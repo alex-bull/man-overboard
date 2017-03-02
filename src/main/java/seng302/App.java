@@ -7,7 +7,11 @@ public class App
         Boat boat1 = new Boat("Oracle Team USA");
         Boat boat2 = new Boat("Emirates Team New Zealand");
 
-        System.out.println(boat1.getTeamName());
-        System.out.println(boat2.getTeamName());
+        System.out.println("Entrants:");
+        System.out.println("#1: " + boat1.getTeamName());
+        System.out.println("#2: " + boat2.getTeamName());
+
+        Race race = new Race(boat1, boat2);
+        race.start();
     }
 }
