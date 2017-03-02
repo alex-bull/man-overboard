@@ -6,11 +6,16 @@ import java.util.List;
 
 /**
  * Created by mgo65 on 3/03/17.
+ * Race object
  */
 public class Race {
 
     private Boat boat1;
     private Boat boat2;
+    private ArrayList<Boat> placings = new ArrayList<>();
+
+
+
 
     /**
      * Creates a Race with two boats
@@ -22,11 +27,15 @@ public class Race {
         this.boat2 = boat2;
     }
 
+    public ArrayList<Boat> getPlacings () {
+        return this.placings;
+    }
+
     /**
-     * Begins the race event
+     * Outputs the finishing order
      */
     public void start () {
-        List<Boat> placings = generatePlacings();
+        generatePlacings();
         System.out.println("Finishing order:");
         System.out.println("#1: " + placings.get(0).getTeamName());
         System.out.println("#2: " + placings.get(1).getTeamName());
@@ -36,12 +45,10 @@ public class Race {
      * Randomly chooses finishing order
      * @return List the placings
      */
-    private List<Boat> generatePlacings() {
-        ArrayList placings = new ArrayList();
+    private void generatePlacings() {
         placings.add(boat1);
         placings.add(boat2);
         Collections.shuffle(placings);
-        return placings;
     }
 
 }
