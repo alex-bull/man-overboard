@@ -14,6 +14,9 @@ public class MatchRace implements Race {
     private ArrayList<Competitor> placings = new ArrayList<>();
 
 
+    /**
+     * Default constructor for MatchRace
+     */
     public MatchRace () {
 
     }
@@ -29,7 +32,7 @@ public class MatchRace implements Race {
     }
 
     /**
-     * sets the competitors who are entered in the race
+     * Sets the competitors who are entered in the race
      * @param comp1 Competitor the first entrant
      * @param comp2 Competitor the second entrant
      */

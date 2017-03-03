@@ -22,12 +22,7 @@ public class App
         MatchRace race2 = new MatchRace();
         MatchRace race3 = new MatchRace();
 
-        //Create the dependencies for the regatta using the abstracting interfaces
-        ArrayList<Race> races = new ArrayList<>();
-        races.add(race1);
-        races.add(race2);
-        races.add(race3);
-
+        //create the dependencies for the regatta using the abstracting interfaces
         ArrayList<Competitor> competitors = new ArrayList<>();
         competitors.add(boat1);
         competitors.add(boat2);
@@ -35,6 +30,11 @@ public class App
         competitors.add(boat4);
         competitors.add(boat5);
         competitors.add(boat6);
+
+        ArrayList<Race> races = new ArrayList<>();
+        races.add(race1);
+        races.add(race2);
+        races.add(race3);
 
         //inject the dependencies for the regatta
         regatta = new Regatta(competitors, races);

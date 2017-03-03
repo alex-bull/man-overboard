@@ -1,7 +1,7 @@
 package seng302;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Collections;
 
 /**
  * Created by mgo65 on 3/03/17.
@@ -25,27 +25,37 @@ public class Regatta {
      * Assigns the Competitors for each race
      */
     private void createMatches() {
-        //randomly pair competitors ignoring multiple races for now
-        Random rand = new Random();
-        ArrayList<Integer> s = new ArrayList<>();
-        s.add(0);
-        s.add(1);
-        s.add(2);
-        s.add(3);
-        s.add(4);
-        s.add(5);
 
-        //generate two random numbers
-        int randOne = rand.nextInt(6);
-        int randTwo = rand.nextInt(5);
+        //create a list of integers for each competitor for indexing
+        ArrayList<Integer> list = new ArrayList<>();
+        for(int i = 0; i < competitors.size(); i++) {
+            list.add(i);
+        }
 
-        //get unique indexes
-        int indexOne = s.get(randOne);
-        s.remove(randOne);
-        int indexTwo = s.get(randTwo);
+        Collections.shuffle(list);
+
+        //assign two unique competitors for each match
+        for (int i = 0; i < races.size(); i++) {
+            races.get(i).setCompetitors(competitors.get(list.get(0)), competitors.get(list.get(1)));
+            Collections.shuffle(list);
+        }
 
 
-        races.get(0).setCompetitors(competitors.get(indexOne), competitors.get(indexTwo));
+        // ------matts code below-----
+//        randomly pair competitors ignoring multiple races for now
+//        Random rand = new Random();
+//        //generate two random numbers
+//        int randOne = rand.nextInt(6);
+//        int randTwo = rand.nextInt(5);
+//
+//        randTwo = list.get()
+//        //get unique indexes
+//        int indexOne = list.get(randOne);
+//        list.remove(randOne);
+//        int indexTwo = list.get(randTwo);
+
+// races.get(0).setCompetitors(competitors.get(indexOne), competitors.get(indexTwo));
+
     }
 
     /**
@@ -53,6 +63,12 @@ public class Regatta {
      */
     public void begin() {
         this.createMatches();
-        races.get(0).start();
+        //races.get(0).start()
+
+        //start all races
+        for(int i = 0; i < races.size(); i++) {
+            System.out.println("Race is starting...");
+            races.get(i).start();
+        }
     }
 }
