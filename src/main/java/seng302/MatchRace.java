@@ -15,6 +15,10 @@ public class MatchRace implements Race {
     private ArrayList<Competitor> placings = new ArrayList<>();
 
 
+    public MatchRace () {
+
+    }
+
     /**
      * Creates a MatchRace with two participants
      * @param competitor1 Competitor a participant
@@ -23,6 +27,16 @@ public class MatchRace implements Race {
     public MatchRace (Competitor competitor1, Competitor competitor2) {
         this.competitor1 = competitor1;
         this.competitor2 = competitor2;
+    }
+
+    /**
+     * sets the competitors who are entered in the race
+     * @param comp1 Competitor the first entrant
+     * @param comp2 Competitor the second entrant
+     */
+    public void setCompetitors(Competitor comp1, Competitor comp2) {
+        this.competitor1 = comp1;
+        this.competitor2 = comp2;
     }
 
     /**

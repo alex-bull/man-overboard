@@ -17,15 +17,16 @@ public class App
         //create the regatta
         Regatta regatta;
 
-        //create a match race
-        MatchRace race1;
+        //create the match races
+        MatchRace race1 = new MatchRace();
+        MatchRace race2 = new MatchRace();
+        MatchRace race3 = new MatchRace();
 
-        //inject the dependencies for the race
-        race1 = new MatchRace(boat1, boat2);
-
-        //Create the dependencies for the regatta
+        //Create the dependencies for the regatta using the abstracting interfaces
         ArrayList<Race> races = new ArrayList<>();
         races.add(race1);
+        races.add(race2);
+        races.add(race3);
 
         ArrayList<Competitor> competitors = new ArrayList<>();
         competitors.add(boat1);
