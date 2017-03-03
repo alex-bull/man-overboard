@@ -40,22 +40,6 @@ public class Regatta {
             Collections.shuffle(list);
         }
 
-
-        // ------matts code below-----
-//        randomly pair competitors ignoring multiple races for now
-//        Random rand = new Random();
-//        //generate two random numbers
-//        int randOne = rand.nextInt(6);
-//        int randTwo = rand.nextInt(5);
-//
-//        randTwo = list.get()
-//        //get unique indexes
-//        int indexOne = list.get(randOne);
-//        list.remove(randOne);
-//        int indexTwo = list.get(randTwo);
-
-// races.get(0).setCompetitors(competitors.get(indexOne), competitors.get(indexTwo));
-
     }
 
     /**
@@ -63,12 +47,14 @@ public class Regatta {
      */
     public void begin() {
         this.createMatches();
-        //races.get(0).start()
 
-        //start all races
-        for(int i = 0; i < races.size(); i++) {
-            System.out.println("Race is starting...");
-            races.get(i).start();
-        }
+        //start a race
+        races.get(0).start();
+
+//        //start all races
+//        for(int i = 0; i < races.size(); i++) {
+//            System.out.println("Race is starting...");
+//            races.get(i).start();
+//        }
     }
 }
