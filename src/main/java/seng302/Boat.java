@@ -4,7 +4,7 @@ package seng302;
  * Created by mgo65 on 3/03/17.
  * Boat object
  */
-public class Boat {
+public class Boat implements Competitor{
     private String teamName;
 
     /**

@@ -3,6 +3,6 @@ package seng302;
 /**
  * Created by mgo65 on 3/03/17.
  */
-public interface Race {
-    void start();
+public interface Competitor {
+    String getTeamName();
 }
