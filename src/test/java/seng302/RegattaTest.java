@@ -25,8 +25,8 @@ public class RegattaTest {
 
         regatta.begin();
         Race race = regatta.getRaces().get(0);
-        Competitor comp1 = race.getCompetitor1();
-        Competitor comp2 = race.getCompetitor2();
+        Competitor comp1 = race.getCompetitors().get(0);
+        Competitor comp2 = race.getCompetitors().get(1);
         assertFalse(comp1.getTeamName().equals(comp2.getTeamName()));
 
 

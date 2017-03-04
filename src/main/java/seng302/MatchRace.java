@@ -11,9 +11,7 @@ import java.util.*;
  */
 public class MatchRace implements Race {
 
-    private Competitor competitor1;
-    private Competitor competitor2;
-    private ArrayList<Competitor> order = new ArrayList<>();
+    private ArrayList<Competitor> competitors = new ArrayList<>();
     private ArrayList<CoursePoint> points = new ArrayList<>();
     private HashMap<Integer, ArrayList<String>> raceMap = new HashMap<>();
 
@@ -27,14 +25,18 @@ public class MatchRace implements Race {
 
     /**
      * Sets the competitors who are entered in the race
-     * @param comp1 Competitor the first entrant
-     * @param comp2 Competitor the second entrant
+     * @param competitors ArrayList the competing teams
      */
-    public void setCompetitors(Competitor comp1, Competitor comp2) {
-        this.competitor1 = comp1;
-        this.competitor2 = comp2;
-        this.order.add(comp1);
-        this.order.add(comp2);
+    public void setCompetitors(ArrayList<Competitor> competitors) {
+        this.competitors = competitors;
+    }
+
+    /**
+     * Gets the competitors who are entered in the race
+     * @return ArrayList the competing teams
+     */
+    public ArrayList<Competitor> getCompetitors() {
+        return this.competitors;
     }
 
     /**
@@ -45,44 +47,21 @@ public class MatchRace implements Race {
         this.points = points;
     }
 
-    /**
-     * Returns the first competitor
-     * @return Competitor
-     */
-    public Competitor getCompetitor1() {
-        return this.competitor1;
-    }
-
-    /**
-     * Returns the second competitor
-     * @return Competitor
-     */
-    public Competitor getCompetitor2() {
-        return this.competitor2;
-    }
-
-    /**
-     * Getter for the race placings
-     * @return ArrayList the finishing order of the competitors
-     */
-    public ArrayList<Competitor> getPlacings () {
-        return this.order;
-    }
-
 
     /**
      * Fills out the raceMap by generating events for when competitors pass course points
      */
     private void generateEvents() {
-        Random rand = new Random();
-        for (int i = 0; i < this.order.size(); i++) {
+
+        for (int i = 0; i < this.competitors.size(); i++) {
+            Competitor comp = competitors.get(i);
+            System.out.println("#" + (i + 1) + " " + comp.getTeamName() + ", velocity: " +  comp.getVelocity() + "m/s");
             Integer time = 0;
 
             for (int j = 0; j < this.points.size() - 1; j++) {
 
                 CoursePoint startPoint = points.get(j);
                 CoursePoint endPoint = points.get(j + 1);
-                Competitor comp = order.get(i);
                 time += this.calculateTime(comp.getVelocity(), startPoint.getLocation(), endPoint.getLocation());
 
                 String event = "Time: " + time.toString() + "s, Event: " + comp.getTeamName() + " Passed the " + endPoint.getName();
@@ -151,7 +130,9 @@ public class MatchRace implements Race {
     private void printRaceMap() throws InterruptedException {
         for (int i = 0; i < 80; i++) {
             if (raceMap.get(i) != null) {
-                System.out.println(raceMap.get(i));
+                for (String event: raceMap.get(i)) {
+                    System.out.println(event);
+                }
             }
             Thread.sleep(1000);
         }
@@ -163,8 +144,7 @@ public class MatchRace implements Race {
     public void start () {
 
         System.out.println("Entrants:");
-        System.out.println("#1: " + competitor1.getTeamName() + ", velocity: " + competitor1.getVelocity() + "m/s");
-        System.out.println("#2: " + competitor2.getTeamName() + ", velocity: " + competitor2.getVelocity() + "m/s");
+
         calculateHeadings();
         generateEvents();
 

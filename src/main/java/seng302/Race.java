@@ -7,8 +7,7 @@ import java.util.ArrayList;
  */
 public interface Race {
     void start();
-    void setCompetitors(Competitor comp1, Competitor comp2);
+    void setCompetitors(ArrayList<Competitor> competitors);
     void setCourse(ArrayList<CoursePoint> points);
-    Competitor getCompetitor1();
-    Competitor getCompetitor2();
+    ArrayList<Competitor> getCompetitors();
 }

@@ -37,13 +37,11 @@ public class Regatta {
      */
     private void createMatches() {
 
-        //shuffle the competitors
         Collections.shuffle(competitors);
-
-        //assign two unique competitors for each match
+        
         for (int i = 0; i < races.size(); i++) {
             races.get(i).setCourse(this.points);
-            races.get(i).setCompetitors(competitors.get(0), competitors.get(1));
+            races.get(i).setCompetitors(this.competitors);
             Collections.shuffle(competitors);
         }
     }

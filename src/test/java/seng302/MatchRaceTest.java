@@ -3,6 +3,8 @@ package seng302;
 import org.junit.Test;
 
 
+import java.util.ArrayList;
+
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertEquals;
 
@@ -11,16 +13,6 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class MatchRaceTest {
 
-    @Test
-    public void testGeneratePlacings() {
-        Boat boat1 = new Boat("a", 10);
-        Boat boat2 = new Boat("b", 8);
-        MatchRace race = new MatchRace();
-        race.setCompetitors(boat1, boat2);
-        race.start();
-        assertEquals(race.getPlacings().size(), 2);
-        assertTrue(race.getPlacings().contains(boat1));
-        assertTrue(race.getPlacings().contains(boat2));
-    }
+
 
 }
