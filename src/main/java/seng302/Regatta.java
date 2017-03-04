@@ -22,24 +22,26 @@ public class Regatta {
     }
 
     /**
-     * Assigns the Competitors for each race
+     * Returns the list of races in the regatta
+     * @return ArrayList the list of races
+     */
+    public ArrayList<Race> getRaces() {
+        return this.races;
+    }
+
+    /**
+     * Assigns the Competitors for each race randomly
      */
     private void createMatches() {
 
-        //create a list of integers for each competitor for indexing
-        ArrayList<Integer> list = new ArrayList<>();
-        for(int i = 0; i < competitors.size(); i++) {
-            list.add(i);
-        }
-
-        Collections.shuffle(list);
+        //shuffle the competitors
+        Collections.shuffle(competitors);
 
         //assign two unique competitors for each match
         for (int i = 0; i < races.size(); i++) {
-            races.get(i).setCompetitors(competitors.get(list.get(0)), competitors.get(list.get(1)));
-            Collections.shuffle(list);
+            races.get(i).setCompetitors(competitors.get(0), competitors.get(1));
+            Collections.shuffle(competitors);
         }
-
     }
 
     /**

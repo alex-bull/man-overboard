@@ -6,4 +6,6 @@ package seng302;
 public interface Race {
     void start();
     void setCompetitors(Competitor comp1, Competitor comp2);
+    Competitor getCompetitor1();
+    Competitor getCompetitor2();
 }

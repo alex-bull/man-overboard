@@ -42,11 +42,37 @@ public class MatchRace implements Race {
     }
 
     /**
+     * Returns the first competitor
+     * @return Competitor
+     */
+    public Competitor getCompetitor1() {
+        return this.competitor1;
+    }
+
+    /**
+     * Returns the second competitor
+     * @return Competitor
+     */
+    public Competitor getCompetitor2() {
+        return this.competitor2;
+    }
+
+    /**
      * Getter for the race placings
      * @return ArrayList the finishing order of the competitors
      */
     public ArrayList<Competitor> getPlacings () {
         return this.placings;
+    }
+
+    /**
+     * Randomly chooses finishing order
+     * @return List the placings
+     */
+    private void generatePlacings() {
+        placings.add(competitor1);
+        placings.add(competitor2);
+        Collections.shuffle(placings);
     }
 
     /**
@@ -61,16 +87,6 @@ public class MatchRace implements Race {
         System.out.println("Finishing order:");
         System.out.println("#1: " + placings.get(0).getTeamName());
         System.out.println("#2: " + placings.get(1).getTeamName());
-    }
-
-    /**
-     * Randomly chooses finishing order
-     * @return List the placings
-     */
-    private void generatePlacings() {
-        placings.add(competitor1);
-        placings.add(competitor2);
-        Collections.shuffle(placings);
     }
 
 }
