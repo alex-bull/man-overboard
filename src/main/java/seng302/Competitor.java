@@ -5,4 +5,5 @@ package seng302;
  */
 public interface Competitor {
     String getTeamName();
+    Integer getVelocity();
 }

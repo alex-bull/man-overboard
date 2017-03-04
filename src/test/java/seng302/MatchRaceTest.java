@@ -13,8 +13,8 @@ public class MatchRaceTest {
 
     @Test
     public void testGeneratePlacings() {
-        Boat boat1 = new Boat("a");
-        Boat boat2 = new Boat("b");
+        Boat boat1 = new Boat("a", 10);
+        Boat boat2 = new Boat("b", 8);
         MatchRace race = new MatchRace();
         race.setCompetitors(boat1, boat2);
         race.start();

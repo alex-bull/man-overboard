@@ -6,12 +6,15 @@ package seng302;
  */
 public class Boat implements Competitor{
     private String teamName;
+    private Integer velocity;
+    private Integer scaleFactor = 2;
 
     /**
      * Creates a boat with boat team name
      * @param teamName String name of team
      */
-    public Boat (String teamName) {
+    public Boat (String teamName, Integer velocity) {
+        this.velocity = velocity / scaleFactor;
         this.teamName = teamName;
     }
 
@@ -21,5 +24,13 @@ public class Boat implements Competitor{
      */
     public String getTeamName () {
         return this.teamName;
+    }
+
+    /**
+     * Getter for the boats velocity
+     * @return Integer the velocity in m/s
+     */
+    public Integer getVelocity () {
+        return this.velocity;
     }
 }

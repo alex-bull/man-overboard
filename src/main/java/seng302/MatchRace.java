@@ -1,5 +1,7 @@
 package seng302;
 
+import javafx.util.Pair;
+
 import java.util.*;
 
 /**
@@ -21,7 +23,6 @@ public class MatchRace implements Race {
     public MatchRace () {
 
     }
-
 
     /**
      * Sets the competitors who are entered in the race
@@ -67,23 +68,21 @@ public class MatchRace implements Race {
         return this.order;
     }
 
-    /**
-     * Randomly orders the placings
-     */
-    private void generateOrder() {
-        Collections.shuffle(order);
-    }
 
+    /**
+     * Fills out the raceMap by generating events for when competitors pass course points
+     */
     private void generateEvents() {
         Random rand = new Random();
         for (int i = 0; i < this.order.size(); i++) {
-            for (int j = 0; j < this.points.size(); j++) {
+            for (int j = 0; j < this.points.size() - 1; j++) {
 
-                //generate a time and add to race map
-                Integer time = rand.nextInt(60);
-                CoursePoint point = points.get(j);
+                CoursePoint startPoint = points.get(j);
+                CoursePoint endPoint = points.get(j + 1);
                 Competitor comp = order.get(i);
-                String event = "Time: " + time.toString() + ", Event: " + comp.getTeamName() + " Passed the " + point.getName() + ".";
+                Integer time = this.calculateTime(comp.getVelocity(), startPoint.getLocation(), endPoint.getLocation());
+
+                String event = "Time: " + time.toString() + ", Event: " + comp.getTeamName() + " Passed the " + endPoint.getName() + ".";
 
                 if (raceMap.get(time) != null) {
                     raceMap.get(time).add(event);
@@ -96,6 +95,28 @@ public class MatchRace implements Race {
         }
     }
 
+    /**
+     * Calculates the time for a competitor to travel between course points
+     * @param velocity Integer the linear velocity of the competitor in m/s
+     * @param start Pair the coordinates of the first course point
+     * @param end Pair the coordinates of the second course point
+     * @return Integer the time taken
+     */
+    private Integer calculateTime (Integer velocity, Pair<Double, Double> start, Pair<Double, Double> end) {
+
+        Double xDistance = Math.pow((start.getKey() - end.getKey()), 2);
+        Double yDistance = Math.pow((start.getValue() - end.getValue()), 2);
+        Double distance = Math.sqrt(xDistance + yDistance);
+        System.out.println(distance);
+        Double time = (distance / velocity);
+        System.out.println(time);
+        return time.intValue();
+    }
+
+    /**
+     *
+     * @throws InterruptedException
+     */
     private void printRaceMap() throws InterruptedException {
         for (int i = 0; i < 60; i++) {
             System.out.println(raceMap.get(i));
@@ -111,15 +132,15 @@ public class MatchRace implements Race {
         System.out.println("Entrants:");
         System.out.println("#1: " + competitor1.getTeamName());
         System.out.println("#2: " + competitor2.getTeamName());
-
-        generateEvents();
-
-        try {
-            printRaceMap();
-        }
-        catch (Exception e) {
-            System.out.println("Thread interrupted");
-        }
+        System.out.println(calculateTime(competitor1.getVelocity(), points.get(0).getLocation(), points.get(1).getLocation()));
+//        generateEvents();
+//
+//        try {
+//            printRaceMap();
+//        }
+//        catch (Exception e) {
+//            System.out.println("Thread interrupted");
+//        }
 
     }
 

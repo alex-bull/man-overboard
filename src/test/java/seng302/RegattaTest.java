@@ -18,9 +18,9 @@ public class RegattaTest {
         ArrayList<Race> races = new ArrayList<>();
 
         races.add(new MatchRace());
-        comps.add(new Boat("A"));
-        comps.add(new Boat("B"));
-        comps.add(new Boat("C"));
+        comps.add(new Boat("A", 10));
+        comps.add(new Boat("B", 6));
+        comps.add(new Boat("C", 4));
         Regatta regatta = new Regatta(comps, races, null);
 
         regatta.begin();
