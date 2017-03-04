@@ -2,6 +2,7 @@ package seng302;
 
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.util.*;
 
 /**
@@ -84,7 +85,10 @@ public class MatchRace implements Race {
                 Competitor comp = order.get(i);
                 time += this.calculateTime(comp.getVelocity(), startPoint.getLocation(), endPoint.getLocation());
 
-                String event = "Time: " + time.toString() + "s, Event: " + comp.getTeamName() + " Passed the " + endPoint.getName() + ".";
+                String event = "Time: " + time.toString() + "s, Event: " + comp.getTeamName() + " Passed the " + endPoint.getName();
+                if (endPoint.getExitHeading() != null) {
+                    event += ", heading: " + String.format("%.2f", endPoint.getExitHeading());
+                }
 
                 if (raceMap.get(time) != null) {
                     raceMap.get(time).add(event);
@@ -114,11 +118,38 @@ public class MatchRace implements Race {
     }
 
     /**
+     * Calculates exit headings of each course point and sets the course point property
+     */
+    private void calculateHeadings () {
+
+        for (int j = 1; j < this.points.size() - 1; j++) {
+            Double heading = calculateAngle(points.get(j).getLocation(), points.get(j + 1).getLocation());
+            points.get(j).setExitHeading(heading);
+        }
+    }
+
+    /**
+     * Calculates the angle between two course points
+     * @param start Pair the coordinates of the first point
+     * @param end Pair the coordinates of the second point
+     * @return Double the angle between the points from the y axis
+     */
+    public Double calculateAngle(Pair<Double, Double> start, Pair<Double, Double> end) {
+        Double angle = Math.toDegrees(Math.atan2(end.getKey() - start.getKey(), end.getValue() - start.getValue()));
+
+        if(angle < 0){
+            angle += 360;
+        }
+        return angle;
+    }
+
+
+    /**
      *
      * @throws InterruptedException
      */
     private void printRaceMap() throws InterruptedException {
-        for (int i = 0; i < 400; i++) {
+        for (int i = 0; i < 80; i++) {
             if (raceMap.get(i) != null) {
                 System.out.println(raceMap.get(i));
             }
@@ -134,6 +165,7 @@ public class MatchRace implements Race {
         System.out.println("Entrants:");
         System.out.println("#1: " + competitor1.getTeamName() + ", velocity: " + competitor1.getVelocity() + "m/s");
         System.out.println("#2: " + competitor2.getTeamName() + ", velocity: " + competitor2.getVelocity() + "m/s");
+        calculateHeadings();
         generateEvents();
 
         try {

@@ -17,10 +17,10 @@ public class RegattaFactory {
 
         //create competitors
         Boat boat1 = new Boat("Oracle Team USA", 9);
-        Boat boat2 = new Boat("Emirates Team New Zealand", 9);
-        Boat boat3 = new Boat("Ben Ainslie Racing", 9);
-        Boat boat4 = new Boat("SoftBank Team Japan", 9);
-        Boat boat5 = new Boat("Team France", 9);
+        Boat boat2 = new Boat("Emirates Team New Zealand", 8);
+        Boat boat3 = new Boat("Ben Ainslie Racing", 7);
+        Boat boat4 = new Boat("SoftBank Team Japan", 6);
+        Boat boat5 = new Boat("Team France", 5);
         Boat boat6 = new Boat("Artemis Racing", 4);
 
         ArrayList<Competitor> competitors = new ArrayList<>();
@@ -43,6 +43,7 @@ public class RegattaFactory {
 
         //Create the marks
         ArrayList<CoursePoint> points = new ArrayList<>();
+        points.add(new Mark("PreStart", new Pair<>(-20.0, 0.0)));
         points.add(new Mark("Start Gate", new Pair<>(0.0, 0.0)));
         points.add(new Mark("Mark", new Pair<>(100.0, 10.0)));
         points.add(new Mark("Leeward Gate", new Pair<>(120.0, 180.0)));

@@ -8,4 +8,6 @@ import javafx.util.Pair;
 public interface CoursePoint {
     String getName();
     Pair<Double, Double> getLocation();
+    void setExitHeading(Double exitHeading);
+    Double getExitHeading ();
 }

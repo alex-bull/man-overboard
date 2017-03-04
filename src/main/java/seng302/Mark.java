@@ -10,6 +10,7 @@ public class Mark implements CoursePoint{
 
     private String name;
     private Pair<Double, Double> location;
+    private Double exitHeading;
 
     /**
      * Creates a course mark
@@ -35,6 +36,22 @@ public class Mark implements CoursePoint{
      */
     public Pair<Double, Double> getLocation () {
         return this.location;
+    }
+
+    /**
+     * Sets the exitHeading property
+     * @param exitHeading Double the direction in which competitors exit the mark.
+     */
+    public void setExitHeading(Double exitHeading) {
+        this.exitHeading = exitHeading;
+    }
+
+    /**
+     * Getter for the exitHeading property
+     * @return Double the heading
+     */
+    public Double getExitHeading () {
+        return this.exitHeading;
     }
 
 }
