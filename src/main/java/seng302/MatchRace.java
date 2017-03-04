@@ -1,7 +1,6 @@
 package seng302;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * Created by mgo65 on 3/03/17.
@@ -13,6 +12,7 @@ public class MatchRace implements Race {
     private Competitor competitor2;
     private ArrayList<Competitor> order = new ArrayList<>();
     private ArrayList<CoursePoint> points = new ArrayList<>();
+    private HashMap<Integer, ArrayList<String>> raceMap = new HashMap<>();
 
 
     /**
@@ -74,6 +74,35 @@ public class MatchRace implements Race {
         Collections.shuffle(order);
     }
 
+    private void generateEvents() {
+        Random rand = new Random();
+        for (int i = 0; i < this.order.size(); i++) {
+            for (int j = 0; j < this.points.size(); j++) {
+
+                //generate a time and add to race map
+                Integer time = rand.nextInt(60);
+                CoursePoint point = points.get(j);
+                Competitor comp = order.get(i);
+                String event = "Time: " + time.toString() + ", Event: " + comp.getTeamName() + " Passed the " + point.getName() + ".";
+
+                if (raceMap.get(time) != null) {
+                    raceMap.get(time).add(event);
+                } else {
+                    ArrayList<String> events = new ArrayList<>();
+                    events.add(event);
+                    raceMap.put(time, events);
+                }
+            }
+        }
+    }
+
+    private void printRaceMap() throws InterruptedException {
+        for (int i = 0; i < 60; i++) {
+            System.out.println(raceMap.get(i));
+            Thread.sleep(1000);
+        }
+    }
+
     /**
      * Outputs the starting line up and outputs the finishing order
      */
@@ -83,13 +112,15 @@ public class MatchRace implements Race {
         System.out.println("#1: " + competitor1.getTeamName());
         System.out.println("#2: " + competitor2.getTeamName());
 
-        for (int i = 0; i < points.size(); i++) {
-            CoursePoint point = points.get(i);
-            System.out.println(point.getName());
-            generateOrder();
-            System.out.println("#1: " + order.get(0).getTeamName());
-            System.out.println("#2: " + order.get(1).getTeamName());
+        generateEvents();
+
+        try {
+            printRaceMap();
         }
+        catch (Exception e) {
+            System.out.println("Thread interrupted");
+        }
+
     }
 
 }
