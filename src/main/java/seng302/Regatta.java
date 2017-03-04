@@ -42,6 +42,7 @@ public class Regatta {
 
         //assign two unique competitors for each match
         for (int i = 0; i < races.size(); i++) {
+            races.get(i).setCourse(this.points);
             races.get(i).setCompetitors(competitors.get(0), competitors.get(1));
             Collections.shuffle(competitors);
         }

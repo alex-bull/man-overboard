@@ -11,7 +11,8 @@ public class MatchRace implements Race {
 
     private Competitor competitor1;
     private Competitor competitor2;
-    private ArrayList<Competitor> placings = new ArrayList<>();
+    private ArrayList<Competitor> order = new ArrayList<>();
+    private ArrayList<CoursePoint> points = new ArrayList<>();
 
 
     /**
@@ -21,15 +22,6 @@ public class MatchRace implements Race {
 
     }
 
-    /**
-     * Creates a MatchRace with two participants
-     * @param competitor1 Competitor a participant
-     * @param competitor2 Competitor a participant
-     */
-    public MatchRace (Competitor competitor1, Competitor competitor2) {
-        this.competitor1 = competitor1;
-        this.competitor2 = competitor2;
-    }
 
     /**
      * Sets the competitors who are entered in the race
@@ -39,6 +31,16 @@ public class MatchRace implements Race {
     public void setCompetitors(Competitor comp1, Competitor comp2) {
         this.competitor1 = comp1;
         this.competitor2 = comp2;
+        this.order.add(comp1);
+        this.order.add(comp2);
+    }
+
+    /**
+     * Sets the course for the race
+     * @param points ArrayList the points on the course
+     */
+    public void setCourse(ArrayList<CoursePoint> points) {
+        this.points = points;
     }
 
     /**
@@ -62,17 +64,14 @@ public class MatchRace implements Race {
      * @return ArrayList the finishing order of the competitors
      */
     public ArrayList<Competitor> getPlacings () {
-        return this.placings;
+        return this.order;
     }
 
     /**
-     * Randomly chooses finishing order
-     * @return List the placings
+     * Randomly orders the placings
      */
-    private void generatePlacings() {
-        placings.add(competitor1);
-        placings.add(competitor2);
-        Collections.shuffle(placings);
+    private void generateOrder() {
+        Collections.shuffle(order);
     }
 
     /**
@@ -83,10 +82,14 @@ public class MatchRace implements Race {
         System.out.println("Entrants:");
         System.out.println("#1: " + competitor1.getTeamName());
         System.out.println("#2: " + competitor2.getTeamName());
-        generatePlacings();
-        System.out.println("Finishing order:");
-        System.out.println("#1: " + placings.get(0).getTeamName());
-        System.out.println("#2: " + placings.get(1).getTeamName());
+
+        for (int i = 0; i < points.size(); i++) {
+            CoursePoint point = points.get(i);
+            System.out.println(point.getName());
+            generateOrder();
+            System.out.println("#1: " + order.get(0).getTeamName());
+            System.out.println("#2: " + order.get(1).getTeamName());
+        }
     }
 
 }
