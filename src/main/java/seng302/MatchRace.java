@@ -75,14 +75,16 @@ public class MatchRace implements Race {
     private void generateEvents() {
         Random rand = new Random();
         for (int i = 0; i < this.order.size(); i++) {
+            Integer time = 0;
+
             for (int j = 0; j < this.points.size() - 1; j++) {
 
                 CoursePoint startPoint = points.get(j);
                 CoursePoint endPoint = points.get(j + 1);
                 Competitor comp = order.get(i);
-                Integer time = this.calculateTime(comp.getVelocity(), startPoint.getLocation(), endPoint.getLocation());
+                time += this.calculateTime(comp.getVelocity(), startPoint.getLocation(), endPoint.getLocation());
 
-                String event = "Time: " + time.toString() + ", Event: " + comp.getTeamName() + " Passed the " + endPoint.getName() + ".";
+                String event = "Time: " + time.toString() + "s, Event: " + comp.getTeamName() + " Passed the " + endPoint.getName() + ".";
 
                 if (raceMap.get(time) != null) {
                     raceMap.get(time).add(event);
@@ -107,9 +109,7 @@ public class MatchRace implements Race {
         Double xDistance = Math.pow((start.getKey() - end.getKey()), 2);
         Double yDistance = Math.pow((start.getValue() - end.getValue()), 2);
         Double distance = Math.sqrt(xDistance + yDistance);
-        System.out.println(distance);
         Double time = (distance / velocity);
-        System.out.println(time);
         return time.intValue();
     }
 
@@ -118,8 +118,10 @@ public class MatchRace implements Race {
      * @throws InterruptedException
      */
     private void printRaceMap() throws InterruptedException {
-        for (int i = 0; i < 60; i++) {
-            System.out.println(raceMap.get(i));
+        for (int i = 0; i < 400; i++) {
+            if (raceMap.get(i) != null) {
+                System.out.println(raceMap.get(i));
+            }
             Thread.sleep(1000);
         }
     }
@@ -130,17 +132,16 @@ public class MatchRace implements Race {
     public void start () {
 
         System.out.println("Entrants:");
-        System.out.println("#1: " + competitor1.getTeamName());
-        System.out.println("#2: " + competitor2.getTeamName());
-        System.out.println(calculateTime(competitor1.getVelocity(), points.get(0).getLocation(), points.get(1).getLocation()));
-//        generateEvents();
-//
-//        try {
-//            printRaceMap();
-//        }
-//        catch (Exception e) {
-//            System.out.println("Thread interrupted");
-//        }
+        System.out.println("#1: " + competitor1.getTeamName() + ", velocity: " + competitor1.getVelocity() + "m/s");
+        System.out.println("#2: " + competitor2.getTeamName() + ", velocity: " + competitor2.getVelocity() + "m/s");
+        generateEvents();
+
+        try {
+            printRaceMap();
+        }
+        catch (Exception e) {
+            System.out.println("Thread interrupted");
+        }
 
     }
 
