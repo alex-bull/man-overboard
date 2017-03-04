@@ -55,7 +55,7 @@ public class MatchRace implements Race {
 
         for (int i = 0; i < this.competitors.size(); i++) {
             Competitor comp = competitors.get(i);
-            System.out.println("#" + (i + 1) + " " + comp.getTeamName() + ", velocity: " +  comp.getVelocity() + "m/s");
+            System.out.println("#" + (i + 1) + " " + comp.getTeamName() + ", Velocity: " +  comp.getVelocity() + "m/s");
             Integer time = 0;
 
             for (int j = 0; j < this.points.size() - 1; j++) {
@@ -64,9 +64,9 @@ public class MatchRace implements Race {
                 CoursePoint endPoint = points.get(j + 1);
                 time += this.calculateTime(comp.getVelocity(), startPoint.getLocation(), endPoint.getLocation());
 
-                String event = "Time: " + time.toString() + "s, Event: " + comp.getTeamName() + " Passed the " + endPoint.getName();
+                String event = "Time: " + time.toString() + "s, Event: " + comp.getTeamName() + " passed the " + endPoint.getName();
                 if (endPoint.getExitHeading() != null) {
-                    event += ", heading: " + String.format("%.2f", endPoint.getExitHeading());
+                    event += ", Heading: " + String.format("%.2f", endPoint.getExitHeading());
                 }
 
                 if (raceMap.get(time) != null) {

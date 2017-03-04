@@ -41,7 +41,7 @@ public class RegattaFactory {
         races.add(race2);
         races.add(race3);
 
-        //Create the marks
+        //create the marks
         ArrayList<CoursePoint> points = new ArrayList<>();
         points.add(new Mark("PreStart", new Pair<>(-20.0, 0.0)));
         points.add(new Mark("Start Gate", new Pair<>(0.0, 0.0)));
