@@ -19,7 +19,7 @@ public class RegattaTest {
         comps.add(new Boat("A"));
         comps.add(new Boat("B"));
         comps.add(new Boat("C"));
-        Regatta regatta = new Regatta(comps, races);
+        Regatta regatta = new Regatta(comps, races, null);
 
         regatta.begin();
         Race race = regatta.getRaces().get(0);

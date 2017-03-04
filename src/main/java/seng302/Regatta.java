@@ -10,15 +10,18 @@ public class Regatta {
 
     private ArrayList<Competitor> competitors = new ArrayList<>();
     private ArrayList<Race> races = new ArrayList<>();
+    private ArrayList<CoursePoint> points = new ArrayList<>();
 
     /**
      * Creates a regatta with a set of competitors and races
-     * @param competitors Competitor the teams competing in the regatta
-     * @param races Race the races in the regatta
+     * @param competitors ArrayList the teams competing in the regatta
+     * @param races ArrayList the races in the regatta
+     * @param points ArrayList the points that make up the course
      */
-    public Regatta (ArrayList<Competitor> competitors, ArrayList<Race> races) {
+    public Regatta (ArrayList<Competitor> competitors, ArrayList<Race> races, ArrayList<CoursePoint> points) {
         this.competitors = competitors;
         this.races = races;
+        this.points = points;
     }
 
     /**

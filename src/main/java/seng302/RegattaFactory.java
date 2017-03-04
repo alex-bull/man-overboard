@@ -1,5 +1,7 @@
 package seng302;
 
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 
 /**
@@ -39,7 +41,14 @@ public class RegattaFactory {
         races.add(race2);
         races.add(race3);
 
+        //Create the marks
+        ArrayList<CoursePoint> points = new ArrayList<>();
+        points.add(new Mark("Start", new Pair<>(0.0, 0.0)));
+        points.add(new Mark("Leeward", new Pair<>(0.0, 0.0)));
+        points.add(new Mark("Windward", new Pair<>(0.0, 0.0)));
+        points.add(new Mark("Finish", new Pair<>(0.0, 0.0)));
+
         //inject the dependencies for the regatta
-        return new Regatta(competitors, races);
+        return new Regatta(competitors, races, points);
     }
 }
