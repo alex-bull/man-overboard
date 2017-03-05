@@ -7,6 +7,7 @@ import static junit.framework.TestCase.assertFalse;;
 
 import java.util.ArrayList;
 import java.util.DoubleSummaryStatistics;
+import java.util.List;
 
 /**
  * Created by Pang on 4/03/17.
@@ -16,8 +17,8 @@ public class RegattaTest {
     @Test
     public void testCreateMatches() {
 
-        ArrayList<Competitor> comps = new ArrayList<>();
-        ArrayList<Race> races = new ArrayList<>();
+        List<Competitor> comps = new ArrayList<>();
+        List<Race> races = new ArrayList<>();
 
         races.add(new MatchRace());
         comps.add(new Boat("A", 10));
@@ -25,14 +26,14 @@ public class RegattaTest {
         comps.add(new Boat("C", 4));
 
         //create the marks
-        ArrayList<CoursePoint> points = new ArrayList<>();
-        points.add(new Mark("PreStart", new Pair<>(-20.0, 0.0)));
-        points.add(new Mark("Start Gate", new Pair<>(0.0, 0.0)));
-        points.add(new Mark("Mark", new Pair<>(100.0, 10.0)));
-        points.add(new Mark("Leeward Gate", new Pair<>(120.0, 180.0)));
-        points.add(new Mark("Windward Gate", new Pair<>(70.0, -70.0)));
-        points.add(new Mark("Leeward Gate", new Pair<>(120.0, 180.0)));
-        points.add(new Mark("Finish", new Pair<>(50.0, 230.0)));
+        List<CoursePoint> points = new ArrayList<>();
+        points.add(new Mark("PreStart", new Point(-20.0, 0.0)));
+        points.add(new Mark("Start Gate", new Point(0.0, 0.0)));
+        points.add(new Mark("Mark", new Point(100.0, 10.0)));
+        points.add(new Mark("Leeward Gate", new Point(120.0, 180.0)));
+        points.add(new Mark("Windward Gate", new Point(70.0, -70.0)));
+        points.add(new Mark("Leeward Gate", new Point(120.0, 180.0)));
+        points.add(new Mark("Finish", new Point(50.0, 230.0)));
 
         Regatta regatta = new Regatta(comps, races, points);
 

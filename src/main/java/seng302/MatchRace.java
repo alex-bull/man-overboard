@@ -88,10 +88,10 @@ public class MatchRace implements Race {
      * @param end Pair the coordinates of the second course point
      * @return Integer the time taken
      */
-    private Integer calculateTime (Integer velocity, Pair<Double, Double> start, Pair<Double, Double> end) {
+    private Integer calculateTime (Integer velocity, Point start, Point end) {
 
-        Double xDistance = Math.pow((start.getKey() - end.getKey()), 2);
-        Double yDistance = Math.pow((start.getValue() - end.getValue()), 2);
+        Double xDistance = Math.pow((start.getX() - end.getX()), 2);
+        Double yDistance = Math.pow((start.getY() - end.getY()), 2);
         Double distance = Math.sqrt(xDistance + yDistance);
         Double time = (distance / velocity);
         return time.intValue();
@@ -114,8 +114,8 @@ public class MatchRace implements Race {
      * @param end Pair the coordinates of the second point
      * @return Double the angle between the points from the y axis
      */
-    public Double calculateAngle(Pair<Double, Double> start, Pair<Double, Double> end) {
-        Double angle = Math.toDegrees(Math.atan2(end.getKey() - start.getKey(), end.getValue() - start.getValue()));
+    public Double calculateAngle(Point start, Point end) {
+        Double angle = Math.toDegrees(Math.atan2(end.getX() - start.getX(), end.getY() - start.getY()));
 
         if(angle < 0){
             angle += 360;

@@ -1,6 +1,5 @@
 package seng302;
 
-import javafx.util.Pair;
 
 /**
  * Created by mgo65 on 4/03/17.
@@ -9,7 +8,7 @@ import javafx.util.Pair;
 public class Mark implements CoursePoint{
 
     private String name;
-    private Pair<Double, Double> location;
+    private Point location;
     private Double exitHeading;
 
     /**
@@ -17,7 +16,7 @@ public class Mark implements CoursePoint{
      * @param name String the name of the mark
      * @param location Pair the coordinates of the mark
      */
-    public Mark (String name, Pair<Double, Double> location) {
+    public Mark (String name, Point location) {
         this.name = name;
         this.location = location;
     }
@@ -34,7 +33,7 @@ public class Mark implements CoursePoint{
      * Getter for the course location
      * @return Pair, the coordinates of the mark
      */
-    public Pair<Double, Double> getLocation () {
+    public Point getLocation () {
         return this.location;
     }
 
