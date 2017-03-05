@@ -3,6 +3,9 @@ package seng302;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by mgo65 on 4/03/17.
@@ -13,7 +16,7 @@ public class RegattaFactory {
      * Creates an Instance of Regatta and injects all dependencies
      * @return Regatta, a regatta object
      */
-    public Regatta createRegatta() {
+    public Regatta createRegatta(int numberOfBoats) {
 
         //create competitors
         Boat boat1 = new Boat("Oracle Team USA", 9);
@@ -23,13 +26,18 @@ public class RegattaFactory {
         Boat boat5 = new Boat("Team France", 5);
         Boat boat6 = new Boat("Artemis Racing", 4);
 
-        ArrayList<Competitor> competitors = new ArrayList<>();
+        List competitors = new ArrayList<Competitor>();
         competitors.add(boat1);
         competitors.add(boat2);
         competitors.add(boat3);
         competitors.add(boat4);
         competitors.add(boat5);
         competitors.add(boat6);
+
+        //randomly select competitors
+        Collections.shuffle(competitors);
+        competitors = competitors.subList(0, numberOfBoats);
+
 
         //create the match races
         MatchRace race1 = new MatchRace();

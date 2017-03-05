@@ -4,6 +4,7 @@ import javafx.util.Pair;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by mgo65 on 3/03/17.
@@ -11,9 +12,9 @@ import java.util.*;
  */
 public class MatchRace implements Race {
 
-    private ArrayList<Competitor> competitors = new ArrayList<>();
-    private ArrayList<CoursePoint> points = new ArrayList<>();
-    private HashMap<Integer, ArrayList<String>> raceMap = new HashMap<>();
+    private List<Competitor> competitors = new ArrayList<>();
+    private List<CoursePoint> points = new ArrayList<>();
+    private Map<Integer, List<String>> raceMap = new HashMap<>();
 
 
     /**
@@ -27,7 +28,7 @@ public class MatchRace implements Race {
      * Sets the competitors who are entered in the race
      * @param competitors ArrayList the competing teams
      */
-    public void setCompetitors(ArrayList<Competitor> competitors) {
+    public void setCompetitors(List<Competitor> competitors) {
         this.competitors = competitors;
     }
 
@@ -35,7 +36,7 @@ public class MatchRace implements Race {
      * Gets the competitors who are entered in the race
      * @return ArrayList the competing teams
      */
-    public ArrayList<Competitor> getCompetitors() {
+    public List<Competitor> getCompetitors() {
         return this.competitors;
     }
 
@@ -43,7 +44,7 @@ public class MatchRace implements Race {
      * Sets the course for the race
      * @param points ArrayList the points on the course
      */
-    public void setCourse(ArrayList<CoursePoint> points) {
+    public void setCourse(List<CoursePoint> points) {
         this.points = points;
     }
 
@@ -72,7 +73,7 @@ public class MatchRace implements Race {
                 if (raceMap.get(time) != null) {
                     raceMap.get(time).add(event);
                 } else {
-                    ArrayList<String> events = new ArrayList<>();
+                    List<String> events = new ArrayList<>();
                     events.add(event);
                     raceMap.put(time, events);
                 }

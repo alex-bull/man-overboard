@@ -2,15 +2,16 @@ package seng302;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by mgo65 on 3/03/17.
  */
 public class Regatta {
 
-    private ArrayList<Competitor> competitors = new ArrayList<>();
-    private ArrayList<Race> races = new ArrayList<>();
-    private ArrayList<CoursePoint> points = new ArrayList<>();
+    private List<Competitor> competitors = new ArrayList<>();
+    private List<Race> races = new ArrayList<>();
+    private List<CoursePoint> points = new ArrayList<>();
 
     /**
      * Creates a regatta with a set of competitors and races
@@ -18,7 +19,7 @@ public class Regatta {
      * @param races ArrayList the races in the regatta
      * @param points ArrayList the points that make up the course
      */
-    public Regatta (ArrayList<Competitor> competitors, ArrayList<Race> races, ArrayList<CoursePoint> points) {
+    public Regatta (List<Competitor> competitors, List<Race> races, List<CoursePoint> points) {
         this.competitors = competitors;
         this.races = races;
         this.points = points;
@@ -28,7 +29,7 @@ public class Regatta {
      * Returns the list of races in the regatta
      * @return ArrayList the list of races
      */
-    public ArrayList<Race> getRaces() {
+    public List<Race> getRaces() {
         return this.races;
     }
 
@@ -38,7 +39,7 @@ public class Regatta {
     private void createMatches() {
 
         Collections.shuffle(competitors);
-        
+
         for (int i = 0; i < races.size(); i++) {
             races.get(i).setCourse(this.points);
             races.get(i).setCompetitors(this.competitors);
