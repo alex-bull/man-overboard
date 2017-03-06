@@ -26,13 +26,6 @@ public class Regatta {
         this.points = points;
     }
 
-    /**
-     * Returns the list of races in the regatta
-     * @return List the list of races
-     */
-    public List<Race> getRaces() {
-        return this.races;
-    }
 
     /**
      * Calculates exit headings of each course point and sets the course point property
@@ -51,7 +44,7 @@ public class Regatta {
      * @param end Point the coordinates of the second point
      * @return Double the angle between the points from the y axis
      */
-    public Double calculateAngle(Point start, Point end) {
+    private Double calculateAngle(Point start, Point end) {
         Double angle = Math.toDegrees(Math.atan2(end.getX() - start.getX(), end.getY() - start.getY()));
 
         if(angle < 0){
