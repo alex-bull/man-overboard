@@ -34,6 +34,32 @@ public class Regatta {
     }
 
     /**
+     * Calculates exit headings of each course point and sets the course point property
+     */
+    private void calculateHeadings () {
+
+        for (int j = 1; j < this.points.size() - 1; j++) {
+            Double heading = calculateAngle(points.get(j).getLocation(), points.get(j + 1).getLocation());
+            points.get(j).setExitHeading(heading);
+        }
+    }
+
+    /**
+     * Calculates the angle between two course points
+     * @param start Pair the coordinates of the first point
+     * @param end Pair the coordinates of the second point
+     * @return Double the angle between the points from the y axis
+     */
+    public Double calculateAngle(Point start, Point end) {
+        Double angle = Math.toDegrees(Math.atan2(end.getX() - start.getX(), end.getY() - start.getY()));
+
+        if(angle < 0){
+            angle += 360;
+        }
+        return angle;
+    }
+
+    /**
      * Assigns the Competitors for each race randomly
      */
     private void createMatches() {
@@ -52,7 +78,7 @@ public class Regatta {
      */
     public void begin() {
         this.createMatches();
-
+        this.calculateHeadings();
         //start a race
         races.get(0).start();
 

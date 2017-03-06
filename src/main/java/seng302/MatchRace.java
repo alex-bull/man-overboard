@@ -1,8 +1,5 @@
 package seng302;
 
-import javafx.util.Pair;
-
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -14,7 +11,7 @@ public class MatchRace implements Race {
 
     private List<Competitor> competitors = new ArrayList<>();
     private List<CoursePoint> points = new ArrayList<>();
-    private Map<Integer, List<String>> raceMap = new HashMap<>();
+    private Map<Integer, List<RaceEvent>> raceTimeline = new HashMap<>();
 
 
     /**
@@ -50,32 +47,38 @@ public class MatchRace implements Race {
 
 
     /**
-     * Fills out the raceMap by generating events for when competitors pass course points
+     * Fills out the race time line by generating events for when competitors pass course points
      */
-    private void generateEvents() {
+    private void generateTimeline() {
 
+        //for each competitor
         for (int i = 0; i < this.competitors.size(); i++) {
             Competitor comp = competitors.get(i);
             System.out.println("#" + (i + 1) + " " + comp.getTeamName() + ", Velocity: " +  comp.getVelocity() + "m/s");
             Integer time = 0;
 
+            //for each course point
             for (int j = 0; j < this.points.size() - 1; j++) {
 
+                //calculate total time for competitor to reach the point
                 CoursePoint startPoint = points.get(j);
                 CoursePoint endPoint = points.get(j + 1);
                 time += this.calculateTime(comp.getVelocity(), startPoint.getLocation(), endPoint.getLocation());
 
-                String event = "Time: " + time.toString() + "s, Event: " + comp.getTeamName() + " passed the " + endPoint.getName();
-                if (endPoint.getExitHeading() != null) {
-                    event += ", Heading: " + String.format("%.2f", endPoint.getExitHeading());
-                }
+                //create the event
+                RaceEvent event = new RaceEvent(comp.getTeamName(), time, endPoint.getName(), endPoint.getExitHeading());
+//                String event = "Time: " + time.toString() + "s, Event: " + comp.getTeamName() + " passed the " + endPoint.getName();
+//                if (endPoint.getExitHeading() != null) {
+//                    event += ", Heading: " + String.format("%.2f", endPoint.getExitHeading());
+//                }
 
-                if (raceMap.get(time) != null) {
-                    raceMap.get(time).add(event);
+                //place the event on the timeline
+                if (raceTimeline.get(time) != null) {
+                    raceTimeline.get(time).add(event);
                 } else {
-                    List<String> events = new ArrayList<>();
+                    List<RaceEvent> events = new ArrayList<>();
                     events.add(event);
-                    raceMap.put(time, events);
+                    raceTimeline.put(time, events);
                 }
             }
         }
@@ -97,45 +100,28 @@ public class MatchRace implements Race {
         return time.intValue();
     }
 
-    /**
-     * Calculates exit headings of each course point and sets the course point property
-     */
-    private void calculateHeadings () {
-
-        for (int j = 1; j < this.points.size() - 1; j++) {
-            Double heading = calculateAngle(points.get(j).getLocation(), points.get(j + 1).getLocation());
-            points.get(j).setExitHeading(heading);
-        }
-    }
-
-    /**
-     * Calculates the angle between two course points
-     * @param start Pair the coordinates of the first point
-     * @param end Pair the coordinates of the second point
-     * @return Double the angle between the points from the y axis
-     */
-    public Double calculateAngle(Point start, Point end) {
-        Double angle = Math.toDegrees(Math.atan2(end.getX() - start.getX(), end.getY() - start.getY()));
-
-        if(angle < 0){
-            angle += 360;
-        }
-        return angle;
-    }
 
 
     /**
-     *
+     * Prints out the race timeline in real time
      * @throws InterruptedException
      */
-    private void printRaceMap() throws InterruptedException {
-        for (int i = 0; i < 80; i++) {
-            if (raceMap.get(i) != null) {
-                for (String event: raceMap.get(i)) {
-                    System.out.println(event);
+    private void printRace() throws InterruptedException {
+
+        int finishedBoats = 0;
+        int i = 0;
+
+        while (finishedBoats < this.competitors.size()) {
+            if (raceTimeline.get(i) != null) {
+                for (RaceEvent event: raceTimeline.get(i)) {
+                    System.out.println(event.getEventString());
+                    if (event.getIsFinish()) {
+                        finishedBoats++;
+                    }
                 }
             }
             Thread.sleep(1000);
+            i++;
         }
     }
 
@@ -146,11 +132,10 @@ public class MatchRace implements Race {
 
         System.out.println("Entrants:");
 
-        calculateHeadings();
-        generateEvents();
+        generateTimeline();
 
         try {
-            printRaceMap();
+            printRace();
         }
         catch (Exception e) {
             System.out.println("Thread interrupted");
