@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Created by mgo65 on 3/03/17.
+ * Represents a group of competitors across multiple races on a course
  */
 public class Regatta {
 
@@ -15,9 +16,9 @@ public class Regatta {
 
     /**
      * Creates a regatta with a set of competitors and races
-     * @param competitors ArrayList the teams competing in the regatta
-     * @param races ArrayList the races in the regatta
-     * @param points ArrayList the points that make up the course
+     * @param competitors List the teams competing in the regatta
+     * @param races List the races in the regatta
+     * @param points List the points that make up the course
      */
     public Regatta (List<Competitor> competitors, List<Race> races, List<CoursePoint> points) {
         this.competitors = competitors;
@@ -27,7 +28,7 @@ public class Regatta {
 
     /**
      * Returns the list of races in the regatta
-     * @return ArrayList the list of races
+     * @return List the list of races
      */
     public List<Race> getRaces() {
         return this.races;
@@ -46,8 +47,8 @@ public class Regatta {
 
     /**
      * Calculates the angle between two course points
-     * @param start Pair the coordinates of the first point
-     * @param end Pair the coordinates of the second point
+     * @param start Point the coordinates of the first point
+     * @param end Point the coordinates of the second point
      * @return Double the angle between the points from the y axis
      */
     public Double calculateAngle(Point start, Point end) {

@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Created by mgo65 on 3/03/17.
- * Race object
+ * Represents one race in a regatta
  */
 public class MatchRace implements Race {
 
@@ -15,15 +15,8 @@ public class MatchRace implements Race {
 
 
     /**
-     * Default constructor for MatchRace
-     */
-    public MatchRace () {
-
-    }
-
-    /**
      * Sets the competitors who are entered in the race
-     * @param competitors ArrayList the competing teams
+     * @param competitors List the competing teams
      */
     public void setCompetitors(List<Competitor> competitors) {
         this.competitors = competitors;
@@ -31,7 +24,7 @@ public class MatchRace implements Race {
 
     /**
      * Gets the competitors who are entered in the race
-     * @return ArrayList the competing teams
+     * @return List the competing teams
      */
     public List<Competitor> getCompetitors() {
         return this.competitors;
@@ -39,7 +32,7 @@ public class MatchRace implements Race {
 
     /**
      * Sets the course for the race
-     * @param points ArrayList the points on the course
+     * @param points List the points on the course
      */
     public void setCourse(List<CoursePoint> points) {
         this.points = points;
@@ -67,10 +60,6 @@ public class MatchRace implements Race {
 
                 //create the event
                 RaceEvent event = new RaceEvent(comp.getTeamName(), time, endPoint.getName(), endPoint.getExitHeading());
-//                String event = "Time: " + time.toString() + "s, Event: " + comp.getTeamName() + " passed the " + endPoint.getName();
-//                if (endPoint.getExitHeading() != null) {
-//                    event += ", Heading: " + String.format("%.2f", endPoint.getExitHeading());
-//                }
 
                 //place the event on the timeline
                 if (raceTimeline.get(time) != null) {
@@ -87,8 +76,8 @@ public class MatchRace implements Race {
     /**
      * Calculates the time for a competitor to travel between course points
      * @param velocity Integer the linear velocity of the competitor in m/s
-     * @param start Pair the coordinates of the first course point
-     * @param end Pair the coordinates of the second course point
+     * @param start Point the coordinates of the first course point
+     * @param end Point the coordinates of the second course point
      * @return Integer the time taken
      */
     private Integer calculateTime (Integer velocity, Point start, Point end) {
@@ -104,7 +93,7 @@ public class MatchRace implements Race {
 
     /**
      * Prints out the race timeline in real time
-     * @throws InterruptedException
+     * @throws InterruptedException if thread sleep interrupted
      */
     private void printRace() throws InterruptedException {
 
@@ -126,7 +115,7 @@ public class MatchRace implements Race {
     }
 
     /**
-     * Outputs the starting line up and outputs the finishing order
+     * Outputs the entire race
      */
     public void start () {
 
@@ -140,7 +129,6 @@ public class MatchRace implements Race {
         catch (Exception e) {
             System.out.println("Thread interrupted");
         }
-
     }
 
 }

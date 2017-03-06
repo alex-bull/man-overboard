@@ -1,38 +1,31 @@
 package seng302;
 
-import javafx.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by mgo65 on 4/03/17.
+ * A factory class for Regatta objects following dependency injection pattern
  */
 public class RegattaFactory {
 
     /**
      * Creates an Instance of Regatta and injects all dependencies
+     * @param numberOfBoats int the number of boats in the regatta
      * @return Regatta, a regatta object
      */
     public Regatta createRegatta(int numberOfBoats) {
 
         //create competitors
-        Boat boat1 = new Boat("Oracle Team USA", 9);
-        Boat boat2 = new Boat("Emirates Team New Zealand", 8);
-        Boat boat3 = new Boat("Ben Ainslie Racing", 7);
-        Boat boat4 = new Boat("SoftBank Team Japan", 6);
-        Boat boat5 = new Boat("Team France", 5);
-        Boat boat6 = new Boat("Artemis Racing", 4);
-
-        List competitors = new ArrayList<Competitor>();
-        competitors.add(boat1);
-        competitors.add(boat2);
-        competitors.add(boat3);
-        competitors.add(boat4);
-        competitors.add(boat5);
-        competitors.add(boat6);
+        List<Competitor> competitors = new ArrayList<>();
+        competitors.add(new Boat("Oracle Team USA", 9));
+        competitors.add(new Boat("Emirates Team New Zealand", 8));
+        competitors.add(new Boat("Ben Ainslie Racing", 7));
+        competitors.add(new Boat("SoftBank Team Japan", 6));
+        competitors.add(new Boat("Team France", 5));
+        competitors.add(new Boat("Artemis Racing", 4));
 
         //randomly select competitors
         Collections.shuffle(competitors);

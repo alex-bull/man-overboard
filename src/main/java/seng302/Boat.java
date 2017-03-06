@@ -10,8 +10,9 @@ public class Boat implements Competitor{
     private Integer scaleFactor = 3;
 
     /**
-     * Creates a boat with boat team name
-     * @param teamName String name of team
+     * Creates a boat
+     * @param teamName String the boats team name
+     * @param velocity Integer the boats velocity in m/s
      */
     public Boat (String teamName, Integer velocity) {
         this.velocity = velocity * scaleFactor;

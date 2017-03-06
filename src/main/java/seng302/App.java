@@ -1,8 +1,5 @@
 package seng302;
 
-import jdk.nashorn.internal.runtime.ECMAException;
-
-import java.util.EmptyStackException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -28,6 +25,5 @@ public class App
 
         Regatta regatta = new RegattaFactory().createRegatta(numberOfBoats);
         regatta.begin();
-
     }
 }

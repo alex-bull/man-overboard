@@ -3,7 +3,7 @@ package seng302;
 
 /**
  * Created by mgo65 on 4/03/17.
- * Represents a course marker
+ * Represents a course marker or gate
  */
 public class Mark implements CoursePoint{
 
@@ -14,7 +14,7 @@ public class Mark implements CoursePoint{
     /**
      * Creates a course mark
      * @param name String the name of the mark
-     * @param location Pair the coordinates of the mark
+     * @param location Point the coordinates of the mark
      */
     public Mark (String name, Point location) {
         this.name = name;
@@ -31,7 +31,7 @@ public class Mark implements CoursePoint{
 
     /**
      * Getter for the course location
-     * @return Pair, the coordinates of the mark
+     * @return Point, the coordinates of the mark
      */
     public Point getLocation () {
         return this.location;
