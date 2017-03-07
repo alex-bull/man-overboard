@@ -23,7 +23,22 @@ public class App
             }
         }
 
-        Regatta regatta = new RegattaFactory().createRegatta(numberOfBoats);
+        System.out.println("Would you like the race to be completed in approximately 1 or 5 minutes? ");
+        int raceDuration;
+        while (true) {
+            try {
+                raceDuration = scanner.nextInt();
+                if (raceDuration == 1 || raceDuration == 5) {
+                    break;
+                }
+                throw new InputMismatchException("Not in valid range");
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter 1 or 5: ");
+                scanner.nextLine();
+            }
+        }
+        System.out.println(raceDuration);
+        Regatta regatta = new RegattaFactory().createRegatta(numberOfBoats, raceDuration);
         regatta.begin();
     }
 }
