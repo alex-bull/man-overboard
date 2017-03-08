@@ -37,7 +37,7 @@ public class App
                 scanner.nextLine();
             }
         }
-        System.out.println(raceDuration);
+        
         Regatta regatta = new RegattaFactory().createRegatta(numberOfBoats, raceDuration);
         regatta.begin();
     }
