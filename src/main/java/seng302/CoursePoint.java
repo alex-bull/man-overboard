@@ -10,4 +10,5 @@ public interface CoursePoint {
     Point getLocation();
     void setExitHeading(Double exitHeading);
     Double getExitHeading ();
+    boolean getIsFinish();
 }
