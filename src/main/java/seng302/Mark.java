@@ -10,6 +10,19 @@ public class Mark implements CoursePoint{
     private String name;
     private Point location;
     private Double exitHeading;
+    private boolean isFinish;
+
+    /**
+     * Creates a course mark
+     * @param name String the name of the mark
+     * @param location Point the coordinates of the mark
+     * @param isFinish boolean true if mark is finish gate
+     */
+    public Mark (String name, Point location, boolean isFinish) {
+        this.name = name;
+        this.location = location;
+        this.isFinish = isFinish;
+    }
 
     /**
      * Creates a course mark
@@ -19,6 +32,15 @@ public class Mark implements CoursePoint{
     public Mark (String name, Point location) {
         this.name = name;
         this.location = location;
+        this.isFinish = false;
+    }
+
+    /**
+     * Getter for isFinish flag
+     * @return boolean isFinish
+     */
+    public boolean getIsFinish () {
+        return this.isFinish;
     }
 
     /**

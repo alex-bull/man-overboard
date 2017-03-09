@@ -19,6 +19,6 @@ public class BoatTest {
     @Test
     public void testGetVelocity () {
         Boat boat = new Boat("A", 10);
-        assertTrue(boat.getVelocity() == 30);
+        assertTrue(boat.getVelocity() == 10);
     }
 }
