@@ -67,8 +67,29 @@ public class Mark implements CoursePoint{
         this.exitHeading = exitHeading;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Mark mark = (Mark) o;
+
+        if (isFinish != mark.isFinish) return false;
+        if (name != null ? !name.equals(mark.name) : mark.name != null) return false;
+        return location != null ? location.equals(mark.location) : mark.location == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (isFinish ? 1 : 0);
+        return result;
+    }
+
     /**
      * Getter for the exitHeading property
+
      * @return Double the heading
      */
     public Double getExitHeading () {

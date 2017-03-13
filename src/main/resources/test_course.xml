@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<course>
+    <compoundMark>
+        <name>Startline 1</name>
+        <latitude>32.296577</latitude>
+        <longtitude>-64.854304</longtitude>
+    </compoundMark>
+
+    <compoundMark isfinish="true">
+        <name>Startline 2</name>
+        <latitude>32.293771</latitude>
+        <longtitude>-64.855242</longtitude>
+    </compoundMark>
+</course>
