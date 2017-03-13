@@ -5,7 +5,7 @@ package seng302.Model;
  * Created by mgo65 on 4/03/17.
  * Represents a course marker or gate
  */
-public class Mark implements CoursePoint{
+public class Mark implements CourseFeature {
 
     private String name;
     private Point location;

@@ -10,7 +10,7 @@ import java.util.List;
 public class MatchRace implements Race {
 
     private List<Competitor> competitors = new ArrayList<>();
-    private List<CoursePoint> points = new ArrayList<>();
+    private List<CourseFeature> points = new ArrayList<>();
     private double velocityScaleFactor;
     private Map<Integer, List<RaceEvent>> raceTimeline = new HashMap<>();
     private List<String> finishingOrder = new ArrayList<>();
@@ -52,7 +52,7 @@ public class MatchRace implements Race {
      * Sets the course for the race
      * @param points List the points on the course
      */
-    public void setCourse(List<CoursePoint> points) {
+    public void setCourse(List<CourseFeature> points) {
         this.points = points;
     }
 
@@ -80,8 +80,8 @@ public class MatchRace implements Race {
             for (int j = 0; j < this.points.size() - 1; j++) {
 
                 //calculate total time for competitor to reach the point
-                CoursePoint startPoint = points.get(j);
-                CoursePoint endPoint = points.get(j + 1);
+                CourseFeature startPoint = points.get(j);
+                CourseFeature endPoint = points.get(j + 1);
                 time += this.calculateTime(comp.getVelocity(), startPoint.getLocation(), endPoint.getLocation());
 
                 //create the event

@@ -8,6 +8,6 @@ import java.util.List;
 public interface Race {
     void start();
     void setCompetitors(List<Competitor> competitors);
-    void setCourse(List<CoursePoint> points);
+    void setCourse(List<CourseFeature> points);
     List<Competitor> getCompetitors();
 }

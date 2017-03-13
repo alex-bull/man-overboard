@@ -12,7 +12,7 @@ public class Regatta {
 
     private List<Competitor> competitors = new ArrayList<>();
     private List<Race> races = new ArrayList<>();
-    private List<CoursePoint> points = new ArrayList<>();
+    private List<CourseFeature> points = new ArrayList<>();
 
     /**
      * Creates a regatta with a set of competitors and races
@@ -20,7 +20,7 @@ public class Regatta {
      * @param races List the races in the regatta
      * @param points List the points that make up the course
      */
-    public Regatta (List<Competitor> competitors, List<Race> races, List<CoursePoint> points) {
+    public Regatta (List<Competitor> competitors, List<Race> races, List<CourseFeature> points) {
         this.competitors = competitors;
         this.races = races;
         this.points = points;

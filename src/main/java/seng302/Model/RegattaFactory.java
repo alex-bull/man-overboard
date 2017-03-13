@@ -21,12 +21,12 @@ public class RegattaFactory {
 
         //create competitors
         List<Competitor> competitors = new ArrayList<>();
-        competitors.add(new Boat("Oracle Team USA", 20));
-        competitors.add(new Boat("Emirates Team New Zealand", 19));
-        competitors.add(new Boat("Ben Ainslie Racing", 18));
-        competitors.add(new Boat("SoftBank Team Japan", 17));
-        competitors.add(new Boat("Team France", 16));
-        competitors.add(new Boat("Artemis Racing", 15));
+        competitors.add(new Boat("Oracle Team USA", 20, new Point(10.0, 20.0)));
+        competitors.add(new Boat("Emirates Team New Zealand", 19, new Point(9.0, 20.0)));
+        competitors.add(new Boat("Ben Ainslie Racing", 18, new Point(11.0, 20.0)));
+        competitors.add(new Boat("SoftBank Team Japan", 17, new Point(13.0, 21.0)));
+        competitors.add(new Boat("Team France", 16, new Point(12.0, 23.0)));
+        competitors.add(new Boat("Artemis Racing", 15, new Point(10.0, 30.0)));
 
         //randomly select competitors
         Collections.shuffle(competitors);
@@ -44,7 +44,7 @@ public class RegattaFactory {
         races.add(race3);
 
         //create the marks
-        List<CoursePoint> points = new ArrayList<>();
+        List<CourseFeature> points = new ArrayList<>();
         points.add(new Mark("PreStart", new Point(-100.0, 0.0)));
         points.add(new Mark("Start Gate", new Point(0.0, 0.0)));
         points.add(new Mark("Mark", new Point(500.0, 50.0)));
