@@ -1,6 +1,10 @@
 package seng302;
 
 
+import org.jdom2.JDOMException;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,14 +48,18 @@ public class RegattaFactory {
         races.add(race3);
 
         //create the marks
-        List<CoursePoint> points = new ArrayList<>();
-        points.add(new Mark("PreStart", new Point(-100.0, 0.0)));
-        points.add(new Mark("Start Gate", new Point(0.0, 0.0)));
-        points.add(new Mark("Mark", new Point(500.0, 50.0)));
-        points.add(new Mark("Leeward Gate", new Point(600.0, 900.0)));
-        points.add(new Mark("Windward Gate", new Point(350.0, -350.0)));
-        points.add(new Mark("Leeward Gate", new Point(600.0, 900.0)));
-        points.add(new Mark("Finish", new Point(250.0, 1150.0), true));
+        File inputFile=new File("src/main/resources/test_course.xml");
+        XMLParser parser=new XMLParser(inputFile);
+        List<CoursePoint> points = null;
+        try {
+            points = parser.parseCourse();
+        } catch (JDOMException e) {
+            System.out.println("XML file format error");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("file not found or something");
+            e.printStackTrace();
+        }
 
         //inject the dependencies for the regatta
         return new Regatta(competitors, races, points);
