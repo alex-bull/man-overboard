@@ -34,4 +34,22 @@ public class Point {
     public Double getY () {
         return this.y;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Point point = (Point) o;
+
+        if (!x.equals(point.x)) return false;
+        return y.equals(point.y);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = x.hashCode();
+        result = 31 * result + y.hashCode();
+        return result;
+    }
 }
