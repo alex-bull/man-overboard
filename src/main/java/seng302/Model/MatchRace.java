@@ -82,7 +82,7 @@ public class MatchRace implements Race {
                 //calculate total time for competitor to reach the point
                 CourseFeature startPoint = points.get(j);
                 CourseFeature endPoint = points.get(j + 1);
-                time += this.calculateTime(comp.getVelocity(), startPoint.getLocation(), endPoint.getLocation());
+                time += this.calculateTime(comp.getVelocity(), startPoint.getLocations().get(0), endPoint.getLocations().get(0));
 
                 //create the event
                 Double scaleTime = time * velocityScaleFactor;

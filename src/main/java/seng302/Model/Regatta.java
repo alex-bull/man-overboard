@@ -33,7 +33,7 @@ public class Regatta {
     private void calculateHeadings () {
 
         for (int j = 1; j < this.points.size() - 1; j++) {
-            Double heading = calculateAngle(points.get(j).getLocation(), points.get(j + 1).getLocation());
+            Double heading = calculateAngle(points.get(j).getLocations().get(0), points.get(j + 1).getLocations().get(0));
             points.get(j).setExitHeading(heading);
         }
     }

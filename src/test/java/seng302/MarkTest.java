@@ -25,7 +25,7 @@ public class MarkTest {
         Point point = new Point(1.0, 2.0);
         Mark mark = new Mark("A", point);
 
-        assertTrue(mark.getLocation().equals(point));
+        assertTrue(mark.getLocations().get(0).equals(point));
     }
 
     @Test
