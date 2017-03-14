@@ -1,5 +1,8 @@
 package seng302.Model;
 
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +12,30 @@ import java.util.List;
  * Represents a group of competitors across multiple races on a course
  */
 public class Regatta {
+
+    public List<Competitor> getCompetitors() {
+        return competitors;
+    }
+
+    public void setCompetitors(List<Competitor> competitors) {
+        this.competitors = competitors;
+    }
+
+    public List<Race> getRaces() {
+        return races;
+    }
+
+    public void setRaces(List<Race> races) {
+        this.races = races;
+    }
+
+    public List<CourseFeature> getPoints() {
+        return points;
+    }
+
+    public void setPoints(List<CourseFeature> points) {
+        this.points = points;
+    }
 
     private List<Competitor> competitors = new ArrayList<>();
     private List<Race> races = new ArrayList<>();

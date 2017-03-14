@@ -6,4 +6,5 @@ package seng302.Model;
 public interface Competitor {
     String getTeamName();
     Integer getVelocity();
+    Point getPosition();
 }
