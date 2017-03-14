@@ -1,6 +1,8 @@
 package seng302;
 
 import org.junit.Test;
+import seng302.Model.RaceEvent;
+
 import static junit.framework.Assert.assertTrue;
 
 /**

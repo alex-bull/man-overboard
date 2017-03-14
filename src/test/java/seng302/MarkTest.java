@@ -1,6 +1,9 @@
 package seng302;
 
 import org.junit.Test;
+import seng302.Model.Mark;
+import seng302.Model.Point;
+
 import static org.junit.Assert.assertTrue;
 
 /**

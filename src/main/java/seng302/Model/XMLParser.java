@@ -1,4 +1,4 @@
-package seng302;
+package seng302.Model;
 
 
 import org.jdom2.Document;
@@ -21,12 +21,12 @@ public class XMLParser {
         this.inputFile = inputFile;
     }
 
-    public ArrayList<CoursePoint> parseCourse() throws JDOMException, IOException {
+    public ArrayList<CourseFeature> parseCourse() throws JDOMException, IOException {
         SAXBuilder saxbuilder = new SAXBuilder();
         Document document = saxbuilder.build(inputFile);
         Element raceCourse = document.getRootElement();
         List<Element> compoundMarks = raceCourse.getChildren();
-        ArrayList<CoursePoint> points = new ArrayList<CoursePoint>();
+        ArrayList<CourseFeature> points = new ArrayList<CourseFeature>();
         for (Element mark : compoundMarks) {
             boolean isfinish = Boolean.valueOf(mark.getAttributeValue("isfinish"));
             String name = mark.getChildText("name");

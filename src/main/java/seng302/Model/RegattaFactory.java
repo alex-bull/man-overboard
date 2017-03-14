@@ -1,7 +1,8 @@
-package seng302;
+package seng302.Model;
 
 
 import org.jdom2.JDOMException;
+import seng302.Model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,12 +26,12 @@ public class RegattaFactory {
 
         //create competitors
         List<Competitor> competitors = new ArrayList<>();
-        competitors.add(new Boat("Oracle Team USA", 20));
-        competitors.add(new Boat("Emirates Team New Zealand", 19));
-        competitors.add(new Boat("Ben Ainslie Racing", 18));
-        competitors.add(new Boat("SoftBank Team Japan", 17));
-        competitors.add(new Boat("Team France", 16));
-        competitors.add(new Boat("Artemis Racing", 15));
+        competitors.add(new Boat("Oracle Team USA", 20, new Point(0.0, 0.0)));
+        competitors.add(new Boat("Emirates Team New Zealand", 19, new Point(0.0, 0.0)));
+        competitors.add(new Boat("Ben Ainslie Racing", 18,  new Point(-10.0, 0.0)));
+        competitors.add(new Boat("SoftBank Team Japan", 17,  new Point(-10.0, 0.0)));
+        competitors.add(new Boat("Team France", 16,  new Point(-20.0, 0.0)));
+        competitors.add(new Boat("Artemis Racing", 15,  new Point(-11.0, 0.0)));
 
         //randomly select competitors
         Collections.shuffle(competitors);
@@ -50,7 +51,7 @@ public class RegattaFactory {
         //create the marks
         File inputFile=new File("src/main/resources/test_course.xml");
         XMLParser parser=new XMLParser(inputFile);
-        List<CoursePoint> points = null;
+        List<CourseFeature> points = null;
         try {
             points = parser.parseCourse();
         } catch (JDOMException e) {

@@ -2,11 +2,11 @@ package seng302;
 
 import org.junit.Before;
 import org.junit.Test;
+import seng302.Model.*;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -17,18 +17,18 @@ import static junit.framework.Assert.assertTrue;
 public class MatchRaceTest {
 
     private List<Competitor> competitors = new ArrayList<>();
-    private List<CoursePoint> points = new ArrayList<>();
+    private List<CourseFeature> points = new ArrayList<>();
 
     @Before
     public void createDependencies () {
         //create competitors
 
-        competitors.add(new Boat("Oracle Team USA", 9));
-        competitors.add(new Boat("Emirates Team New Zealand", 8));
-        competitors.add(new Boat("Ben Ainslie Racing", 7));
-        competitors.add(new Boat("SoftBank Team Japan", 6));
-        competitors.add(new Boat("Team France", 5));
-        competitors.add(new Boat("Artemis Racing", 4));
+        competitors.add(new Boat("Oracle Team USA", 20, new Point(0.0, 0.0)));
+        competitors.add(new Boat("Emirates Team New Zealand", 19, new Point(0.0, 0.0)));
+        competitors.add(new Boat("Ben Ainslie Racing", 18,  new Point(-10.0, 0.0)));
+        competitors.add(new Boat("SoftBank Team Japan", 17,  new Point(-10.0, 0.0)));
+        competitors.add(new Boat("Team France", 16,  new Point(-20.0, 0.0)));
+        competitors.add(new Boat("Artemis Racing", 15,  new Point(-11.0, 0.0)));
 
         points.add(new Mark("PreStart", new Point(-200.0, 0.0)));
         points.add(new Mark("Start Gate", new Point(0.0, 0.0)));
