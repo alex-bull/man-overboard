@@ -1,4 +1,4 @@
-package seng302;
+package seng302.Model;
 
 /**
  * Created by mgo65 on 3/03/17.
