@@ -12,14 +12,20 @@ public class MatchRace implements Race {
     private List<Competitor> competitors = new ArrayList<>();
     private List<CourseFeature> points = new ArrayList<>();
     private double velocityScaleFactor;
+
+    private RaceDelegate delegate;
     private Map<Integer, List<RaceEvent>> raceTimeline = new HashMap<>();
     private List<String> finishingOrder = new ArrayList<>();
+    private Course raceCourse;
 
     /**
      * Creates a match race with an approximate duration
      * @param duration int the approximate duration of the race in minutes
+     * @param delegate RaceDelegate a delegate class to be notified of race events
+     * @param raceCourse Course the course for the race
+     * @param competitors List the list of competing boats
      */
-    public MatchRace (int duration) {
+    public MatchRace (int duration, RaceDelegate delegate, Course raceCourse, List<Competitor> competitors) {
         if (duration == 5) {
             velocityScaleFactor = 1;
         }
@@ -30,6 +36,19 @@ public class MatchRace implements Race {
             //for testing
             velocityScaleFactor = 1000;
         }
+        this.delegate = delegate;
+        this.raceCourse = raceCourse;
+        this.competitors = competitors;
+    }
+
+
+
+    /**
+     * Get race timeline
+     * @return Map the timeline of race events
+     */
+    public Map<Integer, List<RaceEvent>> getRaceTimeline() {
+        return raceTimeline;
     }
 
     /**
@@ -86,7 +105,7 @@ public class MatchRace implements Race {
 
                 //create the event
                 Double scaleTime = time * velocityScaleFactor;
-                RaceEvent event = new RaceEvent(comp.getTeamName(), time, scaleTime.intValue(), endPoint.getName(), endPoint.getExitHeading(), endPoint.getIsFinish());
+                RaceEvent event = new RaceEvent(comp, time, scaleTime.intValue(), endPoint.getName(), endPoint.getExitHeading(), endPoint.getIsFinish(), endPoint);
 
                 //place the event on the timeline
                 if (raceTimeline.get(time) != null) {
@@ -149,7 +168,7 @@ public class MatchRace implements Race {
     }
 
     /**
-     * Outputs the entire race
+     * Starts the race
      */
     public void start () {
 

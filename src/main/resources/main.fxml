@@ -33,6 +33,6 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Canvas fx:id="mycanvas" height="1000.0" layoutY="29.0" width="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0" />
+      <Canvas fx:id="mycanvas" height="1000.0" layoutY="29.0" width="2000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0" />
    </children>
 </AnchorPane>
