@@ -1,9 +1,12 @@
 package seng302.Model;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by mgo65 on 4/03/17.
- * Represents a course marker or gate
+ * Represents a course mark
  */
 public class Mark implements CourseFeature {
 
@@ -55,8 +58,11 @@ public class Mark implements CourseFeature {
      * Getter for the course location
      * @return MutablePoint, the coordinates of the mark
      */
-    public MutablePoint getLocation () {
-        return this.location;
+    public List<MutablePoint> getLocations () {
+
+        List<MutablePoint> points = new ArrayList<>();
+        points.add(this.location);
+        return points;
     }
 
     /**

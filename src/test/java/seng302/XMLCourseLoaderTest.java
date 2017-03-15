@@ -1,13 +1,11 @@
 package seng302;
 
 import org.junit.Test;
-import seng302.Model.CourseFeature;
-import seng302.Model.Mark;
-import seng302.Model.MutablePoint;
-import seng302.Model.XMLParser;
+import seng302.Model.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -16,12 +14,13 @@ import static org.junit.Assert.*;
  */
 public class XMLParserTest {
     @Test
-    public void parseCourse() throws Exception {
+    public void parseCourseTest() throws Exception {
+
     File inputFile=new File("src/main/resources/test_course.xml");
     XMLParser parser=new XMLParser(inputFile);
     ArrayList<CourseFeature> points=new ArrayList<>();
-    points.add(new Mark("Startline 1", new MutablePoint(32.296577,-64.854304)));
-    points.add(new Mark("Startline 2", new MutablePoint(32.293771,-64.855242),true));
+    points.add(new Gate("Startline", new MutablePoint(32.296577,-64.854304), new MutablePoint(32.293771,-64.855242), true));
+    points.add(new Mark("Marker", new MutablePoint(32.293771,-64.855242),false));
     assertEquals(points, parser.parseCourse());
     }
 
