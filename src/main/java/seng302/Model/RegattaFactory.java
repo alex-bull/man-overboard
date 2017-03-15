@@ -49,7 +49,7 @@ public class RegattaFactory {
         races.add(race3);
 
         //create the marks
-        File inputFile=new File("src/main/resources/course.xml");
+        File inputFile=new File("src/main/resources/test_course.xml");
         XMLParser parser=new XMLParser(inputFile);
         List<CourseFeature> points = null;
         try {

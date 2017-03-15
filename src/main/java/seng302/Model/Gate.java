@@ -23,7 +23,7 @@ public class Gate implements CourseFeature {
      * @param point1 Point the coordinates of one end.
      * @param point2 Point the coordinates of the other end.
      */
-    public Gate (String name, Point point1, Point point2) {
+    public Gate (String name, Point point1, Point point2, boolean isFinish) {
         this.name = name;
         this.point1 = point1;
         this.point2 = point2;
@@ -69,25 +69,26 @@ public class Gate implements CourseFeature {
         this.exitHeading = exitHeading;
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//
-//        Gate gate = (Gate) o;
-//
-//        if (isFinish != gate.isFinish) return false;
-//        if (name != null ? !name.equals(gate.name) : gate.name != null) return false;
-//        return location != null ? location.equals(gate.location) : gate.location == null;
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        int result = name != null ? name.hashCode() : 0;
-//        result = 31 * result + (location != null ? location.hashCode() : 0);
-//        result = 31 * result + (isFinish ? 1 : 0);
-//        return result;
-//    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Gate gate = (Gate) o;
+
+        if (isFinish != gate.isFinish) return false;
+        if (name != null ? !name.equals(gate.name) : gate.name != null) return false;
+        return (point1 != null ? point1.equals(gate.point1) : gate.point1 == null) && (point2 != null ? point2.equals(gate.point2) : gate.point2 == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (point1 != null ? point1.hashCode() : 0);
+        result = 31 * result + (point2 != null ? point2.hashCode() : 0);
+        result = 31 * result + (isFinish ? 1 : 0);
+        return result;
+    }
 
     /**
      * Getter for the exitHeading property

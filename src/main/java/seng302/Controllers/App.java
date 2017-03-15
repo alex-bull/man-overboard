@@ -28,7 +28,7 @@ public class App extends Application
 
 
         primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 500, 500));
+        primaryStage.setScene(new Scene(root, 1000, 800));
 //        primaryStage.setX(primaryScreenBounds.getMinX());
 //        primaryStage.setY(primaryScreenBounds.getMinY());
 //        primaryStage.setWidth(primaryScreenBounds.getWidth());
