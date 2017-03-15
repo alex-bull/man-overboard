@@ -11,4 +11,5 @@ public interface CourseFeature {
     void setExitHeading(Double exitHeading);
     Double getExitHeading ();
     boolean getIsFinish();
+    boolean isGate();
 }

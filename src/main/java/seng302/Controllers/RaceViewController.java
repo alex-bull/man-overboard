@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import seng302.Model.Competitor;
+import seng302.Model.CourseFeature;
 import seng302.Model.Regatta;
 
 /**
@@ -24,13 +25,18 @@ public class RaceViewController {
     }
 
     private void draw(GraphicsContext gc) {
-        for(Competitor b:regatta.getCompetitors()){
+        for(CourseFeature b:regatta.getPoints()){
             gc.setFill(Color.GREEN);
-            gc.fillOval(b.getPosition().getX(),b.getPosition().getY(),30 ,30);
+            System.out.printf(b.getName());
+            if (b.isGate()) {
+                gc.fillOval(b.getLocations().get(0).getX(), b.getLocations().get(0).getY(), 10, 10);
+                gc.fillOval(b.getLocations().get(1).getX(), b.getLocations().get(1).getY(), 10, 10);
+            }
+            else {
+                gc.fillOval(b.getLocations().get(0).getX(), b.getLocations().get(0).getY(), 20, 20);
+            }
+
         }
-//        System.out.println(regatta);
-//        gc.setFill(Color.GREEN);
-//        gc.fillOval(50, 100, 200, 200);
 
     }
 

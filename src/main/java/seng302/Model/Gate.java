@@ -60,6 +60,14 @@ public class Gate implements CourseFeature {
         return points;
     }
 
+    /**
+     * Returns true if it is a gate.
+     * @return boolean true or false
+     */
+
+    public boolean isGate() {
+        return true;
+    }
 
     /**
      * Sets the exitHeading property

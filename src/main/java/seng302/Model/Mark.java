@@ -66,6 +66,14 @@ public class Mark implements CourseFeature {
     }
 
     /**
+     * Returns true if it is a gate.
+     * @return boolean true or false
+     */
+    public boolean isGate() {
+        return false;
+    }
+
+    /**
      * Sets the exitHeading property
      * @param exitHeading Double the direction in which competitors exit the mark.
      */
