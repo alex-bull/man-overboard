@@ -5,7 +5,7 @@ package seng302.Model;
  */
 public interface CourseFeature {
     String getName();
-    Point getLocation();
+    MutablePoint getLocation();
     void setExitHeading(Double exitHeading);
     Double getExitHeading ();
     boolean getIsFinish();

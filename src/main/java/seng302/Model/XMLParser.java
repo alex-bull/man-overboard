@@ -33,7 +33,7 @@ public class XMLParser {
             double x = Double.parseDouble(mark.getChildText("latitude"));
             double y = Double.parseDouble(mark.getChildText("longtitude"));
 
-            points.add(new Mark(name, new Point(x, y), isfinish));
+            points.add(new Mark(name, new MutablePoint(x, y), isfinish));
 
         }
         return points;

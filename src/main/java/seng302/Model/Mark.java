@@ -8,17 +8,17 @@ package seng302.Model;
 public class Mark implements CourseFeature {
 
     private String name;
-    private Point location;
+    private MutablePoint location;
     private Double exitHeading;
     private boolean isFinish;
 
     /**
      * Creates a course mark
      * @param name String the name of the mark
-     * @param location Point the coordinates of the mark
+     * @param location MutablePoint the coordinates of the mark
      * @param isFinish boolean true if mark is finish gate
      */
-    public Mark (String name, Point location, boolean isFinish) {
+    public Mark (String name, MutablePoint location, boolean isFinish) {
         this.name = name;
         this.location = location;
         this.isFinish = isFinish;
@@ -27,9 +27,9 @@ public class Mark implements CourseFeature {
     /**
      * Creates a course mark
      * @param name String the name of the mark
-     * @param location Point the coordinates of the mark
+     * @param location MutablePoint the coordinates of the mark
      */
-    public Mark (String name, Point location) {
+    public Mark (String name, MutablePoint location) {
         this.name = name;
         this.location = location;
         this.isFinish = false;
@@ -53,9 +53,9 @@ public class Mark implements CourseFeature {
 
     /**
      * Getter for the course location
-     * @return Point, the coordinates of the mark
+     * @return MutablePoint, the coordinates of the mark
      */
-    public Point getLocation () {
+    public MutablePoint getLocation () {
         return this.location;
     }
 

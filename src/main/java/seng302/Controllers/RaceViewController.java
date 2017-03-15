@@ -1,6 +1,10 @@
 package seng302.Controllers;
 
 import com.sun.corba.se.impl.orbutil.graph.Graph;
+import javafx.animation.AnimationTimer;
+import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -20,7 +24,7 @@ public class RaceViewController implements RaceDelegate{
     @FXML
     private Canvas mycanvas;
 
-    private GraphicsContext gc;
+//    private GraphicsContext gc;
     private Race race;
     private List<String> finishingOrder = new ArrayList<>();
 
@@ -29,23 +33,26 @@ public class RaceViewController implements RaceDelegate{
      */
     @FXML
     void initialize() {
-         gc = mycanvas.getGraphicsContext2D();
-
-    }
-
-    public void boatMoved() {
+//         gc = mycanvas.getGraphicsContext2D();
 
     }
 
     /**
-     * Draw a circle on the canvas
+     * Move a boat
      */
-    private void drawCircle(int x, int y) {
-
-        gc.setFill(Color.GREEN);
-        gc.fillOval(x, y, 10, 10);
+    public void boatMoved() {
 
     }
+
+//    /**
+//     * Draw a circle on the canvas
+//     */
+//    private void drawCircle(int x, int y) {
+//
+//        gc.setFill(Color.GREEN);
+//        gc.fillOval(x, y, 10, 10);
+//
+//    }
 
 
     /**
@@ -54,63 +61,32 @@ public class RaceViewController implements RaceDelegate{
     public void begin(){
         //drawBoats(gc);
         // start the race using the timeline
-        try {
-            startRace(race);
-        }
-        catch (Exception e) {
-            System.out.println("Thread interrupted");
-        }
+        Timeline t = race.generateTimeline();
+        List<Competitor> competitors = race.getCompetitors();
+        Competitor comp = competitors.get(0);
 
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                GraphicsContext gc = mycanvas.getGraphicsContext2D();
+                gc.clearRect(0,0,1000,1000);
+                gc.setFill(Color.FORESTGREEN);
+                gc.fillOval(
+                        comp.getPosition().getXValue(),
+                        comp.getPosition().getYValue(),
+                        10,
+                        10
+                );
+            }
+        };
 
-
-    }
-
-    /**
-     * Start the race using the race timeline in real time
-     * @throws InterruptedException if thread sleep interrupted
-     * @param race Race a race
-     */
-    private void startRace(Race race) throws InterruptedException {
-//        race.start();
-//        int i = 0;
-//        Map<Integer, List<RaceEvent>> raceTimeline = race.getRaceTimeline();
-//
-//        // loop through each boat until all boats have finished
-//        while (finishingOrder.size() < race.getCompetitors().size()) {
-//            if (raceTimeline.get(i) != null) {
-//                // for each event at this time, move the boat
-//                for (RaceEvent event: raceTimeline.get(i)) {
-//                    System.out.println(event.getEventString());
-//                    // move the boat
-//                    moveBoat(event.getBoat(), event.getEndPoint());
-//                    // check if the boat has passed a finishing mark
-//                    if (event.getIsFinish()) {
-//                        finishingOrder.add(event.getTeamName());
-//                    }
-//                }
-//            }
-//            Thread.sleep(1000);
-//            i++;
-//        }
-//
-//        int placing = 1;
-//        System.out.println("Finishing order:");
-//        for (String team: finishingOrder) {
-//            System.out.println("#" + placing + " " + team);
-//            placing++;
-//        }
+        timer.start();
+        t.play();
 
     }
 
-    /**
-     * Move a boat on the canvas to its next destination
-     * @param boat Competitor the competitor
-     * @param destination CourseFeature the destination of the boat
-     */
-    private void moveBoat(Competitor boat, CourseFeature destination) {
-        // add a boat to the canvas
-        drawCircle(destination.getLocation().getX().intValue(), destination.getLocation().getY().intValue());
-    }
+
+
 
     /**
      * Sets the race

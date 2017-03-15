@@ -3,7 +3,7 @@ package seng302;
 import org.junit.Test;
 import seng302.Model.CourseFeature;
 import seng302.Model.Mark;
-import seng302.Model.Point;
+import seng302.Model.MutablePoint;
 import seng302.Model.XMLParser;
 
 import java.io.File;
@@ -20,8 +20,8 @@ public class XMLParserTest {
     File inputFile=new File("src/main/resources/test_course.xml");
     XMLParser parser=new XMLParser(inputFile);
     ArrayList<CourseFeature> points=new ArrayList<>();
-    points.add(new Mark("Startline 1", new Point(32.296577,-64.854304)));
-    points.add(new Mark("Startline 2", new Point(32.293771,-64.855242),true));
+    points.add(new Mark("Startline 1", new MutablePoint(32.296577,-64.854304)));
+    points.add(new Mark("Startline 2", new MutablePoint(32.293771,-64.855242),true));
     assertEquals(points, parser.parseCourse());
     }
 

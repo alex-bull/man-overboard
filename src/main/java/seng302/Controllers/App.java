@@ -1,12 +1,23 @@
 package seng302.Controllers;
 
+import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import seng302.Model.*;
 
 public class App extends Application
@@ -18,24 +29,23 @@ public class App extends Application
 
         RaceViewController raceViewController = loader.getController();
         Race r = generateRace(raceViewController);
-//
-//        //Set regatta in raceViewController
-//        raceViewController.setRace(r);
-//        //Begin the race
-//        raceViewController.begin();
-//        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-//
-//        //Set window to full screen
-//        primaryStage.setTitle("RaceVision");
-//        primaryStage.setScene(new Scene(root, 500, 500));
-//        primaryStage.setX(primaryScreenBounds.getMinX());
-//        primaryStage.setY(primaryScreenBounds.getMinY());
-//        primaryStage.setWidth(primaryScreenBounds.getWidth());
-//        primaryStage.setHeight(primaryScreenBounds.getHeight());
-//        primaryStage.show();
-        r.start();
-    }
 
+        //Set regatta in raceViewController
+        raceViewController.setRace(r);
+        //Begin the race
+        raceViewController.begin();
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+
+        //Set window to full screen
+        primaryStage.setTitle("RaceVision");
+        primaryStage.setScene(new Scene(root, 500, 500));
+        primaryStage.setX(primaryScreenBounds.getMinX());
+        primaryStage.setY(primaryScreenBounds.getMinY());
+        primaryStage.setWidth(primaryScreenBounds.getWidth());
+        primaryStage.setHeight(primaryScreenBounds.getHeight());
+        primaryStage.show();
+
+    }
 
 
     public static void main( String[] args )

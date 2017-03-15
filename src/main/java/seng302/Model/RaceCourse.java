@@ -39,12 +39,12 @@ public class RaceCourse implements Course {
 
     /**
      * Calculates the angle between two course points
-     * @param start Point the coordinates of the first point
-     * @param end Point the coordinates of the second point
+     * @param start MutablePoint the coordinates of the first point
+     * @param end MutablePoint the coordinates of the second point
      * @return Double the angle between the points from the y axis
      */
-    private Double calculateAngle(Point start, Point end) {
-        Double angle = Math.toDegrees(Math.atan2(end.getX() - start.getX(), end.getY() - start.getY()));
+    private Double calculateAngle(MutablePoint start, MutablePoint end) {
+        Double angle = Math.toDegrees(Math.atan2(end.getXValue() - start.getXValue(), end.getYValue() - start.getYValue()));
 
         if(angle < 0){
             angle += 360;

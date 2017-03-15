@@ -18,12 +18,12 @@ public class RaceFactory {
 
         //create competitors
         List<Competitor> competitors = new ArrayList<>();
-        competitors.add(new Boat("Oracle Team USA", 20, new Point(100.0, 100.0)));
-        competitors.add(new Boat("Emirates Team New Zealand", 19, new Point(200.0, 200.0)));
-        competitors.add(new Boat("Ben Ainslie Racing", 18,  new Point(300.0, 300.0)));
-        competitors.add(new Boat("SoftBank Team Japan", 17,  new Point(400.0, 400.0)));
-        competitors.add(new Boat("Team France", 16,  new Point(500.0, 500.0)));
-        competitors.add(new Boat("Artemis Racing", 15,  new Point(600.0, 600.0)));
+        competitors.add(new Boat("Oracle Team USA", 20, new MutablePoint(100.0, 100.0)));
+        competitors.add(new Boat("Emirates Team New Zealand", 19, new MutablePoint(200.0, 200.0)));
+        competitors.add(new Boat("Ben Ainslie Racing", 18,  new MutablePoint(300.0, 300.0)));
+        competitors.add(new Boat("SoftBank Team Japan", 17,  new MutablePoint(400.0, 400.0)));
+        competitors.add(new Boat("Team France", 16,  new MutablePoint(500.0, 500.0)));
+        competitors.add(new Boat("Artemis Racing", 15,  new MutablePoint(600.0, 600.0)));
 
         //randomly select competitors
         Collections.shuffle(competitors);
