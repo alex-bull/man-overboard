@@ -10,7 +10,6 @@ import java.util.List;
 public class MatchRace implements Race {
 
     private List<Competitor> competitors = new ArrayList<>();
-    private List<CourseFeature> points = new ArrayList<>();
     private double velocityScaleFactor;
 
     private RaceDelegate delegate;
@@ -67,13 +66,6 @@ public class MatchRace implements Race {
         return this.competitors;
     }
 
-    /**
-     * Sets the course for the race
-     * @param points List the points on the course
-     */
-    public void setCourse(List<CourseFeature> points) {
-        this.points = points;
-    }
 
     /**
      * Getter for the finishing order of the race
@@ -94,9 +86,9 @@ public class MatchRace implements Race {
             Competitor comp = competitors.get(i);
             System.out.println("#" + (i + 1) + " " + comp.getTeamName() + ", Velocity: " +  comp.getVelocity() + "m/s");
             Integer time = 0;
-
+            List<CourseFeature> points = raceCourse.getPoints();
             //for each course point
-            for (int j = 0; j < this.points.size() - 1; j++) {
+            for (int j = 0; j < points.size() - 1; j++) {
 
                 //calculate total time for competitor to reach the point
                 CourseFeature startPoint = points.get(j);
@@ -175,9 +167,10 @@ public class MatchRace implements Race {
         System.out.println("Entrants:");
 
         generateTimeline();
-
         try {
+
             printRace();
+
         }
         catch (Exception e) {
             System.out.println("Thread interrupted");

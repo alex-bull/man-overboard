@@ -18,21 +18,22 @@ public class App extends Application
 
         RaceViewController raceViewController = loader.getController();
         Race r = generateRace(raceViewController);
-
-        //Set regatta in raceViewController
-        raceViewController.setRace(r);
-        //Begin the race
-        raceViewController.begin();
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
-        //Set window to full screen
-        primaryStage.setTitle("RaceVision");
-        primaryStage.setScene(new Scene(root, 500, 500));
-        primaryStage.setX(primaryScreenBounds.getMinX());
-        primaryStage.setY(primaryScreenBounds.getMinY());
-        primaryStage.setWidth(primaryScreenBounds.getWidth());
-        primaryStage.setHeight(primaryScreenBounds.getHeight());
-        primaryStage.show();
+//
+//        //Set regatta in raceViewController
+//        raceViewController.setRace(r);
+//        //Begin the race
+//        raceViewController.begin();
+//        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+//
+//        //Set window to full screen
+//        primaryStage.setTitle("RaceVision");
+//        primaryStage.setScene(new Scene(root, 500, 500));
+//        primaryStage.setX(primaryScreenBounds.getMinX());
+//        primaryStage.setY(primaryScreenBounds.getMinY());
+//        primaryStage.setWidth(primaryScreenBounds.getWidth());
+//        primaryStage.setHeight(primaryScreenBounds.getHeight());
+//        primaryStage.show();
+        r.start();
     }
 
 
@@ -40,6 +41,7 @@ public class App extends Application
     public static void main( String[] args )
     {
         launch(args);
+
     }
 
     public Race generateRace(RaceDelegate delegate){

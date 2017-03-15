@@ -19,6 +19,14 @@ public class RaceCourse implements Course {
     }
 
     /**
+     * Getter for the points in the course
+     * @return List a list of course points
+     */
+    public List<CourseFeature> getPoints() {
+        return points;
+    }
+
+    /**
      * Calculates exit headings of each course point and sets the course point property
      */
     private void calculateHeadings () {

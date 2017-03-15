@@ -10,6 +10,5 @@ public interface Race {
     void start();
     Map getRaceTimeline();
     void setCompetitors(List<Competitor> competitors);
-    void setCourse(List<CourseFeature> points);
     List<Competitor> getCompetitors();
 }

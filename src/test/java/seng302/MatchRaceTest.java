@@ -43,7 +43,7 @@ public class MatchRaceTest {
     @Test
     public void testGetCompetitors () {
 
-        MatchRace matchRace = new MatchRace(1);
+        MatchRace matchRace = new MatchRace(1, null, new RaceCourse(points), competitors);
         matchRace.setCompetitors(competitors);
 
         assertTrue(matchRace.getCompetitors().equals(competitors));
@@ -51,10 +51,9 @@ public class MatchRaceTest {
 
     @Test
     public void testStart () {
-        MatchRace matchRace = new MatchRace(1000);
+        MatchRace matchRace = new MatchRace(1000, null, new RaceCourse(points), competitors);
 
         matchRace.setCompetitors(competitors);
-        matchRace.setCourse(points);
         matchRace.start();
 
         assertTrue(matchRace.getFinishingOrder().size() == 6);
