@@ -69,16 +69,19 @@ public class RaceViewController implements RaceDelegate{
         colors.add(Color.YELLOW);
         colors.add(Color.RED);
         colors.add(Color.DARKGRAY);
-        colors.add(Color.CYAN);
+        colors.add(Color.WHEAT);
 
         AnimationTimer timer = new AnimationTimer() {
 
             @Override
             public void handle(long now) {
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
-
-
                 gc.clearRect(0,0,width,height);
+                gc.setFill(Color.AQUA);
+                gc.fillRect(0,0,width,height);
+
+
+
 
                 for(int i =0; i< competitors.size(); i++)  {
                     gc.setFill(colors.get(i));
