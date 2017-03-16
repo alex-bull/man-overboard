@@ -33,7 +33,7 @@ public class App extends Application
 
         //Set window to full screen
         primaryStage.setTitle("RaceVision");
-        primaryStage.setScene(new Scene(root, 500, 500));
+        primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
         primaryStage.setX(primaryScreenBounds.getMinX());
         primaryStage.setY(primaryScreenBounds.getMinY());
         primaryStage.setWidth(primaryScreenBounds.getWidth());
@@ -42,7 +42,7 @@ public class App extends Application
         Race r = generateRace(raceViewController, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
 
         raceViewController.setRace(r);
-        raceViewController.begin();
+        raceViewController.begin(primaryScreenBounds.getWidth(),primaryScreenBounds.getHeight());
 
         primaryStage.show();
 

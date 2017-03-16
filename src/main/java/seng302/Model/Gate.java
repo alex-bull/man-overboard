@@ -17,6 +17,8 @@ public class Gate implements CourseFeature {
     private Double exitHeading;
     private boolean isFinish;
 
+
+
     /**
      * Creates a course gate
      * @param name String the name of the gate
@@ -77,6 +79,17 @@ public class Gate implements CourseFeature {
      */
     public void setExitHeading(Double exitHeading) {
         this.exitHeading = exitHeading;
+    }
+
+    /**
+     * factors both point to fit the screen
+     * @param xFactor
+     * @param yFactor
+     */
+    @Override
+    public void factor(double xFactor, double yFactor, double minX,double minY) {
+        point1.factor(xFactor,yFactor,minX,minY);
+        point2.factor(xFactor,yFactor,minX,minY);
     }
 
     @Override

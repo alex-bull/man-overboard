@@ -58,7 +58,7 @@ public class RaceViewController implements RaceDelegate{
     /**
      * Begins the race on the canvas
      */
-    public void begin(){
+    public void begin(double width, double height){
         //drawBoats(gc);
         // start the race using the timeline
         Timeline t = race.generateTimeline();
@@ -69,7 +69,8 @@ public class RaceViewController implements RaceDelegate{
             @Override
             public void handle(long now) {
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
-                gc.clearRect(0,0,1000,1000);
+
+                gc.clearRect(0,0,width,height);
                 gc.setFill(Color.FORESTGREEN);
                 gc.fillOval(
                         comp.getPosition().getXValue(),
@@ -77,6 +78,7 @@ public class RaceViewController implements RaceDelegate{
                         10,
                         10
                 );
+
             }
         };
 

@@ -15,6 +15,8 @@ public class Mark implements CourseFeature {
     private Double exitHeading;
     private boolean isFinish;
 
+
+
     /**
      * Creates a course mark
      * @param name String the name of the mark
@@ -72,6 +74,16 @@ public class Mark implements CourseFeature {
     public MutablePoint getCentre () {
 
         return this.location;
+    }
+
+    /**
+     * Factors point to fit the screen
+     * @param xFactor
+     * @param yFactor
+     */
+    @Override
+    public void factor(double xFactor, double yFactor,double minX, double minY) {
+        location.factor(xFactor,yFactor,minX,minY);
     }
 
     /**

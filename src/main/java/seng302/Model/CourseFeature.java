@@ -12,4 +12,5 @@ public interface CourseFeature {
     Double getExitHeading ();
     boolean getIsFinish();
     MutablePoint getCentre ();
+    void factor(double xFactor,double yFactor,double minX,double minY);
 }

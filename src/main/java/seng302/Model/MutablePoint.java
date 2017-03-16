@@ -72,6 +72,19 @@ public class MutablePoint {
     }
 
 
+    /**
+     * Factors MutablePoint object
+     * @param xFactor
+     * @param yFactor
+     */
+    public void factor(double xFactor,double yFactor,double minX,double minY){
+        setX((getXValue()-minX)*xFactor);
+        setY((getYValue()-minY)*yFactor);
+//        System.out.println(getXValue());
+//        System.out.println(getYValue());
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

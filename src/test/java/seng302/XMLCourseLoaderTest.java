@@ -20,7 +20,7 @@ public class XMLCourseLoaderTest {
     ArrayList<CourseFeature> points=new ArrayList<>();
     points.add(new Gate("Startline", new MutablePoint(32.296577,-64.854304), new MutablePoint(32.293771,-64.855242), true));
     points.add(new Mark("Marker", new MutablePoint(32.293771,-64.855242),false));
-    assertEquals(points, parser.parseCourse());
+    assertEquals(points, parser.parseCourse(1680,1024));
     }
 
 }
