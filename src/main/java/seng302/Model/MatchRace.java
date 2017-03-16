@@ -28,19 +28,18 @@ public class MatchRace implements Race {
 
     /**
      * Creates a match race with an approximate duration
-     * @param duration int the approximate duration of the race in minutes
-     * @param delegate RaceDelegate a delegate class to be notified of race events
-     * @param raceCourse Course the course for the race
+     *
+     * @param duration    int the approximate duration of the race in minutes
+     * @param delegate    RaceDelegate a delegate class to be notified of race events
+     * @param raceCourse  Course the course for the race
      * @param competitors List the list of competing boats
      */
     public MatchRace (int duration, RaceDelegate delegate, Course raceCourse, List<Competitor> competitors) {
         if (duration == 5) {
             velocityScaleFactor = 1;
-        }
-        else if (duration == 1) {
+        } else if (duration == 1) {
             velocityScaleFactor = 4;
-        }
-        else {
+        } else {
             //for testing
             velocityScaleFactor = 1000;
         }
@@ -140,8 +139,9 @@ public class MatchRace implements Race {
     public Timeline generateTimeline() {
 
         Timeline timeline = new Timeline();
-        Integer time = 0;
-        Competitor comp = this.competitors.get(0);
+
+//        Competitor comp = this.competitors.get(0);
+
         List<CourseFeature> points = raceCourse.getPoints();
 
         timeline.getKeyFrames().add(new KeyFrame(
@@ -149,9 +149,27 @@ public class MatchRace implements Race {
                 new KeyValue(comp.getPosition().getX(), comp.getPosition().getXValue()),
                 new KeyValue(comp.getPosition().getY(), comp.getPosition().getYValue())
         ));
+        for (Competitor comp : competitors) {
+            Integer time = 0;
+            timeline.getKeyFrames().add(new KeyFrame(
+                    Duration.seconds(0),
+                    new KeyValue(comp.getPosition().getX(), comp.getPosition().getXValue()),
+                    new KeyValue(comp.getPosition().getY(), comp.getPosition().getYValue())
+            ));
 
-        for (int j = 0; j < points.size() - 1; j++) {
+            for (int j = 0; j < points.size() - 1; j++) {
 
+                //calculate total time for competitor to reach the point
+                CourseFeature startPoint = points.get(j);
+                CourseFeature endPoint = points.get(j + 1);
+                time += this.calculateTime(comp.getVelocity(), startPoint.getCentre(), endPoint.getCentre());
+                System.out.println(time);
+                timeline.getKeyFrames().add(new KeyFrame(
+                        Duration.seconds(time),
+                        new KeyValue(comp.getPosition().getX(), endPoint.getCentre().getXValue()),
+                        new KeyValue(comp.getPosition().getY(), endPoint.getCentre().getYValue())
+                ));
+            }
             //calculate total time for competitor to reach the point
             CourseFeature startPoint = points.get(j);
             CourseFeature endPoint = points.get(j + 1);

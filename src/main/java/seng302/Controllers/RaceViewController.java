@@ -20,7 +20,7 @@ public class RaceViewController implements RaceDelegate{
     @FXML
     private Canvas mycanvas;
 
-    //private GraphicsContext gc;
+//    private GraphicsContext gc;
     private Race race;
     private List<String> finishingOrder = new ArrayList<>();
 
@@ -29,8 +29,7 @@ public class RaceViewController implements RaceDelegate{
      */
     @FXML
     void initialize() {
-         //gc = mycanvas.getGraphicsContext2D();
-        //draw(mycanvas.getGraphicsContext2D());
+//         gc = mycanvas.getGraphicsContext2D();
 
 //        mycanvas.setHeight(1000);
 //        mycanvas.setWidth(1000);
@@ -91,13 +90,19 @@ public class RaceViewController implements RaceDelegate{
         // start the race using the timeline
         Timeline t = race.generateTimeline();
         List<Competitor> competitors = race.getCompetitors();
-        Competitor comp = competitors.get(0);
+        ArrayList<Color> colors=new ArrayList<>();
+        colors.add(Color.BLACK);
+        colors.add(Color.BLUE);
+        colors.add(Color.YELLOW);
+        colors.add(Color.RED);
+        colors.add(Color.DARKGRAY);
+        colors.add(Color.WHEAT);
 
         AnimationTimer timer = new AnimationTimer() {
+
             @Override
             public void handle(long now) {
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
-
                 gc.clearRect(0,0,width,height);
                 draw(gc);
                 gc.setFill(Color.FORESTGREEN);
@@ -108,6 +113,21 @@ public class RaceViewController implements RaceDelegate{
                         10
                 );
 
+                gc.setFill(Color.AQUA);
+                gc.fillRect(0,0,width,height);
+
+
+
+
+                for(int i =0; i< competitors.size(); i++)  {
+                    gc.setFill(colors.get(i));
+                    gc.fillOval(
+                            competitors.get(i).getPosition().getXValue(),
+                            competitors.get(i).getPosition().getYValue(),
+                            10,
+                            10
+                    );
+                }
             }
         };
 

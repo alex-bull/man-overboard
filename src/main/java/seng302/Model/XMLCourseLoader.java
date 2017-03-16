@@ -38,7 +38,8 @@ public class XMLCourseLoader {
      * @throws IOException
      */
     public ArrayList<CourseFeature> parseCourse(double width, double height) throws JDOMException, IOException {
-
+        double bufferX=Math.min(20,width*0.1);
+        double bufferY=Math.min(20,height*0.1);
         SAXBuilder saxbuilder = new SAXBuilder();
         Document document = saxbuilder.build(inputFile);
         Element raceCourse = document.getRootElement();
@@ -94,12 +95,12 @@ public class XMLCourseLoader {
 
         }
 
-        double xFactor= width/(Collections.max(xCoords)-Collections.min(xCoords));
-        double yFactor=height/(Collections.max(yCoords)-Collections.min(yCoords));
+        double xFactor= (width-bufferX)/(Collections.max(xCoords)-Collections.min(xCoords));
+        double yFactor=(height-bufferY)/(Collections.max(yCoords)-Collections.min(yCoords));
 
 
-        System.out.println(xFactor);
-        System.out.println(yFactor);
+        System.out.println(width-bufferX);
+        System.out.println(height-bufferY);
         points.stream().forEach(p->p.factor(xFactor,yFactor,Collections.min(xCoords),Collections.min(yCoords)));
 
         return points;
