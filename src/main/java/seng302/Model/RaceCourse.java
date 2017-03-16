@@ -14,9 +14,13 @@ public class RaceCourse implements Course {
      * A constructor for the RaceCourse
      * @param points List points on the course
      */
+
     public RaceCourse(List<CourseFeature> points) {
         this.points = points;
+        this.calculateHeadings();
     }
+
+
 
     /**
      * Getter for the points in the course

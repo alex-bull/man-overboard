@@ -83,6 +83,7 @@ public class Mark implements CourseFeature {
      */
     @Override
     public void factor(double xFactor, double yFactor,double minX, double minY) {
+        System.out.println(name);
         location.factor(xFactor,yFactor,minX,minY);
     }
 

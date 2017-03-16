@@ -1,24 +1,15 @@
 package seng302.Controllers;
 
-import com.sun.corba.se.impl.orbutil.graph.Graph;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import seng302.Model.Competitor;
-import seng302.Model.CourseFeature;
-import seng302.Model.Regatta;
 import seng302.Model.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import java.util.DoubleSummaryStatistics;
 
 /**
  * Controller for the race view.
@@ -29,7 +20,7 @@ public class RaceViewController implements RaceDelegate{
     @FXML
     private Canvas mycanvas;
 
-//    private GraphicsContext gc;
+    //private GraphicsContext gc;
     private Race race;
     private List<String> finishingOrder = new ArrayList<>();
 
@@ -38,33 +29,42 @@ public class RaceViewController implements RaceDelegate{
      */
     @FXML
     void initialize() {
-//         gc = mycanvas.getGraphicsContext2D();
+         //gc = mycanvas.getGraphicsContext2D();
+        //draw(mycanvas.getGraphicsContext2D());
+
+//        mycanvas.setHeight(1000);
+//        mycanvas.setWidth(1000);
 
     }
 
     private void draw(GraphicsContext gc) {
 
-        for(CourseFeature b:regatta.getPoints()){
+        for (CourseFeature b : this.race.getCourseFeatures()) {
             gc.setFill(Color.GREEN);
             gc.setStroke(Color.BLUE);
 
-            if (b.isGate()) {
+            List<MutablePoint> marks = b.getLocations();
+            Double x1 = marks.get(0).getXValue();
+            Double y1 = marks.get(0).getYValue();
+
+            if (marks.size() == 2) {
                 gc.setLineWidth(3);
-                int w = 15;
-                int h = 15;
-                Double x1 = b.getLocations().get(0).getX();
-                Double y1 =  b.getLocations().get(0).getY();
-                Double x2 = b.getLocations().get(1).getX();
-                Double y2 = b.getLocations().get(1).getY();
-                gc.strokeLine(x1 , y1 , x2+w, y2+h);
-                gc.fillOval(x1, y1, w, h);
-                gc.fillOval(x2, y2, w, h);
-            }
-            else {
-                gc.fillOval(b.getLocations().get(0).getX(), b.getLocations().get(0).getY(), 20, 20);
+                int d = 15;
+                double r = d/2;
+                Double x2 = marks.get(1).getXValue();
+                double y2 = marks.get(1).getYValue();
+
+                gc.strokeLine(x1, y1, x2, y2);
+
+                gc.fillOval(x1 - r, y1 - r, d, d);
+                gc.fillOval(x2 - r, y2 - r, d, d);
+            } else {
+                gc.fillOval(x1, y1, 20, 20);
             }
 
         }
+    }
+
     /**
      * Move a boat
      */
@@ -99,6 +99,7 @@ public class RaceViewController implements RaceDelegate{
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
 
                 gc.clearRect(0,0,width,height);
+                draw(gc);
                 gc.setFill(Color.FORESTGREEN);
                 gc.fillOval(
                         comp.getPosition().getXValue(),

@@ -48,8 +48,8 @@ public class XMLCourseLoader {
         System.out.println(height);
         System.out.println(width);
 
-ArrayList<Double> xCoords=new ArrayList<>();
-ArrayList<Double> yCoords=new ArrayList<>();
+        ArrayList<Double> xCoords=new ArrayList<>();
+        ArrayList<Double> yCoords=new ArrayList<>();
 
         for (Element feature : features) {
 

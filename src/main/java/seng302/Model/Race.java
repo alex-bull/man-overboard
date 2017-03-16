@@ -15,6 +15,7 @@ public interface Race {
     void setCompetitors(List<Competitor> competitors);
     List<Competitor> getCompetitors();
     Timeline generateTimeline();
+    List<CourseFeature> getCourseFeatures();
 //    DoubleProperty getX();
 //    DoubleProperty getY();
 }

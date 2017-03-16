@@ -80,8 +80,8 @@ public class MutablePoint {
     public void factor(double xFactor,double yFactor,double minX,double minY){
         setX((getXValue()-minX)*xFactor);
         setY((getYValue()-minY)*yFactor);
-//        System.out.println(getXValue());
-//        System.out.println(getYValue());
+        System.out.println(getXValue());
+        System.out.println(getYValue());
     }
 
 

@@ -57,6 +57,14 @@ public class MatchRace implements Race {
 //        return this.y;
 //    }
 
+    /***
+     * Getter for the course features in the race course
+     * @return List the features
+     */
+    public List<CourseFeature> getCourseFeatures() {
+        return this.raceCourse.getPoints();
+    }
+
     /**
      * Get race timeline
      * @return Map the timeline of race events
