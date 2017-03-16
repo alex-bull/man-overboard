@@ -1,23 +1,12 @@
 package seng302.Controllers;
 
-import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import seng302.Model.*;
 
 public class App extends Application
@@ -40,14 +29,12 @@ public class App extends Application
         primaryStage.setWidth(primaryScreenBounds.getWidth());
         primaryStage.setHeight(primaryScreenBounds.getHeight());
 
-        Race r = generateRace(raceViewController, primaryScreenBounds.getWidth(), height);
-
+        Race r = generateRace(primaryScreenBounds.getWidth(), height);
+        r.setDelegate(raceViewController);
         raceViewController.setRace(r);
         raceViewController.begin(primaryScreenBounds.getWidth(),height);
 
         primaryStage.show();
-//        System.out.println(primaryStage.getWidth());
-//        System.out.println(primaryStage.getHeight());
 
     }
 
@@ -58,7 +45,13 @@ public class App extends Application
 
     }
 
-    public Race generateRace(RaceDelegate delegate, Double screenX, Double screenY){
+    /**
+     * Creates a Race object
+     * @param screenX
+     * @param screenY
+     * @return
+     */
+    public Race generateRace(Double screenX, Double screenY){
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Enter number of boats in Regatta: ");
 //        int numberOfBoats;
@@ -92,7 +85,7 @@ public class App extends Application
 
         //create the match races, only one is used for now
         Course raceCourse = new CourseFactory().createCourse(screenX, screenY);
-        return new RaceFactory().createRace(6,1, delegate, raceCourse);
+        return new RaceFactory().createRace(6,1, raceCourse);
 
     }
 }

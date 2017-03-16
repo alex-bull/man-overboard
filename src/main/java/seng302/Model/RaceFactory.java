@@ -11,10 +11,13 @@ import java.util.List;
 public class RaceFactory {
 
     /**
-     * Creates an Instance of Race and injects all dependencies
-     * @return Race a match race
+     * Creates an instance of MatchRace and injects all dependencies
+     * @param numBoats int the number of boats in the race
+     * @param raceDuration int the approximate duration of the race
+     * @param raceCourse Course the course for the race
+     * @return Race an implementation of Race
      */
-    public Race createRace(int numBoats, int raceDuration, RaceDelegate delegate, Course raceCourse){
+    public Race createRace(int numBoats, int raceDuration, Course raceCourse){
 
         //create competitors
         List<Competitor> competitors = new ArrayList<>();
@@ -30,7 +33,7 @@ public class RaceFactory {
         competitors = competitors.subList(0, numBoats);
 
 
-        return new MatchRace(raceDuration, delegate, raceCourse, competitors);
+        return new MatchRace(raceDuration, raceCourse, competitors);
 
     }
 }

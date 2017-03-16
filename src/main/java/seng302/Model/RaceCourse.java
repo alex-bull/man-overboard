@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * Created by psu43 on 15/03/17.
- * Represents a course for the race
+ * Represents a course for a Race
  */
 public class RaceCourse implements Course {
 
@@ -14,7 +14,6 @@ public class RaceCourse implements Course {
      * A constructor for the RaceCourse
      * @param points List points on the course
      */
-
     public RaceCourse(List<CourseFeature> points) {
         this.points = points;
         this.calculateHeadings();

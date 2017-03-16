@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Created by msl47 on 15/03/17.
- * Represents a gate.
+ * Represents a gate course feature.
  */
 
 
@@ -82,13 +82,14 @@ public class Gate implements CourseFeature {
     }
 
     /**
-     * factors both point to fit the screen
-     * @param xFactor
-     * @param yFactor
+     * Scales the points to fit the screen
+     * @param xFactor double the factor to scale by in the x axis
+     * @param yFactor double the factor to scale by in the y axis
+     * @param minX double the min x value
+     * @param minY double the min y value
      */
     @Override
     public void factor(double xFactor, double yFactor, double minX,double minY) {
-        System.out.println(name);
         point1.factor(xFactor,yFactor,minX,minY);
         point2.factor(xFactor,yFactor,minX,minY);
     }

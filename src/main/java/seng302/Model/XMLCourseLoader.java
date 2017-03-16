@@ -1,7 +1,6 @@
 package seng302.Model;
 
 
-import javafx.beans.property.DoubleProperty;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -10,10 +9,8 @@ import org.jdom2.input.SAXBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by khe60 on 14/03/17.
@@ -32,7 +29,8 @@ public class XMLCourseLoader {
 
     /**
      * Creates a list of course features read from an xml file
-     *
+     * @param width double the width of the screen
+     * @param height double the height of the screen
      * @return List the list of course features
      * @throws JDOMException
      * @throws IOException
@@ -46,8 +44,6 @@ public class XMLCourseLoader {
         List<Element> features = raceCourse.getChildren();
         ArrayList<CourseFeature> points = new ArrayList<>();
 
-        System.out.println(height);
-        System.out.println(width);
 
         ArrayList<Double> xCoords=new ArrayList<>();
         ArrayList<Double> yCoords=new ArrayList<>();
@@ -99,8 +95,6 @@ public class XMLCourseLoader {
         double yFactor=(height-bufferY)/(Collections.max(yCoords)-Collections.min(yCoords));
 
 
-        System.out.println(width-bufferX);
-        System.out.println(height-bufferY);
         points.stream().forEach(p->p.factor(xFactor,yFactor,Collections.min(xCoords),Collections.min(yCoords)));
 
         return points;

@@ -73,15 +73,15 @@ public class MutablePoint {
 
 
     /**
-     * Factors MutablePoint object
-     * @param xFactor
-     * @param yFactor
+     * Scales coordinates by a factor
+     * @param xFactor double the x factor
+     * @param yFactor double the y factor
+     * @param minX double the min x value
+     * @param minY double the min y value
      */
     public void factor(double xFactor,double yFactor,double minX,double minY){
         setX((getXValue()-minX)*xFactor);
         setY((getYValue()-minY)*yFactor);
-        System.out.println(getXValue());
-        System.out.println(getYValue());
     }
 
 

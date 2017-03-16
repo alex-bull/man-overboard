@@ -4,6 +4,7 @@ import java.util.List;
 
 /**
  * Created by mgo65 on 4/03/17.
+ * An interface for a feature in a Course
  */
 public interface CourseFeature {
     String getName();

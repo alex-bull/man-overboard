@@ -8,14 +8,12 @@ import java.util.Map;
 
 /**
  * Created by mgo65 on 3/03/17.
+ * An interface for a race
  */
 public interface Race {
-    void start();
-    Map getRaceTimeline();
     void setCompetitors(List<Competitor> competitors);
     List<Competitor> getCompetitors();
     Timeline generateTimeline();
     List<CourseFeature> getCourseFeatures();
-//    DoubleProperty getX();
-//    DoubleProperty getY();
+    void setDelegate(RaceDelegate delegate);
 }

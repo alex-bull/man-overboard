@@ -19,24 +19,21 @@ public class RaceViewController implements RaceDelegate{
 
     @FXML
     private Canvas mycanvas;
-
-//    private GraphicsContext gc;
     private Race race;
-    private List<String> finishingOrder = new ArrayList<>();
 
     /**
      * Initialiser for the raceViewController
      */
     @FXML
     void initialize() {
-//         gc = mycanvas.getGraphicsContext2D();
-
-//        mycanvas.setHeight(1000);
-//        mycanvas.setWidth(1000);
 
     }
 
-    private void draw(GraphicsContext gc) {
+    /**
+     * Draws the course features on the canvas
+     * @param gc GraphicContext the context to draw on
+     */
+    private void drawCourse(GraphicsContext gc) {
 
         for (CourseFeature b : this.race.getCourseFeatures()) {
             gc.setFill(Color.GREEN);
@@ -64,29 +61,14 @@ public class RaceViewController implements RaceDelegate{
         }
     }
 
-    /**
-     * Move a boat
-     */
-    public void boatMoved() {
-
-    }
-
-//    /**
-//     * Draw a circle on the canvas
-//     */
-//    private void drawCircle(int x, int y) {
-//
-//        gc.setFill(Color.GREEN);
-//        gc.fillOval(x, y, 10, 10);
-//
-//    }
-
 
     /**
-     * Begins the race on the canvas
+     * Starts the animation timer to animate the race
+     * @param width the width of the canvas
+     * @param height the height of the canvas
      */
     public void begin(double width, double height){
-        //drawBoats(gc);
+
         // start the race using the timeline
         Timeline t = race.generateTimeline();
         List<Competitor> competitors = race.getCompetitors();
@@ -104,20 +86,10 @@ public class RaceViewController implements RaceDelegate{
             public void handle(long now) {
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
                 gc.clearRect(0,0,width,height);
-                draw(gc);
-                gc.setFill(Color.FORESTGREEN);
-                gc.fillOval(
-                        comp.getPosition().getXValue(),
-                        comp.getPosition().getYValue(),
-                        10,
-                        10
-                );
 
-                gc.setFill(Color.AQUA);
+                gc.setFill(Color.LIGHTBLUE);
                 gc.fillRect(0,0,width,height);
-
-
-
+                drawCourse(gc);
 
                 for(int i =0; i< competitors.size(); i++)  {
                     gc.setFill(colors.get(i));

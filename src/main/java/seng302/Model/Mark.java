@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Created by mgo65 on 4/03/17.
- * Represents a course mark
+ * Represents a mark course feature
  */
 public class Mark implements CourseFeature {
 
@@ -78,12 +78,13 @@ public class Mark implements CourseFeature {
 
     /**
      * Factors point to fit the screen
-     * @param xFactor
-     * @param yFactor
+     * @param xFactor double the factor to scale by in the x axis
+     * @param yFactor double the factor to scale by in the y axis
+     * @param minX double the min x value
+     * @param minY double the min y value
      */
     @Override
     public void factor(double xFactor, double yFactor,double minX, double minY) {
-        System.out.println(name);
         location.factor(xFactor,yFactor,minX,minY);
     }
 
@@ -117,7 +118,6 @@ public class Mark implements CourseFeature {
 
     /**
      * Getter for the exitHeading property
-
      * @return Double the heading
      */
     public Double getExitHeading () {

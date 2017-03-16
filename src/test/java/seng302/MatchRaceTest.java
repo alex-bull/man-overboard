@@ -41,24 +41,24 @@ public class MatchRaceTest {
 
     }
 
-    @Test
-    public void testGetCompetitors () {
-
-        MatchRace matchRace = new MatchRace(1, null, new RaceCourse(points), competitors);
-        matchRace.setCompetitors(competitors);
-
-        assertTrue(matchRace.getCompetitors().equals(competitors));
-    }
-
-    @Test
-    public void testStart () {
-        MatchRace matchRace = new MatchRace(1000, null, new RaceCourse(points), competitors);
-
-        matchRace.setCompetitors(competitors);
-        matchRace.start();
-
-        assertTrue(matchRace.getFinishingOrder().size() == 6);
-
-
-    }
+//    @Test
+//    public void testGetCompetitors () {
+//
+//        MatchRace matchRace = new MatchRace(1, null, new RaceCourse(points), competitors);
+//        matchRace.setCompetitors(competitors);
+//
+//        assertTrue(matchRace.getCompetitors().equals(competitors));
+//    }
+//
+//    @Test
+//    public void testStart () {
+//        MatchRace matchRace = new MatchRace(1000, null, new RaceCourse(points), competitors);
+//
+//        matchRace.setCompetitors(competitors);
+//        matchRace.start();
+//
+//        assertTrue(matchRace.getFinishingOrder().size() == 6);
+//
+//
+//    }
 }

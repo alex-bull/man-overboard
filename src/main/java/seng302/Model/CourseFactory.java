@@ -12,6 +12,13 @@ import java.util.List;
  */
 public class CourseFactory {
 
+
+    /**
+     * Creates an instance of RaceCourse and injects all dependencies
+     * @param screenX The width of the screen
+     * @param screenY The height of the screen
+     * @return Course an implementation of Course loaded from an XML file
+     */
     public Course createCourse(Double screenX, Double screenY){
         //create the marks
         File inputFile=new File("src/main/resources/course.xml");
