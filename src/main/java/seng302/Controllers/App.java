@@ -32,6 +32,7 @@ public class App extends Application
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
         //Set window to full screen
+        double height=primaryScreenBounds.getHeight()-30;
         primaryStage.setTitle("RaceVision");
         primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
         primaryStage.setX(primaryScreenBounds.getMinX());
@@ -39,12 +40,14 @@ public class App extends Application
         primaryStage.setWidth(primaryScreenBounds.getWidth());
         primaryStage.setHeight(primaryScreenBounds.getHeight());
 
-        Race r = generateRace(raceViewController, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+        Race r = generateRace(raceViewController, primaryScreenBounds.getWidth(), height);
 
         raceViewController.setRace(r);
-        raceViewController.begin(primaryScreenBounds.getWidth(),primaryScreenBounds.getHeight());
+        raceViewController.begin(primaryScreenBounds.getWidth(),height);
 
         primaryStage.show();
+//        System.out.println(primaryStage.getWidth());
+//        System.out.println(primaryStage.getHeight());
 
     }
 
