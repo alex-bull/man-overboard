@@ -145,7 +145,7 @@ public class MatchRace implements Race {
         List<CourseFeature> points = raceCourse.getPoints();
 
         timeline.getKeyFrames().add(new KeyFrame(
-                Duration.seconds(0),
+                Duration.millis(0),
                 new KeyValue(comp.getPosition().getX(), comp.getPosition().getXValue()),
                 new KeyValue(comp.getPosition().getY(), comp.getPosition().getYValue())
         ));
@@ -158,7 +158,7 @@ public class MatchRace implements Race {
             time += this.calculateTime(comp.getVelocity(), startPoint.getCentre(), endPoint.getCentre());
 
             timeline.getKeyFrames().add(new KeyFrame(
-                    Duration.seconds(time),
+                    Duration.millis(time),
                     new KeyValue(comp.getPosition().getX(), endPoint.getCentre().getXValue()),
                     new KeyValue(comp.getPosition().getY(), endPoint.getCentre().getYValue())
             ));
@@ -175,11 +175,17 @@ public class MatchRace implements Race {
      * @return Integer the time taken
      */
     private Integer calculateTime (Integer velocity, MutablePoint start, MutablePoint end) {
-
+        System.out.println("MARKER");
+        System.out.println(velocity);
         Double xDistance = Math.pow((start.getXValue() - end.getXValue()), 2);
         Double yDistance = Math.pow((start.getYValue() - end.getYValue()), 2);
         Double distance = Math.sqrt(xDistance + yDistance);
+        System.out.println(distance);
         Double time = (distance / (velocity * velocityScaleFactor));
+        time = time * 1000;
+        System.out.println(time);
+        System.out.println(time.intValue());
+        System.out.println("*****************");
         return time.intValue();
     }
 
