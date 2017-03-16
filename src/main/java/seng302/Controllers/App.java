@@ -40,7 +40,6 @@ public class App extends Application
         primaryStage.setHeight(primaryScreenBounds.getHeight());
 
         Race r = generateRace(raceViewController, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-
         raceViewController.setRace(r);
         raceViewController.begin(primaryScreenBounds.getWidth(),primaryScreenBounds.getHeight());
 

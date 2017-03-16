@@ -63,19 +63,28 @@ public class RaceViewController implements RaceDelegate{
         // start the race using the timeline
         Timeline t = race.generateTimeline();
         List<Competitor> competitors = race.getCompetitors();
-
+        ArrayList<Color> colors=new ArrayList<>();
+        colors.add(Color.BLACK);
+        colors.add(Color.BLUE);
+        colors.add(Color.YELLOW);
+        colors.add(Color.RED);
+        colors.add(Color.DARKGRAY);
+        colors.add(Color.CYAN);
 
         AnimationTimer timer = new AnimationTimer() {
+
             @Override
             public void handle(long now) {
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
 
+
                 gc.clearRect(0,0,width,height);
-                for(Competitor comp:competitors) {
-                    gc.setFill(Color.FORESTGREEN);
+
+                for(int i =0; i< competitors.size(); i++)  {
+                    gc.setFill(colors.get(i));
                     gc.fillOval(
-                            comp.getPosition().getXValue(),
-                            comp.getPosition().getYValue(),
+                            competitors.get(i).getPosition().getXValue(),
+                            competitors.get(i).getPosition().getYValue(),
                             10,
                             10
                     );
