@@ -12,10 +12,10 @@ import java.util.List;
  */
 public class CourseFactory {
 
-    public Course createCourse(){
+    public Course createCourse(Double screenX, Double screenY){
         //create the marks
         File inputFile=new File("src/main/resources/course.xml");
-        XMLParser parser=new XMLParser(inputFile);
+        XMLCourseLoader parser=new XMLCourseLoader(inputFile, screenX, screenY);
         List<CourseFeature> points = null;
         try {
             points = parser.parseCourse();

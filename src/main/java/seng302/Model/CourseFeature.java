@@ -1,12 +1,15 @@
 package seng302.Model;
 
+import java.util.List;
+
 /**
  * Created by mgo65 on 4/03/17.
  */
 public interface CourseFeature {
     String getName();
-    MutablePoint getLocation();
+    List<MutablePoint> getLocations();
     void setExitHeading(Double exitHeading);
     Double getExitHeading ();
     boolean getIsFinish();
+    MutablePoint getCentre ();
 }

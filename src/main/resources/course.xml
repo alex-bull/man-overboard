@@ -1,41 +1,76 @@
 <?xml version="1.0"?>
+
+
 <course>
-    <compoundMark>
-        <name>Startline 1</name>
-        <latitude>32.296577</latitude>
-        <longtitude>-64.854304</longtitude>
-    </compoundMark>
+    <gate>
+        <name>Startline</name>
+        <compoundMark>
+            <latitude>32.296577</latitude>
+            <longtitude>-64.854304</longtitude>
+        </compoundMark>
+        <compoundMark>
+            <latitude>32.293771</latitude>
+            <longtitude>-64.855242</longtitude>
+        </compoundMark>
+    </gate>
 
-    <compoundMark>
-        <name>Startline 2</name>
-        <latitude>32.293771</latitude>
-        <longtitude>-64.855242</longtitude>
-    </compoundMark>
 
-    <compoundMark>
+    <Mark>
         <name>Mark</name>
-        <latitude>500</latitude>
-        <longtitude>50</longtitude>
-    </compoundMark>
-    <compoundMark>
-        <name>Leeward Gate</name>
-        <latitude>600</latitude>
-        <longtitude>900</longtitude>
-    </compoundMark>
-    <compoundMark>
-        <name>Windward Gate</name>
-        <latitude>350</latitude>
-        <longtitude>-350</longtitude>
-    </compoundMark>
-    <compoundMark>
-        <name>Leeward Gate</name>
-        <latitude>600</latitude>
-        <longtitude>900</longtitude>
-    </compoundMark>
-    <compoundMark isfinish="true">
-        <name>Finish</name>
-        <latitude>250</latitude>
-        <longtitude>1150</longtitude>
-    </compoundMark>
+        <compoundMark>
+            <latitude>32.293039</latitude>
+            <longtitude>-64.843983</longtitude>
+        </compoundMark>
+    </Mark>
+
+
+    <gate>
+        <name>Northern Gate</name>
+        <compoundMark>
+            <latitude>32.309693</latitude>
+            <longtitude>-64.835249</longtitude>
+        </compoundMark>
+        <compoundMark>
+            <latitude>32.308046</latitude>
+            <longtitude>-64.831785</longtitude>
+        </compoundMark>
+    </gate>
+
+    <gate>
+        <name>Southern Gate</name>
+        <compoundMark>
+            <latitude>32.284680</latitude>
+            <longtitude>-64.850045</longtitude>
+        </compoundMark>
+        <compoundMark>
+            <latitude>32.280164</latitude>
+            <longtitude>-64.847591</longtitude>
+        </compoundMark>
+    </gate>
+
+    <gate>
+        <name>Northern Gate</name>
+        <compoundMark>
+            <latitude>32.309693</latitude>
+            <longtitude>-64.835249</longtitude>
+        </compoundMark>
+        <compoundMark>
+            <latitude>32.308046</latitude>
+            <longtitude>-64.831785</longtitude>
+        </compoundMark>
+    </gate>
+
+    <gate>
+        <name>Finishline</name>
+        <compoundMark>
+            <latitude>32.317379</latitude>
+            <longtitude>-64.839291</longtitude>
+        </compoundMark>
+        <compoundMark>
+            <latitude>32.317257</latitude>
+            <longtitude>-64.836260</longtitude>
+        </compoundMark>
+    </gate>
+
 
 </course>

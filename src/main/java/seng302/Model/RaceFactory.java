@@ -14,7 +14,7 @@ public class RaceFactory {
      * Creates an Instance of Race and injects all dependencies
      * @return Race a match race
      */
-    public Race createRace(int numBoats, int raceDuration, RaceDelegate delegate){
+    public Race createRace(int numBoats, int raceDuration, RaceDelegate delegate, Course raceCourse){
 
         //create competitors
         List<Competitor> competitors = new ArrayList<>();
@@ -29,8 +29,7 @@ public class RaceFactory {
         Collections.shuffle(competitors);
         competitors = competitors.subList(0, numBoats);
 
-        //create the match races, only one is used for now
-        Course raceCourse = new CourseFactory().createCourse();
+
         return new MatchRace(raceDuration, delegate, raceCourse, competitors);
 
     }

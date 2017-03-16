@@ -28,12 +28,7 @@ public class App extends Application
         Parent root = loader.load();
 
         RaceViewController raceViewController = loader.getController();
-        Race r = generateRace(raceViewController);
 
-        //Set regatta in raceViewController
-        raceViewController.setRace(r);
-        //Begin the race
-        raceViewController.begin();
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
         //Set window to full screen
@@ -43,6 +38,12 @@ public class App extends Application
         primaryStage.setY(primaryScreenBounds.getMinY());
         primaryStage.setWidth(primaryScreenBounds.getWidth());
         primaryStage.setHeight(primaryScreenBounds.getHeight());
+
+        Race r = generateRace(raceViewController, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+
+        raceViewController.setRace(r);
+        raceViewController.begin();
+
         primaryStage.show();
 
     }
@@ -54,7 +55,7 @@ public class App extends Application
 
     }
 
-    public Race generateRace(RaceDelegate delegate){
+    public Race generateRace(RaceDelegate delegate, Double screenX, Double screenY){
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Enter number of boats in Regatta: ");
 //        int numberOfBoats;
@@ -86,7 +87,9 @@ public class App extends Application
 //            }
 //        }
 
-        return new RaceFactory().createRace(6,1, delegate);
+        //create the match races, only one is used for now
+        Course raceCourse = new CourseFactory().createCourse(screenX, screenY);
+        return new RaceFactory().createRace(6,1, delegate, raceCourse);
 
     }
 }

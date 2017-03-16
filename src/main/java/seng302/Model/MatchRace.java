@@ -147,12 +147,12 @@ public class MatchRace implements Race {
             //calculate total time for competitor to reach the point
             CourseFeature startPoint = points.get(j);
             CourseFeature endPoint = points.get(j + 1);
-            time += this.calculateTime(comp.getVelocity(), startPoint.getLocation(), endPoint.getLocation());
+            time += this.calculateTime(comp.getVelocity(), startPoint.getCentre(), endPoint.getCentre());
 
             timeline.getKeyFrames().add(new KeyFrame(
                     Duration.seconds(time),
-                    new KeyValue(comp.getPosition().getX(), endPoint.getLocation().getXValue()),
-                    new KeyValue(comp.getPosition().getY(), endPoint.getLocation().getYValue())
+                    new KeyValue(comp.getPosition().getX(), endPoint.getCentre().getXValue()),
+                    new KeyValue(comp.getPosition().getY(), endPoint.getCentre().getYValue())
             ));
         }
         return timeline;

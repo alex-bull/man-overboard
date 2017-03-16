@@ -1,6 +1,7 @@
 package seng302.Model;
 
 
+import javafx.beans.property.DoubleProperty;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -15,11 +16,15 @@ import java.util.List;
  * Created by khe60 on 14/03/17.
  * An XML file parser for reading courses
  */
-public class XMLParser {
+public class XMLCourseLoader {
     File inputFile;
+    Double screenX;
+    Double screenY;
 
-    public XMLParser(File inputFile) {
+    public XMLCourseLoader(File inputFile, Double x, Double y) {
         this.inputFile = inputFile;
+        this.screenX = x;
+        this.screenY = y;
     }
 
     /**
@@ -34,7 +39,7 @@ public class XMLParser {
         Document document = saxbuilder.build(inputFile);
         Element raceCourse = document.getRootElement();
         List<Element> features = raceCourse.getChildren();
-        ArrayList<CourseFeature> points = new ArrayList<CourseFeature>();
+        ArrayList<CourseFeature> points = new ArrayList<>();
 
         for (Element feature : features) {
 
@@ -47,9 +52,12 @@ public class XMLParser {
                 Element markTwo = marks.get(2);
                 boolean isfinish = Boolean.valueOf(feature.getAttributeValue("isfinish"));
                 String name = feature.getChildText("name");
-                MutablePoint p1 = new MutablePoint(Double.parseDouble(markOne.getChildText("latitude")), Double.parseDouble(markOne.getChildText("longtitude")));
-                MutablePoint p2 = new MutablePoint(Double.parseDouble(markTwo.getChildText("latitude")), Double.parseDouble(markTwo.getChildText("longtitude")));
+
+                MutablePoint p1 = new MutablePoint((Double.parseDouble(markOne.getChildText("latitude")) -32) * 1000, (Double.parseDouble(markOne.getChildText("longtitude")) + 64) * 1000 + 1000);
+                MutablePoint p2 = new MutablePoint((Double.parseDouble(markTwo.getChildText("latitude")) -32) * 1000, (Double.parseDouble(markTwo.getChildText("longtitude")) + 64) * 1000 + 1000);
                 points.add(new Gate(name, p1, p2, isfinish));
+                System.out.println(p1.getXValue());
+                System.out.println(p1.getYValue());
             }
             else { //Its a mark
 

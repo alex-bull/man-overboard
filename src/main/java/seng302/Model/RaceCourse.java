@@ -32,7 +32,7 @@ public class RaceCourse implements Course {
     private void calculateHeadings () {
 
         for (int j = 1; j < this.points.size() - 1; j++) {
-            Double heading = calculateAngle(points.get(j).getLocation(), points.get(j + 1).getLocation());
+            Double heading = calculateAngle(points.get(j).getCentre(), points.get(j + 1).getCentre());
             points.get(j).setExitHeading(heading);
         }
     }

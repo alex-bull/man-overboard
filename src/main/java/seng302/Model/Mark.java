@@ -66,6 +66,15 @@ public class Mark implements CourseFeature {
     }
 
     /**
+     * Getter for the centre location of the marker
+     * @return MutablePoint the location
+     */
+    public MutablePoint getCentre () {
+
+        return this.location;
+    }
+
+    /**
      * Sets the exitHeading property
      * @param exitHeading Double the direction in which competitors exit the mark.
      */
