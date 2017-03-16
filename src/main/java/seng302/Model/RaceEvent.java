@@ -12,17 +12,19 @@ public class RaceEvent {
     private String pointName;
     private Integer displayTime;
     private boolean isFinish = false;
+    private Boat boat;
+    private CourseFeature endPoint;
 
     /**
      * Creates a single race event
-     * @param teamName String the competitor
+     * @param boat Competitor the competing boat
      * @param time Integer the time of the event
      * @param displayTime Integer the time to be displayed in the event string
      * @param pointName String the course point name
      * @param heading Double the exit heading of the competitor
      */
-    public RaceEvent(String teamName, Integer time, Integer displayTime, String pointName, Double heading, boolean isFinish) {
-        this.teamName = teamName;
+    public RaceEvent(Competitor boat, Integer time, Integer displayTime, String pointName, Double heading, boolean isFinish, CourseFeature endPoint) {
+        this.teamName = boat.getTeamName();
         this.time = time;
         this.pointName = pointName;
         this.displayTime = displayTime;
@@ -30,8 +32,26 @@ public class RaceEvent {
             this.heading = heading;
         }
         this.isFinish = isFinish;
+        this.endPoint = endPoint;
 
     }
+
+    /**
+     * Getter for the competitor boat
+     * @return Boat a competitor
+     */
+    public Boat getBoat() {
+        return boat;
+    }
+
+    /**
+     * Getter for the end point
+     * @return CourseFeature the mark for the end point
+     */
+    public CourseFeature getEndPoint() {
+        return endPoint;
+    }
+
 
     /**
      * Getter for the isFinish flag

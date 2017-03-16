@@ -7,9 +7,10 @@ import java.util.List;
  */
 public interface CourseFeature {
     String getName();
-    List<Point> getLocations();
+    List<MutablePoint> getLocations();
     void setExitHeading(Double exitHeading);
     Double getExitHeading ();
     boolean getIsFinish();
-    boolean isGate();
+    MutablePoint getCentre ();
+    void factor(double xFactor,double yFactor,double minX,double minY);
 }

@@ -11,17 +11,19 @@ import java.util.List;
 public class Mark implements CourseFeature {
 
     private String name;
-    private Point location;
+    private MutablePoint location;
     private Double exitHeading;
     private boolean isFinish;
+
+
 
     /**
      * Creates a course mark
      * @param name String the name of the mark
-     * @param location Point the coordinates of the mark
+     * @param location MutablePoint the coordinates of the mark
      * @param isFinish boolean true if mark is finish gate
      */
-    public Mark (String name, Point location, boolean isFinish) {
+    public Mark (String name, MutablePoint location, boolean isFinish) {
         this.name = name;
         this.location = location;
         this.isFinish = isFinish;
@@ -30,9 +32,9 @@ public class Mark implements CourseFeature {
     /**
      * Creates a course mark
      * @param name String the name of the mark
-     * @param location Point the coordinates of the mark
+     * @param location MutablePoint the coordinates of the mark
      */
-    public Mark (String name, Point location) {
+    public Mark (String name, MutablePoint location) {
         this.name = name;
         this.location = location;
         this.isFinish = false;
@@ -56,21 +58,32 @@ public class Mark implements CourseFeature {
 
     /**
      * Getter for the course location
-     * @return Point, the coordinates of the mark
+     * @return MutablePoint, the coordinates of the mark
      */
-    public List<Point> getLocations () {
+    public List<MutablePoint> getLocations () {
 
-        List<Point> points = new ArrayList<>();
+        List<MutablePoint> points = new ArrayList<>();
         points.add(this.location);
         return points;
     }
 
     /**
-     * Returns true if it is a gate.
-     * @return boolean true or false
+     * Getter for the centre location of the marker
+     * @return MutablePoint the location
      */
-    public boolean isGate() {
-        return false;
+    public MutablePoint getCentre () {
+
+        return this.location;
+    }
+
+    /**
+     * Factors point to fit the screen
+     * @param xFactor
+     * @param yFactor
+     */
+    @Override
+    public void factor(double xFactor, double yFactor,double minX, double minY) {
+        location.factor(xFactor,yFactor,minX,minY);
     }
 
     /**

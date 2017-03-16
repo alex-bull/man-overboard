@@ -12,10 +12,12 @@ import java.util.List;
 public class Gate implements CourseFeature {
 
     private String name;
-    private Point point1;
-    private Point point2;
+    private MutablePoint point1;
+    private MutablePoint point2;
     private Double exitHeading;
     private boolean isFinish;
+
+
 
     /**
      * Creates a course gate
@@ -23,7 +25,7 @@ public class Gate implements CourseFeature {
      * @param point1 Point the coordinates of one end.
      * @param point2 Point the coordinates of the other end.
      */
-    public Gate (String name, Point point1, Point point2, boolean isFinish) {
+    public Gate (String name, MutablePoint point1, MutablePoint point2, boolean isFinish) {
         this.name = name;
         this.point1 = point1;
         this.point2 = point2;
@@ -52,22 +54,24 @@ public class Gate implements CourseFeature {
      * @return List of points
      */
 
-    public List<Point> getLocations () {
+    public List<MutablePoint> getLocations () {
 
-        List<Point> points = new ArrayList<>();
+        List<MutablePoint> points = new ArrayList<>();
         points.add(this.point1);
         points.add(this.point2);
         return points;
     }
 
     /**
-     * Returns true if it is a gate.
-     * @return boolean true or false
+     * Getter for the centre location of the marker
+     * @return MutablePoint the location
      */
+    public MutablePoint getCentre () {
 
-    public boolean isGate() {
-        return true;
+        return new MutablePoint((this.point1.getXValue()+this.point2.getXValue())/2,
+                (this.point1.getYValue()+this.point2.getYValue())/2);
     }
+
 
     /**
      * Sets the exitHeading property
@@ -75,6 +79,17 @@ public class Gate implements CourseFeature {
      */
     public void setExitHeading(Double exitHeading) {
         this.exitHeading = exitHeading;
+    }
+
+    /**
+     * factors both point to fit the screen
+     * @param xFactor
+     * @param yFactor
+     */
+    @Override
+    public void factor(double xFactor, double yFactor, double minX,double minY) {
+        point1.factor(xFactor,yFactor,minX,minY);
+        point2.factor(xFactor,yFactor,minX,minY);
     }
 
     @Override

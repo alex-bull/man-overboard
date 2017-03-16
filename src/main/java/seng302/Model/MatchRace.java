@@ -1,5 +1,11 @@
 package seng302.Model;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
+import javafx.util.Duration;
+
 import java.util.*;
 import java.util.List;
 
@@ -10,16 +16,24 @@ import java.util.List;
 public class MatchRace implements Race {
 
     private List<Competitor> competitors = new ArrayList<>();
-    private List<CourseFeature> points = new ArrayList<>();
     private double velocityScaleFactor;
+
+    private RaceDelegate delegate;
     private Map<Integer, List<RaceEvent>> raceTimeline = new HashMap<>();
     private List<String> finishingOrder = new ArrayList<>();
+    private Course raceCourse;
+
+//    DoubleProperty x  = new SimpleDoubleProperty();
+//    DoubleProperty y  = new SimpleDoubleProperty();
 
     /**
      * Creates a match race with an approximate duration
      * @param duration int the approximate duration of the race in minutes
+     * @param delegate RaceDelegate a delegate class to be notified of race events
+     * @param raceCourse Course the course for the race
+     * @param competitors List the list of competing boats
      */
-    public MatchRace (int duration) {
+    public MatchRace (int duration, RaceDelegate delegate, Course raceCourse, List<Competitor> competitors) {
         if (duration == 5) {
             velocityScaleFactor = 1;
         }
@@ -30,6 +44,25 @@ public class MatchRace implements Race {
             //for testing
             velocityScaleFactor = 1000;
         }
+        this.delegate = delegate;
+        this.raceCourse = raceCourse;
+        this.competitors = competitors;
+    }
+
+//    public DoubleProperty getX() {
+//        return this.x;
+//    }
+//
+//    public DoubleProperty getY() {
+//        return this.y;
+//    }
+
+    /**
+     * Get race timeline
+     * @return Map the timeline of race events
+     */
+    public Map<Integer, List<RaceEvent>> getRaceTimeline() {
+        return raceTimeline;
     }
 
     /**
@@ -48,13 +81,6 @@ public class MatchRace implements Race {
         return this.competitors;
     }
 
-    /**
-     * Sets the course for the race
-     * @param points List the points on the course
-     */
-    public void setCourse(List<CourseFeature> points) {
-        this.points = points;
-    }
 
     /**
      * Getter for the finishing order of the race
@@ -68,49 +94,82 @@ public class MatchRace implements Race {
     /**
      * Fills out the race time line by generating events for when competitors pass course points
      */
-    private void generateTimeline() {
+//    private void generateTimeline() {
+//
+//        //for each competitor
+//        for (int i = 0; i < this.competitors.size(); i++) {
+//            Competitor comp = competitors.get(i);
+//            System.out.println("#" + (i + 1) + " " + comp.getTeamName() + ", Velocity: " +  comp.getVelocity() + "m/s");
+//            Integer time = 0;
+//            List<CourseFeature> points = raceCourse.getPoints();
+//            //for each course point
+//            for (int j = 0; j < points.size() - 1; j++) {
+//
+//                //calculate total time for competitor to reach the point
+//                CourseFeature startPoint = points.get(j);
+//                CourseFeature endPoint = points.get(j + 1);
+//                time += this.calculateTime(comp.getVelocity(), startPoint.getLocation(), endPoint.getLocation());
+//
+//                //create the event
+//                Double scaleTime = time * velocityScaleFactor;
+//                RaceEvent event = new RaceEvent(comp, time, scaleTime.intValue(), endPoint.getName(), endPoint.getExitHeading(), endPoint.getIsFinish(), endPoint);
+//
+//                //place the event on the timeline
+//                if (raceTimeline.get(time) != null) {
+//                    raceTimeline.get(time).add(event);
+//                } else {
+//                    List<RaceEvent> events = new ArrayList<>();
+//                    events.add(event);
+//                    raceTimeline.put(time, events);
+//                }
+//            }
+//        }
+//    }
 
-        //for each competitor
-        for (int i = 0; i < this.competitors.size(); i++) {
-            Competitor comp = competitors.get(i);
-            System.out.println("#" + (i + 1) + " " + comp.getTeamName() + ", Velocity: " +  comp.getVelocity() + "m/s");
-            Integer time = 0;
+    /**
+     *
+     */
+    public Timeline generateTimeline() {
 
-            //for each course point
-            for (int j = 0; j < this.points.size() - 1; j++) {
+        Timeline timeline = new Timeline();
+        Integer time = 0;
+        Competitor comp = this.competitors.get(0);
+        List<CourseFeature> points = raceCourse.getPoints();
 
-                //calculate total time for competitor to reach the point
-                CourseFeature startPoint = points.get(j);
-                CourseFeature endPoint = points.get(j + 1);
-                time += this.calculateTime(comp.getVelocity(), startPoint.getLocations().get(0), endPoint.getLocations().get(0));
+        timeline.getKeyFrames().add(new KeyFrame(
+                Duration.seconds(0),
+                new KeyValue(comp.getPosition().getX(), comp.getPosition().getXValue()),
+                new KeyValue(comp.getPosition().getY(), comp.getPosition().getYValue())
+        ));
 
-                //create the event
-                Double scaleTime = time * velocityScaleFactor;
-                RaceEvent event = new RaceEvent(comp.getTeamName(), time, scaleTime.intValue(), endPoint.getName(), endPoint.getExitHeading(), endPoint.getIsFinish());
+        for (int j = 0; j < points.size() - 1; j++) {
 
-                //place the event on the timeline
-                if (raceTimeline.get(time) != null) {
-                    raceTimeline.get(time).add(event);
-                } else {
-                    List<RaceEvent> events = new ArrayList<>();
-                    events.add(event);
-                    raceTimeline.put(time, events);
-                }
-            }
+            //calculate total time for competitor to reach the point
+            CourseFeature startPoint = points.get(j);
+            CourseFeature endPoint = points.get(j + 1);
+            time += this.calculateTime(comp.getVelocity(), startPoint.getCentre(), endPoint.getCentre());
+
+            timeline.getKeyFrames().add(new KeyFrame(
+                    Duration.seconds(time),
+                    new KeyValue(comp.getPosition().getX(), endPoint.getCentre().getXValue()),
+                    new KeyValue(comp.getPosition().getY(), endPoint.getCentre().getYValue())
+            ));
         }
+        return timeline;
     }
+
 
     /**
      * Calculates the time for a competitor to travel between course points
      * @param velocity Integer the linear velocity of the competitor in m/s
-     * @param start Point the coordinates of the first course point
-     * @param end Point the coordinates of the second course point
+     * @param start MutablePoint the coordinates of the first course point
+     * @param end MutablePoint the coordinates of the second course point
      * @return Integer the time taken
      */
-    private Integer calculateTime (Integer velocity, Point start, Point end) {
+    private Integer calculateTime (Integer velocity, MutablePoint start, MutablePoint end) {
 
-        Double xDistance = Math.pow((start.getX() - end.getX()), 2);
-        Double yDistance = Math.pow((start.getY() - end.getY()), 2);
+        Double xDistance = Math.pow((start.getXValue() - end.getXValue()), 2);
+        Double yDistance = Math.pow((start.getYValue() - end.getYValue()), 2);
         Double distance = Math.sqrt(xDistance + yDistance);
         Double time = (distance / (velocity * velocityScaleFactor));
         return time.intValue();
@@ -129,6 +188,7 @@ public class MatchRace implements Race {
         while (finishingOrder.size() < this.competitors.size()) {
             if (raceTimeline.get(i) != null) {
                 for (RaceEvent event: raceTimeline.get(i)) {
+                    delegate.boatMoved();
                     System.out.println(event.getEventString());
                     if (event.getIsFinish()) {
                         finishingOrder.add(event.getTeamName());
@@ -149,16 +209,17 @@ public class MatchRace implements Race {
     }
 
     /**
-     * Outputs the entire race
+     * Starts the race
      */
     public void start () {
 
         System.out.println("Entrants:");
 
-        generateTimeline();
-
+//        generateTimeline();
         try {
+
             printRace();
+
         }
         catch (Exception e) {
             System.out.println("Thread interrupted");

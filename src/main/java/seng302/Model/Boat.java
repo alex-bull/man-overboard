@@ -1,10 +1,5 @@
 package seng302.Model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by mgo65 on 3/03/17.
  * Boat object
@@ -12,7 +7,7 @@ import java.util.Map;
 public class Boat implements Competitor {
     private String teamName;
     private Integer velocity;
-    private Point position;
+    private MutablePoint position;
 
     /**
      * Creates a boat
@@ -20,7 +15,7 @@ public class Boat implements Competitor {
      * @param teamName String the boats team name
      * @param velocity Integer the boats velocity in m/s
      */
-    public Boat(String teamName, Integer velocity, Point startPosition) {
+    public Boat(String teamName, Integer velocity, MutablePoint startPosition) {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
@@ -47,9 +42,9 @@ public class Boat implements Competitor {
     /**
      * Getter for the boat's position
      *
-     * @return Point the coordinate of the boat
+     * @return MutablePoint the coordinate of the boat
      */
-    public Point getPosition() {
+    public MutablePoint getPosition() {
         return this.position;
     }
 

@@ -2,7 +2,7 @@ package seng302;
 
 import org.junit.Test;
 import seng302.Model.Mark;
-import seng302.Model.Point;
+import seng302.Model.MutablePoint;
 
 import static org.junit.Assert.assertTrue;
 
@@ -14,7 +14,7 @@ public class MarkTest {
     @Test
     public void testGetName () {
 
-        Point point = new Point(1.0, 2.0);
+        MutablePoint point = new MutablePoint(1.0, 2.0);
         Mark mark = new Mark("A", point);
 
         assertTrue(mark.getName().equals("A"));
@@ -22,7 +22,7 @@ public class MarkTest {
 
     @Test
     public void testGetLocation () {
-        Point point = new Point(1.0, 2.0);
+        MutablePoint point = new MutablePoint(1.0, 2.0);
         Mark mark = new Mark("A", point);
 
         assertTrue(mark.getLocations().get(0).equals(point));
@@ -30,7 +30,7 @@ public class MarkTest {
 
     @Test
     public void testGetExitHeading () {
-        Point point = new Point(1.0, 2.0);
+        MutablePoint point = new MutablePoint(1.0, 2.0);
         Mark mark = new Mark("A", point);
         mark.setExitHeading(10.0);
 

@@ -1,18 +1,24 @@
 package seng302.Controllers;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
+import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import seng302.Model.Regatta;
-import seng302.Model.RegattaFactory;
-
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import javafx.util.Duration;
+import seng302.Model.*;
 
 public class App extends Application
 {
@@ -20,35 +26,36 @@ public class App extends Application
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
         Parent root = loader.load();
-        RaceViewController controller = loader.getController();
-        Regatta r = generateRegatta();
-        controller.setRegatta(r);
-        controller.begin();
+
+        RaceViewController raceViewController = loader.getController();
+
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
+        //Set window to full screen
+        primaryStage.setTitle("RaceVision");
+        primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
+        primaryStage.setX(primaryScreenBounds.getMinX());
+        primaryStage.setY(primaryScreenBounds.getMinY());
+        primaryStage.setWidth(primaryScreenBounds.getWidth());
+        primaryStage.setHeight(primaryScreenBounds.getHeight());
 
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 1000, 800));
-//        primaryStage.setX(primaryScreenBounds.getMinX());
-//        primaryStage.setY(primaryScreenBounds.getMinY());
-//        primaryStage.setWidth(primaryScreenBounds.getWidth());
-//        primaryStage.setHeight(primaryScreenBounds.getHeight());
+        Race r = generateRace(raceViewController, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
 
-
-
+        raceViewController.setRace(r);
+        raceViewController.begin(primaryScreenBounds.getWidth(),primaryScreenBounds.getHeight());
 
         primaryStage.show();
-    }
 
+    }
 
 
     public static void main( String[] args )
     {
-
-
         launch(args);
+
     }
-    public Regatta generateRegatta(){
+
+    public Race generateRace(RaceDelegate delegate, Double screenX, Double screenY){
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Enter number of boats in Regatta: ");
 //        int numberOfBoats;
@@ -80,7 +87,9 @@ public class App extends Application
 //            }
 //        }
 
-        Regatta regatta = new RegattaFactory().createRegatta(6, 1);
-        return regatta;
+        //create the match races, only one is used for now
+        Course raceCourse = new CourseFactory().createCourse(screenX, screenY);
+        return new RaceFactory().createRace(6,1, delegate, raceCourse);
+
     }
 }
