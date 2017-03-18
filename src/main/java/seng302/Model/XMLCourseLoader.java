@@ -28,6 +28,26 @@ public class XMLCourseLoader {
     }
 
     /**
+     * Function to map latitude and longitude to screen coordinates
+     * @param lat latitude
+     * @param lon longitude
+     * @param width width of the screen
+     * @param height height of the screen
+     * @return
+     */
+    public ArrayList<Double> mercatorProjection(double lat,double lon,double width, double height){
+        ArrayList<Double> ret=new ArrayList<>();
+        double x=(lon+180)*(width/360);
+        double latRad=lat*Math.PI/180;
+        double merc=Math.log(Math.tan(Math.PI/4)+(latRad/2));
+        double y=(height/2)-(width*merc/(2*Math.PI));
+        ret.add(x);
+        ret.add(y);
+        return ret;
+
+    }
+
+    /**
      * Creates a list of course features read from an xml file
      * @param width double the width of the screen
      * @param height double the height of the screen
@@ -36,8 +56,12 @@ public class XMLCourseLoader {
      * @throws IOException
      */
     public ArrayList<CourseFeature> parseCourse(double width, double height) throws JDOMException, IOException {
-        double bufferX=Math.min(20,width*0.1);
-        double bufferY=Math.min(20,height*0.1);
+        //buffers are defined as the total buffer size, i.e. total for both sides
+        double bufferX=Math.max(40,width*0.2);
+        double bufferY=Math.max(40,height*0.2);
+        System.out.println("bufferX: "+bufferX);
+        System.out.println("bufferY: "+bufferY);
+
         SAXBuilder saxbuilder = new SAXBuilder();
         Document document = saxbuilder.build(inputFile);
         Element raceCourse = document.getRootElement();
@@ -60,10 +84,19 @@ public class XMLCourseLoader {
                 boolean isfinish = Boolean.valueOf(feature.getAttributeValue("isfinish"));
                 String name = feature.getChildText("name");
 
-                double point1X = Double.parseDouble(markOne.getChildText("latitude"));
-                double point2X = Double.parseDouble(markTwo.getChildText("latitude"));
-                double point1Y = Double.parseDouble(markOne.getChildText("longtitude"));
-                double point2Y = Double.parseDouble(markTwo.getChildText("longtitude"));
+                double lat1 = Double.parseDouble(markOne.getChildText("latitude"));
+                double lat2 = Double.parseDouble(markTwo.getChildText("latitude"));
+
+                double lon1= Double.parseDouble(markOne.getChildText("longtitude"));
+                double lon2= Double.parseDouble(markTwo.getChildText("longtitude"));
+
+                ArrayList<Double> point1=mercatorProjection(lat1,lon1,width,height);
+                ArrayList<Double> point2=mercatorProjection(lat2,lon2,width,height);
+                double point1X=point1.get(0);
+                double point1Y=point1.get(1);
+                double point2X=point2.get(0);
+                double point2Y=point2.get(1);
+
 
                 xCoords.add(point1X);
                 xCoords.add(point2X);
@@ -79,9 +112,11 @@ public class XMLCourseLoader {
                 Element mark = feature.getChildren().get(1);
                 String name = feature.getChildText("name");
 
-                double point1X = Double.parseDouble(mark.getChildText("latitude"));
-                double point1Y = Double.parseDouble(mark.getChildText("longtitude"));
-
+                double lat1 =Double.parseDouble(mark.getChildText("latitude"));
+                double lon1= Double.parseDouble(mark.getChildText("longtitude"));
+                ArrayList<Double> point1=mercatorProjection(lat1,lon1,width,height);
+                double point1X=point1.get(0);
+                double point1Y=point1.get(1);
                 xCoords.add(point1X);
                 yCoords.add(point1Y);
 
@@ -91,11 +126,14 @@ public class XMLCourseLoader {
 
         }
 
-        double xFactor= (width-bufferX)/(Collections.max(xCoords)-Collections.min(xCoords));
-        double yFactor=(height-bufferY)/(Collections.max(yCoords)-Collections.min(yCoords));
+        double xFactor= (width-bufferX/2)/(Collections.max(xCoords)-Collections.min(xCoords));
+        double yFactor=(height-bufferY/2)/(Collections.max(yCoords)-Collections.min(yCoords));
+
+        //make scaling in proportion
+        double factor=Math.min(xFactor,yFactor);
 
 
-        points.stream().forEach(p->p.factor(xFactor,yFactor,Collections.min(xCoords),Collections.min(yCoords)));
+        points.stream().forEach(p->p.factor(factor,factor,Collections.min(xCoords),Collections.min(yCoords),bufferX/2,bufferY/2,width,height));
 
         return points;
     }

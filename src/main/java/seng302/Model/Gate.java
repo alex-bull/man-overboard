@@ -89,9 +89,10 @@ public class Gate implements CourseFeature {
      * @param minY double the min y value
      */
     @Override
-    public void factor(double xFactor, double yFactor, double minX,double minY) {
-        point1.factor(xFactor,yFactor,minX,minY);
-        point2.factor(xFactor,yFactor,minX,minY);
+    public void factor(double xFactor, double yFactor, double minX,double minY,double xBuffer,double yBuffer,double width,double height) {
+        System.out.println("name: "+name);
+        point1.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
+        point2.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
     }
 
     @Override

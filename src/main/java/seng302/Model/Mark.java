@@ -84,8 +84,9 @@ public class Mark implements CourseFeature {
      * @param minY double the min y value
      */
     @Override
-    public void factor(double xFactor, double yFactor,double minX, double minY) {
-        location.factor(xFactor,yFactor,minX,minY);
+    public void factor(double xFactor, double yFactor,double minX, double minY,double xBuffer,double yBuffer,double width,double height) {
+        System.out.println("name: "+name);
+        location.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
     }
 
     /**
