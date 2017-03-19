@@ -15,5 +15,6 @@ public interface Race {
     List<Competitor> getCompetitors();
     Timeline generateTimeline();
     List<CourseFeature> getCourseFeatures();
+    double getWindDirection();
     void setDelegate(RaceDelegate delegate);
 }

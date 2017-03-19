@@ -36,8 +36,8 @@
     </Mark>
 
 
-    <gate>
-        <name>Northern Gate</name>
+    <gate type="leeward">
+        <name >Northern Gate</name>
         <compoundMark>
             <latitude>32.309693</latitude>
             <longtitude>-64.835249</longtitude>
@@ -48,8 +48,8 @@
         </compoundMark>
     </gate>
 
-    <gate>
-        <name>Southern Gate</name>
+    <gate type="windward">
+        <name >Southern Gate</name>
         <compoundMark>
             <latitude>32.284680</latitude>
             <longtitude>-64.850045</longtitude>

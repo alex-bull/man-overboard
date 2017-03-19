@@ -9,17 +9,21 @@ import java.util.List;
 public class RaceCourse implements Course {
 
     private List<CourseFeature> points;
+    private double windDirection;
 
     /**
      * A constructor for the RaceCourse
      * @param points List points on the course
      */
-    public RaceCourse(List<CourseFeature> points) {
+    public RaceCourse(List<CourseFeature> points,double windDirection) {
         this.points = points;
+        this.windDirection=windDirection;
         this.calculateHeadings();
     }
 
-
+    public double getWindDirection() {
+        return windDirection;
+    }
 
     /**
      * Getter for the points in the course

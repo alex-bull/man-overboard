@@ -33,7 +33,7 @@ public class CourseFactory {
             System.out.println("file not found or something");
             e.printStackTrace();
         }
-        return new RaceCourse(points);
+        return new RaceCourse(points,parser.getWindDirection());
 
     }
 }

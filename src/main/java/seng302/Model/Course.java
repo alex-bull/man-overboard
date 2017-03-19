@@ -8,4 +8,5 @@ import java.util.List;
  */
 public interface Course {
     List<CourseFeature> getPoints();
+    double getWindDirection();
 }

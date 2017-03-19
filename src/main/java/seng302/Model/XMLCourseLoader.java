@@ -20,11 +20,25 @@ public class XMLCourseLoader {
     File inputFile;
     Double screenX;
     Double screenY;
+    ArrayList<Gate> winds=new ArrayList<>();
 
     public XMLCourseLoader(File inputFile, Double x, Double y) {
         this.inputFile = inputFile;
         this.screenX = x;
         this.screenY = y;
+    }
+
+    public double getWindDirection(){
+        double x1=winds.get(0).getCentre().getXValue();
+        double y1=winds.get(0).getCentre().getYValue();
+        double x2=winds.get(1).getCentre().getXValue();
+        double y2=winds.get(1).getCentre().getYValue();
+//        System.out.println(x1);
+//        System.out.println(y1);
+//        System.out.println(x2);
+//        System.out.println(y2);
+
+        return Math.toDegrees(Math.atan( (x1-x2)/-(y1-y2)));
     }
 
     /**
@@ -105,8 +119,14 @@ public class XMLCourseLoader {
 
                 MutablePoint p1=new MutablePoint(point1X,point1Y);
                 MutablePoint p2=new MutablePoint(point2X,point2Y);
-                points.add(new Gate(name, p1, p2, isfinish));
+                Gate gate=new Gate(name, p1, p2, isfinish);
+                points.add(gate);
 
+                if (feature.getAttributeValue("type")!=null) {
+
+                        winds.add(gate);
+
+                }
             } else { //Its a mark
 
                 Element mark = feature.getChildren().get(1);

@@ -35,22 +35,18 @@ public class RaceViewController implements RaceDelegate{
     /**
      * Draws an arrow on the screen at top left corner
      * @param gc graphics context
-     * @param x1 x coordinate of position vector 1
-     * @param y1 y coordinate of position vector 1
-     * @param x2 x coordinate of position vector 2
-     * @param y2 y coordinate of position vector 2
+     * @param angle the angle of rotation
      */
-    void drawArrow(GraphicsContext gc, int x1, int y1, int x2, int y2) {
+    void drawArrow(GraphicsContext gc, double angle) {
         gc.save();
         gc.setFill(Color.BLACK);
-        double dx = x2 - x1, dy = y2 - y1;
-        double angle = Math.toDegrees(Math.atan2(dy, dx));
+//        System.out.println(angle);
         Rotate r = new Rotate(angle, 35, 40);
-        System.out.println(angle);
+
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 
 
-        gc.fillPolygon(new double[]{20,30,30,40,40,50,35}, new double[]{50,50,10,10,50,50,70},
+        gc.fillPolygon(new double[]{20,30,30,40,40,50,35}, new double[]{30,30,70,70,30,30,10},
                 7);
         gc.restore();
     }
@@ -87,7 +83,7 @@ public class RaceViewController implements RaceDelegate{
 
         }
 
-                drawArrow(gc, 1,1,1,2);
+                drawArrow(gc, race.getWindDirection());
     }
 
 

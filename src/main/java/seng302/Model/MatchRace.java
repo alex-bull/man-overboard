@@ -43,6 +43,14 @@ public class MatchRace implements Race {
     }
 
     /**
+     * returns the angle of wind direction
+     * @return angle of wind direction
+     */
+    public double getWindDirection(){
+        return raceCourse.getWindDirection();
+    }
+
+    /**
      * Sets the delegate for the race
      * @param delegate RaceDelegate an object to delegate for the race
      */
