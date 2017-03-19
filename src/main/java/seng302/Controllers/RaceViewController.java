@@ -6,6 +6,9 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 import seng302.Model.*;
 
 import java.util.ArrayList;
@@ -30,12 +33,36 @@ public class RaceViewController implements RaceDelegate{
     }
 
     /**
+     * Draws an arrow on the screen at top left corner
+     * @param gc graphics context
+     * @param x1 x coordinate of position vector 1
+     * @param y1 y coordinate of position vector 1
+     * @param x2 x coordinate of position vector 2
+     * @param y2 y coordinate of position vector 2
+     */
+    void drawArrow(GraphicsContext gc, int x1, int y1, int x2, int y2) {
+        gc.save();
+        gc.setFill(Color.BLACK);
+        double dx = x2 - x1, dy = y2 - y1;
+        double angle = Math.toDegrees(Math.atan2(dy, dx));
+        Rotate r = new Rotate(angle, 35, 40);
+        System.out.println(angle);
+        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
+
+
+        gc.fillPolygon(new double[]{20,30,30,40,40,50,35}, new double[]{50,50,10,10,50,50,70},
+                7);
+        gc.restore();
+    }
+
+    /**
      * Draws the course features on the canvas
      * @param gc GraphicContext the context to draw on
      */
     private void drawCourse(GraphicsContext gc) {
 
         for (CourseFeature b : this.race.getCourseFeatures()) {
+
             gc.setFill(Color.GREEN);
             gc.setStroke(Color.BLUE);
 
@@ -59,6 +86,8 @@ public class RaceViewController implements RaceDelegate{
             }
 
         }
+
+                drawArrow(gc, 1,1,1,2);
     }
 
 
