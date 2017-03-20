@@ -57,14 +57,15 @@ public class RaceViewController implements RaceDelegate{
      */
     private void drawCourse(GraphicsContext gc) {
 
-        for (CourseFeature b : this.race.getCourseFeatures()) {
+        for (CourseFeature courseFeature : this.race.getCourseFeatures()) {
             gc.setFill(Color.ORANGERED);
             gc.setStroke(Color.BLUE);
 
-            List<MutablePoint> marks = b.getLocations();
+            List<MutablePoint> marks = courseFeature.getLocations();
             Double x1 = marks.get(0).getXValue();
             Double y1 = marks.get(0).getYValue();
 
+            // if it is a gate
             if (marks.size() == 2) {
                 gc.setLineWidth(3);
                 int d = 15;
@@ -72,7 +73,10 @@ public class RaceViewController implements RaceDelegate{
                 Double x2 = marks.get(1).getXValue();
                 double y2 = marks.get(1).getYValue();
 
-                gc.strokeLine(x1, y1, x2, y2);
+                // check if gate needs line
+                if(courseFeature.isLine()){
+                    gc.strokeLine(x1, y1, x2, y2);
+                }
 
                 gc.fillOval(x1 - r, y1 - r, d, d);
                 gc.fillOval(x2 - r, y2 - r, d, d);

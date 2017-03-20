@@ -16,6 +16,7 @@ public class Gate implements CourseFeature {
     private MutablePoint point2;
     private Double exitHeading;
     private boolean isFinish;
+    private boolean isLine;
 
 
 
@@ -24,19 +25,30 @@ public class Gate implements CourseFeature {
      * @param name String the name of the gate
      * @param point1 Point the coordinates of one end.
      * @param point2 Point the coordinates of the other end.
+     * @param isFinish boolean true if the gate is a finishing gate
+     * @param isLine boolean true if the gate needs a line
      */
-    public Gate (String name, MutablePoint point1, MutablePoint point2, boolean isFinish) {
+    public Gate (String name, MutablePoint point1, MutablePoint point2, boolean isFinish, boolean isLine) {
         this.name = name;
         this.point1 = point1;
         this.point2 = point2;
-        this.isFinish = false;
+        this.isFinish = isFinish;
+        this.isLine = isLine;
+    }
+
+    /**
+     * Getter for isLine flag
+     * @return boolean isLine if gate needs line
+     */
+    public boolean isLine(){
+        return isLine;
     }
 
     /**
      * Getter for isFinish flag
      * @return boolean isFinish
      */
-    public boolean getIsFinish () {
+    public boolean isFinish() {
         return this.isFinish;
     }
 
