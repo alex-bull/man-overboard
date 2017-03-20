@@ -58,8 +58,7 @@ public class RaceViewController implements RaceDelegate{
     private void drawCourse(GraphicsContext gc) {
 
         for (CourseFeature b : this.race.getCourseFeatures()) {
-
-            gc.setFill(Color.GREEN);
+            gc.setFill(Color.ORANGERED);
             gc.setStroke(Color.BLUE);
 
             List<MutablePoint> marks = b.getLocations();
@@ -102,8 +101,8 @@ public class RaceViewController implements RaceDelegate{
         colors.add(Color.BLUE);
         colors.add(Color.YELLOW);
         colors.add(Color.RED);
-        colors.add(Color.DARKGRAY);
-        colors.add(Color.WHEAT);
+        colors.add(Color.PURPLE);
+        colors.add(Color.GREEN);
 
         AnimationTimer timer = new AnimationTimer() {
 

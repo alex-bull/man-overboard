@@ -28,6 +28,10 @@ public class XMLCourseLoader {
         this.screenY = y;
     }
 
+    /**
+     *
+     * @return
+     */
     public double getWindDirection(){
         double x1=winds.get(0).getCentre().getXValue();
         double y1=winds.get(0).getCentre().getYValue();
@@ -51,10 +55,10 @@ public class XMLCourseLoader {
      */
     public ArrayList<Double> mercatorProjection(double lat,double lon,double width, double height){
         ArrayList<Double> ret=new ArrayList<>();
-        double x=(lon+180)*(width/360);
-        double latRad=lat*Math.PI/180;
-        double merc=Math.log(Math.tan(Math.PI/4)+(latRad/2));
-        double y=(height/2)-(width*merc/(2*Math.PI));
+        double x = (lon+180)*(width/360);
+        double latRad = lat*Math.PI/180;
+        double merc = Math.log(Math.tan(Math.PI/4)+(latRad/2));
+        double y = (height/2)-(width*merc/(2*Math.PI));
         ret.add(x);
         ret.add(y);
         return ret;
