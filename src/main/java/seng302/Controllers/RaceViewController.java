@@ -5,6 +5,8 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
@@ -23,6 +25,11 @@ public class RaceViewController implements RaceDelegate{
     @FXML
     private Canvas mycanvas;
     private Race race;
+
+    @FXML
+    private TableController tableController;
+
+
 
     /**
      * Initialiser for the raceViewController
@@ -50,6 +57,7 @@ public class RaceViewController implements RaceDelegate{
                 7);
         gc.restore();
     }
+
 
     /**
      * Draws the course features on the canvas
@@ -96,13 +104,7 @@ public class RaceViewController implements RaceDelegate{
         // start the race using the timeline
         Timeline t = race.generateTimeline();
         List<Competitor> competitors = race.getCompetitors();
-        ArrayList<Color> colors=new ArrayList<>();
-        colors.add(Color.BLACK);
-        colors.add(Color.BLUE);
-        colors.add(Color.YELLOW);
-        colors.add(Color.RED);
-        colors.add(Color.PURPLE);
-        colors.add(Color.GREEN);
+
 
         AnimationTimer timer = new AnimationTimer() {
 
@@ -116,7 +118,7 @@ public class RaceViewController implements RaceDelegate{
                 drawCourse(gc);
 
                 for(int i =0; i< competitors.size(); i++)  {
-                    gc.setFill(colors.get(i));
+                    gc.setFill(competitors.get(i).getColor());
                     gc.fillOval(
                             competitors.get(i).getPosition().getXValue(),
                             competitors.get(i).getPosition().getYValue(),
@@ -141,6 +143,6 @@ public class RaceViewController implements RaceDelegate{
      */
     public void setRace(Race race) {
         this.race=race;
-
+        tableController.setRace(race);
     }
 }

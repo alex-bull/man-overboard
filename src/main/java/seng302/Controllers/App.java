@@ -18,6 +18,7 @@ public class App extends Application
 
         RaceViewController raceViewController = loader.getController();
 
+
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
         //Set window to full screen

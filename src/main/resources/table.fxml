@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+
+<AnchorPane fx:id="table" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controllers.TableController">
+   <children>
+   
+                           <TableView fx:id="raceTable" layoutX="-0.0" layoutY="-0.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-0.0">
+                               <columns>
+                                   <TableColumn fx:id="positionCol" prefWidth="70.0" text="Position" />
+                                   <TableColumn fx:id="colorCol" prefWidth="60.0" text="Color" />
+                                   <TableColumn fx:id="nameCol" prefWidth="60.0" text="Name" />
+                                   <TableColumn fx:id="timeCol" prefWidth="60.0" text="Time" />
+                                   <TableColumn fx:id="speedCol" prefWidth="60.0" text="Speed" />
+                               </columns>
+                           </TableView>
+   </children>
+
+</AnchorPane>

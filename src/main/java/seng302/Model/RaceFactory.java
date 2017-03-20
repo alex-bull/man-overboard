@@ -1,5 +1,10 @@
 package seng302.Model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,21 +17,31 @@ public class RaceFactory {
 
     /**
      * Creates an instance of MatchRace and injects all dependencies
-     * @param numBoats int the number of boats in the race
+     *
+     * @param numBoats     int the number of boats in the race
      * @param raceDuration int the approximate duration of the race
-     * @param raceCourse Course the course for the race
+     * @param raceCourse   Course the course for the race
      * @return Race an implementation of Race
      */
-    public Race createRace(int numBoats, int raceDuration, Course raceCourse){
+    public Race createRace(int numBoats, int raceDuration, Course raceCourse) {
 
         //create competitors
         List<Competitor> competitors = new ArrayList<>();
-        competitors.add(new Boat("Oracle Team USA", 20, new MutablePoint(0.0, 0.0)));
-        competitors.add(new Boat("Emirates Team New Zealand", 19, new MutablePoint(30.0, 0.0)));
-        competitors.add(new Boat("Ben Ainslie Racing", 18,  new MutablePoint(60.0, 0.0)));
-        competitors.add(new Boat("SoftBank Team Japan", 17,  new MutablePoint(90.0, 0.0)));
-        competitors.add(new Boat("Team France", 16,  new MutablePoint(120.0, 0.0)));
-        competitors.add(new Boat("Artemis Racing", 15,  new MutablePoint(150.0, 0.0)));
+        competitors.add(new Boat("Oracle Team USA", 20, new MutablePoint(0.0, 0.0), Color.BLACK));
+        competitors.add(new Boat("Emirates Team New Zealand", 19, new MutablePoint(30.0, 0.0), Color.RED));
+        competitors.add(new Boat("Ben Ainslie Racing", 18, new MutablePoint(60.0, 0.0), Color.PURPLE));
+        competitors.add(new Boat("SoftBank Team Japan", 17, new MutablePoint(90.0, 0.0), Color.YELLOW));
+        competitors.add(new Boat("Team France", 16, new MutablePoint(120.0, 0.0), Color.BROWN));
+        competitors.add(new Boat("Artemis Racing", 15, new MutablePoint(150.0, 0.0), Color.GREEN));
+
+        ObservableList<Competitor> competitors_oa = FXCollections.observableArrayList(
+                new Boat("Oracle Team USA", 20, new MutablePoint(0.0, 0.0), Color.BLACK),
+                new Boat("Emirates Team New Zealand", 19, new MutablePoint(30.0, 0.0), Color.RED),
+                new Boat("Ben Ainslie Racing", 18, new MutablePoint(60.0, 0.0), Color.PURPLE),
+                new Boat("SoftBank Team Japan", 17, new MutablePoint(90.0, 0.0), Color.YELLOW),
+                new Boat("Team France", 16, new MutablePoint(120.0, 0.0), Color.BROWN),
+                new Boat("Artemis Racing", 15, new MutablePoint(150.0, 0.0), Color.GREEN));
+
 
         //randomly select competitors
         Collections.shuffle(competitors);

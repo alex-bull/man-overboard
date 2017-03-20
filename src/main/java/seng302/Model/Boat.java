@@ -1,5 +1,7 @@
 package seng302.Model;
 
+import javafx.scene.paint.Color;
+
 /**
  * Created by mgo65 on 3/03/17.
  * Boat object
@@ -8,17 +10,28 @@ public class Boat implements Competitor {
     private String teamName;
     private Integer velocity;
     private MutablePoint position;
+    private Color color;
 
     /**
+     * Getter for the team color
+     * @return Color the team color
+     */
+    public Color getColor() {
+        return color;
+    }
+
+    /**
+
      * Creates a boat
      *
      * @param teamName String the boats team name
      * @param velocity Integer the boats velocity in m/s
      */
-    public Boat(String teamName, Integer velocity, MutablePoint startPosition) {
+    public Boat(String teamName, Integer velocity, MutablePoint startPosition, Color color) {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
+        this.color = color;
     }
 
     /**
