@@ -1,19 +1,28 @@
 package seng302.Model;
 
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 /**
  * Created by mgo65 on 6/03/17.
  * Represents an event on the race timeline
  */
-public class RaceEvent {
+public class RaceEvent implements Comparable<RaceEvent>{
 
-    private String teamName;
-    private Integer time;
+    private SimpleStringProperty teamName;
+    private SimpleLongProperty time;
+    private SimpleStringProperty color;
+    private SimpleStringProperty endPointName;
+    private SimpleIntegerProperty position;
     private Double heading;
     private String pointName;
     private Integer displayTime;
     private boolean isFinish = false;
     private Boat boat;
     private CourseFeature endPoint;
+    private SimpleIntegerProperty speed;
 
     /**
      * Creates a single race event
@@ -23,9 +32,9 @@ public class RaceEvent {
      * @param pointName String the course point name
      * @param heading Double the exit heading of the competitor
      */
-    public RaceEvent(Competitor boat, Integer time, Integer displayTime, String pointName, Double heading, boolean isFinish, CourseFeature endPoint) {
-        this.teamName = boat.getTeamName();
-        this.time = time;
+    public RaceEvent(Competitor boat, long time, Integer displayTime, String pointName, Double heading, boolean isFinish, CourseFeature endPoint) {
+        this.teamName = new SimpleStringProperty(boat.getTeamName());
+        this.time = new SimpleLongProperty(time);
         this.pointName = pointName;
         this.displayTime = displayTime;
         if (heading != null) {
@@ -36,6 +45,37 @@ public class RaceEvent {
 
     }
 
+    public RaceEvent(Competitor boat, long time, CourseFeature endPoint){
+        this.teamName=new SimpleStringProperty(boat.getTeamName());
+        this.time = new SimpleLongProperty(time);
+        this.color=new SimpleStringProperty(boat.getColor().toString());
+        this.endPointName=new SimpleStringProperty(endPoint.getName());
+        this.speed=new SimpleIntegerProperty(boat.getVelocity());
+    }
+
+    /**
+     * get the speed
+     * @return
+     */
+    public int getSpeed(){return this.speed.get();}
+
+    /**
+     * get the color of the boat in the event
+     * @return
+     */
+    public String getColor(){return this.color.get();}
+
+    /**
+     * get the time of the event
+     * @return
+     */
+    public double getTime(){return this.time.get();}
+
+    /**
+     * get the end point of the event
+     * @return
+     */
+    public String getEndPointName(){return this.endPointName.get();}
     /**
      * Getter for the competitor boat
      * @return Boat a competitor
@@ -65,7 +105,7 @@ public class RaceEvent {
      * Getter for the team name
      * @return String the team name
      */
-    public String getTeamName () {return this.teamName;}
+    public String getTeamName () {return this.teamName.get();}
     /**
      * Creates a formatted display time string in mm:ss
      * @return String the time string
@@ -104,4 +144,15 @@ public class RaceEvent {
         return event;
     }
 
+    /**
+     * compares this event with another by comparing the time
+     * @param o
+     * @return
+     */
+    @Override
+    public int compareTo(RaceEvent o) {
+        if (this.getSpeed()==o.getSpeed()) return 0;
+        else if (this.getSpeed()>o.getSpeed())return -1;
+        return 1;
+    }
 }

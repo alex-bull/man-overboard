@@ -2,6 +2,7 @@ package seng302.Model;
 
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
+import seng302.Controllers.TableController;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
 public interface Race {
     void setCompetitors(List<Competitor> competitors);
     List<Competitor> getCompetitors();
-    Timeline generateTimeline();
+    Timeline generateTimeline(TableController tableController);
     List<CourseFeature> getCourseFeatures();
     double getWindDirection();
     void setDelegate(RaceDelegate delegate);

@@ -103,7 +103,7 @@ public class RaceViewController implements RaceDelegate{
     public void begin(double width, double height){
 
         // start the race using the timeline
-        Timeline t = race.generateTimeline();
+        Timeline t = race.generateTimeline(tableController);
         List<Competitor> competitors = race.getCompetitors();
 
 
@@ -116,7 +116,7 @@ public class RaceViewController implements RaceDelegate{
                 long currenttimeNano = System.nanoTime();
                 count++;
                 if (currenttimeNano > starttimeNano + 1000000000){
-                    System.out.println(count);
+//                    System.out.println(count);
                     count=0;
 
                     starttimeNano=System.nanoTime();
