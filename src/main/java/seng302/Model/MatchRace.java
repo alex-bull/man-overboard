@@ -4,6 +4,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.util.Duration;
 
 import java.util.*;
@@ -116,8 +118,16 @@ public class MatchRace implements Race {
                 CourseFeature startPoint = points.get(j);
                 CourseFeature endPoint = points.get(j + 1);
                 time += this.calculateTime(comp.getVelocity(), startPoint.getCentre(), endPoint.getCentre());
+                EventHandler onFinished = new EventHandler<ActionEvent>() {
+                    public void handle(ActionEvent t) {
+                        System.out.println(comp.getTeamName());
+                        System.out.println(comp.getPosition().getXValue());
+                        System.out.println(comp.getPosition().getYValue());
+
+                    }
+                };
                 timeline.getKeyFrames().add(new KeyFrame(
-                        Duration.millis(time),
+                        Duration.millis(time),onFinished,
                         new KeyValue(comp.getPosition().getX(), endPoint.getCentre().getXValue()),
                         new KeyValue(comp.getPosition().getY(), endPoint.getCentre().getYValue())
                 ));

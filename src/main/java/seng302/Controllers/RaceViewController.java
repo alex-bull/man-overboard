@@ -1,6 +1,7 @@
 package seng302.Controllers;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -106,10 +107,22 @@ public class RaceViewController implements RaceDelegate{
         List<Competitor> competitors = race.getCompetitors();
 
 
-        AnimationTimer timer = new AnimationTimer() {
 
+        AnimationTimer timer = new AnimationTimer() {
+            int count=0;
+            long starttimeNano = System.nanoTime();
             @Override
             public void handle(long now) {
+                long currenttimeNano = System.nanoTime();
+                count++;
+                if (currenttimeNano > starttimeNano + 1000000000){
+                    System.out.println(count);
+                    count=0;
+
+                    starttimeNano=System.nanoTime();
+
+                }
+
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
                 gc.clearRect(0,0,width,height);
 
