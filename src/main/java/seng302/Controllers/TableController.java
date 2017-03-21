@@ -43,6 +43,11 @@ public class TableController {
 
     }
 
+    /**
+     * passes race to table controller
+     * and set the columns to display properties of race event
+     * @param race
+     */
     void setRace(Race race){
         this.race=race;
         //System.out.println(race.getWindDirection());
@@ -54,6 +59,12 @@ public class TableController {
 
     }
 
+    /**
+     * adds an event to table
+     * also removes redundant event and sort them based on speed, can change compareTo in race event to
+     * make it compare time instead
+     * @param event
+     */
    public void addToTable(RaceEvent event) {
        for (int i = 0; i < events.size(); i++) {
            if (events.get(i).getTeamName().equals(event.getTeamName())) {
