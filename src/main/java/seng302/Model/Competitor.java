@@ -11,4 +11,5 @@ public interface Competitor {
     Integer getVelocity();
     MutablePoint getPosition();
     Color getColor();
+    String getAbbreName();
 }
