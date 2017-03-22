@@ -126,19 +126,22 @@ public class MatchRace implements Race {
                 CourseFeature startPoint = points.get(j);
                 CourseFeature endPoint = points.get(j + 1);
                 time += this.calculateTime(comp.getVelocity(), startPoint.getCentre(), endPoint.getCentre());
-                System.out.println(time);
+                //System.out.println(time);
 
                 timeline.getKeyFrames().add(new KeyFrame(
                         Duration.millis(time), t -> {
-
-                            RaceEvent e = new RaceEvent(comp,System.currentTimeMillis(), endPoint);
+                            RaceEvent e = new RaceEvent(comp, endPoint);
                             raceEventHandler.handleRaceEvent(e);
+//                            RaceEvent e = new RaceEvent(comp,System.currentTimeMillis(), endPoint);
+
                         },
+
                         new KeyValue(comp.getPosition().getX(), endPoint.getCentre().getXValue()),
                         new KeyValue(comp.getPosition().getY(), endPoint.getCentre().getYValue())
                 ));
 
             }
+
         }
         return timeline;
     }

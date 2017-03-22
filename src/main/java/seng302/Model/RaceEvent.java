@@ -59,6 +59,13 @@ public class RaceEvent implements Comparable<RaceEvent>{
         this.speed=new SimpleIntegerProperty(boat.getVelocity());
     }
 
+    public RaceEvent(Competitor boat, CourseFeature feature) {
+        this.position = new SimpleIntegerProperty(0);
+        this.speed=new SimpleIntegerProperty(boat.getVelocity());
+        this.endPointName=new SimpleStringProperty(feature.getName());
+        this.teamName=new SimpleStringProperty(boat.getTeamName());
+    }
+
     /**
      * Get the speed
      * @return
@@ -69,6 +76,24 @@ public class RaceEvent implements Comparable<RaceEvent>{
      * Get the color of the boat in the event
      * @return
      */
+
+    /**
+     * sets the position of the boat
+     * @param position
+     */
+    public void setPosition(int position) {
+        this.position = new SimpleIntegerProperty(position);
+    }
+
+    /**
+     * Gets the position of the boat
+     * @return int position
+     */
+    public int getPosition() {
+        return this.position.get();
+    }
+
+
     public String getColor(){return this.color.get();}
 
     /**
@@ -157,8 +182,8 @@ public class RaceEvent implements Comparable<RaceEvent>{
      */
     @Override
     public int compareTo(RaceEvent o) {
-        if (this.getSpeed()==o.getSpeed()) return 0;
-        else if (this.getSpeed()>o.getSpeed())return -1;
+        if (this.getPosition() == o.getPosition()) return 1;
+        else if (this.getPosition() < o.getPosition())return -1;
         return 1;
     }
 }
