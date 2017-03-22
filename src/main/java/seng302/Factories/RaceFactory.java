@@ -28,12 +28,12 @@ public class RaceFactory {
 
         //create competitors
         List<Competitor> competitors = new ArrayList<>();
-        competitors.add(new Boat("Emirates Team New Zealand", 25, new MutablePoint(30.0, 0.0), Color.RED));
-        competitors.add(new Boat("Ben Ainslie Racing", 18, new MutablePoint(60.0, 0.0), Color.PURPLE));
-        competitors.add(new Boat("SoftBank Team Japan", 30, new MutablePoint(90.0, 0.0), Color.YELLOW));
-        competitors.add(new Boat("Team France", 19, new MutablePoint(120.0, 0.0), Color.BROWN));
-        competitors.add(new Boat("Oracle Team USA", 20, new MutablePoint(0.0, 0.0), Color.BLACK));
-        competitors.add(new Boat("Artemis Racing", 21, new MutablePoint(150.0, 0.0), Color.GREEN));
+        competitors.add(new Boat("Emirates Team New Zealand", 20, new MutablePoint(30.0, 0.0), Color.RED));
+        competitors.add(new Boat("Ben Ainslie Racing", 19, new MutablePoint(60.0, 0.0), Color.PURPLE));
+        competitors.add(new Boat("SoftBank Team Japan", 16, new MutablePoint(90.0, 0.0), Color.YELLOW));
+        competitors.add(new Boat("Team France", 18, new MutablePoint(120.0, 0.0), Color.BROWN));
+        competitors.add(new Boat("Oracle Team USA", 17, new MutablePoint(0.0, 0.0), Color.BLACK));
+        competitors.add(new Boat("Artemis Racing", 15, new MutablePoint(150.0, 0.0), Color.GREEN));
 
 //        ObservableList<Competitor> competitors_oa = FXCollections.observableArrayList(
 //                new Boat("Oracle Team USA", 20, new MutablePoint(0.0, 0.0), Color.BLACK),

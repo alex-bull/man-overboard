@@ -75,6 +75,7 @@ public class XMLCourseLoader {
      */
     public ArrayList<CourseFeature> parseCourse(double width, double height) throws JDOMException, IOException {
         //buffers are defined as the total buffer size, i.e. total for both sides
+        int index = 0;
         double bufferX=Math.max(40,width*0.2);
         double bufferY=Math.max(40,height*0.2);
         System.out.println("bufferX: "+bufferX);
@@ -126,7 +127,10 @@ public class XMLCourseLoader {
                 MutablePoint p1=new MutablePoint(point1X,point1Y);
                 MutablePoint p2=new MutablePoint(point2X,point2Y);
                 Gate gate=new Gate(name, p1, p2, isFinish, isLine);
+                gate.setIndex(index);
+                index++;
                 points.add(gate);
+
 
                 if (feature.getAttributeValue("type")!=null) {
 
@@ -147,7 +151,10 @@ public class XMLCourseLoader {
                 yCoords.add(point1Y);
 
                 MutablePoint p1 = new MutablePoint(point1X,point1Y);
-                points.add(new Mark(name, p1, false));
+                Mark mark1 = new Mark(name, p1, false);
+                mark1.setIndex(index);
+                index++;
+                points.add(mark1);
             }
 
         }

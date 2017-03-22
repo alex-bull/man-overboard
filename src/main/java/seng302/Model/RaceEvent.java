@@ -64,6 +64,7 @@ public class RaceEvent implements Comparable<RaceEvent>{
         this.speed=new SimpleIntegerProperty(boat.getVelocity());
         this.endPointName=new SimpleStringProperty(feature.getName());
         this.teamName=new SimpleStringProperty(boat.getTeamName());
+        this.endPoint=feature;
     }
 
     /**
@@ -182,8 +183,12 @@ public class RaceEvent implements Comparable<RaceEvent>{
      */
     @Override
     public int compareTo(RaceEvent o) {
-        if (this.getPosition() == o.getPosition()) return 1;
-        else if (this.getPosition() < o.getPosition())return -1;
+        if (this.getEndPoint().getIndex() == o.getEndPoint().getIndex()) {
+            return 0;
+        }
+        else if (this.getEndPoint().getIndex() > o.getEndPoint().getIndex()) {
+            return -1;
+        }
         return 1;
     }
 }

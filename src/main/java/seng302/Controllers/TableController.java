@@ -35,6 +35,8 @@ public class TableController implements RaceEventHandler {
     private TableColumn speedCol;
 
     private int order = 1;
+    private int finalorder = 1;
+
 
     /**
      * Initialiser for the raceViewController
@@ -62,14 +64,21 @@ public class TableController implements RaceEventHandler {
                events.remove(i);
            }
        }
-       if (order == 7) {
-           order = 1;
-       }
-       event.setPosition(order);
 
        events.add(event);
        Collections.sort(events);
-       order++;
+       if (order == 7) {
+           order = 1;
+       }
+       if (event.getEndPointName().equals("Finishline")) {
+           event.setPosition(finalorder);
+           finalorder++;
+       }
+       else {
+           event.setPosition(order);
+           order++;
+       }
+
    }
 
 }

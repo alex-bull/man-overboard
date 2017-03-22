@@ -17,6 +17,7 @@ public class Gate implements CourseFeature {
     private Double exitHeading;
     private boolean isFinish;
     private boolean isLine;
+    private int index;
 
 
 
@@ -58,6 +59,24 @@ public class Gate implements CourseFeature {
      */
     public String getName () {
         return this.name;
+    }
+
+    /**
+     *
+     * @return
+     */
+
+    public int getIndex () {
+        return this.index;
+    }
+
+    /**
+     *
+     * @param index
+     */
+
+    public void setIndex (int index) {
+        this.index = index;
     }
 
     /**

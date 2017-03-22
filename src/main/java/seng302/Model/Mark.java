@@ -15,7 +15,7 @@ public class Mark implements CourseFeature {
     private Double exitHeading;
     private boolean isFinish;
     private boolean isLine = false;
-
+    private int index;
 
 
     /**
@@ -85,6 +85,23 @@ public class Mark implements CourseFeature {
         return this.location;
     }
 
+    /**
+     *
+     * @return
+     */
+
+    public int getIndex () {
+        return this.index;
+    }
+
+    /**
+     *
+     * @param index
+     */
+
+    public void setIndex (int index) {
+        this.index = index;
+    }
     /**
      * Factors point to fit the screen
      * @param xFactor double the factor to scale by in the x axis

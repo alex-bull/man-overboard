@@ -13,6 +13,8 @@ public interface CourseFeature {
     Double getExitHeading ();
     boolean isFinish();
     MutablePoint getCentre ();
+    int getIndex();
+    void setIndex(int index);
     void factor(double xFactor,double yFactor,double minX,double minY,double xBuffer,double yBuffer,double width,double height);
     boolean isLine();
 }
