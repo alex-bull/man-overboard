@@ -6,9 +6,12 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import seng302.Model.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -108,6 +111,11 @@ public class RaceViewController implements RaceDelegate{
      */
     public void animate(double width, double height){
 
+        //the offset for each overlapping label
+        int offsetY=20;
+        //arraylists to store coordinates
+        ArrayList<Double> xCoords=new ArrayList<>();
+        ArrayList<Double> yCoords=new ArrayList<>();
         // start the race using the timeline
         Timeline t = race.generateTimeline(tableController);
         List<Competitor> competitors = race.getCompetitors();
@@ -128,21 +136,43 @@ public class RaceViewController implements RaceDelegate{
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
                 gc.clearRect(0,0,width,height);
 
+
+
                 // draw course
                 gc.setFill(Color.LIGHTBLUE);
                 gc.fillRect(0,0,width,height);
                 drawCourse(gc);
-
                 // draw competitors
                 for(int i =0; i< competitors.size(); i++)  {
+                    double xValue=competitors.get(i).getPosition().getXValue();
+                    double yValue=competitors.get(i).getPosition().getYValue();
                     gc.setFill(competitors.get(i).getColor());
                     gc.fillOval(
-                            competitors.get(i).getPosition().getXValue(),
-                            competitors.get(i).getPosition().getYValue(),
+                            xValue,
+                            yValue,
                             10,
                             10
                     );
+
+                    //set font to monospaced for easier layout formatting
+                    gc.setFont(Font.font("Monospaced"));
+
+                    //check if labels are overlapping, if so offset the y value
+                    for (int j=0;j<xCoords.size();j++){
+                        double x=xCoords.get(j);
+                        double y=yCoords.get(j);
+                        if (xValue>(x-25) && xValue<(x+25) && yValue<(y+10) && yValue>(y-10)){
+                            yValue+=offsetY;
+                        }
+                    }
+                    //draw label
+                    gc.fillText(competitors.get(i).getAbbreName(),xValue-10,yValue+20);
+                    yCoords.add(yValue);
+                    xCoords.add(xValue);
+//                    System.out.println(xCoords);
                 }
+                xCoords.removeAll(xCoords);
+                yCoords.removeAll(yCoords);
             }
         };
 
