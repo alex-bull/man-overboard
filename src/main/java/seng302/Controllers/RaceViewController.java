@@ -1,20 +1,14 @@
 package seng302.Controllers;
 
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
 import seng302.Model.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +35,16 @@ public class RaceViewController implements RaceDelegate{
     }
 
     /**
+     * Sets the race
+     * @param race Race a group of competitors across multiple races on a course
+     */
+    public void begin(Race race, double width, double height) {
+        this.race=race;
+        animate(width, height);
+
+    }
+
+    /**
      * Draws an arrow on the screen at top left corner
      * @param gc graphics context
      * @param angle the angle of rotation
@@ -48,11 +52,9 @@ public class RaceViewController implements RaceDelegate{
     void drawArrow(GraphicsContext gc, double angle) {
         gc.save();
         gc.setFill(Color.BLACK);
-//        System.out.println(angle);
         Rotate r = new Rotate(angle, 35, 40);
 
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-
 
         gc.fillPolygon(new double[]{20,30,30,40,40,50,35}, new double[]{30,30,70,70,30,30,10},
                 7);
@@ -91,7 +93,7 @@ public class RaceViewController implements RaceDelegate{
 
         }
 
-                drawArrow(gc, race.getWindDirection());
+        drawArrow(gc, race.getWindDirection());
     }
 
 
@@ -100,36 +102,34 @@ public class RaceViewController implements RaceDelegate{
      * @param width the width of the canvas
      * @param height the height of the canvas
      */
-    public void begin(double width, double height){
+    public void animate(double width, double height){
 
         // start the race using the timeline
         Timeline t = race.generateTimeline(tableController);
         List<Competitor> competitors = race.getCompetitors();
 
-
-
         AnimationTimer timer = new AnimationTimer() {
-            int count=0;
-            long starttimeNano = System.nanoTime();
+
+//            long startTimeNano = System.nanoTime();
+
             @Override
             public void handle(long now) {
-                long currenttimeNano = System.nanoTime();
-                count++;
-                if (currenttimeNano > starttimeNano + 1000000000){
-//                    System.out.println(count);
-                    count=0;
+//                long currentTimeNano = System.nanoTime();
+//
+//                if (currentTimeNano > startTimeNano + 1000000000){
+//                    startTimeNano = System.nanoTime();
+//                }
 
-                    starttimeNano=System.nanoTime();
-
-                }
-
+                // clear the canvas
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
                 gc.clearRect(0,0,width,height);
 
+                // draw course
                 gc.setFill(Color.LIGHTBLUE);
                 gc.fillRect(0,0,width,height);
                 drawCourse(gc);
 
+                // draw competitors
                 for(int i =0; i< competitors.size(); i++)  {
                     gc.setFill(competitors.get(i).getColor());
                     gc.fillOval(
@@ -150,12 +150,4 @@ public class RaceViewController implements RaceDelegate{
 
 
 
-    /**
-     * Sets the race
-     * @param race Race a group of competitors across multiple races on a course
-     */
-    public void setRace(Race race) {
-        this.race=race;
-        tableController.setRace(race);
-    }
 }

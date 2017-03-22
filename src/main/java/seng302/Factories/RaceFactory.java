@@ -1,9 +1,10 @@
-package seng302.Model;
+package seng302.Factories;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
+import seng302.Model.*;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -20,10 +20,10 @@ public class MatchRace implements Race {
 
     private List<Competitor> competitors = new ArrayList<>();
     private double velocityScaleFactor;
-    private RaceDelegate delegate;
     private Map<Integer, List<RaceEvent>> raceTimeline = new HashMap<>();
     private List<String> finishingOrder = new ArrayList<>();
     private Course raceCourse;
+    private RaceEventHandler raceEventHandler;
 
 
     /**
@@ -46,23 +46,16 @@ public class MatchRace implements Race {
         this.competitors = competitors;
     }
 
+
     /**
-     * returns the angle of wind direction
-     *
-     * @return angle of wind direction
+     * Returns the angle of wind direction
+     * @return double wind direction angle
      */
     public double getWindDirection() {
         return raceCourse.getWindDirection();
     }
 
-    /**
-     * Sets the delegate for the race
-     *
-     * @param delegate RaceDelegate an object to delegate for the race
-     */
-    public void setDelegate(RaceDelegate delegate) {
-        this.delegate = delegate;
-    }
+
 
     /***
      * Getter for the course features in the race course
@@ -72,6 +65,13 @@ public class MatchRace implements Race {
         return this.raceCourse.getPoints();
     }
 
+    /**
+     * Sets the race event handler
+     * @param raceEventHandler RaceEventHandler
+     */
+    public void setRaceEventHandler(RaceEventHandler raceEventHandler) {
+        this.raceEventHandler = raceEventHandler;
+    }
 
     /**
      * Sets the competitors who are entered in the race
@@ -127,14 +127,13 @@ public class MatchRace implements Race {
                 CourseFeature endPoint = points.get(j + 1);
                 time += this.calculateTime(comp.getVelocity(), startPoint.getCentre(), endPoint.getCentre());
                 System.out.println(time);
-                timeline.getKeyFrames().add(new KeyFrame(
-                        Duration.millis(time), new EventHandler<ActionEvent>() {
-                    public void handle(ActionEvent t) {
 
-                        RaceEvent e = new RaceEvent(comp,System.currentTimeMillis(), endPoint);
-                        tableController.addToTable(e);
-                    }
-                },
+                timeline.getKeyFrames().add(new KeyFrame(
+                        Duration.millis(time), t -> {
+
+                            RaceEvent e = new RaceEvent(comp,System.currentTimeMillis(), endPoint);
+                            raceEventHandler.handleRaceEvent(e);
+                        },
                         new KeyValue(comp.getPosition().getX(), endPoint.getCentre().getXValue()),
                         new KeyValue(comp.getPosition().getY(), endPoint.getCentre().getYValue())
                 ));

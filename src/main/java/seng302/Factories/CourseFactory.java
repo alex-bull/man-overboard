@@ -1,6 +1,10 @@
-package seng302.Model;
+package seng302.Factories;
 
 import org.jdom2.JDOMException;
+import seng302.Model.Course;
+import seng302.Model.CourseFeature;
+import seng302.Model.RaceCourse;
+import seng302.Model.XMLCourseLoader;
 
 import java.io.File;
 import java.io.IOException;

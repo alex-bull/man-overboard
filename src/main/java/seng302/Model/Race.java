@@ -17,5 +17,5 @@ public interface Race {
     Timeline generateTimeline(TableController tableController);
     List<CourseFeature> getCourseFeatures();
     double getWindDirection();
-    void setDelegate(RaceDelegate delegate);
+    void setRaceEventHandler(RaceEventHandler raceEventHandler);
 }

@@ -7,6 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import seng302.Factories.CourseFactory;
+import seng302.Factories.RaceFactory;
 import seng302.Model.*;
 
 public class App extends Application
@@ -16,7 +18,7 @@ public class App extends Application
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
         Parent root = loader.load();
 
-        RaceViewController raceViewController = loader.getController();
+        MainController mainController = loader.getController();
 
 
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -31,10 +33,7 @@ public class App extends Application
         primaryStage.setHeight(primaryScreenBounds.getHeight());
 
         Race r = generateRace(primaryScreenBounds.getWidth() * 0.8, height);
-        r.setDelegate(raceViewController);
-        raceViewController.setRace(r);
-        raceViewController.begin(primaryScreenBounds.getWidth(),height);
-
+        mainController.setRace(r,primaryScreenBounds.getWidth(),height);
         primaryStage.show();
 
     }
@@ -48,9 +47,9 @@ public class App extends Application
 
     /**
      * Creates a Race object
-     * @param screenX
-     * @param screenY
-     * @return
+     * @param screenX then width of the window screen
+     * @param screenY the height of the window screen
+     * @return Race a race created by the race factory
      */
     public Race generateRace(Double screenX, Double screenY){
 //        Scanner scanner = new Scanner(System.in);
@@ -85,6 +84,7 @@ public class App extends Application
 //        }
 
         //create the match races, only one is used for now
+
         Course raceCourse = new CourseFactory().createCourse(screenX, screenY);
         return new RaceFactory().createRace(6,1, raceCourse);
 

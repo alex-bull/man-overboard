@@ -24,7 +24,7 @@ public class RaceEvent implements Comparable<RaceEvent>{
     private CourseFeature endPoint;
     private SimpleIntegerProperty speed;
 
-    /**
+    /**EDIT LATER
      * Creates a single race event
      * @param boat Competitor the competing boat
      * @param time Integer the time of the event
@@ -32,7 +32,7 @@ public class RaceEvent implements Comparable<RaceEvent>{
      * @param pointName String the course point name
      * @param heading Double the exit heading of the competitor
      */
-    public RaceEvent(Competitor boat, long time, Integer displayTime, String pointName, Double heading, boolean isFinish, CourseFeature endPoint) {
+    public RaceEvent(Competitor boat, long time, Integer displayTime, String pointName, Double heading, boolean isFinish, CourseFeature feature) {
         this.teamName = new SimpleStringProperty(boat.getTeamName());
         this.time = new SimpleLongProperty(time);
         this.pointName = pointName;
@@ -41,32 +41,38 @@ public class RaceEvent implements Comparable<RaceEvent>{
             this.heading = heading;
         }
         this.isFinish = isFinish;
-        this.endPoint = endPoint;
+        this.endPoint = feature;
 
     }
 
-    public RaceEvent(Competitor boat, long time, CourseFeature endPoint){
+    /**
+     * Creates a race event
+     * @param boat Competitor a competing boat
+     * @param time long the time in milliseconds
+     * @param feature CourseFeature the feature the competitor passed
+     */
+    public RaceEvent(Competitor boat, long time, CourseFeature feature){
         this.teamName=new SimpleStringProperty(boat.getTeamName());
         this.time = new SimpleLongProperty(time);
         this.color=new SimpleStringProperty(boat.getColor().toString());
-        this.endPointName=new SimpleStringProperty(endPoint.getName());
+        this.endPointName=new SimpleStringProperty(feature.getName());
         this.speed=new SimpleIntegerProperty(boat.getVelocity());
     }
 
     /**
-     * get the speed
+     * Get the speed
      * @return
      */
     public int getSpeed(){return this.speed.get();}
 
     /**
-     * get the color of the boat in the event
+     * Get the color of the boat in the event
      * @return
      */
     public String getColor(){return this.color.get();}
 
     /**
-     * get the time of the event
+     * Get the time of the event
      * @return
      */
     public double getTime(){return this.time.get();}
