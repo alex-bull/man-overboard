@@ -99,7 +99,9 @@ public class XMLCourseLoader {
                 List<Element> marks = feature.getChildren();
                 Element markOne = marks.get(1);
                 Element markTwo = marks.get(2);
-                boolean isfinish = Boolean.valueOf(feature.getAttributeValue("isfinish"));
+
+                boolean isLine = Boolean.valueOf(feature.getAttributeValue("isLine"));
+                boolean isFinish = Boolean.valueOf(feature.getAttributeValue("isFinish"));
                 String name = feature.getChildText("name");
 
                 double lat1 = Double.parseDouble(markOne.getChildText("latitude"));
@@ -123,7 +125,7 @@ public class XMLCourseLoader {
 
                 MutablePoint p1=new MutablePoint(point1X,point1Y);
                 MutablePoint p2=new MutablePoint(point2X,point2Y);
-                Gate gate=new Gate(name, p1, p2, isfinish);
+                Gate gate=new Gate(name, p1, p2, isFinish, isLine);
                 points.add(gate);
 
                 if (feature.getAttributeValue("type")!=null) {

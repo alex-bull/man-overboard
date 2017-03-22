@@ -11,7 +11,8 @@ public interface CourseFeature {
     List<MutablePoint> getLocations();
     void setExitHeading(Double exitHeading);
     Double getExitHeading ();
-    boolean getIsFinish();
+    boolean isFinish();
     MutablePoint getCentre ();
     void factor(double xFactor,double yFactor,double minX,double minY,double xBuffer,double yBuffer,double width,double height);
+    boolean isLine();
 }

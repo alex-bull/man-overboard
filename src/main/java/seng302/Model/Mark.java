@@ -14,6 +14,7 @@ public class Mark implements CourseFeature {
     private MutablePoint location;
     private Double exitHeading;
     private boolean isFinish;
+    private boolean isLine = false;
 
 
 
@@ -27,6 +28,14 @@ public class Mark implements CourseFeature {
         this.name = name;
         this.location = location;
         this.isFinish = isFinish;
+    }
+
+    /**
+     * Always returns false for a mark
+     * @return boolean false there is no line for a mark
+     */
+    public boolean isLine() {
+        return false;
     }
 
     /**
@@ -44,7 +53,7 @@ public class Mark implements CourseFeature {
      * Getter for isFinish flag
      * @return boolean isFinish
      */
-    public boolean getIsFinish () {
+    public boolean isFinish() {
         return this.isFinish;
     }
 
