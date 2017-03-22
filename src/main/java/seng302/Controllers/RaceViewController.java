@@ -112,7 +112,7 @@ public class RaceViewController implements RaceDelegate{
     public void animate(double width, double height){
 
         //the offset for each overlapping label
-        int offsetY=20;
+        int offsetY=40;
         //arraylists to store coordinates
         ArrayList<Double> xCoords=new ArrayList<>();
         ArrayList<Double> yCoords=new ArrayList<>();
@@ -144,9 +144,10 @@ public class RaceViewController implements RaceDelegate{
                 drawCourse(gc);
                 // draw competitors
                 for(int i =0; i< competitors.size(); i++)  {
-                    double xValue=competitors.get(i).getPosition().getXValue();
-                    double yValue=competitors.get(i).getPosition().getYValue();
-                    gc.setFill(competitors.get(i).getColor());
+                    Competitor boat=competitors.get(i);
+                    double xValue=boat.getPosition().getXValue();
+                    double yValue=boat.getPosition().getYValue();
+                    gc.setFill(boat.getColor());
                     gc.fillOval(
                             xValue,
                             yValue,
@@ -157,16 +158,18 @@ public class RaceViewController implements RaceDelegate{
                     //set font to monospaced for easier layout formatting
                     gc.setFont(Font.font("Monospaced"));
 
-                    //check if labels are overlapping, if so offset the y value
-                    for (int j=0;j<xCoords.size();j++){
-                        double x=xCoords.get(j);
-                        double y=yCoords.get(j);
-                        if (xValue>(x-25) && xValue<(x+25) && yValue<(y+10) && yValue>(y-10)){
-                            yValue+=offsetY;
-                        }
-                    }
+//                    //check if labels are overlapping, if so offset the y value
+//                    for (int j=0;j<xCoords.size();j++){
+//                        double x=xCoords.get(j);
+//                        double y=yCoords.get(j);
+//                        if (xValue>(x-25) && xValue<(x+25) && yValue<(y+10) && yValue>(y-10)){
+//                            yValue+=offsetY;
+//                        }
+//                    }
                     //draw label
-                    gc.fillText(competitors.get(i).getAbbreName(),xValue-10,yValue+20);
+
+                    gc.fillText(boat.getAbbreName(),xValue-10,yValue);
+                    gc.fillText(boat.getVelocity().toString()+" m/s",xValue-20,yValue+20);
                     yCoords.add(yValue);
                     xCoords.add(xValue);
 //                    System.out.println(xCoords);
