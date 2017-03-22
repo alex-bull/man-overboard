@@ -51,7 +51,7 @@ public class XMLCourseLoader {
      * @param lon longitude
      * @param width width of the screen
      * @param height height of the screen
-     * @return
+     * @return ArrayList the coordinates in metres
      */
     public ArrayList<Double> mercatorProjection(double lat,double lon,double width, double height){
         ArrayList<Double> ret=new ArrayList<>();

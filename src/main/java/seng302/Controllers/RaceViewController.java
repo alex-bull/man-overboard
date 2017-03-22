@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import seng302.Model.*;
 
@@ -19,7 +20,14 @@ public class RaceViewController implements RaceDelegate{
 
     @FXML
     private Canvas mycanvas;
+    @FXML
+    private Text timerText;
+
+    private long startTime;
+
+
     private Race race;
+
 
     @FXML
     private TableController tableController;
@@ -40,7 +48,10 @@ public class RaceViewController implements RaceDelegate{
      */
     public void begin(Race race, double width, double height) {
         this.race=race;
+        startTime = System.currentTimeMillis();
         animate(width, height);
+
+
 
     }
 
@@ -112,6 +123,7 @@ public class RaceViewController implements RaceDelegate{
         Timeline t = race.generateTimeline(tableController);
         List<Competitor> competitors = race.getCompetitors();
 
+
         AnimationTimer timer = new AnimationTimer() {
 
 //            long startTimeNano = System.nanoTime();
@@ -143,11 +155,43 @@ public class RaceViewController implements RaceDelegate{
                             10
                     );
                 }
+
+
+                timerText.setText(formatDisplayTime(System.currentTimeMillis() - startTime));
+
+                //test++;
+
+
             }
         };
 
         timer.start();
         t.play();
+
+    }
+
+
+        /**
+     * Creates a formatted display time string in mm:ss
+     * @return String the time string
+     */
+    private String formatDisplayTime (long display) {
+        int displayTime = (int)display/1000;
+        int minutes = displayTime / 60;
+        int seconds = displayTime - (60 * minutes);
+
+        String formattedTime = "";
+        if (minutes > 9) {
+            formattedTime += minutes + ":";
+        } else {
+            formattedTime += "0" + minutes + ":";
+        }
+        if (seconds > 9) {
+            formattedTime += seconds;
+        } else {
+            formattedTime += "0" + seconds;
+        }
+        return formattedTime;
 
     }
 
