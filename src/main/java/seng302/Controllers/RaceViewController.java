@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import seng302.Model.*;
 
@@ -114,24 +115,37 @@ public class RaceViewController implements RaceDelegate{
 
         AnimationTimer timer = new AnimationTimer() {
 
-//            long startTimeNano = System.nanoTime();
+            long startTimeNano = System.nanoTime();
+            long currentTimeNano = System.nanoTime();
+            int counter=0;
+            int fps;
 
             @Override
             public void handle(long now) {
-//                long currentTimeNano = System.nanoTime();
-//
-//                if (currentTimeNano > startTimeNano + 1000000000){
-//                    startTimeNano = System.nanoTime();
-//                }
+                counter++;
 
                 // clear the canvas
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
                 gc.clearRect(0,0,width,height);
 
+                //calculate
+                currentTimeNano=System.nanoTime();
+                if (currentTimeNano > startTimeNano + 1000000000){
+                    startTimeNano = System.nanoTime();
+
+                    fps=counter;
+                    counter=0;
+                }
+
                 // draw course
                 gc.setFill(Color.LIGHTBLUE);
                 gc.fillRect(0,0,width,height);
                 drawCourse(gc);
+
+                //draw fps counter
+                gc.setFill(Color.BLACK);
+                gc.setFont(Font.font("Monospaced",20));
+                gc.fillText(String.format("FPS: %d",fps),0,height-10);
 
                 // draw competitors
                 for(int i =0; i< competitors.size(); i++)  {
