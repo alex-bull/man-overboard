@@ -41,17 +41,6 @@ public class Mark implements CourseFeature {
     }
 
     /**
-     * Creates a course mark
-     * @param name String the name of the mark
-     * @param pixelLocation MutablePoint the coordinates of the mark
-     */
-    public Mark (String name, MutablePoint pixelLocation) {
-        this.name = name;
-        this.pixelLocation = pixelLocation;
-        this.isFinish = false;
-    }
-
-    /**
      * Getter for isFinish flag
      * @return boolean isFinish
      */

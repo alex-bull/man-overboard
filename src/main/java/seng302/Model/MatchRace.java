@@ -117,12 +117,16 @@ public class MatchRace implements Race {
 
         for (Competitor comp : competitors) {
             int time = 0;
+
+            // sets the position of boats at time 0
             timeline.getKeyFrames().add(new KeyFrame(
                     Duration.millis(0),
-                    new KeyValue(comp.getPosition().getX(), comp.getPosition().getXValue()),
-                    new KeyValue(comp.getPosition().getY(), comp.getPosition().getYValue())
+                    new KeyValue(comp.getPosition().getX(), points.get(0).getPixelLocations().get(0).getXValue()),
+                    new KeyValue(comp.getPosition().getY(), points.get(0).getPixelLocations().get(0).getYValue())
             ));
 
+
+            // loops through pairs of course features
             for (int j = 0; j < points.size() - 1; j++) {
 
                 //calculate total time for competitor to reach the point

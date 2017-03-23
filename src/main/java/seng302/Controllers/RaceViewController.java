@@ -14,6 +14,8 @@ import seng302.Model.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 /**
  * Controller for the race view.
  */
@@ -81,7 +83,9 @@ public class RaceViewController implements RaceDelegate{
      */
     private void drawCourse(GraphicsContext gc) {
 
-        for (CourseFeature courseFeature : this.race.getCourseFeatures()) {
+        // loops through all course features
+        for (CourseFeature courseFeature : this.race.getCourseFeatures().subList(1, race.getCourseFeatures().size())) {
+            System.out.println("course feature "  + courseFeature.getName());
             gc.setFill(Color.ORANGERED);
             gc.setStroke(Color.BLUE);
 
@@ -219,13 +223,23 @@ public class RaceViewController implements RaceDelegate{
      * @return String the time string
      */
     private String formatDisplayTime (long display) {
-        // multiply by the scale factor of the race
-        display = display * race.getVelocityScaleFactor();
-        int displayTime = (int)display/1000;
+
+        int scaleFactor = race.getVelocityScaleFactor();
+        display = (display - (27000 / scaleFactor)) * scaleFactor;
+
+
+
+        int displayTime = abs((int)display/1000);
         int minutes = displayTime / 60;
         int seconds = displayTime - (60 * minutes);
-
         String formattedTime = "";
+
+        System.out.println("display " + display + "aaaa" + displayTime);
+        if (display < 0) {
+            formattedTime += "-";
+        }
+
+
         if (minutes > 9) {
             formattedTime += minutes + ":";
         } else {
