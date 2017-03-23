@@ -12,16 +12,15 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Circle?>
 
-<AnchorPane fx:id="table" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controllers.TableController">
+<AnchorPane fx:id="table" maxWidth="440.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controllers.TableController">
    <children>
    
-                           <TableView fx:id="raceTable" layoutX="-0.0" layoutY="-0.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-0.0">
+                           <TableView fx:id="raceTable" layoutX="-0.0" layoutY="-0.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="440.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-0.0">
                                <columns>
                                    <TableColumn fx:id="positionCol" prefWidth="70.0" text="Position" />
-                                   <TableColumn fx:id="colorCol" prefWidth="60.0" text="Color" />
-                                   <TableColumn fx:id="nameCol" prefWidth="60.0" text="Name" />
-                                   <TableColumn fx:id="timeCol" prefWidth="60.0" text="Time" />
-                                   <TableColumn fx:id="speedCol" prefWidth="60.0" text="Speed" />
+                                   <TableColumn fx:id="featureCol" prefWidth="110.0" text="Last passed" />
+                                   <TableColumn fx:id="nameCol" prefWidth="200.0" text="Name" />
+                                   <TableColumn fx:id="speedCol" prefWidth="60.0" text="m/s" />
                                </columns>
                            </TableView>
    </children>

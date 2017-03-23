@@ -1,6 +1,7 @@
 package seng302;
 
 import javafx.scene.paint.Color;
+import org.junit.Before;
 import org.junit.Test;
 import seng302.Model.Boat;
 import seng302.Model.MutablePoint;
@@ -13,16 +14,24 @@ import static org.junit.Assert.assertTrue;
  */
 public class BoatTest {
 
+    Boat boat;
+    @Before
+    public void setUp(){
+        boat= new Boat("A", 10, new MutablePoint(10.0, 29.0), Color.BLACK,"ABC");
+    }
 
     @Test
     public void testGetTeamName () {
-        Boat boat = new Boat("A", 10, new MutablePoint(10.0, 29.0), Color.BLACK);
         assertTrue(boat.getTeamName().equals("A"));
     }
 
     @Test
     public void testGetVelocity () {
-        Boat boat = new Boat("A", 10, new MutablePoint(12.0, 21.0), Color.BLACK);
         assertTrue(boat.getVelocity() == 10);
+    }
+
+    @Test
+    public void testGetAbbrev(){
+        assertTrue(boat.getAbbreName()=="ABC");
     }
 }

@@ -29,6 +29,7 @@ public class CourseFactory {
         XMLCourseLoader parser = new XMLCourseLoader(inputFile, screenX, screenY);
 
         List<CourseFeature> points = null;
+
         try {
             points = parser.parseCourse(screenX, screenY);
         } catch (JDOMException e) {

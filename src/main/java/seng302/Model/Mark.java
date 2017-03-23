@@ -16,7 +16,7 @@ public class Mark implements CourseFeature {
     private Double exitHeading;
     private boolean isFinish;
     private boolean isLine = false;
-
+    private int index;
 
 
     /**
@@ -87,6 +87,23 @@ public class Mark implements CourseFeature {
         return this.GPSLocation;
     }
 
+    /**
+     * Setter for the index of the mark
+     * @return int index of the mark
+     */
+
+    public int getIndex () {
+        return this.index;
+    }
+
+    /**
+     * Setter for the index of the mark
+     * @param index int the index of the mark
+     */
+
+    public void setIndex (int index) {
+        this.index = index;
+    }
     /**
      * Factors point to fit the screen
      * @param xFactor double the factor to scale by in the x axis

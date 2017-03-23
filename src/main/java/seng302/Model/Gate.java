@@ -20,6 +20,7 @@ public class Gate implements CourseFeature {
     private Double exitHeading;
     private boolean isFinish;
     private boolean isLine;
+    private int index;
 
 
 
@@ -67,8 +68,22 @@ public class Gate implements CourseFeature {
         return this.name;
     }
 
+    /**
+     * Getter for index of the gate
+     * @return int the index
+     */
 
+    public int getIndex () {
+        return this.index;
+    }
 
+    /**
+     * Setter for the index of the gate
+     * @param index int the index of the gate
+     */
+    public void setIndex (int index) {
+        this.index = index;
+    }
 
     /**
      * Gets a list scale pixel points representing the screen location of the gate

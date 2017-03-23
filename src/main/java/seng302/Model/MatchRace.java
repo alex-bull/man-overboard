@@ -127,15 +127,17 @@ public class MatchRace implements Race {
 
                 timeline.getKeyFrames().add(new KeyFrame(
                         Duration.millis(time), t -> {
-
-                            RaceEvent e = new RaceEvent(comp,System.currentTimeMillis(), endPoint);
+                            RaceEvent e = new RaceEvent(comp, endPoint);
                             raceEventHandler.handleRaceEvent(e);
+//                            RaceEvent e = new RaceEvent(comp,System.currentTimeMillis(), endPoint);
+
                         },
                         new KeyValue(comp.getPosition().getX(), endPoint.getPixelLocations().get(0).getXValue()),
                         new KeyValue(comp.getPosition().getY(), endPoint.getPixelLocations().get(0).getYValue())
                 ));
 
             }
+
         }
         return timeline;
     }

@@ -7,9 +7,11 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import seng302.Model.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -120,6 +122,11 @@ public class RaceViewController implements RaceDelegate{
      */
     public void animate(double width, double height){
 
+        //the offset for each overlapping label
+        int offsetY=40;
+        //arraylists to store coordinates
+        ArrayList<Double> xCoords=new ArrayList<>();
+        ArrayList<Double> yCoords=new ArrayList<>();
         // start the race using the timeline
         Timeline t = race.generateTimeline(tableController);
         List<Competitor> competitors = race.getCompetitors();
@@ -127,34 +134,69 @@ public class RaceViewController implements RaceDelegate{
 
         AnimationTimer timer = new AnimationTimer() {
 
-//            long startTimeNano = System.nanoTime();
+            long startTimeNano = System.nanoTime();
+            long currentTimeNano = System.nanoTime();
+            int counter=0;
+            int fps;
 
             @Override
             public void handle(long now) {
-//                long currentTimeNano = System.nanoTime();
-//
-//                if (currentTimeNano > startTimeNano + 1000000000){
-//                    startTimeNano = System.nanoTime();
-//                }
+                counter++;
 
                 // clear the canvas
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
                 gc.clearRect(0,0,width,height);
+
+                //calculate
+                currentTimeNano=System.nanoTime();
+                if (currentTimeNano > startTimeNano + 1000000000){
+                    startTimeNano = System.nanoTime();
+
+                    fps=counter;
+                    counter=0;
+                }
 
                 // draw course
                 gc.setFill(Color.LIGHTBLUE);
                 gc.fillRect(0,0,width,height);
                 drawCourse(gc);
 
+                //draw fps counter
+                gc.setFill(Color.BLACK);
+                gc.setFont(Font.font("Monospaced",20));
+                gc.fillText(String.format("FPS: %d",fps),0,height-10);
+
                 // draw competitors
                 for(int i =0; i< competitors.size(); i++)  {
-                    gc.setFill(competitors.get(i).getColor());
+                    Competitor boat=competitors.get(i);
+                    double xValue=boat.getPosition().getXValue();
+                    double yValue=boat.getPosition().getYValue();
+                    gc.setFill(boat.getColor());
                     gc.fillOval(
-                            competitors.get(i).getPosition().getXValue(),
-                            competitors.get(i).getPosition().getYValue(),
+                            xValue,
+                            yValue,
                             10,
                             10
                     );
+
+                    //set font to monospaced for easier layout formatting
+                    gc.setFont(Font.font("Monospaced"));
+
+//                    //check if labels are overlapping, if so offset the y value
+//                    for (int j=0;j<xCoords.size();j++){
+//                        double x=xCoords.get(j);
+//                        double y=yCoords.get(j);
+//                        if (xValue>(x-25) && xValue<(x+25) && yValue<(y+10) && yValue>(y-10)){
+//                            yValue+=offsetY;
+//                        }
+//                    }
+                    //draw label
+
+                    gc.fillText(boat.getAbbreName(),xValue-10,yValue);
+                    gc.fillText(boat.getVelocity().toString()+" m/s",xValue-20,yValue+20);
+                    yCoords.add(yValue);
+                    xCoords.add(xValue);
+//                    System.out.println(xCoords);
                 }
 
 

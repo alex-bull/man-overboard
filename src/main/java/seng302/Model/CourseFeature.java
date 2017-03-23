@@ -12,6 +12,9 @@ public interface CourseFeature {
     void setExitHeading(Double exitHeading);
     Double getExitHeading ();
     boolean isFinish();
+    MutablePoint getCentre ();
+    int getIndex();
+    void setIndex(int index);
     MutablePoint getGPSCentre();
     void factor(double xFactor,double yFactor,double minX,double minY,double xBuffer,double yBuffer,double width,double height);
     boolean isLine();

@@ -14,6 +14,7 @@ import java.util.Collections;
  * Created by msl47 on 21/03/17.
  * The controller for the table
  */
+
 public class TableController implements RaceEventHandler {
 
     ObservableList<RaceEvent> events= FXCollections.observableArrayList();
@@ -25,26 +26,26 @@ public class TableController implements RaceEventHandler {
     private TableColumn positionCol;
 
     @FXML
-    private TableColumn colorCol;
+    private TableColumn featureCol;
 
     @FXML
     private TableColumn nameCol;
 
     @FXML
-    private TableColumn timeCol;
-
-    @FXML
     private TableColumn speedCol;
+
+    private int order = 1;
+    private int finalOrder = 1;
+
 
     /**
      * Initialiser for the raceViewController
      */
     @FXML
     void initialize() {
+        positionCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, Integer>("position"));
         nameCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("teamName"));
-        colorCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("color"));
-        timeCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,Long>("time"));
-        positionCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("endPointName"));
+        featureCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("endPointName"));
         speedCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,Integer>("speed"));
         raceTable.setItems(events);
 
@@ -53,20 +54,32 @@ public class TableController implements RaceEventHandler {
 
 
     /**
-     * Adds an event to table, also removes redundant event and sort them based on speed
+     * Adds an event to table, also removes redundant event and sort them based on last feature passed by boat
      * Can change compareTo in race event to make it compare time instead
      * @param event RaceEvent an event in the race
      */
    public void handleRaceEvent(RaceEvent event) {
-
        for (int i = 0; i < events.size(); i++) {
            if (events.get(i).getTeamName().equals(event.getTeamName())) {
                events.remove(i);
            }
        }
 
+
        events.add(event);
-       Collections.sort(events);
+       Collections.sort(events);  //events are sorted by index of the features
+       if (order == 7) {
+           order = 1;
+       }
+       if (event.getEndPointName().equals("Finishline")) {
+           event.setPosition(finalOrder);
+           finalOrder++;
+       }
+       else {
+           event.setPosition(order);
+           order++;
+       }
+
    }
 
 }
