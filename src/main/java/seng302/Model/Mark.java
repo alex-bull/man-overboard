@@ -86,8 +86,8 @@ public class Mark implements CourseFeature {
     }
 
     /**
-     *
-     * @return
+     * Setter for the index of the mark
+     * @return int index of the mark
      */
 
     public int getIndex () {
@@ -95,8 +95,8 @@ public class Mark implements CourseFeature {
     }
 
     /**
-     *
-     * @param index
+     * Setter for the index of the mark
+     * @param index int the index of the mark
      */
 
     public void setIndex (int index) {

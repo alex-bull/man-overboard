@@ -62,8 +62,8 @@ public class Gate implements CourseFeature {
     }
 
     /**
-     *
-     * @return
+     * Getter for index of the gate
+     * @return int the index
      */
 
     public int getIndex () {
@@ -71,10 +71,9 @@ public class Gate implements CourseFeature {
     }
 
     /**
-     *
-     * @param index
+     * Setter for the index of the gate
+     * @param index int the index of the gate
      */
-
     public void setIndex (int index) {
         this.index = index;
     }

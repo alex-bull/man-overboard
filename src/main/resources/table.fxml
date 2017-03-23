@@ -20,7 +20,7 @@
                                    <TableColumn fx:id="positionCol" prefWidth="70.0" text="Position" />
                                    <TableColumn fx:id="featureCol" prefWidth="110.0" text="Last passed" />
                                    <TableColumn fx:id="nameCol" prefWidth="200.0" text="Name" />
-                                   <TableColumn fx:id="speedCol" prefWidth="60.0" text="knots" />
+                                   <TableColumn fx:id="speedCol" prefWidth="60.0" text="m/s" />
                                </columns>
                            </TableView>
    </children>

@@ -35,15 +35,6 @@ public class RaceFactory {
         competitors.add(new Boat("Oracle Team USA", 17, new MutablePoint(0.0, 0.0), Color.BLACK));
         competitors.add(new Boat("Artemis Racing", 15, new MutablePoint(150.0, 0.0), Color.GREEN));
 
-//        ObservableList<Competitor> competitors_oa = FXCollections.observableArrayList(
-//                new Boat("Oracle Team USA", 20, new MutablePoint(0.0, 0.0), Color.BLACK),
-//                new Boat("Emirates Team New Zealand", 19, new MutablePoint(30.0, 0.0), Color.RED),
-//                new Boat("Ben Ainslie Racing", 18, new MutablePoint(60.0, 0.0), Color.PURPLE),
-//                new Boat("SoftBank Team Japan", 17, new MutablePoint(90.0, 0.0), Color.YELLOW),
-//                new Boat("Team France", 16, new MutablePoint(120.0, 0.0), Color.BROWN),
-//                new Boat("Artemis Racing", 15, new MutablePoint(150.0, 0.0), Color.GREEN));
-
-
         //randomly select competitors
         Collections.shuffle(competitors);
         competitors = competitors.subList(0, numBoats);

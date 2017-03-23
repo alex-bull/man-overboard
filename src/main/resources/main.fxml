@@ -14,10 +14,10 @@
 
 <AnchorPane prefHeight="668.0" prefWidth="977.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controllers.MainController">
    <children>
-      <SplitPane dividerPositions="0.8" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.73" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-            <fx:include fx:id="raceView" source="raceView.fxml"/>
-            <fx:include fx:id="table" source="table.fxml"/>
+            <fx:include fx:id="raceView" source="raceView.fxml" />
+            <fx:include fx:id="table" source="table.fxml" />
         </items>
       </SplitPane>
    </children>

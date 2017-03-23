@@ -35,7 +35,7 @@ public class TableController implements RaceEventHandler {
     private TableColumn speedCol;
 
     private int order = 1;
-    private int finalorder = 1;
+    private int finalOrder = 1;
 
 
     /**
@@ -66,13 +66,13 @@ public class TableController implements RaceEventHandler {
        }
 
        events.add(event);
-       Collections.sort(events);
+       Collections.sort(events);  //events are sorted by index of the features
        if (order == 7) {
            order = 1;
        }
        if (event.getEndPointName().equals("Finishline")) {
-           event.setPosition(finalorder);
-           finalorder++;
+           event.setPosition(finalOrder);
+           finalOrder++;
        }
        else {
            event.setPosition(order);
