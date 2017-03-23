@@ -123,13 +123,11 @@ public class XMLCourseLoader {
                 MutablePoint GPS1 = new MutablePoint(lat1, lon1);
                 MutablePoint GPS2 = new MutablePoint(lat2, lon2);
 
-                MutablePoint p1=new MutablePoint(point1X,point1Y);
-                MutablePoint p2=new MutablePoint(point2X,point2Y);
-                Gate gate=new Gate(name, p1, p2, isFinish, isLine);
-                gate.setIndex(index);
-                index++;
+
                 Gate gate=new Gate(name, GPS1, GPS2, pixel1, pixel2, isFinish, isLine);
                 points.add(gate);
+                gate.setIndex(index);
+                index++;
 
 
                 if (feature.getAttributeValue("type")!=null) {
@@ -150,18 +148,16 @@ public class XMLCourseLoader {
                 xMercatorCoords.add(point1X);
                 yMercatorCoords.add(point1Y);
 
-                MutablePoint p1 = new MutablePoint(point1X,point1Y);
-                Mark mark1 = new Mark(name, p1, false);
-                mark1.setIndex(index);
-                index++;
-                points.add(mark1);
                 // add the original lat and lon to the array lists of lat and lons
                 xCoords.add(lat1);
                 yCoords.add(lon1);
 
                 MutablePoint pixel = new MutablePoint(point1X, point1Y);
                 MutablePoint GPS = new MutablePoint(lat1, lon1);
-                points.add(new Mark(name, pixel, GPS,false));
+                Mark mark1 = new Mark(name, pixel, GPS,false);
+                mark1.setIndex(index);
+                index++;
+                points.add(mark1);
             }
 
         }

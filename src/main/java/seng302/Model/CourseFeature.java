@@ -12,7 +12,6 @@ public interface CourseFeature {
     void setExitHeading(Double exitHeading);
     Double getExitHeading ();
     boolean isFinish();
-    MutablePoint getCentre ();
     int getIndex();
     void setIndex(int index);
     MutablePoint getGPSCentre();
