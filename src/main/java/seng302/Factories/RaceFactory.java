@@ -28,12 +28,21 @@ public class RaceFactory {
 
         //create competitors
         List<Competitor> competitors = new ArrayList<>();
-        competitors.add(new Boat("Emirates Team New Zealand", 20, new MutablePoint(30.0, 0.0), Color.RED));
-        competitors.add(new Boat("Ben Ainslie Racing", 19, new MutablePoint(60.0, 0.0), Color.PURPLE));
-        competitors.add(new Boat("SoftBank Team Japan", 16, new MutablePoint(90.0, 0.0), Color.YELLOW));
-        competitors.add(new Boat("Team France", 18, new MutablePoint(120.0, 0.0), Color.BROWN));
-        competitors.add(new Boat("Oracle Team USA", 17, new MutablePoint(0.0, 0.0), Color.BLACK));
-        competitors.add(new Boat("Artemis Racing", 15, new MutablePoint(150.0, 0.0), Color.GREEN));
+        competitors.add(new Boat("Oracle Team USA", 20, new MutablePoint(0.0, 0.0), Color.BLACK,"USA"));
+        competitors.add(new Boat("Emirates Team New Zealand", 19, new MutablePoint(30.0, 0.0), Color.RED,"NZL"));
+        competitors.add(new Boat("Ben Ainslie Racing", 18, new MutablePoint(60.0, 0.0), Color.PURPLE, "GBR"));
+        competitors.add(new Boat("SoftBank Team Japan", 17, new MutablePoint(90.0, 0.0), Color.YELLOW,"JPN"));
+        competitors.add(new Boat("Team France", 16, new MutablePoint(120.0, 0.0), Color.BROWN,"FRA"));
+        competitors.add(new Boat("Artemis Racing", 15, new MutablePoint(150.0, 0.0), Color.GREEN,"SWE"));
+
+//        ObservableList<Competitor> competitors_oa = FXCollections.observableArrayList(
+//                new Boat("Oracle Team USA", 20, new MutablePoint(0.0, 0.0), Color.BLACK),
+//                new Boat("Emirates Team New Zealand", 19, new MutablePoint(30.0, 0.0), Color.RED),
+//                new Boat("Ben Ainslie Racing", 18, new MutablePoint(60.0, 0.0), Color.PURPLE),
+//                new Boat("SoftBank Team Japan", 17, new MutablePoint(90.0, 0.0), Color.YELLOW),
+//                new Boat("Team France", 16, new MutablePoint(120.0, 0.0), Color.BROWN),
+//                new Boat("Artemis Racing", 15, new MutablePoint(150.0, 0.0), Color.GREEN));
+
 
         //randomly select competitors
         Collections.shuffle(competitors);
