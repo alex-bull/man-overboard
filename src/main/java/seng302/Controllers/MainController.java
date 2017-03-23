@@ -1,6 +1,7 @@
 package seng302.Controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.SplitPane;
 import seng302.Model.Race;
 
 /**
@@ -17,6 +18,9 @@ public class MainController {
 
     @FXML
     private RaceViewController raceViewController;
+
+    @FXML
+    private SplitPane splitPane;
 
     /**
      * Initialiser for the raceViewController
@@ -36,5 +40,6 @@ public class MainController {
         this.race=race;
         this.race.setRaceEventHandler(tableController);
         raceViewController.begin(race, width, height);
+
     }
 }
