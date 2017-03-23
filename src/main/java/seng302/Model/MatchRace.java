@@ -16,7 +16,7 @@ import java.util.List;
 public class MatchRace implements Race {
 
     private List<Competitor> competitors = new ArrayList<>();
-    private double velocityScaleFactor;
+    private int velocityScaleFactor;
     private List<String> finishingOrder = new ArrayList<>();
     private Course raceCourse;
     private RaceEventHandler raceEventHandler;
@@ -42,6 +42,13 @@ public class MatchRace implements Race {
         this.competitors = competitors;
     }
 
+    /**
+     * Gets the velocity scale factor of the race
+     * @return double the velocity scale factor
+     */
+    public int getVelocityScaleFactor() {
+        return velocityScaleFactor;
+    }
 
     /**
      * Returns the angle of wind direction

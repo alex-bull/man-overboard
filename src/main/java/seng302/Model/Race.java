@@ -16,6 +16,7 @@ public interface Race {
     List<Competitor> getCompetitors();
     Timeline generateTimeline(TableController tableController);
     List<CourseFeature> getCourseFeatures();
+    int getVelocityScaleFactor();
     double getWindDirection();
     void setRaceEventHandler(RaceEventHandler raceEventHandler);
 }

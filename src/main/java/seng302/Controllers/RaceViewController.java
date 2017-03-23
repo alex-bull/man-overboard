@@ -219,6 +219,8 @@ public class RaceViewController implements RaceDelegate{
      * @return String the time string
      */
     private String formatDisplayTime (long display) {
+        // multiply by the scale factor of the race
+        display = display * race.getVelocityScaleFactor();
         int displayTime = (int)display/1000;
         int minutes = displayTime / 60;
         int seconds = displayTime - (60 * minutes);
