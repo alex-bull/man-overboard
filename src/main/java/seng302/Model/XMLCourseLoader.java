@@ -153,7 +153,7 @@ public class XMLCourseLoader {
 
                 MutablePoint pixel = new MutablePoint(point1X, point1Y);
                 MutablePoint GPS = new MutablePoint(lat1, lon1);
-                Mark mark1 = new Mark(name, pixel, GPS,false,index);
+                Mark mark1 = new Mark(name, pixel, GPS,index);
                 index++;
                 points.add(mark1);
             }

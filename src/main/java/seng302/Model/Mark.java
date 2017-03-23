@@ -23,7 +23,7 @@ public class Mark implements CourseFeature {
      * Creates a course mark
      * @param name String the name of the mark
      * @param pixelLocation MutablePoint the coordinates of the mark
-     * @param isFinish boolean true if mark is finish gate
+
      */
     public Mark (String name, MutablePoint pixelLocation, MutablePoint GPSLocation, int index) {
         this.name = name;
