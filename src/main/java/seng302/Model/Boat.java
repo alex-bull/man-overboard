@@ -8,27 +8,12 @@ import javafx.scene.paint.Color;
  */
 public class Boat implements Competitor {
     private String teamName;
-    private Integer velocity;
+    private int velocity;
     private MutablePoint position;
     private Color color;
     private String abbreName;
 
-    /**
-     * gets the abbreviated team name
-     * @return the abbreviated team name
-     */
-    @Override
-    public String getAbbreName() {
-        return abbreName;
-    }
 
-    /**
-     * Getter for the team color
-     * @return Color the team color
-     */
-    public Color getColor() {
-        return color;
-    }
 
     /**
 
@@ -37,7 +22,7 @@ public class Boat implements Competitor {
      * @param teamName String the boats team name
      * @param velocity Integer the boats velocity in m/s
      */
-    public Boat(String teamName, Integer velocity, MutablePoint startPosition, Color color, String abbreName) {
+    public Boat(String teamName, int velocity, MutablePoint startPosition, Color color, String abbreName) {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
@@ -57,9 +42,9 @@ public class Boat implements Competitor {
     /**
      * Getter for the boats velocity
      *
-     * @return Integer the velocity in m/s
+     * @return int the velocity in m/s
      */
-    public Integer getVelocity() {
+    public int getVelocity() {
         return this.velocity;
     }
 
@@ -73,4 +58,21 @@ public class Boat implements Competitor {
     }
 
 
+    /**
+     * gets the abbreviated team name
+     * @return the abbreviated team name
+     */
+    @Override
+    public String getAbbreName() {
+        return abbreName;
+    }
+
+    /**
+     * Getter for the team color
+     * @return Color the team color
+     */
+    @Override
+    public Color getColor() {
+        return color;
+    }
 }

@@ -193,7 +193,7 @@ public class RaceViewController implements RaceDelegate{
                     //draw label
 
                     gc.fillText(boat.getAbbreName(),xValue-10,yValue);
-                    gc.fillText(boat.getVelocity().toString()+" m/s",xValue-20,yValue+20);
+                    gc.fillText(boat.getVelocity()+" m/s",xValue-20,yValue+20);
                     yCoords.add(yValue);
                     xCoords.add(xValue);
 //                    System.out.println(xCoords);

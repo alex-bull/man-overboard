@@ -124,9 +124,8 @@ public class XMLCourseLoader {
                 MutablePoint GPS2 = new MutablePoint(lat2, lon2);
 
 
-                Gate gate=new Gate(name, GPS1, GPS2, pixel1, pixel2, isFinish, isLine);
+                Gate gate=new Gate(name, GPS1, GPS2, pixel1, pixel2, isFinish, isLine,index);
                 points.add(gate);
-                gate.setIndex(index);
                 index++;
 
 
@@ -154,8 +153,7 @@ public class XMLCourseLoader {
 
                 MutablePoint pixel = new MutablePoint(point1X, point1Y);
                 MutablePoint GPS = new MutablePoint(lat1, lon1);
-                Mark mark1 = new Mark(name, pixel, GPS,false);
-                mark1.setIndex(index);
+                Mark mark1 = new Mark(name, pixel, GPS,false,index);
                 index++;
                 points.add(mark1);
             }

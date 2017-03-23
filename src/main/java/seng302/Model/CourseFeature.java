@@ -10,8 +10,9 @@ public interface CourseFeature {
     String getName();
     List<MutablePoint> getPixelLocations();
     void setExitHeading(Double exitHeading);
-    Double getExitHeading ();
+    double getExitHeading ();
     boolean isFinish();
+    MutablePoint getCentre ();
     int getIndex();
     void setIndex(int index);
     MutablePoint getGPSCentre();
