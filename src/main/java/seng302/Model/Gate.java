@@ -14,7 +14,7 @@ public class Gate implements CourseFeature {
     private String name;
     private MutablePoint point1;
     private MutablePoint point2;
-    private Double exitHeading;
+    private double exitHeading;
     private boolean isFinish;
     private boolean isLine;
     private int index;
@@ -29,12 +29,13 @@ public class Gate implements CourseFeature {
      * @param isFinish boolean true if the gate is a finishing gate
      * @param isLine boolean true if the gate needs a line
      */
-    public Gate (String name, MutablePoint point1, MutablePoint point2, boolean isFinish, boolean isLine) {
+    public Gate (String name, MutablePoint point1, MutablePoint point2, boolean isFinish, boolean isLine, int index) {
         this.name = name;
         this.point1 = point1;
         this.point2 = point2;
         this.isFinish = isFinish;
         this.isLine = isLine;
+        this.index=index;
     }
 
     /**
@@ -70,13 +71,6 @@ public class Gate implements CourseFeature {
         return this.index;
     }
 
-    /**
-     * Setter for the index of the gate
-     * @param index int the index of the gate
-     */
-    public void setIndex (int index) {
-        this.index = index;
-    }
 
     /**
      * Creates a list of points
@@ -151,7 +145,7 @@ public class Gate implements CourseFeature {
 
      * @return Double the heading
      */
-    public Double getExitHeading () {
+    public double getExitHeading () {
         return this.exitHeading;
     }
 

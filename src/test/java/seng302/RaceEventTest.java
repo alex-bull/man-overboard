@@ -22,8 +22,8 @@ public class RaceEventTest {
 
     @Test
     public void testGetIsFinish () {
-        CourseFeature A = new Mark("A", new MutablePoint(12.0, 2.0), false);
-        CourseFeature B = new Mark("B", new MutablePoint(12.0, 2.0), true);
+        CourseFeature A = new Mark("A", new MutablePoint(12.0, 2.0),1);
+        CourseFeature B = new Mark("B", new MutablePoint(12.0, 2.0),2);
         RaceEvent raceEvent = new RaceEvent(boatA, 10, 10, "Start", 10.0, false, A);
 
         assertTrue(!raceEvent.getIsFinish());
@@ -35,8 +35,8 @@ public class RaceEventTest {
 
     @Test
     public void testGetEventString () {
-        CourseFeature A = new Mark("A", new MutablePoint(12.0, 2.0), false);
-        CourseFeature B = new Mark("B", new MutablePoint(12.0, 2.0), true);
+        CourseFeature A = new Mark("A", new MutablePoint(12.0, 2.0),1);
+        CourseFeature B = new Mark("B", new MutablePoint(12.0, 2.0),2);
         RaceEvent raceEvent = new RaceEvent(boatA, 10, 10, "Start", 10.0, false, A);
         System.out.println(raceEvent.getEventString());
         assertTrue(raceEvent.getEventString().equals("Time: 00:10, Event: Orace Team USA passed the Start, Heading: 10.00"));

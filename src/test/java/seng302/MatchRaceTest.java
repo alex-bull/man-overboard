@@ -34,7 +34,7 @@ public class MatchRaceTest {
         points.add(new Mark("Leeward Gate", new MutablePoint(600.0, 900.0)));
         points.add(new Mark("Windward Gate", new MutablePoint(350.0, -350.0)));
         points.add(new Mark("Leeward Gate", new MutablePoint(600.0, 900.0)));
-        points.add(new Mark("Finish", new MutablePoint(250.0, 1150.0), true));
+        points.add(new Mark("Finish", new MutablePoint(250.0, 1150.0),1));
 
     }
 
