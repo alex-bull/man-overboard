@@ -9,10 +9,6 @@ import seng302.Model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sun.xml.internal.ws.dump.LoggingDumpTube.Position.Before;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-
 /**
  * Created by mgo65 on 3/03/17.
  */

@@ -96,8 +96,8 @@ public class MutablePoint {
 
         MutablePoint point = (MutablePoint) o;
 
-        if (!x.equals(point.x)) return false;
-        return y.equals(point.y);
+        if (!(x.get()==point.x.get())) return false;
+        return y.get()==point.y.get();
     }
 
     @Override
