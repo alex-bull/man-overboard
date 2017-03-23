@@ -8,11 +8,11 @@ import java.util.List;
  */
 public interface CourseFeature {
     String getName();
-    List<MutablePoint> getLocations();
+    List<MutablePoint> getPixelLocations();
     void setExitHeading(Double exitHeading);
     Double getExitHeading ();
     boolean isFinish();
-    MutablePoint getCentre ();
+    MutablePoint getGPSCentre();
     void factor(double xFactor,double yFactor,double minX,double minY,double xBuffer,double yBuffer,double width,double height);
     boolean isLine();
 }

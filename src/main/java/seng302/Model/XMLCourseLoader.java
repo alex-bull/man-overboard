@@ -12,15 +12,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 /**
  * Created by khe60 on 14/03/17.
  * An XML file parser for reading courses
  */
 public class XMLCourseLoader {
-    File inputFile;
-    Double screenX;
-    Double screenY;
-    ArrayList<Gate> winds=new ArrayList<>();
+    private File inputFile;
+    private Double screenX;
+    private Double screenY;
+    private ArrayList<Gate> winds = new ArrayList<>();
+    CoordinateMapper mapper = new CoordinateMapper();
+
+
+
+    private ArrayList<Double> xCoords = new ArrayList<>();
+    private ArrayList<Double> yCoords = new ArrayList<>();
+    private ArrayList<CourseFeature> points = new ArrayList<>();
+    private double distanceMetres;
+    private double distancePixels;
 
     public XMLCourseLoader(File inputFile, Double x, Double y) {
         this.inputFile = inputFile;
@@ -33,10 +44,10 @@ public class XMLCourseLoader {
      * @return
      */
     public double getWindDirection(){
-        double x1=winds.get(0).getCentre().getXValue();
-        double y1=winds.get(0).getCentre().getYValue();
-        double x2=winds.get(1).getCentre().getXValue();
-        double y2=winds.get(1).getCentre().getYValue();
+        double x1=winds.get(0).getGPSCentre().getXValue();
+        double y1=winds.get(0).getGPSCentre().getYValue();
+        double x2=winds.get(1).getGPSCentre().getXValue();
+        double y2=winds.get(1).getGPSCentre().getYValue();
 //        System.out.println(x1);
 //        System.out.println(y1);
 //        System.out.println(x2);
@@ -45,25 +56,7 @@ public class XMLCourseLoader {
         return Math.toDegrees(Math.atan( (x1-x2)/-(y1-y2)));
     }
 
-    /**
-     * Function to map latitude and longitude to screen coordinates
-     * @param lat latitude
-     * @param lon longitude
-     * @param width width of the screen
-     * @param height height of the screen
-     * @return ArrayList the coordinates in metres
-     */
-    public ArrayList<Double> mercatorProjection(double lat,double lon,double width, double height){
-        ArrayList<Double> ret=new ArrayList<>();
-        double x = (lon+180)*(width/360);
-        double latRad = lat*Math.PI/180;
-        double merc = Math.log(Math.tan(Math.PI/4)+(latRad/2));
-        double y = (height/2)-(width*merc/(2*Math.PI));
-        ret.add(x);
-        ret.add(y);
-        return ret;
 
-    }
 
     /**
      * Creates a list of course features read from an xml file
@@ -84,11 +77,8 @@ public class XMLCourseLoader {
         Document document = saxbuilder.build(inputFile);
         Element raceCourse = document.getRootElement();
         List<Element> features = raceCourse.getChildren();
-        ArrayList<CourseFeature> points = new ArrayList<>();
-
-
-        ArrayList<Double> xCoords=new ArrayList<>();
-        ArrayList<Double> yCoords=new ArrayList<>();
+        ArrayList<Double> xMercatorCoords=new ArrayList<>();
+        ArrayList<Double> yMercatorCoords=new ArrayList<>();
 
         for (Element feature : features) {
 
@@ -110,22 +100,29 @@ public class XMLCourseLoader {
                 double lon1= Double.parseDouble(markOne.getChildText("longtitude"));
                 double lon2= Double.parseDouble(markTwo.getChildText("longtitude"));
 
-                ArrayList<Double> point1=mercatorProjection(lat1,lon1,width,height);
-                ArrayList<Double> point2=mercatorProjection(lat2,lon2,width,height);
+                xCoords.add(lat1);
+                xCoords.add(lat2);
+                yCoords.add(lon1);
+                yCoords.add(lon2);
+
+                ArrayList<Double> point1=mapper.mercatorProjection(lat1,lon1,width,height);
+                ArrayList<Double> point2=mapper.mercatorProjection(lat2,lon2,width,height);
                 double point1X=point1.get(0);
                 double point1Y=point1.get(1);
                 double point2X=point2.get(0);
                 double point2Y=point2.get(1);
 
+                xMercatorCoords.add(point1X);
+                xMercatorCoords.add(point2X);
+                yMercatorCoords.add(point1Y);
+                yMercatorCoords.add(point2Y);
 
-                xCoords.add(point1X);
-                xCoords.add(point2X);
-                yCoords.add(point1Y);
-                yCoords.add(point2Y);
+                MutablePoint pixel1 = new MutablePoint(point1X,point1Y);
+                MutablePoint pixel2 = new MutablePoint(point2X,point2Y);
+                MutablePoint GPS1 = new MutablePoint(lat1, lon1);
+                MutablePoint GPS2 = new MutablePoint(lat2, lon2);
 
-                MutablePoint p1=new MutablePoint(point1X,point1Y);
-                MutablePoint p2=new MutablePoint(point2X,point2Y);
-                Gate gate=new Gate(name, p1, p2, isFinish, isLine);
+                Gate gate=new Gate(name, GPS1, GPS2, pixel1, pixel2, isFinish, isLine);
                 points.add(gate);
 
                 if (feature.getAttributeValue("type")!=null) {
@@ -140,27 +137,35 @@ public class XMLCourseLoader {
 
                 double lat1 =Double.parseDouble(mark.getChildText("latitude"));
                 double lon1= Double.parseDouble(mark.getChildText("longtitude"));
-                ArrayList<Double> point1=mercatorProjection(lat1,lon1,width,height);
+                ArrayList<Double> point1=mapper.mercatorProjection(lat1,lon1,width,height);
                 double point1X=point1.get(0);
                 double point1Y=point1.get(1);
-                xCoords.add(point1X);
-                yCoords.add(point1Y);
+                xMercatorCoords.add(point1X);
+                yMercatorCoords.add(point1Y);
 
-                MutablePoint p1 = new MutablePoint(point1X,point1Y);
-                points.add(new Mark(name, p1, false));
+                // add the original lat and lon to the array lists of lat and lons
+                xCoords.add(lat1);
+                yCoords.add(lon1);
+
+                MutablePoint pixel = new MutablePoint(point1X, point1Y);
+                MutablePoint GPS = new MutablePoint(lat1, lon1);
+                points.add(new Mark(name, pixel, GPS,false));
             }
 
         }
 
-        double xFactor= (width-bufferX/2)/(Collections.max(xCoords)-Collections.min(xCoords));
-        double yFactor=(height-bufferY/2)/(Collections.max(yCoords)-Collections.min(yCoords));
+        double xFactor= (width-bufferX/2)/(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
+        double yFactor=(height-bufferY/2)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
 
         //make scaling in proportion
         double factor=Math.min(xFactor,yFactor);
 
-
-        points.stream().forEach(p->p.factor(factor,factor,Collections.min(xCoords),Collections.min(yCoords),bufferX/2,bufferY/2,width,height));
+        //scale points to fit screen
+        points.stream().forEach(p->p.factor(factor,factor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2,width,height));
 
         return points;
     }
+
+
+
 }

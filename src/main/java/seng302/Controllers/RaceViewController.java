@@ -83,7 +83,7 @@ public class RaceViewController implements RaceDelegate{
             gc.setFill(Color.ORANGERED);
             gc.setStroke(Color.BLUE);
 
-            List<MutablePoint> marks = courseFeature.getLocations();
+            List<MutablePoint> marks = courseFeature.getPixelLocations();
             Double x1 = marks.get(0).getXValue();
             Double y1 = marks.get(0).getYValue();
 
@@ -102,6 +102,7 @@ public class RaceViewController implements RaceDelegate{
 
                 gc.fillOval(x1 - r, y1 - r, d, d);
                 gc.fillOval(x2 - r, y2 - r, d, d);
+
             } else {
                 gc.fillOval(x1, y1, 20, 20);
             }

@@ -33,7 +33,7 @@ public class App extends Application
         primaryStage.setHeight(primaryScreenBounds.getHeight());
 
         Race r = generateRace(primaryScreenBounds.getWidth() * 0.8, height);
-        mainController.setRace(r,primaryScreenBounds.getWidth(),height);
+        mainController.setRace(r,4000,2000);
         primaryStage.show();
 
     }
@@ -86,7 +86,7 @@ public class App extends Application
         //create the match races, only one is used for now
 
         Course raceCourse = new CourseFactory().createCourse(screenX, screenY);
-        return new RaceFactory().createRace(6,1, raceCourse);
+        return new RaceFactory().createRace(6,5, raceCourse);
 
     }
 }

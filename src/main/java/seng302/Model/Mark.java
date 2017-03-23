@@ -11,7 +11,8 @@ import java.util.List;
 public class Mark implements CourseFeature {
 
     private String name;
-    private MutablePoint location;
+    private MutablePoint pixelLocation;
+    private MutablePoint GPSLocation;
     private Double exitHeading;
     private boolean isFinish;
     private boolean isLine = false;
@@ -21,12 +22,13 @@ public class Mark implements CourseFeature {
     /**
      * Creates a course mark
      * @param name String the name of the mark
-     * @param location MutablePoint the coordinates of the mark
+     * @param pixelLocation MutablePoint the coordinates of the mark
      * @param isFinish boolean true if mark is finish gate
      */
-    public Mark (String name, MutablePoint location, boolean isFinish) {
+    public Mark (String name, MutablePoint pixelLocation, MutablePoint GPSLocation, boolean isFinish) {
         this.name = name;
-        this.location = location;
+        this.pixelLocation = pixelLocation;
+        this.GPSLocation = GPSLocation;
         this.isFinish = isFinish;
     }
 
@@ -41,11 +43,11 @@ public class Mark implements CourseFeature {
     /**
      * Creates a course mark
      * @param name String the name of the mark
-     * @param location MutablePoint the coordinates of the mark
+     * @param pixelLocation MutablePoint the coordinates of the mark
      */
-    public Mark (String name, MutablePoint location) {
+    public Mark (String name, MutablePoint pixelLocation) {
         this.name = name;
-        this.location = location;
+        this.pixelLocation = pixelLocation;
         this.isFinish = false;
     }
 
@@ -66,23 +68,23 @@ public class Mark implements CourseFeature {
     }
 
     /**
-     * Getter for the course location
+     * Getter for the course pixelLocation
      * @return MutablePoint, the coordinates of the mark
      */
-    public List<MutablePoint> getLocations () {
+    public List<MutablePoint> getPixelLocations() {
 
         List<MutablePoint> points = new ArrayList<>();
-        points.add(this.location);
+        points.add(this.pixelLocation);
         return points;
     }
 
     /**
-     * Getter for the centre location of the marker
-     * @return MutablePoint the location
+     * Getter for the centre GPS Location of the marker
+     * @return MutablePoint the GPS Location
      */
-    public MutablePoint getCentre () {
+    public MutablePoint getGPSCentre() {
 
-        return this.location;
+        return this.GPSLocation;
     }
 
     /**
@@ -95,7 +97,7 @@ public class Mark implements CourseFeature {
     @Override
     public void factor(double xFactor, double yFactor,double minX, double minY,double xBuffer,double yBuffer,double width,double height) {
         System.out.println("name: "+name);
-        location.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
+        pixelLocation.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
     }
 
     /**
@@ -115,13 +117,13 @@ public class Mark implements CourseFeature {
 
         if (isFinish != mark.isFinish) return false;
         if (name != null ? !name.equals(mark.name) : mark.name != null) return false;
-        return location != null ? location.equals(mark.location) : mark.location == null;
+        return pixelLocation != null ? pixelLocation.equals(mark.pixelLocation) : mark.pixelLocation == null;
     }
 
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (pixelLocation != null ? pixelLocation.hashCode() : 0);
         result = 31 * result + (isFinish ? 1 : 0);
         return result;
     }

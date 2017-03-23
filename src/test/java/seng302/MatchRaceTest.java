@@ -32,13 +32,13 @@ public class MatchRaceTest {
         competitors.add(new Boat("Team France", 16,  new MutablePoint(120.0, 0.0),Color.BROWN));
         competitors.add(new Boat("Artemis Racing", 15,  new MutablePoint(150.0, 0.0), Color.GREEN));
 
-        points.add(new Mark("PreStart", new MutablePoint(-200.0, 0.0)));
-        points.add(new Mark("Start Gate", new MutablePoint(0.0, 0.0)));
-        points.add(new Mark("Mark", new MutablePoint(500.0, 50.0)));
-        points.add(new Mark("Leeward Gate", new MutablePoint(600.0, 900.0)));
-        points.add(new Mark("Windward Gate", new MutablePoint(350.0, -350.0)));
-        points.add(new Mark("Leeward Gate", new MutablePoint(600.0, 900.0)));
-        points.add(new Mark("Finish", new MutablePoint(250.0, 1150.0), true));
+//        points.add(new Mark("PreStart", new MutablePoint(-200.0, 0.0)));
+//        points.add(new Mark("Start Gate", new MutablePoint(0.0, 0.0)));
+//        points.add(new Mark("Mark", new MutablePoint(500.0, 50.0)));
+//        points.add(new Mark("Leeward Gate", new MutablePoint(600.0, 900.0)));
+//        points.add(new Mark("Windward Gate", new MutablePoint(350.0, -350.0)));
+//        points.add(new Mark("Leeward Gate", new MutablePoint(600.0, 900.0)));
+//        points.add(new Mark("Finish", new MutablePoint(250.0, 1150.0), true));
 
     }
 

@@ -3,9 +3,6 @@ package seng302.Model;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.property.DoubleProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.util.Duration;
 import seng302.Controllers.TableController;
 
@@ -20,7 +17,6 @@ public class MatchRace implements Race {
 
     private List<Competitor> competitors = new ArrayList<>();
     private double velocityScaleFactor;
-    private Map<Integer, List<RaceEvent>> raceTimeline = new HashMap<>();
     private List<String> finishingOrder = new ArrayList<>();
     private Course raceCourse;
     private RaceEventHandler raceEventHandler;
@@ -35,9 +31,9 @@ public class MatchRace implements Race {
      */
     public MatchRace(int duration, Course raceCourse, List<Competitor> competitors) {
         if (duration == 5) {
-            velocityScaleFactor = 1;
+            velocityScaleFactor = 2;
         } else if (duration == 1) {
-            velocityScaleFactor = 4;
+            velocityScaleFactor = 9;
         } else {
             //for testing
             velocityScaleFactor = 1000;
@@ -125,7 +121,8 @@ public class MatchRace implements Race {
                 //calculate total time for competitor to reach the point
                 CourseFeature startPoint = points.get(j);
                 CourseFeature endPoint = points.get(j + 1);
-                time += this.calculateTime(comp.getVelocity(), startPoint.getCentre(), endPoint.getCentre());
+                double distance = raceCourse.distanceBetweenGPSPoints(startPoint.getGPSCentre(), endPoint.getGPSCentre());
+                time += this.calculateTime(comp.getVelocity(), distance);
                 System.out.println(time);
 
                 timeline.getKeyFrames().add(new KeyFrame(
@@ -134,8 +131,8 @@ public class MatchRace implements Race {
                             RaceEvent e = new RaceEvent(comp,System.currentTimeMillis(), endPoint);
                             raceEventHandler.handleRaceEvent(e);
                         },
-                        new KeyValue(comp.getPosition().getX(), endPoint.getCentre().getXValue()),
-                        new KeyValue(comp.getPosition().getY(), endPoint.getCentre().getYValue())
+                        new KeyValue(comp.getPosition().getX(), endPoint.getPixelLocations().get(0).getXValue()),
+                        new KeyValue(comp.getPosition().getY(), endPoint.getPixelLocations().get(0).getYValue())
                 ));
 
             }
@@ -148,16 +145,19 @@ public class MatchRace implements Race {
      * Calculates the time for a competitor to travel between course points
      *
      * @param velocity Integer the linear velocity of the competitor in m/s
-     * @param start    MutablePoint the coordinates of the first course point
-     * @param end      MutablePoint the coordinates of the second course point
+     * @param distance double the distance between two course points
      * @return Integer the time taken in milliseconds
      */
-    private Integer calculateTime(Integer velocity, MutablePoint start, MutablePoint end) {
-        Double xDistance = Math.pow((start.getXValue() - end.getXValue()), 2);
-        Double yDistance = Math.pow((start.getYValue() - end.getYValue()), 2);
-        Double distance = Math.sqrt(xDistance + yDistance);
+    private Integer calculateTime(Integer velocity, double distance) {
+        System.out.println("****************");
+        System.out.println(distance);
+        System.out.println(velocity);
         Double time = (distance / (velocity * velocityScaleFactor));
+        System.out.println(time);
         time = time * 1000;
+        System.out.println(time);
+        System.out.println(time.intValue());
+        System.out.println("******************");
         return time.intValue();
     }
 

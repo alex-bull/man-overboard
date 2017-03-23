@@ -25,8 +25,9 @@ public class CourseFactory {
      */
     public Course createCourse(Double screenX, Double screenY){
         //create the marks
-        File inputFile=new File("src/main/resources/course.xml");
-        XMLCourseLoader parser=new XMLCourseLoader(inputFile, screenX, screenY);
+        File inputFile = new File("src/main/resources/course.xml");
+        XMLCourseLoader parser = new XMLCourseLoader(inputFile, screenX, screenY);
+
         List<CourseFeature> points = null;
         try {
             points = parser.parseCourse(screenX, screenY);

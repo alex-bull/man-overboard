@@ -12,8 +12,11 @@ import java.util.List;
 public class Gate implements CourseFeature {
 
     private String name;
-    private MutablePoint point1;
-    private MutablePoint point2;
+    private MutablePoint pixelPoint1;
+    private MutablePoint pixelPoint2;
+    private MutablePoint GPSPoint1;
+    private MutablePoint GPSPoint2;
+
     private Double exitHeading;
     private boolean isFinish;
     private boolean isLine;
@@ -23,15 +26,19 @@ public class Gate implements CourseFeature {
     /**
      * Creates a course gate
      * @param name String the name of the gate
-     * @param point1 Point the coordinates of one end.
-     * @param point2 Point the coordinates of the other end.
+     * @param GPSPoint1 MutablePoint the GPS location of one end
+     * @param GPSPoint2 MutablePoint the GPS location of the other end
+     * @param pixelPoint1 MutablePoint the scaled pixel coordinates of one end.
+     * @param pixelPoint2 MutablePoint the scaled pixel coordinates of the other end.
      * @param isFinish boolean true if the gate is a finishing gate
      * @param isLine boolean true if the gate needs a line
      */
-    public Gate (String name, MutablePoint point1, MutablePoint point2, boolean isFinish, boolean isLine) {
+    public Gate (String name, MutablePoint GPSPoint1, MutablePoint GPSPoint2, MutablePoint pixelPoint1, MutablePoint pixelPoint2, boolean isFinish, boolean isLine) {
         this.name = name;
-        this.point1 = point1;
-        this.point2 = point2;
+        this.GPSPoint1 = GPSPoint1;
+        this.GPSPoint2 = GPSPoint2;
+        this.pixelPoint1 = pixelPoint1;
+        this.pixelPoint2 = pixelPoint2;
         this.isFinish = isFinish;
         this.isLine = isLine;
     }
@@ -60,28 +67,29 @@ public class Gate implements CourseFeature {
         return this.name;
     }
 
-    /**
-     * Creates a list of points
-     * Adds two points to an array
-     * @return List of points
-     */
 
-    public List<MutablePoint> getLocations () {
+
+
+    /**
+     * Gets a list scale pixel points representing the screen location of the gate
+     * @return List the pixel points
+     */
+    public List<MutablePoint> getPixelLocations() {
 
         List<MutablePoint> points = new ArrayList<>();
-        points.add(this.point1);
-        points.add(this.point2);
+        points.add(this.pixelPoint1);
+        points.add(this.pixelPoint2);
         return points;
     }
 
     /**
-     * Getter for the centre location of the marker
-     * @return MutablePoint the location
+     * Getter for the centre GPS location of the marker
+     * @return MutablePoint the GPS location
      */
-    public MutablePoint getCentre () {
+    public MutablePoint getGPSCentre() {
 
-        return new MutablePoint((this.point1.getXValue()+this.point2.getXValue())/2,
-                (this.point1.getYValue()+this.point2.getYValue())/2);
+        return new MutablePoint((this.GPSPoint1.getXValue()+this.GPSPoint2.getXValue())/2,
+                (this.GPSPoint1.getYValue()+this.GPSPoint2.getYValue())/2);
     }
 
 
@@ -103,8 +111,8 @@ public class Gate implements CourseFeature {
     @Override
     public void factor(double xFactor, double yFactor, double minX,double minY,double xBuffer,double yBuffer,double width,double height) {
         System.out.println("name: "+name);
-        point1.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
-        point2.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
+        pixelPoint1.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
+        pixelPoint2.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
     }
 
     @Override
@@ -116,14 +124,14 @@ public class Gate implements CourseFeature {
 
         if (isFinish != gate.isFinish) return false;
         if (name != null ? !name.equals(gate.name) : gate.name != null) return false;
-        return (point1 != null ? point1.equals(gate.point1) : gate.point1 == null) && (point2 != null ? point2.equals(gate.point2) : gate.point2 == null);
+        return (pixelPoint1 != null ? pixelPoint1.equals(gate.pixelPoint1) : gate.pixelPoint1 == null) && (pixelPoint2 != null ? pixelPoint2.equals(gate.pixelPoint2) : gate.pixelPoint2 == null);
     }
 
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (point1 != null ? point1.hashCode() : 0);
-        result = 31 * result + (point2 != null ? point2.hashCode() : 0);
+        result = 31 * result + (pixelPoint1 != null ? pixelPoint1.hashCode() : 0);
+        result = 31 * result + (pixelPoint2 != null ? pixelPoint2.hashCode() : 0);
         result = 31 * result + (isFinish ? 1 : 0);
         return result;
     }
