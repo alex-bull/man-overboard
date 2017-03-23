@@ -135,9 +135,8 @@ public class MatchRace implements Race {
 //                            RaceEvent e = new RaceEvent(comp,System.currentTimeMillis(), endPoint);
 
                         },
-
-                        new KeyValue(comp.getPosition().getX(), endPoint.getCentre().getXValue()),
-                        new KeyValue(comp.getPosition().getY(), endPoint.getCentre().getYValue())
+                        new KeyValue(comp.getPosition().getX(), endPoint.getLocations().get(0).getXValue()),
+                        new KeyValue(comp.getPosition().getY(), endPoint.getLocations().get(0).getYValue())
                 ));
 
             }
