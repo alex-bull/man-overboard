@@ -234,8 +234,7 @@ public class RaceViewController implements RaceDelegate{
         int seconds = displayTime - (60 * minutes);
         String formattedTime = "";
 
-        System.out.println("display " + display + "aaaa" + displayTime);
-        if (display < 0) {
+        if (display < 0 && displayTime != 0) {
             formattedTime += "-";
         }
 
@@ -250,6 +249,8 @@ public class RaceViewController implements RaceDelegate{
         } else {
             formattedTime += "0" + seconds;
         }
+
+        System.out.println("time is " + formattedTime);
         return formattedTime;
 
     }
