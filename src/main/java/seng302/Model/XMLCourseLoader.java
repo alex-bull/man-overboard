@@ -20,39 +20,31 @@ import static java.lang.Math.abs;
  */
 public class XMLCourseLoader {
     private File inputFile;
-    private Double screenX;
-    private Double screenY;
     private ArrayList<Gate> winds = new ArrayList<>();
     CoordinateMapper mapper = new CoordinateMapper();
-
 
 
     private ArrayList<Double> xCoords = new ArrayList<>();
     private ArrayList<Double> yCoords = new ArrayList<>();
     private ArrayList<CourseFeature> points = new ArrayList<>();
-    private double distanceMetres;
-    private double distancePixels;
 
-    public XMLCourseLoader(File inputFile, Double x, Double y) {
+    /**
+     * Constructor for loading a course with an XML input file
+     * @param inputFile File a XML file with course features
+     */
+    public XMLCourseLoader(File inputFile) {
         this.inputFile = inputFile;
-        this.screenX = x;
-        this.screenY = y;
     }
 
     /**
-     *
-     * @return
+     * Gets the wind direction
+     * @return double the angle of the wind direction
      */
     public double getWindDirection(){
         double x1=winds.get(0).getGPSCentre().getXValue();
         double y1=winds.get(0).getGPSCentre().getYValue();
         double x2=winds.get(1).getGPSCentre().getXValue();
         double y2=winds.get(1).getGPSCentre().getYValue();
-//        System.out.println(x1);
-//        System.out.println(y1);
-//        System.out.println(x2);
-//        System.out.println(y2);
-
         return Math.toDegrees(Math.atan( (x1-x2)/-(y1-y2)));
     }
 
@@ -124,7 +116,7 @@ public class XMLCourseLoader {
                 MutablePoint GPS2 = new MutablePoint(lat2, lon2);
 
 
-                Gate gate=new Gate(name, GPS1, GPS2, pixel1, pixel2, isFinish, isLine,index);
+                Gate gate = new Gate(name, GPS1, GPS2, pixel1, pixel2, isFinish, isLine, index);
                 points.add(gate);
                 index++;
 
@@ -160,14 +152,15 @@ public class XMLCourseLoader {
 
         }
 
-        double xFactor= (width-bufferX/2)/(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
-        double yFactor=(height-bufferY/2)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
+        // scale to canvas size
+        double xFactor = (width-bufferX/2)/(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
+        double yFactor = (height-bufferY/2)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
 
         //make scaling in proportion
         double factor=Math.min(xFactor,yFactor);
 
         //scale points to fit screen
-        points.stream().forEach(p->p.factor(factor,factor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2,width,height));
+        points.stream().forEach(p->p.factor(factor,factor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
 
         return points;
     }

@@ -19,24 +19,14 @@ import static java.lang.Math.abs;
 /**
  * Controller for the race view.
  */
-public class RaceViewController implements RaceDelegate{
+public class RaceViewController {
 
-
-    @FXML
-    private Canvas mycanvas;
-    @FXML
-    private Text timerText;
+    @FXML private Canvas mycanvas;
+    @FXML private Text timerText;
+    @FXML private TableController tableController;
 
     private long startTime;
-
-
     private Race race;
-
-
-    @FXML
-    private TableController tableController;
-
-
 
     /**
      * Initialiser for the raceViewController
@@ -47,27 +37,27 @@ public class RaceViewController implements RaceDelegate{
     }
 
     /**
-     * Sets the race
-     * @param race Race a group of competitors across multiple races on a course
+     * Sets the race and the race start time and then animates the race
+     * @param race Race  group of competitors across multiple races on a course
+     * @param width double the width of the canvas
+     * @param height double the height of the canvas
      */
     public void begin(Race race, double width, double height) {
         this.race=race;
         startTime = System.currentTimeMillis();
         animate(width, height);
 
-
-
     }
 
     /**
      * Draws an arrow on the screen at top left corner
-     * @param gc graphics context
-     * @param angle the angle of rotation
+     * @param gc GraphicsContext graphics context
+     * @param angle double the angle of rotation
      */
     void drawArrow(GraphicsContext gc, double angle) {
         gc.save();
         gc.setFill(Color.BLACK);
-        Rotate r = new Rotate(angle, 35, 40);
+        Rotate r = new Rotate(angle, 80, 40);
 
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 
@@ -85,37 +75,38 @@ public class RaceViewController implements RaceDelegate{
 
         // loops through all course features
         for (CourseFeature courseFeature : this.race.getCourseFeatures().subList(1, race.getCourseFeatures().size())) {
-            System.out.println("course feature "  + courseFeature.getName());
-            gc.setFill(Color.ORANGERED);
-            gc.setStroke(Color.BLUE);
+            gc.setFill(Color.ORANGERED); // buoy colour
+            gc.setStroke(Color.BLUE); // line colour between gates
 
+            // get the pixel locations of the course feature
             List<MutablePoint> marks = courseFeature.getPixelLocations();
-            Double x1 = marks.get(0).getXValue();
-            Double y1 = marks.get(0).getYValue();
+            Double x1 = marks.get(0).getXValue(); // first x pixel coordinate
+            Double y1 = marks.get(0).getYValue(); // first y pixel coordinate
 
-            // if it is a gate
+            // if it is a gate it will have two pixel location coordinates
             if (marks.size() == 2) {
                 gc.setLineWidth(3);
-                int d = 15;
-                double r = d/2;
-                Double x2 = marks.get(1).getXValue();
-                double y2 = marks.get(1).getYValue();
+                int d = 15; // diameter of the circle
+                double r = d/2; // radius of the circle
+                double x2 = marks.get(1).getXValue(); // second x pixel coordinate
+                double y2 = marks.get(1).getYValue(); // second y pixel coordinate
 
                 // check if gate needs line
                 if(courseFeature.isLine()){
                     gc.strokeLine(x1, y1, x2, y2);
                 }
 
+                // draw gate points
                 gc.fillOval(x1 - r, y1 - r, d, d);
                 gc.fillOval(x2 - r, y2 - r, d, d);
 
             } else {
-                gc.fillOval(x1, y1, 20, 20);
+                gc.fillOval(x1, y1, 20, 20); // draw mark point
             }
 
         }
+        drawArrow(gc, race.getWindDirection()); // draw wind direction arrow
 
-        drawArrow(gc, race.getWindDirection());
     }
 
 
@@ -126,38 +117,34 @@ public class RaceViewController implements RaceDelegate{
      */
     public void animate(double width, double height){
 
-        //the offset for each overlapping label
-        int offsetY=40;
-        //arraylists to store coordinates
-        ArrayList<Double> xCoords=new ArrayList<>();
-        ArrayList<Double> yCoords=new ArrayList<>();
+        // arraylists to store coordinates
+        ArrayList<Double> xCoords = new ArrayList<>();
+        ArrayList<Double> yCoords = new ArrayList<>();
         // start the race using the timeline
         Timeline t = race.generateTimeline(tableController);
         List<Competitor> competitors = race.getCompetitors();
-
 
         AnimationTimer timer = new AnimationTimer() {
 
             long startTimeNano = System.nanoTime();
             long currentTimeNano = System.nanoTime();
-            int counter=0;
+            int counter = 0;
             int fps;
 
             @Override
             public void handle(long now) {
-                counter++;
+                counter++; // increment fps counter
 
                 // clear the canvas
                 GraphicsContext gc = mycanvas.getGraphicsContext2D();
                 gc.clearRect(0,0,width,height);
 
-                //calculate
-                currentTimeNano=System.nanoTime();
+                // calculate fps
+                currentTimeNano = System.nanoTime();
                 if (currentTimeNano > startTimeNano + 1000000000){
                     startTimeNano = System.nanoTime();
-
-                    fps=counter;
-                    counter=0;
+                    fps = counter;
+                    counter = 0;
                 }
 
                 // draw course
@@ -167,7 +154,7 @@ public class RaceViewController implements RaceDelegate{
 
                 //draw fps counter
                 gc.setFill(Color.BLACK);
-                gc.setFont(Font.font("Monospaced",20));
+                gc.setFont(Font.font("Monospaced", 20));
                 gc.fillText(String.format("FPS: %d",fps),0,height-10);
 
                 // draw competitors
@@ -186,28 +173,14 @@ public class RaceViewController implements RaceDelegate{
                     //set font to monospaced for easier layout formatting
                     gc.setFont(Font.font("Monospaced"));
 
-//                    //check if labels are overlapping, if so offset the y value
-//                    for (int j=0;j<xCoords.size();j++){
-//                        double x=xCoords.get(j);
-//                        double y=yCoords.get(j);
-//                        if (xValue>(x-25) && xValue<(x+25) && yValue<(y+10) && yValue>(y-10)){
-//                            yValue+=offsetY;
-//                        }
-//                    }
                     //draw label
-
                     gc.fillText(boat.getAbbreName(),xValue-10,yValue);
                     gc.fillText(boat.getVelocity()+" m/s",xValue-20,yValue+20);
                     yCoords.add(yValue);
                     xCoords.add(xValue);
-//                    System.out.println(xCoords);
                 }
-
-
+                // show race time
                 timerText.setText(formatDisplayTime(System.currentTimeMillis() - startTime));
-
-                //test++;
-
 
             }
         };
@@ -218,17 +191,18 @@ public class RaceViewController implements RaceDelegate{
     }
 
 
-        /**
-     * Creates a formatted display time string in mm:ss
+    /**
+     * Creates a formatted display time string in mm:ss and takes into account the scale factor
+     * @param display long the current duration of the race
      * @return String the time string
-     */
+     * */
     private String formatDisplayTime (long display) {
 
         int scaleFactor = race.getVelocityScaleFactor();
+        // calculate the actual race time using the scale factor
         display = (display - (27000 / scaleFactor)) * scaleFactor;
 
-
-
+        // format the time shown
         int displayTime = abs((int)display/1000);
         int minutes = displayTime / 60;
         int seconds = displayTime - (60 * minutes);
@@ -237,7 +211,6 @@ public class RaceViewController implements RaceDelegate{
         if (display < 0 && displayTime != 0) {
             formattedTime += "-";
         }
-
 
         if (minutes > 9) {
             formattedTime += minutes + ":";
@@ -250,9 +223,7 @@ public class RaceViewController implements RaceDelegate{
             formattedTime += "0" + seconds;
         }
 
-        System.out.println("time is " + formattedTime);
         return formattedTime;
-
     }
 
 

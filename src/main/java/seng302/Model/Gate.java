@@ -8,7 +8,6 @@ import java.util.List;
  * Represents a gate course feature.
  */
 
-
 public class Gate implements CourseFeature {
 
     private String name;
@@ -21,8 +20,6 @@ public class Gate implements CourseFeature {
     private boolean isFinish;
     private boolean isLine;
     private int index;
-
-
 
     /**
      * Creates a course gate
@@ -73,14 +70,13 @@ public class Gate implements CourseFeature {
      * Getter for index of the gate
      * @return int the index
      */
-
     public int getIndex () {
         return this.index;
     }
 
 
     /**
-     * Gets a list scale pixel points representing the screen location of the gate
+     * Gets a list of scaled pixel points representing the screen location of the gate
      * @return List the pixel points
      */
     public List<MutablePoint> getPixelLocations() {
@@ -118,10 +114,10 @@ public class Gate implements CourseFeature {
      * @param minY double the min y value
      */
     @Override
-    public void factor(double xFactor, double yFactor, double minX,double minY,double xBuffer,double yBuffer,double width,double height) {
+    public void factor(double xFactor, double yFactor, double minX,double minY,double xBuffer,double yBuffer) {
         System.out.println("name: "+name);
-        pixelPoint1.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
-        pixelPoint2.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
+        pixelPoint1.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
+        pixelPoint2.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
     }
 
     @Override
@@ -147,7 +143,6 @@ public class Gate implements CourseFeature {
 
     /**
      * Getter for the exitHeading property
-
      * @return Double the heading
      */
     public double getExitHeading () {

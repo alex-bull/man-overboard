@@ -21,15 +21,14 @@ public class MatchRace implements Race {
     private Course raceCourse;
     private RaceEventHandler raceEventHandler;
 
-
     /**
      * Creates a match race with an approximate duration
-     *
      * @param duration    int the approximate duration of the race in minutes
      * @param raceCourse  Course the course for the race
      * @param competitors List the list of competing boats
      */
     public MatchRace(int duration, Course raceCourse, List<Competitor> competitors) {
+        // adjust velocity scale factor so that the race time is approximately the given duration
         if (duration == 5) {
             velocityScaleFactor = 2;
         } else if (duration == 1) {
@@ -59,7 +58,6 @@ public class MatchRace implements Race {
     }
 
 
-
     /***
      * Getter for the course features in the race course
      * @return List the features
@@ -78,7 +76,6 @@ public class MatchRace implements Race {
 
     /**
      * Sets the competitors who are entered in the race
-     *
      * @param competitors List the competing teams
      */
     public void setCompetitors(List<Competitor> competitors) {
@@ -87,7 +84,6 @@ public class MatchRace implements Race {
 
     /**
      * Gets the competitors who are entered in the race
-     *
      * @return List the competing teams
      */
     public List<Competitor> getCompetitors() {
@@ -97,7 +93,6 @@ public class MatchRace implements Race {
 
     /**
      * Getter for the finishing order of the race
-     *
      * @return List the team names in finishing order
      */
     public List<String> getFinishingOrder() {
@@ -107,7 +102,6 @@ public class MatchRace implements Race {
 
     /**
      * Generates a timeline of events in the race where competitors pass course features
-     *
      * @return Timeline the timeline of events
      */
     public Timeline generateTimeline(TableController tableController) {
@@ -129,7 +123,7 @@ public class MatchRace implements Race {
             // loops through pairs of course features
             for (int j = 0; j < points.size() - 1; j++) {
 
-                //calculate total time for competitor to reach the point
+                // calculate total time for competitor to reach the point
                 CourseFeature startPoint = points.get(j);
                 CourseFeature endPoint = points.get(j + 1);
                 double distance = raceCourse.distanceBetweenGPSPoints(startPoint.getGPSCentre(), endPoint.getGPSCentre());
@@ -140,8 +134,6 @@ public class MatchRace implements Race {
                         Duration.millis(time), t -> {
                             RaceEvent e = new RaceEvent(comp, endPoint);
                             raceEventHandler.handleRaceEvent(e);
-//                            RaceEvent e = new RaceEvent(comp,System.currentTimeMillis(), endPoint);
-
                         },
                         new KeyValue(comp.getPosition().getX(), endPoint.getPixelLocations().get(0).getXValue()),
                         new KeyValue(comp.getPosition().getY(), endPoint.getPixelLocations().get(0).getYValue())
@@ -156,21 +148,13 @@ public class MatchRace implements Race {
 
     /**
      * Calculates the time for a competitor to travel between course points
-     *
      * @param velocity Integer the linear velocity of the competitor in m/s
      * @param distance double the distance between two course points
      * @return Integer the time taken in milliseconds
      */
     private Integer calculateTime(Integer velocity, double distance) {
-        System.out.println("****************");
-        System.out.println(distance);
-        System.out.println(velocity);
         Double time = (distance / (velocity * velocityScaleFactor));
-        System.out.println(time);
         time = time * 1000;
-        System.out.println(time);
-        System.out.println(time.intValue());
-        System.out.println("******************");
         return time.intValue();
     }
 

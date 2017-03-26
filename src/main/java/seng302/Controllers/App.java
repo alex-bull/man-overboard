@@ -17,15 +17,14 @@ public class App extends Application
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
         Parent root = loader.load();
-
         MainController mainController = loader.getController();
 
-
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
         //Set window to full screen
         double height=primaryScreenBounds.getHeight()-30;
         primaryStage.setTitle("RaceVision");
+        primaryStage.setMinHeight(700);
+        primaryStage.setMinWidth(1000);
         primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
         primaryStage.setX(primaryScreenBounds.getMinX());
         primaryStage.setY(primaryScreenBounds.getMinY());
@@ -84,9 +83,8 @@ public class App extends Application
 //        }
 
         //create the match races, only one is used for now
-
         Course raceCourse = new CourseFactory().createCourse(screenX, screenY);
-        return new RaceFactory().createRace(6,5, raceCourse);
+        return new RaceFactory().createRace(6,1, raceCourse);
 
     }
 }

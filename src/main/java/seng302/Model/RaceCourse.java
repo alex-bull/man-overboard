@@ -17,10 +17,14 @@ public class RaceCourse implements Course {
      */
     public RaceCourse(List<CourseFeature> points, double windDirection) {
         this.points = points;
-        this.windDirection=windDirection;
+        this.windDirection = windDirection;
         this.calculateHeadings();
     }
 
+    /**
+     * Get wind direction
+     * @return double the angle of wind direction
+     */
     public double getWindDirection() {
         return windDirection;
     }
@@ -37,7 +41,6 @@ public class RaceCourse implements Course {
      * Calculates exit headings of each course point and sets the course point property
      */
     private void calculateHeadings () {
-
         for (int j = 1; j < this.points.size() - 1; j++) {
             Double heading = calculateAngle(points.get(j).getGPSCentre(), points.get(j + 1).getGPSCentre());
             points.get(j).setExitHeading(heading);
@@ -81,7 +84,7 @@ public class RaceCourse implements Course {
                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
+        double distance = R * c * 1000; // convert to metres
         return distance;
     }
 

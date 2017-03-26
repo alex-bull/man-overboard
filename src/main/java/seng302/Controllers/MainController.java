@@ -13,14 +13,11 @@ public class MainController {
 
     private Race race;
 
-    @FXML
-    private TableController tableController;
+    @FXML private TableController tableController;
 
-    @FXML
-    private RaceViewController raceViewController;
+    @FXML private RaceViewController raceViewController;
 
-    @FXML
-    private SplitPane splitPane;
+    @FXML private SplitPane splitPane;
 
     /**
      * Initialiser for the raceViewController
@@ -29,7 +26,6 @@ public class MainController {
     void initialize() {
 
     }
-
 
 
     /**

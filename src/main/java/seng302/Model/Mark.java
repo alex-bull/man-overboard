@@ -14,7 +14,7 @@ public class Mark implements CourseFeature {
     private MutablePoint pixelLocation;
     private MutablePoint GPSLocation;
     private double exitHeading;
-    private boolean isFinish=false;
+    private boolean isFinish = false;
     private boolean isLine = false;
     private int index;
 
@@ -22,14 +22,15 @@ public class Mark implements CourseFeature {
     /**
      * Creates a course mark
      * @param name String the name of the mark
-     * @param pixelLocation MutablePoint the coordinates of the mark
-
+     * @param pixelLocation MutablePoint the pixel coordinates of the mark
+     * @param GPSLocation MutablePoint the GPS coordinates of the mark
+     * @param index int the index of the mark
      */
     public Mark (String name, MutablePoint pixelLocation, MutablePoint GPSLocation, int index) {
         this.name = name;
         this.pixelLocation = pixelLocation;
         this.GPSLocation = GPSLocation;
-        this.index=index;
+        this.index = index;
     }
 
     /**
@@ -94,9 +95,9 @@ public class Mark implements CourseFeature {
      * @param minY double the min y value
      */
     @Override
-    public void factor(double xFactor, double yFactor,double minX, double minY,double xBuffer,double yBuffer,double width,double height) {
+    public void factor(double xFactor, double yFactor,double minX, double minY,double xBuffer,double yBuffer) {
         System.out.println("name: "+name);
-        pixelLocation.factor(xFactor,yFactor,minX,minY,xBuffer,yBuffer,width,height);
+        pixelLocation.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
     }
 
     /**

@@ -14,13 +14,13 @@ public class Boat implements Competitor {
     private String abbreName;
 
 
-
     /**
-
      * Creates a boat
-     *
-     * @param teamName String the boats team name
-     * @param velocity Integer the boats velocity in m/s
+     * @param teamName String the team name of the boat
+     * @param velocity int the velocity of the boat in m/s
+     * @param startPosition MutablePoint the boat's start position coordinate
+     * @param color Color the boat colour
+     * @param abbreName String the abbreviated name of the boat
      */
     public Boat(String teamName, int velocity, MutablePoint startPosition, Color color, String abbreName) {
         this.velocity = velocity;
@@ -31,8 +31,7 @@ public class Boat implements Competitor {
     }
 
     /**
-     * Getter for team name
-     *
+     * Getter for the boat's team name
      * @return String The name of the boat team
      */
     public String getTeamName() {
@@ -41,7 +40,6 @@ public class Boat implements Competitor {
 
     /**
      * Getter for the boats velocity
-     *
      * @return int the velocity in m/s
      */
     public int getVelocity() {
@@ -50,7 +48,6 @@ public class Boat implements Competitor {
 
     /**
      * Getter for the boat's position
-     *
      * @return MutablePoint the coordinate of the boat
      */
     public MutablePoint getPosition() {
@@ -59,8 +56,8 @@ public class Boat implements Competitor {
 
 
     /**
-     * gets the abbreviated team name
-     * @return the abbreviated team name
+     * Getter for the abbreviated team name
+     * @return String the abbreviated team name
      */
     @Override
     public String getAbbreName() {

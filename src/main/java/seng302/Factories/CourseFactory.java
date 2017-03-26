@@ -24,22 +24,21 @@ public class CourseFactory {
      * @return Course an implementation of Course loaded from an XML file
      */
     public Course createCourse(Double screenX, Double screenY){
-        //create the marks
+        // load XML file that contains course points
         File inputFile = new File("src/main/resources/course.xml");
-        XMLCourseLoader parser = new XMLCourseLoader(inputFile, screenX, screenY);
+        XMLCourseLoader parser = new XMLCourseLoader(inputFile);
 
+        // create a raceCourse with course features
         List<CourseFeature> points = null;
-
         try {
             points = parser.parseCourse(screenX, screenY);
         } catch (JDOMException e) {
-            System.out.println("XML file format error");
+            System.out.println("XML file format error.");
             e.printStackTrace();
         } catch (IOException e) {
-            System.out.println("file not found or something");
+            System.out.println("Failed to load file.");
             e.printStackTrace();
         }
-        return new RaceCourse(points,parser.getWindDirection());
-
+        return new RaceCourse(points, parser.getWindDirection());
     }
 }

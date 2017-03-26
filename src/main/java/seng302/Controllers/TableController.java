@@ -17,8 +17,6 @@ import java.util.Collections;
 
 public class TableController implements RaceEventHandler {
 
-    ObservableList<RaceEvent> events= FXCollections.observableArrayList();
-
     @FXML
     private TableView raceTable;
 
@@ -36,6 +34,7 @@ public class TableController implements RaceEventHandler {
 
     private int order = 1;
     private int finalOrder = 1;
+    private ObservableList<RaceEvent> events = FXCollections.observableArrayList();
 
 
     /**
@@ -43,6 +42,8 @@ public class TableController implements RaceEventHandler {
      */
     @FXML
     void initialize() {
+
+        // initialise race table
         positionCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, Integer>("position"));
         nameCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("teamName"));
         featureCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("endPointName"));
@@ -54,24 +55,27 @@ public class TableController implements RaceEventHandler {
 
 
     /**
-     * Adds an event to table, also removes redundant event and sort them based on last feature passed by boat
-     * Can change compareTo in race event to make it compare time instead
+     * Adds an event to table, also removes redundant event and sort them based on last feature passed by boat.
+     * Can change compareTo in race event to make it compare time instead.
      * @param event RaceEvent an event in the race
      */
    public void handleRaceEvent(RaceEvent event) {
+
+       // loop through all events in the table and remove events with the same team name as this event
        for (int i = 0; i < events.size(); i++) {
            if (events.get(i).getTeamName().equals(event.getTeamName())) {
                events.remove(i);
            }
        }
 
-
+       // add this event to the race table
        events.add(event);
        Collections.sort(events);  //events are sorted by index of the features
+       // order the event indexes
        if (order == 7) {
            order = 1;
        }
-       if (event.getEndPointName().equals("Finishline")) {
+       if (event.getEndPoint().isFinish()) {
            event.setPosition(finalOrder);
            finalOrder++;
        }
