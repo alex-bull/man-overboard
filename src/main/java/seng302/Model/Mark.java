@@ -13,8 +13,8 @@ public class Mark implements CourseFeature {
     private String name;
     private MutablePoint pixelLocation;
     private MutablePoint GPSLocation;
-    private Double exitHeading;
-    private boolean isFinish;
+    private double exitHeading;
+    private boolean isFinish=false;
     private boolean isLine = false;
     private int index;
 
@@ -23,13 +23,13 @@ public class Mark implements CourseFeature {
      * Creates a course mark
      * @param name String the name of the mark
      * @param pixelLocation MutablePoint the coordinates of the mark
-     * @param isFinish boolean true if mark is finish gate
+
      */
-    public Mark (String name, MutablePoint pixelLocation, MutablePoint GPSLocation, boolean isFinish) {
+    public Mark (String name, MutablePoint pixelLocation, MutablePoint GPSLocation, int index) {
         this.name = name;
         this.pixelLocation = pixelLocation;
         this.GPSLocation = GPSLocation;
-        this.isFinish = isFinish;
+        this.index=index;
     }
 
     /**
@@ -85,14 +85,7 @@ public class Mark implements CourseFeature {
         return this.index;
     }
 
-    /**
-     * Setter for the index of the mark
-     * @param index int the index of the mark
-     */
 
-    public void setIndex (int index) {
-        this.index = index;
-    }
     /**
      * Factors point to fit the screen
      * @param xFactor double the factor to scale by in the x axis
@@ -138,7 +131,7 @@ public class Mark implements CourseFeature {
      * Getter for the exitHeading property
      * @return Double the heading
      */
-    public Double getExitHeading () {
+    public double getExitHeading () {
         return this.exitHeading;
     }
 

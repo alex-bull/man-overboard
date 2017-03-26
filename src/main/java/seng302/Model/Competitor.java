@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
  */
 public interface Competitor {
     String getTeamName();
-    Integer getVelocity();
+    int getVelocity();
     MutablePoint getPosition();
     Color getColor();
     String getAbbreName();

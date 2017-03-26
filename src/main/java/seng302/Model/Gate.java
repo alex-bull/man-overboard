@@ -17,7 +17,7 @@ public class Gate implements CourseFeature {
     private MutablePoint GPSPoint1;
     private MutablePoint GPSPoint2;
 
-    private Double exitHeading;
+    private double exitHeading;
     private boolean isFinish;
     private boolean isLine;
     private int index;
@@ -34,7 +34,7 @@ public class Gate implements CourseFeature {
      * @param isFinish boolean true if the gate is a finishing gate
      * @param isLine boolean true if the gate needs a line
      */
-    public Gate (String name, MutablePoint GPSPoint1, MutablePoint GPSPoint2, MutablePoint pixelPoint1, MutablePoint pixelPoint2, boolean isFinish, boolean isLine) {
+    public Gate (String name, MutablePoint GPSPoint1, MutablePoint GPSPoint2, MutablePoint pixelPoint1, MutablePoint pixelPoint2, boolean isFinish, boolean isLine, int index) {
         this.name = name;
         this.GPSPoint1 = GPSPoint1;
         this.GPSPoint2 = GPSPoint2;
@@ -42,6 +42,7 @@ public class Gate implements CourseFeature {
         this.pixelPoint2 = pixelPoint2;
         this.isFinish = isFinish;
         this.isLine = isLine;
+        this.index=index;
     }
 
     /**
@@ -77,13 +78,6 @@ public class Gate implements CourseFeature {
         return this.index;
     }
 
-    /**
-     * Setter for the index of the gate
-     * @param index int the index of the gate
-     */
-    public void setIndex (int index) {
-        this.index = index;
-    }
 
     /**
      * Gets a list scale pixel points representing the screen location of the gate
@@ -156,7 +150,7 @@ public class Gate implements CourseFeature {
 
      * @return Double the heading
      */
-    public Double getExitHeading () {
+    public double getExitHeading () {
         return this.exitHeading;
     }
 

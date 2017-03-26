@@ -51,7 +51,7 @@ public class MutablePoint {
      * Getter for the x value
      * @return Double x value
      */
-    public Double getXValue () {
+    public double getXValue () {
         return this.x.getValue();
     }
 
@@ -67,7 +67,7 @@ public class MutablePoint {
      * Getter for the y value
      * @return Double y value
      */
-    public Double getYValue () {
+    public double getYValue () {
         return this.y.getValue();
     }
 
@@ -96,8 +96,8 @@ public class MutablePoint {
 
         MutablePoint point = (MutablePoint) o;
 
-        if (!x.equals(point.x)) return false;
-        return y.equals(point.y);
+        if (!(x.getValue().equals(point.x.getValue()))) return false;
+        return y.getValue().equals(point.y.getValue());
     }
 
     @Override
