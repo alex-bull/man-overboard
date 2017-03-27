@@ -1,5 +1,10 @@
 package seng302.Controllers;
 
+import com.google.common.collect.Iterables;
+import com.google.common.primitives.Doubles;
+import com.sun.deploy.util.ArrayUtil;
+import edu.princeton.cs.algorithms.GrahamScan;
+import edu.princeton.cs.algorithms.Point2D;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -16,9 +21,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import seng302.Model.*;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.lang.Math.abs;
@@ -36,6 +44,8 @@ public class RaceViewController {
     private long startTime;
     private Race race;
     private boolean showAnnotations = true;
+    private ArrayList<Double> boundaryX=new ArrayList<>();
+    private ArrayList<Double> boundaryY=new ArrayList<>();
 
     /**
      * Initialiser for the raceViewController
@@ -56,8 +66,10 @@ public class RaceViewController {
         startTime = System.currentTimeMillis();
         mycanvas.setHeight(height);
         mycanvas.setWidth(width);
+        calcBoundary();
         animate(width, height);
         initialize();
+
 
     }
 
@@ -75,6 +87,7 @@ public class RaceViewController {
 
         gc.fillPolygon(new double[]{40,50,50,60,60,70,55}, new double[]{70,70,110,110,70,70,50},
                 7);
+
         gc.restore();
     }
 
@@ -119,6 +132,19 @@ public class RaceViewController {
         }
         drawArrow(gc, race.getWindDirection()); // draw wind direction arrow
 
+
+        //draw the course boundary
+        gc.save();
+        double pivotX=(Collections.min(boundaryX)+Collections.max(boundaryX))/2;
+        double pivotY=(Collections.min(boundaryY)+Collections.max(boundaryY))/2;
+        Scale s=new Scale(1.1,1.1,pivotX,pivotY);
+        gc.setLineDashes(2);
+        gc.setLineWidth(0.5);
+        gc.setTransform(s.getMxx(), s.getMyx(), s.getMxy(), s.getMyy(), s.getTx(), s.getTy());
+//        gc.scale(1.1,1.1);
+        gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
+
+        gc.restore();
     }
 
 
@@ -197,6 +223,8 @@ public class RaceViewController {
                 // show race time
                 timerText.setText(formatDisplayTime(System.currentTimeMillis() - startTime));
 
+
+
             }
         };
 
@@ -262,5 +290,24 @@ public class RaceViewController {
         }
     }
 
+    public void calcBoundary(){
+        ArrayList<Point2D> coords=new ArrayList<>();
+        for(CourseFeature feature : race.getCourseFeatures()){
+            if (feature.getName().equals("Prestart")){
+                continue;
+            }
+            for(MutablePoint p:feature.getPixelLocations()){
+                Point2D point=new Point2D(p.getXValue(),p.getYValue());
+                coords.add(point);
+            }
+        }
+        GrahamScan gs=new GrahamScan(coords.toArray(new Point2D[coords.size()]));
+
+        gs.hull().forEach(point2D -> {
+//            System.out.println(point2D);
+            boundaryX.add(point2D.x());
+            boundaryY.add(point2D.y());});
+
+    }
 
 }
