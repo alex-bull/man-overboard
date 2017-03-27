@@ -1,6 +1,10 @@
 package seng302.Controllers;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import seng302.Model.Race;
 
@@ -26,7 +30,10 @@ public class MainController {
     void initialize() {
 
     }
-
+    @FXML
+    public void toggleFPS(){
+        raceViewController.toggleFPS();
+    }
 
     /**
      * Sets the race
