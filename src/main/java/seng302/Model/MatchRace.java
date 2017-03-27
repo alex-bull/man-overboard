@@ -35,7 +35,7 @@ public class MatchRace implements Race {
             velocityScaleFactor = 9;
         } else {
             //for testing
-            velocityScaleFactor = 1000;
+            velocityScaleFactor = 1;
         }
         this.raceCourse = raceCourse;
         this.competitors = competitors;
@@ -102,11 +102,13 @@ public class MatchRace implements Race {
 
     /**
      * Generates a timeline of events in the race where competitors pass course features
+     *
      * @return Timeline the timeline of events
      */
     public Timeline generateTimeline() {
 
         Timeline timeline = new Timeline();
+
         List<CourseFeature> points = raceCourse.getPoints();
 
         for (Competitor comp : competitors) {
@@ -132,9 +134,9 @@ public class MatchRace implements Race {
 
                 timeline.getKeyFrames().add(new KeyFrame(
                         Duration.millis(time), t -> {
-                            RaceEvent e = new RaceEvent(comp, endPoint);
-                            raceEventHandler.handleRaceEvent(e);
-                        },
+                    RaceEvent e = new RaceEvent(comp, endPoint);
+                    raceEventHandler.handleRaceEvent(e);
+                },
                         new KeyValue(comp.getPosition().getX(), endPoint.getPixelLocations().get(0).getXValue()),
                         new KeyValue(comp.getPosition().getY(), endPoint.getPixelLocations().get(0).getYValue())
                 ));
@@ -142,6 +144,7 @@ public class MatchRace implements Race {
             }
 
         }
+
         return timeline;
     }
 
