@@ -1,5 +1,6 @@
 package seng302.Model;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
 
 /**
@@ -12,4 +13,6 @@ public interface Competitor {
     MutablePoint getPosition();
     Color getColor();
     String getAbbreName();
+    double getCurrentHeading();
+    void setCurrentHeading(double currentHeading);
 }

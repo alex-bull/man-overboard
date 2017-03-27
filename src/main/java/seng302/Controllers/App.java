@@ -30,8 +30,8 @@ public class App extends Application
         //Set window to full screen
         double height=primaryScreenBounds.getHeight()-30;
         primaryStage.setTitle("RaceVision");
-        primaryStage.setMinHeight(1000);
-        primaryStage.setMinWidth(1500);
+        primaryStage.setMinHeight(900);
+        primaryStage.setMinWidth(1300);
         primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
         primaryStage.setX(primaryScreenBounds.getMinX());
         primaryStage.setY(primaryScreenBounds.getMinY());

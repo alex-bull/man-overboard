@@ -23,7 +23,6 @@
 <!--</children>-->
 <!--</AnchorPane>-->
 
-
 <AnchorPane prefHeight="668.0" prefWidth="977.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controllers.MainController">
    <children>
 
@@ -31,8 +30,9 @@
     <fx:include fx:id="table" source="table.fxml" />
       <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
-          <Menu mnemonicParsing="false" text="Annotation">
+          <Menu mnemonicParsing="false" text="View">
             <items>
+                  <MenuItem mnemonicParsing="false" onAction="#toggleAnnotations" text="Toggle annotations" />
               <MenuItem mnemonicParsing="false" onAction="#toggleFPS" text="Toggle FPS" />
             </items>
           </Menu>

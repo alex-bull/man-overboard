@@ -35,6 +35,7 @@ public class RaceViewController {
 
     private long startTime;
     private Race race;
+    private boolean showAnnotations = true;
 
     /**
      * Initialiser for the raceViewController
@@ -183,11 +184,15 @@ public class RaceViewController {
                     //set font to monospaced for easier layout formatting
                     gc.setFont(Font.font("Monospaced"));
 
-                    //draw label
-                    gc.fillText(boat.getAbbreName(),xValue-10,yValue);
-                    gc.fillText(boat.getVelocity()+" m/s",xValue-20,yValue+20);
-                    yCoords.add(yValue);
-                    xCoords.add(xValue);
+                    //draw labels if show all annotations is toggled
+                    if (showAnnotations) {
+                        gc.fillText(boat.getAbbreName(),xValue-10,yValue);
+                        gc.fillText(boat.getVelocity()+" m/s",xValue-20,yValue+20);
+                        yCoords.add(yValue);
+                        xCoords.add(xValue);
+                    }
+
+
                 }
                 // show race time
                 timerText.setText(formatDisplayTime(System.currentTimeMillis() - startTime));
@@ -236,12 +241,26 @@ public class RaceViewController {
         return formattedTime;
     }
 
+    /**
+     * Called when the user clicks toggle fps from the view menu bar.
+     */
     @FXML
     public void toggleFPS(){
-        System.out.println("asdf");
         fpsCounter.setVisible(!fpsCounter.visibleProperty().getValue());
-}
+    }
 
+    /**
+     * Called when the user clicks toggle annotations from the view menu bar.
+     */
+    @FXML
+    public void toggleAnnotations() {
+        if(showAnnotations) {
+            showAnnotations = false;
+        }
+        else {
+            showAnnotations = true;
+        }
+    }
 
 
 }
