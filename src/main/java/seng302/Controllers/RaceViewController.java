@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 /**
  * Controller for the race view.
@@ -181,6 +183,21 @@ public class RaceViewController {
                             10
                     );
 
+                    // draw wake of boat
+                    //double boatSpeed = boat.getVelocity();
+;
+                    double wakeDirection = boat.getCurrentHeading() + 180;
+                    System.out.println("boat current heading "+ boat.getCurrentHeading());
+                    System.out.println(wakeDirection);
+                    double wakeLength = 20;
+                    double x2 = xValue - wakeLength * sin(wakeDirection);
+                    double y2 = yValue - wakeLength * cos(wakeDirection);
+                    System.out.println("x2 is" +  x2);
+                    System.out.println("x1 is" + y2);
+                    //double y2
+                    gc.setStroke(Color.DARKBLUE);
+                    gc.strokeLine(xValue, yValue, x2, y2);
+
                     //set font to monospaced for easier layout formatting
                     gc.setFont(Font.font("Monospaced"));
 
@@ -191,6 +208,8 @@ public class RaceViewController {
                         yCoords.add(yValue);
                         xCoords.add(xValue);
                     }
+
+
 
 
                 }

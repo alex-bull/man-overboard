@@ -14,5 +14,6 @@ public interface Competitor {
     Color getColor();
     String getAbbreName();
     double getCurrentHeading();
+    DoubleProperty getHeadingProperty();
     void setCurrentHeading(double currentHeading);
 }

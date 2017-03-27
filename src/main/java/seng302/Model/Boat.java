@@ -91,4 +91,12 @@ public class Boat implements Competitor {
     public double getCurrentHeading() {
         return currentHeading.getValue();
     }
+
+    /**
+     * Getter for the double property of the heading
+     * @return DoubleProperty the heading property
+     */
+    public DoubleProperty getHeadingProperty() {
+        return this.currentHeading;
+    }
 }

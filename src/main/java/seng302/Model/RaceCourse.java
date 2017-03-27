@@ -41,9 +41,10 @@ public class RaceCourse implements Course {
      * Calculates exit headings of each course point and sets the course point property
      */
     private void calculateHeadings () {
-        for (int j = 1; j < this.points.size() - 1; j++) {
-            Double heading = calculateAngle(points.get(j).getGPSCentre(), points.get(j + 1).getGPSCentre());
+        for (int j = 0; j < this.points.size() - 1; j++) {
+            Double heading = calculateAngle(points.get(j).getPixelLocations().get(0), points.get(j + 1).getPixelLocations().get(0));
             points.get(j).setExitHeading(heading);
+            System.out.println("JHEADD " + heading);
         }
     }
 
@@ -54,7 +55,7 @@ public class RaceCourse implements Course {
      * @return Double the angle between the points from the y axis
      */
     private Double calculateAngle(MutablePoint start, MutablePoint end) {
-        Double angle = Math.toDegrees(Math.atan2(end.getXValue() - start.getXValue(), end.getYValue() - start.getYValue()));
+        Double angle = 180 - Math.toDegrees(Math.atan2(end.getXValue() - start.getXValue(), end.getYValue() - start.getYValue()));
 
         if(angle < 0){
             angle += 360;

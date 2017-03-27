@@ -1,5 +1,6 @@
 package seng302.Model;
 
+import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -130,15 +131,17 @@ public class MatchRace implements Race {
                 CourseFeature endPoint = points.get(j + 1);
                 double distance = raceCourse.distanceBetweenGPSPoints(startPoint.getGPSCentre(), endPoint.getGPSCentre());
                 time += this.calculateTime(comp.getVelocity(), distance);
-                System.out.println(time);
+
 
                 timeline.getKeyFrames().add(new KeyFrame(
                         Duration.millis(time), t -> {
                     RaceEvent e = new RaceEvent(comp, endPoint);
                     raceEventHandler.handleRaceEvent(e);
+
                 },
                         new KeyValue(comp.getPosition().getX(), endPoint.getPixelLocations().get(0).getXValue()),
-                        new KeyValue(comp.getPosition().getY(), endPoint.getPixelLocations().get(0).getYValue())
+                        new KeyValue(comp.getPosition().getY(), endPoint.getPixelLocations().get(0).getYValue()),
+                        new KeyValue(comp.getHeadingProperty(), startPoint.getExitHeading(), Interpolator.DISCRETE)
                 ));
 
             }
