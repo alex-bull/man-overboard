@@ -39,9 +39,10 @@ public class MainController {
      * Sets the race
      * @param race Race a group of competitors across multiple races on a course
      */
-    public void setRace(Race race, double width, double height) {
+    public void setRace(Race race, double width, double height, int numBoats) {
         this.race=race;
         this.race.setRaceEventHandler(tableController);
+        this.tableController.setNumBoats(numBoats);
         raceViewController.begin(race, width, height);
 
     }

@@ -33,6 +33,7 @@ public class TableController implements RaceEventHandler {
     private TableColumn speedCol;
 
     private int order = 1;
+    private int numBoats;
     private int finalOrder = 1;
     private ObservableList<RaceEvent> events = FXCollections.observableArrayList();
 
@@ -46,13 +47,16 @@ public class TableController implements RaceEventHandler {
         // initialise race table
         positionCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, Integer>("position"));
         nameCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("teamName"));
-        featureCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("endPointName"));
+        featureCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("featureName"));
         speedCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,Integer>("speed"));
         raceTable.setItems(events);
 
     }
 
 
+    void setNumBoats(int numBoats) {
+        this.numBoats = numBoats;
+    }
 
     /**
      * Adds an event to table, also removes redundant event and sort them based on last feature passed by boat.
@@ -72,10 +76,10 @@ public class TableController implements RaceEventHandler {
        events.add(event);
        Collections.sort(events);  //events are sorted by index of the features
        // order the event indexes
-       if (order == 7) {
+       if (order == numBoats + 1) {
            order = 1;
        }
-       if (event.getEndPoint().isFinish()) {
+       if (event.getFeature().isFinish()) {
            event.setPosition(finalOrder);
            finalOrder++;
        }

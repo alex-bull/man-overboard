@@ -15,6 +15,9 @@ import seng302.Factories.CourseFactory;
 import seng302.Factories.RaceFactory;
 import seng302.Model.*;
 
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
 public class App extends Application
 {
     @Override
@@ -35,8 +38,13 @@ public class App extends Application
         primaryStage.setWidth(primaryScreenBounds.getWidth());
         primaryStage.setHeight(primaryScreenBounds.getHeight());
 
-        Race r = generateRace(primaryScreenBounds.getWidth() * 0.70, height);
-        mainController.setRace(r,4000,4000);
+        Scanner scanner = new Scanner(System.in);
+        int numBoats = getNumBoats(scanner);
+        int duration = getDuration(scanner);
+        Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height);
+
+        Race r = new RaceFactory().createRace(numBoats, duration, raceCourse);
+        mainController.setRace(r,4000,4000, numBoats);
         primaryStage.show();
 
     }
@@ -49,46 +57,49 @@ public class App extends Application
     }
 
     /**
-     * Creates a Race object
-     * @param screenX then width of the window screen
-     * @param screenY the height of the window screen
-     * @return Race a race created by the race factory
+     * Gets number of boats from user input
+     * @param scanner Scanner
+     * @return int the number of competitors
      */
-    public Race generateRace(Double screenX, Double screenY){
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Enter number of boats in Regatta: ");
-//        int numberOfBoats;
-//        while (true) {
-//            try {
-//                numberOfBoats = scanner.nextInt();
-//                if (numberOfBoats >= 2 && numberOfBoats <= 6) {
-//                    break;
-//                }
-//                throw new InputMismatchException("Not in valid range");
-//            } catch (Exception e) {
-//                System.out.println("Invalid input. Please enter an integer between 2 and 6: ");
-//                scanner.nextLine();
-//            }
-//        }
-//
-//        System.out.println("Would you like the race to be completed in approximately 1 or 5 minutes? ");
-//        int raceDuration;
-//        while (true) {
-//            try {
-//                raceDuration = scanner.nextInt();
-//                if (raceDuration == 1 || raceDuration == 5) {
-//                    break;
-//                }
-//                throw new InputMismatchException("Not in valid range");
-//            } catch (Exception e) {
-//                System.out.println("Invalid input. Please enter 1 or 5: ");
-//                scanner.nextLine();
-//            }
-//        }
-
-        //create the match races, only one is used for now
-        Course raceCourse = new CourseFactory().createCourse(screenX, screenY);
-        return new RaceFactory().createRace(6,1, raceCourse);
-
+    private int getNumBoats(Scanner scanner) {
+        System.out.println("Enter number of boats in Regatta: ");
+        int numberOfBoats;
+        while (true) {
+            try {
+                numberOfBoats = scanner.nextInt();
+                if (numberOfBoats >= 2 && numberOfBoats <= 6) {
+                    break;
+                }
+                throw new InputMismatchException("Not in valid range");
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter an integer between 2 and 6: ");
+                scanner.nextLine();
+            }
+        }
+        return numberOfBoats;
     }
+
+    /**
+     * Gets the duration from user input
+     * @param scanner Scanner
+     * @return int the approximate duration in minutes
+     */
+    private int getDuration(Scanner scanner) {
+        System.out.println("Would you like the race to be completed in approximately 1 or 5 minutes? ");
+        int raceDuration;
+        while (true) {
+            try {
+                raceDuration = scanner.nextInt();
+                if (raceDuration == 1 || raceDuration == 5) {
+                    break;
+                }
+                throw new InputMismatchException("Not in valid range");
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter 1 or 5: ");
+                scanner.nextLine();
+            }
+        }
+        return raceDuration;
+    }
+
 }
