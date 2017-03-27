@@ -1,8 +1,6 @@
 package seng302.Model;
 
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 /**
@@ -12,47 +10,12 @@ import javafx.beans.property.SimpleStringProperty;
 public class RaceEvent implements Comparable<RaceEvent>{
 
     private SimpleStringProperty teamName;
-    private SimpleStringProperty endPointName;
+    private SimpleStringProperty featureName;
     private SimpleIntegerProperty position;
     private boolean isFinish = false;
-    private CourseFeature endPoint;
+    private CourseFeature feature;
     private SimpleIntegerProperty speed;
 
-
-    /**EDIT LATER
-     * Creates a single race event
-     * @param boat Competitor the competing boat
-     * @param time Integer the time of the event
-     * @param displayTime Integer the time to be displayed in the event string
-     * @param pointName String the course point name
-     * @param heading Double the exit heading of the competitor
-     */
-//    public RaceEvent(Competitor boat, long time, Integer displayTime, String pointName, Double heading, boolean isFinish, CourseFeature feature) {
-//        this.teamName = new SimpleStringProperty(boat.getTeamName());
-//        this.time = new SimpleLongProperty(time);
-//        this.pointName = pointName;
-//        this.displayTime = displayTime;
-//        if (heading != null) {
-//            this.heading = heading;
-//        }
-//        this.isFinish = isFinish;
-//        this.endPoint = feature;
-//
-//    }
-
-    /**
-     * Creates a race event
-     * @param boat Competitor a competing boat
-     * @param time long the time in milliseconds
-     * @param feature CourseFeature the feature the competitor passed
-     */
-//    public RaceEvent(Competitor boat, long time, CourseFeature feature){
-//        this.teamName=new SimpleStringProperty(boat.getTeamName());
-//        this.time = new SimpleLongProperty(time);
-//        this.color=new SimpleStringProperty(boat.getColor().toString());
-//        this.endPointName=new SimpleStringProperty(feature.getName());
-//        this.speed=new SimpleIntegerProperty(boat.getVelocity());
-//    }
 
     /**
      * Creates a race event
@@ -62,9 +25,9 @@ public class RaceEvent implements Comparable<RaceEvent>{
     public RaceEvent(Competitor boat, CourseFeature feature) {
         this.position = new SimpleIntegerProperty(0);
         this.speed = new SimpleIntegerProperty(boat.getVelocity());
-        this.endPointName = new SimpleStringProperty(feature.getName());
+        this.featureName = new SimpleStringProperty(feature.getName());
         this.teamName = new SimpleStringProperty(boat.getTeamName());
-        this.endPoint = feature;
+        this.feature = feature;
     }
 
 
@@ -75,10 +38,10 @@ public class RaceEvent implements Comparable<RaceEvent>{
      */
     @Override
     public int compareTo(RaceEvent raceEvent) {
-        if (this.getEndPoint().getIndex() == raceEvent.getEndPoint().getIndex()) {
+        if (this.getFeature().getIndex() == raceEvent.getFeature().getIndex()) {
             return 0;
         }
-        else if (this.getEndPoint().getIndex() > raceEvent.getEndPoint().getIndex()) {
+        else if (this.getFeature().getIndex() > raceEvent.getFeature().getIndex()) {
             return -1;
         }
         return 1;
@@ -111,14 +74,14 @@ public class RaceEvent implements Comparable<RaceEvent>{
      * Get the end point of the event
      * @return String the course feature the boat passed
      */
-    public String getEndPointName(){return this.endPointName.get();}
+    public String getFeatureName(){return this.featureName.get();}
 
     /**
      * Getter for the end point
      * @return CourseFeature the mark for the end point
      */
-    public CourseFeature getEndPoint() {
-        return endPoint;
+    public CourseFeature getFeature() {
+        return feature;
     }
 
 

@@ -21,7 +21,6 @@ import static java.lang.Math.abs;
 public class XMLCourseLoader {
     private File inputFile;
     private ArrayList<Gate> winds = new ArrayList<>();
-    CoordinateMapper mapper = new CoordinateMapper();
 
 
     private ArrayList<Double> xCoords = new ArrayList<>();
@@ -48,7 +47,25 @@ public class XMLCourseLoader {
         return Math.toDegrees(Math.atan( (x1-x2)/-(y1-y2)));
     }
 
+    /**
+     * Function to map latitude and longitude to screen coordinates
+     * @param lat latitude
+     * @param lon longitude
+     * @param width width of the screen
+     * @param height height of the screen
+     * @return ArrayList the coordinates in metres
+     */
+    private ArrayList<Double> mercatorProjection(double lat, double lon, double width, double height){
+        ArrayList<Double> ret=new ArrayList<>();
+        double x = (lon+180)*(width/360);
+        double latRad = lat*Math.PI/180;
+        double merc = Math.log(Math.tan(Math.PI/4)+(latRad/2));
+        double y = (height/2)-(width*merc/(2*Math.PI));
+        ret.add(x);
+        ret.add(y);
+        return ret;
 
+    }
 
     /**
      * Creates a list of course features read from an xml file
@@ -98,8 +115,8 @@ public class XMLCourseLoader {
                 yCoords.add(lon1);
                 yCoords.add(lon2);
 
-                ArrayList<Double> point1=mapper.mercatorProjection(lat1,lon1,width,height);
-                ArrayList<Double> point2=mapper.mercatorProjection(lat2,lon2,width,height);
+                ArrayList<Double> point1=mercatorProjection(lat1,lon1,width,height);
+                ArrayList<Double> point2=mercatorProjection(lat2,lon2,width,height);
                 double point1X=point1.get(0);
                 double point1Y=point1.get(1);
                 double point2X=point2.get(0);
@@ -133,7 +150,7 @@ public class XMLCourseLoader {
 
                 double lat1 =Double.parseDouble(mark.getChildText("latitude"));
                 double lon1= Double.parseDouble(mark.getChildText("longtitude"));
-                ArrayList<Double> point1=mapper.mercatorProjection(lat1,lon1,width,height);
+                ArrayList<Double> point1=mercatorProjection(lat1,lon1,width,height);
                 double point1X=point1.get(0);
                 double point1Y=point1.get(1);
                 xMercatorCoords.add(point1X);

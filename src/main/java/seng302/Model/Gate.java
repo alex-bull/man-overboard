@@ -115,7 +115,6 @@ public class Gate implements CourseFeature {
      */
     @Override
     public void factor(double xFactor, double yFactor, double minX,double minY,double xBuffer,double yBuffer) {
-        System.out.println("name: "+name);
         pixelPoint1.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
         pixelPoint2.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
     }
