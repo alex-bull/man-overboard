@@ -41,10 +41,10 @@ public class XMLCourseLoader {
      * @return double the angle of the wind direction
      */
     public double getWindDirection(){
-        double x1=winds.get(0).getGPSCentre().getXValue();
-        double y1=winds.get(0).getGPSCentre().getYValue();
-        double x2=winds.get(1).getGPSCentre().getXValue();
-        double y2=winds.get(1).getGPSCentre().getYValue();
+        double x1=winds.get(0).getPixelLocations().get(0).getXValue();
+        double y1=winds.get(0).getPixelLocations().get(0).getYValue();
+        double x2=winds.get(1).getPixelLocations().get(0).getXValue();
+        double y2=winds.get(1).getPixelLocations().get(0).getYValue();
         return Math.toDegrees(Math.atan( (x1-x2)/-(y1-y2)));
     }
 

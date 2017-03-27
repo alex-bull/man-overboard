@@ -23,6 +23,7 @@ public class RaceViewController {
 
     @FXML private Canvas mycanvas;
     @FXML private Text timerText;
+    @FXML private Text fpsCounter;
     @FXML private TableController tableController;
 
     private long startTime;
@@ -45,6 +46,8 @@ public class RaceViewController {
     public void begin(Race race, double width, double height) {
         this.race=race;
         startTime = System.currentTimeMillis();
+        mycanvas.setHeight(height);
+        mycanvas.setWidth(width);
         animate(width, height);
 
     }
@@ -57,11 +60,11 @@ public class RaceViewController {
     void drawArrow(GraphicsContext gc, double angle) {
         gc.save();
         gc.setFill(Color.BLACK);
-        Rotate r = new Rotate(angle, 80, 40);
+        Rotate r = new Rotate(angle, 55, 90); // rotate object
 
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 
-        gc.fillPolygon(new double[]{20,30,30,40,40,50,35}, new double[]{30,30,70,70,30,30,10},
+        gc.fillPolygon(new double[]{40,50,50,60,60,70,55}, new double[]{70,70,110,110,70,70,50},
                 7);
         gc.restore();
     }
@@ -153,9 +156,9 @@ public class RaceViewController {
                 drawCourse(gc);
 
                 //draw fps counter
-                gc.setFill(Color.BLACK);
-                gc.setFont(Font.font("Monospaced", 20));
-                gc.fillText(String.format("FPS: %d",fps),0,height-10);
+                fpsCounter.setText(String.format("FPS: %d",fps));
+
+
 
                 // draw competitors
                 for(int i =0; i< competitors.size(); i++)  {
