@@ -124,7 +124,7 @@ public class RaceViewController {
         ArrayList<Double> xCoords = new ArrayList<>();
         ArrayList<Double> yCoords = new ArrayList<>();
         // start the race using the timeline
-        Timeline t = race.generateTimeline(tableController);
+        Timeline t = race.generateTimeline();
         List<Competitor> competitors = race.getCompetitors();
 
         AnimationTimer timer = new AnimationTimer() {

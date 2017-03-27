@@ -14,7 +14,7 @@ import java.util.Map;
 public interface Race {
     void setCompetitors(List<Competitor> competitors);
     List<Competitor> getCompetitors();
-    Timeline generateTimeline(TableController tableController);
+    Timeline generateTimeline();
     List<CourseFeature> getCourseFeatures();
     int getVelocityScaleFactor();
     double getWindDirection();

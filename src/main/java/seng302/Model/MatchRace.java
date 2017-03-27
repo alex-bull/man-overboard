@@ -104,7 +104,7 @@ public class MatchRace implements Race {
      * Generates a timeline of events in the race where competitors pass course features
      * @return Timeline the timeline of events
      */
-    public Timeline generateTimeline(TableController tableController) {
+    public Timeline generateTimeline() {
 
         Timeline timeline = new Timeline();
         List<CourseFeature> points = raceCourse.getPoints();
