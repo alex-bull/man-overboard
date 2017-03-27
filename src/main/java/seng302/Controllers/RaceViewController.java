@@ -1,6 +1,8 @@
 package seng302.Controllers;
 
 import com.google.common.collect.Iterables;
+import com.google.common.math.DoubleMath;
+import com.google.common.math.Stats;
 import com.google.common.primitives.Doubles;
 import com.sun.deploy.util.ArrayUtil;
 import edu.princeton.cs.algorithms.GrahamScan;
@@ -98,6 +100,20 @@ public class RaceViewController {
      */
     private void drawCourse(GraphicsContext gc) {
 
+        //draw the course boundary
+        gc.save();
+//        double pivotX= Stats.meanOf(boundaryX);
+//        double pivotY=Stats.meanOf(boundaryY);
+//        gc.fillOval(pivotX,pivotY,1,1);
+//        Scale s=new Scale(1.1,1.1,pivotX,pivotY);
+        gc.setLineDashes(5);
+        gc.setLineWidth(0.8);
+        //gc.setTransform(s.getMxx(), s.getMyx(), s.getMxy(), s.getMyy(), s.getTx(), s.getTy());
+        gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
+        gc.setFill(Color.DEEPSKYBLUE);
+        gc.fillPolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
+        gc.restore();
+
         // loops through all course features
         for (CourseFeature courseFeature : this.race.getCourseFeatures().subList(1, race.getCourseFeatures().size())) {
             gc.setFill(Color.ORANGERED); // buoy colour
@@ -133,18 +149,7 @@ public class RaceViewController {
         drawArrow(gc, race.getWindDirection()); // draw wind direction arrow
 
 
-        //draw the course boundary
-        gc.save();
-        double pivotX=(Collections.min(boundaryX)+Collections.max(boundaryX))/2;
-        double pivotY=(Collections.min(boundaryY)+Collections.max(boundaryY))/2;
-        Scale s=new Scale(1.1,1.1,pivotX,pivotY);
-        gc.setLineDashes(2);
-        gc.setLineWidth(0.5);
-        gc.setTransform(s.getMxx(), s.getMyx(), s.getMxy(), s.getMyy(), s.getTx(), s.getTy());
-//        gc.scale(1.1,1.1);
-        gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
 
-        gc.restore();
     }
 
 
