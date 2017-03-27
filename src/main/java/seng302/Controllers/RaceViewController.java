@@ -2,9 +2,16 @@ package seng302.Controllers;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
@@ -23,7 +30,7 @@ public class RaceViewController {
 
     @FXML private Canvas mycanvas;
     @FXML private Text timerText;
-    @FXML private Text fpsCounter;
+    @FXML private Label fpsCounter;
     @FXML private TableController tableController;
 
     private long startTime;
@@ -32,8 +39,8 @@ public class RaceViewController {
     /**
      * Initialiser for the raceViewController
      */
-    @FXML
     void initialize() {
+
 
     }
 
@@ -49,6 +56,7 @@ public class RaceViewController {
         mycanvas.setHeight(height);
         mycanvas.setWidth(width);
         animate(width, height);
+        initialize();
 
     }
 
@@ -132,7 +140,6 @@ public class RaceViewController {
             long startTimeNano = System.nanoTime();
             long currentTimeNano = System.nanoTime();
             int counter = 0;
-            int fps;
 
             @Override
             public void handle(long now) {
@@ -146,7 +153,8 @@ public class RaceViewController {
                 currentTimeNano = System.nanoTime();
                 if (currentTimeNano > startTimeNano + 1000000000){
                     startTimeNano = System.nanoTime();
-                    fps = counter;
+
+                    fpsCounter.setText(String.format("FPS: %d",counter));
                     counter = 0;
                 }
 
@@ -155,8 +163,7 @@ public class RaceViewController {
                 gc.fillRect(0,0,width,height);
                 drawCourse(gc);
 
-                //draw fps counter
-                fpsCounter.setText(String.format("FPS: %d",fps));
+
 
 
 
@@ -229,6 +236,11 @@ public class RaceViewController {
         return formattedTime;
     }
 
+    @FXML
+    public void toggleFPS(){
+        System.out.println("asdf");
+        fpsCounter.setVisible(!fpsCounter.visibleProperty().getValue());
+}
 
 
 
