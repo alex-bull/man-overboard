@@ -80,8 +80,8 @@ public class XMLCourseLoader {
         int index = 0;
         double bufferX=Math.max(40,width*0.2);
         double bufferY=Math.max(40,height*0.2);
-        System.out.println("bufferX: "+bufferX);
-        System.out.println("bufferY: "+bufferY);
+//        System.out.println("bufferX: "+bufferX);
+//        System.out.println("bufferY: "+bufferY);
 
         SAXBuilder saxbuilder = new SAXBuilder();
         Document document = saxbuilder.build(inputFile);
@@ -143,7 +143,7 @@ public class XMLCourseLoader {
                         winds.add(gate);
 
                 }
-            } else { //Its a mark
+            } else if (type.equals("mark")){ //Its a mark
 
                 Element mark = feature.getChildren().get(1);
                 String name = feature.getChildText("name");
@@ -165,6 +165,9 @@ public class XMLCourseLoader {
                 Mark mark1 = new Mark(name, pixel, GPS,index);
                 index++;
                 points.add(mark1);
+
+            } else { //invalid course file
+                throw new JDOMException();
             }
 
         }
