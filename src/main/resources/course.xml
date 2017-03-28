@@ -3,13 +3,13 @@
 
 <course>
 
-    <Mark>
+    <mark>
         <name>Prestart</name>
         <compoundMark>
             <latitude>32.29700</latitude>
             <longtitude>-64.861</longtitude>
         </compoundMark>
-    </Mark>
+    </mark>
 
 
 
@@ -26,13 +26,13 @@
     </gate>
 
 
-    <Mark>
+    <mark>
         <name>Mark</name>
         <compoundMark>
             <latitude>32.293039</latitude>
             <longtitude>-64.843983</longtitude>
         </compoundMark>
-    </Mark>
+    </mark>
 
 
     <gate type="leeward">
