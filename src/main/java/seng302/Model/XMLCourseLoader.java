@@ -78,8 +78,8 @@ public class XMLCourseLoader {
     public ArrayList<CourseFeature> parseCourse(double width, double height) throws JDOMException, IOException {
         //buffers are defined as the total buffer size, i.e. total for both sides
         int index = 0;
-        double bufferX=Math.max(40,width*0.2);
-        double bufferY=Math.max(40,height*0.2);
+        double bufferX=Math.max(150,width*0.3);
+        double bufferY=Math.max(300,height*0.3);
         System.out.println("bufferX: "+bufferX);
         System.out.println("bufferY: "+bufferY);
 

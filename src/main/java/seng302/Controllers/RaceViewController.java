@@ -2,6 +2,7 @@ package seng302.Controllers;
 
 import com.google.common.collect.Iterables;
 import com.google.common.math.DoubleMath;
+import com.google.common.math.Quantiles;
 import com.google.common.math.Stats;
 import com.google.common.primitives.Doubles;
 import com.sun.deploy.util.ArrayUtil;
@@ -12,6 +13,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
@@ -27,16 +29,18 @@ import javafx.scene.transform.Scale;
 import seng302.Model.*;
 
 import java.awt.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
 
 /**
  * Controller for the race view.
  */
-public class RaceViewController {
+public class RaceViewController implements Initializable{
 
     @FXML private Canvas mycanvas;
     @FXML private Text timerText;
@@ -46,16 +50,18 @@ public class RaceViewController {
     private long startTime;
     private Race race;
     private boolean showAnnotations = true;
-    private ArrayList<Double> boundaryX=new ArrayList<>();
-    private ArrayList<Double> boundaryY=new ArrayList<>();
+    private List<Double> boundaryX;
+    private List<Double> boundaryY;
 
     /**
      * Initialiser for the raceViewController
      */
-    void initialize() {
-
-
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        boundaryX=new ArrayList<>();
+        boundaryY=new ArrayList<>();
     }
+
 
     /**
      * Sets the race and the race start time and then animates the race
@@ -70,7 +76,6 @@ public class RaceViewController {
         mycanvas.setWidth(width);
         calcBoundary();
         animate(width, height);
-        initialize();
 
 
     }
@@ -101,18 +106,30 @@ public class RaceViewController {
     private void drawCourse(GraphicsContext gc) {
 
         //draw the course boundary
+        //calculate the mid point
+        double pivotX= Quantiles.median().compute(boundaryX);
+        //double pivotX2=(Collections.min(boundaryX)+Collections.max(boundaryX))/2;
+        double pivotY=Quantiles.median().compute(boundaryY);
+        //double pivotY2=(Collections.min(boundaryY)+Collections.max(boundaryY))/2;
         gc.save();
-//        double pivotX= Stats.meanOf(boundaryX);
-//        double pivotY=Stats.meanOf(boundaryY);
-//        gc.fillOval(pivotX,pivotY,1,1);
-//        Scale s=new Scale(1.1,1.1,pivotX,pivotY);
+
+        Scale s=new Scale(1.15,1.15,pivotX,pivotY);
+        //Scale s2=new Scale(1.15,1.15,pivotX2,pivotY2);
         gc.setLineDashes(5);
         gc.setLineWidth(0.8);
-        //gc.setTransform(s.getMxx(), s.getMyx(), s.getMxy(), s.getMyy(), s.getTx(), s.getTy());
+        //scale the boundary
+        gc.setTransform(s.getMxx(), s.getMyx(), s.getMxy(), s.getMyy(), s.getTx(), s.getTy());
+        //gc.setTransform(s2.getMxx(), s2.getMyx(), s2.getMxy(), s2.getMyy(), s2.getTx(), s2.getTy());
+        //draw boundary
         gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
         gc.setFill(Color.DEEPSKYBLUE);
+        //shade inside the boundary
         gc.fillPolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
         gc.restore();
+        //draw pivot for testing
+//        gc.setFill(Color.BLACK);
+//        gc.fillOval(pivotX,pivotY,10,10);
+
 
         // loops through all course features
         for (CourseFeature courseFeature : this.race.getCourseFeatures().subList(1, race.getCourseFeatures().size())) {
@@ -295,6 +312,10 @@ public class RaceViewController {
         }
     }
 
+    /**
+     * Calculates the boundary of the course by running graham scan algorithm on all points in course feature.
+     * Once it is done it adds the points on the convex hull to boundaryX and boundaryY.
+     */
     public void calcBoundary(){
         ArrayList<Point2D> coords=new ArrayList<>();
         for(CourseFeature feature : race.getCourseFeatures()){
@@ -312,7 +333,6 @@ public class RaceViewController {
 //            System.out.println(point2D);
             boundaryX.add(point2D.x());
             boundaryY.add(point2D.y());});
-
     }
 
 }
