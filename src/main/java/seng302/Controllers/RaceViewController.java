@@ -1,5 +1,6 @@
 package seng302.Controllers;
 
+import com.google.common.primitives.Doubles;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -29,27 +30,17 @@ import static java.lang.Math.sin;
 /**
  * Controller for the race view.
  */
-public class RaceViewController implements Initializable{
+public class RaceViewController {
 
     @FXML private Canvas mycanvas;
     @FXML private Text timerText;
     @FXML private Label fpsCounter;
-    @FXML private TableController tableController;
 
     private long startTime;
     private Race race;
     private boolean showAnnotations = true;
-//    private List<Double> boundaryX;
-//    private List<Double> boundaryY;
 
-    /**
-     * Initialiser for the raceViewController
-     */
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-//        boundaryX=new ArrayList<>();
-//        boundaryY=new ArrayList<>();
-    }
+
 
 
     /**
@@ -106,7 +97,7 @@ public class RaceViewController implements Initializable{
         gc.setLineDashes(5);
         gc.setLineWidth(0.8);
         gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
-        gc.setFill(Color.DEEPSKYBLUE);
+        gc.setFill(Color.CYAN);
        //shade inside the boundary
         gc.fillPolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
         gc.restore();
