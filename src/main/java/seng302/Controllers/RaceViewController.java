@@ -83,28 +83,9 @@ public class RaceViewController {
      */
     private void drawCourse(GraphicsContext gc) {
 
-        //draw the boundary
-
-        gc.save();
-        ArrayList<Double> boundaryX = new ArrayList<>();
-        ArrayList<Double> boundaryY = new ArrayList<>();
-        for (MutablePoint point: this.race.getCourseBoundary()) {
-
-            boundaryX.add(point.getXValue());
-            boundaryY.add(point.getYValue());
-
-        }
-        gc.setLineDashes(5);
-        gc.setLineWidth(0.8);
-        gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
-        gc.setFill(Color.CYAN);
-       //shade inside the boundary
-        gc.fillPolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
-        gc.restore();
-
+        drawBoundary(gc);
 
         // loops through all course features
-
         for (CourseFeature courseFeature : this.race.getCourseFeatures().subList(1, race.getCourseFeatures().size())) {
             gc.setFill(Color.ORANGERED); // buoy colour
             gc.setStroke(Color.BLUE); // line colour between gates
@@ -142,7 +123,29 @@ public class RaceViewController {
     }
 
 
+    /**
+     * Draw boundary
+     * @param gc GraphicsContext
+     */
+    public void drawBoundary(GraphicsContext gc) {
+        gc.save();
+        ArrayList<Double> boundaryX = new ArrayList<>();
+        ArrayList<Double> boundaryY = new ArrayList<>();
+        for (MutablePoint point: this.race.getCourseBoundary()) {
 
+            boundaryX.add(point.getXValue());
+            boundaryY.add(point.getYValue());
+
+        }
+        gc.setLineDashes(5);
+        gc.setLineWidth(0.8);
+        gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
+        gc.setFill(Color.POWDERBLUE);
+        //shade inside the boundary
+        gc.fillPolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
+        gc.restore();
+
+    }
 
     /**
      * Starts the animation timer to animate the race
