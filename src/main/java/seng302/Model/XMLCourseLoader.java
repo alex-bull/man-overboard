@@ -25,6 +25,8 @@ public class XMLCourseLoader {
     private Double bufferX;
     private Double bufferY;
     private ArrayList<CourseFeature> points = new ArrayList<>();
+    List <Double> xMercatorCoords=new ArrayList<>();
+    List <Double> yMercatorCoords=new ArrayList<>();
 
     /**
      * Constructor for loading a course with an XML input file
@@ -58,7 +60,7 @@ public class XMLCourseLoader {
         ArrayList<Double> ret=new ArrayList<>();
         double x = (lon+180)*(width/360);
         double latRad = lat*Math.PI/180;
-        double merc = Math.log(Math.tan(Math.PI/4)+(latRad/2));
+        double merc = Math.log(Math.tan((Math.PI/4)+(latRad/2)));
         double y = (height/2)-(width*merc/(2*Math.PI));
         ret.add(x);
         ret.add(y);
@@ -73,8 +75,6 @@ public class XMLCourseLoader {
         Element raceCourse = document.getRootElement();
         List<Element> features = raceCourse.getChildren();
 
-        ArrayList<Double> xMercatorCoords=new ArrayList<>();
-        ArrayList<Double> yMercatorCoords=new ArrayList<>();
         List<MutablePoint> boundary = new ArrayList<>();
 
 
@@ -115,14 +115,17 @@ public class XMLCourseLoader {
     public ArrayList<CourseFeature> parseCourse(double width, double height) throws JDOMException, IOException {
         //buffers are defined as the total buffer size, i.e. total for both sides
         int index = 0;
+        bufferX=Math.max(150,width*0.6);
+        bufferY=Math.max(10,height*0.1);
+        System.out.println("bufferX: "+bufferX);
+        System.out.println("bufferY: "+bufferY);
+
         bufferX=Math.max(150,width*0.3);
         bufferY=Math.max(300,height*0.3);
         SAXBuilder saxbuilder = new SAXBuilder();
         Document document = saxbuilder.build(inputFile);
         Element raceCourse = document.getRootElement();
         List<Element> features = raceCourse.getChildren();
-        ArrayList<Double> xMercatorCoords=new ArrayList<>();
-        ArrayList<Double> yMercatorCoords=new ArrayList<>();
 
 
         for (Element feature : features) {
@@ -204,8 +207,8 @@ public class XMLCourseLoader {
         }
 
         // scale to canvas size
-        double xFactor = (width-bufferX/2)/(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
-        double yFactor = (height-bufferY/2)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
+        double xFactor = (width-bufferX)/(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
+        double yFactor = (height-bufferY)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
 
         //make scaling in proportion
         scaleFactor = Math.min(xFactor,yFactor);
