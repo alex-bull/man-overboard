@@ -73,7 +73,6 @@ public class RaceViewController {
         gc.save();
         gc.setFill(Color.BLACK);
         Rotate r = new Rotate(angle, 55, 90); // rotate object
-
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 
         gc.fillPolygon(new double[]{40,50,50,60,60,70,55}, new double[]{70,70,110,110,70,70,50},
@@ -169,7 +168,12 @@ public class RaceViewController {
                 drawCourse(gc);
 
 
-
+                // draw wake - separate loop so all wakes drawn underneath boats
+                for(int i =0; i< competitors.size(); i++)  {
+                    Competitor boat = competitors.get(i);
+                    // draw wake of boat
+                    drawWake(boat, gc);
+                }
 
 
                 // draw competitors
@@ -178,20 +182,24 @@ public class RaceViewController {
                     double xValue = boat.getPosition().getXValue();
                     double yValue = boat.getPosition().getYValue();
 
-
-
-                    // draw wake of boat
-                    drawWake(boat, gc);
-
                     // draw boat
-                    gc.setFill(boat.getColor());
-                    gc.fillOval(
-                            xValue - 5,
-                            yValue - 5,
-                            10,
-                            10
-                    );
+                    double d = 10.0;
+                    double h = 10.0;
 
+                    gc.setFill(boat.getColor());
+                    double[] xPoints = new double[] {
+                            xValue, xValue - (d/2), xValue + (d/2)
+                    };
+                    double[] yPoints = new double[] {
+                            yValue - h, yValue, yValue
+                    };
+
+                    gc.save();
+                    Rotate r = new Rotate(boat.getCurrentHeading(), xValue, yValue); // rotate object
+                    gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
+
+                    gc.fillPolygon(xPoints, yPoints, 3);
+                    gc.restore();
 
 
                     //set font to monospaced for easier layout formatting
@@ -199,16 +207,17 @@ public class RaceViewController {
 
                     //draw labels if show all annotations is toggled
                     if (showAnnotations) {
-                        gc.fillText(boat.getAbbreName(),xValue-10,yValue);
-                        gc.fillText(boat.getVelocity()+" m/s",xValue-20,yValue+20);
+                        gc.fillText(boat.getAbbreName(),xValue - 10,yValue - 20);
+                        gc.fillText(boat.getVelocity() + " m/s",xValue - 20,yValue + 20);
                         yCoords.add(yValue);
                         xCoords.add(xValue);
                     }
 
 
-
-
                 }
+
+
+
                 // show race time
                 timerText.setText(formatDisplayTime(System.currentTimeMillis() - startTime));
 
