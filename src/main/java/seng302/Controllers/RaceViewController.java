@@ -132,9 +132,6 @@ public class RaceViewController {
      */
     public void animate(double width, double height){
 
-        // arraylists to store coordinates
-        ArrayList<Double> xCoords = new ArrayList<>();
-        ArrayList<Double> yCoords = new ArrayList<>();
         // start the race using the timeline
         Timeline t = race.generateTimeline();
         List<Competitor> competitors = race.getCompetitors();
@@ -157,7 +154,6 @@ public class RaceViewController {
                 currentTimeNano = System.nanoTime();
                 if (currentTimeNano > startTimeNano + 1000000000){
                     startTimeNano = System.nanoTime();
-
                     fpsCounter.setText(String.format("FPS: %d",counter));
                     counter = 0;
                 }
@@ -171,52 +167,16 @@ public class RaceViewController {
                 // draw wake - separate loop so all wakes drawn underneath boats
                 for(int i =0; i< competitors.size(); i++)  {
                     Competitor boat = competitors.get(i);
-                    // draw wake of boat
                     drawWake(boat, gc);
                 }
 
-
-                // draw competitors
+                // draw competitors and annotations
                 for(int i =0; i< competitors.size(); i++)  {
                     Competitor boat = competitors.get(i);
-                    double xValue = boat.getPosition().getXValue();
-                    double yValue = boat.getPosition().getYValue();
-
-                    // draw boat
-                    double d = 10.0;
-                    double h = 10.0;
-
-                    gc.setFill(boat.getColor());
-                    double[] xPoints = new double[] {
-                            xValue, xValue - (d/2), xValue + (d/2)
-                    };
-                    double[] yPoints = new double[] {
-                            yValue - h, yValue, yValue
-                    };
-
-                    gc.save();
-                    Rotate r = new Rotate(boat.getCurrentHeading(), xValue, yValue); // rotate object
-                    gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-
-                    gc.fillPolygon(xPoints, yPoints, 3);
-                    gc.restore();
-
-
-                    //set font to monospaced for easier layout formatting
-                    gc.setFont(Font.font("Monospaced"));
-
-                    //draw labels if show all annotations is toggled
-                    if (showAnnotations) {
-                        gc.fillText(boat.getAbbreName(),xValue - 10,yValue - 20);
-                        gc.fillText(boat.getVelocity() + " m/s",xValue - 20,yValue + 20);
-                        yCoords.add(yValue);
-                        xCoords.add(xValue);
-                    }
-
+                    drawBoat(boat, gc);
+                    drawAnnotations(boat, gc);
 
                 }
-
-
 
                 // show race time
                 timerText.setText(formatDisplayTime(System.currentTimeMillis() - startTime));
@@ -227,6 +187,52 @@ public class RaceViewController {
         timer.start();
         t.play();
 
+    }
+
+    /**
+     * Draw annotations
+     * @param boat Competitor a competing boat
+     * @param gc Graphics Context
+     */
+    private void drawAnnotations(Competitor boat, GraphicsContext gc) {
+        double xValue = boat.getPosition().getXValue();
+        double yValue = boat.getPosition().getYValue();
+        //set font to monospaced for easier layout formatting
+        gc.setFont(Font.font("Monospaced"));
+
+        //draw labels if show all annotations is toggled
+        if (showAnnotations) {
+            gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
+            gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
+        }
+    }
+
+    /**
+     * Draw boat competitor
+     * @param boat Competitor a competing boat
+     * @param gc GraphicsContext
+     */
+    private void drawBoat(Competitor boat, GraphicsContext gc) {
+        double xValue = boat.getPosition().getXValue();
+        double yValue = boat.getPosition().getYValue();
+        double d = 10.0;
+        double h = 10.0;
+
+        gc.setFill(boat.getColor());
+        double[] xPoints = new double[] {
+                xValue, xValue - (d/2), xValue + (d/2)
+        };
+        double[] yPoints = new double[] {
+                yValue - h, yValue, yValue
+        };
+
+        gc.save();
+        Rotate r = new Rotate(boat.getCurrentHeading(), xValue, yValue); // rotate object
+        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
+        gc.fillPolygon(xPoints, yPoints, 3);
+        gc.setStroke(boat.getColor());
+        gc.strokeLine(xValue, yValue, xValue, yValue -h);
+        gc.restore();
     }
 
     /**
