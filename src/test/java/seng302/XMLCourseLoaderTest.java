@@ -22,11 +22,11 @@ public class XMLCourseLoaderTest {
         CourseFeature point1 = new Gate("Startline",
                 new MutablePoint(32.296577,-64.854304),
                 new MutablePoint(32.293771,-64.855242),
-                new MutablePoint(873.8008138831299, 51.2),
-                new MutablePoint(873.8008138831299, 51.2),
+                new MutablePoint(244.96829203234785, 76.8),
+                new MutablePoint(244.96829203234785, 76.8),
                 true, true, 0);
 
-        CourseFeature point2 = new Mark("Marker", new MutablePoint(84.0, 972.8000000000001), new MutablePoint(32.293771,-64.855242), 1);
+        CourseFeature point2 = new Mark("Marker", new MutablePoint(1554.0, 251.8359918483676), new MutablePoint(32.293039,-64.843983), 1);
 
 
         List<CourseFeature> features = parser.parseCourse(1680,1024);
@@ -39,13 +39,13 @@ public class XMLCourseLoaderTest {
         Assert.assertEquals(point2.getGPSCentre().getYValue(), pointb.getGPSCentre().getYValue(), 0.0001);
 
 
-        Assert.assertEquals(point1.getPixelLocations().get(0).getXValue(), pointa.getPixelLocations().get(0).getXValue(), 0.0001);
-        Assert.assertEquals(point1.getPixelLocations().get(0).getYValue(), pointa.getPixelLocations().get(0).getYValue(), 0.0001);
-        Assert.assertEquals(point1.getPixelLocations().get(1).getXValue(), pointa.getPixelLocations().get(0).getXValue(), 0.0001);
-        Assert.assertEquals(point1.getPixelLocations().get(1).getYValue(), pointa.getPixelLocations().get(0).getYValue(), 0.0001);
+        Assert.assertEquals(point1.getPixelLocations().get(0).getXValue(), pointa.getPixelLocations().get(0).getXValue(), 0.01);
+        Assert.assertEquals(point1.getPixelLocations().get(0).getYValue(), pointa.getPixelLocations().get(0).getYValue(), 0.01);
+        Assert.assertEquals(point1.getPixelLocations().get(1).getXValue(), pointa.getPixelLocations().get(0).getXValue(), 0.01);
+        Assert.assertEquals(point1.getPixelLocations().get(1).getYValue(), pointa.getPixelLocations().get(0).getYValue(), 0.01);
 
-        Assert.assertEquals(point2.getPixelLocations().get(0).getXValue(), pointb.getPixelLocations().get(0).getXValue(), 0.0001);
-        Assert.assertEquals(point2.getPixelLocations().get(0).getYValue(), pointb.getPixelLocations().get(0).getYValue(), 0.0001);
+        Assert.assertEquals(point2.getPixelLocations().get(0).getXValue(), pointb.getPixelLocations().get(0).getXValue(), 0.01);
+        Assert.assertEquals(point2.getPixelLocations().get(0).getYValue(), pointb.getPixelLocations().get(0).getYValue(), 0.01);
 
 
     }

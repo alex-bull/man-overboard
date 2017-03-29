@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <course>
-    <gate isFinish="true">
+    <gate isLine="true">
         <name>Startline</name>
         <compoundMark>
             <latitude>32.296577</latitude>
@@ -11,11 +11,13 @@
             <longtitude>-64.855242</longtitude>
         </compoundMark>
     </gate>
-    <Mark>
-        <name>Marker</name>
+
+
+    <mark>
+        <name>Mark</name>
         <compoundMark>
-            <latitude>32.293771</latitude>
-            <longtitude>-64.855242</longtitude>
+            <latitude>32.293039</latitude>
+            <longtitude>-64.843983</longtitude>
         </compoundMark>
-    </Mark>
+    </mark>
 </course>
