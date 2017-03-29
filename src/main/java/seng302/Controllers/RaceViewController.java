@@ -1,26 +1,26 @@
 package seng302.Controllers;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
-import seng302.Model.*;
+import javafx.scene.transform.Scale;
+import seng302.Model.Competitor;
+import seng302.Model.CourseFeature;
+import seng302.Model.MutablePoint;
+import seng302.Model.Race;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -29,7 +29,7 @@ import static java.lang.Math.sin;
 /**
  * Controller for the race view.
  */
-public class RaceViewController {
+public class RaceViewController implements Initializable{
 
     @FXML private Canvas mycanvas;
     @FXML private Text timerText;
@@ -39,14 +39,18 @@ public class RaceViewController {
     private long startTime;
     private Race race;
     private boolean showAnnotations = true;
+//    private List<Double> boundaryX;
+//    private List<Double> boundaryY;
 
     /**
      * Initialiser for the raceViewController
      */
-    void initialize() {
-
-
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+//        boundaryX=new ArrayList<>();
+//        boundaryY=new ArrayList<>();
     }
+
 
     /**
      * Sets the race and the race start time and then animates the race
@@ -60,7 +64,7 @@ public class RaceViewController {
         mycanvas.setHeight(height);
         mycanvas.setWidth(width);
         animate(width, height);
-        initialize();
+
 
     }
 
@@ -77,6 +81,7 @@ public class RaceViewController {
 
         gc.fillPolygon(new double[]{40,50,50,60,60,70,55}, new double[]{70,70,110,110,70,70,50},
                 7);
+
         gc.restore();
     }
 
@@ -87,7 +92,28 @@ public class RaceViewController {
      */
     private void drawCourse(GraphicsContext gc) {
 
+        //draw the boundary
+
+        gc.save();
+        ArrayList<Double> boundaryX = new ArrayList<>();
+        ArrayList<Double> boundaryY = new ArrayList<>();
+        for (MutablePoint point: this.race.getCourseBoundary()) {
+
+            boundaryX.add(point.getXValue());
+            boundaryY.add(point.getYValue());
+
+        }
+        gc.setLineDashes(5);
+        gc.setLineWidth(0.8);
+        gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
+        gc.setFill(Color.DEEPSKYBLUE);
+       //shade inside the boundary
+        gc.fillPolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
+        gc.restore();
+
+
         // loops through all course features
+
         for (CourseFeature courseFeature : this.race.getCourseFeatures().subList(1, race.getCourseFeatures().size())) {
             gc.setFill(Color.ORANGERED); // buoy colour
             gc.setStroke(Color.BLUE); // line colour between gates
@@ -123,6 +149,8 @@ public class RaceViewController {
         drawArrow(gc, race.getWindDirection()); // draw wind direction arrow
 
     }
+
+
 
 
     /**
@@ -252,6 +280,8 @@ public class RaceViewController {
         gc.setStroke(Color.CORNFLOWERBLUE);
         gc.strokeLine(xValue, yValue, x2, y2);
     }
+
+
 
 
     /**

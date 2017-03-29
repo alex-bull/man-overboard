@@ -20,6 +20,9 @@ import java.util.Scanner;
 
 public class App extends Application
 {
+
+    private static String courseFile;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
@@ -38,10 +41,13 @@ public class App extends Application
         primaryStage.setWidth(primaryScreenBounds.getWidth());
         primaryStage.setHeight(primaryScreenBounds.getHeight());
 
+
+        Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height, courseFile);
+
         Scanner scanner = new Scanner(System.in);
         int numBoats = getNumBoats(scanner);
         int duration = getDuration(scanner);
-        Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height);
+
 
         Race r = new RaceFactory().createRace(numBoats, duration, raceCourse);
         mainController.setRace(r,4000,4000, numBoats);
@@ -52,6 +58,8 @@ public class App extends Application
 
     public static void main( String[] args )
     {
+
+        courseFile = args[0];
         launch(args);
 
     }

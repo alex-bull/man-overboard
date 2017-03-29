@@ -60,6 +60,14 @@ public class MatchRace implements Race {
 
 
     /***
+     * Getter for the course boundary in the race course
+     * @return List the boundary points
+     */
+    public List<MutablePoint> getCourseBoundary() {
+        return this.raceCourse.getBoundaryPoints();
+    }
+
+    /***
      * Getter for the course features in the race course
      * @return List the features
      */

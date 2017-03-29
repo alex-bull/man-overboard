@@ -3,13 +3,13 @@
 
 <course>
 
-    <Mark>
+    <mark>
         <name>Prestart</name>
         <compoundMark>
             <latitude>32.29700</latitude>
             <longtitude>-64.861</longtitude>
         </compoundMark>
-    </Mark>
+    </mark>
 
 
 
@@ -26,13 +26,13 @@
     </gate>
 
 
-    <Mark>
+    <mark>
         <name>Mark</name>
         <compoundMark>
             <latitude>32.293039</latitude>
             <longtitude>-64.843983</longtitude>
         </compoundMark>
-    </Mark>
+    </mark>
 
 
     <gate type="leeward">
@@ -82,6 +82,46 @@
             <longtitude>-64.836260</longtitude>
         </compoundMark>
     </gate>
+
+    <boundary>
+        >
+        <point>
+            <latitude>32.3178927</latitude>
+            <longtitude>-64.8396993</longtitude>
+        </point>
+        <point>
+            <latitude>32.3181103</latitude>
+            <longtitude>-64.8328543</longtitude>
+        </point>
+        <point>
+            <latitude>32.306504</latitude>
+            <longtitude>-64.8242283</longtitude>
+        </point>
+        <point>
+            <latitude>32.2746516</latitude>
+            <longtitude>-64.8421669</longtitude>
+        </point>
+        <point>
+            <latitude>32.2770463</latitude>
+            <longtitude>-64.8498917</longtitude>
+        </point>
+        <point>
+            <latitude>32.2914861</latitude>
+            <longtitude>-64.8540974</longtitude>
+        </point>
+        <point>
+            <latitude>32.2932274</latitude>
+            <longtitude>-64.8597622</longtitude>
+        </point>
+        <point>
+            <latitude>32.300265</latitude>
+            <longtitude>-64.8581314</longtitude>
+        </point>
+        <point>
+            <latitude>32.3097686</latitude>
+            <longtitude>-64.8377037</longtitude>
+        </point>
+    </boundary>
 
 
 </course>

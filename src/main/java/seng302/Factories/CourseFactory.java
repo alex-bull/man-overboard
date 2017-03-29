@@ -1,10 +1,7 @@
 package seng302.Factories;
 
 import org.jdom2.JDOMException;
-import seng302.Model.Course;
-import seng302.Model.CourseFeature;
-import seng302.Model.RaceCourse;
-import seng302.Model.XMLCourseLoader;
+import seng302.Model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,22 +20,26 @@ public class CourseFactory {
      * @param screenY The height of the screen
      * @return Course an implementation of Course loaded from an XML file
      */
-    public Course createCourse(Double screenX, Double screenY){
+    public Course createCourse(Double screenX, Double screenY, String courseFile){
         // load XML file that contains course points
-        File inputFile = new File("src/main/resources/course.xml");
+        File inputFile = new File(courseFile);
         XMLCourseLoader parser = new XMLCourseLoader(inputFile);
 
         // create a raceCourse with course features
         List<CourseFeature> points = null;
+        List<MutablePoint> boundary = null;
         try {
             points = parser.parseCourse(screenX, screenY);
+            boundary = parser.parseCourseBoundary(screenX, screenY);
         } catch (JDOMException e) {
             System.out.println("XML file format error.");
-            e.printStackTrace();
+            System.exit(1);
+            //e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Failed to load file.");
-            e.printStackTrace();
+            System.exit(1);
+//            e.printStackTrace();
         }
-        return new RaceCourse(points, parser.getWindDirection());
+        return new RaceCourse(points, boundary, parser.getWindDirection());
     }
 }
