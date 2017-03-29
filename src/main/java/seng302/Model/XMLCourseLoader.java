@@ -117,9 +117,6 @@ public class XMLCourseLoader {
         int index = 0;
         bufferX=Math.max(150,width*0.3);
         bufferY=Math.max(300,height*0.3);
-        System.out.println("bufferX: "+bufferX);
-        System.out.println("bufferY: "+bufferY);
-
         SAXBuilder saxbuilder = new SAXBuilder();
         Document document = saxbuilder.build(inputFile);
         Element raceCourse = document.getRootElement();

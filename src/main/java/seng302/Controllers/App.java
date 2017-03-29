@@ -58,10 +58,15 @@ public class App extends Application
 
     public static void main( String[] args )
     {
+        try {
+            courseFile = args[0];
+            launch(args);
 
-        courseFile = args[0];
-        launch(args);
-
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+            System.out.println("No course XML file was provided.");
+            System.exit(1);
+        }
     }
 
     /**

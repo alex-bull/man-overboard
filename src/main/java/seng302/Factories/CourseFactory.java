@@ -32,13 +32,11 @@ public class CourseFactory {
             points = parser.parseCourse(screenX, screenY);
             boundary = parser.parseCourseBoundary(screenX, screenY);
         } catch (JDOMException e) {
-            System.out.println("XML file format error.");
+            System.out.println("Invalid format for course XML file.");
             System.exit(1);
-            //e.printStackTrace();
         } catch (IOException e) {
-            System.out.println("Failed to load file.");
+            System.out.println("Failed to load file, please make sure path is correct.");
             System.exit(1);
-//            e.printStackTrace();
         }
         return new RaceCourse(points, boundary, parser.getWindDirection());
     }

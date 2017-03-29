@@ -96,7 +96,6 @@ public class Mark implements CourseFeature {
      */
     @Override
     public void factor(double xFactor, double yFactor,double minX, double minY,double xBuffer,double yBuffer) {
-//        System.out.println("name: "+name);
         pixelLocation.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
     }
 
