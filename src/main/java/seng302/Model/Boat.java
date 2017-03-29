@@ -17,6 +17,7 @@ public class Boat implements Competitor {
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
 
 
+
     /**
      * Creates a boat
      * @param teamName String the team name of the boat
@@ -40,6 +41,15 @@ public class Boat implements Competitor {
     public String getTeamName() {
         return this.teamName;
     }
+
+    /**
+     * Setter for the boat's velocity
+     * @param velocity boat's velocity m/s
+     */
+    public void setVelocity(int velocity) {
+        this.velocity = velocity;
+    }
+
 
     /**
      * Getter for the boats velocity

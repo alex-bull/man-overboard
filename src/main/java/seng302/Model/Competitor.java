@@ -16,4 +16,5 @@ public interface Competitor {
     double getCurrentHeading();
     DoubleProperty getHeadingProperty();
     void setCurrentHeading(double currentHeading);
+    void setVelocity(int velocity);
 }

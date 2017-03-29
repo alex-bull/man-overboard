@@ -138,6 +138,9 @@ public class MatchRace implements Race {
                         Duration.millis(time), t -> {
                     RaceEvent e = new RaceEvent(comp, endPoint);
                     raceEventHandler.handleRaceEvent(e);
+                    if(endPoint.isFinish()){
+                        comp.setVelocity(0);
+                    }
 
                 },
                         new KeyValue(comp.getPosition().getX(), endPoint.getPixelLocations().get(0).getXValue()),
