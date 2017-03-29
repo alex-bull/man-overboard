@@ -1,5 +1,6 @@
 package seng302.Controllers;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -96,12 +97,13 @@ public class RaceViewController {
             List<MutablePoint> marks = courseFeature.getPixelLocations();
             Double x1 = marks.get(0).getXValue(); // first x pixel coordinate
             Double y1 = marks.get(0).getYValue(); // first y pixel coordinate
+            int d = 15; // diameter of the circle
+            double r = d/2; // radius of the circle
 
             // if it is a gate it will have two pixel location coordinates
             if (marks.size() == 2) {
                 gc.setLineWidth(3);
-                int d = 15; // diameter of the circle
-                double r = d/2; // radius of the circle
+
                 double x2 = marks.get(1).getXValue(); // second x pixel coordinate
                 double y2 = marks.get(1).getYValue(); // second y pixel coordinate
 
@@ -115,7 +117,7 @@ public class RaceViewController {
                 gc.fillOval(x2 - r, y2 - r, d, d);
 
             } else {
-                gc.fillOval(x1, y1, 20, 20); // draw mark point
+                gc.fillOval(x1 - r, y1 - r, d, d); // draw mark point
             }
 
         }
@@ -172,31 +174,25 @@ public class RaceViewController {
 
                 // draw competitors
                 for(int i =0; i< competitors.size(); i++)  {
-                    Competitor boat=competitors.get(i);
-                    double xValue=boat.getPosition().getXValue();
-                    double yValue=boat.getPosition().getYValue();
+                    Competitor boat = competitors.get(i);
+                    double xValue = boat.getPosition().getXValue();
+                    double yValue = boat.getPosition().getYValue();
+
+
+
+                    // draw wake of boat
+                    drawWake(boat, gc);
+
+                    // draw boat
                     gc.setFill(boat.getColor());
                     gc.fillOval(
-                            xValue,
-                            yValue,
+                            xValue - 5,
+                            yValue - 5,
                             10,
                             10
                     );
 
-                    // draw wake of boat
-                    //double boatSpeed = boat.getVelocity();
-;
-                    double wakeDirection = boat.getCurrentHeading() + 180;
-                    System.out.println("boat current heading "+ boat.getCurrentHeading());
-                    System.out.println(wakeDirection);
-                    double wakeLength = 20;
-                    double x2 = xValue - wakeLength * sin(wakeDirection);
-                    double y2 = yValue - wakeLength * cos(wakeDirection);
-                    System.out.println("x2 is" +  x2);
-                    System.out.println("x1 is" + y2);
-                    //double y2
-                    gc.setStroke(Color.DARKBLUE);
-                    gc.strokeLine(xValue, yValue, x2, y2);
+
 
                     //set font to monospaced for easier layout formatting
                     gc.setFont(Font.font("Monospaced"));
@@ -222,6 +218,24 @@ public class RaceViewController {
         timer.start();
         t.play();
 
+    }
+
+    /**
+     * Draw boat wakes and factor it with its velocity
+     * @param boat Competitor a competitor
+     * @param gc Graphics Context
+     */
+    private void drawWake(Competitor boat, GraphicsContext gc) {
+        double xValue = boat.getPosition().getXValue();
+        double yValue = boat.getPosition().getYValue();
+        double wakeDirection = Math.toRadians(boat.getCurrentHeading());
+        double wakeLength = boat.getVelocity();
+        double x_len = wakeLength * sin(wakeDirection);
+        double y_len = wakeLength * cos(wakeDirection);
+        double x2 = xValue - x_len;
+        double y2 = yValue + y_len;
+        gc.setStroke(Color.CORNFLOWERBLUE);
+        gc.strokeLine(xValue, yValue, x2, y2);
     }
 
 

@@ -119,7 +119,8 @@ public class MatchRace implements Race {
             timeline.getKeyFrames().add(new KeyFrame(
                     Duration.millis(0),
                     new KeyValue(comp.getPosition().getX(), points.get(0).getPixelLocations().get(0).getXValue()),
-                    new KeyValue(comp.getPosition().getY(), points.get(0).getPixelLocations().get(0).getYValue())
+                    new KeyValue(comp.getPosition().getY(), points.get(0).getPixelLocations().get(0).getYValue()),
+                    new KeyValue(comp.getHeadingProperty(), points.get(0).getExitHeading(), Interpolator.DISCRETE)
             ));
 
 
@@ -141,7 +142,7 @@ public class MatchRace implements Race {
                 },
                         new KeyValue(comp.getPosition().getX(), endPoint.getPixelLocations().get(0).getXValue()),
                         new KeyValue(comp.getPosition().getY(), endPoint.getPixelLocations().get(0).getYValue()),
-                        new KeyValue(comp.getHeadingProperty(), startPoint.getExitHeading(), Interpolator.DISCRETE)
+                        new KeyValue(comp.getHeadingProperty(), endPoint.getExitHeading(), Interpolator.DISCRETE)
                 ));
 
             }
