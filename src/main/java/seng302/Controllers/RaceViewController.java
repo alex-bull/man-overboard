@@ -13,10 +13,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
-import seng302.Model.Competitor;
-import seng302.Model.CourseFeature;
-import seng302.Model.MutablePoint;
-import seng302.Model.Race;
+import seng302.Model.*;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,13 +27,13 @@ import static java.lang.Math.sin;
 /**
  * Controller for the race view.
  */
-public class RaceViewController {
+public class RaceViewController implements ClockHandler {
 
     @FXML private Canvas mycanvas;
     @FXML private Text timerText;
     @FXML private Label fpsCounter;
 
-    private long startTime;
+    private Clock raceClock;
     private Race race;
     private boolean showAnnotations = true;
 
@@ -51,13 +48,14 @@ public class RaceViewController {
      */
     public void begin(Race race, double width, double height) {
         this.race=race;
-        startTime = System.currentTimeMillis();
+        this.raceClock = new RaceClock(this, race.getVelocityScaleFactor(), 27000);
         mycanvas.setHeight(height);
         mycanvas.setWidth(width);
+        raceClock.start();
         animate(width, height);
 
-
     }
+
 
     /**
      * Draws an arrow on the screen at top left corner
@@ -147,6 +145,83 @@ public class RaceViewController {
 
     }
 
+
+
+    /**
+     * Draw annotations
+     * @param boat Competitor a competing boat
+     * @param gc Graphics Context
+     */
+    private void drawAnnotations(Competitor boat, GraphicsContext gc) {
+        double xValue = boat.getPosition().getXValue();
+        double yValue = boat.getPosition().getYValue();
+        //set font to monospaced for easier layout formatting
+        gc.setFont(Font.font("Monospaced"));
+
+        //draw labels if show all annotations is toggled
+        if (showAnnotations) {
+            gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
+            gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
+        }
+    }
+
+    /**
+     * Draw boat competitor
+     * @param boat Competitor a competing boat
+     * @param gc GraphicsContext
+     */
+    private void drawBoat(Competitor boat, GraphicsContext gc) {
+        double xValue = boat.getPosition().getXValue();
+        double yValue = boat.getPosition().getYValue();
+        double d = 10.0;
+        double h = 10.0;
+
+        gc.setFill(boat.getColor());
+        double[] xPoints = new double[] {
+                xValue, xValue - (d/2), xValue + (d/2)
+        };
+        double[] yPoints = new double[] {
+                yValue - h, yValue, yValue
+        };
+
+        gc.save();
+        Rotate r = new Rotate(boat.getCurrentHeading(), xValue, yValue); // rotate object
+        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
+        gc.fillPolygon(xPoints, yPoints, 3);
+        gc.setStroke(boat.getColor());
+        gc.strokeLine(xValue, yValue, xValue, yValue -h);
+        gc.restore();
+    }
+
+
+    /**
+     * Draw boat wakes and factor it with its velocity
+     * @param boat Competitor a competitor
+     * @param gc Graphics Context
+     */
+    private void drawWake(Competitor boat, GraphicsContext gc) {
+        double xValue = boat.getPosition().getXValue();
+        double yValue = boat.getPosition().getYValue();
+        double wakeDirection = Math.toRadians(boat.getCurrentHeading());
+        double wakeLength = boat.getVelocity();
+        double x_len = wakeLength * sin(wakeDirection);
+        double y_len = wakeLength * cos(wakeDirection);
+        double x2 = xValue - x_len;
+        double y2 = yValue + y_len;
+        gc.setStroke(Color.CORNFLOWERBLUE);
+        gc.strokeLine(xValue, yValue, x2, y2);
+    }
+
+
+    /**
+     * Implementation of ClockHandler interface method
+     * @param newTime The currentTime of the clock
+     */
+    public void clockTicked(String newTime) {
+        timerText.setText(newTime);
+    }
+
+
     /**
      * Starts the animation timer to animate the race
      * @param width the width of the canvas
@@ -201,7 +276,7 @@ public class RaceViewController {
                 }
 
                 // show race time
-                timerText.setText(formatDisplayTime(System.currentTimeMillis() - startTime));
+                //timerText.setText(formatDisplayTime(System.currentTimeMillis() - startTime));
 
             }
         };
@@ -211,107 +286,7 @@ public class RaceViewController {
 
     }
 
-    /**
-     * Draw annotations
-     * @param boat Competitor a competing boat
-     * @param gc Graphics Context
-     */
-    private void drawAnnotations(Competitor boat, GraphicsContext gc) {
-        double xValue = boat.getPosition().getXValue();
-        double yValue = boat.getPosition().getYValue();
-        //set font to monospaced for easier layout formatting
-        gc.setFont(Font.font("Monospaced"));
 
-        //draw labels if show all annotations is toggled
-        if (showAnnotations) {
-            gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
-            gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
-        }
-    }
-
-    /**
-     * Draw boat competitor
-     * @param boat Competitor a competing boat
-     * @param gc GraphicsContext
-     */
-    private void drawBoat(Competitor boat, GraphicsContext gc) {
-        double xValue = boat.getPosition().getXValue();
-        double yValue = boat.getPosition().getYValue();
-        double d = 10.0;
-        double h = 10.0;
-
-        gc.setFill(boat.getColor());
-        double[] xPoints = new double[] {
-                xValue, xValue - (d/2), xValue + (d/2)
-        };
-        double[] yPoints = new double[] {
-                yValue - h, yValue, yValue
-        };
-
-        gc.save();
-        Rotate r = new Rotate(boat.getCurrentHeading(), xValue, yValue); // rotate object
-        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-        gc.fillPolygon(xPoints, yPoints, 3);
-        gc.setStroke(boat.getColor());
-        gc.strokeLine(xValue, yValue, xValue, yValue -h);
-        gc.restore();
-    }
-
-    /**
-     * Draw boat wakes and factor it with its velocity
-     * @param boat Competitor a competitor
-     * @param gc Graphics Context
-     */
-    private void drawWake(Competitor boat, GraphicsContext gc) {
-        double xValue = boat.getPosition().getXValue();
-        double yValue = boat.getPosition().getYValue();
-        double wakeDirection = Math.toRadians(boat.getCurrentHeading());
-        double wakeLength = boat.getVelocity();
-        double x_len = wakeLength * sin(wakeDirection);
-        double y_len = wakeLength * cos(wakeDirection);
-        double x2 = xValue - x_len;
-        double y2 = yValue + y_len;
-        gc.setStroke(Color.CORNFLOWERBLUE);
-        gc.strokeLine(xValue, yValue, x2, y2);
-    }
-
-
-
-
-    /**
-     * Creates a formatted display time string in mm:ss and takes into account the scale factor
-     * @param display long the current duration of the race
-     * @return String the time string
-     * */
-    private String formatDisplayTime (long display) {
-
-        int scaleFactor = race.getVelocityScaleFactor();
-        // calculate the actual race time using the scale factor
-        display = (display - (27000 / scaleFactor)) * scaleFactor;
-
-        // format the time shown
-        int displayTime = abs((int)display/1000);
-        int minutes = displayTime / 60;
-        int seconds = displayTime - (60 * minutes);
-        String formattedTime = "";
-
-        if (display < 0 && displayTime != 0) {
-            formattedTime += "-";
-        }
-
-        if (minutes > 9) {
-            formattedTime += minutes + ":";
-        } else {
-            formattedTime += "0" + minutes + ":";
-        }
-        if (seconds > 9) {
-            formattedTime += seconds;
-        } else {
-            formattedTime += "0" + seconds;
-        }
-
-        return formattedTime;
-    }
 
     /**
      * Called when the user clicks toggle fps from the view menu bar.
