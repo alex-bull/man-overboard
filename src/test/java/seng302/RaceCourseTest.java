@@ -17,7 +17,7 @@ public class RaceCourseTest {
     @Test
     public void distanceBetweenGPSPoints() throws Exception {
 
-        Course raceCourse = new RaceCourse(new ArrayList<>(), 1.0);
+        Course raceCourse = new RaceCourse(new ArrayList<>(), new ArrayList<>(), 1.0);
 
         MutablePoint point1 = new MutablePoint(0.0, 0.0);
         MutablePoint point2 = new MutablePoint(1.0, 2.0);

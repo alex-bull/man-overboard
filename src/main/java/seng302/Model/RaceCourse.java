@@ -9,14 +9,18 @@ import java.util.List;
 public class RaceCourse implements Course {
 
     private List<CourseFeature> points;
+    private List<MutablePoint> boundaryPoints;
     private double windDirection;
 
     /**
      * A constructor for the RaceCourse
      * @param points List points on the course
+     * @param boundaryPoints List the points that make up the course boundary
+     * @param windDirection double the direction of the wind
      */
-    public RaceCourse(List<CourseFeature> points, double windDirection) {
+    public RaceCourse(List<CourseFeature> points, List<MutablePoint> boundaryPoints, double windDirection) {
         this.points = points;
+        this.boundaryPoints = boundaryPoints;
         this.windDirection = windDirection;
         this.calculateHeadings();
     }
@@ -35,6 +39,14 @@ public class RaceCourse implements Course {
      */
     public List<CourseFeature> getPoints() {
         return points;
+    }
+
+    /**
+     * Getter for the boundary points
+     * @return List the points that make up the boundary
+     */
+    public List<MutablePoint> getBoundaryPoints() {
+        return this.boundaryPoints;
     }
 
     /**

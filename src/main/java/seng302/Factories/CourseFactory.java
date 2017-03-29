@@ -1,10 +1,7 @@
 package seng302.Factories;
 
 import org.jdom2.JDOMException;
-import seng302.Model.Course;
-import seng302.Model.CourseFeature;
-import seng302.Model.RaceCourse;
-import seng302.Model.XMLCourseLoader;
+import seng302.Model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +27,10 @@ public class CourseFactory {
 
         // create a raceCourse with course features
         List<CourseFeature> points = null;
+        List<MutablePoint> boundary = null;
         try {
             points = parser.parseCourse(screenX, screenY);
+            boundary = parser.parseCourseBoundary(screenX, screenY);
         } catch (JDOMException e) {
             System.out.println("XML file format error.");
             System.exit(1);
@@ -41,6 +40,6 @@ public class CourseFactory {
             System.exit(1);
 //            e.printStackTrace();
         }
-        return new RaceCourse(points, parser.getWindDirection());
+        return new RaceCourse(points, boundary, parser.getWindDirection());
     }
 }

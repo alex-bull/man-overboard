@@ -19,4 +19,5 @@ public interface Race {
     int getVelocityScaleFactor();
     double getWindDirection();
     void setRaceEventHandler(RaceEventHandler raceEventHandler);
+    List<MutablePoint> getCourseBoundary();
 }

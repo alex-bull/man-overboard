@@ -21,10 +21,9 @@ import static java.lang.Math.abs;
 public class XMLCourseLoader {
     private File inputFile;
     private ArrayList<Gate> winds = new ArrayList<>();
-
-
-    private ArrayList<Double> xCoords = new ArrayList<>();
-    private ArrayList<Double> yCoords = new ArrayList<>();
+    private Double scaleFactor;
+    private Double bufferX;
+    private Double bufferY;
     private ArrayList<CourseFeature> points = new ArrayList<>();
 
     /**
@@ -67,6 +66,44 @@ public class XMLCourseLoader {
 
     }
 
+    public List<MutablePoint> parseCourseBoundary(double width, double height) throws JDOMException, IOException {
+
+        SAXBuilder saxbuilder = new SAXBuilder();
+        Document document = saxbuilder.build(inputFile);
+        Element raceCourse = document.getRootElement();
+        List<Element> features = raceCourse.getChildren();
+
+        ArrayList<Double> xMercatorCoords=new ArrayList<>();
+        ArrayList<Double> yMercatorCoords=new ArrayList<>();
+        List<MutablePoint> boundary = new ArrayList<>();
+
+
+        for (Element feature : features) {
+
+            String type = feature.getName();
+            if (type.equals("boundary")) {
+                List<Element> points = feature.getChildren();
+
+                for (Element point: points) {
+                    double lat = Double.parseDouble(point.getChildText("latitude"));
+                    double lon = Double.parseDouble(point.getChildText("longtitude"));
+
+                    ArrayList<Double> point1=mercatorProjection(lat,lon,width,height);
+                    double point1X = point1.get(0);
+                    double point1Y = point1.get(1);
+                    xMercatorCoords.add(point1X);
+                    yMercatorCoords.add(point1Y);
+
+                    MutablePoint pixel = new MutablePoint(point1X, point1Y);
+                    boundary.add(pixel);
+
+                }
+            }
+        }
+        boundary.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
+        return boundary;
+    }
+
     /**
      * Creates a list of course features read from an xml file
      * @param width double the width of the screen
@@ -78,8 +115,8 @@ public class XMLCourseLoader {
     public ArrayList<CourseFeature> parseCourse(double width, double height) throws JDOMException, IOException {
         //buffers are defined as the total buffer size, i.e. total for both sides
         int index = 0;
-        double bufferX=Math.max(150,width*0.3);
-        double bufferY=Math.max(300,height*0.3);
+        bufferX=Math.max(150,width*0.3);
+        bufferY=Math.max(300,height*0.3);
         System.out.println("bufferX: "+bufferX);
         System.out.println("bufferY: "+bufferY);
 
@@ -89,6 +126,7 @@ public class XMLCourseLoader {
         List<Element> features = raceCourse.getChildren();
         ArrayList<Double> xMercatorCoords=new ArrayList<>();
         ArrayList<Double> yMercatorCoords=new ArrayList<>();
+
 
         for (Element feature : features) {
 
@@ -110,10 +148,6 @@ public class XMLCourseLoader {
                 double lon1= Double.parseDouble(markOne.getChildText("longtitude"));
                 double lon2= Double.parseDouble(markTwo.getChildText("longtitude"));
 
-                xCoords.add(lat1);
-                xCoords.add(lat2);
-                yCoords.add(lon1);
-                yCoords.add(lon2);
 
                 ArrayList<Double> point1=mercatorProjection(lat1,lon1,width,height);
                 ArrayList<Double> point2=mercatorProjection(lat2,lon2,width,height);
@@ -143,28 +177,28 @@ public class XMLCourseLoader {
                         winds.add(gate);
 
                 }
-            } else if (type.equals("mark")){ //Its a mark
+            } else if (type.equals("mark")) { //Its a mark
 
                 Element mark = feature.getChildren().get(1);
                 String name = feature.getChildText("name");
 
-                double lat1 =Double.parseDouble(mark.getChildText("latitude"));
-                double lon1= Double.parseDouble(mark.getChildText("longtitude"));
-                ArrayList<Double> point1=mercatorProjection(lat1,lon1,width,height);
-                double point1X=point1.get(0);
-                double point1Y=point1.get(1);
+                double lat1 = Double.parseDouble(mark.getChildText("latitude"));
+                double lon1 = Double.parseDouble(mark.getChildText("longtitude"));
+                ArrayList<Double> point1 = mercatorProjection(lat1, lon1, width, height);
+                double point1X = point1.get(0);
+                double point1Y = point1.get(1);
                 xMercatorCoords.add(point1X);
                 yMercatorCoords.add(point1Y);
 
-                // add the original lat and lon to the array lists of lat and lons
-                xCoords.add(lat1);
-                yCoords.add(lon1);
 
                 MutablePoint pixel = new MutablePoint(point1X, point1Y);
                 MutablePoint GPS = new MutablePoint(lat1, lon1);
-                Mark mark1 = new Mark(name, pixel, GPS,index);
+                Mark mark1 = new Mark(name, pixel, GPS, index);
                 index++;
                 points.add(mark1);
+
+
+            } else if (type.equals("boundary")) {
 
             } else { //invalid course file
                 throw new JDOMException();
@@ -177,10 +211,10 @@ public class XMLCourseLoader {
         double yFactor = (height-bufferY/2)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
 
         //make scaling in proportion
-        double factor=Math.min(xFactor,yFactor);
+        scaleFactor = Math.min(xFactor,yFactor);
 
         //scale points to fit screen
-        points.stream().forEach(p->p.factor(factor,factor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
+        points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
 
         return points;
     }
