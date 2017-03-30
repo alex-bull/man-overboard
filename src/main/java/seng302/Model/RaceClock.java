@@ -33,10 +33,8 @@ public class RaceClock extends AnimationTimer implements Clock {
 
     @Override
     public void handle(long now) {
-        System.out.println("OK");
         String newTime = this.formatDisplayTime(System.currentTimeMillis() - this.startTime);
         this.clockHandler.clockTicked(newTime);
-        System.out.println("OK");
     }
 
 

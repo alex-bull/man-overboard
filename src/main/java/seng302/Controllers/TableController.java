@@ -72,20 +72,13 @@ public class TableController implements RaceEventHandler {
            }
        }
 
+
        // add this event to the race table
        events.add(event);
        Collections.sort(events);  //events are sorted by index of the features
-       // order the event indexes
-       if (order == numBoats + 1) {
-           order = 1;
-       }
-       if (event.getFeature().isFinish()) {
-           event.setPosition(finalOrder);
-           finalOrder++;
-       }
-       else {
-           event.setPosition(order);
-           order++;
+
+       for (RaceEvent e: events) {
+           e.setPosition(events.indexOf(e) + 1);
        }
 
    }
