@@ -72,7 +72,6 @@ public class TableController implements RaceEventHandler {
            }
        }
 
-
        // add this event to the race table
        events.add(event);
        Collections.sort(events);  //events are sorted by index of the features

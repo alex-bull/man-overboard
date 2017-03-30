@@ -22,11 +22,11 @@ public class XMLCourseLoaderTest {
         CourseFeature point1 = new Gate("Startline",
                 new MutablePoint(32.296577,-64.854304),
                 new MutablePoint(32.293771,-64.855242),
-                new MutablePoint(244.96829203234785, 76.8),
-                new MutablePoint(244.96829203234785, 76.8),
+                new MutablePoint(559.985, 51.2),
+                new MutablePoint(559.985, 51.2),
                 true, true, 0);
 
-        CourseFeature point2 = new Mark("Marker", new MutablePoint(1554.0, 251.8359918483676), new MutablePoint(32.293039,-64.843983), 1);
+        CourseFeature point2 = new Mark("Marker", new MutablePoint(1176.0, 301.01), new MutablePoint(32.293039,-64.843983), 1);
 
 
         List<CourseFeature> features = parser.parseCourse(1680,1024);
