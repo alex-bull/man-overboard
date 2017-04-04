@@ -17,7 +17,7 @@ public class RaceClock extends AnimationTimer implements Clock {
 
 
     public RaceClock(ClockHandler handler, int scaleFactor, int negativeTime) {
-        System.out.println(handler);
+
         this.clockHandler = handler;
         this.scaleFactor = scaleFactor;
         this.negativeTime = negativeTime;

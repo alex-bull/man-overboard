@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.layout.AnchorPane;
 import seng302.Model.Race;
 
 /**
@@ -17,11 +18,9 @@ public class MainController {
 
     private Race race;
 
+
     @FXML private TableController tableController;
-
     @FXML private RaceViewController raceViewController;
-
-    @FXML private SplitPane splitPane;
 
     /**
      * Initialiser for the raceViewController

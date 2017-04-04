@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.canvas.*?>
@@ -20,7 +22,6 @@
 <AnchorPane fx:id="raceView" layoutX="69.0" layoutY="26.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controllers.RaceViewController">
 
     <children>
-        <Canvas fx:id="mycanvas" height="1000.0" width="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
       <Text fx:id="timerText" layoutX="14.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00:00" AnchorPane.TopAnchor="50.0" AnchorPane.rightAnchor="10.0">
          <font>
             <Font size="23.0" />
@@ -36,6 +37,8 @@
             <Font size="24.0" />
          </font>
       </Label>
+        <Canvas fx:id="raceViewCanvas" height="1000.0" width="1000.0" />
+      <Group fx:id="raceViewGroup" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
     </children>
 
 
