@@ -36,6 +36,7 @@ public class RaceViewController implements ClockHandler {
     private Clock raceClock;
     private Race race;
     private boolean showAnnotations = true;
+    private boolean showImportantAnnotations = false;
 
 
 
@@ -162,6 +163,10 @@ public class RaceViewController implements ClockHandler {
         if (showAnnotations) {
             gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
             gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
+        }
+        if (showImportantAnnotations) {
+            gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
+            // gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
         }
     }
 
@@ -303,11 +308,21 @@ public class RaceViewController implements ClockHandler {
     public void toggleAnnotations() {
         if(showAnnotations) {
             showAnnotations = false;
+
         }
         else {
             showAnnotations = true;
         }
     }
 
+    @FXML
+    public void toggleImportantAnnotations() {
+        if (showImportantAnnotations) {
+            showImportantAnnotations = false;
+        }
+        else {
+            showImportantAnnotations = true;
+        }
+    }
 
 }

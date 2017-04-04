@@ -47,6 +47,9 @@ public class MainController {
         raceViewController.toggleAnnotations();
     }
 
+    @FXML
+    public void toggleImportantAnnotations() {raceViewController.toggleImportantAnnotations();}
+
     /**
      * Sets the race
      * @param race Race a group of competitors across multiple races on a course
