@@ -36,6 +36,7 @@
             <Font size="24.0" />
          </font>
       </Label>
+      <Text fx:id="worldClockValue" layoutX="842.0" layoutY="111.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Local race time:" AnchorPane.bottomAnchor="943.2265625" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="80.0" />
     </children>
 
 

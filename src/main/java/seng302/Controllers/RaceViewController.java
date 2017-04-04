@@ -3,6 +3,7 @@ package seng302.Controllers;
 import com.google.common.primitives.Doubles;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -16,9 +17,7 @@ import javafx.scene.transform.Scale;
 import seng302.Model.*;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -27,17 +26,22 @@ import static java.lang.Math.sin;
 /**
  * Controller for the race view.
  */
-public class RaceViewController implements ClockHandler {
+public class RaceViewController implements ClockHandler, Initializable {
 
     @FXML private Canvas mycanvas;
     @FXML private Text timerText;
     @FXML private Label fpsCounter;
+    @FXML public Text worldClockValue;
 
     private Clock raceClock;
     private Race race;
     private boolean showAnnotations = true;
+    private String bermudaTimeZone = "GMT-3";
 
-
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        setWorldClock(bermudaTimeZone);
+    }
 
 
     /**
@@ -54,6 +58,52 @@ public class RaceViewController implements ClockHandler {
         raceClock.start();
         animate(width, height);
 
+    }
+
+    /**
+     * Calculate and update the world clock.
+     * Display on the starting view
+     * @param courseTimezone String the timezone of the course in GMT format
+     */
+    private void setWorldClock(String courseTimezone) {
+
+        Task<Void> task = new Task<Void>() {
+            public Void call() throws Exception {
+
+                while (true) {
+
+                    TimeZone timeZone = TimeZone.getTimeZone(courseTimezone);
+                    Calendar calendar = Calendar.getInstance(timeZone);
+
+                    String hour = Integer.toString(calendar.get(Calendar.HOUR));
+                    String minutes = Integer.toString(calendar.get(Calendar.MINUTE));
+                    String seconds = Integer.toString(calendar.get(Calendar.SECOND));
+                    String ampm;
+                    if (calendar.get(Calendar.AM_PM) == Calendar.AM) {
+                        ampm = "AM";
+                    } else {
+                        ampm = "PM";
+                    }
+
+                    if (minutes.length() < 2) {
+                        minutes = "0" + minutes;
+                    }
+                    if (seconds.length() < 2) {
+                        seconds = "0" + seconds;
+                    }
+                    if (hour.equals("0")) {
+                        hour = "12";
+                    }
+
+                    updateMessage(hour + ":" + minutes + ":" + seconds + " " + ampm + "  UTC" + courseTimezone.substring(3));
+                    Thread.sleep(1000);
+                }
+            }
+        };
+        task.messageProperty().addListener((obs, oldMessage, newMessage) -> {
+            worldClockValue.setText(newMessage);
+        });
+        new Thread(task).start();
     }
 
 
