@@ -28,9 +28,15 @@
         <menus>
           <Menu mnemonicParsing="false" text="View">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#toggleFPS" text="Toggle FPS" />
-                  <CheckMenuItem mnemonicParsing="false" onAction="#toggleAnnotations" selected="true" text="Toggle annotations" />
-                  <CheckMenuItem mnemonicParsing="false" onAction="#toggleImportantAnnotations" text="Toggle important annotations" />
+                  <CheckMenuItem mnemonicParsing="false" onAction="#toggleFPS" selected="true" text="Toggle FPS" />
+                  <CheckMenuItem mnemonicParsing="false" onAction="#toggleAnnotations" selected="true" text="Toggle All Annotations" />
+                  <CheckMenuItem mnemonicParsing="false" onAction="#toggleImportantAnnotations" text="Toggle Important Annotations" />
+                  <Menu mnemonicParsing="false" text="Set Important Annotations">
+                     <items>
+                        <CheckMenuItem fx:id="boatSpeedLabel" mnemonicParsing="false" onAction="#setBoatSpeedLabel" text="Speed" />
+                        <CheckMenuItem fx:id="boatNameLabel" mnemonicParsing="false" onAction="#setBoatNameLabel" text="Name" />
+                     </items>
+                  </Menu>
             </items>
           </Menu>
         </menus>
