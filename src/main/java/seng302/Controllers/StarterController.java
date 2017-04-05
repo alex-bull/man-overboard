@@ -29,9 +29,7 @@ import javafx.util.Duration;
 import org.w3c.dom.css.Rect;
 import seng302.Factories.CourseFactory;
 import seng302.Factories.RaceFactory;
-import seng302.Model.Competitor;
-import seng302.Model.Course;
-import seng302.Model.Race;
+import seng302.Model.*;
 
 
 import java.io.IOException;
@@ -43,7 +41,7 @@ import java.util.Scanner;
 /**
  * Created by rjc249 on 5/04/17.
  */
-public class StarterController implements Initializable {
+public class StarterController implements Initializable, ClockHandler {
 
 
     @FXML
@@ -59,18 +57,18 @@ public class StarterController implements Initializable {
     @FXML
     private ChoiceBox<Integer> durationInput;
 
-    Stage primaryStage;
-    double height;
-    String courseFile;
-    Race r;
+    private Clock worldClock;
+    private Stage primaryStage;
+    private double height;
+    private String courseFile;
+    private Race r;
     private ObservableList<Competitor> compList;
-    int numBoats;
-    int duration;
-    Rectangle2D primaryScreenBounds;
-    int STARTTIME = 5;
+    private int numBoats;
+    private int duration;
+    private Rectangle2D primaryScreenBounds;
+    private final int STARTTIME = 5;
     private Timeline timeline;
-    private IntegerProperty timeSeconds =
-            new SimpleIntegerProperty(STARTTIME);
+    private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
 
 
     public void setCourseFile(String courseFile) {
@@ -81,6 +79,15 @@ public class StarterController implements Initializable {
         this.primaryStage = primaryStage;
     }
 
+    /**
+     * Implementation of ClockHandler interface method
+     * @param newTime The currentTime of the clock
+     */
+    public void clockTicked(String newTime, Clock clock) {
+        if(clock == worldClock) {
+            worldClockValue.setText(newTime);
+        }
+    }
 
     /**
      * Initialiser for StarterController
@@ -89,6 +96,9 @@ public class StarterController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.worldClock = new WorldClock(this);
+        worldClock.start();
+
         countdownText.textProperty().bind(timeSeconds.asString());
 
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();

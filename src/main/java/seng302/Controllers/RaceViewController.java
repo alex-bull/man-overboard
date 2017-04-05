@@ -3,7 +3,6 @@ package seng302.Controllers;
 import com.google.common.primitives.Doubles;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -13,7 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
 import seng302.Model.*;
 
 import java.net.URL;
@@ -34,13 +32,14 @@ public class RaceViewController implements ClockHandler, Initializable {
     @FXML public Text worldClockValue;
 
     private Clock raceClock;
+    private Clock worldClock;
     private Race race;
     private boolean showAnnotations = true;
     private String bermudaTimeZone = "GMT-3";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setWorldClock(bermudaTimeZone);
+        //setWorldClock(worldClockValue,bermudaTimeZone);
     }
 
 
@@ -53,59 +52,28 @@ public class RaceViewController implements ClockHandler, Initializable {
     public void begin(Race race, double width, double height) {
         this.race=race;
         this.raceClock = new RaceClock(this, race.getVelocityScaleFactor(), 27000);
+        this.worldClock = new WorldClock(this);
         mycanvas.setHeight(height);
         mycanvas.setWidth(width);
         raceClock.start();
+        worldClock.start();
         animate(width, height);
 
     }
 
+
     /**
-     * Calculate and update the world clock.
-     * Display on the starting view
-     * @param courseTimezone String the timezone of the course in GMT format
+     * Implementation of ClockHandler interface method
+     * @param newTime The currentTime of the clock
      */
-    private void setWorldClock(String courseTimezone) {
-
-        Task<Void> task = new Task<Void>() {
-            public Void call() throws Exception {
-
-                while (true) {
-
-                    TimeZone timeZone = TimeZone.getTimeZone(courseTimezone);
-                    Calendar calendar = Calendar.getInstance(timeZone);
-
-                    String hour = Integer.toString(calendar.get(Calendar.HOUR));
-                    String minutes = Integer.toString(calendar.get(Calendar.MINUTE));
-                    String seconds = Integer.toString(calendar.get(Calendar.SECOND));
-                    String ampm;
-                    if (calendar.get(Calendar.AM_PM) == Calendar.AM) {
-                        ampm = "AM";
-                    } else {
-                        ampm = "PM";
-                    }
-
-                    if (minutes.length() < 2) {
-                        minutes = "0" + minutes;
-                    }
-                    if (seconds.length() < 2) {
-                        seconds = "0" + seconds;
-                    }
-                    if (hour.equals("0")) {
-                        hour = "12";
-                    }
-
-                    updateMessage(hour + ":" + minutes + ":" + seconds + " " + ampm + "  UTC" + courseTimezone.substring(3));
-                    Thread.sleep(1000);
-                }
-            }
-        };
-        task.messageProperty().addListener((obs, oldMessage, newMessage) -> {
-            worldClockValue.setText(newMessage);
-        });
-        new Thread(task).start();
+    public void clockTicked(String newTime, Clock clock) {
+        if(clock == raceClock) {
+            timerText.setText(newTime);
+        }
+        if(clock == worldClock) {
+            worldClockValue.setText(newTime);
+        }
     }
-
 
     /**
      * Draws an arrow on the screen at top left corner
@@ -262,14 +230,6 @@ public class RaceViewController implements ClockHandler, Initializable {
         gc.strokeLine(xValue, yValue, x2, y2);
     }
 
-
-    /**
-     * Implementation of ClockHandler interface method
-     * @param newTime The currentTime of the clock
-     */
-    public void clockTicked(String newTime) {
-        timerText.setText(newTime);
-    }
 
 
     /**
