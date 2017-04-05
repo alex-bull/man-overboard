@@ -57,7 +57,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button layoutX="200.0" layoutY="418.0" mnemonicParsing="false" onAction="#switchToCourseView" text="Start Countdown" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                  <Button fx:id="countdownButton" layoutX="200.0" layoutY="418.0" mnemonicParsing="false" onAction="#switchToCourseView" text="Start Countdown" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets right="5.0" top="25.0" />
                      </GridPane.margin>
