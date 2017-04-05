@@ -23,6 +23,10 @@ public class App extends Application
 
     private static String courseFile;
 
+
+
+
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("starters.fxml"));
