@@ -32,9 +32,11 @@ public class App extends Application
         starterController.setCourseFile(courseFile);
         starterController.setStage(primaryStage);
 
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
-        primaryStage.setWidth(primaryScreenBounds.getWidth());
-        primaryStage.setHeight(primaryScreenBounds.getHeight());
+        //Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
+        primaryStage.setMinWidth(530);
+        primaryStage.setMinWidth(548);
+//        primaryStage.setWidth(primaryScreenBounds.getWidth());
+//        primaryStage.setHeight(primaryScreenBounds.getHeight());
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 

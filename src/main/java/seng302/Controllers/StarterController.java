@@ -107,7 +107,6 @@ public class StarterController implements Initializable, ClockHandler {
         durationInput.setItems(FXCollections.observableArrayList(1, 5));
         compList = FXCollections.observableArrayList();
         starterList.setCellFactory(new Callback<ListView<Competitor>, ListCell<Competitor>>() {
-
             @Override
             public ListCell<Competitor> call(ListView<Competitor> param) {
                 ListCell<Competitor> cell = new ListCell<Competitor>() {
