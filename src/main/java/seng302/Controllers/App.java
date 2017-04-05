@@ -25,32 +25,16 @@ public class App extends Application
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("starters.fxml"));
         Parent root = loader.load();
-        MainController mainController = loader.getController();
+        StarterController starterController = loader.getController();
+        starterController.setCourseFile(courseFile);
+        starterController.setStage(primaryStage);
 
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        //Set window to full screen
-        double height=primaryScreenBounds.getHeight()-30;
-        primaryStage.setTitle("RaceVision");
-        primaryStage.setMinHeight(900);
-        primaryStage.setMinWidth(1300);
-        primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
-        primaryStage.setX(primaryScreenBounds.getMinX());
-        primaryStage.setY(primaryScreenBounds.getMinY());
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
         primaryStage.setWidth(primaryScreenBounds.getWidth());
         primaryStage.setHeight(primaryScreenBounds.getHeight());
-
-
-        Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height, courseFile);
-
-        Scanner scanner = new Scanner(System.in);
-        int numBoats = getNumBoats(scanner);
-        int duration = getDuration(scanner);
-
-
-        Race r = new RaceFactory().createRace(numBoats, duration, raceCourse);
-        mainController.setRace(r,4000,4000, numBoats);
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
     }
@@ -69,50 +53,6 @@ public class App extends Application
         }
     }
 
-    /**
-     * Gets number of boats from user input
-     * @param scanner Scanner
-     * @return int the number of competitors
-     */
-    private int getNumBoats(Scanner scanner) {
-        System.out.println("Enter number of boats in Regatta: ");
-        int numberOfBoats;
-        while (true) {
-            try {
-                numberOfBoats = scanner.nextInt();
-                if (numberOfBoats >= 2 && numberOfBoats <= 6) {
-                    break;
-                }
-                throw new InputMismatchException("Not in valid range");
-            } catch (Exception e) {
-                System.out.println("Invalid input. Please enter an integer between 2 and 6: ");
-                scanner.nextLine();
-            }
-        }
-        return numberOfBoats;
-    }
 
-    /**
-     * Gets the duration from user input
-     * @param scanner Scanner
-     * @return int the approximate duration in minutes
-     */
-    private int getDuration(Scanner scanner) {
-        System.out.println("Would you like the race to be completed in approximately 1 or 5 minutes? ");
-        int raceDuration;
-        while (true) {
-            try {
-                raceDuration = scanner.nextInt();
-                if (raceDuration == 1 || raceDuration == 5) {
-                    break;
-                }
-                throw new InputMismatchException("Not in valid range");
-            } catch (Exception e) {
-                System.out.println("Invalid input. Please enter 1 or 5: ");
-                scanner.nextLine();
-            }
-        }
-        return raceDuration;
-    }
 
 }
