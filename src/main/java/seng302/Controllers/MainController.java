@@ -17,6 +17,7 @@ public class MainController {
 
     private Race race;
 
+
     @FXML private TableController tableController;
 
     @FXML private RaceViewController raceViewController;

@@ -151,8 +151,8 @@ public class StarterController implements Initializable {
                 mainController.setRace(r, 4000, 4000, numBoats);
 
                 primaryStage.setTitle("RaceVision");
-//                primaryStage.setMinHeight(900);
-//                primaryStage.setMinWidth(1300);
+                primaryStage.setMinHeight(900);
+                primaryStage.setMinWidth(1300);
                 primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
                 primaryStage.setX(primaryScreenBounds.getMinX());
                 primaryStage.setY(primaryScreenBounds.getMinY());
