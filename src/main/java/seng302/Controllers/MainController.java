@@ -39,32 +39,6 @@ public class MainController {
         raceViewController.toggleFPS();
     }
 
-    /**
-     * Called when the user clicks toggle annotations from the menu bar
-     */
-    @FXML
-    public void toggleAnnotations() {
-        raceViewController.toggleAnnotations();
-    }
-
-    /**
-     * Called when the user clicks toggle important annotations from the menu bar
-     */
-    @FXML
-    public void toggleImportantAnnotations() {raceViewController.toggleImportantAnnotations();}
-
-    /**
-     *  Called when the user clicks Name label from the set important annotations menu bar.
-     */
-    @FXML
-    public void setBoatNameLabel() {raceViewController.setBoatNameLabel();}
-
-    /**
-     * Called when the user clicks Speed label from the set important annotations menu bar.
-     */
-    @FXML
-    public void setBoatSpeedLabel() {raceViewController.setBoatSpeedLabel();}
-
 
 
 

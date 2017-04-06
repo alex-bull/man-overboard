@@ -36,6 +36,9 @@
             <Font size="24.0" />
          </font>
       </Label>
+      <RadioButton fx:id="allAnnotationsButton" layoutX="10.0" layoutY="195.0" mnemonicParsing="false" onAction="#clearAnnotations" selected="true" text="All Annotations" />
+      <RadioButton fx:id="speedButton" layoutX="10.0" layoutY="229.0" mnemonicParsing="false" text="Speed" />
+      <RadioButton fx:id="nameButton" layoutX="10.0" layoutY="265.0" mnemonicParsing="false" text="Team Name" />
     </children>
 
 

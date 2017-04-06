@@ -9,6 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -33,17 +34,32 @@ public class RaceViewController implements ClockHandler {
     @FXML private Canvas mycanvas;
     @FXML private Text timerText;
     @FXML private Label fpsCounter;
+    @FXML private RadioButton allAnnotationsButton;
+    @FXML private RadioButton speedButton;
+    @FXML private RadioButton nameButton;
 
 
     private Clock raceClock;
     private Race race;
-    private boolean showAnnotations = true;
-    private boolean showImportantAnnotations = false;
-    private boolean setSpeedLabel = false;
-    private boolean setNameLabel = false;
 
 
+    /**
+     * Called when the user clicks toggle fps from the view menu bar.
+     */
+    @FXML
+    public void toggleFPS(){
+        fpsCounter.setVisible(!fpsCounter.visibleProperty().getValue());
+    }
 
+    /**
+     * Called when the user clicks all Annotations button.
+     * Clears individual annotations
+     */
+    @FXML
+    public void clearAnnotations(){
+        speedButton.setSelected(false);
+        nameButton.setSelected(false);
+    }
 
     /**
      * Sets the race and the race start time and then animates the race
@@ -163,20 +179,29 @@ public class RaceViewController implements ClockHandler {
         //set font to monospaced for easier layout formatting
         gc.setFont(Font.font("Monospaced"));
 
-        //draw labels if show all annotations is toggled
-        if (showAnnotations) {
-            gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
-            gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
-        }
-        //draws only the selected labels
-        if (showImportantAnnotations) {
-            if(setNameLabel) {
+
+
+        //draw labels if show all annotations is toggled and disables other buttons
+        if (allAnnotationsButton.isSelected()) {
+            if(nameButton.isSelected() || speedButton.isSelected()){
+                allAnnotationsButton.setSelected(false);
+            } else {
                 gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
-            }
-            if(setSpeedLabel) {
                 gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
             }
         }
+
+        //draws only the selected labels and also disables all annotation button
+        if(nameButton.isSelected()) {
+            allAnnotationsButton.setSelected(false);
+            gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
+        }
+        if(speedButton.isSelected()) {
+            allAnnotationsButton.setSelected(false);
+            gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
+        }
+
+
     }
 
     /**
@@ -302,63 +327,6 @@ public class RaceViewController implements ClockHandler {
 
 
 
-    /**
-     * Called when the user clicks toggle fps from the view menu bar.
-     */
-    @FXML
-    public void toggleFPS(){
-        fpsCounter.setVisible(!fpsCounter.visibleProperty().getValue());
-    }
-
-    /**
-     * Called when the user clicks toggle annotations from the view menu bar.
-     */
-    @FXML
-    public void toggleAnnotations() {
-        if(showAnnotations) {
-            showAnnotations = false;
-
-        }
-        else {
-            showAnnotations = true;
-        }
-    }
-
-    /**
-     * Called when the user clicks toggle important annotations from the view menu bar.
-     */
-    @FXML
-    public void toggleImportantAnnotations() {
-        if (showImportantAnnotations) {
-            showImportantAnnotations = false;
-        }
-        else {
-            showImportantAnnotations = true;
-
-
-        }
-    }
-
-    /**
-     * Called when the user clicks Name label from the Set important annotations menu bar.
-     */
-    @FXML
-    public void setBoatNameLabel(){
-        if(setNameLabel) {
-            setNameLabel = false;
-        }else setNameLabel =true;
-    }
-
-    /**
-     * Called when the user clicks Speed label from the Set important annotations menu bar.
-     */
-
-    @FXML
-    public void setBoatSpeedLabel(){
-        if(setSpeedLabel) {
-            setSpeedLabel = false;
-        }else setSpeedLabel =true;
-    }
 
 
 }
