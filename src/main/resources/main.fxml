@@ -11,10 +11,14 @@
 <!--</children>-->
 <!--</AnchorPane>-->
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.AnchorPane?>
+
 <AnchorPane prefHeight="668.0" prefWidth="977.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controllers.MainController">
    <children>
 
@@ -24,8 +28,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="View">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#toggleAnnotations" text="Toggle annotations" />
-              <MenuItem mnemonicParsing="false" onAction="#toggleFPS" text="Toggle FPS" />
+                  <CheckMenuItem mnemonicParsing="false" onAction="#toggleFPS" selected="true" text="Toggle FPS" />
             </items>
           </Menu>
         </menus>

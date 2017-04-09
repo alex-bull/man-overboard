@@ -40,13 +40,11 @@ public class MainController {
         raceViewController.toggleFPS();
     }
 
-    /**
-     * Called when the user clicks toggle annotations from the menu bar
-     */
-    @FXML
-    public void toggleAnnotations() {
-        raceViewController.toggleAnnotations();
-    }
+
+
+
+
+
 
     /**
      * Sets the race

@@ -21,6 +21,7 @@ public class MatchRace implements Race {
     private List<String> finishingOrder = new ArrayList<>();
     private Course raceCourse;
     private RaceEventHandler raceEventHandler;
+    private int numBoats;
 
     /**
      * Creates a match race with an approximate duration
@@ -119,10 +120,9 @@ public class MatchRace implements Race {
         Timeline timeline = new Timeline();
 
         List<CourseFeature> points = raceCourse.getPoints();
-
+        numBoats = competitors.size();
         for (Competitor comp : competitors) {
             int time = 0;
-
             // sets the position of boats at time 0
             timeline.getKeyFrames().add(new KeyFrame(
                     Duration.millis(0),
@@ -134,10 +134,10 @@ public class MatchRace implements Race {
 
             // loops through pairs of course features
             for (int j = 0; j < points.size() - 1; j++) {
-
                 // calculate total time for competitor to reach the point
                 CourseFeature startPoint = points.get(j);
                 CourseFeature endPoint = points.get(j + 1);
+
                 double distance = raceCourse.distanceBetweenGPSPoints(startPoint.getGPSCentre(), endPoint.getGPSCentre());
                 time += this.calculateTime(comp.getVelocity(), distance);
 

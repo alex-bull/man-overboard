@@ -7,7 +7,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -30,6 +32,10 @@ public class RaceViewController implements ClockHandler, Initializable {
     @FXML private Text timerText;
     @FXML private Label fpsCounter;
     @FXML public Text worldClockValue;
+    @FXML private RadioButton allAnnotationsButton;
+    @FXML private RadioButton speedButton;
+    @FXML private RadioButton nameButton;
+
 
     private Clock raceClock;
     private Clock worldClock;
@@ -42,6 +48,23 @@ public class RaceViewController implements ClockHandler, Initializable {
         //setWorldClock(worldClockValue,bermudaTimeZone);
     }
 
+    /**
+     * Called when the user clicks toggle fps from the view menu bar.
+     */
+    @FXML
+    public void toggleFPS(){
+        fpsCounter.setVisible(!fpsCounter.visibleProperty().getValue());
+    }
+
+    /**
+     * Called when the user clicks all Annotations button.
+     * Clears individual annotations
+     */
+    @FXML
+    public void clearAnnotations(){
+        speedButton.setSelected(false);
+        nameButton.setSelected(false);
+    }
 
     /**
      * Sets the race and the race start time and then animates the race
@@ -176,11 +199,29 @@ public class RaceViewController implements ClockHandler, Initializable {
         //set font to monospaced for easier layout formatting
         gc.setFont(Font.font("Monospaced"));
 
-        //draw labels if show all annotations is toggled
-        if (showAnnotations) {
+
+
+        //draw labels if show all annotations is toggled and disables other buttons
+        if (allAnnotationsButton.isSelected()) {
+            if(nameButton.isSelected() || speedButton.isSelected()){
+                allAnnotationsButton.setSelected(false);
+            } else {
+                gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
+                gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
+            }
+        }
+
+        //draws only the selected labels and also disables all annotation button
+        if(nameButton.isSelected()) {
+            allAnnotationsButton.setSelected(false);
             gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
+        }
+        if(speedButton.isSelected()) {
+            allAnnotationsButton.setSelected(false);
             gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
         }
+
+
     }
 
     /**
@@ -298,26 +339,6 @@ public class RaceViewController implements ClockHandler, Initializable {
 
 
 
-    /**
-     * Called when the user clicks toggle fps from the view menu bar.
-     */
-    @FXML
-    public void toggleFPS(){
-        fpsCounter.setVisible(!fpsCounter.visibleProperty().getValue());
-    }
-
-    /**
-     * Called when the user clicks toggle annotations from the view menu bar.
-     */
-    @FXML
-    public void toggleAnnotations() {
-        if(showAnnotations) {
-            showAnnotations = false;
-        }
-        else {
-            showAnnotations = true;
-        }
-    }
 
 
 }
