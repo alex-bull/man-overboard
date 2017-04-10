@@ -39,7 +39,6 @@ public class RaceFactory {
         Collections.shuffle(competitors);
         competitors = competitors.subList(0, numBoats);
 
-
         return new MatchRace(raceDuration, raceCourse, competitors);
 
     }

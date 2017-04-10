@@ -6,5 +6,4 @@ package seng302.Model;
  */
 public interface RaceEventHandler {
     void handleRaceEvent(RaceEvent raceEvent);
-
 }

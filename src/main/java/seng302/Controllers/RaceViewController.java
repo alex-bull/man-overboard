@@ -14,13 +14,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
 import seng302.Model.*;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -29,7 +26,7 @@ import static java.lang.Math.sin;
 /**
  * Controller for the race view.
  */
-public class RaceViewController implements ClockHandler {
+public class RaceViewController implements ClockHandler, Initializable {
 
     @FXML private Canvas mycanvas;
     @FXML private Text timerText;
@@ -38,9 +35,13 @@ public class RaceViewController implements ClockHandler {
     @FXML private RadioButton speedButton;
     @FXML private RadioButton nameButton;
 
+    @FXML public Text worldClockValue;
 
     private Clock raceClock;
+    private Clock worldClock;
     private Race race;
+    private boolean showAnnotations = true;
+    private String bermudaTimeZone = "GMT-3";
 
 
     /**
@@ -49,6 +50,10 @@ public class RaceViewController implements ClockHandler {
     @FXML
     public void toggleFPS(){
         fpsCounter.setVisible(!fpsCounter.visibleProperty().getValue());
+    }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        //setWorldClock(worldClockValue,bermudaTimeZone);
     }
 
     /**
@@ -70,13 +75,28 @@ public class RaceViewController implements ClockHandler {
     public void begin(Race race, double width, double height) {
         this.race=race;
         this.raceClock = new RaceClock(this, race.getVelocityScaleFactor(), 27000);
+        this.worldClock = new WorldClock(this);
         mycanvas.setHeight(height);
         mycanvas.setWidth(width);
         raceClock.start();
+        worldClock.start();
         animate(width, height);
 
     }
 
+
+    /**
+     * Implementation of ClockHandler interface method
+     * @param newTime The currentTime of the clock
+     */
+    public void clockTicked(String newTime, Clock clock) {
+        if(clock == raceClock) {
+            timerText.setText(newTime);
+        }
+        if(clock == worldClock) {
+            worldClockValue.setText(newTime);
+        }
+    }
 
     /**
      * Draws an arrow on the screen at top left corner
@@ -251,14 +271,6 @@ public class RaceViewController implements ClockHandler {
         gc.strokeLine(xValue, yValue, x2, y2);
     }
 
-
-    /**
-     * Implementation of ClockHandler interface method
-     * @param newTime The currentTime of the clock
-     */
-    public void clockTicked(String newTime) {
-        timerText.setText(newTime);
-    }
 
 
     /**
