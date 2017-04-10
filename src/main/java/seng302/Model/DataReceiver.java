@@ -82,8 +82,12 @@ public class DataReceiver {
                 e.printStackTrace();
             }
             for(int i=0;i<1024;i++){
-            System.out.println(String.format("%02X ", msg[i]));
+                System.out.print((char) msg[i]);
+               // System.out.println(String.format("%02X ", msg[i]));
+
             }
         }
     }
+
+
 }

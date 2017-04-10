@@ -27,14 +27,14 @@ public class DataSender {
     private OutputStream os;
 
     /**
-     * constructor for DataSender, creates port at given portnum
-     * @param portnum
+     * Constructor for DataSender, creates port at given portnum
+     * @param portnum int The port number
      * @throws IOException
      */
     public DataSender(int portnum) throws IOException {
         ServerSocket welcomeSocket = new ServerSocket(portnum);
-        socket=welcomeSocket.accept();
-        os=socket.getOutputStream();
+        socket = welcomeSocket.accept();
+        os = socket.getOutputStream();
 
     }
 
@@ -54,12 +54,12 @@ public class DataSender {
     private void sendTestData() throws IOException, InterruptedException {
         System.out.println("Sending test_data.bin");
 
-        File file=new File("src/main/resources/test_data.bin");
-        InputStream is=new FileInputStream(file);
+        File file = new File("src/main/resources/test_data.bin");
+        InputStream is = new FileInputStream(file);
         //read data from test file
-        byte[] content= ByteStreams.toByteArray(is);
+        byte[] content = ByteStreams.toByteArray(is);
 
-        for(int i=0;i<content.length;i++){
+        for(int i=0; i<content.length; i++){
             os.write(content[i]);
             Thread.sleep(1000);
         }
