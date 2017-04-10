@@ -6,6 +6,7 @@ import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -29,9 +30,7 @@ import javafx.util.Duration;
 import org.w3c.dom.css.Rect;
 import seng302.Factories.CourseFactory;
 import seng302.Factories.RaceFactory;
-import seng302.Model.Competitor;
-import seng302.Model.Course;
-import seng302.Model.Race;
+import seng302.Model.*;
 
 
 import java.io.IOException;
@@ -42,62 +41,71 @@ import java.util.Scanner;
 
 /**
  * Created by rjc249 on 5/04/17.
+ * Controller for the start scene.
  */
-public class StarterController implements Initializable {
+public class StarterController implements Initializable, ClockHandler {
 
 
-    @FXML
-    private ListView<Competitor> starterList;
-    @FXML
-    private Label countdownText;
-    @FXML
-    private Text worldClockValue;
-    @FXML
-    private Button confirmButton;
-    @FXML
-    private ChoiceBox<Integer> numBoatsInput;
-    @FXML
-    private ChoiceBox<Integer> durationInput;
+    @FXML private ListView<Competitor> starterList;
+    @FXML private Label countdownText;
+    @FXML private Text worldClockValue;
+    @FXML private Button confirmButton;
+    @FXML private ChoiceBox<Integer> numBoatsInput;
+    @FXML private ChoiceBox<Integer> durationInput;
+    @FXML private Button countdownButton;
 
-    Stage primaryStage;
-    double height;
-    String courseFile;
-    Race r;
+    private Clock worldClock;
+    private Stage primaryStage;
+    private String courseFile;
+    private Race r;
     private ObservableList<Competitor> compList;
-    int numBoats;
-    int duration;
-    Rectangle2D primaryScreenBounds;
-    int STARTTIME = 5;
-    private Timeline timeline;
-    private IntegerProperty timeSeconds =
-            new SimpleIntegerProperty(STARTTIME);
+    private int numBoats;
+    private Rectangle2D primaryScreenBounds;
+    private final int STARTTIME = 5;
+    private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
 
-
+    /**
+     * Takes an XML course file so the course information is set
+     * @param courseFile String the XML coureFile
+     */
     public void setCourseFile(String courseFile) {
         this.courseFile = courseFile;
     }
 
+    /**
+     * Sets the stage
+     * @param primaryStage Stage the stage for this window
+     */
     public void setStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
+    /**
+     * Implementation of ClockHandler interface method
+     * @param newTime The currentTime of the clock
+     */
+    public void clockTicked(String newTime, Clock clock) {
+        if(clock == worldClock) {
+            worldClockValue.setText(newTime);
+        }
+    }
 
     /**
      * Initialiser for StarterController
-     * @param location
-     * @param resources
+     * @param location URL
+     * @param resources ResourceBundle
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.worldClock = new WorldClock(this);
+        worldClock.start();
         countdownText.textProperty().bind(timeSeconds.asString());
-
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
         numBoatsInput.setItems(FXCollections.observableArrayList(2, 3, 4, 5, 6));
         durationInput.setItems(FXCollections.observableArrayList(1, 5));
         compList = FXCollections.observableArrayList();
-        starterList.setCellFactory(new Callback<ListView<Competitor>, ListCell<Competitor>>() {
 
+        starterList.setCellFactory(new Callback<ListView<Competitor>, ListCell<Competitor>>() {
             @Override
             public ListCell<Competitor> call(ListView<Competitor> param) {
                 ListCell<Competitor> cell = new ListCell<Competitor>() {
@@ -116,21 +124,41 @@ public class StarterController implements Initializable {
             }
         });
         starterList.setItems(compList);
+
     }
 
     /**
      * Switches from start view to course view.
-     * Counts down for 5 seconds before switching.
-     * @param event Confirm button clicked.
-     * @throws IOException
-     * @throws InterruptedException
+     * Starts countdown if the list of starters is not empty.
      */
     @FXML
-    void switchToCourseView(ActionEvent event) throws IOException, InterruptedException {
+    void switchToCourseView(){
 
+        // check that starter table is not empty
+        if(!starterList.getItems().isEmpty()) {
+            startCountdown();
+            countdownButton.setDisable(true);
+        }
+        else {
+            // inform user to press confirm
+            Stage thisStage = (Stage) confirmButton.getScene().getWindow();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information Dialog");
+            alert.initOwner(thisStage);
+            alert.setHeaderText(null);
+            alert.setContentText("Please make sure to confirm duration and number of boats for the race.");
+            alert.showAndWait();
+        }
+
+    }
+
+    /**
+     * Countdown until the race start, updates the countdown time text.
+     */
+    private void startCountdown() {
         //count down for 5 seconds
         timeSeconds.set(STARTTIME);
-        timeline = new Timeline();
+        Timeline timeline = new Timeline();
         timeline.getKeyFrames().add(
                 new KeyFrame(Duration.seconds(STARTTIME + 1),
                         new KeyValue(timeSeconds, 0)));
@@ -147,9 +175,7 @@ public class StarterController implements Initializable {
                     e.printStackTrace();
                 }
                 MainController mainController = loader.getController();
-
                 mainController.setRace(r, 4000, 4000, numBoats);
-
                 primaryStage.setTitle("RaceVision");
                 primaryStage.setMinHeight(900);
                 primaryStage.setMinWidth(1300);
@@ -158,7 +184,6 @@ public class StarterController implements Initializable {
                 primaryStage.setY(primaryScreenBounds.getMinY());
                 primaryStage.setWidth(primaryScreenBounds.getWidth());
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
-
             }
         });
     }
@@ -174,13 +199,11 @@ public class StarterController implements Initializable {
             System.out.println("Fields not set");
             return;
         }
-        numBoats = (int) numBoatsInput.getValue();    //retrieves input values
-        duration = (int) durationInput.getValue();
+        numBoats = numBoatsInput.getValue();    //retrieves input values
+        int duration = durationInput.getValue();
 
         //create course
-        height = primaryScreenBounds.getHeight() * 0.8;
-        System.out.println(height);
-        System.out.println(primaryScreenBounds.getWidth() * 0.70);
+        double height = primaryScreenBounds.getHeight() * 0.8;
         Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height, courseFile);
 
         r = new RaceFactory().createRace(numBoats, duration, raceCourse);

@@ -23,7 +23,6 @@ public class App extends Application
 
     private static String courseFile;
 
-
     @Override
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("starters.fxml"));
@@ -31,10 +30,8 @@ public class App extends Application
         StarterController starterController = loader.getController();
         starterController.setCourseFile(courseFile);
         starterController.setStage(primaryStage);
-
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
-        primaryStage.setWidth(primaryScreenBounds.getWidth());
-        primaryStage.setHeight(primaryScreenBounds.getHeight());
+        primaryStage.setMinWidth(530);
+        primaryStage.setMinWidth(548);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
