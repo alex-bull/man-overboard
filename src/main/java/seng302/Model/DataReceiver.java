@@ -1,5 +1,7 @@
 package seng302.Model;
 
+import seng302.Parsers.Packet;
+
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -9,6 +11,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -58,7 +61,7 @@ public class DataReceiver {
 
     }
     public static void main (String [] args) throws InterruptedException {
-
+        Packet packet = new Packet();
         DataReceiver me= null;
         System.out.println("start connection to server");
         while(me==null){
@@ -81,11 +84,59 @@ public class DataReceiver {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            int count = 0;
+            boolean isHeader = false;
+            boolean getBoatLocationMsg = false;
+            ArrayList arrayList = new ArrayList();
+            ArrayList msgBody = new ArrayList();
+            int bodyCount = 0;
+            String syncByte1 = "";
             for(int i=0;i<1024;i++){
-                System.out.print((char) msg[i]);
-               // System.out.println(String.format("%02X ", msg[i]));
+
+                String hex = String.format("%02X", msg[i]);
+                if(hex.equals("83") && syncByte1.equals("47")) {
+                    arrayList.add("47");
+                    count++;
+                    isHeader = true;
+                }
+
+                if(isHeader) {
+                    if(count < 15) {
+                        arrayList.add(hex);
+                        count++;
+                    }
+                    else{
+                        boolean valid  = packet.validBoatLocation(arrayList);
+                        if(valid) {
+                            getBoatLocationMsg = true;
+                        }
+                        count = 0;
+                        arrayList.clear();
+                        isHeader = false;
+
+                    }
+                }
+
+                if(getBoatLocationMsg && bodyCount < 57) {
+//                    System.out.println(hex);
+                    msgBody.add(hex);
+                    bodyCount++;
+                }
+                if (bodyCount == 56) {
+                    System.out.println(msgBody);
+                    packet.processMsgBody(msgBody);
+                    getBoatLocationMsg = false;
+                    msgBody.clear();
+                    bodyCount = 0;
+                }
+
+                syncByte1 = hex;
+
+//                System.out.print(String.format("%02X ", msg[i]));
 
             }
+
         }
     }
 
