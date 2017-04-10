@@ -32,13 +32,13 @@ public class MainController {
 
     }
 
-    /**
-     * Called when the user clicks toggle FPS from the menu bar
-     */
-    @FXML
-    public void toggleFPS(){
-        raceViewController.toggleFPS();
-    }
+//    /**
+//     * Called when the user clicks toggle FPS from the menu bar
+//     */
+//    @FXML
+//    public void toggleFPS(){
+//        raceViewController.toggleFPS();
+//    }
 
 
 

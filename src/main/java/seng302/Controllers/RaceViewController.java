@@ -3,6 +3,7 @@ package seng302.Controllers;
 import com.google.common.primitives.Doubles;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -10,12 +11,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import seng302.Model.*;
 
+import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.*;
 
@@ -34,26 +37,17 @@ public class RaceViewController implements ClockHandler, Initializable {
     @FXML private RadioButton allAnnotationsButton;
     @FXML private RadioButton speedButton;
     @FXML private RadioButton nameButton;
-
+    @FXML private RadioButton fpsRadio;
     @FXML public Text worldClockValue;
 
     private Clock raceClock;
     private Clock worldClock;
     private Race race;
-    private boolean showAnnotations = true;
-    private String bermudaTimeZone = "GMT-3";
 
 
-    /**
-     * Called when the user clicks toggle fps from the view menu bar.
-     */
-    @FXML
-    public void toggleFPS(){
-        fpsCounter.setVisible(!fpsCounter.visibleProperty().getValue());
-    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //setWorldClock(worldClockValue,bermudaTimeZone);
+
     }
 
     /**
@@ -221,6 +215,13 @@ public class RaceViewController implements ClockHandler, Initializable {
             gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
         }
 
+        if(fpsRadio.isSelected()) {
+
+            fpsCounter.setVisible(true);
+        }
+        else {
+            fpsCounter.setVisible(false);
+        }
 
     }
 
@@ -325,9 +326,6 @@ public class RaceViewController implements ClockHandler, Initializable {
                     drawAnnotations(boat, gc);
 
                 }
-
-                // show race time
-                //timerText.setText(formatDisplayTime(System.currentTimeMillis() - startTime));
 
             }
         };
