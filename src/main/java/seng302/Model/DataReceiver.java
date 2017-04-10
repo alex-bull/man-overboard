@@ -47,10 +47,14 @@ public class DataReceiver {
      * @return the byte received
      * @throws IOException
      */
-    public byte receive() throws IOException {
-        byte[] received=new byte[1];
-            dis.readFully(received);
-            return received[0];
+    public byte[] receive() throws IOException {
+
+
+
+        byte[] received=new byte[1024];
+
+        dis.readFully(received);
+        return received;
 
     }
     public static void main (String [] args) throws InterruptedException {
@@ -61,7 +65,7 @@ public class DataReceiver {
             try {
                 me=new DataReceiver("livedata.americascup.com",4941);
             } catch (IOException e) {
-                System.out.println(e.getMessage());
+                e.printStackTrace();
                 System.out.println("connection failed retry in 1 sec");
                 Thread.sleep(1000);
             }
@@ -70,13 +74,16 @@ public class DataReceiver {
 
 
         while(true){
-            byte msg= 0;
+            byte[] msg= new byte[1024];
             try {
                 msg = me.receive();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println(String.format("%02X ", msg));
+            for(int i=0;i<1024;i++){
+            System.out.println(String.format("%02X ", msg[i]));
+            }
         }
     }
 }
