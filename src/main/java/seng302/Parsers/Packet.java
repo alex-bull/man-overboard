@@ -63,7 +63,7 @@ public class Packet {
             }
             if (bodyCount == 56) {
                 System.out.println(msgBody);
-                processMsgBody(msgBody);
+                processMsgBody(msgBody); // parse the boat location message
                 getBoatLocationMsg = false;
                 msgBody.clear();
                 bodyCount = 0;
@@ -101,12 +101,46 @@ public class Packet {
         List latitude = body.subList(16, 20);
         List longitude = body.subList(20, 24);
         List heading = body.subList(28, 30);
-        System.out.println("lat " + latitude);
-        System.out.println("long " + longitude);
-        System.out.println("head " + heading);
 
+        // latitude calculations
+        System.out.println("lat " + latitude);
+        System.out.println(calculateCoordinate(latitude));
+
+        // long calcs
+        System.out.println("long " + longitude);
+
+
+        System.out.println("head " + heading);
         List speed = body.subList(34, 36);
         System.out.println("Speed " + speed);
+    }
+
+    private double calculateCoordinate(List latitude) {
+        String hexString = "";
+        for(int i = 0; i < latitude.size(); i++) {
+            String hex = latitude.get(i).toString();
+            String revHex = new StringBuilder(hex).reverse().toString();
+            hexString += revHex;
+
+        }
+        System.out.println("hex string is " + hexString);
+        String reversedHex = new StringBuilder(hexString).reverse().toString();
+
+        System.out.println("reversed hex string is " + reversedHex);
+        Integer b = Integer.parseInt(reversedHex, 16);
+        System.out.println(b);
+        double latAnswer = (double) b * 180.0 /  2147483648.0;
+        System.out.println("answerr " + latAnswer);
+
+        return latAnswer;
+    }
+
+    private String addLeadingZeros(String binaryString) {
+
+        while(binaryString.length() < 8) {
+            binaryString = "0" + binaryString;
+        }
+        return binaryString;
     }
 
 }
