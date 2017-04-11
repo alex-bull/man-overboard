@@ -8,9 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -34,10 +32,12 @@ public class RaceViewController implements ClockHandler, Initializable {
     @FXML private Canvas mycanvas;
     @FXML private Text timerText;
     @FXML private Label fpsCounter;
-    @FXML private RadioButton allAnnotationsButton;
-    @FXML private RadioButton speedButton;
-    @FXML private RadioButton nameButton;
-    @FXML private RadioButton fpsRadio;
+    @FXML private RadioButton allAnnotationsRadio;
+    @FXML private RadioButton noAnnotationsRadio;
+    @FXML private RadioButton someAnnotationsRadio;
+    @FXML private CheckBox speedButton;
+    @FXML private CheckBox nameButton;
+    @FXML private CheckBox fpsToggle;
     @FXML public Text worldClockValue;
 
     private Clock raceClock;
@@ -47,7 +47,25 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        final ToggleGroup annotations = new ToggleGroup();
+        allAnnotationsRadio.setToggleGroup(annotations);
+        noAnnotationsRadio.setToggleGroup(annotations);
+        someAnnotationsRadio.setToggleGroup(annotations);
 
+        allAnnotationsRadio.setSelected(true);
+        showAllAnnotations();
+
+        fpsToggle.setSelected(true);
+    }
+
+    /**
+     * Called when the user clicks no annotations button.
+     * Clears individual annotations
+     */
+    @FXML
+    public void clearAnnotations(){
+        speedButton.setSelected(false);
+        nameButton.setSelected(false);
     }
 
     /**
@@ -55,9 +73,9 @@ public class RaceViewController implements ClockHandler, Initializable {
      * Clears individual annotations
      */
     @FXML
-    public void clearAnnotations(){
-        speedButton.setSelected(false);
-        nameButton.setSelected(false);
+    public void showAllAnnotations(){
+        speedButton.setSelected(true);
+        nameButton.setSelected(true);
     }
 
     /**
@@ -193,30 +211,22 @@ public class RaceViewController implements ClockHandler, Initializable {
         //set font to monospaced for easier layout formatting
         gc.setFont(Font.font("Monospaced"));
 
-
-
-        //draw labels if show all annotations is toggled and disables other buttons
-        if (allAnnotationsButton.isSelected()) {
-            if(nameButton.isSelected() || speedButton.isSelected()){
-                allAnnotationsButton.setSelected(false);
-            } else {
-                gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
-                gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
-            }
-        }
-
-        //draws only the selected labels and also disables all annotation button
+        //draws name
         if(nameButton.isSelected()) {
-            allAnnotationsButton.setSelected(false);
             gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
         }
+
+        //draws speed
         if(speedButton.isSelected()) {
-            allAnnotationsButton.setSelected(false);
             gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
         }
 
-        if(fpsRadio.isSelected()) {
+        if(!(nameButton.isSelected() && speedButton.isSelected() || !nameButton.isSelected() && !speedButton.isSelected())) {
+            someAnnotationsRadio.setSelected(true);
+        }
 
+        // draws FPS counter
+        if(fpsToggle.isSelected()) {
             fpsCounter.setVisible(true);
         }
         else {

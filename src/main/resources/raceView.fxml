@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <!--<AnchorPane fx:id="raceView" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controllers.RaceViewController">-->
 <!--<children>-->
@@ -32,15 +38,17 @@
             </font>
         </Text>
       <Text fx:id="worldClockValue" layoutX="842.0" layoutY="111.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Local race time:" AnchorPane.bottomAnchor="943.2265625" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="60.0" />
-      <RadioButton fx:id="fpsRadio" layoutX="10.0" layoutY="299.0" mnemonicParsing="false" selected="true" text="FPS" />
-      <Label fx:id="fpsCounter" layoutX="950.0" layoutY="963.0" text="-" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+      <Label fx:id="fpsCounter" layoutX="955.0" layoutY="1006.0" text="-" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <RadioButton fx:id="allAnnotationsButton" layoutX="10.0" layoutY="195.0" mnemonicParsing="false" onAction="#clearAnnotations" selected="true" text="All Boat Annotations" />
-      <RadioButton fx:id="speedButton" layoutX="10.0" layoutY="229.0" mnemonicParsing="false" text="Speed" />
-      <RadioButton fx:id="nameButton" layoutX="10.0" layoutY="265.0" mnemonicParsing="false" text="Team Name" />
+      <RadioButton fx:id="allAnnotationsRadio" layoutX="10.0" layoutY="195.0" mnemonicParsing="false" onAction="#showAllAnnotations" selected="true" text="All" />
+      <CheckBox fx:id="fpsToggle" layoutX="8.0" layoutY="337.0" mnemonicParsing="false" text="Show FPS" />
+      <CheckBox fx:id="nameButton" layoutX="10.0" layoutY="265.0" mnemonicParsing="false" text="Team Name" />
+      <CheckBox fx:id="speedButton" layoutX="10.0" layoutY="229.0" mnemonicParsing="false" text="Speed" />
+      <RadioButton fx:id="noAnnotationsRadio" layoutX="62.0" layoutY="195.0" mnemonicParsing="false" onAction="#clearAnnotations" text="None" />
+      <RadioButton fx:id="someAnnotationsRadio" layoutX="128.0" layoutY="195.0" mnemonicParsing="false" text="Some" />
     </children>
 
 
