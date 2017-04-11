@@ -8,7 +8,6 @@ import java.util.List;
  */
 public class Packet {
 
-
     /**
      * Receive data packets
      * @param msg byte[] byte array of the message that is being received
@@ -94,20 +93,21 @@ public class Packet {
      * @param body List a list of hexadecimal bytes
      */
     private void processMsgBody(List<String> body) {
-        // get source id, latitude, long, heading, speed
+        // get source id, latitude, longitude, heading, speed
         List sourceID = body.subList(7, 11);
         System.out.println("sourceID " + sourceID);
 
-        List latitude = body.subList(16, 20);
-        List longitude = body.subList(20, 24);
+        List latitudeHexValues = body.subList(16, 20);
+        List longitudeHexValues = body.subList(20, 24);
         List heading = body.subList(28, 30);
 
         // latitude calculations
-        System.out.println("lat " + latitude);
-        System.out.println(calculateCoordinate(latitude));
+        System.out.println("lat " + latitudeHexValues);
+        double latitude = parseCoordinate(latitudeHexValues);
 
-        // long calcs
-        System.out.println("long " + longitude);
+        // longitude calculations
+        System.out.println("long " + longitudeHexValues);
+        double longitude = parseCoordinate(longitudeHexValues);
 
 
         System.out.println("head " + heading);
@@ -115,33 +115,26 @@ public class Packet {
         System.out.println("Speed " + speed);
     }
 
-    private double calculateCoordinate(List latitude) {
+    /**
+     * Convert a list of little endian hex values into a decimal latitude or longitude
+     * @param hexValues List a list of (4) hexadecimal bytes in little endian format
+     */
+    private double parseCoordinate(List hexValues) {
         String hexString = "";
-        for(int i = 0; i < latitude.size(); i++) {
-            String hex = latitude.get(i).toString();
-            String revHex = new StringBuilder(hex).reverse().toString();
-            hexString += revHex;
 
+        for(int i = 0; i < hexValues.size(); i++) {
+            String hex = hexValues.get(i).toString();
+            String reverseHex = new StringBuilder(hex).reverse().toString();
+            hexString += reverseHex;
         }
-        System.out.println("hex string is " + hexString);
-        String reversedHex = new StringBuilder(hexString).reverse().toString();
 
-        System.out.println("reversed hex string is " + reversedHex);
-        Integer b = Integer.parseInt(reversedHex, 16);
-        System.out.println(b);
-        double latAnswer = (double) b * 180.0 /  2147483648.0;
-        System.out.println("answerr " + latAnswer);
+        String reverseHexString = new StringBuilder(hexString).reverse().toString();
+        Integer decimalValue = Integer.parseInt(reverseHexString, 16);
+        double scaledValue = (double) decimalValue * 180.0 /  2147483648.0;
 
-        return latAnswer;
+        System.out.println("answerr " + scaledValue);
+
+        return scaledValue;
     }
-
-    private String addLeadingZeros(String binaryString) {
-
-        while(binaryString.length() < 8) {
-            binaryString = "0" + binaryString;
-        }
-        return binaryString;
-    }
-
 }
 
