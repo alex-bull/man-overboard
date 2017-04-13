@@ -1,4 +1,5 @@
 package seng302.Parsers;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -6,7 +7,7 @@ import java.util.List;
  * Created by psu43 on 10/04/17.
  * Handles parsing for received data packets
  */
-public class ByteStreamConverter {
+public class ByteStreamConverter extends Converter {
     private BoatDataParser boatDataParser;
 
     public ByteStreamConverter() {
@@ -22,7 +23,7 @@ public class ByteStreamConverter {
         int bodyCount = 0;
         int msgSize = 1024;
         int headerSize = 15;
-        String XMLMessageLength = "";
+        long XMLMessageLength;
         boolean isHeader = false;
         boolean getBoatLocationMsg = false;
         boolean getXMLMesssage = false;
@@ -54,8 +55,8 @@ public class ByteStreamConverter {
                     }
                     else if(validXMLMessage(tempBytes)) {
                         getXMLMesssage = true;
-                        XMLMessageLength = tempBytes.get(13).toString() + tempBytes.get(14).toString();
-                        System.out.println(tempBytes + "\nFOUND XML" + getXMLMesssage + XMLMessageLength);
+                        XMLMessageLength = hexListToDecimal(tempBytes.subList(13, 15));
+                        System.out.println(tempBytes + "\nFOUND XML" + XMLMessageLength);
                     }
                     // get ready to parse new message
                     count = 0;
@@ -103,9 +104,8 @@ public class ByteStreamConverter {
      * @return boolean True if the data received is a valid XML location
      */
     private boolean validXMLMessage(List data) {
-        // from protocol byte 2: message type = 26 in dec and 13: length is not fixed
+        // from protocol byte 2: message type = 26 in dec and length is not fixed
         String hexMsgType = "1A";
-        //String hexMsgLen = "38";
         if(data.get(2).equals(hexMsgType)) {
             return true;
         }

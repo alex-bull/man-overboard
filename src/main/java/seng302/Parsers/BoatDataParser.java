@@ -2,17 +2,19 @@ package seng302.Parsers;
 
 import java.util.List;
 
+import static seng302.Parsers.Converter.hexListToDecimal;
+
 /**
  * Created by psu43 on 13/04/17.
- * Parser for boat data.
+ * Converter for boat data.
  */
 public class BoatDataParser {
 
-    int sourceID;
+    long sourceID;
     double latitude;
     double longitude;
     double heading;
-    int speed;
+    long speed;
 
     /**
      * Process the given list of data and parse source id, latitude, longitude, heading, speed
@@ -22,9 +24,9 @@ public class BoatDataParser {
 
         // source id
         List sourceIDHexValues = body.subList(7, 11);
-        //System.out.println("sourceID " + sourceIDHexValues);
+        System.out.println("sourceID " + sourceIDHexValues);
         this.sourceID = hexListToDecimal(sourceIDHexValues);
-       // System.out.println("parsed source ID: " + sourceID);
+        System.out.println("parsed source ID: " + sourceID);
 
         List latitudeHexValues = body.subList(16, 20);
         List longitudeHexValues = body.subList(20, 24);
@@ -46,26 +48,9 @@ public class BoatDataParser {
 
         // speed
         List speedHexValues = body.subList(34, 36);
-        //System.out.println("Speed " + speedHexValues);
+        System.out.println("Speed " + speedHexValues);
         this.speed = hexListToDecimal(speedHexValues);
-        //System.out.println("parsed speed: " + speed);
-    }
-
-
-    /**
-     * Convert a list of little endian hex values into an integer
-     * @param hexValues List a list of hexadecimal bytes in little endian format
-     * @return Integer the integer value of the hexadecimal bytes
-     */
-    private Integer hexListToDecimal(List hexValues) {
-        String hexString = "";
-        for(Object hexValue: hexValues) {
-            String hex = hexValue.toString();
-            String reverseHex = new StringBuilder(hex).reverse().toString();
-            hexString += reverseHex;
-        }
-        String reverseHexString = new StringBuilder(hexString).reverse().toString();
-        return Integer.parseInt(reverseHexString, 16);
+        System.out.println("parsed speed: " + speed);
     }
 
     /**
@@ -74,8 +59,7 @@ public class BoatDataParser {
      * @return Double the value of the heading
      */
     private Double parseHeading(List hexValues) {
-        Integer integerValue = hexListToDecimal(hexValues);
-        return (double) integerValue * 360.0 / 65536.0;
+        return (double) hexListToDecimal(hexValues) * 360.0 / 65536.0;
     }
 
     /**
@@ -84,15 +68,14 @@ public class BoatDataParser {
      * @return Double the value of the coordinate value
      */
     private Double parseCoordinate(List hexValues) {
-        Integer integerValue = hexListToDecimal(hexValues);
-        return (double) integerValue * 180.0 /  2147483648.0;
+        return (double) hexListToDecimal(hexValues) * 180.0 /  2147483648.0;
     }
 
-    public int getSourceID() {
+    public long getSourceID() {
         return sourceID;
     }
 
-    public void setSourceID(int sourceID) {
+    public void setSourceID(long sourceID) {
         this.sourceID = sourceID;
     }
 
@@ -120,11 +103,11 @@ public class BoatDataParser {
         this.heading = heading;
     }
 
-    public int getSpeed() {
+    public long getSpeed() {
         return speed;
     }
 
-    public void setSpeed(int speed) {
+    public void setSpeed(long speed) {
         this.speed = speed;
     }
 
