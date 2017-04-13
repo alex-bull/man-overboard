@@ -209,10 +209,6 @@ public class RaceViewController implements ClockHandler {
         boatModel.setFill(boat.getColor());
         boatModel.setStroke(BLACK);
         boatModel.setStrokeWidth(1);
-        boatModel.setLayoutX(boat.getPosition().getXValue());
-        boatModel.setLayoutY(boat.getPosition().getYValue());
-        //translate it
-        boatModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         //add to the pane and store a reference
         this.raceViewPane.getChildren().add(boatModel);
         this.boatModels.add(boatModel);
@@ -255,10 +251,6 @@ public class RaceViewController implements ClockHandler {
         wake.setStrokeWidth(4);
         wake.setStroke(DARKBLUE);
 
-        //apply transformations
-        wake.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatLength, boatLength));
-        wake.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
-
         //add to pane and store a reference
         this.raceViewPane.getChildren().add(wake);
         this.wakeModels.add(wake);
@@ -276,12 +268,9 @@ public class RaceViewController implements ClockHandler {
         double boatLength=20;
 
         Polyline wakeModel = wakeModels.get(index);
-        //clear existing transformation and line points
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
-        //redraw the line
         wakeModel.getPoints().addAll(0.0, boatLength,0.0, newLength+boatLength);
-        //add the correct transformations
         wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
         wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
     }
@@ -289,7 +278,8 @@ public class RaceViewController implements ClockHandler {
 
     /**
      * Draw the next dot of track for the boat on the canvas
-     * @param boat
+     * @param boat Competitor
+     * @param gc GraphicsContext the gc to draw the track on
      */
     private void drawTrack(Competitor boat, GraphicsContext gc) {
         gc.setFill(boat.getColor());
@@ -304,7 +294,7 @@ public class RaceViewController implements ClockHandler {
 
         gc.restore();
     }
-    
+
 
     /**
      * Implementation of ClockHandler interface method
@@ -320,7 +310,7 @@ public class RaceViewController implements ClockHandler {
      * @param width the width of the canvas
      * @param height the height of the canvas
      */
-    public void animate(double width, double height){
+    private void animate(double width, double height){
 
         // start the race using the timeline
         Timeline t = race.generateTimeline();
