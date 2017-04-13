@@ -1,6 +1,6 @@
 package seng302.Model;
 
-import seng302.Parsers.Packet;
+import seng302.Parsers.ByteStreamConverter;
 
 import java.io.*;
 import java.net.Socket;
@@ -49,14 +49,14 @@ public class DataReceiver {
 
 
     public static void main (String [] args) throws InterruptedException {
-        Packet packet = new Packet();
+        ByteStreamConverter byteStreamConverter = new ByteStreamConverter();
         DataReceiver me = null;
         System.out.println("Start connection to server...");
 
         while(me==null){
             try {
-                me=new DataReceiver("livedata.americascup.com",4941);
-//                me=new DataReceiver("csse-s302staff.canterbury.ac.nz",4941);
+//                me=new DataReceiver("livedata.americascup.com",4941);
+                me=new DataReceiver("csse-s302staff.canterbury.ac.nz",4941);
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("connection failed retry in 1 sec");
@@ -66,16 +66,13 @@ public class DataReceiver {
         }
 
         while(true){
-            byte[] msg = new byte[1024];
+            byte[] msg;
             try {
                 msg = me.receive();
-
+                byteStreamConverter.parseData(msg);
             } catch (IOException e) {
-                e.printStackTrace();
+                break;
             }
-
-            packet.parseData(msg);
-
         }
     }
 
