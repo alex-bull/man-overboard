@@ -9,10 +9,10 @@ import java.util.List;
 public class Packet {
 
     /**
-     * Receive data packets
+     * Parse the received data packet
      * @param msg byte[] byte array of the message that is being received
      */
-    public void receiveData(byte[] msg) {
+    public void parseData(byte[] msg) {
         int count = 0;
         int bodyCount = 0;
         boolean isHeader = false;
@@ -93,47 +93,75 @@ public class Packet {
      * @param body List a list of hexadecimal bytes
      */
     private void processMsgBody(List<String> body) {
-        // get source id, latitude, longitude, heading, speed
-        List sourceID = body.subList(7, 11);
-        System.out.println("sourceID " + sourceID);
+        // parse source id, latitude, longitude, heading, speed
+
+        // source id
+        List sourceIDHexValues = body.subList(7, 11);
+        System.out.println("sourceID " + sourceIDHexValues);
+        Integer sourceID = hexListToDecimal(sourceIDHexValues);
+        System.out.println("parsed source ID: " + sourceID);
 
         List latitudeHexValues = body.subList(16, 20);
         List longitudeHexValues = body.subList(20, 24);
-        List heading = body.subList(28, 30);
-
         // latitude calculations
         System.out.println("lat " + latitudeHexValues);
-        double latitude = parseCoordinate(latitudeHexValues);
+        Double latitude = parseCoordinate(latitudeHexValues);
+        System.out.println("parsed lat: " + latitude);
 
         // longitude calculations
         System.out.println("long " + longitudeHexValues);
-        double longitude = parseCoordinate(longitudeHexValues);
+        Double longitude = parseCoordinate(longitudeHexValues);
+        System.out.println("parsed long: " + longitude);
 
+        // heading
+        List headingHexValues = body.subList(28, 30);
+        System.out.println("head " + headingHexValues);
+        Double heading = parseHeading(headingHexValues);
+        System.out.println("parsed heading : " + heading);
 
-        System.out.println("head " + heading);
-        List speed = body.subList(34, 36);
-        System.out.println("Speed " + speed);
+        // speed
+        List speedHexValues = body.subList(34, 36);
+        System.out.println("Speed " + speedHexValues);
+        Integer speed = hexListToDecimal(speedHexValues);
+        System.out.println("parsed speed: " + speed);
     }
 
-    /**
-     * Convert a list of little endian hex values into a decimal latitude or longitude
-     * @param hexValues List a list of (4) hexadecimal bytes in little endian format
-     */
-    private double parseCoordinate(List hexValues) {
-        String hexString = "";
 
+    /**
+     * Convert a list of little endian hex values into an integer
+     * @param hexValues List a list of hexadecimal bytes in little endian format
+     * @return Integer the integer value of the hexadecimal bytes
+     */
+    private Integer hexListToDecimal(List hexValues) {
+        String hexString = "";
         for(int i = 0; i < hexValues.size(); i++) {
             String hex = hexValues.get(i).toString();
             String reverseHex = new StringBuilder(hex).reverse().toString();
             hexString += reverseHex;
         }
-
         String reverseHexString = new StringBuilder(hexString).reverse().toString();
-        Integer decimalValue = Integer.parseInt(reverseHexString, 16);
-        double scaledValue = (double) decimalValue * 180.0 /  2147483648.0;
+        return Integer.parseInt(reverseHexString, 16);
+    }
 
-        System.out.println("answerr " + scaledValue);
+    /**
+     * Convert a list of little endian hex values into a decimal heading
+     * @param hexValues List a list of (2) hexadecimal bytes in little endian format
+     * @return Double the value of the heading
+     */
+    private Double parseHeading(List hexValues) {
+        Integer integerValue = hexListToDecimal(hexValues);
+        Double scaledValue = (double) integerValue * 360.0 / 65536.0;
+        return scaledValue;
+    }
 
+    /**
+     * Convert a list of little endian hex values into a decimal latitude or longitude
+     * @param hexValues List a list of (4) hexadecimal bytes in little endian format
+     * @return Double the value of the coordinate value
+     */
+    private Double parseCoordinate(List hexValues) {
+        Integer integerValue = hexListToDecimal(hexValues);
+        Double scaledValue = (double) integerValue * 180.0 /  2147483648.0;
         return scaledValue;
     }
 }

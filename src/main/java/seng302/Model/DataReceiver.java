@@ -56,6 +56,7 @@ public class DataReceiver {
         while(me==null){
             try {
                 me=new DataReceiver("livedata.americascup.com",4941);
+//                me=new DataReceiver("csse-s302staff.canterbury.ac.nz",4941);
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("connection failed retry in 1 sec");
@@ -73,7 +74,7 @@ public class DataReceiver {
                 e.printStackTrace();
             }
 
-            packet.receiveData(msg);
+            packet.parseData(msg);
 
         }
     }
