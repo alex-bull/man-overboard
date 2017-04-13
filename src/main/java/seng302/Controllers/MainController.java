@@ -24,27 +24,6 @@ public class MainController {
 
     @FXML private SplitPane splitPane;
 
-    /**
-     * Initialiser for the raceViewController
-     */
-    @FXML
-    void initialize() {
-
-    }
-
-//    /**
-//     * Called when the user clicks toggle FPS from the menu bar
-//     */
-//    @FXML
-//    public void toggleFPS(){
-//        raceViewController.toggleFPS();
-//    }
-
-
-
-
-
-
 
     /**
      * Sets the race

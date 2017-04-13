@@ -238,27 +238,6 @@ public class RaceViewController implements ClockHandler, Initializable {
         speedLabel.setLayoutY(yValue + 15);
     }
 
-
-        //draws only the selected labels and also disables all annotation button
-        if(nameButton.isSelected()) {
-            allAnnotationsButton.setSelected(false);
-            gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
-        }
-        if(speedButton.isSelected()) {
-            allAnnotationsButton.setSelected(false);
-            gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
-        }
-
-        if(fpsRadio.isSelected()) {
-
-            fpsCounter.setVisible(true);
-        }
-        else {
-            fpsCounter.setVisible(false);
-        }
-
-    }
-
     /**
      * Draw boat competitor
      * @param boat Competitor a competing boat

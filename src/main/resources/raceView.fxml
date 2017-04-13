@@ -30,17 +30,12 @@
     <children>
         <Canvas fx:id="raceViewCanvas" height="1000.0" width="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <Pane fx:id="raceViewPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="4000.0" prefWidth="4000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <Label fx:id="fpsCounter" layoutX="950.0" layoutY="963.0" onMouseClicked="#toggleFPS" text="FPS:" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </Label>
         <Text layoutX="14.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wind Direction" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="864.326171875" AnchorPane.topAnchor="30.0">
             <font>
                 <Font size="17.0" />
             </font>
         </Text>
-        <Text fx:id="timerText" layoutX="14.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00:00" AnchorPane.TopAnchor="50.0" AnchorPane.rightAnchor="10.0">
+        <Text fx:id="timerText" layoutX="14.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00:00" AnchorPane.TopAnchor="30.0" AnchorPane.rightAnchor="10.0">
             <font>
                 <Font size="23.0" />
             </font>
