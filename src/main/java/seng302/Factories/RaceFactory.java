@@ -28,17 +28,16 @@ public class RaceFactory {
 
         //create competitors
         List<Competitor> competitors = new ArrayList<>();
-        competitors.add(new Boat("Oracle Team USA", 20, new MutablePoint(0.0, 50.0), Color.BLACK,"USA"));
-        competitors.add(new Boat("Emirates Team New Zealand", 22, new MutablePoint(30.0, 50.0), Color.RED,"NZL"));
-        competitors.add(new Boat("Ben Ainslie Racing", 18, new MutablePoint(60.0, 50.0), Color.PURPLE, "GBR"));
-        competitors.add(new Boat("SoftBank Team Japan", 16, new MutablePoint(90.0, 50.0), Color.YELLOW,"JPN"));
-        competitors.add(new Boat("Team France", 15, new MutablePoint(120.0, 50.0), Color.BROWN,"FRA"));
-        competitors.add(new Boat("Artemis Racing", 14, new MutablePoint(150.0, 50.0), Color.GREEN,"SWE"));
+        competitors.add(new Boat("Oracle Team USA", 22, new MutablePoint(0.0, 0.0), Color.BLACK,"USA"));
+        competitors.add(new Boat("Emirates Team New Zealand", 20, new MutablePoint(30.0, 0.0), Color.RED,"NZL"));
+        competitors.add(new Boat("Ben Ainslie Racing", 18, new MutablePoint(60.0, 0.0), Color.PURPLE, "GBR"));
+        competitors.add(new Boat("SoftBank Team Japan", 16, new MutablePoint(90.0, 0.0), Color.YELLOW,"JPN"));
+        competitors.add(new Boat("Team France", 15, new MutablePoint(120.0, 0.0), Color.BROWN,"FRA"));
+        competitors.add(new Boat("Artemis Racing", 19, new MutablePoint(150.0, 0.0), Color.GREEN,"SWE"));
 
         //randomly select competitors
         Collections.shuffle(competitors);
         competitors = competitors.subList(0, numBoats);
-
 
         return new MatchRace(raceDuration, raceCourse, competitors);
 

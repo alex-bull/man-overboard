@@ -3,13 +3,18 @@ package seng302.Controllers;
 import com.google.common.primitives.Doubles;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Control;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.control.RadioButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
@@ -20,8 +25,13 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import seng302.Model.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.ActionEvent;
+import java.net.URL;
+import java.util.*;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.DARKBLUE;
@@ -29,14 +39,21 @@ import static javafx.scene.paint.Color.DARKBLUE;
 /**
  * Controller for the race view.
  */
-public class RaceViewController implements ClockHandler {
+public class RaceViewController implements ClockHandler, Initializable {
 
     @FXML private AnchorPane raceView;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
     @FXML private Text timerText;
     @FXML private Label fpsCounter;
+    @FXML private RadioButton allAnnotationsButton;
+    @FXML private RadioButton speedButton;
+    @FXML private RadioButton nameButton;
+    @FXML private RadioButton fpsRadio;
+    @FXML public Text worldClockValue;
 
+    private Clock raceClock;
+    private Clock worldClock;
     private Race race;
     private boolean showAnnotations = true;
     private List<Polygon> boatModels = new ArrayList<>();
@@ -45,7 +62,20 @@ public class RaceViewController implements ClockHandler {
     private List<Label> speedAnnotations = new ArrayList<>();
 
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
 
+    }
+
+    /**
+     * Called when the user clicks all Annotations button.
+     * Clears individual annotations
+     */
+    @FXML
+    public void clearAnnotations(){
+        speedButton.setSelected(false);
+        nameButton.setSelected(false);
+    }
 
     /**
      * Sets the race and the race start time and then animates the race
@@ -55,15 +85,30 @@ public class RaceViewController implements ClockHandler {
      */
     public void begin(Race race, double width, double height) {
         this.race=race;
-        Clock raceClock = new RaceClock(this, race.getVelocityScaleFactor(), 27000);
+        this.raceClock = new RaceClock(this, race.getVelocityScaleFactor(), 27000);
+        this.worldClock = new WorldClock(this);
         raceViewCanvas.setHeight(height);
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
         raceViewPane.setPrefWidth(width);
         raceClock.start();
+        worldClock.start();
         animate(width, height);
     }
 
+
+    /**
+     * Implementation of ClockHandler interface method
+     * @param newTime The currentTime of the clock
+     */
+    public void clockTicked(String newTime, Clock clock) {
+        if(clock == raceClock) {
+            timerText.setText(newTime);
+        }
+        if(clock == worldClock) {
+            worldClockValue.setText(newTime);
+        }
+    }
 
     /**
      * Draws an arrow on the screen at top left corner
@@ -194,6 +239,26 @@ public class RaceViewController implements ClockHandler {
     }
 
 
+        //draws only the selected labels and also disables all annotation button
+        if(nameButton.isSelected()) {
+            allAnnotationsButton.setSelected(false);
+            gc.fillText(boat.getAbbreName(), xValue - 10, yValue - 20);
+        }
+        if(speedButton.isSelected()) {
+            allAnnotationsButton.setSelected(false);
+            gc.fillText(boat.getVelocity() + " m/s", xValue - 20, yValue + 20);
+        }
+
+        if(fpsRadio.isSelected()) {
+
+            fpsCounter.setVisible(true);
+        }
+        else {
+            fpsCounter.setVisible(false);
+        }
+
+    }
+
     /**
      * Draw boat competitor
      * @param boat Competitor a competing boat
@@ -297,6 +362,25 @@ public class RaceViewController implements ClockHandler {
 
 
     /**
+     * Draw boat wakes and factor it with its velocity
+     * @param boat Competitor a competitor
+     * @param gc Graphics Context
+     */
+    private void drawWake(Competitor boat, GraphicsContext gc) {
+        double xValue = boat.getPosition().getXValue();
+        double yValue = boat.getPosition().getYValue();
+        double wakeDirection = Math.toRadians(boat.getCurrentHeading());
+        double wakeLength = boat.getVelocity();
+        double x_len = wakeLength * sin(wakeDirection);
+        double y_len = wakeLength * cos(wakeDirection);
+        double x2 = xValue - x_len;
+        double y2 = yValue + y_len;
+        gc.setStroke(Color.CORNFLOWERBLUE);
+        gc.strokeLine(xValue, yValue, x2, y2);
+    }
+
+
+    /**
      * Implementation of ClockHandler interface method
      * @param newTime The currentTime of the clock
      */
@@ -368,26 +452,6 @@ public class RaceViewController implements ClockHandler {
 
 
 
-    /**
-     * Called when the user clicks toggle fps from the view menu bar.
-     */
-    @FXML
-    public void toggleFPS(){
-        fpsCounter.setVisible(!fpsCounter.visibleProperty().getValue());
-    }
-
-    /**
-     * Called when the user clicks toggle annotations from the view menu bar.
-     */
-    @FXML
-    public void toggleAnnotations() {
-        if(showAnnotations) {
-            showAnnotations = false;
-        }
-        else {
-            showAnnotations = true;
-        }
-    }
 
 
 }

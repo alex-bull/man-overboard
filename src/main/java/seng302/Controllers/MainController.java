@@ -18,9 +18,11 @@ public class MainController {
 
     private Race race;
 
-
     @FXML private TableController tableController;
+
     @FXML private RaceViewController raceViewController;
+
+    @FXML private SplitPane splitPane;
 
     /**
      * Initialiser for the raceViewController
@@ -30,21 +32,19 @@ public class MainController {
 
     }
 
-    /**
-     * Called when the user clicks toggle FPS from the menu bar
-     */
-    @FXML
-    public void toggleFPS(){
-        raceViewController.toggleFPS();
-    }
+//    /**
+//     * Called when the user clicks toggle FPS from the menu bar
+//     */
+//    @FXML
+//    public void toggleFPS(){
+//        raceViewController.toggleFPS();
+//    }
 
-    /**
-     * Called when the user clicks toggle annotations from the menu bar
-     */
-    @FXML
-    public void toggleAnnotations() {
-        raceViewController.toggleAnnotations();
-    }
+
+
+
+
+
 
     /**
      * Sets the race

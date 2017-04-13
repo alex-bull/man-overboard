@@ -23,6 +23,7 @@ public class RaceEvent implements Comparable<RaceEvent>{
      * @param feature CourseFeature the feature the competitor passed
      */
     public RaceEvent(Competitor boat, CourseFeature feature) {
+
         this.position = new SimpleIntegerProperty(0);
         this.speed = new SimpleIntegerProperty(boat.getVelocity());
         this.featureName = new SimpleStringProperty(feature.getName());
