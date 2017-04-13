@@ -47,8 +47,9 @@
       <CheckBox fx:id="fpsToggle" layoutX="8.0" layoutY="337.0" mnemonicParsing="false" text="Show FPS" />
       <CheckBox fx:id="nameButton" layoutX="10.0" layoutY="265.0" mnemonicParsing="false" text="Team Name" />
       <CheckBox fx:id="speedButton" layoutX="10.0" layoutY="229.0" mnemonicParsing="false" text="Speed" />
-      <RadioButton fx:id="noAnnotationsRadio" layoutX="62.0" layoutY="195.0" mnemonicParsing="false" onAction="#clearAnnotations" text="None" />
-      <RadioButton fx:id="someAnnotationsRadio" layoutX="128.0" layoutY="195.0" mnemonicParsing="false" text="Some" />
+      <RadioButton fx:id="noAnnotationsRadio" layoutX="136.0" layoutY="195.0" mnemonicParsing="false" onAction="#clearAnnotations" text="None" />
+      <RadioButton fx:id="someAnnotationsRadio" layoutX="64.0" layoutY="195.0" mnemonicParsing="false" text="Partial" />
+      <Text layoutX="12.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Annotations" />
     </children>
 
 
