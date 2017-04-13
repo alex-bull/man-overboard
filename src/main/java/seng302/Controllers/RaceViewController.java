@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -46,10 +47,12 @@ public class RaceViewController implements ClockHandler, Initializable {
     @FXML private Canvas raceViewCanvas;
     @FXML private Text timerText;
     @FXML private Label fpsCounter;
-    @FXML private RadioButton allAnnotationsButton;
-    @FXML private RadioButton speedButton;
-    @FXML private RadioButton nameButton;
-    @FXML private RadioButton fpsRadio;
+    @FXML private RadioButton allAnnotationsRadio;
+    @FXML private RadioButton noAnnotationsRadio;
+    @FXML private RadioButton someAnnotationsRadio;
+    @FXML private CheckBox speedButton;
+    @FXML private CheckBox nameButton;
+    @FXML private CheckBox fpsToggle;
     @FXML public Text worldClockValue;
 
     private Clock raceClock;
@@ -64,7 +67,25 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        final ToggleGroup annotations = new ToggleGroup();
+        allAnnotationsRadio.setToggleGroup(annotations);
+        noAnnotationsRadio.setToggleGroup(annotations);
+        someAnnotationsRadio.setToggleGroup(annotations);
 
+        allAnnotationsRadio.setSelected(true);
+        showAllAnnotations();
+
+        fpsToggle.setSelected(true);
+    }
+
+    /**
+     * Called when the user clicks no annotations button.
+     * Clears individual annotations
+     */
+    @FXML
+    public void clearAnnotations(){
+        speedButton.setSelected(false);
+        nameButton.setSelected(false);
     }
 
     /**
@@ -72,9 +93,9 @@ public class RaceViewController implements ClockHandler, Initializable {
      * Clears individual annotations
      */
     @FXML
-    public void clearAnnotations(){
-        speedButton.setSelected(false);
-        nameButton.setSelected(false);
+    public void showAllAnnotations(){
+        speedButton.setSelected(true);
+        nameButton.setSelected(true);
     }
 
     /**
@@ -203,19 +224,37 @@ public class RaceViewController implements ClockHandler, Initializable {
         Double xValue = boat.getPosition().getXValue();
         Double yValue = boat.getPosition().getYValue();
 
-        //name annotation
-        Label nameLabel = new Label(boat.getAbbreName());
-        nameLabel.setFont(Font.font("Monospaced"));
-        nameLabel.setTextFill(boat.getColor());
-        this.raceViewPane.getChildren().add(nameLabel);
-        this.nameAnnotations.add(nameLabel);
+        //draws name
+        if(nameButton.isSelected()) {
+            //name annotation
+            Label nameLabel = new Label(boat.getAbbreName());
+            nameLabel.setFont(Font.font("Monospaced"));
+            nameLabel.setTextFill(boat.getColor());
+            this.raceViewPane.getChildren().add(nameLabel);
+            this.nameAnnotations.add(nameLabel);
+        }
 
-        //speed annotation
-        Label speedLabel = new Label(String.valueOf(boat.getVelocity()) + "m/s");
-        speedLabel.setFont(Font.font("Monospaced"));
-        speedLabel.setTextFill(boat.getColor());
-        this.raceViewPane.getChildren().add(speedLabel);
-        this.speedAnnotations.add(speedLabel);
+        //draws speed
+        if(speedButton.isSelected()) {
+            //speed annotation
+            Label speedLabel = new Label(String.valueOf(boat.getVelocity()) + "m/s");
+            speedLabel.setFont(Font.font("Monospaced"));
+            speedLabel.setTextFill(boat.getColor());
+            this.raceViewPane.getChildren().add(speedLabel);
+            this.speedAnnotations.add(speedLabel);
+        }
+
+        if(!(nameButton.isSelected() && speedButton.isSelected() || !nameButton.isSelected() && !speedButton.isSelected())) {
+            someAnnotationsRadio.setSelected(true);
+        }
+
+        // draws FPS counter
+        if(fpsToggle.isSelected()) {
+            fpsCounter.setVisible(true);
+        }
+        else {
+            fpsCounter.setVisible(false);
+        }
     }
 
     /**

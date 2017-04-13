@@ -61,7 +61,7 @@ public class StarterController implements Initializable, ClockHandler {
     private ObservableList<Competitor> compList;
     private int numBoats;
     private Rectangle2D primaryScreenBounds;
-    private final int STARTTIME = 5;
+    private final int STARTTIME = 1;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
 
     /**
