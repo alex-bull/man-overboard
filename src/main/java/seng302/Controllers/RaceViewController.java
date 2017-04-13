@@ -58,7 +58,6 @@ public class RaceViewController implements ClockHandler, Initializable {
     private Clock raceClock;
     private Clock worldClock;
     private Race race;
-    private boolean showAnnotations = true;
     private List<Polygon> boatModels = new ArrayList<>();
     private List<Polyline> wakeModels = new ArrayList<>();
     private List<Label> nameAnnotations = new ArrayList<>();
@@ -214,47 +213,25 @@ public class RaceViewController implements ClockHandler, Initializable {
     }
 
 
-
     /**
      * Draw annotations
      * @param boat Competitor a competing boat
      */
     private void drawAnnotations(Competitor boat) {
 
-        Double xValue = boat.getPosition().getXValue();
-        Double yValue = boat.getPosition().getYValue();
+        //name annotation
+        Label nameLabel = new Label(boat.getAbbreName());
+        nameLabel.setFont(Font.font("Monospaced"));
+        nameLabel.setTextFill(boat.getColor());
+        this.raceViewPane.getChildren().add(nameLabel);
+        this.nameAnnotations.add(nameLabel);
 
-        //draws name
-        if(nameButton.isSelected()) {
-            //name annotation
-            Label nameLabel = new Label(boat.getAbbreName());
-            nameLabel.setFont(Font.font("Monospaced"));
-            nameLabel.setTextFill(boat.getColor());
-            this.raceViewPane.getChildren().add(nameLabel);
-            this.nameAnnotations.add(nameLabel);
-        }
-
-        //draws speed
-        if(speedButton.isSelected()) {
-            //speed annotation
-            Label speedLabel = new Label(String.valueOf(boat.getVelocity()) + "m/s");
-            speedLabel.setFont(Font.font("Monospaced"));
-            speedLabel.setTextFill(boat.getColor());
-            this.raceViewPane.getChildren().add(speedLabel);
-            this.speedAnnotations.add(speedLabel);
-        }
-
-        if(!(nameButton.isSelected() && speedButton.isSelected() || !nameButton.isSelected() && !speedButton.isSelected())) {
-            someAnnotationsRadio.setSelected(true);
-        }
-
-        // draws FPS counter
-        if(fpsToggle.isSelected()) {
-            fpsCounter.setVisible(true);
-        }
-        else {
-            fpsCounter.setVisible(false);
-        }
+        //speed annotation
+        Label speedLabel = new Label(String.valueOf(boat.getVelocity()) + "m/s");
+        speedLabel.setFont(Font.font("Monospaced"));
+        speedLabel.setTextFill(boat.getColor());
+        this.raceViewPane.getChildren().add(speedLabel);
+        this.speedAnnotations.add(speedLabel);
     }
 
     /**
@@ -268,13 +245,38 @@ public class RaceViewController implements ClockHandler, Initializable {
         Double yValue = boat.getPosition().getYValue();
         Label nameLabel = this.nameAnnotations.get(index);
         Label speedLabel = this.speedAnnotations.get(index);
-        nameLabel.toFront();
-        speedLabel.toFront();
-        speedLabel.setText(String.valueOf(boat.getVelocity()) + "m/s");
-        nameLabel.setLayoutX(xValue - 25);
-        nameLabel.setLayoutY(yValue - 25);
-        speedLabel.setLayoutX(xValue + 5);
-        speedLabel.setLayoutY(yValue + 15);
+
+        //draws name
+        if(nameButton.isSelected()) {
+            nameLabel.toFront();
+            nameLabel.setText(boat.getAbbreName());
+            nameLabel.setLayoutX(xValue - 25);
+            nameLabel.setLayoutY(yValue - 25);
+        } else {
+            nameLabel.setText("");
+        }
+
+        //draws speed
+        if(speedButton.isSelected()) {
+            speedLabel.toFront();
+            speedLabel.setText(String.valueOf(boat.getVelocity()) + "m/s");
+            speedLabel.setLayoutX(xValue + 5);
+            speedLabel.setLayoutY(yValue + 15);
+        } else {
+            speedLabel.setText("");
+        }
+
+        if(!(nameButton.isSelected() && speedButton.isSelected() || !nameButton.isSelected() && !speedButton.isSelected())) {
+            someAnnotationsRadio.setSelected(true);
+        }
+
+        // draws FPS counter
+        if(fpsToggle.isSelected()) {
+            fpsCounter.setVisible(true);
+        }
+        else {
+            fpsCounter.setVisible(false);
+        }
     }
 
     /**
