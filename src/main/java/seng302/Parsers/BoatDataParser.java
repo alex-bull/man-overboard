@@ -24,9 +24,9 @@ public class BoatDataParser {
 
         // source id
         List sourceIDHexValues = body.subList(7, 11);
-        System.out.println("sourceID " + sourceIDHexValues);
+//        System.out.println("sourceID " + sourceIDHexValues);
         this.sourceID = hexListToDecimal(sourceIDHexValues);
-        System.out.println("parsed source ID: " + sourceID);
+//        System.out.println("parsed source ID: " + sourceID);
 
         List latitudeHexValues = body.subList(16, 20);
         List longitudeHexValues = body.subList(20, 24);
@@ -48,9 +48,9 @@ public class BoatDataParser {
 
         // speed
         List speedHexValues = body.subList(34, 36);
-        System.out.println("Speed " + speedHexValues);
+//        System.out.println("Speed " + speedHexValues);
         this.speed = hexListToDecimal(speedHexValues);
-        System.out.println("parsed speed: " + speed);
+//        System.out.println("parsed speed: " + speed);
     }
 
     /**

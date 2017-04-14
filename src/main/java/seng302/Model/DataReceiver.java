@@ -41,7 +41,7 @@ public class DataReceiver {
      * @throws IOException
      */
     public byte[] receive() throws IOException {
-        byte[] received=new byte[1024];
+        byte[] received=new byte[1];
         dis.readFully(received);
         return received;
 
@@ -50,13 +50,13 @@ public class DataReceiver {
 
     public static void main (String [] args) throws InterruptedException {
         ByteStreamConverter byteStreamConverter = new ByteStreamConverter();
-        DataReceiver me = null;
+        DataReceiver dataReceiver = null;
         System.out.println("Start connection to server...");
 
-        while(me==null){
+        while(dataReceiver==null){
             try {
 //                me = new DataReceiver("livedata.americascup.com",4941);
-                me = new DataReceiver("csse-s302staff.canterbury.ac.nz",4941);
+                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz",4941);
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("connection failed retry in 1 sec");
@@ -66,13 +66,58 @@ public class DataReceiver {
         }
 
         while(true){
-            byte[] msg;
+
+            byte[] b = new byte[1];
             try {
-                msg = me.receive();
-                byteStreamConverter.parseData(msg);
+                dataReceiver.dis.readFully(b);
+                if (String.format("%02X", b[0]).equals("47")) {
+                    byte[] b2 = new byte[1];
+                    try {
+                        dataReceiver.dis.readFully(b2);
+                        if (String.format("%02X", b2[0]).equals("83")) {
+                            byte[] header = new byte[13];
+                            try {
+                                dataReceiver.dis.readFully(header);
+                                byteStreamConverter.parseHeader(header);
+
+
+                            } catch (IOException e) {
+                                break;
+                            }
+                        }
+                    } catch (IOException e) {
+                        break;
+                    }
+                }
             } catch (IOException e) {
                 break;
             }
+
+
+//            byte[] header;
+//            try {
+//                header = new byte[15];
+//                dataReceiver.dis.readFully(header);
+//                boolean isHeader = byteStreamConverter.parseHeader(header);
+//                System.out.println(byteStreamConverter.getMessageLength());
+//            } catch (IOException e) {
+//                break;
+//            }
+
+//            byte[] message;
+//            try {
+//                message = dataReceiver.receive();
+//                byteStreamConverter.parseMessage(message);
+//            } catch (IOException e) {
+//                break;
+//            }
+//            byte[] crc;
+//            try {
+//                msg = dataReceiver.receive();
+//                byteStreamConverter.checkCRC(msg);
+//            } catch (IOException e) {
+//                break;
+//            }
         }
     }
 
