@@ -1,4 +1,4 @@
-package seng302.Model;
+package seng302.Parsers;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
