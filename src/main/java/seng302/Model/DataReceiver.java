@@ -80,6 +80,15 @@ public class DataReceiver {
                                 dataReceiver.dis.readFully(header);
                                 byteStreamConverter.parseHeader(header);
 
+                                byte[] message = new byte[(int) byteStreamConverter.getMessageLength()];
+                                try {
+                                    dataReceiver.dis.readFully(message);
+                                    byteStreamConverter.parseMessage(message);
+
+                                }
+                                catch (IOException e) {
+                                    break;
+                                }
 
                             } catch (IOException e) {
                                 break;

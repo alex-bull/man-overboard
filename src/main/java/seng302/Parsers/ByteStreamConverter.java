@@ -1,6 +1,8 @@
 package seng302.Parsers;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,6 +45,38 @@ public class ByteStreamConverter extends Converter {
         tempBytes.add(byteToHex(header[11]));
         tempBytes.add(byteToHex(header[12]));
         messageLength = hexListToDecimal(tempBytes);
+    }
+
+    public void parseMessage(byte[] message) {
+
+        if(messageType == 26) {
+            parseXMLMessage(message);
+        }
+
+    }
+
+    private void parseXMLMessage(byte[] message) {
+        List tempBytes = new ArrayList();
+        tempBytes.add(byteToHex(message[12]));
+        tempBytes.add(byteToHex(message[13]));
+
+        long XMLLength = hexListToDecimal(tempBytes);
+        byte[] xmlBytes = Arrays.copyOfRange(message, 14, (int)XMLLength + 14);
+
+        try {
+            String s = new String(xmlBytes,"UTF-8");
+            System.out.println(s);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+//        for(int i = 14; i < XMLLength + 14; i++) {
+//
+//            String s = new String(message.sub, "UTF-8");
+//
+//        }
+
     }
 
     /**
