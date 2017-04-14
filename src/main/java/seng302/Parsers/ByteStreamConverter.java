@@ -16,26 +16,49 @@ public class ByteStreamConverter extends Converter {
         boatDataParser = new BoatDataParser();
     }
 
-
     private long messageType;
     private long messageLength;
 
+    private XmlSubtype xmlSubType;
+
+
+
     public long getMessageType() {
-        return messageType;
+        return this.messageType;
     }
 
     public long getMessageLength() {
         return this.messageLength;
     }
 
+    public XmlSubtype getXmlSubType() {
+        return xmlSubType;
+    }
+
+    ///////////////////////////////////////////
+
+    /**
+     * Convert byte to hex string
+     * @param b byte a byte
+     * @return String two letter hex string
+     */
     private String byteToHex(byte b) {
         return String.format("%02X", b);
     }
 
+    /**
+     * Convert hex string to decimal
+     * @param hex String a string of hexadecimal characters
+     * @return long the decimal value of the hex string
+     */
     private long hexToLong(String hex) {
         return Long.parseLong(hex, 16);
     }
 
+    /**
+     * Find information about the message
+     * @param header byte[] an array of 15 bytes corresponding to the message header
+     */
     public void parseHeader(byte[] header) {
         messageType = hexToLong(byteToHex(header[0]));
 
@@ -47,165 +70,47 @@ public class ByteStreamConverter extends Converter {
         messageLength = hexListToDecimal(tempBytes);
     }
 
-    public void parseMessage(byte[] message) {
+    /**
+     * Parse binary data into XML
+     * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
+     * @return String XML string describing Regatta, Race, or Boat
+     */
+    public String parseXMLMessage(byte[] message) {
 
-        if(messageType == 26) {
-            parseXMLMessage(message);
+        // can get version number, ack number, timestamp if needed
+
+        long subType = hexToLong(byteToHex(message[9]));
+        if (subType == 5) {
+            xmlSubType = XmlSubtype.REGATTA;
+        }
+        if (subType == 6) {
+            xmlSubType = XmlSubtype.RACE;
+        }
+        if (subType == 7) {
+            xmlSubType = XmlSubtype.BOAT;
         }
 
-    }
+        // can get sequence number if needed
 
-    private void parseXMLMessage(byte[] message) {
         List tempBytes = new ArrayList();
         tempBytes.add(byteToHex(message[12]));
         tempBytes.add(byteToHex(message[13]));
+        long xmlLength = hexListToDecimal(tempBytes);
 
-        long XMLLength = hexListToDecimal(tempBytes);
-        byte[] xmlBytes = Arrays.copyOfRange(message, 14, (int)XMLLength + 14);
+        int start = 14;
+        int end = start + (int)xmlLength;
+
+        byte[] xmlBytes = Arrays.copyOfRange(message, start, end);
+        String charset = "UTF-8";
+        String xmlString = "";
 
         try {
-            String s = new String(xmlBytes,"UTF-8");
-            System.out.println(s);
+            xmlString = new String(xmlBytes, charset);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
-
-//        for(int i = 14; i < XMLLength + 14; i++) {
-//
-//            String s = new String(message.sub, "UTF-8");
-//
-//        }
-
-    }
-
-    /**
-     * Parse the received data packet
-     * @param msg byte[] byte array of the message that is being received
-     */
-    public void parseData(byte[] msg) {
-        int count = 0;
-        long bodyCount = 0;
-        int msgSize = 1024;
-        int headerSize = 15;
-        long messageLength = 0;
-        boolean isHeader = false;
-        boolean getBoatLocationMsg = false;
-        boolean getXMLMesssage = false;
-        String syncByte1Value = "47";
-        String syncByte2Value = "83";
-        String syncByte1 = "";
-        List tempBytes = new ArrayList();
-        List tempMessage = new ArrayList();
-
-
-        for(int j = 0 ; j < 15; j++) {
-            String hexByte = String.format("%02X", msg[0]);
-            // if current byte is equal to sync byte 2 and prev byte is sync byte 1 then flag is header
-            if (hexByte.equals(syncByte2Value) && syncByte1.equals(syncByte1Value)) {
-                tempBytes.add(syncByte1Value);
-                count++;
-                isHeader = true;
-            }
-
-            if (isHeader) {
-
-                if (count < headerSize) {
-                    tempBytes.add(hexByte);
-                    count++;
-                }
-                if(count == headerSize) {
-                    System.out.println(tempBytes);
-
-                }
-//                else {
-//                    System.out.println("temp bytes " + tempBytes);
-//
-//                    messageLength = hexListToDecimal(tempBytes.subList(13, 15));
-//                    if (validBoatLocation(tempBytes)) {
-//                        getBoatLocationMsg = true; // flag to parse boat location message
-//                    }
-//                    else if(validXMLMessage(tempBytes)) {
-//                        getXMLMesssage = true;
-//                        System.out.println(tempBytes + "\nFOUND XML " + messageLength);
-//
-//                    }
-//
-//                    // get ready to parse new message
-//                    count = 0;
-//                    tempBytes.clear();
-//                    isHeader = false;
-//                }
-            }
-            syncByte1 = hexByte;
-        }
-
-
-//        for(int i=15 ; i < messageLength + 15; i++) {
-//            String hexByte = String.format("%02X", msg[i]);
-////            // if current byte is equal to sync byte 2 and prev byte is sync byte 1 then flag is header
-////            if (hexByte.equals(syncByte2Value) && syncByte1.equals(syncByte1Value)) {
-////                tempBytes.add(syncByte1Value);
-////                count++;
-////                isHeader = true;
-////            }
-////
-////            if (isHeader) {
-////                if (count < headerSize) {
-////                    tempBytes.add(hexByte);
-////                    count++;
-////                } else {
-////                    //System.out.println("temp bytes " + tempBytes);ddd
-////                    if (validBoatLocation(tempBytes)) {
-////                        getBoatLocationMsg = true; // flag to parse boat location message
-////                    }
-////                    else if(validXMLMessage(tempBytes)) {
-////                        getXMLMesssage = true;
-////                        XMLMessageLength = hexListToDecimal(tempBytes.subList(13, 15));
-////                        System.out.println(tempBytes + "\nFOUND XML " + XMLMessageLength);
-////
-////                    }
-////                    // get ready to parse new message
-////                    count = 0;
-////                    tempBytes.clear();
-////                    isHeader = false;
-////                }
-////            }
-//
-//            if(getXMLMesssage && bodyCount < messageLength + 1) {
-//                if(bodyCount == 1024) {
-//                    System.out.println("body count is " + bodyCount);
-//                }
-//                tempMessage.add(hexByte);
-//                bodyCount++;
-//                if(bodyCount == messageLength) {
-//                    System.out.println("body count is " + bodyCount);
-//                }
-//            }
-////            if(getXMLMesssage && bodyCount == XMLMessageLength) {
-////
-////                System.out.println("Body count is " + bodyCount);
-////                System.out.println(tempMessage);
-////                getXMLMesssage = false;
-////                tempMessage.clear();
-////                bodyCount = 0;
-////            }
-//
-//            if (getBoatLocationMsg && bodyCount < 57) {
-////                    System.out.println(hex);
-//                tempMessage.add(hexByte);
-//                bodyCount++;
-//            }
-//            if (getBoatLocationMsg && bodyCount == 56) {
-//                //System.out.println(tempMessage);
-//                boatDataParser.processMessage(tempMessage); // parse the boat location message
-//                getBoatLocationMsg = false;
-//                tempMessage.clear();
-//                bodyCount = 0;
-//            }
-//
-////            syncByte1 = hexByte;
-//        }
+        return xmlString;
     }
 
     /**
@@ -236,6 +141,7 @@ public class ByteStreamConverter extends Converter {
         }
         return false;
     }
+
 
 
 }

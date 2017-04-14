@@ -1,6 +1,6 @@
 package seng302.Model;
 
-import seng302.Parsers.ByteStreamConverter;
+import seng302.Parsers.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -47,6 +47,61 @@ public class DataReceiver {
 
     }
 
+    private static void readMessage(DataReceiver dataReceiver, ByteStreamConverter byteStreamConverter) throws IOException {
+        // TODO shouldn't be static?
+
+        int messageLength = (int) byteStreamConverter.getMessageLength();
+        int messageType = (int) byteStreamConverter.getMessageType();
+
+        byte[] message = new byte[messageLength];
+        dataReceiver.dis.readFully(message);
+
+        if (messageType == 26) {
+            String xml = byteStreamConverter.parseXMLMessage(message);
+            XmlSubtype subType = byteStreamConverter.getXmlSubType();
+
+            System.out.println(xml);
+
+            switch (subType) {
+                case REGATTA:
+                    RegattaXMLParser regattaParser = new RegattaXMLParser(xml);
+                    break;
+                case RACE:
+                    RaceXMLParser raceParser = new RaceXMLParser(xml);
+                    break;
+                case BOAT:
+                    BoatXMLParser boatParser = new BoatXMLParser(xml);
+                    break;
+            }
+        }
+    }
+
+    private static void readHeader(DataReceiver dataReceiver, ByteStreamConverter byteStreamConverter) throws IOException {
+        // TODO shouldn't be static?
+        byte[] header = new byte[13];
+        dataReceiver.dis.readFully(header);
+        byteStreamConverter.parseHeader(header);
+    }
+
+    private static boolean checkForSyncBytes(DataReceiver dataReceiver) throws IOException {
+        // TODO shouldn't be static?
+        String firstSyncByte = "47";
+        String secondSyncByte = "83";
+
+        byte[] b1 = new byte[1];
+
+        dataReceiver.dis.readFully(b1);
+        if (String.format("%02X", b1[0]).equals(firstSyncByte)) {
+            byte[] b2 = new byte[1];
+
+            dataReceiver.dis.readFully(b2);
+            if (String.format("%02X", b2[0]).equals(secondSyncByte)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public static void main (String [] args) throws InterruptedException {
         ByteStreamConverter byteStreamConverter = new ByteStreamConverter();
@@ -66,67 +121,18 @@ public class DataReceiver {
         }
 
         while(true){
-
-            byte[] b = new byte[1];
             try {
-                dataReceiver.dis.readFully(b);
-                if (String.format("%02X", b[0]).equals("47")) {
-                    byte[] b2 = new byte[1];
-                    try {
-                        dataReceiver.dis.readFully(b2);
-                        if (String.format("%02X", b2[0]).equals("83")) {
-                            byte[] header = new byte[13];
-                            try {
-                                dataReceiver.dis.readFully(header);
-                                byteStreamConverter.parseHeader(header);
+                boolean isStartOfPacket = checkForSyncBytes(dataReceiver);
 
-                                byte[] message = new byte[(int) byteStreamConverter.getMessageLength()];
-                                try {
-                                    dataReceiver.dis.readFully(message);
-                                    byteStreamConverter.parseMessage(message);
-
-                                }
-                                catch (IOException e) {
-                                    break;
-                                }
-
-                            } catch (IOException e) {
-                                break;
-                            }
-                        }
-                    } catch (IOException e) {
-                        break;
-                    }
+                if (isStartOfPacket) {
+                    readHeader(dataReceiver, byteStreamConverter);
+                    readMessage(dataReceiver, byteStreamConverter);
                 }
+
             } catch (IOException e) {
+                System.out.println(e);
                 break;
             }
-
-
-//            byte[] header;
-//            try {
-//                header = new byte[15];
-//                dataReceiver.dis.readFully(header);
-//                boolean isHeader = byteStreamConverter.parseHeader(header);
-//                System.out.println(byteStreamConverter.getMessageLength());
-//            } catch (IOException e) {
-//                break;
-//            }
-
-//            byte[] message;
-//            try {
-//                message = dataReceiver.receive();
-//                byteStreamConverter.parseMessage(message);
-//            } catch (IOException e) {
-//                break;
-//            }
-//            byte[] crc;
-//            try {
-//                msg = dataReceiver.receive();
-//                byteStreamConverter.checkCRC(msg);
-//            } catch (IOException e) {
-//                break;
-//            }
         }
     }
 
