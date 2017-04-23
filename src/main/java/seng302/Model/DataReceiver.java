@@ -4,6 +4,8 @@ import seng302.Parsers.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by khe60 on 10/04/17.
@@ -49,6 +51,9 @@ public class DataReceiver {
 
     private static void readMessage(DataReceiver dataReceiver, ByteStreamConverter byteStreamConverter) throws IOException {
         // TODO shouldn't be static?
+        int XMLMessageType = 26;
+        int boatLocationMessageType = 37;
+
 
         int messageLength = (int) byteStreamConverter.getMessageLength();
         int messageType = (int) byteStreamConverter.getMessageType();
@@ -56,7 +61,7 @@ public class DataReceiver {
         byte[] message = new byte[messageLength];
         dataReceiver.dis.readFully(message);
 
-        if (messageType == 26) {
+        if (messageType == XMLMessageType) {
             String xml = byteStreamConverter.parseXMLMessage(message);
             XmlSubtype subType = byteStreamConverter.getXmlSubType();
 
@@ -64,16 +69,23 @@ public class DataReceiver {
 
             switch (subType) {
                 case REGATTA:
+                    System.out.println("hi parsing regatta parsing");
                     RegattaXMLParser regattaParser = new RegattaXMLParser(xml);
                     break;
                 case RACE:
+                    System.out.println(" hi parsing race parsing");
                     RaceXMLParser raceParser = new RaceXMLParser(xml);
                     break;
                 case BOAT:
+                    System.out.println("hi parsing boat parsing");
                     BoatXMLParser boatParser = new BoatXMLParser(xml);
                     break;
             }
         }
+        else if (messageType == boatLocationMessageType) {
+            byteStreamConverter.parseBoatLocationMessage(message);
+        }
+
     }
 
     private static void readHeader(DataReceiver dataReceiver, ByteStreamConverter byteStreamConverter) throws IOException {

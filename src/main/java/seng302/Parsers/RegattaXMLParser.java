@@ -11,6 +11,7 @@ import java.io.StringReader;
 
 /**
  * Created by jar156 on 14/04/17.
+ * Parser for regatta XML
  */
 public class RegattaXMLParser {
     public RegattaXMLParser(String xmlStr) {

@@ -1,6 +1,5 @@
 package seng302.Parsers;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,17 +10,14 @@ import java.util.List;
  */
 public class ByteStreamConverter extends Converter {
     private BoatDataParser boatDataParser;
+    private long messageType;
+    private long messageLength;
+    private XmlSubtype xmlSubType;
+
 
     public ByteStreamConverter() {
         boatDataParser = new BoatDataParser();
     }
-
-    private long messageType;
-    private long messageLength;
-
-    private XmlSubtype xmlSubType;
-
-
 
     public long getMessageType() {
         return this.messageType;
@@ -76,17 +72,19 @@ public class ByteStreamConverter extends Converter {
      * @return String XML string describing Regatta, Race, or Boat
      */
     public String parseXMLMessage(byte[] message) {
-
+        int regattaType = 5;
+        int raceType = 6;
+        int boatType = 7;
         // can get version number, ack number, timestamp if needed
 
         long subType = hexToLong(byteToHex(message[9]));
-        if (subType == 5) {
+        if (subType == regattaType) {
             xmlSubType = XmlSubtype.REGATTA;
         }
-        if (subType == 6) {
+        if (subType == raceType) {
             xmlSubType = XmlSubtype.RACE;
         }
-        if (subType == 7) {
+        if (subType == boatType) {
             xmlSubType = XmlSubtype.BOAT;
         }
 
@@ -112,6 +110,17 @@ public class ByteStreamConverter extends Converter {
 
         return xmlString;
     }
+
+
+    public void parseBoatLocationMessage(byte[] message) {
+        List msgBody = new ArrayList();
+        for(byte b: message) {
+            msgBody.add(byteToHex(b));
+        }
+        boatDataParser.processMessage(msgBody);
+
+    }
+
 
     /**
      * Confirm the message's message type and message length with protocol

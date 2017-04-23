@@ -6,15 +6,15 @@ import static seng302.Parsers.Converter.hexListToDecimal;
 
 /**
  * Created by psu43 on 13/04/17.
- * Converter for boat data.
+ * Parser for boat data.
  */
 public class BoatDataParser {
 
-    long sourceID;
-    double latitude;
-    double longitude;
-    double heading;
-    long speed;
+    private long sourceID;
+    private double latitude;
+    private double longitude;
+    private double heading;
+    private long speed;
 
     /**
      * Process the given list of data and parse source id, latitude, longitude, heading, speed
@@ -26,31 +26,31 @@ public class BoatDataParser {
         List sourceIDHexValues = body.subList(7, 11);
 //        System.out.println("sourceID " + sourceIDHexValues);
         this.sourceID = hexListToDecimal(sourceIDHexValues);
-//        System.out.println("parsed source ID: " + sourceID);
+        System.out.println("parsed source ID: " + sourceID);
 
         List latitudeHexValues = body.subList(16, 20);
         List longitudeHexValues = body.subList(20, 24);
         // latitude calculations
         //System.out.println("lat " + latitudeHexValues);
         this.latitude = parseCoordinate(latitudeHexValues);
-       // System.out.println("parsed lat: " + latitude);
+        System.out.println("parsed lat: " + latitude);
 
         // longitude calculations
         //System.out.println("long " + longitudeHexValues);
         this.longitude = parseCoordinate(longitudeHexValues);
-       // System.out.println("parsed long: " + longitude);
+        System.out.println("parsed long: " + longitude);
 
         // heading
         List headingHexValues = body.subList(28, 30);
         //System.out.println("head " + headingHexValues);
         this.heading = parseHeading(headingHexValues);
-      //  System.out.println("parsed heading : " + heading);
+        System.out.println("parsed heading : " + heading);
 
         // speed
         List speedHexValues = body.subList(34, 36);
 //        System.out.println("Speed " + speedHexValues);
         this.speed = hexListToDecimal(speedHexValues);
-//        System.out.println("parsed speed: " + speed);
+        System.out.println("parsed speed: " + speed);
     }
 
     /**
