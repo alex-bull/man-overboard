@@ -16,7 +16,7 @@ import java.util.List;
  * Created by khe60 on 14/03/17.
  * An XML file parser for reading courses
  */
-public class XMLtestCourseLoader {
+public class XMLTestCourseLoader {
     private File inputFile;
     private ArrayList<Gate> winds = new ArrayList<>();
     private Double scaleFactor;
@@ -30,7 +30,7 @@ public class XMLtestCourseLoader {
      * Constructor for loading a course with an XML input file
      * @param inputFile File a XML file with course features
      */
-    public XMLtestCourseLoader(File inputFile) {
+    public XMLTestCourseLoader(File inputFile) {
         this.inputFile = inputFile;
     }
 
@@ -39,6 +39,7 @@ public class XMLtestCourseLoader {
      * @return double the angle of the wind direction
      */
     public double getWindDirection(){
+        //System.out.println(winds.get(0).getPixelLocations().get(0).getXValue());
         double x1=winds.get(0).getPixelLocations().get(0).getXValue();
         double y1=winds.get(0).getPixelLocations().get(0).getYValue();
         double x2=winds.get(1).getPixelLocations().get(0).getXValue();
@@ -83,8 +84,8 @@ public class XMLtestCourseLoader {
                 List<Element> points = feature.getChildren();
 
                 for (Element point: points) {
-                    double lat = Double.parseDouble(point.getChildText("Lat"));
-                    double lon = Double.parseDouble(point.getChildText("Lon"));
+                    double lat = Double.parseDouble(point.getAttribute("Lat").getValue());
+                    double lon = Double.parseDouble(point.getAttribute("Lon").getValue());
 
                     ArrayList<Double> point1=mercatorProjection(lat,lon,width,height);
                     double point1X = point1.get(0);
@@ -122,24 +123,21 @@ public class XMLtestCourseLoader {
 
 
         for (Element feature : features) {
-
             String type = feature.getName();
 
-            if (type.equals("gate")) { //its a gate
+            if (type.equals("CompoundMark") && feature.getChildren().size() == 2) { //its a gate
 
                 List<Element> marks = feature.getChildren();
-                Element markOne = marks.get(1);
-                Element markTwo = marks.get(2);
-
-                boolean isLine = Boolean.valueOf(feature.getAttributeValue("isLine"));
+                Element markOne = marks.get(0);
+                Element markTwo = marks.get(1);
                 boolean isFinish = Boolean.valueOf(feature.getAttributeValue("isFinish"));
-                String name = feature.getChildText("name");
+                String name = feature.getAttribute("Name").getValue();
 
-                double lat1 = Double.parseDouble(markOne.getChildText("TargetLat"));
-                double lat2 = Double.parseDouble(markTwo.getChildText("TargetLat"));
+                double lat1 = Double.parseDouble(markOne.getAttribute("TargetLat").getValue());
+                double lat2 = Double.parseDouble(markTwo.getAttribute("TargetLat").getValue());
 
-                double lon1= Double.parseDouble(markOne.getChildText("TargetLng"));
-                double lon2= Double.parseDouble(markTwo.getChildText("TargetLng"));
+                double lon1= Double.parseDouble(markOne.getAttribute("TargetLng").getValue());
+                double lon2= Double.parseDouble(markTwo.getAttribute("TargetLng").getValue());
 
                 int index = Integer.parseInt(feature.getAttributeValue("CompoundMarkID"));
 
@@ -162,22 +160,26 @@ public class XMLtestCourseLoader {
                 MutablePoint GPS2 = new MutablePoint(lat2, lon2);
 
 
-                Gate gate = new Gate(name, GPS1, GPS2, pixel1, pixel2, isFinish, isLine, index);
+                Gate gate = new Gate(name, GPS1, GPS2, pixel1, pixel2, isFinish, true, index);
                 points.add(gate);
 
 
-                if (feature.getAttributeValue("type")!=null) {
-
+                if (markOne.getAttribute("Name").getValue().contains("Lee") ||
+                        markOne.getAttribute("Name").getValue().contains("Wind")) {
                         winds.add(gate);
 
                 }
-            } else if (type.equals("mark")) { //Its a mark
+                else if (markTwo.getAttribute("Name").getValue().contains("Lee") ||
+                        markTwo.getAttribute("Name").getValue().contains("Wind")) {
+                    winds.add(gate);
 
-                Element mark = feature.getChildren().get(1);
-                String name = feature.getChildText("name");
+                }
+            } else if (type.equals("CompoundMark") && feature.getChildren().size() == 1) { //Its a mark
 
-                double lat1 = Double.parseDouble(mark.getChildText("latitude"));
-                double lon1 = Double.parseDouble(mark.getChildText("longtitude"));
+                Element mark = feature.getChildren().get(0);
+                String name = feature.getAttribute("Name").getValue();
+                double lat1 = Double.parseDouble(mark.getAttribute("TargetLat").getValue());
+                double lon1 = Double.parseDouble(mark.getAttribute("TargetLng").getValue());
                 int index = Integer.parseInt(feature.getAttributeValue("CompoundMarkID"));
                 ArrayList<Double> point1 = mercatorProjection(lat1, lon1, width, height);
                 double point1X = point1.get(0);

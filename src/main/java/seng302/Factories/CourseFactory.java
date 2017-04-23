@@ -23,7 +23,7 @@ public class CourseFactory {
     public Course createCourse(Double screenX, Double screenY, String courseFile){
         // load XML file that contains course points
         File inputFile = new File(courseFile);
-        XMLCourseLoader parser = new XMLCourseLoader(inputFile);
+        XMLTestCourseLoader parser = new XMLTestCourseLoader(inputFile);
 
         // create a raceCourse with course features
         List<CourseFeature> points = null;
