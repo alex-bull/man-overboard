@@ -1,22 +1,10 @@
 package seng302.Controllers;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import seng302.Factories.CourseFactory;
-import seng302.Factories.RaceFactory;
-import seng302.Model.*;
-
-import java.util.InputMismatchException;
-import java.util.Scanner;
 
 public class App extends Application
 {

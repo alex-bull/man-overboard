@@ -1,4 +1,4 @@
-package seng302;
+package seng302.TestClasses;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
