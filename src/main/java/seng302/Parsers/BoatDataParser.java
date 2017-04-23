@@ -22,35 +22,34 @@ public class BoatDataParser {
      */
     public void processMessage(List body) {
 
-        // source id
         List sourceIDHexValues = body.subList(7, 11);
-//        System.out.println("sourceID " + sourceIDHexValues);
         this.sourceID = hexListToDecimal(sourceIDHexValues);
-        System.out.println("parsed source ID: " + sourceID);
 
         List latitudeHexValues = body.subList(16, 20);
-        List longitudeHexValues = body.subList(20, 24);
-        // latitude calculations
-        //System.out.println("lat " + latitudeHexValues);
         this.latitude = parseCoordinate(latitudeHexValues);
-        System.out.println("parsed lat: " + latitude);
 
-        // longitude calculations
-        //System.out.println("long " + longitudeHexValues);
+        List longitudeHexValues = body.subList(20, 24);
         this.longitude = parseCoordinate(longitudeHexValues);
-        System.out.println("parsed long: " + longitude);
 
-        // heading
         List headingHexValues = body.subList(28, 30);
-        //System.out.println("head " + headingHexValues);
         this.heading = parseHeading(headingHexValues);
-        System.out.println("parsed heading : " + heading);
 
-        // speed
         List speedHexValues = body.subList(34, 36);
-//        System.out.println("Speed " + speedHexValues);
         this.speed = hexListToDecimal(speedHexValues);
-        System.out.println("parsed speed: " + speed);
+
+
+        /////// comment this out to disable printing values ////////
+//        System.out.println("sourceID " + sourceIDHexValues);
+//        System.out.println("lat " + latitudeHexValues);
+//        System.out.println("long " + longitudeHexValues);
+//        System.out.println("head " + headingHexValues);
+//        System.out.println("Speed " + speedHexValues);
+//
+//        System.out.println("parsed source ID: " + sourceID);
+//        System.out.println("parsed lat: " + latitude);
+//        System.out.println("parsed long: " + longitude);
+//        System.out.println("parsed heading : " + heading);
+//        System.out.println("parsed speed: " + speed);
     }
 
     /**

@@ -11,6 +11,7 @@ import java.io.StringReader;
 
 /**
  * Created by jar156 on 14/04/17.
+ * Parser for Boat XML
  */
 public class BoatXMLParser {
 
@@ -113,7 +114,7 @@ public class BoatXMLParser {
             saxParser.parse(new InputSource(new StringReader(xmlStr)), handler);
 
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
     }

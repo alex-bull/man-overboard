@@ -11,7 +11,7 @@ import java.io.StringReader;
 
 /**
  * Created by jar156 on 14/04/17.
- * Parser for regatta XML
+ * Parser for Regatta XML
  */
 public class RegattaXMLParser {
     public RegattaXMLParser(String xmlStr) {
@@ -110,7 +110,7 @@ public class RegattaXMLParser {
             saxParser.parse(new InputSource(new StringReader(xmlStr)), handler);
 
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
     }

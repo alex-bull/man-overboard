@@ -69,15 +69,12 @@ public class DataReceiver {
 
             switch (subType) {
                 case REGATTA:
-                    System.out.println("hi parsing regatta parsing");
                     RegattaXMLParser regattaParser = new RegattaXMLParser(xml);
                     break;
                 case RACE:
-                    System.out.println(" hi parsing race parsing");
                     RaceXMLParser raceParser = new RaceXMLParser(xml);
                     break;
                 case BOAT:
-                    System.out.println("hi parsing boat parsing");
                     BoatXMLParser boatParser = new BoatXMLParser(xml);
                     break;
             }

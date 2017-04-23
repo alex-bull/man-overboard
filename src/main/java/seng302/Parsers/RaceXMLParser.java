@@ -11,6 +11,7 @@ import java.io.StringReader;
 
 /**
  * Created by jar156 on 13/04/17.
+ * Parser for Race XML
  */
 public class RaceXMLParser {
 
@@ -100,7 +101,7 @@ public class RaceXMLParser {
             saxParser.parse(new InputSource(new StringReader(xmlStr)), handler);
 
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
     }

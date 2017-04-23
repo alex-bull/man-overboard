@@ -111,14 +111,16 @@ public class ByteStreamConverter extends Converter {
         return xmlString;
     }
 
-
+    /**
+     * Parses binary data into boat location data
+     * @param message byte[] an array of bytes which includes information about the boat location
+     */
     public void parseBoatLocationMessage(byte[] message) {
         List msgBody = new ArrayList();
         for(byte b: message) {
             msgBody.add(byteToHex(b));
         }
         boatDataParser.processMessage(msgBody);
-
     }
 
 
