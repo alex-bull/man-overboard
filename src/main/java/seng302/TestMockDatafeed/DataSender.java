@@ -32,8 +32,8 @@ public class DataSender {
      * @throws IOException
      */
     public DataSender(int portnum) throws IOException {
-        ServerSocket welcomeSocket = new ServerSocket(portnum);
-        socket = welcomeSocket.accept();
+        ServerSocket outputSocket = new ServerSocket(portnum);
+        socket = outputSocket.accept();
         os = socket.getOutputStream();
 
     }
@@ -63,6 +63,15 @@ public class DataSender {
             os.write(content[i]);
             Thread.sleep(1000);
         }
+    }
+
+    /**
+     * sends the data to the output socket
+     * @param data
+     */
+    public void sendData(byte[] data) throws IOException {
+        os.write(data);
+
     }
 
     public static void main (String [] args) throws IOException, InterruptedException {

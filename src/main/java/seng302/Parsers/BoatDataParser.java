@@ -39,17 +39,17 @@ public class BoatDataParser {
 
 
         /////// comment this out to disable printing values ////////
-//        System.out.println("sourceID " + sourceIDHexValues);
-//        System.out.println("lat " + latitudeHexValues);
-//        System.out.println("long " + longitudeHexValues);
-//        System.out.println("head " + headingHexValues);
-//        System.out.println("Speed " + speedHexValues);
-//
-//        System.out.println("parsed source ID: " + sourceID);
-//        System.out.println("parsed lat: " + latitude);
-//        System.out.println("parsed long: " + longitude);
-//        System.out.println("parsed heading : " + heading);
-//        System.out.println("parsed speed: " + speed);
+        System.out.println("sourceID " + sourceIDHexValues);
+        System.out.println("lat " + latitudeHexValues);
+        System.out.println("long " + longitudeHexValues);
+        System.out.println("head " + headingHexValues);
+        System.out.println("Speed " + speedHexValues);
+
+        System.out.println("parsed source ID: " + sourceID);
+        System.out.println("parsed lat: " + latitude);
+        System.out.println("parsed long: " + longitude);
+        System.out.println("parsed heading : " + heading);
+        System.out.println("parsed speed: " + speed);
     }
 
     /**

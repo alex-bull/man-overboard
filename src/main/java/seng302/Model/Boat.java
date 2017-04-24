@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
  */
 public class Boat implements Competitor {
     private String teamName;
-    private int velocity;
+    private double velocity;
     private MutablePoint position;
     private Color color;
     private String abbreName;
@@ -80,7 +80,7 @@ public class Boat implements Competitor {
      *
      * @return int the velocity in m/s
      */
-    public int getVelocity() {
+    public double getVelocity() {
         return this.velocity;
     }
 

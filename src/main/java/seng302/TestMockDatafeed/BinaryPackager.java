@@ -18,7 +18,7 @@ public class BinaryPackager {
 
     Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     private byte syncByteOne = 0x47;
-    private byte syncByteTwo = -3;
+    private byte syncByteTwo = -125;
 
 
 

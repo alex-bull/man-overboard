@@ -90,6 +90,7 @@ public class DataReceiver {
         byte[] header = new byte[13];
         dataReceiver.dis.readFully(header);
         byteStreamConverter.parseHeader(header);
+
     }
 
     private static boolean checkForSyncBytes(DataReceiver dataReceiver) throws IOException {
@@ -120,7 +121,7 @@ public class DataReceiver {
         while(dataReceiver==null){
             try {
 //                me = new DataReceiver("livedata.americascup.com",4941);
-                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz",4941);
+                dataReceiver = new DataReceiver("127.0.0.1",4941);
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("connection failed retry in 1 sec");
@@ -128,14 +129,15 @@ public class DataReceiver {
             }
 
         }
-
+        System.out.println("connected");
         while(true){
             try {
                 boolean isStartOfPacket = checkForSyncBytes(dataReceiver);
-
+                System.out.println(isStartOfPacket);
                 if (isStartOfPacket) {
                     readHeader(dataReceiver, byteStreamConverter);
                     readMessage(dataReceiver, byteStreamConverter);
+                    System.out.println("received");
                 }
 
             } catch (IOException e) {

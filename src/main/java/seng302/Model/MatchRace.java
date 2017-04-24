@@ -170,7 +170,7 @@ public class MatchRace implements Race {
      * @param distance double the distance between two course points
      * @return Integer the time taken in milliseconds
      */
-    private Integer calculateTime(Integer velocity, double distance) {
+    private Integer calculateTime(double velocity, double distance) {
         Double time = (distance / (velocity * velocityScaleFactor));
         time = time * 1000;
         return time.intValue();
