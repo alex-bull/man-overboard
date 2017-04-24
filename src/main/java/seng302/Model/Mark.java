@@ -135,4 +135,8 @@ public class Mark implements CourseFeature {
         return this.exitHeading;
     }
 
+    @Override
+    public MutablePoint getGPSPoint() {
+        return GPSLocation;
+    }
 }

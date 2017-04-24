@@ -14,6 +14,7 @@ public interface CourseFeature {
     boolean isFinish();
     int getIndex();
     MutablePoint getGPSCentre();
+    MutablePoint getGPSPoint();
     void factor(double xFactor,double yFactor,double minX,double minY,double xBuffer,double yBuffer);
     boolean isLine();
 }

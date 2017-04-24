@@ -102,4 +102,31 @@ public class MutablePoint {
         result = 31 * result + y.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "MutablePoint{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
+    /**
+     * Checks in the current point is close enough to the other point, current precision is 0.0001
+     * @param o the other mutable point
+     * @return true if this point is close enough to o
+     */
+    public boolean isWithin(MutablePoint o){
+//        System.out.print(String.format("%.4f",getXValue())+ "  ");
+//        System.out.println(String.format("%.4f",o.getXValue()));
+//        System.out.print(String.format("%.4f",getYValue())+"  ");
+//        System.out.println(String.format("%.4f",o.getYValue()));
+//        System.out.println();
+        if(String.format("%.4f",getXValue()).equals(String.format("%.4f",o.getXValue()))){
+            if(String.format("%.4f",getYValue()).equals(String.format("%.4f",o.getYValue()))){
+                return true;
+            }
+        }
+    return false;
+    }
 }

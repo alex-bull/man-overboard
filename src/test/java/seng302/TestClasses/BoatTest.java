@@ -44,5 +44,14 @@ public class BoatTest {
         MutablePoint p=new MutablePoint(10.0,29.0);
         assertEquals(boat.getPosition(),p);
     }
+    @Test
+    public void updatePositionTest() throws Exception {
+        Boat boat2=new Boat("Test",1000,new MutablePoint(32.29700,-64.861),Color.BEIGE,"T");
+        System.out.println(boat2.getPosition());
+        boat2.setCurrentHeading(35);
+        boat2.updatePosition(1);
+        assertEquals(32.304366,boat2.getPosition().getXValue(),0.000001);
+        assertEquals(-64.854897,boat2.getPosition().getYValue(),0.000001);
+    }
 
 }

@@ -148,4 +148,8 @@ public class Gate implements CourseFeature {
         return this.exitHeading;
     }
 
+    @Override
+    public MutablePoint getGPSPoint() {
+        return GPSPoint1;
+    }
 }
