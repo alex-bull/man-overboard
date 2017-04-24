@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import seng302.TestMockDatafeed.BinaryPackager;
 
 public class App extends Application
 {
@@ -37,6 +38,7 @@ public class App extends Application
             System.out.println("No course XML file was provided.");
             System.exit(1);
         }
+
     }
 
 

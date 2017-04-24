@@ -1,7 +1,125 @@
 package seng302.TestMockDatafeed;
 
+import com.google.common.primitives.UnsignedBytes;
+import edu.princeton.cs.introcs.In;
+
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Calendar;
+import java.util.List;
+import java.util.TimeZone;
+
 /**
  * Created by mattgoodson on 24/04/17.
  */
 public class BinaryPackager {
+
+
+    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+    private byte syncByteOne = 0x47;
+    private byte syncByteTwo = -3;
+
+
+
+    /**
+     * Takes boat position data and encapsulates it in a binary packet
+     * @param sourceId Double, the id of the boat
+     * @param latitude Double, the current latitude of the boat
+     * @param longitude Double, the current longitude of the boat
+     * @param heading Double, the current heading of the boat
+     * @param boatSpeed Double, the current speed of the boat
+     * @return byte[], the binary packet
+     */
+    public byte[] packageBoatLocation(Integer sourceId, Double latitude, Double longitude, Double heading, Double boatSpeed) {
+
+        byte[] packet = new byte[75];
+
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        Integer sequenceNumber = 0; //TODO:- Figure out what the sequence numbers should be
+
+        //HEADER
+        byte type = 37;
+        short bodyLength = 56;
+        this.writeHeader(packetBuffer, type, bodyLength);
+
+        //BODY - note: chars are used as unsigned shorts
+        packetBuffer.put((byte) 1); //version number
+        packetBuffer.put(this.getTimeStamp()); //timestamp
+        packetBuffer.putInt(sourceId); //boat id
+        packetBuffer.putInt(sequenceNumber); //sequence number
+        packetBuffer.put((byte) 13); //device type: App
+        packetBuffer.putFloat(latitude.floatValue()); //lat
+        packetBuffer.putFloat(longitude.floatValue()); //long
+        packetBuffer.putInt(1); //TODO:- Figure out altitude
+        packetBuffer.putChar((char) heading.shortValue()); // Headding:TODO:- Check this conversion, may not work as short is a signed value
+        packetBuffer.putShort((short) 1); // Pitch - Can probably be ignored
+        packetBuffer.putShort((short) 1); // Roll- can also be ignored
+        packetBuffer.putChar((char) boatSpeed.shortValue()); //Speed: TODO:- Same as heading
+        packetBuffer.putChar('0'); //COG
+        packetBuffer.putChar('0');//SOG
+        packetBuffer.putChar('0');//Apparent wind speed
+        packetBuffer.putShort((short) 1); // Apparent wind angle
+        packetBuffer.putChar('0'); //True wind speed
+        packetBuffer.putChar('0'); //True wind direction
+        packetBuffer.putShort((short) 1); //True wind angle
+        packetBuffer.putChar('0'); //Current drift
+        packetBuffer.putChar('0'); //Current set
+        packetBuffer.putShort((short) 1); // Rudder angle
+
+
+        //CRC
+        packetBuffer.putInt(0x04C11DB7);
+
+
+        return packet;
+
+    }
+
+
+    /**
+     * writes the header to a given buffer in AC35 streaming format
+     * @param buffer The buffer to write to
+     * @param messageType byte, the type of message
+     * @param messageLength short, the length of the message body
+     */
+    private void writeHeader(ByteBuffer buffer, byte messageType, short messageLength) {
+
+        buffer.put(syncByteOne);
+        buffer.put(syncByteTwo);
+        buffer.put(messageType);
+
+        buffer.put(this.getTimeStamp());
+
+        //message source id
+        buffer.putInt(1); //TODO:- figure out what the message source id is
+        buffer.putShort(messageLength);
+    }
+
+
+
+    /**
+     * Returns the time in milliseconds since January 1, 1970
+     * @return byte[], the timestamp as 6 bytes
+     */
+    private byte[] getTimeStamp() {
+
+        calendar.clear();
+        calendar.set(2011, Calendar.OCTOBER, 1);
+        long time = calendar.getTimeInMillis();
+
+        byte[] buffer = new byte[6];
+        buffer[0] = (byte)(time >>> 40);
+        buffer[1] = (byte)(time >>> 32);
+        buffer[2] = (byte)(time >>> 24);
+        buffer[3] = (byte)(time >>> 16);
+        buffer[4] = (byte)(time >>>  8);
+        buffer[5] = (byte)(time >>>  0);
+        return  buffer;
+    }
+
+
+
 }
