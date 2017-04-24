@@ -39,8 +39,6 @@ import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
-import static seng302.Model.DataReceiver.receiveData;
-
 /**
  * Created by rjc249 on 5/04/17.
  * Controller for the start scene.
@@ -68,7 +66,7 @@ public class StarterController implements Initializable, ClockHandler {
 
     /**
      * Takes an XML course file so the course information is set
-     * @param courseFile String the XML coureFile
+     * @param courseFile String the XML courseFile
      */
     public void setCourseFile(String courseFile) {
         this.courseFile = courseFile;

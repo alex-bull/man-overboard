@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by khe60 on 10/04/17.
  * The Receiver class, currently receives messages 1 byte at a time
- * Can't connect to the test port for some reason (internet enabler)
+ * Turn on internet enabler to connect to live data
  */
 public class DataReceiver {
     private Socket receiveSock;
@@ -49,7 +49,7 @@ public class DataReceiver {
     /**
      * Receives one byte from server and returns it, test server only sends one byte at a time so this is gonna get changed
      * @return the byte received
-     * @throws IOException
+     * @throws IOException IOException
      */
     public byte[] receive() throws IOException {
         byte[] received=new byte[1];
@@ -58,11 +58,13 @@ public class DataReceiver {
 
     }
 
+    /**
+     * Reads the message by finding the message type and length.
+     * @throws IOException IOException
+     */
     public void readMessage() throws IOException {
-        // TODO shouldn't be static?
         int XMLMessageType = 26;
         int boatLocationMessageType = 37;
-
 
         int messageLength = (int) byteStreamConverter.getMessageLength();
         int messageType = (int) byteStreamConverter.getMessageType();
@@ -94,6 +96,10 @@ public class DataReceiver {
 
     }
 
+    /**
+     * Reads the header of the binary message. This is called after sync bytes found.
+     * @throws IOException IOException
+     */
     public void readHeader() throws IOException {
         // 13 because already read sync bytes
         byte[] header = new byte[13];
@@ -102,6 +108,11 @@ public class DataReceiver {
     }
 
 
+    /**
+     * Checks for sync bytes in the binary message.
+     * @return boolean True if sync bytes are found
+     * @throws IOException IOException
+     */
     public boolean checkForSyncBytes() throws IOException {
         byte firstSyncByte = 0x47;
         // -125 is equivalent to 0x83 unsigned
@@ -121,6 +132,9 @@ public class DataReceiver {
     }
 
 
+    /**
+     * Receives the binary message
+     */
     public void receiveData() {
 
 

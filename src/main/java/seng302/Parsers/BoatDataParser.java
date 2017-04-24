@@ -18,8 +18,8 @@ public class BoatDataParser {
     private long speed;
 
     /**
-     * Process the given list of data and parse source id, latitude, longitude, heading, speed
-     * @param body List a list of hexadecimal bytes
+     * Process the given data and parse source id, latitude, longitude, heading, speed
+     * @param body byte[] a byte array of the boat data message
      */
     public void processMessage(byte[] body) {
 
@@ -45,8 +45,8 @@ public class BoatDataParser {
     }
 
     /**
-     * Convert a list of little endian hex values into a decimal heading
-     * @param hexValues List a list of (2) hexadecimal bytes in little endian format
+     * Convert a byte array of little endian hex values into a decimal heading
+     * @param hexValues byte[] a byte array of (2) hexadecimal bytes in little endian format
      * @return Double the value of the heading
      */
     private Double parseHeading(byte[] hexValues) {
@@ -54,8 +54,8 @@ public class BoatDataParser {
     }
 
     /**
-     * Convert a list of little endian hex values into a decimal latitude or longitude
-     * @param hexValues List a list of (4) hexadecimal bytes in little endian format
+     * Convert a byte array of little endian hex values into a decimal latitude or longitude
+     * @param hexValues byte[] a byte array of (4) hexadecimal bytes in little endian format
      * @return Double the value of the coordinate value
      */
     private Double parseCoordinate(byte[] hexValues) {

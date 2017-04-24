@@ -100,35 +100,6 @@ public class ByteStreamConverter extends Converter {
     }
 
 
-    /**
-     * Confirm the message's message type and message length with protocol
-     * @param data List a list of data in hexadecimal bytes
-     * @return boolean True if the data received is a valid boat location
-     */
-    private boolean validBoatLocation(List data) {
-        // from protocol byte 2: message type = 37 in dec and 13: length is 57 in dec
-        String hexMsgType = "25";
-        String hexMsgLen = "38";
-        if(data.get(2).equals(hexMsgType) && data.get(13).equals(hexMsgLen)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Confirm the message's message type and message length with protocol
-     * @param data List a list of data in hexadecimal bytes
-     * @return boolean True if the data received is a valid XML location
-     */
-    private boolean validXMLMessage(List data) {
-        // from protocol byte 2: message type = 26 in dec and length is not fixed
-        String hexMsgType = "1A";
-        if(data.get(2).equals(hexMsgType)) {
-            return true;
-        }
-        return false;
-    }
-
 
 
 }
