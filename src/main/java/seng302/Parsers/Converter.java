@@ -13,16 +13,13 @@ public class Converter {
      * @param hexValues List a list of hexadecimal bytes in little endian format
      * @return Long the value of the hexadecimal bytes
      */
-    public static Long hexListToDecimal(List hexValues) {
-        String hexString = "";
-        for(Object hexValue: hexValues) {
-            String hex = hexValue.toString();
-            String reverseHex = new StringBuilder(hex).reverse().toString();
-            hexString += reverseHex;
+    public static int hexByteArrayToInt(byte[] hexValues) {
+        Long value = 0l;
+        for (int i = 0; i < hexValues.length; i++)
+        {
+            value += ((long) hexValues[i] & 0xffL) << (8 * i);
         }
-        String reverseHexString = new StringBuilder(hexString).reverse().toString();
-        return Long.parseLong(reverseHexString, 16);
-        //return Integer.parseInt(reverseHexString, 16);
+        return value.intValue();
     }
 
 }

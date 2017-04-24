@@ -15,6 +15,8 @@ import java.util.List;
 public class DataReceiver {
     private Socket receiveSock;
     private DataInputStream dis;
+    private ByteStreamConverter byteStreamConverter;
+    private FileOutputStream fileOutputStream;
 
     /**
      * Initializes port to receive binary data from
@@ -25,6 +27,13 @@ public class DataReceiver {
     public DataReceiver(String host, int port) throws IOException {
         receiveSock = new Socket(host, port);
         dis = new DataInputStream(receiveSock.getInputStream());
+        fileOutputStream=new FileOutputStream(new File("src/main/resources/BinaryFiles/"+host));
+        System.setOut(new PrintStream(new BufferedOutputStream(fileOutputStream)));
+        byteStreamConverter = new ByteStreamConverter();
+        System.out.println("Start connection to server...");
+
+
+
     }
 
 
@@ -49,7 +58,7 @@ public class DataReceiver {
 
     }
 
-    private static void readMessage(DataReceiver dataReceiver, ByteStreamConverter byteStreamConverter) throws IOException {
+    public void readMessage() throws IOException {
         // TODO shouldn't be static?
         int XMLMessageType = 26;
         int boatLocationMessageType = 37;
@@ -59,7 +68,7 @@ public class DataReceiver {
         int messageType = (int) byteStreamConverter.getMessageType();
 
         byte[] message = new byte[messageLength];
-        dataReceiver.dis.readFully(message);
+        dis.readFully(message);
 
         if (messageType == XMLMessageType) {
             String xml = byteStreamConverter.parseXMLMessage(message);
@@ -85,26 +94,26 @@ public class DataReceiver {
 
     }
 
-    private static void readHeader(DataReceiver dataReceiver, ByteStreamConverter byteStreamConverter) throws IOException {
-        // TODO shouldn't be static?
+    public void readHeader() throws IOException {
+        // 13 because already read sync bytes
         byte[] header = new byte[13];
-        dataReceiver.dis.readFully(header);
+        dis.readFully(header);
         byteStreamConverter.parseHeader(header);
     }
 
-    private static boolean checkForSyncBytes(DataReceiver dataReceiver) throws IOException {
-        // TODO shouldn't be static?
-        String firstSyncByte = "47";
-        String secondSyncByte = "83";
+
+    public boolean checkForSyncBytes() throws IOException {
+        byte firstSyncByte = 0x47;
+        // -125 is equivalent to 0x83 unsigned
+        byte secondSyncByte = -125;
 
         byte[] b1 = new byte[1];
-
-        dataReceiver.dis.readFully(b1);
-        if (String.format("%02X", b1[0]).equals(firstSyncByte)) {
+        dis.readFully(b1);
+        if (b1[0] == firstSyncByte) {
             byte[] b2 = new byte[1];
 
-            dataReceiver.dis.readFully(b2);
-            if (String.format("%02X", b2[0]).equals(secondSyncByte)) {
+            dis.readFully(b2);
+            if (b2[0] == secondSyncByte) {
                 return true;
             }
         }
@@ -112,37 +121,46 @@ public class DataReceiver {
     }
 
 
-    public static void main (String [] args) throws InterruptedException {
-        ByteStreamConverter byteStreamConverter = new ByteStreamConverter();
-        DataReceiver dataReceiver = null;
-        System.out.println("Start connection to server...");
+    public void receiveData() {
 
-        while(dataReceiver==null){
-            try {
-//                me = new DataReceiver("livedata.americascup.com",4941);
-                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz",4941);
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("connection failed retry in 1 sec");
-                Thread.sleep(1000);
-            }
-
-        }
 
         while(true){
             try {
-                boolean isStartOfPacket = checkForSyncBytes(dataReceiver);
+                boolean isStartOfPacket = checkForSyncBytes();
 
                 if (isStartOfPacket) {
-                    readHeader(dataReceiver, byteStreamConverter);
-                    readMessage(dataReceiver, byteStreamConverter);
+                    readHeader();
+                    readMessage();
                 }
 
-            } catch (IOException e) {
-                System.out.println(e);
+            }
+            catch (EOFException e) {
+                System.out.println("End of file.");
+                break;
+            }
+            catch (IOException e) {
+                e.printStackTrace();
                 break;
             }
         }
+    }
+
+    public static void main (String [] args) throws InterruptedException {
+        DataReceiver dataReceiver = null;
+        while(dataReceiver == null) {
+            try {
+                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
+//                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+
+                dataReceiver.receiveData();
+
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
     }
 
 

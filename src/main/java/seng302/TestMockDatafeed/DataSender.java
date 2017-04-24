@@ -28,11 +28,11 @@ public class DataSender {
 
     /**
      * Constructor for DataSender, creates port at given portnum
-     * @param portnum int The port number
+     * @param portNum int The port number
      * @throws IOException
      */
-    public DataSender(int portnum) throws IOException {
-        ServerSocket welcomeSocket = new ServerSocket(portnum);
+    public DataSender(int portNum) throws IOException {
+        ServerSocket welcomeSocket = new ServerSocket(portNum);
         socket = welcomeSocket.accept();
         os = socket.getOutputStream();
 

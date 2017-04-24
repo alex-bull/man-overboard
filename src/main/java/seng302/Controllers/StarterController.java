@@ -39,6 +39,8 @@ import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
+import static seng302.Model.DataReceiver.receiveData;
+
 /**
  * Created by rjc249 on 5/04/17.
  * Controller for the start scene.
@@ -128,16 +130,16 @@ public class StarterController implements Initializable, ClockHandler {
     }
 
     /**
-     * Switches from start view to course view.
+     * Switches from start view to course view. Called when user clicks start button.
      * Starts countdown if the list of starters is not empty.
      */
     @FXML
     void switchToCourseView(){
-
         // check that starter table is not empty
         if(!starterList.getItems().isEmpty()) {
             startCountdown();
             countdownButton.setDisable(true);
+
         }
         else {
             // inform user to press confirm

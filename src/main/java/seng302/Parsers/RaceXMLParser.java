@@ -14,6 +14,18 @@ import java.io.StringReader;
  * Parser for Race XML
  */
 public class RaceXMLParser {
+    int raceID;
+    String raceType;
+    String creationTimeDate;
+    boolean postponed;
+    String raceStartTimeTime;
+    boolean raceStartTimePostpone;
+    int yachtSourceID;
+    String yachtEntry;
+    int compoundMarkID;
+    String compoundMarkName;
+
+
 
     public RaceXMLParser(String xmlStr) {
 
