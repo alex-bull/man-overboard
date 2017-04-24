@@ -38,7 +38,7 @@ public class BinaryPackager {
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        Integer sequenceNumber = 0; //TODO:- Figure out what the sequence numbers should be
+        Integer sequenceNumber = 0; //TODO:- Figure out what the sequence number should be
 
         //HEADER
         byte type = 37;
@@ -51,20 +51,35 @@ public class BinaryPackager {
         packetBuffer.putInt(sourceId); //boat id
         packetBuffer.putInt(sequenceNumber); //sequence number
         packetBuffer.put((byte) 13); //device type: App
-        packetBuffer.putFloat(latitude.floatValue()); //lat
-        packetBuffer.putFloat(longitude.floatValue()); //long
-        packetBuffer.putInt(1); //TODO:- Figure out altitude
-        packetBuffer.putChar((char) heading.shortValue()); // Headding:TODO:- Check this conversion, may not work as short is a signed value
+
+        latitude = latitude * 2147483648.0 / 180.0; //latitude
+        packetBuffer.putFloat(latitude.intValue());
+
+        longitude = longitude * 2147483648.0 / 180.0; //longitude
+        packetBuffer.putFloat(longitude.floatValue());
+
+        packetBuffer.putInt(1); //Altitude: TODO:- Figure out what value altitude should be
+
+        double head = heading * 65536.0 / 360.0; //heading
+        packetBuffer.putChar((char) head);
+
         packetBuffer.putShort((short) 1); // Pitch - Can probably be ignored
         packetBuffer.putShort((short) 1); // Roll- can also be ignored
-        packetBuffer.putChar((char) boatSpeed.shortValue()); //Speed: TODO:- Same as heading
+
+        double speed = boatSpeed; //Boat speed
+        packetBuffer.putChar((char) speed);
+
         packetBuffer.putChar('0'); //COG
-        packetBuffer.putChar('0');//SOG
-        packetBuffer.putChar('0');//Apparent wind speed
+        packetBuffer.putChar('0'); //SOG
+        packetBuffer.putChar('0'); //Apparent wind speed
         packetBuffer.putShort((short) 1); // Apparent wind angle
         packetBuffer.putChar('0'); //True wind speed
         packetBuffer.putChar('0'); //True wind direction
-        packetBuffer.putShort((short) 1); //True wind angle
+
+        double trueWindAngle = 25.0; //true wind angle
+        trueWindAngle = trueWindAngle * 32768.0 / 180.0;
+        packetBuffer.putShort((short) trueWindAngle);
+
         packetBuffer.putChar('0'); //Current drift
         packetBuffer.putChar('0'); //Current set
         packetBuffer.putShort((short) 1); // Rudder angle
@@ -72,7 +87,6 @@ public class BinaryPackager {
 
         //CRC
         packetBuffer.putInt(0x04C11DB7);
-
 
         return packet;
 
@@ -118,6 +132,16 @@ public class BinaryPackager {
         buffer[4] = (byte)(time >>>  8);
         buffer[5] = (byte)(time >>>  0);
         return  buffer;
+    }
+
+
+    public static void main(String[] args) {
+        BinaryPackager a = new BinaryPackager();
+        byte[] b = a.packageBoatLocation(12, 123.444, 234.434, 65535.0, 20.3);
+        for (byte c: b) {
+            System.out.println(c);
+        }
+        System.out.println(b.length);
     }
 
 
