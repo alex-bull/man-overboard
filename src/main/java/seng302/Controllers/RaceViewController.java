@@ -26,7 +26,9 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import seng302.Model.*;
 
+import javax.xml.crypto.Data;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -62,10 +64,16 @@ public class RaceViewController implements ClockHandler, Initializable {
     private List<Polyline> wakeModels = new ArrayList<>();
     private List<Label> nameAnnotations = new ArrayList<>();
     private List<Label> speedAnnotations = new ArrayList<>();
+    private DataReceiver dataReceiver;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        try {
+            dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
         noAnnotationsRadio.setToggleGroup(annotations);
@@ -409,15 +417,17 @@ public class RaceViewController implements ClockHandler, Initializable {
     }
 
 
+
     /**
      * Starts the animation timer to animate the race
      * @param width the width of the canvas
      * @param height the height of the canvas
      */
     private void animate(double width, double height){
-
+        (new Thread(dataReceiver)).start();
         // start the race using the timeline
         Timeline t = race.generateTimeline();
+
         List<Competitor> competitors = race.getCompetitors();
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
 

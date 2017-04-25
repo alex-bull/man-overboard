@@ -12,7 +12,7 @@ import java.util.List;
  * The Receiver class, currently receives messages 1 byte at a time
  * Turn on internet enabler to connect to live data
  */
-public class DataReceiver {
+public class DataReceiver implements Runnable{
     private Socket receiveSock;
     private DataInputStream dis;
     private ByteStreamConverter byteStreamConverter;
@@ -28,7 +28,7 @@ public class DataReceiver {
         receiveSock = new Socket(host, port);
         dis = new DataInputStream(receiveSock.getInputStream());
         fileOutputStream=new FileOutputStream(new File("src/main/resources/BinaryFiles/"+host));
-        System.setOut(new PrintStream(new BufferedOutputStream(fileOutputStream)));
+//        System.setOut(new PrintStream(new BufferedOutputStream(fileOutputStream)));
         byteStreamConverter = new ByteStreamConverter();
         System.out.println("Start connection to server...");
 
@@ -135,11 +135,11 @@ public class DataReceiver {
     /**
      * Receives the binary message
      */
-    public void receiveData() {
-
-
+    @Override
+    public void run() {
         while(true){
             try {
+
                 boolean isStartOfPacket = checkForSyncBytes();
 
                 if (isStartOfPacket) {
@@ -166,7 +166,7 @@ public class DataReceiver {
                 dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
 //                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
 
-                dataReceiver.receiveData();
+                (new Thread(dataReceiver)).start();
 
             }
             catch (IOException e) {
