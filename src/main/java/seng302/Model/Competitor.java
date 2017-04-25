@@ -9,12 +9,13 @@ import javafx.scene.paint.Color;
  */
 public interface Competitor {
     String getTeamName();
-    int getVelocity();
+    double getVelocity();
     MutablePoint getPosition();
     Color getColor();
     String getAbbreName();
     double getCurrentHeading();
     DoubleProperty getHeadingProperty();
     void setCurrentHeading(double currentHeading);
-    void setVelocity(int velocity);
+    void setVelocity(double velocity);
+    void setProperties(double velocity, double heading, double latitude, double longitude);
 }

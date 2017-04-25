@@ -9,9 +9,9 @@ public class BoatData {
     private double latitude;
     private double longitude;
     private double heading;
-    private int speed;
+    private double speed;
 
-    public BoatData(int sourceID, double latitude, double longitude, double heading, int speed) {
+    public BoatData(int sourceID, double latitude, double longitude, double heading, double speed) {
         this.sourceID = sourceID;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -52,7 +52,7 @@ public class BoatData {
         this.heading = heading;
     }
 
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 

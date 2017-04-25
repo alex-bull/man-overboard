@@ -23,9 +23,11 @@ public class BoatDataParser {
         double latitude = parseCoordinate(Arrays.copyOfRange(body, 16,20));
         double longitude = parseCoordinate(Arrays.copyOfRange(body, 20,24));
         double heading = hexByteArrayToInt(Arrays.copyOfRange(body, 28,30));
+        //speed in mm/sec
         int speed = hexByteArrayToInt(Arrays.copyOfRange(body, 34,36));
-
-        return new BoatData(sourceID, latitude, longitude, heading, speed);
+        //speed in m/sec
+        double convertedSpeed=speed/1000.0;
+        return new BoatData(sourceID, latitude, longitude, heading, convertedSpeed);
     }
 
     /**

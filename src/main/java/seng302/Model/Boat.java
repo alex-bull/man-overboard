@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
  */
 public class Boat implements Competitor {
     private String teamName;
-    private int velocity;
+    private double velocity;
     private MutablePoint position;
     private Color color;
     private String abbreName;
@@ -46,7 +46,7 @@ public class Boat implements Competitor {
      * Setter for the boat's velocity
      * @param velocity boat's velocity m/s
      */
-    public void setVelocity(int velocity) {
+    public void setVelocity(double velocity) {
         this.velocity = velocity;
     }
 
@@ -55,7 +55,7 @@ public class Boat implements Competitor {
      * Getter for the boats velocity
      * @return int the velocity in m/s
      */
-    public int getVelocity() {
+    public double getVelocity() {
         return this.velocity;
     }
 
@@ -108,5 +108,12 @@ public class Boat implements Competitor {
      */
     public DoubleProperty getHeadingProperty() {
         return this.currentHeading;
+    }
+
+    public void setProperties(double velocity, double heading, double latitude, double longitude){
+        this.velocity=velocity;
+        this.currentHeading.setValue(heading);
+        this.position=new MutablePoint(latitude,longitude);
+
     }
 }

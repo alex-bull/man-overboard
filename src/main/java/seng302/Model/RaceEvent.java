@@ -1,5 +1,6 @@
 package seng302.Model;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -14,7 +15,7 @@ public class RaceEvent implements Comparable<RaceEvent>{
     private SimpleIntegerProperty position;
     private boolean isFinish = false;
     private CourseFeature feature;
-    private SimpleIntegerProperty speed;
+    private SimpleDoubleProperty speed;
 
 
     /**
@@ -25,7 +26,7 @@ public class RaceEvent implements Comparable<RaceEvent>{
     public RaceEvent(Competitor boat, CourseFeature feature) {
 
         this.position = new SimpleIntegerProperty(0);
-        this.speed = new SimpleIntegerProperty(boat.getVelocity());
+        this.speed = new SimpleDoubleProperty(boat.getVelocity());
         this.featureName = new SimpleStringProperty(feature.getName());
         this.teamName = new SimpleStringProperty(boat.getTeamName());
         this.feature = feature;
@@ -52,7 +53,7 @@ public class RaceEvent implements Comparable<RaceEvent>{
      * Get the speed
      * @return int the speed of the boat in m/s
      */
-    public int getSpeed(){return this.speed.get();}
+    public double getSpeed(){return this.speed.get();}
 
     /**
      * Sets the position of the boat

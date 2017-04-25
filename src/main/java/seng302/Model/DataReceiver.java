@@ -4,23 +4,24 @@ import seng302.Parsers.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by khe60 on 10/04/17.
  * The Receiver class, currently receives messages 1 byte at a time
- * Turn on internet enabler to connect to live data
+ * Can't connect to the test port for some reason (internet enabler)
  */
-public class DataReceiver implements Callable {
+public class DataReceiver extends TimerTask {
     private Socket receiveSock;
     private DataInputStream dis;
     private ByteStreamConverter byteStreamConverter;
     private FileOutputStream fileOutputStream;
-
+    private List<Competitor> competitors;
     private BoatData boatData;
+    private boolean isBoatData;
 
     /**
      * Initializes port to receive binary data from
@@ -35,6 +36,9 @@ public class DataReceiver implements Callable {
 //        System.setOut(new PrintStream(new BufferedOutputStream(fileOutputStream)));
         byteStreamConverter = new ByteStreamConverter();
         System.out.println("Start connection to server...");
+
+
+
     }
 
 
@@ -50,7 +54,7 @@ public class DataReceiver implements Callable {
     /**
      * Receives one byte from server and returns it, test server only sends one byte at a time so this is gonna get changed
      * @return the byte received
-     * @throws IOException IOException
+     * @throws IOException
      */
     public byte[] receive() throws IOException {
         byte[] received=new byte[1];
@@ -59,13 +63,11 @@ public class DataReceiver implements Callable {
 
     }
 
-    /**
-     * Reads the message by finding the message type and length.
-     * @throws IOException IOException
-     */
     public void readMessage() throws IOException {
+        isBoatData=false;
         int XMLMessageType = 26;
         int boatLocationMessageType = 37;
+
 
         int messageLength = (int) byteStreamConverter.getMessageLength();
         int messageType = (int) byteStreamConverter.getMessageType();
@@ -78,33 +80,26 @@ public class DataReceiver implements Callable {
             XmlSubtype subType = byteStreamConverter.getXmlSubType();
 
 //            System.out.println(xml);
-//
-//            switch (subType) {
-//                case REGATTA:
-//                    RegattaXMLParser regattaParser = new RegattaXMLParser(xml);
-//                    break;
-//                case RACE:
-//                    RaceXMLParser raceParser = new RaceXMLParser(xml);
-//                    break;
-//                case BOAT:
-//                    BoatXMLParser boatParser = new BoatXMLParser(xml);
-//                    break;
-//            }
+
+            switch (subType) {
+                case REGATTA:
+                    RegattaXMLParser regattaParser = new RegattaXMLParser(xml);
+                    break;
+                case RACE:
+                    RaceXMLParser raceParser = new RaceXMLParser(xml);
+                    break;
+                case BOAT:
+                    BoatXMLParser boatParser = new BoatXMLParser(xml);
+                    break;
+            }
         }
         else if (messageType == boatLocationMessageType) {
-            this.boatData = byteStreamConverter.parseBoatLocationMessage(message);
-            System.out.println("hi");
-            System.out.println(boatData.getSourceID());
-            System.out.println("byte");
+            isBoatData=true;
+            boatData=byteStreamConverter.parseBoatLocationMessage(message);
         }
 
     }
 
-
-    /**
-     * Reads the header of the binary message. This is called after sync bytes found.
-     * @throws IOException IOException
-     */
     public void readHeader() throws IOException {
         // 13 because already read sync bytes
         byte[] header = new byte[13];
@@ -113,11 +108,6 @@ public class DataReceiver implements Callable {
     }
 
 
-    /**
-     * Checks for sync bytes in the binary message.
-     * @return boolean True if sync bytes are found
-     * @throws IOException IOException
-     */
     public boolean checkForSyncBytes() throws IOException {
         byte firstSyncByte = 0x47;
         // -125 is equivalent to 0x83 unsigned
@@ -125,10 +115,13 @@ public class DataReceiver implements Callable {
 
         byte[] b1 = new byte[1];
         dis.readFully(b1);
+//        System.out.println(String.format("First Sync: %02X",b1[0]));
         if (b1[0] == firstSyncByte) {
             byte[] b2 = new byte[1];
 
+
             dis.readFully(b2);
+//            System.out.println(String.format("Second Sync: %02X",b2[0]));
             if (b2[0] == secondSyncByte) {
                 return true;
             }
@@ -136,42 +129,40 @@ public class DataReceiver implements Callable {
         return false;
     }
 
+    public void setCompetitors(List<Competitor> competitors){
+        this.competitors=competitors;
+    }
 
-    /**
-     * Receives the binary message
-     */
-    @Override
-    public BoatData call() {
-        while(true){
+
+    public void run() {
+//        while(true){
             try {
-
                 boolean isStartOfPacket = checkForSyncBytes();
 
                 if (isStartOfPacket) {
                     readHeader();
                     readMessage();
+                    //update boat with boat data
+                    if(isBoatData){
+                        //TODO: get rid of this hack
+                        int index=boatData.getSourceID()-101;
+                        if(index<competitors.size()) {
+                            competitors.get(index).setProperties(boatData.getSpeed(), boatData.getHeading(), boatData.getLatitude(), boatData.getLongitude());
+                        }
                 }
-                System.out.println(boatData.getSourceID());
-                return this.boatData;
+                }
 
             }
             catch (EOFException e) {
                 System.out.println("End of file.");
-                break;
+//                break;
             }
             catch (IOException e) {
                 e.printStackTrace();
-                break;
+//                break;
             }
-        }
-        return null;
+//        }
     }
-
-
-    public BoatData getBoatData() {
-        return boatData;
-    }
-
 
     public static void main (String [] args) throws InterruptedException {
         DataReceiver dataReceiver = null;
@@ -180,16 +171,8 @@ public class DataReceiver implements Callable {
 //                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
                 dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
 
-                // not finished yet still need work
-//                (new Thread(dataReceiver)).start();
-//                ExecutorService service =  Executors.newSingleThreadExecutor();
-//                Future<BoatData> future = service.submit(dataReceiver);
-//                try {
-//                    BoatData boatData = future.get();
-//                    System.out.println(boatData.getSourceID());
-//                } catch (ExecutionException |InterruptedException e) {
-//                    e.printStackTrace();
-//                }
+                Timer timer=new Timer();
+                timer.schedule(dataReceiver,0,100);
 
             }
             catch (IOException e) {

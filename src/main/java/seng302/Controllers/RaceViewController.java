@@ -429,10 +429,10 @@ public class RaceViewController implements ClockHandler, Initializable {
      * @param height the height of the canvas
      */
     private void animate(double width, double height){
-//        (new Thread(dataReceiver)).start();
-        ExecutorService service =  Executors.newSingleThreadExecutor();
-//        SumTask sumTask = new SumTask(20);
-        Future<BoatData> future = service.submit(dataReceiver);
+
+//        ExecutorService service =  Executors.newSingleThreadExecutor();
+////        SumTask sumTask = new SumTask(20);
+//        Future<BoatData> future = service.submit(dataReceiver);
 //        try {
 //            if(service != null) {
 //
@@ -447,10 +447,16 @@ public class RaceViewController implements ClockHandler, Initializable {
 //        }
 
         // start the race using the timeline
-        Timeline t = race.generateTimeline();
+//        Timeline t = race.generateTimeline();
 
         List<Competitor> competitors = race.getCompetitors();
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
+
+        //set competitors
+        dataReceiver.setCompetitors(competitors);
+        Timer receiverTimer=new Timer();
+        receiverTimer.schedule(dataReceiver,0,100);
+
 
         //draw the course
         gc.setFill(Color.LIGHTBLUE);
@@ -493,12 +499,14 @@ public class RaceViewController implements ClockHandler, Initializable {
                     moveWake(boat, i);
                     moveBoat(boat, i);
                     moveAnnotations(boat, i);
+
                 }
+
             }
         };
 
         timer.start();
-        t.play();
+//        t.play();
     }
 
 
