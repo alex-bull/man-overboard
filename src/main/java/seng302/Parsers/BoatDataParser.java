@@ -11,37 +11,21 @@ import static seng302.Parsers.Converter.hexByteArrayToInt;
  */
 public class BoatDataParser {
 
-    private long sourceID;
-    private double latitude;
-    private double longitude;
-    private double heading;
-    private long speed;
 
     /**
      * Process the given data and parse source id, latitude, longitude, heading, speed
      * @param body byte[] a byte array of the boat data message
+     * @return BoatData boat data object
      */
-    public void processMessage(byte[] body) {
+    public BoatData processMessage(byte[] body) {
 
-        this.sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7,11));
-        this.latitude = parseCoordinate(Arrays.copyOfRange(body, 16,20));
-        this.longitude = parseCoordinate(Arrays.copyOfRange(body, 20,24));
-        this.heading = hexByteArrayToInt(Arrays.copyOfRange(body, 28,30));
-        this.speed = hexByteArrayToInt(Arrays.copyOfRange(body, 34,36));
+        int sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7,11));
+        double latitude = parseCoordinate(Arrays.copyOfRange(body, 16,20));
+        double longitude = parseCoordinate(Arrays.copyOfRange(body, 20,24));
+        double heading = hexByteArrayToInt(Arrays.copyOfRange(body, 28,30));
+        int speed = hexByteArrayToInt(Arrays.copyOfRange(body, 34,36));
 
-
-        /////// comment this out to disable printing values ////////
-//        System.out.println("sourceID " + sourceIDHexValues);
-//        System.out.println("lat " + latitudeHexValues);
-//        System.out.println("long " + longitudeHexValues);
-//        System.out.println("head " + headingHexValues);
-//        System.out.println("Speed " + speedHexValues);
-
-//        System.out.println("parsed source ID: " + sourceID);
-//        System.out.println("parsed lat: " + latitude);
-//        System.out.println("parsed long: " + longitude);
-//        System.out.println("parsed heading : " + heading);
-//        System.out.println("parsed speed: " + speed);
+        return new BoatData(sourceID, latitude, longitude, heading, speed);
     }
 
     /**
@@ -60,46 +44,6 @@ public class BoatDataParser {
      */
     private Double parseCoordinate(byte[] hexValues) {
         return (double) hexByteArrayToInt(hexValues) * 180.0 /  2147483648.0;
-    }
-
-    public long getSourceID() {
-        return sourceID;
-    }
-
-    public void setSourceID(long sourceID) {
-        this.sourceID = sourceID;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public double getHeading() {
-        return heading;
-    }
-
-    public void setHeading(double heading) {
-        this.heading = heading;
-    }
-
-    public long getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(long speed) {
-        this.speed = speed;
     }
 
 }

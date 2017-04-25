@@ -94,9 +94,10 @@ public class ByteStreamConverter extends Converter {
     /**
      * Parses binary data into boat location data
      * @param message byte[] an array of bytes which includes information about the boat location
+     * @return BoatData boat data object
      */
-    public void parseBoatLocationMessage(byte[] message) {
-        boatDataParser.processMessage(message);
+    public BoatData parseBoatLocationMessage(byte[] message) {
+        return boatDataParser.processMessage(message);
     }
 
 

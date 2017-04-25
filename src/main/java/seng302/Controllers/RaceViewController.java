@@ -25,12 +25,17 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import seng302.Model.*;
+import seng302.Parsers.BoatData;
 
 import javax.xml.crypto.Data;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -424,7 +429,23 @@ public class RaceViewController implements ClockHandler, Initializable {
      * @param height the height of the canvas
      */
     private void animate(double width, double height){
-        (new Thread(dataReceiver)).start();
+//        (new Thread(dataReceiver)).start();
+        ExecutorService service =  Executors.newSingleThreadExecutor();
+//        SumTask sumTask = new SumTask(20);
+        Future<BoatData> future = service.submit(dataReceiver);
+//        try {
+//            if(service != null) {
+//
+//                BoatData boatData = future.get();
+//                System.out.println(boatData.getSourceID());
+//            }
+//            else {
+//                System.out.println("empty");
+//            }
+//        } catch (ExecutionException|InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
         // start the race using the timeline
         Timeline t = race.generateTimeline();
 

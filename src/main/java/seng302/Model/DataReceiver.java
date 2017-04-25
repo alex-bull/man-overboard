@@ -4,19 +4,23 @@ import seng302.Parsers.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Created by khe60 on 10/04/17.
  * The Receiver class, currently receives messages 1 byte at a time
  * Turn on internet enabler to connect to live data
  */
-public class DataReceiver implements Runnable{
+public class DataReceiver implements Callable {
     private Socket receiveSock;
     private DataInputStream dis;
     private ByteStreamConverter byteStreamConverter;
     private FileOutputStream fileOutputStream;
+
+    private BoatData boatData;
 
     /**
      * Initializes port to receive binary data from
@@ -31,9 +35,6 @@ public class DataReceiver implements Runnable{
 //        System.setOut(new PrintStream(new BufferedOutputStream(fileOutputStream)));
         byteStreamConverter = new ByteStreamConverter();
         System.out.println("Start connection to server...");
-
-
-
     }
 
 
@@ -76,25 +77,29 @@ public class DataReceiver implements Runnable{
             String xml = byteStreamConverter.parseXMLMessage(message);
             XmlSubtype subType = byteStreamConverter.getXmlSubType();
 
-            System.out.println(xml);
-
-            switch (subType) {
-                case REGATTA:
-                    RegattaXMLParser regattaParser = new RegattaXMLParser(xml);
-                    break;
-                case RACE:
-                    RaceXMLParser raceParser = new RaceXMLParser(xml);
-                    break;
-                case BOAT:
-                    BoatXMLParser boatParser = new BoatXMLParser(xml);
-                    break;
-            }
+//            System.out.println(xml);
+//
+//            switch (subType) {
+//                case REGATTA:
+//                    RegattaXMLParser regattaParser = new RegattaXMLParser(xml);
+//                    break;
+//                case RACE:
+//                    RaceXMLParser raceParser = new RaceXMLParser(xml);
+//                    break;
+//                case BOAT:
+//                    BoatXMLParser boatParser = new BoatXMLParser(xml);
+//                    break;
+//            }
         }
         else if (messageType == boatLocationMessageType) {
-            byteStreamConverter.parseBoatLocationMessage(message);
+            this.boatData = byteStreamConverter.parseBoatLocationMessage(message);
+            System.out.println("hi");
+            System.out.println(boatData.getSourceID());
+            System.out.println("byte");
         }
 
     }
+
 
     /**
      * Reads the header of the binary message. This is called after sync bytes found.
@@ -136,7 +141,7 @@ public class DataReceiver implements Runnable{
      * Receives the binary message
      */
     @Override
-    public void run() {
+    public BoatData call() {
         while(true){
             try {
 
@@ -146,6 +151,8 @@ public class DataReceiver implements Runnable{
                     readHeader();
                     readMessage();
                 }
+                System.out.println(boatData.getSourceID());
+                return this.boatData;
 
             }
             catch (EOFException e) {
@@ -157,16 +164,32 @@ public class DataReceiver implements Runnable{
                 break;
             }
         }
+        return null;
     }
+
+
+    public BoatData getBoatData() {
+        return boatData;
+    }
+
 
     public static void main (String [] args) throws InterruptedException {
         DataReceiver dataReceiver = null;
         while(dataReceiver == null) {
             try {
-                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
-//                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+//                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
+                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
 
-                (new Thread(dataReceiver)).start();
+                // not finished yet still need work
+//                (new Thread(dataReceiver)).start();
+//                ExecutorService service =  Executors.newSingleThreadExecutor();
+//                Future<BoatData> future = service.submit(dataReceiver);
+//                try {
+//                    BoatData boatData = future.get();
+//                    System.out.println(boatData.getSourceID());
+//                } catch (ExecutionException |InterruptedException e) {
+//                    e.printStackTrace();
+//                }
 
             }
             catch (IOException e) {
