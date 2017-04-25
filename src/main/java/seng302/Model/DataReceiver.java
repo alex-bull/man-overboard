@@ -20,8 +20,11 @@ public class DataReceiver extends TimerTask {
     private ByteStreamConverter byteStreamConverter;
     private FileOutputStream fileOutputStream;
     private List<Competitor> competitors;
+
+    //variables that need to be refactored
     private BoatData boatData;
     private boolean isBoatData;
+    private int counter=0;
 
     /**
      * Initializes port to receive binary data from
@@ -141,9 +144,14 @@ public class DataReceiver extends TimerTask {
 
                 if (isStartOfPacket) {
                     readHeader();
+
                     readMessage();
-                    //update boat with boat data
                     if(isBoatData){
+                        System.out.println(boatData);
+                        counter++;
+                    }
+                    //update boat with boat data
+                    if(isBoatData && competitors!=null){
                         //TODO: get rid of this hack
                         int index=boatData.getSourceID()-101;
                         if(index<competitors.size()) {
@@ -155,6 +163,7 @@ public class DataReceiver extends TimerTask {
             }
             catch (EOFException e) {
                 System.out.println("End of file.");
+
 //                break;
             }
             catch (IOException e) {

@@ -60,7 +60,14 @@ public class BoatData {
         this.speed = speed;
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return "BoatData{" +
+                "sourceID=" + sourceID +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", heading=" + heading +
+                ", speed=" + speed +
+                '}';
+    }
 }
