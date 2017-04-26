@@ -45,7 +45,6 @@ public class RaceXMLParser {
         String raceStartTime = race.getChild("RaceStartTime").getAttributeValue("Time");
         boolean raceStartTimePostponed = Boolean.parseBoolean(race.getChild("RaceStartTime").getAttributeValue("Postpone"));
 
-
         System.out.println("Race ID : " + raceID);
         System.out.println("Race type: " + raceType);
         System.out.println("Creation time date: " + creationTimeDate);
@@ -98,9 +97,32 @@ public class RaceXMLParser {
         raceData.setCourse(course);
 
         for(Element corner: race.getChild("CompoundMarkSequence").getChildren()) {
-            int seqID = Integer.parseInt(corner.getAttributeValue("SeqID"));
-            //TODO: CONTINUTE HERE....
+            int cornerSeqID = Integer.parseInt(corner.getAttributeValue("SeqID"));
+            int compoundMarkID = Integer.parseInt(corner.getAttributeValue("CompoundMarkID"));
+            String rounding = corner.getAttributeValue("Rounding");
+            int zoneSize = Integer.parseInt(corner.getAttributeValue("ZoneSize"));
+
+            System.out.println("Corner seq id: " + cornerSeqID);
+            System.out.println("Compound mark id : " + compoundMarkID);
+            System.out.println("Rounding: " + rounding);
+            System.out.println("Zone size: " + zoneSize);
+            CornerData cornerData = new CornerData(cornerSeqID, compoundMarkID, rounding, zoneSize);
+            raceData.getCompoundMarkSequence().add(cornerData);
         }
+
+        for(Element limit: race.getChild("CourseLimit").getChildren()) {
+            int limitSeqID =  Integer.parseInt(limit.getAttributeValue("SeqID"));
+            double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
+            double lon = Double.parseDouble(limit.getAttributeValue("Lon"));
+
+            System.out.println("Limit seq id:" + limitSeqID);
+            System.out.println("Lat:" + lat);
+            System.out.println("Lon:" + lon);
+            LimitData limitData  = new LimitData(limitSeqID, lat, lon);
+            raceData.getCourseLimit().add(limitData);
+
+        }
+
     }
 
 

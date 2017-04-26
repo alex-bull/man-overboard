@@ -79,7 +79,7 @@ public class DataReceiver extends TimerTask {
             case RACE:
                 RaceXMLParser raceParser = new RaceXMLParser(xml);
                 this.raceData = raceParser.getRaceData();
-//                updateCourse();
+                updateCourse();
                 break;
             case BOAT:
                 BoatXMLParser boatParser = new BoatXMLParser(xml);
@@ -88,9 +88,8 @@ public class DataReceiver extends TimerTask {
     }
 
     private void updateCourse() {
-        System.out.println(raceData.getRaceStartTime());
-        System.out.println(raceData.isRaceStartTimePostpone());
-        System.out.println("ok");
+        System.out.println("HELLO UPDATING COURSE");
+
         System.out.println(raceData.getParticipants().size());
         for(YachtData yachtData: raceData.getParticipants()) {
             System.out.println(yachtData.getSourceID());
