@@ -189,9 +189,10 @@ public class StarterController implements Initializable, ClockHandler {
     }
 
     /**
-     * Collects the information about the number of boats and duration of the race.
+     * Collects the information about the number of boats and duration of the race. Called when user clicks confirm.
      * Display the starting boat information in a listView (starterList)
      */
+    @FXML
     public void collectInfo() throws Exception {
 
         //checks duration and number of boats have been selected

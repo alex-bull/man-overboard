@@ -79,7 +79,7 @@ public class DataReceiver extends TimerTask {
             case RACE:
                 RaceXMLParser raceParser = new RaceXMLParser(xml);
                 this.raceData = raceParser.getRaceData();
-                updateCourse();
+                updateCourse(raceParser);
                 break;
             case BOAT:
                 BoatXMLParser boatParser = new BoatXMLParser(xml);
@@ -87,24 +87,14 @@ public class DataReceiver extends TimerTask {
         }
     }
 
-    private void updateCourse() {
-        System.out.println("HELLO UPDATING COURSE");
+    private void updateCourse(RaceXMLParser raceParser) {
+//        System.out.println("HELLO UPDATING COURSE");
 
-        System.out.println(raceData.getParticipants().size());
-        for(YachtData yachtData: raceData.getParticipants()) {
-            System.out.println(yachtData.getSourceID());
-            System.out.println(yachtData.getEntry());
+        List<CourseFeature> courseFeatures = raceParser.getCourseFeature();
+        List<MutablePoint> courseBoundary = raceParser.getCourseBoundary();
+        double windDirection = 10; // to do later
 
-        }
-
-        System.out.println("AAA" + raceData.getCourse().size());
-//        for(CompoundMarkData compoundMark: raceData.getCourse()) {
-//            System.out.println(compoundMark.getID());
-//            System.out.println(compoundMark.getName());
-//        }
-
-//        List<CourseFeature> courseFeatures = raceData.getC
-//        this.course = new RaceCourse();
+//        this.course = new RaceCourse(courseFeatures, courseBoundary, windDirection);
     }
 
 
