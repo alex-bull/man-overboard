@@ -25,8 +25,8 @@ public class XMLCourseLoader {
     private Double bufferX;
     private Double bufferY;
     private ArrayList<CourseFeature> points = new ArrayList<>();
-    List <Double> xMercatorCoords=new ArrayList<>();
-    List <Double> yMercatorCoords=new ArrayList<>();
+    private List <Double> xMercatorCoords=new ArrayList<>();
+    private List <Double> yMercatorCoords=new ArrayList<>();
 
     /**
      * Constructor for loading a course with an XML input file

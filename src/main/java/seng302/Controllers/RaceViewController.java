@@ -452,8 +452,8 @@ public class RaceViewController implements ClockHandler, Initializable {
         List<Competitor> competitors = race.getCompetitors();
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
 
-        List<MutablePoint> courseBoundary = race.getCourseBoundary();
-        dataReceiver.setCourseBoundary(courseBoundary);
+//        List<MutablePoint> courseBoundary = race.getCourseBoundary();
+//        dataReceiver.setCourseBoundary(courseBoundary);
         //set competitors
         dataReceiver.setCompetitors(competitors);
         Timer receiverTimer=new Timer();

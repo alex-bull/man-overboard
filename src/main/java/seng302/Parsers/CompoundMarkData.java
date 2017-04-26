@@ -12,10 +12,12 @@ public class CompoundMarkData {
     private String name;
     private List<MarkData> marks = new ArrayList<>();
 
-    public CompoundMarkData(int ID, String name) {
+    public CompoundMarkData(int ID, String name, List<MarkData> marks) {
         this.ID = ID;
         this.name = name;
+        this.marks = marks;
     }
+
 
     public List<MarkData> getMarks() {
         return marks;

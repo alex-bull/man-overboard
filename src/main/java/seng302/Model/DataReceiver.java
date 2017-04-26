@@ -1,5 +1,6 @@
 package seng302.Model;
 
+import org.jdom2.JDOMException;
 import seng302.Parsers.*;
 
 import java.io.*;
@@ -19,8 +20,8 @@ public class DataReceiver extends TimerTask {
     private ByteStreamConverter byteStreamConverter;
     private FileOutputStream fileOutputStream;
     private List<Competitor> competitors;
-    private List<MutablePoint> courseBoundary;
     private Race race;
+    private Course course;
     //variables that need to be refactored
     private BoatData boatData;
     private RaceData raceData;
@@ -65,7 +66,7 @@ public class DataReceiver extends TimerTask {
 
     }
 
-    private void readXMLMessage(byte[] message) {
+    private void readXMLMessage(byte[] message) throws IOException, JDOMException {
         String xml = byteStreamConverter.parseXMLMessage(message);
         XmlSubtype subType = byteStreamConverter.getXmlSubType();
 
@@ -77,8 +78,8 @@ public class DataReceiver extends TimerTask {
                 break;
             case RACE:
                 RaceXMLParser raceParser = new RaceXMLParser(xml);
-                raceData = raceParser.getRaceData();
-                updateCourseBoundary(raceData);
+                this.raceData = raceParser.getRaceData();
+//                updateCourse();
                 break;
             case BOAT:
                 BoatXMLParser boatParser = new BoatXMLParser(xml);
@@ -86,10 +87,25 @@ public class DataReceiver extends TimerTask {
         }
     }
 
-    private void updateCourseBoundary(RaceData raceData) {
-        if(courseBoundary!=null) {
+    private void updateCourse() {
+        System.out.println(raceData.getRaceStartTime());
+        System.out.println(raceData.isRaceStartTimePostpone());
+        System.out.println("ok");
+        System.out.println(raceData.getParticipants().size());
+        for(YachtData yachtData: raceData.getParticipants()) {
+            System.out.println(yachtData.getSourceID());
+            System.out.println(yachtData.getEntry());
 
         }
+
+        System.out.println("AAA" + raceData.getCourse().size());
+//        for(CompoundMarkData compoundMark: raceData.getCourse()) {
+//            System.out.println(compoundMark.getID());
+//            System.out.println(compoundMark.getName());
+//        }
+
+//        List<CourseFeature> courseFeatures = raceData.getC
+//        this.course = new RaceCourse();
     }
 
 
@@ -127,10 +143,6 @@ public class DataReceiver extends TimerTask {
     }
 
 
-    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
-        this.courseBoundary = courseBoundary;
-    }
-
     public void run() {
 //        while(true){
             try {
@@ -148,7 +160,11 @@ public class DataReceiver extends TimerTask {
                     dis.readFully(message);
 
                     if (messageType == XMLMessageType) {
-                        readXMLMessage(message);
+                        try {
+                            readXMLMessage(message);
+                        } catch (JDOMException e) {
+                            e.printStackTrace();
+                        }
                     }
                     else if (messageType == boatLocationMessageType) {
                         boatData = byteStreamConverter.parseBoatLocationMessage(message);
