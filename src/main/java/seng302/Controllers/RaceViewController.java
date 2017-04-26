@@ -358,7 +358,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     /**
      * Draw boat wakes and factor it with its velocity
      * @param boat Competitor a competitor
-     * @param index
+     * @param index Index
      */
     private void moveWake(Competitor boat, Integer index) {
 
@@ -452,11 +452,14 @@ public class RaceViewController implements ClockHandler, Initializable {
         List<Competitor> competitors = race.getCompetitors();
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
 
+        List<MutablePoint> courseBoundary = race.getCourseBoundary();
+        dataReceiver.setCourseBoundary(courseBoundary);
         //set competitors
         dataReceiver.setCompetitors(competitors);
         Timer receiverTimer=new Timer();
         receiverTimer.schedule(dataReceiver,0,100);
 
+//        race=dataReceiver.getRace();
 
         //draw the course
         gc.setFill(Color.LIGHTBLUE);
@@ -508,9 +511,6 @@ public class RaceViewController implements ClockHandler, Initializable {
         timer.start();
 //        t.play();
     }
-
-
-
 
 
 }

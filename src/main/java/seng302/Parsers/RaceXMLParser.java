@@ -1,5 +1,6 @@
 package seng302.Parsers;
 
+import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -14,22 +15,19 @@ import java.io.StringReader;
  * Parser for Race XML
  */
 public class RaceXMLParser {
-    int raceID;
-    String raceType;
-    String creationTimeDate;
-    boolean postponed;
-    String raceStartTimeTime;
-    boolean raceStartTimePostpone;
-    int yachtSourceID;
-    String yachtEntry;
-    int compoundMarkID;
-    String compoundMarkName;
+
+    private RaceData raceData;
+
+    public RaceData getRaceData() {
+        return raceData;
+    }
 
 
 
     public RaceXMLParser(String xmlStr) {
 
         try {
+            this.raceData = new RaceData();
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
 
@@ -38,6 +36,7 @@ public class RaceXMLParser {
                 boolean hasRaceId = false;
                 boolean hasRaceType = false;
                 boolean hasCreationTimeDate = false;
+                CompoundMarkData currentCompoundMark;
 
                 @Override
                 public void startElement(String uri, String localName, String qName, Attributes attributes) {
@@ -51,35 +50,63 @@ public class RaceXMLParser {
                         hasCreationTimeDate = true;
 
                     } else if (qName.equalsIgnoreCase("RaceStartTime")) {
-                        System.out.println("Race Start Time : " + attributes.getValue("Time"));
-                        System.out.println("Postponed? : " + attributes.getValue("Postpone"));
+                        String raceStartTime = attributes.getValue("Time");
+//                        System.out.println("Race Start Time : " + attributes.getValue("Time"));
+//                        System.out.println("Postponed? : " + attributes.getValue("Postpone"));
+                        raceData.setRaceStartTime(raceStartTime);
+                        raceData.setRaceStartTimePostpone(Boolean.parseBoolean(attributes.getValue("Postpone")));
 
 
                     } else if (qName.equalsIgnoreCase("Yacht")) {
-                        System.out.println("Source ID : " + attributes.getValue("SourceID"));
-                        System.out.println("Entry : " + attributes.getValue("Entry"));
+                        int sourceID = Integer.parseInt(attributes.getValue("SourceID"));
+                        String entry = attributes.getValue("Entry");
+//                        System.out.println("Source ID : " + sourceID);
+//                        System.out.println("Entry : " + entry);
+                        YachtData yacht = new YachtData(sourceID, entry);
+                        raceData.getParticipants().add(yacht);
 
                     } else if (qName.equalsIgnoreCase("CompoundMark")) {
-                        System.out.println("Compound Mark ID : " + attributes.getValue("CompoundMarkID"));
-                        System.out.println("Name : " + attributes.getValue("Name"));
+                        int id = Integer.parseInt(attributes.getValue("CompoundMarkID"));
+                        String name = attributes.getValue("Name");
+//                        System.out.println("Compound Mark ID : " + id);
+//                        System.out.println("Name : " + name);
+                        currentCompoundMark = new CompoundMarkData(id, name);
 
                     } else if (qName.equalsIgnoreCase("Mark")) {
-                        System.out.println("Seq ID : " + attributes.getValue("SeqID"));
-                        System.out.println("Name : " + attributes.getValue("Name"));
-                        System.out.println("Target Lat : " + attributes.getValue("TargetLat"));
-                        System.out.println("Target Lon : " + attributes.getValue("TargetLng"));
-                        System.out.println("Source ID : " + attributes.getValue("SourceID"));
+                        int seqID = Integer.parseInt( attributes.getValue("SeqID"));
+                        String name = attributes.getValue("Name");
+                        double targetLat = Double.parseDouble(attributes.getValue("TargetLat"));
+                        double targetLon = Double.parseDouble(attributes.getValue("TargetLon"));
+                        int sourceID = Integer.parseInt(attributes.getValue("SourceID"));
+//                        System.out.println("Seq ID : " + seqID);
+//                        System.out.println("Name : " + name);
+//                        System.out.println("Target Lat : " + targetLat);
+//                        System.out.println("Target Lon : " + targetLon);
+//                        System.out.println("Source ID : " + sourceID);
+                        MarkData mark = new MarkData(seqID, name, targetLat, targetLon, sourceID);
+                        currentCompoundMark.getMarks().add(mark);
 
                     } else if (qName.equalsIgnoreCase("Corner")) {
-                        System.out.println("Seq ID : " + attributes.getValue("SeqID"));
-                        System.out.println("Compound Mark ID : " + attributes.getValue("CompoundMarkID"));
-                        System.out.println("Rounding : " + attributes.getValue("Rounding"));
-                        System.out.println("Zone Size : " + attributes.getValue("ZoneSize"));
+                        int seqID = Integer.parseInt( attributes.getValue("SeqID"));
+                        int compoundMarkID = Integer.parseInt(attributes.getValue("CompoundMarkID"));
+                        String rounding = attributes.getValue("Rounding");
+                        int zoneSize = Integer.parseInt(attributes.getValue("ZoneSize"));
+//                        System.out.println("Seq ID : " + seqID);
+//                        System.out.println("Compound Mark ID : " + compoundMarkID);
+//                        System.out.println("Rounding : " + rounding);
+//                        System.out.println("Zone Size : " + zoneSize);
+                        CornerData corner = new CornerData(seqID, compoundMarkID, rounding, zoneSize);
+                        raceData.getCompoundMarkSequence().add(corner);
 
                     } else if (qName.equalsIgnoreCase("Limit")) {
-                        System.out.println("Seq ID : " + attributes.getValue("SeqID"));
-                        System.out.println("Lat : " + attributes.getValue("Lat"));
-                        System.out.println("Lon : " + attributes.getValue("Lon"));
+                        int seqID = Integer.parseInt( attributes.getValue("SeqID"));
+                        double lat = Double.parseDouble(attributes.getValue("Lat"));
+                        double lon = Double.parseDouble(attributes.getValue("Lon"));
+//                        System.out.println("Seq ID : " + seqID);
+//                        System.out.println("Lat : " + lat);
+//                        System.out.println("Lon : " + lon);
+                        LimitData limit = new LimitData(seqID, lat, lon);
+                        raceData.getCourseLimit().add(limit);
 
                     }
 
@@ -93,16 +120,23 @@ public class RaceXMLParser {
                 @Override
                 public void characters(char ch[], int start, int length) throws SAXException {
                     if (hasRaceId) {
-                        System.out.println("Race ID : " + new String(ch, start, length));
+                        int raceID = Integer.parseInt(new String(ch, start, length));
+//                        System.out.println("Race ID : " + raceID);
                         hasRaceId = false;
+                        raceData.setRaceID(raceID);
 
                     } else if (hasRaceType) {
-                        System.out.println("Race Type : " + new String(ch, start, length));
+                        String raceType =  new String(ch, start, length);
+//                        System.out.println("Race Type : " + raceType);
                         hasRaceType = false;
+                        raceData.setRaceType(raceType);
+
 
                     } else if (hasCreationTimeDate) {
-                        System.out.println("Creation Time Date : " + new String(ch, start, length));
+                        String creationTimeDate = new String(ch, start, length);
+//                        System.out.println("Creation Time Date : " + creationTimeDate);
                         hasCreationTimeDate = false;
+                        raceData.setCreationTimeDate(creationTimeDate);
 
                     }
                 }
@@ -117,6 +151,8 @@ public class RaceXMLParser {
         }
 
     }
+
+
 
     public static void main(String[] args){
 

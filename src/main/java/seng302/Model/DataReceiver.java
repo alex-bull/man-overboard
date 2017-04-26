@@ -4,7 +4,6 @@ import seng302.Parsers.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,11 +19,11 @@ public class DataReceiver extends TimerTask {
     private ByteStreamConverter byteStreamConverter;
     private FileOutputStream fileOutputStream;
     private List<Competitor> competitors;
-
+    private List<MutablePoint> courseBoundary;
+    private Race race;
     //variables that need to be refactored
     private BoatData boatData;
-    private boolean isBoatData;
-    private int counter=0;
+    private RaceData raceData;
 
     /**
      * Initializes port to receive binary data from
@@ -66,42 +65,33 @@ public class DataReceiver extends TimerTask {
 
     }
 
-    public void readMessage() throws IOException {
-        isBoatData=false;
-        int XMLMessageType = 26;
-        int boatLocationMessageType = 37;
-
-
-        int messageLength = (int) byteStreamConverter.getMessageLength();
-        int messageType = (int) byteStreamConverter.getMessageType();
-
-        byte[] message = new byte[messageLength];
-        dis.readFully(message);
-
-        if (messageType == XMLMessageType) {
-            String xml = byteStreamConverter.parseXMLMessage(message);
-            XmlSubtype subType = byteStreamConverter.getXmlSubType();
+    private void readXMLMessage(byte[] message) {
+        String xml = byteStreamConverter.parseXMLMessage(message);
+        XmlSubtype subType = byteStreamConverter.getXmlSubType();
 
 //            System.out.println(xml);
 
-            switch (subType) {
-                case REGATTA:
-                    RegattaXMLParser regattaParser = new RegattaXMLParser(xml);
-                    break;
-                case RACE:
-                    RaceXMLParser raceParser = new RaceXMLParser(xml);
-                    break;
-                case BOAT:
-                    BoatXMLParser boatParser = new BoatXMLParser(xml);
-                    break;
-            }
+        switch (subType) {
+            case REGATTA:
+                RegattaXMLParser regattaParser = new RegattaXMLParser(xml);
+                break;
+            case RACE:
+                RaceXMLParser raceParser = new RaceXMLParser(xml);
+                raceData = raceParser.getRaceData();
+                updateCourseBoundary(raceData);
+                break;
+            case BOAT:
+                BoatXMLParser boatParser = new BoatXMLParser(xml);
+                break;
         }
-        else if (messageType == boatLocationMessageType) {
-            isBoatData=true;
-            boatData=byteStreamConverter.parseBoatLocationMessage(message);
-        }
-
     }
+
+    private void updateCourseBoundary(RaceData raceData) {
+        if(courseBoundary!=null) {
+
+        }
+    }
+
 
     public void readHeader() throws IOException {
         // 13 because already read sync bytes
@@ -137,6 +127,10 @@ public class DataReceiver extends TimerTask {
     }
 
 
+    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
+        this.courseBoundary = courseBoundary;
+    }
+
     public void run() {
 //        while(true){
             try {
@@ -145,19 +139,30 @@ public class DataReceiver extends TimerTask {
                 if (isStartOfPacket) {
                     readHeader();
 
-                    readMessage();
-                    if(isBoatData){
-                        System.out.println(boatData);
-                        counter++;
+                    int XMLMessageType = 26;
+                    int boatLocationMessageType = 37;
+                    int messageType = (int) byteStreamConverter.getMessageType();
+                    int messageLength = (int) byteStreamConverter.getMessageLength();
+
+                    byte[] message = new byte[messageLength];
+                    dis.readFully(message);
+
+                    if (messageType == XMLMessageType) {
+                        readXMLMessage(message);
                     }
-                    //update boat with boat data
-                    if(isBoatData && competitors!=null){
-                        //TODO: get rid of this hack
-                        int index=boatData.getSourceID()-101;
-                        if(index<competitors.size()) {
-                            competitors.get(index).setProperties(boatData.getSpeed(), boatData.getHeading(), boatData.getLatitude(), boatData.getLongitude());
+                    else if (messageType == boatLocationMessageType) {
+                        boatData = byteStreamConverter.parseBoatLocationMessage(message);
+//                        System.out.println(boatData);
+                        //update boat with boat data
+                        if(competitors!=null){
+                            //TODO: get rid of this hack
+                            int index=boatData.getSourceID() - 101;
+                            if(index<competitors.size()) {
+                                competitors.get(index).setProperties(boatData.getSpeed(), boatData.getHeading(), boatData.getLatitude(), boatData.getLongitude());
+                            }
                         }
-                }
+
+                    }
                 }
 
             }
@@ -192,5 +197,7 @@ public class DataReceiver extends TimerTask {
 
     }
 
-
+    public Race getRace() {
+        return race;
+    }
 }

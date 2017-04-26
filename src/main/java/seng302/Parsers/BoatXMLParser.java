@@ -35,57 +35,57 @@ public class BoatXMLParser {
                         hasVersion = true;
 
                     } else if (qName.equalsIgnoreCase("RaceBoatType")) {
-                        System.out.println("Type : " + attributes.getValue("Type"));
+//                        System.out.println("Type : " + attributes.getValue("Type"));
 
                     } else if (qName.equalsIgnoreCase("BoatDimension")) {
-                        System.out.println("Boat Length : " + attributes.getValue("BoatLength"));
-                        System.out.println("Hull Length : " + attributes.getValue("HullLength"));
+//                        System.out.println("Boat Length : " + attributes.getValue("BoatLength"));
+//                        System.out.println("Hull Length : " + attributes.getValue("HullLength"));
 
                     } else if (qName.equalsIgnoreCase("ZoneSize")) {
-                        System.out.println("Mark Zone Size : " + attributes.getValue("MarkZoneSize"));
-                        System.out.println("Course Zone Size : " + attributes.getValue("CourseZoneSize"));
+//                        System.out.println("Mark Zone Size : " + attributes.getValue("MarkZoneSize"));
+//                        System.out.println("Course Zone Size : " + attributes.getValue("CourseZoneSize"));
 
                     } else if (qName.equalsIgnoreCase("ZoneLimits")) {
-                        System.out.println("Limit 1 : " + attributes.getValue("Limit1"));
-                        System.out.println("Limit 2 : " + attributes.getValue("Limit2"));
-                        System.out.println("Limit 3 : " + attributes.getValue("Limit3"));
-                        System.out.println("Limit 4 : " + attributes.getValue("Limit4"));
-                        System.out.println("Limit 5 : " + attributes.getValue("Limit5"));
+//                        System.out.println("Limit 1 : " + attributes.getValue("Limit1"));
+//                        System.out.println("Limit 2 : " + attributes.getValue("Limit2"));
+//                        System.out.println("Limit 3 : " + attributes.getValue("Limit3"));
+//                        System.out.println("Limit 4 : " + attributes.getValue("Limit4"));
+//                        System.out.println("Limit 5 : " + attributes.getValue("Limit5"));
 
                     } else if (qName.equalsIgnoreCase("BoatShape")) {
-                        System.out.println("Shape ID : " + attributes.getValue("ShapeID"));
+//                        System.out.println("Shape ID : " + attributes.getValue("ShapeID"));
 
                     } else if (qName.equalsIgnoreCase("Vtx")) {
-                        System.out.println("Seq : " + attributes.getValue("Seq"));
-                        System.out.println("Y : " + attributes.getValue("Y"));
-                        System.out.println("X : " + attributes.getValue("X"));
+//                        System.out.println("Seq : " + attributes.getValue("Seq"));
+//                        System.out.println("Y : " + attributes.getValue("Y"));
+//                        System.out.println("X : " + attributes.getValue("X"));
 
 
                     } else if (qName.equalsIgnoreCase("Boat")) {
-                        System.out.println("Type : " + attributes.getValue("Type"));
-                        System.out.println("Source ID : " + attributes.getValue("SourceID"));
-                        System.out.println("Shape ID : " + attributes.getValue("ShapeID"));
-                        System.out.println("Hull Num : " + attributes.getValue("HullNum"));
-                        System.out.println("Stowe Name : " + attributes.getValue("StoweName"));
-                        System.out.println("Short Name : " + attributes.getValue("ShortName"));
-                        System.out.println("Boat Name : " + attributes.getValue("BoatName"));
-                        System.out.println("Country : " + attributes.getValue("Country"));
-                        System.out.println("Skipper : " + attributes.getValue("Skipper"));
+//                        System.out.println("Type : " + attributes.getValue("Type"));
+//                        System.out.println("Source ID : " + attributes.getValue("SourceID"));
+//                        System.out.println("Shape ID : " + attributes.getValue("ShapeID"));
+//                        System.out.println("Hull Num : " + attributes.getValue("HullNum"));
+//                        System.out.println("Stowe Name : " + attributes.getValue("StoweName"));
+//                        System.out.println("Short Name : " + attributes.getValue("ShortName"));
+//                        System.out.println("Boat Name : " + attributes.getValue("BoatName"));
+//                        System.out.println("Country : " + attributes.getValue("Country"));
+//                        System.out.println("Skipper : " + attributes.getValue("Skipper"));
 
                     } else if (qName.equalsIgnoreCase("GPSposition")) {
-                        System.out.println("Z : " + attributes.getValue("Z"));
-                        System.out.println("Y : " + attributes.getValue("Y"));
-                        System.out.println("X : " + attributes.getValue("X"));
+//                        System.out.println("Z : " + attributes.getValue("Z"));
+//                        System.out.println("Y : " + attributes.getValue("Y"));
+//                        System.out.println("X : " + attributes.getValue("X"));
 
                     } else if (qName.equalsIgnoreCase("FlagPosition")) {
-                        System.out.println("Z : " + attributes.getValue("Z"));
-                        System.out.println("Y : " + attributes.getValue("Y"));
-                        System.out.println("X : " + attributes.getValue("X"));
+//                        System.out.println("Z : " + attributes.getValue("Z"));
+//                        System.out.println("Y : " + attributes.getValue("Y"));
+//                        System.out.println("X : " + attributes.getValue("X"));
 
                     } else if (qName.equalsIgnoreCase("MastTop")) {
-                        System.out.println("Z : " + attributes.getValue("Z"));
-                        System.out.println("Y : " + attributes.getValue("Y"));
-                        System.out.println("X : " + attributes.getValue("X"));
+//                        System.out.println("Z : " + attributes.getValue("Z"));
+//                        System.out.println("Y : " + attributes.getValue("Y"));
+//                        System.out.println("X : " + attributes.getValue("X"));
                     }
 
                 }
@@ -98,11 +98,11 @@ public class BoatXMLParser {
                 @Override
                 public void characters(char ch[], int start, int length) throws SAXException {
                     if (hasModified) {
-                        System.out.println("Modified : " + new String(ch, start, length));
+//                        System.out.println("Modified : " + new String(ch, start, length));
                         hasModified = false;
 
                     } else if (hasVersion) {
-                        System.out.println("Version : " + new String(ch, start, length));
+//                        System.out.println("Version : " + new String(ch, start, length));
                         hasVersion = false;
 
                     }
