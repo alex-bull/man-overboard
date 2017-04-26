@@ -29,6 +29,9 @@ public class RaceXMLParser {
     private RaceData raceData;
     private List<MutablePoint> courseBoundary;
     private List<CourseFeature> courseFeature;
+    private double scaleFactor;
+    private double bufferX;
+    private double bufferY;
 
     public RaceData getRaceData() {
         return raceData;

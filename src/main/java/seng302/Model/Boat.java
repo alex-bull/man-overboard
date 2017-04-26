@@ -15,6 +15,7 @@ public class Boat implements Competitor {
     private Color color;
     private String abbreName;
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
+    private int sourceID;
 
 
 
@@ -32,6 +33,37 @@ public class Boat implements Competitor {
         this.position = startPosition;
         this.color = color;
         this.abbreName=abbreName;
+    }
+
+    /**
+     * Empty Constructor
+     */
+    public Boat(){
+
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public void setAbbreName(String abbreName) {
+        this.abbreName = abbreName;
+    }
+
+    public int getSourceID() {
+        return sourceID;
+    }
+
+    public void setSourceID(int sourceID) {
+        this.sourceID = sourceID;
+    }
+
+    /**
+     * Parse the Source ID as a string
+     * @param sourceID the Source ID as string
+     */
+    public void setSourceID(String sourceID) {
+        this.sourceID = Integer.parseInt(sourceID);
     }
 
     /**
@@ -115,5 +147,14 @@ public class Boat implements Competitor {
         this.currentHeading.setValue(heading);
         this.position=new MutablePoint(latitude,longitude);
 
+    }
+
+    @Override
+    public String toString() {
+        return "Boat{" +
+                "teamName='" + teamName + '\'' +
+                ", abbreName='" + abbreName + '\'' +
+                ", sourceID=" + sourceID +
+                '}';
     }
 }
