@@ -124,13 +124,4 @@ public class RaceData {
         this.courseLimit = courseLimit;
     }
 
-
-
-
-
-
-
-
-
-
 }

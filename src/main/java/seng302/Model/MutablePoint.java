@@ -102,4 +102,12 @@ public class MutablePoint {
         result = 31 * result + y.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "MutablePoint{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

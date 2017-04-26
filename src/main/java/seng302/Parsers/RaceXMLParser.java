@@ -51,12 +51,12 @@ public class RaceXMLParser {
         String creationTimeDate = race.getChild("CreationTimeDate").getValue();
         String raceStartTime = race.getChild("RaceStartTime").getAttributeValue("Time");
         boolean raceStartTimePostponed = Boolean.parseBoolean(race.getChild("RaceStartTime").getAttributeValue("Postpone"));
-
-        System.out.println("Race ID : " + raceID);
-        System.out.println("Race type: " + raceType);
-        System.out.println("Creation time date: " + creationTimeDate);
-        System.out.println("Race start time: " +raceStartTime);
-        System.out.println("Postpone: " + raceStartTimePostponed);
+//
+//        System.out.println("Race ID : " + raceID);
+//        System.out.println("Race type: " + raceType);
+//        System.out.println("Creation time date: " + creationTimeDate);
+//        System.out.println("Race start time: " +raceStartTime);
+//        System.out.println("Postpone: " + raceStartTimePostponed);
 
         raceData.setRaceID(raceID);
         raceData.setRaceType(raceType);
@@ -67,8 +67,8 @@ public class RaceXMLParser {
         for(Element yacht: race.getChild("Participants").getChildren()) {
             int sourceID = Integer.parseInt(yacht.getAttributeValue("SourceID"));
             String entry = yacht.getAttributeValue("Entry");
-            System.out.println("Yacht ID:" + sourceID);
-            System.out.println("Entry: "+ entry);
+//            System.out.println("Yacht ID:" + sourceID);
+//            System.out.println("Entry: "+ entry);
             YachtData yachtData = new YachtData(sourceID, entry);
             raceData.getParticipants().add(yachtData);
 
@@ -78,22 +78,22 @@ public class RaceXMLParser {
         for(Element compoundMark:race.getChild("Course").getChildren()){
             int compoundMarkID = Integer.parseInt(compoundMark.getAttribute("CompoundMarkID").getValue());
             String compoundMarkName = compoundMark.getAttribute("Name").getValue();
-            System.out.println("Compound mark ID: " + compoundMarkID);
-            System.out.println("Compound mark name: " + compoundMarkName);
+//            System.out.println("Compound mark ID: " + compoundMarkID);
+//            System.out.println("Compound mark name: " + compoundMarkName);
 
             List<MarkData> marks = new ArrayList<>();
             for(Element mark: compoundMark.getChildren()) {
                 int seqID = Integer.parseInt(mark.getAttributeValue("SeqID"));
-                System.out.println("Seq ID: " + seqID);
+//                System.out.println("Seq ID: " + seqID);
                 String markName = mark.getAttributeValue("Name");
                 double targetLat = Double.parseDouble(mark.getAttributeValue("TargetLat"));
                 double targetLng =  Double.parseDouble(mark.getAttributeValue("TargetLng"));
                 int sourceID = Integer.parseInt(mark.getAttributeValue("SourceID"));
 
-                System.out.println("Mark name: " + markName);
-                System.out.println("Target lat: " +targetLat);
-                System.out.println("Target Lng: " + targetLng);
-                System.out.println("Source id: " + sourceID);
+//                System.out.println("Mark name: " + markName);
+//                System.out.println("Target lat: " +targetLat);
+//                System.out.println("Target Lng: " + targetLng);
+//                System.out.println("Source id: " + sourceID);
                 MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
                 marks.add(markData);
             }
@@ -109,28 +109,29 @@ public class RaceXMLParser {
             String rounding = corner.getAttributeValue("Rounding");
             int zoneSize = Integer.parseInt(corner.getAttributeValue("ZoneSize"));
 
-            System.out.println("Corner seq id: " + cornerSeqID);
-            System.out.println("Compound mark id : " + compoundMarkID);
-            System.out.println("Rounding: " + rounding);
-            System.out.println("Zone size: " + zoneSize);
+//            System.out.println("Corner seq id: " + cornerSeqID);
+//            System.out.println("Compound mark id : " + compoundMarkID);
+//            System.out.println("Rounding: " + rounding);
+//            System.out.println("Zone size: " + zoneSize);
             CornerData cornerData = new CornerData(cornerSeqID, compoundMarkID, rounding, zoneSize);
             raceData.getCompoundMarkSequence().add(cornerData);
+
         }
         int count= 0;
         for(Element limit: race.getChild("CourseLimit").getChildren()) {
             int limitSeqID =  Integer.parseInt(limit.getAttributeValue("SeqID"));
             double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
             double lon = Double.parseDouble(limit.getAttributeValue("Lon"));
-
-            System.out.println("Limit seq id:" + limitSeqID);
-            System.out.println("Lat:" + lat);
-            System.out.println("Lon:" + lon);
+//
+//            System.out.println("Limit seq id:" + limitSeqID);
+//            System.out.println("Lat:" + lat);
+//            System.out.println("Lon:" + lon);
             LimitData limitData  = new LimitData(limitSeqID, lat, lon);
             raceData.getCourseLimit().add(limitData);
             count++;
 
         }
-        System.out.println("-----count---- : " + count);
+//        System.out.println("-----count---- : " + count);
 
         // TODO: parse in the correct parameters
         parseRace(1200.0,1000, 1, 12, 12);
@@ -182,8 +183,8 @@ public class RaceXMLParser {
         }
 
         boundary.forEach(p->p.factor(scaleFactor,scaleFactor, Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
-        System.out.println(boundary);
-        System.out.println("SIZe of boundary " + boundary.size());
+//        System.out.println(boundary);
+//        System.out.println("SIZe of boundary " + boundary.size());
 
         this.courseBoundary = boundary;
 
@@ -210,31 +211,5 @@ public class RaceXMLParser {
     }
 
 
-
-    public static void main(String[] args){
-
-        try {
-            RaceXMLParser p = new RaceXMLParser("<Race><RaceID>11080703</RaceID><RaceType>Match</RaceType>" +
-                    "<CreationTimeDate>2011-08-06T13:25:00-0000</CreationTimeDate ><RaceStartTime Time=\"2011-08-06T13:30:00-0700\" Postpone=\"false\" " +
-                    "/><Participants><Yacht SourceID=\"107\" Entry=\"Port\" /><Yacht SourceID=\"108\" Entry=\"Stbd\" /></Participants><Course><CompoundMark " +
-                    "CompoundMarkID=\"1\" Name=\"StartLine\"><Mark SeqID=\"1\" Name=\"PRO\" TargetLat=\"-36.83\" TargetLng=\"174.83\" SourceID=\"101\" />" +
-                    "<Mark SeqID=\"2\" Name=\"PIN\" TargetLat=\"-36.84\" TargetLng=\"174.81\" SourceID=\"102\" /></CompoundMark><CompoundMark CompoundMarkID=\"2\" " +
-                    "Name=\"M1\"><Mark Name=\"M1\" TargetLat=\"-36.63566590\" TargetLng=\"174.88543944\" SourceID=\"103\" /></CompoundMark><CompoundMark CompoundMarkID=\"3\" " +
-                    "Name=\"M2\"><Mark Name=\"M2\" TargetLat=\"-36.83\" TargetLng=\"174.80\" SourceID=\"102\" />" +
-                    "</CompoundMark><CompoundMark CompoundMarkID=\"4\" Name=\"Gate\"><Mark SeqID=\"1\" Name=\"G1\" TargetLat=\"-36.63566590\" TargetLng=\"174.97205159\" " +
-                    "SourceID=\"104\" /><Mark SeqID=\"2\" Name=\"G2\" TargetLat=\"-36.64566590\" TargetLng=\"174.98205159\" SourceID=\"105\" /></CompoundMark></Course>" +
-                    "<CompoundMarkSequence><Corner SeqID=\"1\" CompoundMarkID=\"1\" Rounding=\"SP\" ZoneSize=\"3\" /><Corner SeqID=\"2\" CompoundMarkID=\"2\" Rounding=\"Port\" ZoneSize=\"3\" />" +
-                    "<Corner SeqID=\"3\" CompoundMarkID=\"3\" Rounding=\"Stbd\" ZoneSize=\"6\" /><Corner SeqID=\"4\" CompoundMarkID=\"4\" Rounding=\"PS\" ZoneSize=\"6\" />" +
-                    "<Corner SeqID=\"5\" CompoundMarkID=\"1\" Rounding=\"SP\" ZoneSize=\"3\"/></CompoundMarkSequence><CourseLimit><Limit SeqID=\"1\" Lat=\"-36.8325\" Lon=\"174.8325\"/>" +
-                    "<Limit SeqID=\"2\" Lat=\"-36.82883\" Lon=\"174.81983\"/><Limit SeqID=\"3\" Lat=\"-36.82067\" Lon=\"174.81983\"/>" +
-                    "<Limit SeqID=\"4\" Lat=\"-36.811\" Lon=\"174.8265\"/><Limit SeqID=\"5\" Lat=\"-36.81033\" Lon=\"174.83833\"/><Limit SeqID=\"6\" Lat=\"-36.81533\" Lon=\"174.8525\"/>" +
-                    "<Limit SeqID=\"7\" Lat=\"-36.81533\" Lon=\"174.86733\"/>" +
-                    "<Limit SeqID=\"8\" Lat=\"-36.81633\" Lon=\"174.88217\"/><Limit SeqID=\"9\" Lat=\"-36.83383\" Lon=\"174.87117\"/><Limit SeqID=\"10\" Lat=\"-36.83417\" Lon=\"174.84767\"/></CourseLimit></Race>");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        }
-    }
 
 }
