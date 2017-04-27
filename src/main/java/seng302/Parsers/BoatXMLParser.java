@@ -25,8 +25,8 @@ public class BoatXMLParser {
     private List<Boat> markBoats;
 
     /**
-     * returns a list of boats
-     * @return
+     *
+     * @return List a list of boats
      */
     public List<Boat> getBoats(){
         return boats;
@@ -44,6 +44,7 @@ public class BoatXMLParser {
         Document root= builder.build(stream);
         Element boatConfig = root.getRootElement();
 
+
         //we only care about boat data right now
         for(Element boat: boatConfig.getChild("Boats").getChildren()){
             // only need yacht data
@@ -53,6 +54,9 @@ public class BoatXMLParser {
                 competitor.setAbbreName(boat.getAttributeValue("ShortName"));
                 competitor.setSourceID(boat.getAttributeValue("SourceID"));
                 competitor.setType("Yacht");
+                System.out.println("Boat name : " + competitor.getTeamName());
+                System.out.println("Abbre: " + competitor.getAbbreName());
+                System.out.println("Source ID: " + competitor.getSourceID());
                 boats.add(competitor);
             }
             //add to mark boats if type is mark
@@ -62,6 +66,10 @@ public class BoatXMLParser {
                 mark.setAbbreName(boat.getAttributeValue("ShortName"));
                 mark.setSourceID(boat.getAttributeValue("SourceID"));
                 mark.setType("Mark");
+
+                System.out.println("Boatname: " + mark.getTeamName());
+                System.out.println("Short name : " + mark.getAbbreName());
+                System.out.println("Source id: " + mark.getSourceID());
                 markBoats.add(mark);
             }
 

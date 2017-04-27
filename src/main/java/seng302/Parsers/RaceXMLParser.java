@@ -51,12 +51,12 @@ public class RaceXMLParser {
         String creationTimeDate = race.getChild("CreationTimeDate").getValue();
         String raceStartTime = race.getChild("RaceStartTime").getAttributeValue("Time");
         boolean raceStartTimePostponed = Boolean.parseBoolean(race.getChild("RaceStartTime").getAttributeValue("Postpone"));
-//
-//        System.out.println("Race ID : " + raceID);
-//        System.out.println("Race type: " + raceType);
-//        System.out.println("Creation time date: " + creationTimeDate);
-//        System.out.println("Race start time: " +raceStartTime);
-//        System.out.println("Postpone: " + raceStartTimePostponed);
+
+        System.out.println("Race ID : " + raceID);
+        System.out.println("Race type: " + raceType);
+        System.out.println("Creation time date: " + creationTimeDate);
+        System.out.println("Race start time: " +raceStartTime);
+        System.out.println("Postpone: " + raceStartTimePostponed);
 
         raceData.setRaceID(raceID);
         raceData.setRaceType(raceType);

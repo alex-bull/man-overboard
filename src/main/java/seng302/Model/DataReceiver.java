@@ -74,15 +74,15 @@ public class DataReceiver extends TimerTask {
 
         switch (subType) {
             case REGATTA:
-                RegattaXMLParser regattaParser = new RegattaXMLParser(xml);
+                RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
                 break;
             case RACE:
-                RaceXMLParser raceParser = new RaceXMLParser(xml);
+                RaceXMLParser raceParser = new RaceXMLParser(xml.trim());
                 this.raceData = raceParser.getRaceData();
                 updateCourse(raceParser);
                 break;
             case BOAT:
-                BoatXMLParser boatParser = new BoatXMLParser(xml);
+                BoatXMLParser boatParser = new BoatXMLParser(xml.trim());
                 break;
         }
     }
