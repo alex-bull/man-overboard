@@ -22,6 +22,7 @@ import java.util.List;
  */
 public class BoatXMLParser {
     private List<Boat> boats;
+    private List<Boat> markBoats;
 
     /**
      * returns a list of boats
@@ -31,8 +32,13 @@ public class BoatXMLParser {
         return boats;
     }
 
+    public List<Boat> getMarkBoats(){
+        return markBoats;
+    }
+
     public BoatXMLParser(String xmlStr) throws IOException, JDOMException {
         boats=new ArrayList<>();
+        markBoats=new ArrayList<>();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
         Document root= builder.build(stream);
@@ -46,7 +52,17 @@ public class BoatXMLParser {
                 competitor.setTeamName(boat.getAttributeValue("BoatName"));
                 competitor.setAbbreName(boat.getAttributeValue("ShortName"));
                 competitor.setSourceID(boat.getAttributeValue("SourceID"));
+                competitor.setType("Yacht");
                 boats.add(competitor);
+            }
+            //add to mark boats if type is mark
+            if(boat.getAttributeValue("Type").equals("Mark")){
+                Boat mark=new Boat();
+                mark.setTeamName(boat.getAttributeValue("BoatName"));
+                mark.setAbbreName(boat.getAttributeValue("ShortName"));
+                mark.setSourceID(boat.getAttributeValue("SourceID"));
+                mark.setType("Mark");
+                markBoats.add(mark);
             }
 
         }

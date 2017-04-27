@@ -260,6 +260,9 @@ public class BoatXMLParserTest {
         assertEquals("SOFTBANK TEAM JAPAN",competitors.get(3).getTeamName());
         assertEquals("GROUPAMA TEAM FRANCE",competitors.get(4).getTeamName());
         assertEquals("LAND ROVER BAR",competitors.get(5).getTeamName());
+
+        List<Boat> markBoats=boatXMLParser.getMarkBoats();
+        assertEquals(10,markBoats.size());
     }
 
 }

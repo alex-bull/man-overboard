@@ -16,8 +16,15 @@ public class Boat implements Competitor {
     private String abbreName;
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
     private int sourceID;
+    private String type;
 
+    public String getType() {
+        return type;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
 
     /**
      * Creates a boat
