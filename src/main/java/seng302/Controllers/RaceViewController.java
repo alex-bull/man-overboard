@@ -76,6 +76,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         try {
             dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,6 +118,8 @@ public class RaceViewController implements ClockHandler, Initializable {
      * @param height double the height of the canvas
      */
     public void begin(Race race, double width, double height) {
+        dataReceiver.setCanvasDimensions(width, height);
+        System.out.println(width + "  " + height);
         this.race=race;
         this.raceClock = new RaceClock(this, race.getVelocityScaleFactor(), 27000);
         this.worldClock = new WorldClock(this);
@@ -208,21 +211,45 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     public void drawBoundary(GraphicsContext gc) {
 
-        gc.save();
-        ArrayList<Double> boundaryX = new ArrayList<>();
-        ArrayList<Double> boundaryY = new ArrayList<>();
+        if(dataReceiver.getCourseBoundary() != null) {
+            System.out.println("HELLO");
+            System.out.println(dataReceiver.getCourseBoundary().size());
+            gc.save();
+            ArrayList<Double> boundaryX = new ArrayList<>();
+            ArrayList<Double> boundaryY = new ArrayList<>();
 
-        for (MutablePoint point: this.race.getCourseBoundary()) {
-            boundaryX.add(point.getXValue());
-            boundaryY.add(point.getYValue());
+            for (MutablePoint point: dataReceiver.getCourseBoundary()) {
+                boundaryX.add(point.getXValue());
+                boundaryY.add(point.getYValue());
+                System.out.println(point.getXValue() + "  " + point.getYValue());
+            }
+            gc.setLineDashes(5);
+            gc.setLineWidth(0.8);
+            gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
+            gc.setFill(Color.POWDERBLUE);
+            //shade inside the boundary
+            gc.fillPolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
+            gc.restore();
+
         }
-        gc.setLineDashes(5);
-        gc.setLineWidth(0.8);
-        gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
-        gc.setFill(Color.POWDERBLUE);
-        //shade inside the boundary
-        gc.fillPolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
-        gc.restore();
+
+
+//        gc.save();
+//        ArrayList<Double> boundaryX = new ArrayList<>();
+//        ArrayList<Double> boundaryY = new ArrayList<>();
+//
+//        for (MutablePoint point: this.race.getCourseBoundary()) {
+//            boundaryX.add(point.getXValue());
+//            boundaryY.add(point.getYValue());
+////            System.out.println(point.getXValue() + "  " + point.getYValue());
+//        }
+//        gc.setLineDashes(5);
+//        gc.setLineWidth(0.8);
+//        gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
+//        gc.setFill(Color.POWDERBLUE);
+//        //shade inside the boundary
+//        gc.fillPolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
+//        gc.restore();
     }
 
 
@@ -450,21 +477,27 @@ public class RaceViewController implements ClockHandler, Initializable {
 //        Timeline t = race.generateTimeline();
 
         List<Competitor> competitors = race.getCompetitors();
+        List<MutablePoint> boundary= new ArrayList<>();
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
 
 //        List<MutablePoint> courseBoundary = race.getCourseBoundary();
 //        dataReceiver.setCourseBoundary(courseBoundary);
         //set competitors
+        dataReceiver.setCourseBoundary(boundary);
         dataReceiver.setCompetitors(competitors);
+//        dataReceiver.setCourseBoundary();
         Timer receiverTimer=new Timer();
         receiverTimer.schedule(dataReceiver,0,100);
 
+        System.out.println("HI");
+        System.out.println(dataReceiver.getCourseBoundary().size());
+        System.out.println("BYTE");
 //        race=dataReceiver.getRace();
 
         //draw the course
         gc.setFill(Color.LIGHTBLUE);
         gc.fillRect(0,0,width,height);
-        drawCourse(gc);
+//        drawCourse(gc);
 
         //draw wind direction arrow
         drawArrow(race.getWindDirection(), gc);
@@ -495,6 +528,7 @@ public class RaceViewController implements ClockHandler, Initializable {
                     counter = 0;
                 }
 
+                drawCourse(gc);
                 //move competitors and draw tracks
                 for (int i = 0; i < competitors.size(); i++) {
                     Competitor boat = competitors.get(i);
@@ -504,6 +538,7 @@ public class RaceViewController implements ClockHandler, Initializable {
                     moveAnnotations(boat, i);
 
                 }
+
 
             }
         };

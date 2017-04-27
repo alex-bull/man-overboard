@@ -175,7 +175,7 @@ public class StarterController implements Initializable, ClockHandler {
                     e.printStackTrace();
                 }
                 MainController mainController = loader.getController();
-                mainController.setRace(r, 4000, 4000, numBoats);
+                mainController.setRace(r, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), numBoats);
                 primaryStage.setTitle("RaceVision");
                 primaryStage.setMinHeight(900);
                 primaryStage.setMinWidth(1300);

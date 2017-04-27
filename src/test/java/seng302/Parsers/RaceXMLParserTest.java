@@ -96,7 +96,7 @@ public class RaceXMLParserTest {
                 "    <Limit SeqID=\"9\" Lat=\"57.6686890\" Lon=\"11.8250920\" />\n" +
                 "    <Limit SeqID=\"10\" Lat=\"57.6708220\" Lon=\"11.8321340\" />\n" +
                 "  </CourseLimit>\n" +
-                "</Race>");
+                "</Race>", 1000, 1000);
     }
 
     @Test

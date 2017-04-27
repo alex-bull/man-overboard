@@ -32,14 +32,17 @@ public class RaceXMLParser {
     private double scaleFactor;
     private double bufferX;
     private double bufferY;
+    private double width;
+    private double height;
 
     public RaceData getRaceData() {
         return raceData;
     }
 
 
-
-    public RaceXMLParser(String xmlStr) throws IOException, JDOMException {
+    public RaceXMLParser(String xmlStr, double width, double height) throws IOException, JDOMException {
+        this.width = width;
+        this.height = height;
         this.raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
@@ -52,11 +55,11 @@ public class RaceXMLParser {
         String raceStartTime = race.getChild("RaceStartTime").getAttributeValue("Time");
         boolean raceStartTimePostponed = Boolean.parseBoolean(race.getChild("RaceStartTime").getAttributeValue("Postpone"));
 
-        System.out.println("Race ID : " + raceID);
-        System.out.println("Race type: " + raceType);
-        System.out.println("Creation time date: " + creationTimeDate);
-        System.out.println("Race start time: " +raceStartTime);
-        System.out.println("Postpone: " + raceStartTimePostponed);
+//        System.out.println("Race ID : " + raceID);
+//        System.out.println("Race type: " + raceType);
+//        System.out.println("Creation time date: " + creationTimeDate);
+//        System.out.println("Race start time: " +raceStartTime);
+//        System.out.println("Postpone: " + raceStartTimePostponed);
 
         raceData.setRaceID(raceID);
         raceData.setRaceType(raceType);
@@ -133,8 +136,7 @@ public class RaceXMLParser {
         }
 //        System.out.println("-----count---- : " + count);
 
-        // TODO: parse in the correct parameters
-        parseRace(1200.0,1000, 1, 12, 12);
+        parseRace(width, height);
     }
 
     public List<MutablePoint> getCourseBoundary() {
@@ -145,23 +147,24 @@ public class RaceXMLParser {
         return courseFeature;
     }
 
-    private void parseRace(double width, double height, double scaleFactor, double bufferX, double bufferY) {
+    private void parseRace(double width, double height) {
+        bufferX=Math.max(150,width*0.6);
+        bufferY=Math.max(10,height*0.1);
 
-        parseBoundary(width, height, scaleFactor, bufferX, bufferY);
+        parseBoundary(width, height, bufferX, bufferY);
         parseCourseFeatures(width, height, bufferX, bufferY);
     }
 
 
     private void parseCourseFeatures(double width, double height, double bufferX, double bufferY) {
         int index = 0;
-        bufferX=Math.max(150,width*0.6);
-        bufferY=Math.max(10,height*0.1);
-        // TODO: need to carry on parsing course features here and scale them
 
+        // TODO: need to carry on parsing course features here and scale them
+        this.courseFeature = new ArrayList<>();
     }
 
 
-    private void parseBoundary(double width, double height, double scaleFactor, double bufferX, double bufferY) {
+    private void parseBoundary(double width, double height, double bufferX, double bufferY) {
         System.out.println("----------------PARSING BOUNDARY------------------");
 
         List <Double> xMercatorCoords=new ArrayList<>();
@@ -182,10 +185,21 @@ public class RaceXMLParser {
             boundary.add(pixel);
         }
 
-        boundary.forEach(p->p.factor(scaleFactor,scaleFactor, Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
-//        System.out.println(boundary);
-//        System.out.println("SIZe of boundary " + boundary.size());
+        // scale to canvas size
+        double xFactor = (width-bufferX)/(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
+        double yFactor = (height-bufferY)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
 
+        //make scaling in proportion
+        scaleFactor = Math.min(xFactor,yFactor);
+        boundary.forEach(p->p.factor(scaleFactor,scaleFactor, Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
+
+
+
+        //        System.out.println(boundary);
+//        System.out.println("SIZe of boundary " + boundary.size());
+//        for(MutablePoint point: boundary) {
+//            System.out.println(point.getXValue() + "  " + point.getYValue());
+//        }
         this.courseBoundary = boundary;
 
     }

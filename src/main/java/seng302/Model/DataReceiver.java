@@ -5,6 +5,7 @@ import seng302.Parsers.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,6 +22,23 @@ public class DataReceiver extends TimerTask {
     private FileOutputStream fileOutputStream;
     private List<Competitor> competitors;
     private Race race;
+    private double canvasWidth;
+    private double canvasHeight;
+
+    public List<MutablePoint> getCourseBoundary() {
+        return courseBoundary;
+    }
+
+    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
+        this.courseBoundary = courseBoundary;
+    }
+
+    private List<MutablePoint> courseBoundary = new ArrayList<>();
+
+    public Course getCourse() {
+        return course;
+    }
+
     private Course course;
     //variables that need to be refactored
     private BoatData boatData;
@@ -43,6 +61,17 @@ public class DataReceiver extends TimerTask {
 
 
     }
+
+    /**
+     * Sets the canvas width and height so that the parser can scale values to screen.
+     * @param width double the width of the canvas
+     * @param height double the height of the canvae
+     */
+    public void setCanvasDimensions(double width, double height) {
+        this.canvasWidth = width;
+        this.canvasHeight = height;
+    }
+
 
 
     /**
@@ -77,7 +106,7 @@ public class DataReceiver extends TimerTask {
                 RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
                 break;
             case RACE:
-                RaceXMLParser raceParser = new RaceXMLParser(xml.trim());
+                RaceXMLParser raceParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
                 this.raceData = raceParser.getRaceData();
                 updateCourse(raceParser);
                 break;
@@ -89,12 +118,17 @@ public class DataReceiver extends TimerTask {
 
     private void updateCourse(RaceXMLParser raceParser) {
 //        System.out.println("HELLO UPDATING COURSE");
+        this.courseBoundary = raceParser.getCourseBoundary();
+        System.out.println("SIZe of boundary " + courseBoundary.size());
+        for(MutablePoint point: courseBoundary) {
+            System.out.println(point.getXValue() + "  " + point.getYValue());
+        }
 
         List<CourseFeature> courseFeatures = raceParser.getCourseFeature();
         List<MutablePoint> courseBoundary = raceParser.getCourseBoundary();
         double windDirection = 10; // to do later
 
-//        this.course = new RaceCourse(courseFeatures, courseBoundary, windDirection);
+        this.course = new RaceCourse(courseFeatures, courseBoundary, windDirection);
     }
 
 
