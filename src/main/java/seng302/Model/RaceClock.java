@@ -6,6 +6,7 @@ import static java.lang.Math.abs;
 
 /**
  * Created by mgo65 on 30/03/17.
+ * Clock for the race
  */
 public class RaceClock extends AnimationTimer implements Clock {
 
@@ -17,7 +18,7 @@ public class RaceClock extends AnimationTimer implements Clock {
 
 
     public RaceClock(ClockHandler handler, int scaleFactor, int negativeTime) {
-        System.out.println(handler);
+
         this.clockHandler = handler;
         this.scaleFactor = scaleFactor;
         this.negativeTime = negativeTime;
@@ -34,7 +35,7 @@ public class RaceClock extends AnimationTimer implements Clock {
     @Override
     public void handle(long now) {
         String newTime = this.formatDisplayTime(System.currentTimeMillis() - this.startTime);
-        this.clockHandler.clockTicked(newTime);
+        this.clockHandler.clockTicked(newTime, this);
     }
 
 
