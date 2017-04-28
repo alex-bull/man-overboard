@@ -430,12 +430,15 @@ public class RaceViewController implements ClockHandler, Initializable {
         drawArrow(race.getWindDirection(), gc);
 
         //draw moving entities
-        for(int i =0; i< competitors.size(); i++)  {
+
+//        if(dataReceiver.) {
+        for(int i = 0; i < competitors.size(); i++) {
             Competitor boat = competitors.get(i);
             drawWake(boat);
             drawBoat(boat);
             drawAnnotations(boat);
         }
+//        }
 
         AnimationTimer timer = new AnimationTimer() {
 
