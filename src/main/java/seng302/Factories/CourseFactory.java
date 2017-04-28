@@ -42,4 +42,9 @@ public class CourseFactory {
         }
         return new RaceCourse(points, boundary, parser.getWindDirection());
     }
+
+//    public static void main(String[] args){
+//        CourseFactory cf=new CourseFactory();
+//        cf.createCourse(1000.0,1000.0,"src/main/resources/mockXML/new_format_course.xml");
+//    }
 }

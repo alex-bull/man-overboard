@@ -15,11 +15,13 @@ public class Gate implements CourseFeature {
     private MutablePoint pixelPoint2;
     private MutablePoint GPSPoint1;
     private MutablePoint GPSPoint2;
+    private String rounding;
 
     private double exitHeading;
     private boolean isFinish;
     private boolean isLine;
     private int index;
+    private int zoneSize;
 
     /**
      * Creates a course gate
@@ -48,6 +50,42 @@ public class Gate implements CourseFeature {
      */
     public boolean isLine(){
         return isLine;
+    }
+
+    /**
+     * Getter for rounding
+     * @return String rounding. Represents how the course feature is passed.
+     */
+    @Override
+    public String getRounding() {
+        return this.rounding;
+    }
+
+    /**
+     * Setter for rounding
+     * @param rounding the rounding of the course feature
+     */
+    @Override
+    public void setRounding(String rounding) {
+        this.rounding = rounding;
+    }
+
+    /**
+     * Setter for zoneSize
+     * @param zoneSize the zoneSize of the course feature
+     */
+    @Override
+    public void setZoneSize(String zoneSize) {
+        this.zoneSize = Integer.valueOf(zoneSize);
+    }
+
+    /**
+     * Getter for zoneSize
+     * @return int zoneSize
+     */
+    @Override
+    public int getZoneSize() {
+        return this.zoneSize;
     }
 
     /**
@@ -97,7 +135,6 @@ public class Gate implements CourseFeature {
                 (this.GPSPoint1.getYValue()+this.GPSPoint2.getYValue())/2);
     }
 
-
     /**
      * Sets the exitHeading property
      * @param exitHeading Double the direction in which competitors exit the gate.
@@ -118,6 +155,7 @@ public class Gate implements CourseFeature {
         pixelPoint1.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
         pixelPoint2.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
     }
+
 
     @Override
     public boolean equals(Object o) {

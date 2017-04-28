@@ -108,22 +108,77 @@ public class RaceXMLParser {
 
     public static void main(String[] args){
 
-        RaceXMLParser p = new RaceXMLParser("<Race><RaceID>11080703</RaceID><RaceType>Match</RaceType>" +
-                "<CreationTimeDate>2011-08-06T13:25:00-0000</CreationTimeDate ><RaceStartTime Time=\"2011-08-06T13:30:00-0700\" Postpone=\"false\" " +
-                "/><Participants><Yacht SourceID=\"107\" Entry=\"Port\" /><Yacht SourceID=\"108\" Entry=\"Stbd\" /></Participants><Course><CompoundMark " +
-                "CompoundMarkID=\"1\" Name=\"StartLine\"><Mark SeqID=\"1\" Name=\"PRO\" TargetLat=\"-36.83\" TargetLng=\"174.83\" SourceID=\"101\" />" +
-                "<Mark SeqID=\"2\" Name=\"PIN\" TargetLat=\"-36.84\" TargetLng=\"174.81\" SourceID=\"102\" /></CompoundMark><CompoundMark CompoundMarkID=\"2\" " +
-                "Name=\"M1\"><Mark Name=\"M1\" TargetLat=\"-36.63566590\" TargetLng=\"174.88543944\" SourceID=\"103\" /></CompoundMark><CompoundMark CompoundMarkID=\"3\" " +
-                "Name=\"M2\"><Mark Name=\"M2\" TargetLat=\"-36.83\" TargetLng=\"174.80\" SourceID=\"102\" />" +
-                "</CompoundMark><CompoundMark CompoundMarkID=\"4\" Name=\"Gate\"><Mark SeqID=\"1\" Name=\"G1\" TargetLat=\"-36.63566590\" TargetLng=\"174.97205159\" " +
-                "SourceID=\"104\" /><Mark SeqID=\"2\" Name=\"G2\" TargetLat=\"-36.64566590\" TargetLng=\"174.98205159\" SourceID=\"105\" /></CompoundMark></Course>" +
-                "<CompoundMarkSequence><Corner SeqID=\"1\" CompoundMarkID=\"1\" Rounding=\"SP\" ZoneSize=\"3\" /><Corner SeqID=\"2\" CompoundMarkID=\"2\" Rounding=\"Port\" ZoneSize=\"3\" />" +
-                "<Corner SeqID=\"3\" CompoundMarkID=\"3\" Rounding=\"Stbd\" ZoneSize=\"6\" /><Corner SeqID=\"4\" CompoundMarkID=\"4\" Rounding=\"PS\" ZoneSize=\"6\" />" +
-                "<Corner SeqID=\"5\" CompoundMarkID=\"1\" Rounding=\"SP\" ZoneSize=\"3\"/></CompoundMarkSequence><CourseLimit><Limit SeqID=\"1\" Lat=\"-36.8325\" Lon=\"174.8325\"/>" +
-                "<Limit SeqID=\"2\" Lat=\"-36.82883\" Lon=\"174.81983\"/><Limit SeqID=\"3\" Lat=\"-36.82067\" Lon=\"174.81983\"/>" +
-                "<Limit SeqID=\"4\" Lat=\"-36.811\" Lon=\"174.8265\"/><Limit SeqID=\"5\" Lat=\"-36.81033\" Lon=\"174.83833\"/><Limit SeqID=\"6\" Lat=\"-36.81533\" Lon=\"174.8525\"/>" +
-                "<Limit SeqID=\"7\" Lat=\"-36.81533\" Lon=\"174.86733\"/>" +
-                "<Limit SeqID=\"8\" Lat=\"-36.81633\" Lon=\"174.88217\"/><Limit SeqID=\"9\" Lat=\"-36.83383\" Lon=\"174.87117\"/><Limit SeqID=\"10\" Lat=\"-36.83417\" Lon=\"174.84767\"/></CourseLimit></Race>");
+        RaceXMLParser p = new RaceXMLParser("<?xml version=\"1.0\"?>\n" +
+                "<Race>\n" +
+                "    <RaceID>123546789</RaceID>\n" +
+                "\n" +
+                "    <RaceType>Match</RaceType>\n" +
+                "\n" +
+                "    <CreationTimeDate>2011-08-06T13:25:00-0000</CreationTimeDate >\n" +
+                "\n" +
+                "    <RaceStartTime Time=\"2011-08-06T13:30:00-0700\" Postpone=\"false\" />\n" +
+                "\n" +
+                "    <Participants>\n" +
+                "        <Yacht SourceID=\"101\" />\n" +
+                "        <Yacht SourceID=\"102\" />\n" +
+                "        <Yacht SourceID=\"103\" />\n" +
+                "        <Yacht SourceID=\"104\" />\n" +
+                "        <Yacht SourceID=\"105\" />\n" +
+                "        <Yacht SourceID=\"106\" />\n" +
+                "    </Participants>\n" +
+                "\n" +
+                "    <Course>\n" +
+                "        <CompoundMark CompoundMarkID=\"1\" Name=\"Mark0\">\n" +
+                "            <Mark SeqID=\"1\" Name=\"Start Line 1\" TargetLat=\"32.296577\" TargetLng=\"-64.854304\" SourceID=\"122\" />\n" +
+                "            <Mark SeqID=\"2\" Name=\"Start Line 2\" TargetLat=\"32.293771\" TargetLng=\"-64.855242\" SourceID=\"123\" />\n" +
+                "        </CompoundMark>\n" +
+                "\n" +
+                "        <CompoundMark CompoundMarkID=\"2\" Name=\"Mark1\">\n" +
+                "            <Mark SeqID=\"1\" Name=\"Mark 1\" TargetLat=\"32.293039\" TargetLng=\"-64.843983\" SourceID=\"131\" />\n" +
+                "        </CompoundMark>\n" +
+                "\n" +
+                "        <CompoundMark CompoundMarkID=\"3\" Name=\"Mark2\">\n" +
+                "            <Mark SeqID=\"1\" Name=\"Lee Gate 1\" TargetLat=\"32.309693\" TargetLng=\"-64.835249\" SourceID=\"124\" />\n" +
+                "            <Mark SeqID=\"2\" Name=\"Lee Gate 2\" TargetLat=\"32.308046\" TargetLng=\"-64.831785\" SourceID=\"125\" />\n" +
+                "        </CompoundMark>\n" +
+                "\n" +
+                "        <CompoundMark CompoundMarkID=\"4\" Name=\"Mark3\">\n" +
+                "            <Mark SeqID=\"1\" Name=\"Wind Gate 1\" TargetLat=\"32.284680\" TargetLng=\"-64.850045\" SourceID=\"126\" />\n" +
+                "            <Mark SeqID=\"2\" Name=\"Wind Gate 2\" TargetLat=\"32.280164\" TargetLng=\"-64.847591\" SourceID=\"127\" />\n" +
+                "        </CompoundMark>\n" +
+                "\n" +
+                "        <CompoundMark CompoundMarkID=\"5\" Name=\"Mark2\">\n" +
+                "            <Mark SeqID=\"1\" Name=\"Lee Gate 1\" TargetLat=\"32.309693\" TargetLng=\"-64.835249\" SourceID=\"124\" />\n" +
+                "            <Mark SeqID=\"2\" Name=\"Lee Gate 2\" TargetLat=\"32.308046\" TargetLng=\"-64.831785\" SourceID=\"125\" />\n" +
+                "        </CompoundMark>\n" +
+                "\n" +
+                "        <CompoundMark CompoundMarkID=\"6\" Name=\"Mark4\" isfinish=\"true\">\n" +
+                "            <Mark SeqID=\"1\" Name=\"Finish Line 1\" TargetLat=\"32.317379\" TargetLng=\"-64.839291\" SourceID=\"128\" />\n" +
+                "            <Mark SeqID=\"2\" Name=\"Finish Line 2\" TargetLat=\"32.317257\" TargetLng=\"-64.836260\" SourceID=\"129\" />\n" +
+                "        </CompoundMark>\n" +
+                "\n" +
+                "        <CompoundMarkSequence>\n" +
+                "            <Corner SeqID=\"1\" CompoundMarkID=\"1\" Rounding=\"PS\" ZoneSize=\"3\" />\n" +
+                "            <Corner SeqID=\"2\" CompoundMarkID=\"2\" Rounding=\"Port\" ZoneSize=\"3\" />\n" +
+                "            <Corner SeqID=\"3\" CompoundMarkID=\"3\" Rounding=\"SP\" ZoneSize=\"3\" />\n" +
+                "            <Corner SeqID=\"4\" CompoundMarkID=\"4\" Rounding=\"PS\" ZoneSize=\"3\" />\n" +
+                "            <Corner SeqID=\"5\" CompoundMarkID=\"5\" Rounding=\"SP\" ZoneSize=\"3\" />\n" +
+                "            <Corner SeqID=\"6\" CompoundMarkID=\"6\" Rounding=\"PS\" ZoneSize=\"3\" />\n" +
+                "        </CompoundMarkSequence>\n" +
+                "        <CourseLimit>\n" +
+                "            <Limit SeqID=\"1\" Lat=\"32.3177476\" Lon=\"-64.8403001\" />\n" +
+                "            <Limit SeqID=\"2\" Lat=\"32.3174575\" Lon=\"-64.8328543\" />\n" +
+                "            <Limit SeqID=\"3\" Lat=\"32.3028767\" Lon=\"-64.8209667\" />\n" +
+                "            <Limit SeqID=\"4\" Lat=\"32.2776994\" Lon=\"-64.8418236\" />\n" +
+                "            <Limit SeqID=\"5\" Lat=\"32.2768286\" Lon=\"-64.8519516\" />\n" +
+                "            <Limit SeqID=\"6\" Lat=\"32.2918489\" Lon=\"-64.8545266\" />\n" +
+                "            <Limit SeqID=\"7\" Lat=\"32.2935902\" Lon=\"-64.8600197\" />\n" +
+                "            <Limit SeqID=\"8\" Lat=\"32.299467\" Lon=\"-64.8581314\" />\n" +
+                "            <Limit SeqID=\"9\" Lat=\"32.2982336\" Lon=\"-64.8480892\" />\n" +
+                "            <Limit SeqID=\"10\" Lat=\"32.3122319\" Lon=\"-64.8378754\" />\n" +
+                "        </CourseLimit>\n" +
+                "    </Course>\n" +
+                "</Race>");
     }
 
 }

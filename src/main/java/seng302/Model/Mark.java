@@ -14,9 +14,11 @@ public class Mark implements CourseFeature {
     private MutablePoint pixelLocation;
     private MutablePoint GPSLocation;
     private double exitHeading;
+    private int zoneSize;
     private boolean isFinish = false;
     private boolean isLine = false;
     private int index;
+    private String rounding;
 
 
     /**
@@ -39,6 +41,42 @@ public class Mark implements CourseFeature {
      */
     public boolean isLine() {
         return false;
+    }
+
+    /**
+     * Getter for rounding
+     * @return String rounding. Represents how the course feature is passed.
+     */
+    @Override
+    public String getRounding() {
+        return this.rounding;
+    }
+
+    /**
+     * Setter for rounding
+     * @param rounding
+     */
+    @Override
+    public void setRounding(String rounding) {
+        this.rounding = rounding;
+    }
+
+    /**
+     * Setter for zoneSize
+     * @param zoneSize
+     */
+    @Override
+    public void setZoneSize(String zoneSize) {
+        this.zoneSize = Integer.valueOf(zoneSize);
+    }
+
+    /**
+     * Getter for zoneSize
+     * @return int zoneSize
+     */
+    @Override
+    public int getZoneSize() {
+        return this.zoneSize;
     }
 
     /**
@@ -73,7 +111,6 @@ public class Mark implements CourseFeature {
      * @return MutablePoint the GPS Location
      */
     public MutablePoint getGPSCentre() {
-
         return this.GPSLocation;
     }
 
@@ -98,6 +135,8 @@ public class Mark implements CourseFeature {
     public void factor(double xFactor, double yFactor,double minX, double minY,double xBuffer,double yBuffer) {
         pixelLocation.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
     }
+
+
 
     /**
      * Sets the exitHeading property

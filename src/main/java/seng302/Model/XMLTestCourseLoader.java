@@ -123,6 +123,7 @@ public class XMLTestCourseLoader {
 
 
         for (Element feature : features) {
+
             String type = feature.getName();
 
             if (type.equals("CompoundMark") && feature.getChildren().size() == 2) { //its a gate
@@ -194,12 +195,25 @@ public class XMLTestCourseLoader {
                 points.add(mark1);
 
 
-            } else if (type.equals("CourseLimit")) {
+            } else if (type.equals("CompoundMarkSequence")) {        //Additional information for course features
+                List<Element> corners = feature.getChildren();
+                for (Element corner : corners) {
+                    for (CourseFeature courseFeature : points) {
+                        if (corner.getAttributeValue("CompoundMarkID").equals(
+                                String.valueOf(courseFeature.getIndex()))) {
+                            String rounding = corner.getAttributeValue("Rounding");
+                            courseFeature.setRounding(rounding);
+                            String zoneSize = corner.getAttributeValue("ZoneSize");
+                            courseFeature.setZoneSize(zoneSize);
+                        }
+                    }
 
-            } else { //invalid course file
+                }
+            } else if (type.equals("CourseLimit")) {
+            }
+            else { //invalid course file
                 throw new JDOMException();
             }
-
         }
 
         // scale to canvas size
@@ -213,8 +227,7 @@ public class XMLTestCourseLoader {
         points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
 
         return points;
+
     }
-
-
 
 }
