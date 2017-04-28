@@ -72,7 +72,7 @@ public class XMLTestCourseLoader {
         SAXBuilder saxbuilder = new SAXBuilder();
         Document document = saxbuilder.build(inputFile);
         Element raceCourse = document.getRootElement();
-        List<Element> features = raceCourse.getChildren();
+        List<Element> features = raceCourse.getChild("Course").getChildren();
 
         List<MutablePoint> boundary = new ArrayList<>();
 
@@ -119,7 +119,7 @@ public class XMLTestCourseLoader {
         SAXBuilder saxbuilder = new SAXBuilder();
         Document document = saxbuilder.build(inputFile);
         Element raceCourse = document.getRootElement();
-        List<Element> features = raceCourse.getChildren();
+        List<Element> features = raceCourse.getChild("Course").getChildren();
 
 
         for (Element feature : features) {

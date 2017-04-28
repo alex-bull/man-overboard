@@ -16,6 +16,7 @@ public class Boat implements Competitor {
     private String abbreName;
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
     private int currentLegIndex;
+    private int sourceID;
 
 
 
@@ -35,6 +36,29 @@ public class Boat implements Competitor {
         this.color = color;
         this.abbreName = abbreName;
         currentLegIndex=0;
+    }
+
+    /**
+     * Creates a boat, for mock class only
+     *
+     * @param teamName      String the team name of the boat
+     * @param velocity      int the velocity of the boat in m/s
+     * @param startPosition MutablePoint the boat's start position coordinate
+     * @param sourceID      sourceID of the boat
+     * @param abbreName     String the abbreviated name of the boat
+     */
+    public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID) {
+        this.velocity = velocity;
+        this.teamName = teamName;
+        this.position = startPosition;
+        this.abbreName = abbreName;
+        currentLegIndex=0;
+        this.sourceID=sourceID;
+    }
+
+
+    public int getSourceID() {
+        return sourceID;
     }
 
     /**

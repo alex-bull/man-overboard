@@ -1,14 +1,17 @@
 package seng302.TestMockDatafeed;
 
+import com.google.common.io.ByteStreams;
 import com.google.common.primitives.UnsignedBytes;
 import edu.princeton.cs.introcs.In;
 
-import java.io.ByteArrayOutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
 /**
  * Created by mattgoodson on 24/04/17.
@@ -86,11 +89,56 @@ public class BinaryPackager {
 
 
         //CRC
-        packetBuffer.putInt(0x04C11DB7);
+        Checksum crc32=new CRC32();
+        crc32.update(packet,0,packet.length);
+        packetBuffer.putInt((int) crc32.getValue());
 
         return packet;
 
     }
+
+    /**
+     * Packages XML files into bytearray to be sent
+     * @param length length of the xmlFile
+     * @param xmlFileString the xml file to be sent
+     * @param messageType the type of the xml file
+     *                    5-Regatta
+     *                    6-Race
+     *                    7-Boat
+     * @return a bytearray of packaged xml message
+     */
+    public byte[] packageXML(int length, String xmlFileString, int messageType) throws IOException {
+
+        // message header is 19 bytes + 14 bytes of other xml message fields
+        byte[] packet = new byte[length+33];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        //HEADER
+        byte type = 26;
+        int bodyLength = length+14;
+        this.writeHeader(packetBuffer, type, (short) bodyLength);
+        //BODY - note: chars are used as unsigned shorts
+        packetBuffer.put((byte) 1); //version number
+        packetBuffer.putShort((short) 1);//AckNumber, set to 1 since we only send it once for now
+        packetBuffer.put(getTimeStamp()); //timestamp
+        packetBuffer.put((byte)messageType); //message type
+        packetBuffer.putShort((short) 1);//sequence number
+        packetBuffer.putShort((short)length);//length of message
+
+        //get the content of xmlFile
+        packetBuffer.put(xmlFileString.getBytes());
+
+        //CRC
+        Checksum crc32=new CRC32();
+        crc32.update(packet,0,packet.length);
+        packetBuffer.putInt((int) crc32.getValue());
+
+        return packet;
+
+    }
+
+
 
 
     /**

@@ -14,7 +14,9 @@ import java.nio.channels.SocketChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -71,14 +73,15 @@ public class DataSender {
      */
     public void sendData(byte[] data) throws IOException {
         os.write(data);
-
     }
 
-    public static void main (String [] args) throws IOException, InterruptedException {
-        DataSender me=new DataSender(4941);
-        me.sendTestData();
-        me.close();
 
-    }
+
+//    public static void main (String [] args) throws IOException, InterruptedException {
+//        DataSender me=new DataSender(4941);
+//        me.sendTestData();
+//        me.close();
+//
+//    }
 
 }
