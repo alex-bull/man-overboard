@@ -24,25 +24,30 @@ public class DataReceiver extends TimerTask {
     private Race race;
     private double canvasWidth;
     private double canvasHeight;
-
-    public List<MutablePoint> getCourseBoundary() {
-        return courseBoundary;
-    }
-
-    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
-        this.courseBoundary = courseBoundary;
-    }
-
-    private List<MutablePoint> courseBoundary = new ArrayList<>();
-
-    public Course getCourse() {
-        return course;
-    }
-
     private Course course;
     //variables that need to be refactored
     private BoatData boatData;
     private RaceData raceData;
+
+    private List<MutablePoint> courseBoundary = new ArrayList<>();
+    public Race getRace() {
+        return race;
+    }
+    public Course getCourse() {
+        return course;
+    }
+    public List<MutablePoint> getCourseBoundary() {
+        return courseBoundary;
+    }
+
+    public void setCompetitors(List<Competitor> competitors){
+        this.competitors=competitors;
+    }
+    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
+        this.courseBoundary = courseBoundary;
+    }
+
+    ////////////////////////////////////////////////
 
     /**
      * Initializes port to receive binary data from
@@ -53,54 +58,24 @@ public class DataReceiver extends TimerTask {
     public DataReceiver(String host, int port) throws IOException {
         receiveSock = new Socket(host, port);
         dis = new DataInputStream(receiveSock.getInputStream());
-        fileOutputStream=new FileOutputStream(new File("src/main/resources/BinaryFiles/"+host));
+//        fileOutputStream=new FileOutputStream(new File("src/main/resources/BinaryFiles/"+host));
 //        System.setOut(new PrintStream(new BufferedOutputStream(fileOutputStream)));
         byteStreamConverter = new ByteStreamConverter();
         System.out.println("Start connection to server...");
 
-
-
-    }
-
-    /**
-     * Sets the canvas width and height so that the parser can scale values to screen.
-     * @param width double the width of the canvas
-     * @param height double the height of the canvae
-     */
-    public void setCanvasDimensions(double width, double height) {
-        this.canvasWidth = width;
-        this.canvasHeight = height;
     }
 
 
-
     /**
-     * Close the established streams and sockets
+     * Parse binary data into XML and create a new parser dependant on the XmlSubType
+     * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
      * @throws IOException IOException
+     * @throws JDOMException JDOMException
      */
-    public void close() throws IOException {
-        receiveSock.close();
-        dis.close();
-    }
-
-    /**
-     * Receives one byte from server and returns it, test server only sends one byte at a time so this is gonna get changed
-     * @return the byte received
-     * @throws IOException
-     */
-    public byte[] receive() throws IOException {
-        byte[] received=new byte[1];
-        dis.readFully(received);
-        return received;
-
-    }
-
     private void readXMLMessage(byte[] message) throws IOException, JDOMException {
         String xml = byteStreamConverter.parseXMLMessage(message);
         XmlSubtype subType = byteStreamConverter.getXmlSubType();
-
 //            System.out.println(xml);
-
         switch (subType) {
             case REGATTA:
                 RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
@@ -116,8 +91,12 @@ public class DataReceiver extends TimerTask {
         }
     }
 
+
+    /**
+     * Update the course using the information from the raceParser
+     * @param raceParser Parsed race information
+     */
     private void updateCourse(RaceXMLParser raceParser) {
-//        System.out.println("HELLO UPDATING COURSE");
         this.courseBoundary = raceParser.getCourseBoundary();
         System.out.println("SIZe of boundary " + courseBoundary.size());
         for(MutablePoint point: courseBoundary) {
@@ -126,12 +105,49 @@ public class DataReceiver extends TimerTask {
 
         List<CourseFeature> courseFeatures = raceParser.getCourseFeature();
         List<MutablePoint> courseBoundary = raceParser.getCourseBoundary();
-        double windDirection = 10; // to do later
+        double windDirection = 10; //TODO: later
 
         this.course = new RaceCourse(courseFeatures, courseBoundary, windDirection);
     }
 
 
+    /**
+     * Sets the canvas width and height so that the parser can scale values to screen.
+     * @param width double the width of the canvas
+     * @param height double the height of the canvas
+     */
+    public void setCanvasDimensions(double width, double height) {
+        this.canvasWidth = width;
+        this.canvasHeight = height;
+    }
+
+
+    /**
+     * Close the established streams and sockets
+     * @throws IOException IOException
+     */
+    public void close() throws IOException {
+        receiveSock.close();
+        dis.close();
+    }
+
+
+    /**
+     * Receives one byte from server and returns it, test server only sends one byte at a time so this is gonna get changed
+     * @return the byte received
+     * @throws IOException IOException
+     */
+    public byte[] receive() throws IOException {
+        byte[] received=new byte[1];
+        dis.readFully(received);
+        return received;
+    }
+
+
+    /**
+     * Read the message header (13 bytes) and parse information
+     * @throws IOException IOException
+     */
     public void readHeader() throws IOException {
         // 13 because already read sync bytes
         byte[] header = new byte[13];
@@ -140,6 +156,11 @@ public class DataReceiver extends TimerTask {
     }
 
 
+    /**
+     * Check for the first and second sync byte
+     * @return Boolean if Sync Byte found
+     * @throws IOException IOException
+     */
     public boolean checkForSyncBytes() throws IOException {
         byte firstSyncByte = 0x47;
         // -125 is equivalent to 0x83 unsigned
@@ -161,11 +182,10 @@ public class DataReceiver extends TimerTask {
         return false;
     }
 
-    public void setCompetitors(List<Competitor> competitors){
-        this.competitors=competitors;
-    }
 
-
+    /**
+     * Identify the start of a packet, determine the message type and length, then read.
+     */
     public void run() {
 //        while(true){
             try {
@@ -200,23 +220,23 @@ public class DataReceiver extends TimerTask {
                                 competitors.get(index).setProperties(boatData.getSpeed(), boatData.getHeading(), boatData.getLatitude(), boatData.getLongitude());
                             }
                         }
-
                     }
                 }
-
             }
             catch (EOFException e) {
                 System.out.println("End of file.");
-
-//                break;
             }
             catch (IOException e) {
                 e.printStackTrace();
-//                break;
             }
 //        }
     }
 
+    /**
+     * Creates a new data receiver and runs at the period of 100ms
+     * @param args
+     * @throws InterruptedException
+     */
     public static void main (String [] args) throws InterruptedException {
         DataReceiver dataReceiver = null;
         while(dataReceiver == null) {
@@ -224,7 +244,7 @@ public class DataReceiver extends TimerTask {
 //                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
                 dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
 
-                Timer timer=new Timer();
+                Timer timer = new Timer();
                 timer.schedule(dataReceiver,0,100);
 
             }
@@ -232,11 +252,7 @@ public class DataReceiver extends TimerTask {
                 e.printStackTrace();
             }
         }
-
-
     }
 
-    public Race getRace() {
-        return race;
-    }
+
 }

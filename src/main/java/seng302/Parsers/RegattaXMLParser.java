@@ -14,6 +14,11 @@ import java.io.StringReader;
  * Parser for Regatta XML
  */
 public class RegattaXMLParser {
+
+    /**
+     * Parse the Regatta Data
+     * @param xmlStr XML String of regatta data
+     */
     public RegattaXMLParser(String xmlStr) {
 
         try {

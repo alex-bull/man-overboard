@@ -14,7 +14,6 @@ public class ByteStreamConverter extends Converter {
     private int messageLength;
     private XmlSubtype xmlSubType;
 
-
     public ByteStreamConverter() {
         boatDataParser = new BoatDataParser();
     }
@@ -40,7 +39,6 @@ public class ByteStreamConverter extends Converter {
      */
     public void parseHeader(byte[] header) {
         messageType = header[0];
-
 
         // can get timestamp and source id from here if needed
 
@@ -99,8 +97,6 @@ public class ByteStreamConverter extends Converter {
     public BoatData parseBoatLocationMessage(byte[] message) {
         return boatDataParser.processMessage(message);
     }
-
-
 
 
 }

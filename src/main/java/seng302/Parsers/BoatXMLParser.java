@@ -24,10 +24,6 @@ public class BoatXMLParser {
     private List<Boat> boats;
     private List<Boat> markBoats;
 
-    /**
-     *
-     * @return List a list of boats
-     */
     public List<Boat> getBoats(){
         return boats;
     }
@@ -36,6 +32,12 @@ public class BoatXMLParser {
         return markBoats;
     }
 
+    /**
+     * Parse the XML string and set competitor and mark properties from given boat data
+     * @param xmlStr XML String of a boat data
+     * @throws IOException IOException
+     * @throws JDOMException JDOMException
+     */
     public BoatXMLParser(String xmlStr) throws IOException, JDOMException {
         boats=new ArrayList<>();
         markBoats=new ArrayList<>();
@@ -72,13 +74,6 @@ public class BoatXMLParser {
 //                System.out.println("Source id: " + mark.getSourceID());
                 markBoats.add(mark);
             }
-
         }
-
-
-
-
     }
-
-
 }

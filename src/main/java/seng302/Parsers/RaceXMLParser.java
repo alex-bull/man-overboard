@@ -38,8 +38,23 @@ public class RaceXMLParser {
     public RaceData getRaceData() {
         return raceData;
     }
+    public List<MutablePoint> getCourseBoundary() {
+        return courseBoundary;
+    }
+    public List<CourseFeature> getCourseFeature() {
+        return courseFeature;
+    }
 
+    /////////////////////////////////////////////
 
+    /**
+     * Parse XML race data
+     * @param xmlStr XML String of race data
+     * @param width double width of the course view
+     * @param height double height of the course view
+     * @throws IOException IOException
+     * @throws JDOMException JDOMException
+     */
     public RaceXMLParser(String xmlStr, double width, double height) throws IOException, JDOMException {
         this.width = width;
         this.height = height;
@@ -139,14 +154,12 @@ public class RaceXMLParser {
         parseRace(width, height);
     }
 
-    public List<MutablePoint> getCourseBoundary() {
-        return courseBoundary;
-    }
 
-    public List<CourseFeature> getCourseFeature() {
-        return courseFeature;
-    }
-
+    /**
+     * Set buffers and call course parsers
+     * @param width double width of the race canvas
+     * @param height double height of the race canvas
+     */
     private void parseRace(double width, double height) {
         bufferX=Math.max(150,width*0.6);
         bufferY=Math.max(10,height*0.1);
@@ -155,7 +168,13 @@ public class RaceXMLParser {
         parseCourseFeatures(width, height, bufferX, bufferY);
     }
 
-
+    /**
+     * Parse the course features
+     * @param width double - width of the race canvas
+     * @param height double - height of the race canvas
+     * @param bufferX canvas buffer width
+     * @param bufferY canvas buffer height
+     */
     private void parseCourseFeatures(double width, double height, double bufferX, double bufferY) {
         int index = 0;
 
@@ -164,6 +183,13 @@ public class RaceXMLParser {
     }
 
 
+    /**
+     * Parse the boundary of the course
+     * @param width double - width of the race canvas
+     * @param height double - height of the race canvas
+     * @param bufferX canvas buffer width
+     * @param bufferY canvas buffer height
+     */
     private void parseBoundary(double width, double height, double bufferX, double bufferY) {
         System.out.println("----------------PARSING BOUNDARY------------------");
 
