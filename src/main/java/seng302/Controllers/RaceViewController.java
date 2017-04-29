@@ -495,7 +495,7 @@ public class RaceViewController implements ClockHandler, Initializable {
         dataReceiver.setCompetitors(competitors);
 //        dataReceiver.setCourseBoundary();
         Timer receiverTimer=new Timer();
-        receiverTimer.schedule(dataReceiver,0,100);
+        receiverTimer.schedule(dataReceiver,0,1);
 
         System.out.println("HI");
         System.out.println(dataReceiver.getCourseBoundary().size());

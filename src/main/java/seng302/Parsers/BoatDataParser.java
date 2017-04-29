@@ -24,7 +24,6 @@ public class BoatDataParser {
     double height;
 
     CourseFeature courseFeature;
-
     BoatData boatData;
 
     private List<CourseFeature> courseFeatures;

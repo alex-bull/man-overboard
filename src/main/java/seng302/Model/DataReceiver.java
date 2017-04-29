@@ -15,45 +15,26 @@ import java.util.*;
  */
 public class DataReceiver extends TimerTask {
 
-
-    private List <Double> xMercatorCoords = new ArrayList<>();
-    private List <Double> yMercatorCoords = new ArrayList<>();
-
     private Socket receiveSock;
     private DataInputStream dis;
     private ByteStreamConverter byteStreamConverter;
-    private FileOutputStream fileOutputStream;
     private List<Competitor> competitors;
-    private Race race;
     private double canvasWidth;
     private double canvasHeight;
-    private Course course;
-    //variables that need to be refactored
     private BoatData boatData;
     private RaceData raceData;
     private RaceXMLParser raceXMLParser;
-
+    private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
+    private List<CourseFeature> courseFeatures = new ArrayList<>();
     private List<MutablePoint> courseBoundary = new ArrayList<>();
-
+    private FileOutputStream fileOutputStream;
     public List<CourseFeature> getCourseFeatures() {
 
         return courseFeatures;
     }
-    private List<CourseFeature> storedFeatures = new ArrayList<>();
-    private List<CourseFeature> courseFeatures = new ArrayList<>();
-//    private List<MutablePoint> markPixelLocation = new ArrayList<>();
-    public Race getRace() {
-        return race;
-    }
-    public Course getCourse() {
-        return course;
-    }
     public List<MutablePoint> getCourseBoundary() {
         return courseBoundary;
     }
-//    public List<MutablePoint> getMarkPixelLocation() { return markPixelLocation; }
-
-
     public void setCompetitors(List<Competitor> competitors){
         this.competitors=competitors;
     }
@@ -106,10 +87,6 @@ public class DataReceiver extends TimerTask {
     }
 
 
-
-
-
-
     /**
      * Sets the canvas width and height so that the parser can scale values to screen.
      * @param width double the width of the canvas
@@ -130,19 +107,6 @@ public class DataReceiver extends TimerTask {
         dis.close();
     }
 
-
-    /**
-     * Receives one byte from server and returns it, test server only sends one byte at a time so this is gonna get changed
-     * @return the byte received
-     * @throws IOException IOException
-     */
-    public byte[] receive() throws IOException {
-        byte[] received=new byte[1];
-        dis.readFully(received);
-        return received;
-    }
-
-
     /**
      * Read the message header (13 bytes) and parse information
      * @throws IOException IOException
@@ -153,7 +117,6 @@ public class DataReceiver extends TimerTask {
         dis.readFully(header);
         byteStreamConverter.parseHeader(header);
     }
-
 
     /**
      * Check for the first and second sync byte
@@ -170,7 +133,6 @@ public class DataReceiver extends TimerTask {
 //        System.out.println(String.format("First Sync: %02X",b1[0]));
         if (b1[0] == firstSyncByte) {
             byte[] b2 = new byte[1];
-
 
             dis.readFully(b2);
 //            System.out.println(String.format("Second Sync: %02X",b2[0]));
@@ -220,7 +182,7 @@ public class DataReceiver extends TimerTask {
                                 competitors.get(index).setProperties(boatData.getSpeed(), boatData.getHeading(), boatData.getLatitude(), boatData.getLongitude());
                             }
                         }
-                        if(boatData.getDeviceType() == 3) {
+                        if(boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
 //                            for(CourseFeature point: boatDataParser.getCourseFeatures()){
 //                                System.out.println(point.getPixelLocations().size() + "PIXEL LOCATION");
 //                                for(MutablePoint p : point.getPixelLocations()){
@@ -229,14 +191,13 @@ public class DataReceiver extends TimerTask {
 //                            }
                             List<CourseFeature> points = new ArrayList<>();
                             CourseFeature courseFeature = boatDataParser.getCourseFeature();
-                            this.storedFeatures.add(courseFeature);
+//                            this.storedFeatures.add(courseFeature);
+                            this.storedFeatures.put(boatData.getSourceID(), courseFeature);
 
 
-                            for(CourseFeature feature: this.storedFeatures) {
-                                points.add(feature);
+                            for(Integer id: this.storedFeatures.keySet()) {
+                                points.add(this.storedFeatures.get(id));
                             }
-
-
 
                             //make scaling in proportion
                             double bufferX = raceXMLParser.getBufferX();
@@ -245,9 +206,9 @@ public class DataReceiver extends TimerTask {
                             List<Double> xMercatorCoords = raceXMLParser.getxMercatorCoords();
                             List<Double> yMercatorCoords = raceXMLParser.getyMercatorCoords();
 
-
                             //scale points to fit screen
                             points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
+
                             this.courseFeatures = points;
                             System.out.println("------STORED FEATURES------");
                             for(CourseFeature feature: points) {

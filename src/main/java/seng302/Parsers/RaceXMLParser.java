@@ -18,9 +18,7 @@ import javax.print.Doc;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by jar156 on 13/04/17.
@@ -36,7 +34,7 @@ public class RaceXMLParser {
     private double bufferY;
     private List <Double> xMercatorCoords;
     private List <Double> yMercatorCoords;
-
+    private Set<Integer> markIDs = new HashSet<>();
     private double width;
     private double height;
 
@@ -50,7 +48,9 @@ public class RaceXMLParser {
     public List<CourseFeature> getCourseFeatures() {
         return courseFeatures;
     }
-
+    public Set<Integer> getMarkIDs() {
+        return markIDs;
+    }
 
 
     /**
@@ -117,7 +117,8 @@ public class RaceXMLParser {
 //                System.out.println("Mark name: " + markName);
 //                System.out.println("Target lat: " +targetLat);
 //                System.out.println("Target Lng: " + targetLng);
-//                System.out.println("Source id: " + sourceID);
+                System.out.println("Source id: " + sourceID);
+                markIDs.add(sourceID);
                 MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
                 marks.add(markData);
             }
