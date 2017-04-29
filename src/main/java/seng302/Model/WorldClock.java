@@ -9,14 +9,16 @@ import static java.lang.Math.abs;
 
 /**
  * Created by psu43 on 6/04/17.
- * Live clock for the Bermuda time zone
+ * Live clock
  */
 public class WorldClock extends AnimationTimer implements Clock {
 
     private ClockHandler clockHandler;
+    private String offsetUTC;
 
-    public WorldClock(ClockHandler handler) {
+    public WorldClock(ClockHandler handler, String offsetUTC) {
         this.clockHandler = handler;
+        this.offsetUTC = offsetUTC;
     }
 
     @Override
@@ -33,8 +35,8 @@ public class WorldClock extends AnimationTimer implements Clock {
 
 
     private String formatWorldTime() {
-        String bermudaTimeZone = "GMT-3";
-        TimeZone timeZone = TimeZone.getTimeZone(bermudaTimeZone);
+
+        TimeZone timeZone = TimeZone.getTimeZone("GMT" + offsetUTC);
         Calendar calendar = Calendar.getInstance(timeZone);
 
         String hour = Integer.toString(calendar.get(Calendar.HOUR));
@@ -57,7 +59,7 @@ public class WorldClock extends AnimationTimer implements Clock {
             hour = "12";
         }
 
-        return hour + ":" + minutes + ":" + seconds + " " + ampm + "  UTC" + bermudaTimeZone.substring(3);
+        return hour + ":" + minutes + ":" + seconds + " " + ampm + "  UTC" + offsetUTC;
     }
 
 }

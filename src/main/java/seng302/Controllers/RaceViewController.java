@@ -76,12 +76,12 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        try {
-            dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
         noAnnotationsRadio.setToggleGroup(annotations);
@@ -119,12 +119,15 @@ public class RaceViewController implements ClockHandler, Initializable {
      * @param width double the width of the canvas
      * @param height double the height of the canvas
      */
-    public void begin(Race race, double width, double height) {
+    public void begin(Race race, double width, double height, DataReceiver dataReceiver) {
+        this.dataReceiver = dataReceiver;
         dataReceiver.setCanvasDimensions(width, height);
         System.out.println(width + "  " + height);
         this.race=race;
         this.raceClock = new RaceClock(this, race.getVelocityScaleFactor(), 27000);
-        this.worldClock = new WorldClock(this);
+        String timezone = dataReceiver.getCourseTimezone();
+        System.out.println("Timezone " + timezone);
+        this.worldClock = new WorldClock(this, timezone);
         raceViewCanvas.setHeight(height);
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
@@ -175,6 +178,9 @@ public class RaceViewController implements ClockHandler, Initializable {
         for (CourseFeature courseFeature : dataReceiver.getCourseFeatures()) {
             gc.setFill(Color.ORANGERED); // buoy colour
             gc.setStroke(Color.BLUE); // line colour between gates
+
+            System.out.println("FEATURE " + courseFeature.getPixelLocations());
+
 
             // get the pixel locations of the course feature
             List<MutablePoint> marks = courseFeature.getPixelLocations();
@@ -494,8 +500,8 @@ public class RaceViewController implements ClockHandler, Initializable {
         dataReceiver.setCourseBoundary(boundary);
         dataReceiver.setCompetitors(competitors);
 //        dataReceiver.setCourseBoundary();
-        Timer receiverTimer=new Timer();
-        receiverTimer.schedule(dataReceiver,0,1);
+        //Timer receiverTimer=new Timer();
+        //receiverTimer.schedule(dataReceiver,0,1);
 
         System.out.println("HI");
         System.out.println(dataReceiver.getCourseBoundary().size());

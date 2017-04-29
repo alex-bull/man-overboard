@@ -23,18 +23,19 @@ public class DataReceiver extends TimerTask {
     private double canvasHeight;
     private BoatData boatData;
     private RaceData raceData;
+    private String timezone;
     private RaceXMLParser raceXMLParser;
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
     private List<CourseFeature> courseFeatures = new ArrayList<>();
     private List<MutablePoint> courseBoundary = new ArrayList<>();
     private FileOutputStream fileOutputStream;
-    public List<CourseFeature> getCourseFeatures() {
 
-        return courseFeatures;
-    }
-    public List<MutablePoint> getCourseBoundary() {
-        return courseBoundary;
-    }
+    //Getters
+    public List<CourseFeature> getCourseFeatures() { return courseFeatures; }
+    public List<MutablePoint> getCourseBoundary() { return courseBoundary; }
+    public String getCourseTimezone() { return timezone; }
+
+    //Setters
     public void setCompetitors(List<Competitor> competitors){
         this.competitors=competitors;
     }
@@ -74,6 +75,11 @@ public class DataReceiver extends TimerTask {
         switch (subType) {
             case REGATTA:
                 RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
+                this.timezone = regattaParser.getOffsetUTC();
+                if (timezone.substring(0,1) != "-") {
+                    timezone = "+" + timezone;
+                }
+                System.out.println("UTC is " + timezone);
                 break;
             case RACE:
                 this.raceXMLParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
@@ -164,6 +170,7 @@ public class DataReceiver extends TimerTask {
                     dis.readFully(message);
 
                     if (messageType == XMLMessageType) {
+                        System.out.println("XML");
                         try {
                             readXMLMessage(message);
                         } catch (JDOMException e) {
@@ -182,13 +189,13 @@ public class DataReceiver extends TimerTask {
                                 competitors.get(index).setProperties(boatData.getSpeed(), boatData.getHeading(), boatData.getLatitude(), boatData.getLongitude());
                             }
                         }
-                        if(boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
+                        if(boatData.getDeviceType() == 3) {
 //                            for(CourseFeature point: boatDataParser.getCourseFeatures()){
 //                                System.out.println(point.getPixelLocations().size() + "PIXEL LOCATION");
 //                                for(MutablePoint p : point.getPixelLocations()){
 //                                    System.out.println(p.getXValue() + "       +       " + p.getYValue());
 //                                }
-//                            }
+//                            }&& raceXMLParser.getMarkIDs().contains(boatData.getSourceID())
                             List<CourseFeature> points = new ArrayList<>();
                             CourseFeature courseFeature = boatDataParser.getCourseFeature();
 //                            this.storedFeatures.add(courseFeature);
@@ -206,13 +213,15 @@ public class DataReceiver extends TimerTask {
                             List<Double> xMercatorCoords = raceXMLParser.getxMercatorCoords();
                             List<Double> yMercatorCoords = raceXMLParser.getyMercatorCoords();
 
+                            System.out.println("S1 " + scaleFactor);
                             //scale points to fit screen
-                            points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
+                            //points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
 
                             this.courseFeatures = points;
                             System.out.println("------STORED FEATURES------");
                             for(CourseFeature feature: points) {
                                 System.out.println("name---" + feature.getName());
+                                System.out.println(feature.getExitHeading());
                                 System.out.println(feature.getPixelLocations().get(0).getXValue());
                                 System.out.println(feature.getPixelLocations().get(0).getYValue());
                                 System.out.println("x and y values above");

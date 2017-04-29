@@ -1,5 +1,6 @@
 package seng302.Controllers;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -31,6 +32,7 @@ import org.w3c.dom.css.Rect;
 import seng302.Factories.CourseFactory;
 import seng302.Factories.RaceFactory;
 import seng302.Model.*;
+import seng302.Parsers.RegattaXMLParser;
 
 
 import java.io.IOException;
@@ -38,6 +40,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 import java.util.Scanner;
+import java.util.Timer;
 
 /**
  * Created by rjc249 on 5/04/17.
@@ -63,6 +66,7 @@ public class StarterController implements Initializable, ClockHandler {
     private Rectangle2D primaryScreenBounds;
     private final int STARTTIME = 1;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
+    private DataReceiver dataReceiver;
 
     /**
      * Takes an XML course file so the course information is set
@@ -97,8 +101,26 @@ public class StarterController implements Initializable, ClockHandler {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.worldClock = new WorldClock(this);
+
+        //RegattaXMLParser parser = new RegattaXMLParser("<?xml version=\"1.0\" encoding=\"utf-8\"?><UtcOffset>-3</UtcOffset>");
+
+        try {
+            dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Timer receiverTimer=new Timer();
+        receiverTimer.schedule(dataReceiver,0,1);
+
+        while (dataReceiver.getCourseTimezone() == null) {
+            System.out.print("");
+        }
+
+        this.worldClock = new WorldClock(this, dataReceiver.getCourseTimezone());
         worldClock.start();
+
         countdownText.textProperty().bind(timeSeconds.asString());
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         numBoatsInput.setItems(FXCollections.observableArrayList(2, 3, 4, 5, 6));
@@ -163,6 +185,7 @@ public class StarterController implements Initializable, ClockHandler {
                 new KeyFrame(Duration.seconds(STARTTIME + 1),
                         new KeyValue(timeSeconds, 0)));
         timeline.play();
+
         timeline.setOnFinished(new EventHandler<ActionEvent>() {
             //after 5 seconds, load race course view
             @Override
@@ -175,7 +198,7 @@ public class StarterController implements Initializable, ClockHandler {
                     e.printStackTrace();
                 }
                 MainController mainController = loader.getController();
-                mainController.setRace(r, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), numBoats);
+                mainController.setRace(r, dataReceiver, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), numBoats);
                 primaryStage.setTitle("RaceVision");
                 primaryStage.setMinHeight(900);
                 primaryStage.setMinWidth(1300);

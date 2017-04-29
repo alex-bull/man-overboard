@@ -203,8 +203,9 @@ public class RaceXMLParser {
         }
 
         // scale to canvas size
-        double xFactor = (width-bufferX)/(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
-        double yFactor = (height-bufferY)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
+        double xFactor = (width-bufferX);//(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
+        double yFactor = (height-bufferY);//(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
+        // TODO divide by zero error possible above
 
         //make scaling in proportion
         scaleFactor = Math.min(xFactor,yFactor);
