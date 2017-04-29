@@ -70,6 +70,8 @@ public class RaceViewController implements ClockHandler, Initializable {
     private List<Label> nameAnnotations = new ArrayList<>();
     private List<Label> speedAnnotations = new ArrayList<>();
     private DataReceiver dataReceiver;
+    private List<MutablePoint> courseBoundary = null;
+    private List<CourseFeature> courseFeature = null;
 
 
     @Override
@@ -168,10 +170,9 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     private void drawCourse(GraphicsContext gc) {
 
-        drawBoundary(gc);
-
+        System.out.println("DRAWING COURSE.." + dataReceiver.getCourseFeatures().size());
         // loops through all course features
-        for (CourseFeature courseFeature : this.race.getCourseFeatures().subList(1, race.getCourseFeatures().size())) {
+        for (CourseFeature courseFeature : dataReceiver.getCourseFeatures()) {
             gc.setFill(Color.ORANGERED); // buoy colour
             gc.setStroke(Color.BLUE); // line colour between gates
 
@@ -182,12 +183,17 @@ public class RaceViewController implements ClockHandler, Initializable {
             int d = 15; // diameter of the circle
             double r = d/2; // radius of the circle
 
+            System.out.println("SIZE OF MARK>. " + marks.size());
             // if it is a gate it will have two pixel location coordinates
             if (marks.size() == 2) {
+
                 gc.setLineWidth(3);
 
                 double x2 = marks.get(1).getXValue(); // second x pixel coordinate
                 double y2 = marks.get(1).getYValue(); // second y pixel coordinate
+                System.out.println("GATEEE" );
+                System.out.println(x1 + " Ddddd" + y1);
+                System.out.println(x2 + " Dddxxxdd" + y2);
 
                 // check if gate needs line
                 if(courseFeature.isLine()){
@@ -199,6 +205,8 @@ public class RaceViewController implements ClockHandler, Initializable {
                 gc.fillOval(x2 - r, y2 - r, d, d);
 
             } else {
+                System.out.println("NOT");
+                System.out.println(x1 + " Ddddd" + y1);
                 gc.fillOval(x1 - r, y1 - r, d, d); // draw mark point
             }
         }
@@ -528,7 +536,16 @@ public class RaceViewController implements ClockHandler, Initializable {
                     counter = 0;
                 }
 
-                drawCourse(gc);
+                if(dataReceiver.getCourseBoundary() != courseBoundary) {
+                    drawBoundary(gc);
+                    courseBoundary = dataReceiver.getCourseBoundary();
+                }
+
+                if(dataReceiver.getCourseFeatures() != courseFeature){
+                    drawCourse(gc);
+                    courseFeature = dataReceiver.getCourseFeatures();
+                }
+
                 //move competitors and draw tracks
                 for (int i = 0; i < competitors.size(); i++) {
                     Competitor boat = competitors.get(i);

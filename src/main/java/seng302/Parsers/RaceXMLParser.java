@@ -10,6 +10,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import seng302.Model.CourseFeature;
+import seng302.Model.Gate;
+import seng302.Model.Mark;
 import seng302.Model.MutablePoint;
 
 import javax.print.Doc;
@@ -28,7 +30,7 @@ public class RaceXMLParser {
 
     private RaceData raceData;
     private List<MutablePoint> courseBoundary;
-    private List<CourseFeature> courseFeature;
+    private List<CourseFeature> courseFeatures;
     private double scaleFactor;
     private double bufferX;
     private double bufferY;
@@ -41,8 +43,8 @@ public class RaceXMLParser {
     public List<MutablePoint> getCourseBoundary() {
         return courseBoundary;
     }
-    public List<CourseFeature> getCourseFeature() {
-        return courseFeature;
+    public List<CourseFeature> getCourseFeatures() {
+        return courseFeatures;
     }
 
     /////////////////////////////////////////////
@@ -165,22 +167,91 @@ public class RaceXMLParser {
         bufferY=Math.max(10,height*0.1);
 
         parseBoundary(width, height, bufferX, bufferY);
-        parseCourseFeatures(width, height, bufferX, bufferY);
     }
 
-    /**
-     * Parse the course features
-     * @param width double - width of the race canvas
-     * @param height double - height of the race canvas
-     * @param bufferX canvas buffer width
-     * @param bufferY canvas buffer height
-     */
-    private void parseCourseFeatures(double width, double height, double bufferX, double bufferY) {
-        int index = 0;
+//    /**
+//     * Parse the course features
+//     * @param width double - width of the race canvas
+//     * @param height double - height of the race canvas
+//     * @param bufferX canvas buffer width
+//     * @param bufferY canvas buffer height
+//     */
+//    private void parseCourseFeatures(double width, double height, double bufferX, double bufferY) {
+//        int index = 0;
+//        List <Double> xMercatorCoords=new ArrayList<>();
+//        List <Double> yMercatorCoords=new ArrayList<>();
+//
+//        ArrayList<CourseFeature> points = new ArrayList<>();
+//       for(CompoundMarkData mark: raceData.getCourse()) {
+//           int id = mark.getID();
+//           String name = mark.getName();
+//           System.out.println(name + "****");
+//           if(mark.getMarks().size() == 2){
+//
+//               double lat1 = mark.getMarks().get(0).getTargetLat();
+//               double lat2 = mark.getMarks().get(1).getTargetLat();
+//
+//               double lon1 = mark.getMarks().get(0).getTargetLon();
+//               double lon2 = mark.getMarks().get(1).getTargetLon();
+//
+//               System.out.println(lat1 + "  " + lon1 + "----" + lat2 + " " + lon2);
+//
+//               ArrayList<Double> point1=mercatorProjection(lat1,lon1,width,height);
+//               ArrayList<Double> point2=mercatorProjection(lat2,lon2,width,height);
+//               double point1X=point1.get(0);
+//               double point1Y=point1.get(1);
+//               double point2X=point2.get(0);
+//               double point2Y=point2.get(1);
+//
+//               xMercatorCoords.add(point1X);
+//               xMercatorCoords.add(point2X);
+//               yMercatorCoords.add(point1Y);
+//               yMercatorCoords.add(point2Y);
+//
+//               MutablePoint pixel1 = new MutablePoint(point1X,point1Y);
+//               MutablePoint pixel2 = new MutablePoint(point2X,point2Y);
+//               MutablePoint GPS1 = new MutablePoint(lat1, lon1);
+//               MutablePoint GPS2 = new MutablePoint(lat2, lon2);
+//
+//
+//               Gate gate = new Gate(name, GPS1, GPS2, pixel1, pixel2, false, true, index);
+//               points.add(gate);
+//           }
+//           else if (mark.getMarks().size() == 1){
+//
+//               double lat1 = mark.getMarks().get(0).getTargetLat();
+//               double lon1 = mark.getMarks().get(0).getTargetLon();
+//
+//               ArrayList<Double> point1 = mercatorProjection(lat1, lon1, width, height);
+//               double point1X = point1.get(0);
+//               double point1Y = point1.get(1);
+//               xMercatorCoords.add(point1X);
+//               yMercatorCoords.add(point1Y);
+//
+//
+//               MutablePoint pixel = new MutablePoint(point1X, point1Y);
+//               MutablePoint GPS = new MutablePoint(lat1, lon1);
+//               Mark mark1 = new Mark(name, pixel, GPS, index);
+//
+//               points.add(mark1);
+//           }
+//
+//       }
+//
+//        // scale to canvas size
+//        double xFactor = (width-bufferX)/(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
+//        double yFactor = (height-bufferY)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
+//
+//        //make scaling in proportion
+//        scaleFactor = Math.min(xFactor,yFactor);
+//
+//        //scale points to fit screen
+//        points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
+//
+//        // TODO: need to carry on parsing course features here and scale them
+//        this.courseFeatures = points;
+//    }
 
-        // TODO: need to carry on parsing course features here and scale them
-        this.courseFeature = new ArrayList<>();
-    }
 
 
     /**

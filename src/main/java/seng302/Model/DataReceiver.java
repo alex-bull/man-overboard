@@ -5,10 +5,7 @@ import seng302.Parsers.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * Created by khe60 on 10/04/17.
@@ -16,6 +13,11 @@ import java.util.TimerTask;
  * Can't connect to the test port for some reason (internet enabler)
  */
 public class DataReceiver extends TimerTask {
+
+
+    private List <Double> xMercatorCoords = new ArrayList<>();
+    private List <Double> yMercatorCoords = new ArrayList<>();
+
     private Socket receiveSock;
     private DataInputStream dis;
     private ByteStreamConverter byteStreamConverter;
@@ -30,6 +32,14 @@ public class DataReceiver extends TimerTask {
     private RaceData raceData;
 
     private List<MutablePoint> courseBoundary = new ArrayList<>();
+
+    public List<CourseFeature> getCourseFeatures() {
+
+        return courseFeatures;
+    }
+    private List<CourseFeature> storedFeatures = new ArrayList<>();
+    private List<CourseFeature> courseFeatures = new ArrayList<>();
+//    private List<MutablePoint> markPixelLocation = new ArrayList<>();
     public Race getRace() {
         return race;
     }
@@ -39,6 +49,8 @@ public class DataReceiver extends TimerTask {
     public List<MutablePoint> getCourseBoundary() {
         return courseBoundary;
     }
+//    public List<MutablePoint> getMarkPixelLocation() { return markPixelLocation; }
+
 
     public void setCompetitors(List<Competitor> competitors){
         this.competitors=competitors;
@@ -83,7 +95,7 @@ public class DataReceiver extends TimerTask {
             case RACE:
                 RaceXMLParser raceParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
                 this.raceData = raceParser.getRaceData();
-                updateCourse(raceParser);
+                this.courseBoundary = raceParser.getCourseBoundary();
                 break;
             case BOAT:
                 BoatXMLParser boatParser = new BoatXMLParser(xml.trim());
@@ -92,23 +104,8 @@ public class DataReceiver extends TimerTask {
     }
 
 
-    /**
-     * Update the course using the information from the raceParser
-     * @param raceParser Parsed race information
-     */
-    private void updateCourse(RaceXMLParser raceParser) {
-        this.courseBoundary = raceParser.getCourseBoundary();
-        System.out.println("SIZe of boundary " + courseBoundary.size());
-        for(MutablePoint point: courseBoundary) {
-            System.out.println(point.getXValue() + "  " + point.getYValue());
-        }
 
-        List<CourseFeature> courseFeatures = raceParser.getCourseFeature();
-        List<MutablePoint> courseBoundary = raceParser.getCourseBoundary();
-        double windDirection = 10; //TODO: later
 
-        this.course = new RaceCourse(courseFeatures, courseBoundary, windDirection);
-    }
 
 
     /**
@@ -210,7 +207,8 @@ public class DataReceiver extends TimerTask {
                         }
                     }
                     else if (messageType == boatLocationMessageType) {
-                        boatData = byteStreamConverter.parseBoatLocationMessage(message);
+                        BoatDataParser boatDataParser = new BoatDataParser(message, canvasWidth, canvasHeight);
+                        this.boatData = boatDataParser.getBoatData();
 //                        System.out.println(boatData);
                         //update boat with boat data
                         if(competitors!=null){
@@ -218,6 +216,47 @@ public class DataReceiver extends TimerTask {
                             int index=boatData.getSourceID() - 101;
                             if(index<competitors.size()) {
                                 competitors.get(index).setProperties(boatData.getSpeed(), boatData.getHeading(), boatData.getLatitude(), boatData.getLongitude());
+                            }
+                        }
+                        if(boatData.getDeviceType() == 3) {
+//                            for(CourseFeature point: boatDataParser.getCourseFeatures()){
+//                                System.out.println(point.getPixelLocations().size() + "PIXEL LOCATION");
+//                                for(MutablePoint p : point.getPixelLocations()){
+//                                    System.out.println(p.getXValue() + "       +       " + p.getYValue());
+//                                }
+//                            }
+                            List<CourseFeature> points = new ArrayList<>();
+                            CourseFeature courseFeature = boatDataParser.getCourseFeature();
+                            xMercatorCoords.add(courseFeature.getPixelLocations().get(0).getXValue());
+                            yMercatorCoords.add(courseFeature.getPixelLocations().get(0).getYValue());
+                            System.out.println("X MER" + xMercatorCoords);
+                            System.out.println("Y MER" + yMercatorCoords);
+                            this.storedFeatures.add(courseFeature);
+
+
+                            for(CourseFeature feature: this.storedFeatures) {
+                                points.add(feature);
+                            }
+
+                            double bufferX=Math.max(150,canvasWidth*0.6);
+                            double bufferY=Math.max(10,canvasHeight*0.1);
+
+                            // scale to canvas size
+                            double xFactor = (canvasWidth-bufferX)/(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
+                            double yFactor = (canvasHeight-bufferY)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
+
+                            //make scaling in proportion
+                            double scaleFactor = Math.min(xFactor,yFactor);
+
+
+                            //scale points to fit screen
+                            points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
+                            this.courseFeatures = points;
+                            for(CourseFeature feature: points) {
+                                System.out.println("asdas---");
+                                System.out.println(feature.getPixelLocations().get(0).getXValue());
+                                System.out.println(feature.getPixelLocations().get(0).getYValue());
+                                System.out.println("----sdad");
                             }
                         }
                     }

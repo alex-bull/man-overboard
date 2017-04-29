@@ -14,9 +14,7 @@ public class ByteStreamConverter extends Converter {
     private int messageLength;
     private XmlSubtype xmlSubType;
 
-    public ByteStreamConverter() {
-        boatDataParser = new BoatDataParser();
-    }
+
 
     public long getMessageType() {
         return this.messageType;
@@ -89,14 +87,7 @@ public class ByteStreamConverter extends Converter {
         return xmlString;
     }
 
-    /**
-     * Parses binary data into boat location data
-     * @param message byte[] an array of bytes which includes information about the boat location
-     * @return BoatData boat data object
-     */
-    public BoatData parseBoatLocationMessage(byte[] message) {
-        return boatDataParser.processMessage(message);
-    }
+
 
 
 }

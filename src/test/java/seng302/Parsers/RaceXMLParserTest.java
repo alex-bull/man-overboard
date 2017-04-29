@@ -102,7 +102,7 @@ public class RaceXMLParserTest {
     @Test
     public void parserTest() throws  Exception{
         System.out.println(raceXMLParser.getCourseBoundary());
-        System.out.println(raceXMLParser.getCourseFeature());
+        System.out.println(raceXMLParser.getCourseFeatures());
     }
 
 }

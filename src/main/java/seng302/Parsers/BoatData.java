@@ -6,19 +6,29 @@ package seng302.Parsers;
  */
 public class BoatData {
     private int sourceID;
+    private int deviceType;
     private double latitude;
     private double longitude;
     private double heading;
     private double speed;
 
-    public BoatData(int sourceID, double latitude, double longitude, double heading, double speed) {
+    public BoatData(int sourceID, int deviceType, double latitude, double longitude, double heading, double speed) {
         this.sourceID = sourceID;
+        this.deviceType = deviceType;
         this.latitude = latitude;
         this.longitude = longitude;
         this.heading = heading;
         this.speed = speed;
     }
 
+
+    public int getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(int deviceType) {
+        this.deviceType = deviceType;
+    }
 
     public int getSourceID() {
         return sourceID;
