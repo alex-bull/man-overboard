@@ -1,5 +1,6 @@
 package seng302.Model;
 
+import javafx.beans.property.DoubleProperty;
 import org.jdom2.JDOMException;
 import seng302.Parsers.*;
 
@@ -30,6 +31,7 @@ public class DataReceiver extends TimerTask {
     //variables that need to be refactored
     private BoatData boatData;
     private RaceData raceData;
+    private RaceXMLParser raceXMLParser;
 
     private List<MutablePoint> courseBoundary = new ArrayList<>();
 
@@ -93,9 +95,9 @@ public class DataReceiver extends TimerTask {
                 RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
                 break;
             case RACE:
-                RaceXMLParser raceParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
-                this.raceData = raceParser.getRaceData();
-                this.courseBoundary = raceParser.getCourseBoundary();
+                this.raceXMLParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
+                this.raceData = raceXMLParser.getRaceData();
+                this.courseBoundary = raceXMLParser.getCourseBoundary();
                 break;
             case BOAT:
                 BoatXMLParser boatParser = new BoatXMLParser(xml.trim());
@@ -227,10 +229,6 @@ public class DataReceiver extends TimerTask {
 //                            }
                             List<CourseFeature> points = new ArrayList<>();
                             CourseFeature courseFeature = boatDataParser.getCourseFeature();
-                            xMercatorCoords.add(courseFeature.getPixelLocations().get(0).getXValue());
-                            yMercatorCoords.add(courseFeature.getPixelLocations().get(0).getYValue());
-                            System.out.println("X MER" + xMercatorCoords);
-                            System.out.println("Y MER" + yMercatorCoords);
                             this.storedFeatures.add(courseFeature);
 
 
@@ -238,26 +236,27 @@ public class DataReceiver extends TimerTask {
                                 points.add(feature);
                             }
 
-                            double bufferX=Math.max(150,canvasWidth*0.6);
-                            double bufferY=Math.max(10,canvasHeight*0.1);
 
-                            // scale to canvas size
-                            double xFactor = (canvasWidth-bufferX)/(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
-                            double yFactor = (canvasHeight-bufferY)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
 
                             //make scaling in proportion
-                            double scaleFactor = Math.min(xFactor,yFactor);
+                            double bufferX = raceXMLParser.getBufferX();
+                            double bufferY = raceXMLParser.getBufferY();
+                            double scaleFactor = raceXMLParser.getScaleFactor();
+                            List<Double> xMercatorCoords = raceXMLParser.getxMercatorCoords();
+                            List<Double> yMercatorCoords = raceXMLParser.getyMercatorCoords();
 
 
                             //scale points to fit screen
                             points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
                             this.courseFeatures = points;
+                            System.out.println("------STORED FEATURES------");
                             for(CourseFeature feature: points) {
-                                System.out.println("asdas---");
+                                System.out.println("name---" + feature.getName());
                                 System.out.println(feature.getPixelLocations().get(0).getXValue());
                                 System.out.println(feature.getPixelLocations().get(0).getYValue());
-                                System.out.println("----sdad");
+                                System.out.println("x and y values above");
                             }
+                            System.out.println("---END STORED FEATURES -------");
                         }
                     }
                 }
