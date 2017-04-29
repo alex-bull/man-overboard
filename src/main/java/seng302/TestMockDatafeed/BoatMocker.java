@@ -11,6 +11,7 @@ import seng302.Model.RaceCourse;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.*;
 
 /**
@@ -108,8 +109,13 @@ public class BoatMocker extends TimerTask{
             //start the race, updates boat position at a rate of 10 hz
             Timer raceTimer=new Timer();
             raceTimer.schedule(me,0,1000);
-        } catch (IOException e) {
+        }
+        catch (SocketException e){
+
+        }
+        catch (IOException e) {
             e.printStackTrace();
+
         }
 
 
@@ -150,9 +156,9 @@ public class BoatMocker extends TimerTask{
     public void sendAllXML() {
 
         try {
-            sendXml("src/main/resources/mockXML/mock_boats.xml",6);
+            sendXml("src/main/resources/mockXML/mock_boats.xml",7);
             sendXml("src/main/resources/mockXML/mock_regatta.xml",5);
-            sendXml("src/main/resources/mockXML/new_format_course.xml",7);
+            sendXml("src/main/resources/mockXML/new_format_course.xml",6);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("asfd");
@@ -186,10 +192,13 @@ public class BoatMocker extends TimerTask{
         //update the position of the boats given the current position, heading and velocity
         updatePosition(1);
         //send the boat info to receiver
+
         try {
             sendData();
         } catch (IOException e) {
             e.printStackTrace();
+
         }
+
     }
 }

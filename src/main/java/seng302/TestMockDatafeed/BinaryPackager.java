@@ -56,10 +56,10 @@ public class BinaryPackager {
         packetBuffer.put((byte) 13); //device type: App
 
         latitude = latitude * 2147483648.0 / 180.0; //latitude
-        packetBuffer.putFloat(latitude.intValue());
+        packetBuffer.putInt(latitude.intValue());
 
         longitude = longitude * 2147483648.0 / 180.0; //longitude
-        packetBuffer.putFloat(longitude.floatValue());
+        packetBuffer.putInt(longitude.intValue());
 
         packetBuffer.putInt(1); //Altitude: TODO:- Figure out what value altitude should be
 

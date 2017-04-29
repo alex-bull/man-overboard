@@ -6,7 +6,7 @@
 
     <CreationTimeDate>2011-08-06T13:25:00-0000</CreationTimeDate >
 
-    <RaceStartTime Time="2011-08-06T13:30:00-0700" Postpone="false" />
+    <RaceStartTime Time="2011-08-06T13:30:00-07:00" Postpone="false" />
 
     <Participants>
         <Yacht SourceID="101" />
