@@ -17,6 +17,7 @@ public class Boat implements Competitor {
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
     private int currentLegIndex;
     private int sourceID;
+    private int status;
 
 
 
@@ -47,15 +48,34 @@ public class Boat implements Competitor {
      * @param sourceID      sourceID of the boat
      * @param abbreName     String the abbreviated name of the boat
      */
-    public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID) {
+    public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID, int status) {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
         this.abbreName = abbreName;
         currentLegIndex=0;
         this.sourceID=sourceID;
+        this.status=status;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    /**
+     * setter for status
+     * @param status 0 -> Undefined
+     *               1 -> Prestart
+     *               2 -> Racing
+     *               3 -> Finished
+     *               4 -> DNS (did not start)
+     *               5 -> DNF (did not finish)
+     *               6 -> DSQ (disqualified)
+     *               7 -> OCS (On Course Side – across start line early)
+     */
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public int getSourceID() {
         return sourceID;

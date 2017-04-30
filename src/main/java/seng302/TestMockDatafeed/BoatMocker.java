@@ -2,16 +2,15 @@ package seng302.TestMockDatafeed;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import javafx.scene.paint.Color;
 import seng302.Factories.CourseFactory;
 import seng302.Model.Boat;
 import seng302.Model.Course;
 import seng302.Model.MutablePoint;
-import seng302.Model.RaceCourse;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
@@ -22,6 +21,9 @@ public class BoatMocker extends TimerTask{
     List<Boat> competitors;
     List<Boat> markBoats;
     Course raceCourse;
+    int raceStatus;
+    ZonedDateTime expectedStartTime;
+
     BinaryPackager binaryPackager;
     DataSender dataSender;
 
@@ -29,6 +31,8 @@ public class BoatMocker extends TimerTask{
         binaryPackager=new BinaryPackager();
         dataSender=new DataSender(4941);
         prestart=new MutablePoint(32.29700,-64.861);
+        raceStatus=3;
+        expectedStartTime=ZonedDateTime.now();
     }
 
     /**
@@ -48,26 +52,26 @@ public class BoatMocker extends TimerTask{
     public void generateCompetitors(int numBoats){
         competitors=new ArrayList<>();
         //generate all boats
-        competitors.add(new Boat("Oracle Team USA", 22, prestart,"USA",101));
-        competitors.add(new Boat("Emirates Team New Zealand", 20,prestart,"NZL",103));
-        competitors.add(new Boat("Ben Ainslie Racing", 18, prestart,  "GBR",106));
-        competitors.add(new Boat("SoftBank Team Japan", 16,prestart, "JPN",104));
-        competitors.add(new Boat("Team France", 15, prestart, "FRA",105));
-        competitors.add(new Boat("Artemis Racing", 19, prestart,"SWE",102));
+        competitors.add(new Boat("Oracle Team USA", 22, prestart,"USA",101,1));
+        competitors.add(new Boat("Emirates Team New Zealand", 20,prestart,"NZL",103,1));
+        competitors.add(new Boat("Ben Ainslie Racing", 18, prestart,  "GBR",106,1));
+        competitors.add(new Boat("SoftBank Team Japan", 16,prestart, "JPN",104,1));
+        competitors.add(new Boat("Team France", 15, prestart, "FRA",105,1));
+        competitors.add(new Boat("Artemis Racing", 19, prestart,"SWE",102,1));
 
         //generate mark boats
         markBoats=new ArrayList<>();
-        markBoats.add(new Boat("Start Line 1",0,new MutablePoint(32.296577,-64.854304),"SL1",122));
-        markBoats.add(new Boat("Start Line 2",0,new MutablePoint(32.293771,-64.855242),"SL2",123));
-        markBoats.add(new Boat("Mark1",0,new MutablePoint(32.293039,-64.843983),"M1",131));
-        markBoats.add(new Boat("Lee Gate 1",0,new MutablePoint(32.309693,-64.835249),"LG1",124));
-        markBoats.add(new Boat("Lee Gate 2",0,new MutablePoint(32.308046,-64.831785),"LG2",125));
+        markBoats.add(new Boat("Start Line 1",0,new MutablePoint(32.296577,-64.854304),"SL1",122,0));
+        markBoats.add(new Boat("Start Line 2",0,new MutablePoint(32.293771,-64.855242),"SL2",123,0));
+        markBoats.add(new Boat("Mark1",0,new MutablePoint(32.293039,-64.843983),"M1",131,0));
+        markBoats.add(new Boat("Lee Gate 1",0,new MutablePoint(32.309693,-64.835249),"LG1",124,0));
+        markBoats.add(new Boat("Lee Gate 2",0,new MutablePoint(32.308046,-64.831785),"LG2",125,0));
 
-        markBoats.add(new Boat("Wind Gate 1",0,new MutablePoint(32.284680,-64.850045),"WG1",126));
-        markBoats.add(new Boat("Wind Gate 2",0,new MutablePoint(32.280164,-64.847591),"WG2",127));
+        markBoats.add(new Boat("Wind Gate 1",0,new MutablePoint(32.284680,-64.850045),"WG1",126,0));
+        markBoats.add(new Boat("Wind Gate 2",0,new MutablePoint(32.280164,-64.847591),"WG2",127,0));
 
-        markBoats.add(new Boat("Finish Line 1",0,new MutablePoint(32.317379,-64.839291),"FL1",128));
-        markBoats.add(new Boat("Finish Line 2",0,new MutablePoint(32.317257,-64.836260),"FL2",129));
+        markBoats.add(new Boat("Finish Line 1",0,new MutablePoint(32.317379,-64.839291),"FL1",128,0));
+        markBoats.add(new Boat("Finish Line 2",0,new MutablePoint(32.317257,-64.836260),"FL2",129,0));
 
         //set initial heading
         for(Boat b: competitors){
@@ -124,13 +128,13 @@ public class BoatMocker extends TimerTask{
     /**
      * Sends boat info to port
      */
-    public void sendData() throws IOException {
+    public void sendBoatLocation() throws IOException {
         //send competitor boats
         for(Boat boat: competitors){
             byte[] boatinfo=binaryPackager.packageBoatLocation(boat.getSourceID(),boat.getPosition().getXValue(),boat.getPosition().getYValue(),
                     boat.getCurrentHeading(),boat.getVelocity());
             dataSender.sendData(boatinfo);
-            System.out.println("sent");
+            System.out.println("sent race data");
         }
         //send mark boats
         for(Boat markBoat:markBoats){
@@ -138,6 +142,18 @@ public class BoatMocker extends TimerTask{
                     markBoat.getCurrentHeading(),markBoat.getVelocity());
             dataSender.sendData(boatinfo);
         }
+    }
+
+    /**
+     * Sends Race Status to outputport
+     * @throws IOException
+     */
+    public void sendRaceStatus() throws IOException{
+        //TODO: make race status message
+        byte[] raceStatusPacket=binaryPackager.packageRaceStatus(123546789,raceStatus,expectedStartTime );
+        byte[] eachBoatPacket=binaryPackager.packageEachBoat(competitors);
+        dataSender.sendData(binaryPackager.packetRaceStatus(raceStatusPacket,eachBoatPacket));
+        System.out.println("sent race status");
     }
 
 
@@ -177,8 +193,15 @@ public class BoatMocker extends TimerTask{
             //if at the end stop
             if(b.getCurrentLegIndex()==raceCourse.getPoints().size()-1){
                 b.setVelocity(0);
+                b.setStatus(3);
                 continue;
             }
+            //set status to started
+            if(b.getCurrentLegIndex()==1){
+                b.setStatus(1);
+                continue;
+            }
+
 
 //            //update direction if they are
 //            System.out.println(b.getPosition());
@@ -194,7 +217,8 @@ public class BoatMocker extends TimerTask{
         //send the boat info to receiver
 
         try {
-            sendData();
+            sendBoatLocation();
+            sendRaceStatus();
         } catch (IOException e) {
             e.printStackTrace();
 

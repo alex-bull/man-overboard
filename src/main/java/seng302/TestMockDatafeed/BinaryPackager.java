@@ -3,10 +3,14 @@ package seng302.TestMockDatafeed;
 import com.google.common.io.ByteStreams;
 import com.google.common.primitives.UnsignedBytes;
 import edu.princeton.cs.introcs.In;
+import seng302.Model.Boat;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
@@ -19,7 +23,8 @@ import java.util.zip.Checksum;
 public class BinaryPackager {
 
 
-    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+    private Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+    private Calendar currentCalendar=Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     private byte syncByteOne = 0x47;
     private byte syncByteTwo = -125;
 
@@ -50,7 +55,7 @@ public class BinaryPackager {
 
         //BODY - note: chars are used as unsigned shorts
         packetBuffer.put((byte) 1); //version number
-        packetBuffer.put(this.getTimeStamp()); //timestamp
+        packetBuffer.put(this.getTimeStamp(2011,10,1)); //timestamp
         packetBuffer.putInt(sourceId); //boat id
         packetBuffer.putInt(sequenceNumber); //sequence number
         packetBuffer.put((byte) 13); //device type: App
@@ -121,7 +126,7 @@ public class BinaryPackager {
         //BODY - note: chars are used as unsigned shorts
         packetBuffer.put((byte) 1); //version number
         packetBuffer.putShort((short) 1);//AckNumber, set to 1 since we only send it once for now
-        packetBuffer.put(getTimeStamp()); //timestamp
+        packetBuffer.put(getTimeStamp(2011,10,1)); //timestamp
         packetBuffer.put((byte)messageType); //message type
         packetBuffer.putShort((short) 1);//sequence number
         packetBuffer.putShort((short)length);//length of message
@@ -147,29 +152,70 @@ public class BinaryPackager {
      * @param messageType byte, the type of message
      * @param messageLength short, the length of the message body
      */
-    private void writeHeader(ByteBuffer buffer, byte messageType, short messageLength) {
+    private void writeHeader(ByteBuffer buffer, int messageType, int messageLength) {
 
         buffer.put(syncByteOne);
         buffer.put(syncByteTwo);
-        buffer.put(messageType);
+        buffer.put((byte)messageType);
 
-        buffer.put(this.getTimeStamp());
+
+        buffer.put(this.getTimeStamp(2011,10,1));
 
         //message source id
         buffer.putInt(1); //TODO:- figure out what the message source id is
-        buffer.putShort(messageLength);
+        buffer.putShort((short)messageLength);
     }
 
 
 
     /**
-     * Returns the time in milliseconds since January 1, 1970
+     * Returns the time in milliseconds since January 1, 1970 till day/month/year
+     * @param year the year
+     * @param month the month
+     * @param day the day
      * @return byte[], the timestamp as 6 bytes
      */
-    private byte[] getTimeStamp() {
+    private byte[] getTimeStamp(int year, int month, int day) {
 
         calendar.clear();
-        calendar.set(2011, Calendar.OCTOBER, 1);
+        calendar.set(year, month, day);
+
+        long time = calendar.getTimeInMillis();
+
+        byte[] buffer = new byte[6];
+        buffer[0] = (byte)(time >>> 40);
+        buffer[1] = (byte)(time >>> 32);
+        buffer[2] = (byte)(time >>> 24);
+        buffer[3] = (byte)(time >>> 16);
+        buffer[4] = (byte)(time >>>  8);
+        buffer[5] = (byte)(time >>>  0);
+        return  buffer;
+    }
+
+    /**
+     * returns the current time in milliseconds since January 1, 1970
+     * @return byte[], the timestamp of 6 bytes
+     */
+    private byte[] getCurrentTimeStamp(){
+        long time=currentCalendar.getTimeInMillis();
+        byte[] buffer = new byte[6];
+        buffer[0] = (byte)(time >>> 40);
+        buffer[1] = (byte)(time >>> 32);
+        buffer[2] = (byte)(time >>> 24);
+        buffer[3] = (byte)(time >>> 16);
+        buffer[4] = (byte)(time >>>  8);
+        buffer[5] = (byte)(time >>>  0);
+        return  buffer;
+    }
+
+    /**
+     * Gets the time stamp from a LocalDateTime
+     * @param estimatedStartTime the LocalDateTime
+     * @return byte[] the timestamp of 6 bytes
+     */
+    private byte[] getTimeStamp(ZonedDateTime estimatedStartTime){
+        calendar.clear();
+        calendar.setTimeInMillis(estimatedStartTime.toInstant().toEpochMilli());
         long time = calendar.getTimeInMillis();
 
         byte[] buffer = new byte[6];
@@ -192,6 +238,89 @@ public class BinaryPackager {
         System.out.println(b.length);
     }
 
+    /**
+     * Packages a race status message, currently only takes race ID, race status and expected start time as input,
+     * can add wind direction and others later on. Does not include per boat section of the message
+     * @param raceID the race id of the race defined in race.xml
+     * @param raceStatus the race status of the race
+     *                   0 – Not Active
+     *                   1 – Warning (between 3:00 and 1:00 before start)
+     *                   2 – Preparatory (less than 1:00 before start)
+     *                   3 – Started
+     *                   4 – Finished (obsolete)
+     *                   5 – Retired (obsolete)
+     *                   6 – Abandoned
+     *                   7 – Postponed
+     *                   8 – Terminated
+     *                   9 – Race start time not set
+     *                   10 – Prestart (more than 3:00 until start)
+     * @param expectedStartTime the expected start time
+     * @return byte[], the race status message
+     */
+    public byte[] packageRaceStatus(int raceID, int raceStatus, ZonedDateTime expectedStartTime){
+        byte[] packet = new byte[24];
+        short windDirection = -32768;// 0x8000 in signed short
 
+
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        packetBuffer.put((byte) 2); //MessageVersionNumber
+        packetBuffer.put(getCurrentTimeStamp());//CurrentTime
+        packetBuffer.putInt(raceID);//RaceID
+        packetBuffer.put((byte) raceStatus); //RaceStatus
+        packetBuffer.put(getTimeStamp(expectedStartTime));//ExpectedStartTime
+        packetBuffer.putShort(windDirection); //WindDirection
+        packetBuffer.putShort((short) 0);//WindSpeed
+        packetBuffer.put((byte) 6);//Number of Boats
+        packetBuffer.put((byte) 1);//RaceType 1 ->MatchRace
+
+        return packet;
+
+    }
+
+    /**
+     * package boat's status given a list of competitors
+     * @param competitors the list of boats
+     * @return byte[] of each boat's section in RaceStatus Message
+     */
+    public byte[] packageEachBoat(List<Boat> competitors){
+        byte[] packet=new byte[20*competitors.size()];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        for(Boat competitor: competitors){
+            packetBuffer.putInt(competitor.getSourceID()); //SourceID
+            packetBuffer.put((byte) competitor.getStatus());//Boat Status
+            packetBuffer.put((byte) competitor.getCurrentLegIndex()); //Leg Number
+            packetBuffer.put((byte) 0);//penalties awarded, not important so far
+            packetBuffer.put((byte) 0);//penalties served, not important so far
+            packetBuffer.put(getCurrentTimeStamp());//Estimated time at next mark, not important so far
+            packetBuffer.put(getCurrentTimeStamp());//Estimated time at finish, not important so far
+
+        }
+        return packet;
+    }
+
+    /**
+     * combines the race status and each boat into one packet
+     * @param raceStatus the race status bytearray
+     * @param eachBoat the each boat bytearray
+     * @return byte[] of the entire RaceStatus packet
+     */
+    public byte[] packetRaceStatus(byte[] raceStatus, byte[] eachBoat){
+        byte[] packet=new byte[19+raceStatus.length+eachBoat.length];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        writeHeader(packetBuffer,12,raceStatus.length+eachBoat.length);
+        packetBuffer.put(raceStatus);
+        packetBuffer.put(eachBoat);
+
+        //CRC
+        Checksum crc32=new CRC32();
+        crc32.update(packet,0,packet.length);
+        packetBuffer.putInt((int) crc32.getValue());
+        return packet;
+    }
 
 }
