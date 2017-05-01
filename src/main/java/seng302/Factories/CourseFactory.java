@@ -40,7 +40,7 @@ public class CourseFactory {
             e.printStackTrace();
             System.exit(1);
         }
-        return new RaceCourse(points, boundary, parser.getWindDirection());
+        return new RaceCourse(points, boundary, parser.getWindDirection(),false);
     }
 
 //    public static void main(String[] args){

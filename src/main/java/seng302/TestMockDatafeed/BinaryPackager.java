@@ -257,7 +257,7 @@ public class BinaryPackager {
      * @param expectedStartTime the expected start time
      * @return byte[], the race status message
      */
-    public byte[] packageRaceStatus(int raceID, int raceStatus, ZonedDateTime expectedStartTime){
+    public byte[] raceStatusHeader(int raceID, int raceStatus, ZonedDateTime expectedStartTime){
         byte[] packet = new byte[24];
         short windDirection = -32768;// 0x8000 in signed short
 

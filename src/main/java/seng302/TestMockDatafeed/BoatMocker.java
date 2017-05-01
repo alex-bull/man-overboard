@@ -30,7 +30,7 @@ public class BoatMocker extends TimerTask{
     public BoatMocker() throws IOException {
         binaryPackager=new BinaryPackager();
         dataSender=new DataSender(4941);
-        prestart=new MutablePoint(32.29700,-64.861);
+        prestart=new MutablePoint(32.296577,-64.854304);
         raceStatus=3;
         expectedStartTime=ZonedDateTime.now();
     }
@@ -85,7 +85,7 @@ public class BoatMocker extends TimerTask{
 
     /**
      * updates the position of all the boats given the boats speed and heading
-     * @param dt the time passed
+     * @param dt the time passed in seconds
      */
     private void updatePosition(double dt){
 
@@ -106,13 +106,13 @@ public class BoatMocker extends TimerTask{
             me.generateCourse();
 
             //generate the boats
-            me.generateCompetitors(1);
+            me.generateCompetitors(6);
 
             //send all xml data first
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
             Timer raceTimer=new Timer();
-            raceTimer.schedule(me,0,1000);
+            raceTimer.schedule(me,0,100);
         }
         catch (SocketException e){
 
@@ -126,20 +126,22 @@ public class BoatMocker extends TimerTask{
     }
 
     /**
-     * Sends boat info to port
+     * Sends boat info to port, including mark boats
      */
     public void sendBoatLocation() throws IOException {
         //send competitor boats
         for(Boat boat: competitors){
             byte[] boatinfo=binaryPackager.packageBoatLocation(boat.getSourceID(),boat.getPosition().getXValue(),boat.getPosition().getYValue(),
-                    boat.getCurrentHeading(),boat.getVelocity());
+                    boat.getCurrentHeading(),boat.getVelocity()*1000);
             dataSender.sendData(boatinfo);
-            System.out.println("sent race data");
+
+//            System.out.println(competitors.size());
+
         }
         //send mark boats
         for(Boat markBoat:markBoats){
             byte[] boatinfo=binaryPackager.packageBoatLocation(markBoat.getSourceID(),markBoat.getPosition().getXValue(),markBoat.getPosition().getYValue(),
-                    markBoat.getCurrentHeading(),markBoat.getVelocity());
+                    markBoat.getCurrentHeading(),markBoat.getVelocity()*1000);
             dataSender.sendData(boatinfo);
         }
     }
@@ -150,10 +152,10 @@ public class BoatMocker extends TimerTask{
      */
     public void sendRaceStatus() throws IOException{
         //TODO: make race status message
-        byte[] raceStatusPacket=binaryPackager.packageRaceStatus(123546789,raceStatus,expectedStartTime );
+        byte[] raceStatusPacket=binaryPackager.raceStatusHeader(123546789,raceStatus,expectedStartTime );
         byte[] eachBoatPacket=binaryPackager.packageEachBoat(competitors);
         dataSender.sendData(binaryPackager.packetRaceStatus(raceStatusPacket,eachBoatPacket));
-        System.out.println("sent race status");
+//        System.out.println("sent race status");
     }
 
 
@@ -188,6 +190,7 @@ public class BoatMocker extends TimerTask{
     @Override
     public void run() {
 
+//        System.out.println(competitors.get(0).getPosition());
         //check if boats are at the end of the leg
         for(Boat b: competitors){
             //if at the end stop
@@ -196,6 +199,7 @@ public class BoatMocker extends TimerTask{
                 b.setStatus(3);
                 continue;
             }
+
             //set status to started
             if(b.getCurrentLegIndex()==1){
                 b.setStatus(1);
@@ -203,17 +207,17 @@ public class BoatMocker extends TimerTask{
             }
 
 
-//            //update direction if they are
-//            System.out.println(b.getPosition());
+//            //update direction if they are close enough
+
 //            System.out.println(raceCourse.getPoints().get(b.getCurrentLegIndex()+1).getGPSPoint());
             if(b.getPosition().isWithin(raceCourse.getPoints().get(b.getCurrentLegIndex()+1).getGPSPoint())){
                 b.setCurrentLegIndex(b.getCurrentLegIndex()+1);
                 b.setCurrentHeading(raceCourse.getPoints().get(b.getCurrentLegIndex()).getExitHeading());
-                System.out.println(b.getCurrentLegIndex());
+//                System.out.println(b.getCurrentLegIndex());
             }
         }
         //update the position of the boats given the current position, heading and velocity
-        updatePosition(1);
+        updatePosition(0.1);
         //send the boat info to receiver
 
         try {
