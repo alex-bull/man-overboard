@@ -189,9 +189,9 @@ public class BoatMocker extends TimerTask{
      */
     @Override
     public void run() {
-
-        System.out.println(competitors.get(0).getPosition());
-        System.out.println(raceCourse.getPoints().get(competitors.get(0).getCurrentLegIndex()+1).getGPSPoint());
+//
+//        System.out.println(competitors.get(0).getPosition());
+//        System.out.println(raceCourse.getPoints().get(competitors.get(0).getCurrentLegIndex()+1).getGPSPoint());
         //check if boats are at the end of the leg
         for(Boat b: competitors){
             //if at the end stop
@@ -211,7 +211,7 @@ public class BoatMocker extends TimerTask{
             if(b.getPosition().isWithin(raceCourse.getPoints().get(b.getCurrentLegIndex()+1).getGPSPoint())){
                 b.setCurrentLegIndex(b.getCurrentLegIndex()+1);
                 b.setCurrentHeading(raceCourse.getPoints().get(b.getCurrentLegIndex()).getExitHeading());
-                System.out.println(b.getCurrentLegIndex());
+//                System.out.println(b.getCurrentLegIndex());
             }
         }
         //update the position of the boats given the current position, heading and velocity

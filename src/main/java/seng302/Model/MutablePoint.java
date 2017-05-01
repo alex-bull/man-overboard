@@ -122,8 +122,6 @@ public class MutablePoint {
         if (Math.abs(getXValue() - o.getXValue()) < EPSILON && Math.abs(getYValue() - o.getYValue()) < EPSILON*2) {
             return true;
         } else {
-            System.out.println(Math.abs(getXValue() - o.getXValue()) );
-            System.out.println(Math.abs(getYValue() - o.getYValue()));
             return false;
         }
     }

@@ -97,7 +97,7 @@ public class BinaryPackager {
         crc32.update(packet,0,packet.length);
         packetBuffer.putInt((int) crc32.getValue());
 
-        System.out.println();
+//        System.out.println();
         return packet;
 
     }
