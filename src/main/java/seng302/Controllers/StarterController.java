@@ -102,10 +102,11 @@ public class StarterController implements Initializable, ClockHandler {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        //RegattaXMLParser parser = new RegattaXMLParser("<?xml version=\"1.0\" encoding=\"utf-8\"?><UtcOffset>-3</UtcOffset>");
+        primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
         try {
             dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+            dataReceiver.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -122,7 +123,6 @@ public class StarterController implements Initializable, ClockHandler {
         worldClock.start();
 
         countdownText.textProperty().bind(timeSeconds.asString());
-        primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         numBoatsInput.setItems(FXCollections.observableArrayList(2, 3, 4, 5, 6));
         durationInput.setItems(FXCollections.observableArrayList(1, 5));
         compList = FXCollections.observableArrayList();
@@ -146,6 +146,7 @@ public class StarterController implements Initializable, ClockHandler {
             }
         });
         starterList.setItems(compList);
+        dataReceiver.setCompetitors(compList);
 
     }
 
@@ -223,7 +224,9 @@ public class StarterController implements Initializable, ClockHandler {
             System.out.println("Fields not set");
             return;
         }
-        numBoats = numBoatsInput.getValue();    //retrieves input values
+
+        //retrieve input values
+        numBoats = numBoatsInput.getValue();
         int duration = durationInput.getValue();
 
         //create course

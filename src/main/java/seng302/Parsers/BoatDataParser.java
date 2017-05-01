@@ -45,7 +45,6 @@ public class BoatDataParser {
 
         this.sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7,11));
         int deviceType = hexByteArrayToInt(Arrays.copyOfRange(body,15, 16));
-        System.out.println(deviceType + "********");
         this.latitude = parseCoordinate(Arrays.copyOfRange(body, 16,20));
         this.longitude = parseCoordinate(Arrays.copyOfRange(body, 20,24));
         double heading = parseHeading(Arrays.copyOfRange(body, 28,30));
@@ -58,7 +57,7 @@ public class BoatDataParser {
             ArrayList<Double> point1 = mercatorProjection(latitude, longitude, width, height);
             double point1X = point1.get(0);
             double point1Y = point1.get(1);
-            System.out.println("lat lon and Y" + point1X + " +" + point1Y);
+            //System.out.println("lat lon and Y" + point1X + " +" + point1Y);
             MutablePoint pixel = new MutablePoint(point1X, point1Y);
             MutablePoint GPS = new MutablePoint(latitude, longitude);
 

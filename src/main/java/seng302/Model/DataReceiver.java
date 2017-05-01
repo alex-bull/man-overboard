@@ -71,7 +71,6 @@ public class DataReceiver extends TimerTask {
     private void readXMLMessage(byte[] message) throws IOException, JDOMException {
         String xml = byteStreamConverter.parseXMLMessage(message);
         XmlSubtype subType = byteStreamConverter.getXmlSubType();
-//            System.out.println(xml);
         switch (subType) {
             case REGATTA:
                 RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
@@ -79,7 +78,6 @@ public class DataReceiver extends TimerTask {
                 if (timezone.substring(0,1) != "-") {
                     timezone = "+" + timezone;
                 }
-                System.out.println("UTC is " + timezone);
                 break;
             case RACE:
                 this.raceXMLParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
@@ -136,12 +134,10 @@ public class DataReceiver extends TimerTask {
 
         byte[] b1 = new byte[1];
         dis.readFully(b1);
-//        System.out.println(String.format("First Sync: %02X",b1[0]));
         if (b1[0] == firstSyncByte) {
             byte[] b2 = new byte[1];
 
             dis.readFully(b2);
-//            System.out.println(String.format("Second Sync: %02X",b2[0]));
             if (b2[0] == secondSyncByte) {
                 return true;
             }
@@ -180,7 +176,7 @@ public class DataReceiver extends TimerTask {
                     else if (messageType == boatLocationMessageType) {
                         BoatDataParser boatDataParser = new BoatDataParser(message, canvasWidth, canvasHeight);
                         this.boatData = boatDataParser.getBoatData();
-//                        System.out.println(boatData);
+
                         //update boat with boat data
                         if(competitors!=null){
                             //TODO: get rid of this hack
@@ -213,20 +209,19 @@ public class DataReceiver extends TimerTask {
                             List<Double> xMercatorCoords = raceXMLParser.getxMercatorCoords();
                             List<Double> yMercatorCoords = raceXMLParser.getyMercatorCoords();
 
-                            System.out.println("S1 " + scaleFactor);
                             //scale points to fit screen
-                            //points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
+                            points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
 
                             this.courseFeatures = points;
-                            System.out.println("------STORED FEATURES------");
+                            //System.out.println("------STORED FEATURES------");
                             for(CourseFeature feature: points) {
-                                System.out.println("name---" + feature.getName());
-                                System.out.println(feature.getExitHeading());
-                                System.out.println(feature.getPixelLocations().get(0).getXValue());
-                                System.out.println(feature.getPixelLocations().get(0).getYValue());
-                                System.out.println("x and y values above");
+                                //System.out.println("name---" + feature.getName());
+                                //System.out.println(feature.getExitHeading());
+                                //System.out.println(feature.getPixelLocations().get(0).getXValue());
+                                //System.out.println(feature.getPixelLocations().get(0).getYValue());
+                                //System.out.println("x and y values above");
                             }
-                            System.out.println("---END STORED FEATURES -------");
+                            //System.out.println("---END STORED FEATURES -------");
                         }
                     }
                 }

@@ -169,7 +169,11 @@ public class RaceXMLParser {
         this.bufferX=Math.max(150,width*0.6);
         this.bufferY=Math.max(10,height*0.1);
 
-        parseBoundary(width, height, bufferX, bufferY);
+        try {
+            parseBoundary(width, height, bufferX, bufferY);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
 
@@ -181,7 +185,7 @@ public class RaceXMLParser {
      * @param bufferX canvas buffer width
      * @param bufferY canvas buffer height
      */
-    private void parseBoundary(double width, double height, double bufferX, double bufferY) {
+    private void parseBoundary(double width, double height, double bufferX, double bufferY) throws Exception {
         System.out.println("----------------PARSING BOUNDARY------------------");
 
         this.xMercatorCoords=new ArrayList<>();
@@ -202,10 +206,14 @@ public class RaceXMLParser {
             boundary.add(pixel);
         }
 
-        // scale to canvas size
-        double xFactor = (width-bufferX);//(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
-        double yFactor = (height-bufferY);//(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
-        // TODO divide by zero error possible above
+        double xDifference = (Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
+        double yDifference = (Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
+
+        if (xDifference == 0 || yDifference == 0) {
+            throw new Exception("Attempted to divide by zero");
+        }
+        double xFactor = (width-bufferX)/xDifference;
+        double yFactor = (height-bufferY)/yDifference;
 
         //make scaling in proportion
         scaleFactor = Math.min(xFactor,yFactor);
