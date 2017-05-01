@@ -208,20 +208,31 @@ public class DataReceiver extends TimerTask {
                             double scaleFactor = raceXMLParser.getScaleFactor();
                             List<Double> xMercatorCoords = raceXMLParser.getxMercatorCoords();
                             List<Double> yMercatorCoords = raceXMLParser.getyMercatorCoords();
+                            System.out.println("------ POINTS------");
+                            for(CourseFeature feature: points) {
+                                System.out.println("name---" + feature.getName());
+                                System.out.println(feature.getExitHeading());
+                                System.out.println(feature.getPixelLocations().get(0).getXValue());
+                                System.out.println(feature.getPixelLocations().get(0).getYValue());
+                                System.out.println("x and y values above");
+                            }
+                            System.out.println("---END POINTS -------");
 
                             //scale points to fit screen
-                            points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
+                            points.forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
+
+
 
                             this.courseFeatures = points;
-                            //System.out.println("------STORED FEATURES------");
-                            for(CourseFeature feature: points) {
-                                //System.out.println("name---" + feature.getName());
-                                //System.out.println(feature.getExitHeading());
-                                //System.out.println(feature.getPixelLocations().get(0).getXValue());
-                                //System.out.println(feature.getPixelLocations().get(0).getYValue());
-                                //System.out.println("x and y values above");
+                            System.out.println("------STORED FEATURES------");
+                            for(CourseFeature feature: this.courseFeatures) {
+                                System.out.println("name---" + feature.getName());
+                                System.out.println(feature.getExitHeading());
+                                System.out.println(feature.getPixelLocations().get(0).getXValue());
+                                System.out.println(feature.getPixelLocations().get(0).getYValue());
+                                System.out.println("x and y values above");
                             }
-                            //System.out.println("---END STORED FEATURES -------");
+                            System.out.println("---END STORED FEATURES -------");
                         }
                     }
                 }

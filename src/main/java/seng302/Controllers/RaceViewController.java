@@ -17,8 +17,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
@@ -43,6 +45,7 @@ import static java.lang.Math.sin;
 
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.DARKBLUE;
+import static javafx.scene.paint.Color.ORANGERED;
 
 /**
  * Controller for the race view.
@@ -72,6 +75,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     private DataReceiver dataReceiver;
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
+    private Map<String, Shape> markModels = new HashMap<>();
 
 
     @Override
@@ -167,56 +171,38 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     /**
      * Draws the course features on the canvas
-     * @param gc GraphicContext the context to draw on
      */
-    private void drawCourse(GraphicsContext gc) {
+    private void drawCourse() {
 
         //System.out.println("DRAWING COURSE.." + courseFeatures.size());
 
         // loops through all course features
+        System.out.println("COURSE FEATURE " + courseFeatures.size());
         for (CourseFeature courseFeature : courseFeatures) {
-            gc.setFill(Color.ORANGERED); // buoy colour
-            gc.setStroke(Color.BLUE); // line colour between gates
-
-            //System.out.println("FEATURE " + courseFeature.getPixelLocations());
-
-
-            // get the pixel locations of the course feature
-            List<MutablePoint> marks = courseFeature.getPixelLocations();
-            Double x1 = marks.get(0).getXValue(); // first x pixel coordinate
-            Double y1 = marks.get(0).getYValue(); // first y pixel coordinate
-            int d = 15; // diameter of the circle
-            double r = d/2; // radius of the circle
-
-            //System.out.println("SIZE OF MARK>. " + marks.size());
-            // if it is a gate it will have two pixel location coordinates
-            if (marks.size() == 2) {
-
-                gc.setLineWidth(3);
-
-                double x2 = marks.get(1).getXValue(); // second x pixel coordinate
-                double y2 = marks.get(1).getYValue(); // second y pixel coordinate
-                //System.out.println("GATEEE" );
-               // System.out.println(x1 + " Ddddd" + y1);
-                //System.out.println(x2 + " Dddxxxdd" + y2);
-
-                // check if gate needs line
-                if(courseFeature.isLine()){
-                    gc.strokeLine(x1, y1, x2, y2);
-                }
-
-                // draw gate points
-                gc.fillOval(x1 - r, y1 - r, d, d);
-                gc.fillOval(x2 - r, y2 - r, d, d);
-
-            } else {
-                //System.out.println("NOT");
-                //System.out.println(x1 + " Ddddd" + y1);
-                gc.fillOval(x1 - r, y1 - r, d, d); // draw mark point
+            //System.out.println("FEATURE " + courseFeature.getName());
+            Shape mark = this.markModels.get(courseFeature.getName());
+            //System.out.println(mark);
+            if (mark != null) {
+                this.raceViewPane.getChildren().remove(mark);
             }
+            drawMark(courseFeature);
+
         }
     }
 
+
+    private void drawMark(CourseFeature courseFeature) {
+
+
+        double x = courseFeature.getPixelLocations().get(0).getXValue();
+        double y = courseFeature.getPixelLocations().get(0).getYValue();
+        System.out.println("DRAWING MARK " + courseFeature.getName() + " " + x + " " + y);
+        Circle circle = new Circle(x, y, 7.5, ORANGERED);
+        this.raceViewPane.getChildren().add(circle);
+        this.markModels.put(courseFeature.getName(), circle);
+
+
+    }
 
     /**
      * Draw boundary
@@ -452,6 +438,12 @@ public class RaceViewController implements ClockHandler, Initializable {
     }
 
 
+
+    private void moveMark(String name, double x, double y) {
+        this.markModels.get(name).setLayoutX(x);
+        this.markModels.get(name).setLayoutY(y);
+    }
+
     /**
      * Implementation of ClockHandler interface method
      * @param newTime The currentTime of the clock
@@ -522,12 +514,18 @@ public class RaceViewController implements ClockHandler, Initializable {
             drawAnnotations(boat);
         }
 
+//        for(CourseFeature courseFeature: dataReceiver.getCourseFeatures()) {
+//            System.out.println("hello " + courseFeature.getName());
+//            drawMark(courseFeature);
+//        }
+
+
         AnimationTimer timer = new AnimationTimer() {
 
             long startTimeNano = System.nanoTime();
             long currentTimeNano = System.nanoTime();
             int counter = 0;
-
+            int count = 0;
             @Override
             public void handle(long now) {
 
@@ -548,10 +546,18 @@ public class RaceViewController implements ClockHandler, Initializable {
                 }
 
                 // check if course features need to be redrawn
-                if(dataReceiver.getCourseFeatures() != courseFeatures){
+                count++;
+                if (count % 100 == 0){
+                if(dataReceiver.getCourseFeatures() != (courseFeatures)) {
                     courseFeatures = dataReceiver.getCourseFeatures();
-                    drawCourse(gc);
-                }
+                    drawCourse();
+//                    for(CourseFeature courseFeature: courseFeatures) {
+//
+//                        moveMark(courseFeature.getName(), courseFeature.getPixelLocations().get(0).getXValue(),
+//                                courseFeature.getPixelLocations().get(0).getYValue());
+//                    }
+//                }
+                }}
 
                 //move competitors and draw tracks
                 for (int i = 0; i < competitors.size(); i++) {

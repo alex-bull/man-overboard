@@ -221,7 +221,7 @@ public class StarterController implements Initializable, ClockHandler {
 
         //checks duration and number of boats have been selected
         if (numBoatsInput.getValue() == null || durationInput.getValue() == null) {
-            System.out.println("Fields not set");
+            //System.out.println("Fields not set");
             return;
         }
 
