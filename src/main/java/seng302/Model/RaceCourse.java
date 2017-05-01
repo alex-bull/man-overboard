@@ -61,7 +61,7 @@ public class RaceCourse implements Course {
         }
         else {
             for (int j = 0; j < this.points.size() - 1; j++) {
-//                System.out.println(points.get(j));
+                System.out.println(points.get(j).getGPSPoint()+" "+points.get(j + 1).getGPSPoint());
                 Double heading = calculateAngle(points.get(j).getPixelLocations().get(0), points.get(j + 1).getPixelLocations().get(0));
                 points.get(j).setExitHeading(heading);
             }

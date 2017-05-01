@@ -112,21 +112,19 @@ public class MutablePoint {
     }
 
     /**
-     * Checks in the current point is close enough to the other point, current precision is 0.0001
+     * Checks in the current point is close enough to the other point, current EPSILON is 0.0002, longitude needs a higher
+     * EPSILON
      * @param o the other mutable point
      * @return true if this point is close enough to o
      */
-    public boolean isWithin(MutablePoint o){
-//        System.out.print(String.format("%.4f",getXValue())+ "  ");
-//        System.out.println(String.format("%.4f",o.getXValue()));
-//        System.out.print(String.format("%.4f",getYValue())+"  ");
-//        System.out.println(String.format("%.4f",o.getYValue()));
-//        System.out.println();
-        if(String.format("%.4f",getXValue()).equals(String.format("%.4f",o.getXValue()))){
-            if(String.format("%.4f",getYValue()).equals(String.format("%.4f",o.getYValue()))){
-                return true;
-            }
+    public boolean isWithin(MutablePoint o) {
+        double EPSILON = 0.0002;
+        if (Math.abs(getXValue() - o.getXValue()) < EPSILON && Math.abs(getYValue() - o.getYValue()) < EPSILON*2) {
+            return true;
+        } else {
+            System.out.println(Math.abs(getXValue() - o.getXValue()) );
+            System.out.println(Math.abs(getYValue() - o.getYValue()));
+            return false;
         }
-    return false;
     }
 }
