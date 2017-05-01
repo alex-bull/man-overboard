@@ -24,9 +24,11 @@ public class BoatDataParser {
     double height;
 
     CourseFeature courseFeature;
+
+
+    MutablePoint mark;
     BoatData boatData;
 
-    private List<CourseFeature> courseFeatures;
 
     public BoatDataParser(byte[] message, double width, double height) {
         this.width = width;
@@ -62,6 +64,7 @@ public class BoatDataParser {
             MutablePoint GPS = new MutablePoint(latitude, longitude);
 
             this.courseFeature = new Mark(sourceID.toString(), pixel, GPS, 0);
+//            this.mark = new MutablePoint(point1X, point1Y);
 
         }
         return new BoatData(sourceID, deviceType, latitude, longitude, heading, convertedSpeed);
@@ -85,53 +88,15 @@ public class BoatDataParser {
         return (double) hexByteArrayToInt(hexValues) * 180.0 /  2147483648.0;
     }
 
-    /**
-     * Parse the course features
-     * @param width double - width of the race canvas
-     * @param height double - height of the race canvas
 
-     */
-    private void parseCourseFeatures(double width, double height) {
-
-        double bufferX=Math.max(150,width*0.6);
-        double bufferY=Math.max(10,height*0.1);
-
-        int index = 0;
-        List <Double> xMercatorCoords=new ArrayList<>();
-        List <Double> yMercatorCoords=new ArrayList<>();
-
-        ArrayList<CourseFeature> points = new ArrayList<>();
-
-        ArrayList<Double> point1 = mercatorProjection(latitude, longitude, width, height);
-        double point1X = point1.get(0);
-        double point1Y = point1.get(1);
-        xMercatorCoords.add(point1X);
-        yMercatorCoords.add(point1Y);
-
-
-        MutablePoint pixel = new MutablePoint(point1X, point1Y);
-        MutablePoint GPS = new MutablePoint(latitude, longitude);
-        Mark mark1 = new Mark(sourceID.toString(), pixel, GPS, index);
-
-        points.add(mark1);
-
-
-        System.out.println(point1X + " ----- " + point1Y);
-
-        // scale to canvas size
-        double xFactor = (width-bufferX)/(Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
-        double yFactor = (height-bufferY)/(Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
-
-        //make scaling in proportion
-        double scaleFactor = Math.min(xFactor,yFactor);
-
-        //scale points to fit screen
-        points.stream().forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
-
-
-        // TODO: need to carry on parsing course features here and scale them
-        this.courseFeatures = points;
+    public MutablePoint getMark() {
+        return mark;
     }
+
+    public void setMark(MutablePoint mark) {
+        this.mark = mark;
+    }
+
 
     /**
      * Function to map latitude and longitude to screen coordinates
@@ -154,13 +119,7 @@ public class BoatDataParser {
     }
 
 
-    public List<CourseFeature> getCourseFeatures() {
-        return courseFeatures;
-    }
 
-    public void setCourseFeatures(List<CourseFeature> courseFeatures) {
-        this.courseFeatures = courseFeatures;
-    }
 
 
     public BoatData getBoatData() {

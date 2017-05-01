@@ -185,16 +185,18 @@ public class DataReceiver extends TimerTask {
                                 competitors.get(index).setProperties(boatData.getSpeed(), boatData.getHeading(), boatData.getLatitude(), boatData.getLongitude());
                             }
                         }
-                        if(boatData.getDeviceType() == 3) {
-//                            for(CourseFeature point: boatDataParser.getCourseFeatures()){
-//                                System.out.println(point.getPixelLocations().size() + "PIXEL LOCATION");
-//                                for(MutablePoint p : point.getPixelLocations()){
-//                                    System.out.println(p.getXValue() + "       +       " + p.getYValue());
-//                                }
-//                            }&& raceXMLParser.getMarkIDs().contains(boatData.getSourceID())
+                        if(boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
+                            //make scaling in proportion
+                            double bufferX = raceXMLParser.getBufferX();
+                            double bufferY = raceXMLParser.getBufferY();
+                            double scaleFactor = raceXMLParser.getScaleFactor();
+                            List<Double> xMercatorCoords = raceXMLParser.getxMercatorCoords();
+                            List<Double> yMercatorCoords = raceXMLParser.getyMercatorCoords();
                             List<CourseFeature> points = new ArrayList<>();
+//                            CourseFeature courseFeature = boatDataParser.getCourseFeature();
                             CourseFeature courseFeature = boatDataParser.getCourseFeature();
 //                            this.storedFeatures.add(courseFeature);
+                            courseFeature.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2);
                             this.storedFeatures.put(boatData.getSourceID(), courseFeature);
 
 
@@ -202,37 +204,18 @@ public class DataReceiver extends TimerTask {
                                 points.add(this.storedFeatures.get(id));
                             }
 
-                            //make scaling in proportion
-                            double bufferX = raceXMLParser.getBufferX();
-                            double bufferY = raceXMLParser.getBufferY();
-                            double scaleFactor = raceXMLParser.getScaleFactor();
-                            List<Double> xMercatorCoords = raceXMLParser.getxMercatorCoords();
-                            List<Double> yMercatorCoords = raceXMLParser.getyMercatorCoords();
-                            System.out.println("------ POINTS------");
-                            for(CourseFeature feature: points) {
-                                System.out.println("name---" + feature.getName());
-                                System.out.println(feature.getExitHeading());
-                                System.out.println(feature.getPixelLocations().get(0).getXValue());
-                                System.out.println(feature.getPixelLocations().get(0).getYValue());
-                                System.out.println("x and y values above");
-                            }
-                            System.out.println("---END POINTS -------");
-
-                            //scale points to fit screen
-                            points.forEach(p->p.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
-
-
 
                             this.courseFeatures = points;
-                            System.out.println("------STORED FEATURES------");
-                            for(CourseFeature feature: this.courseFeatures) {
-                                System.out.println("name---" + feature.getName());
-                                System.out.println(feature.getExitHeading());
-                                System.out.println(feature.getPixelLocations().get(0).getXValue());
-                                System.out.println(feature.getPixelLocations().get(0).getYValue());
-                                System.out.println("x and y values above");
-                            }
-                            System.out.println("---END STORED FEATURES -------");
+//                            System.out.println("------STORED FEATURES------");
+//                            for(CourseFeature feature: this.courseFeatures) {
+//                                System.out.println("name---" + feature.getName());
+//                                System.out.println(feature.getExitHeading());
+//                                System.out.println(feature.getPixelLocations().get(0).getXValue());
+//                                System.out.println(feature.getPixelLocations().get(0).getYValue());
+//
+//                                System.out.println("x and y values above");
+//                            }
+//                            System.out.println("---END STORED FEATURES -------");
                         }
                     }
                 }

@@ -201,13 +201,14 @@ public class StarterController implements Initializable, ClockHandler {
                 MainController mainController = loader.getController();
                 mainController.setRace(r, dataReceiver, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), numBoats);
                 primaryStage.setTitle("RaceVision");
-                primaryStage.setMinHeight(900);
-                primaryStage.setMinWidth(1300);
-                primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
-                primaryStage.setX(primaryScreenBounds.getMinX());
-                primaryStage.setY(primaryScreenBounds.getMinY());
                 primaryStage.setWidth(primaryScreenBounds.getWidth());
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
+                primaryStage.setMinHeight(primaryScreenBounds.getHeight());
+                primaryStage.setMinWidth(primaryScreenBounds.getWidth());
+                primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
+//                primaryStage.setX(primaryScreenBounds.getMinX());
+//                primaryStage.setY(primaryScreenBounds.getMinY());
+
             }
         });
     }

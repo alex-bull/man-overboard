@@ -166,7 +166,7 @@ public class RaceXMLParser {
      * @param height double height of the race canvas
      */
     private void parseRace(double width, double height) {
-        this.bufferX=Math.max(150,width*0.6);
+        this.bufferX=Math.max(1000,width*0.6);
         this.bufferY=Math.max(10,height*0.1);
 
         try {
