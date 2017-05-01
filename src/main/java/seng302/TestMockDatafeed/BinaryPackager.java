@@ -23,8 +23,7 @@ import java.util.zip.Checksum;
 public class BinaryPackager {
 
 
-    private Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-    private Calendar currentCalendar=Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+    private Calendar calendar;
     private byte syncByteOne = 0x47;
     private byte syncByteTwo = -125;
 
@@ -55,7 +54,7 @@ public class BinaryPackager {
 
         //BODY - note: chars are used as unsigned shorts
         packetBuffer.put((byte) 1); //version number
-        packetBuffer.put(this.getTimeStamp(2011,10,1)); //timestamp
+        packetBuffer.put(this.getCurrentTimeStamp()); //timestamp
         packetBuffer.putInt(sourceId); //boat id
         packetBuffer.putInt(sequenceNumber); //sequence number
         packetBuffer.put((byte) 13); //device type: App
@@ -98,6 +97,7 @@ public class BinaryPackager {
         crc32.update(packet,0,packet.length);
         packetBuffer.putInt((int) crc32.getValue());
 
+        System.out.println();
         return packet;
 
     }
@@ -126,7 +126,7 @@ public class BinaryPackager {
         //BODY - note: chars are used as unsigned shorts
         packetBuffer.put((byte) 1); //version number
         packetBuffer.putShort((short) 1);//AckNumber, set to 1 since we only send it once for now
-        packetBuffer.put(getTimeStamp(2011,10,1)); //timestamp
+        packetBuffer.put(getCurrentTimeStamp()); //timestamp
         packetBuffer.put((byte)messageType); //message type
         packetBuffer.putShort((short) 1);//sequence number
         packetBuffer.putShort((short)length);//length of message
@@ -156,10 +156,9 @@ public class BinaryPackager {
 
         buffer.put(syncByteOne);
         buffer.put(syncByteTwo);
+
         buffer.put((byte)messageType);
-
-
-        buffer.put(this.getTimeStamp(2011,10,1));
+        buffer.put(this.getCurrentTimeStamp());
 
         //message source id
         buffer.putInt(1); //TODO:- figure out what the message source id is
@@ -169,43 +168,12 @@ public class BinaryPackager {
 
 
     /**
-     * Returns the time in milliseconds since January 1, 1970 till day/month/year
-     * @param year the year
-     * @param month the month
-     * @param day the day
-     * @return byte[], the timestamp as 6 bytes
-     */
-    private byte[] getTimeStamp(int year, int month, int day) {
-
-        calendar.clear();
-        calendar.set(year, month, day);
-
-        long time = calendar.getTimeInMillis();
-
-        byte[] buffer = new byte[6];
-        buffer[0] = (byte)(time >>> 40);
-        buffer[1] = (byte)(time >>> 32);
-        buffer[2] = (byte)(time >>> 24);
-        buffer[3] = (byte)(time >>> 16);
-        buffer[4] = (byte)(time >>>  8);
-        buffer[5] = (byte)(time >>>  0);
-        return  buffer;
-    }
-
-    /**
      * returns the current time in milliseconds since January 1, 1970
      * @return byte[], the timestamp of 6 bytes
      */
     private byte[] getCurrentTimeStamp(){
-        long time=currentCalendar.getTimeInMillis();
-        byte[] buffer = new byte[6];
-        buffer[0] = (byte)(time >>> 40);
-        buffer[1] = (byte)(time >>> 32);
-        buffer[2] = (byte)(time >>> 24);
-        buffer[3] = (byte)(time >>> 16);
-        buffer[4] = (byte)(time >>>  8);
-        buffer[5] = (byte)(time >>>  0);
-        return  buffer;
+        long time = System.currentTimeMillis();
+        return this.get48bitTime(time);
     }
 
     /**
@@ -214,10 +182,19 @@ public class BinaryPackager {
      * @return byte[] the timestamp of 6 bytes
      */
     private byte[] getTimeStamp(ZonedDateTime estimatedStartTime){
-        calendar.clear();
+        this.calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.setTimeInMillis(estimatedStartTime.toInstant().toEpochMilli());
         long time = calendar.getTimeInMillis();
+        return this.get48bitTime(time);
+    }
 
+
+    /**
+     * Takes a long time and removes the 2 lowest bytes
+     * @param time long the time
+     * @return byte[] the remaining 6 bytes
+     */
+    private byte[] get48bitTime(long time) {
         byte[] buffer = new byte[6];
         buffer[0] = (byte)(time >>> 40);
         buffer[1] = (byte)(time >>> 32);
@@ -225,18 +202,11 @@ public class BinaryPackager {
         buffer[3] = (byte)(time >>> 16);
         buffer[4] = (byte)(time >>>  8);
         buffer[5] = (byte)(time >>>  0);
+
         return  buffer;
     }
 
 
-    public static void main(String[] args) {
-        BinaryPackager a = new BinaryPackager();
-        byte[] b = a.packageBoatLocation(12, 123.444, 234.434, 65535.0, 20.3);
-        for (byte c: b) {
-            System.out.println(c);
-        }
-        System.out.println(b.length);
-    }
 
     /**
      * Packages a race status message, currently only takes race ID, race status and expected start time as input,
@@ -321,6 +291,16 @@ public class BinaryPackager {
         crc32.update(packet,0,packet.length);
         packetBuffer.putInt((int) crc32.getValue());
         return packet;
+    }
+
+
+    public static void main(String[] args) {
+        BinaryPackager a = new BinaryPackager();
+        byte[] b = a.packageBoatLocation(12, 123.444, 234.434, 65535.0, 20.3);
+        for (byte c: b) {
+            System.out.println(c);
+        }
+        System.out.println(b.length);
     }
 
 }
