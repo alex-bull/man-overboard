@@ -35,6 +35,7 @@ public class RaceXMLParser {
     private List <Double> xMercatorCoords;
     private List <Double> yMercatorCoords;
     private Set<Integer> markIDs = new HashSet<>();
+    private Set<Integer> boatIDs = new HashSet<>();
     private double width;
     private double height;
 
@@ -50,6 +51,9 @@ public class RaceXMLParser {
     }
     public Set<Integer> getMarkIDs() {
         return markIDs;
+    }
+    public Set<Integer> getBoatIDs() {
+        return boatIDs;
     }
 
 
@@ -94,6 +98,7 @@ public class RaceXMLParser {
 //            System.out.println("Yacht ID:" + sourceID);
 //            System.out.println("Entry: "+ entry);
             YachtData yachtData = new YachtData(sourceID, entry);
+            this.boatIDs.add(sourceID);
             raceData.getParticipants().add(yachtData);
 
         }

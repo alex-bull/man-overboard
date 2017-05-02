@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import seng302.Model.Boat;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -252,7 +253,7 @@ public class BoatXMLParserTest {
 
     @Test
     public void testParser() throws Exception{
-        List<Boat> competitors=boatXMLParser.getBoats();
+        HashMap<Integer, Boat> competitors=boatXMLParser.getBoats();
         assertEquals(6,competitors.size());
         assertEquals("ORACLE TEAM USA",competitors.get(0).getTeamName());
         assertEquals("ARTEMIS RACING",competitors.get(1).getTeamName());

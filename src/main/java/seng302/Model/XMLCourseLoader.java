@@ -115,7 +115,7 @@ public class XMLCourseLoader {
     public ArrayList<CourseFeature> parseCourse(double width, double height) throws JDOMException, IOException {
         //buffers are defined as the total buffer size, i.e. total for both sides
         int index = 0;
-        bufferX=Math.max(150,width*0.6);
+        bufferX=Math.max(1000,width*0.6);
         bufferY=Math.max(10,height*0.1);
 
         SAXBuilder saxbuilder = new SAXBuilder();
@@ -197,7 +197,7 @@ public class XMLCourseLoader {
             } else if (type.equals("boundary")) {
 
             } else { //invalid course file
-                throw new JDOMException();
+//                throw new JDOMException();
             }
 
         }

@@ -107,6 +107,10 @@ public class Boat implements Competitor {
     }
 
 
+    public void setPosition(MutablePoint position) {
+        this.position = position;
+    }
+
     /**
      * Getter for the abbreviated team name
      * @return String the abbreviated team name

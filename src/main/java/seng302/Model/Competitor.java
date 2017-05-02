@@ -17,5 +17,6 @@ public interface Competitor {
     DoubleProperty getHeadingProperty();
     void setCurrentHeading(double currentHeading);
     void setVelocity(double velocity);
+    void setPosition(MutablePoint position);
     void setProperties(double velocity, double heading, double latitude, double longitude);
 }

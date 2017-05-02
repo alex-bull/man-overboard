@@ -14,6 +14,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -21,10 +22,10 @@ import java.util.List;
  * Parser for Boat XML
  */
 public class BoatXMLParser {
-    private List<Boat> boats;
+    private HashMap<Integer, Boat> boats;
     private List<Boat> markBoats;
 
-    public List<Boat> getBoats(){
+    public HashMap<Integer, Boat> getBoats(){
         return boats;
     }
 
@@ -39,7 +40,7 @@ public class BoatXMLParser {
      * @throws JDOMException JDOMException
      */
     public BoatXMLParser(String xmlStr) throws IOException, JDOMException {
-        boats=new ArrayList<>();
+        boats = new HashMap<>();
         markBoats=new ArrayList<>();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
@@ -52,14 +53,15 @@ public class BoatXMLParser {
             // only need yacht data
             if(boat.getAttributeValue("Type").equals("Yacht")){
                 Boat competitor=new Boat();
+                int sourceID = Integer.parseInt(boat.getAttributeValue("SourceID"));
                 competitor.setTeamName(boat.getAttributeValue("BoatName"));
                 competitor.setAbbreName(boat.getAttributeValue("ShortName"));
-                competitor.setSourceID(boat.getAttributeValue("SourceID"));
+                competitor.setSourceID(sourceID);
                 competitor.setType("Yacht");
 //                System.out.println("Boat name : " + competitor.getTeamName());
 //                System.out.println("Abbre: " + competitor.getAbbreName());
 //                System.out.println("Source ID: " + competitor.getSourceID());
-                boats.add(competitor);
+                boats.put(sourceID, competitor);
             }
             //add to mark boats if type is mark
             if(boat.getAttributeValue("Type").equals("Mark")){
