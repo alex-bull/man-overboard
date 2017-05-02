@@ -77,7 +77,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     private List<MarkData> startMarks = null;
     private List<MarkData> finishMarks = null;
     private Map<String, Shape> markModels = new HashMap<>();
-    private Map<String, Shape> lineModels = new HashMap<>();
+    private List<Line> lineModels = new ArrayList<>();
 
 
     @Override
@@ -190,23 +190,19 @@ public class RaceViewController implements ClockHandler, Initializable {
             drawMark(courseFeature);
         }
     }
-    private void drawLine() {
-        this.startMarks = dataReceiver.getStartMarks();
-        this.finishMarks = dataReceiver.getFinishMarks();
-        double x1 = startMarks.get(0).getTargetLat();
-        double y1 = startMarks.get(0).getTargetLon();
-        double x2 = startMarks.get(1).getTargetLat();
-        double y2 = startMarks.get(1).getTargetLon();
-        Line start = new Line(x1,y1,x2,y2);
-        this.raceViewPane.getChildren().add(start);
-        this.lineModels.put("start line", start);
-        double x3 = finishMarks.get(0).getTargetLat();
-        double y3 = finishMarks.get(0).getTargetLon();
-        double x4 = finishMarks.get(1).getTargetLat();
-        double y4 = finishMarks.get(1).getTargetLon();
-        Line finish = new Line(x3,y3,x4,y4);
-        this.raceViewPane.getChildren().add(finish);
-        this.lineModels.put("finish line", finish);
+
+    /**
+     * Draws the line for gates
+     * @param gates List of MarkData
+     */
+    private void drawLine( List<MarkData> gates) {
+        double x1 = gates.get(0).getTargetLat();
+        double y1 = gates.get(0).getTargetLon();
+        double x2 = gates.get(1).getTargetLat();
+        double y2 = gates.get(1).getTargetLon();
+        Line line = new Line(x1,y1,x2,y2);
+        this.raceViewPane.getChildren().add(line);
+        this.lineModels.add(line);
 
     }
 
@@ -530,7 +526,8 @@ public class RaceViewController implements ClockHandler, Initializable {
                 if(dataReceiver.getCourseBoundary() != courseBoundary) {
                     courseBoundary = dataReceiver.getCourseBoundary();
                     drawBoundary(gc);
-                    drawLine();
+                    drawLine(dataReceiver.getStartMarks());
+                    drawLine(dataReceiver.getFinishMarks());
                 }
                 }}
 

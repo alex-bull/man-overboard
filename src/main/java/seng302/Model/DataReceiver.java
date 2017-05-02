@@ -253,15 +253,12 @@ public class DataReceiver extends TimerTask {
                             double bufferX = raceXMLParser.getBufferX();
                             double bufferY = raceXMLParser.getBufferY();
                             double scaleFactor = raceXMLParser.getScaleFactor();
-                            List<Double> xMercatorCoords = raceXMLParser.getxMercatorCoords();
-                            List<Double> yMercatorCoords = raceXMLParser.getyMercatorCoords();
-                            ;
                             List<CourseFeature> points = new ArrayList<>();
 //                            CourseFeature courseFeature = boatDataParser.getCourseFeature();
                             CourseFeature courseFeature = boatDataParser.getCourseFeature();
 //                            this.storedFeatures.add(courseFeature);
-                            courseFeature.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2);
 
+                            courseFeature.factor(scaleFactor,scaleFactor,minXMercatorCoord,minYMercatorCoord,bufferX/2,bufferY/2);
                             for (MarkData mark : startMarks) {
                                 if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
                                     mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
@@ -276,7 +273,7 @@ public class DataReceiver extends TimerTask {
                                 }
                             }
 
-                            courseFeature.factor(scaleFactor,scaleFactor,minXMercatorCoord,minYMercatorCoord,bufferX/2,bufferY/2);
+
                             this.storedFeatures.put(boatData.getSourceID(), courseFeature);
 
 
