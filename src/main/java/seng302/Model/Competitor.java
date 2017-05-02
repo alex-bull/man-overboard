@@ -16,6 +16,7 @@ public interface Competitor {
     double getCurrentHeading();
     DoubleProperty getHeadingProperty();
     void setCurrentHeading(double currentHeading);
+    void setTeamName(String name);
     void setVelocity(double velocity);
     void setPosition(MutablePoint position);
     void setProperties(double velocity, double heading, double latitude, double longitude);

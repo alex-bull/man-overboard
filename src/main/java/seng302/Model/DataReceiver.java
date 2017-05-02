@@ -221,13 +221,17 @@ public class DataReceiver extends TimerTask {
                             int boatID = boatData.getSourceID();
 
                             Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
-                            System.out.println("boat country " + competitor.getAbbreName());
+
+                            System.out.println("boat country " + competitor.getAbbreName() + "  " +  competitor.getTeamName());
+                            System.out.println("heading " + boatData.getHeading());
+                            competitor.setCurrentHeading(boatData.getHeading());
+
                             double x = boatDataParser.getPixelPoint().getXValue();
                             double y = boatDataParser.getPixelPoint().getYValue();
-                            System.out.println("boat lat and lon " + x +  "   " + y);
+//                            System.out.println("boat lat and lon " + x +  "   " + y);
                             MutablePoint location = new MutablePoint(x, y);
                             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX/2,bufferY/2);
-                            competitor.setPosition(location);
+                            competitor.setPosition(location);;
                             System.out.println(location.getXValue() +  "   " + location.getYValue());
 
                             this.storedCompetitors.put(boatID, competitor);

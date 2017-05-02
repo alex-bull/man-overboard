@@ -153,6 +153,11 @@ public class Boat implements Competitor {
         return this.currentHeading;
     }
 
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public void setProperties(double velocity, double heading, double latitude, double longitude){
         this.velocity=velocity;
         this.currentHeading.setValue(heading);
