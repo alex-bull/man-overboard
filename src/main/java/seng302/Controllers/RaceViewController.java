@@ -252,23 +252,6 @@ public class RaceViewController implements ClockHandler, Initializable {
 
         }
 
-
-//        gc.save();
-//        ArrayList<Double> boundaryX = new ArrayList<>();
-//        ArrayList<Double> boundaryY = new ArrayList<>();
-//
-//        for (MutablePoint point: this.race.getCourseBoundary()) {
-//            boundaryX.add(point.getXValue());
-//            boundaryY.add(point.getYValue());
-////            System.out.println(point.getXValue() + "  " + point.getYValue());
-//        }
-//        gc.setLineDashes(5);
-//        gc.setLineWidth(0.8);
-//        gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
-//        gc.setFill(Color.POWDERBLUE);
-//        //shade inside the boundary
-//        gc.fillPolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
-//        gc.restore();
     }
 
 
@@ -480,51 +463,24 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     private void animate(double width, double height){
 
-//        ExecutorService service =  Executors.newSingleThreadExecutor();
-////        SumTask sumTask = new SumTask(20);
-//        Future<BoatData> future = service.submit(dataReceiver);
-//        try {
-//            if(service != null) {
-//
-//                BoatData boatData = future.get();
-//                System.out.println(boatData.getSourceID());
-//            }
-//            else {
-//                System.out.println("empty");
-//            }
-//        } catch (ExecutionException|InterruptedException e) {
-//            e.printStackTrace();
-//        }
-
-        // start the race using the timeline
-//        Timeline t = race.generateTimeline();
-
-        List<Competitor> competitors = race.getCompetitors();
-        //List<MutablePoint> boundary= new ArrayList<>();
+//        List<Competitor> competitors = race.getCompetitors();
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
 
-//        List<MutablePoint> courseBoundary = race.getCourseBoundary();
-//        dataReceiver.setCourseBoundary(courseBoundary);
-        //set competitors
-        //dataReceiver.setCourseBoundary(boundary);
-        //dataReceiver.setCompetitors(competitors);
-//        dataReceiver.setCourseBoundary();
-        //Timer receiverTimer=new Timer();
-        //receiverTimer.schedule(dataReceiver,0,1);
 
         System.out.println("HI");
         System.out.println(dataReceiver.getCourseBoundary().size());
         System.out.println("BYTE");
-//        race=dataReceiver.getRace();
+
 
         //draw the course
         gc.setFill(Color.LIGHTBLUE);
         gc.fillRect(0,0,width,height);
-//        drawCourse(gc);
 
         //draw wind direction arrow
         drawArrow(race.getWindDirection(), gc);
 
+        List<Competitor> competitors = dataReceiver.getCompetitors();
+        System.out.println("COMPS " + dataReceiver.getCompetitors().size());
         //draw moving entities
         for(int i =0; i< competitors.size(); i++)  {
             Competitor boat = competitors.get(i);
@@ -577,6 +533,9 @@ public class RaceViewController implements ClockHandler, Initializable {
                     drawLine();
                 }
                 }}
+
+
+//                competitors = dataReceiver.getCompetitors();
 
                 //move competitors and draw tracks
                 for (int i = 0; i < competitors.size(); i++) {

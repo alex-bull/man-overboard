@@ -26,9 +26,16 @@ public class DataReceiver extends TimerTask {
     private String timezone;
     private RaceXMLParser raceXMLParser;
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
+    private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
     private List<CourseFeature> courseFeatures = new ArrayList<>();
     private List<MutablePoint> courseBoundary = new ArrayList<>();
     private FileOutputStream fileOutputStream;
+    private double bufferX;
+    private double bufferY;
+    private double scaleFactor;
+    private double minXMercatorCoord;
+    private double minYMercatorCoord;
+    private BoatXMLParser boatXMLParser;
     List<MarkData> startMarks = new ArrayList<>();
     List<MarkData> finishMarks = new ArrayList<>();
 
@@ -38,6 +45,9 @@ public class DataReceiver extends TimerTask {
     public String getCourseTimezone() { return timezone; }
     public List<MarkData> getStartMarks() {return startMarks;}
     public List<MarkData> getFinishMarks() {return finishMarks;}
+    public List<Competitor> getCompetitors() {
+        return competitors;
+    }
 
     //Setters
     public void setCompetitors(List<Competitor> competitors){
@@ -87,13 +97,27 @@ public class DataReceiver extends TimerTask {
                 this.raceXMLParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
                 this.raceData = raceXMLParser.getRaceData();
                 this.courseBoundary = raceXMLParser.getCourseBoundary();
+                setScalingFactors();
                 break;
             case BOAT:
-                BoatXMLParser boatParser = new BoatXMLParser(xml.trim());
+                this.boatXMLParser = new BoatXMLParser(xml.trim());
+//                System.out.println("mark boats" + boatParser.getBoats());
+
                 break;
         }
     }
 
+    /**
+     * Sets the scaling values after the boundary has been received and parsed by the raceXMLParser.
+     */
+    private void setScalingFactors()
+    {
+        this.bufferX = raceXMLParser.getBufferX();
+        this.bufferY = raceXMLParser.getBufferY();
+        this.scaleFactor = raceXMLParser.getScaleFactor();
+        this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
+        this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
+    }
 
     /**
      * Sets the canvas width and height so that the parser can scale values to screen.
@@ -182,14 +206,47 @@ public class DataReceiver extends TimerTask {
                         this.boatData = boatDataParser.getBoatData();
 
                         //update boat with boat data
-                        if(competitors!=null){
-                            //TODO: get rid of this hack
-                            int index=boatData.getSourceID() - 101;
-                            if(index<competitors.size()) {
-                                competitors.get(index).setProperties(boatData.getSpeed(), boatData.getHeading(), boatData.getLatitude(), boatData.getLongitude());
+//                        if(competitors!=null){
+//                            //TODO: get rid of this hack
+//                            int index=boatData.getSourceID() - 101;
+//                            if(index<competitors.size()) {
+//                                competitors.get(index).setProperties(boatData.getSpeed(), boatData.getHeading(), boatData.getLatitude(), boatData.getLongitude());
+//                            }
+//
+//
+//                        }
+
+//                        System.out.println("BOATSSS" + boatXMLParser.getBoats());
+                        if(boatData.getDeviceType() == 1 && raceXMLParser.getBoatIDs().contains(boatData.getSourceID())) {
+                            int boatID = boatData.getSourceID();
+
+                            Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
+                            System.out.println("boat country " + competitor.getAbbreName());
+                            double x = boatDataParser.getPixelPoint().getXValue();
+                            double y = boatDataParser.getPixelPoint().getYValue();
+                            System.out.println("boat lat and lon " + x +  "   " + y);
+                            MutablePoint location = new MutablePoint(x, y);
+                            location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX/2,bufferY/2);
+                            competitor.setPosition(location);
+                            System.out.println(location.getXValue() +  "   " + location.getYValue());
+
+                            this.storedCompetitors.put(boatID, competitor);
+
+                            List<Competitor> comps = new ArrayList<>();
+                            for(Integer id: this.storedCompetitors.keySet()) {
+                                comps.add(this.storedCompetitors.get(id));
                             }
+
+                            this.competitors = comps;
+//                            this.boatXMLParser.getBoats().containsKey(boatData.getSourceID());
+//                            // then there are competitors
+//                            List<Competitor> boats = new ArrayList<>();
+//                            Competitor competitor = boatDataParser.getCompetitor();
+//                            System.out.println("BOAT ID: " + boatData.getSourceID());
+//
+
                         }
-                        if(boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
+                        else if(boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
                             //make scaling in proportion
                             startMarks = raceData.getStartMarks();
                             finishMarks = raceData.getFinishMarks();
@@ -198,6 +255,7 @@ public class DataReceiver extends TimerTask {
                             double scaleFactor = raceXMLParser.getScaleFactor();
                             List<Double> xMercatorCoords = raceXMLParser.getxMercatorCoords();
                             List<Double> yMercatorCoords = raceXMLParser.getyMercatorCoords();
+                            ;
                             List<CourseFeature> points = new ArrayList<>();
 //                            CourseFeature courseFeature = boatDataParser.getCourseFeature();
                             CourseFeature courseFeature = boatDataParser.getCourseFeature();
@@ -218,6 +276,7 @@ public class DataReceiver extends TimerTask {
                                 }
                             }
 
+                            courseFeature.factor(scaleFactor,scaleFactor,minXMercatorCoord,minYMercatorCoord,bufferX/2,bufferY/2);
                             this.storedFeatures.put(boatData.getSourceID(), courseFeature);
 
 

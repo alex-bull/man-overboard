@@ -33,6 +33,7 @@ public class CourseFactory {
             boundary = parser.parseCourseBoundary(screenX, screenY);
         } catch (JDOMException e) {
             System.out.println("Invalid format for course XML file.");
+            e.printStackTrace();
             System.exit(1);
         } catch (IOException e) {
             System.out.println("Failed to load file, please make sure path is correct.");

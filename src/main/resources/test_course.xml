@@ -13,11 +13,11 @@
     </gate>
 
 
-    <mark>
+    <pixelPoint>
         <name>Mark</name>
         <compoundMark>
             <latitude>32.293039</latitude>
             <longtitude>-64.843983</longtitude>
         </compoundMark>
-    </mark>
+    </pixelPoint>
 </course>

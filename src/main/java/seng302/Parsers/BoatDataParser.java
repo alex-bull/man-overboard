@@ -1,9 +1,6 @@
 package seng302.Parsers;
 
-import seng302.Model.CourseFeature;
-import seng302.Model.Gate;
-import seng302.Model.Mark;
-import seng302.Model.MutablePoint;
+import seng302.Model.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,17 +14,15 @@ import static seng302.Parsers.Converter.hexByteArrayToInt;
  * Parser for boat location data.
  */
 public class BoatDataParser {
-    double latitude;
-    double longitude;
-    Integer sourceID;
-    double width;
-    double height;
-
-    CourseFeature courseFeature;
-
-
-    MutablePoint mark;
-    BoatData boatData;
+    private double latitude;
+    private double longitude;
+    private Integer sourceID;
+    private double width;
+    private double height;
+    private CourseFeature courseFeature;
+    private Competitor competitor;
+    private MutablePoint pixelPoint;
+    private BoatData boatData;
 
 
     public BoatDataParser(byte[] message, double width, double height) {
@@ -55,17 +50,16 @@ public class BoatDataParser {
         //speed in m/sec
         double convertedSpeed=speed/1000.0;
 
+        ArrayList<Double> point = mercatorProjection(latitude, longitude, width, height);
+        double pointX = point.get(0);
+        double pointY = point.get(1);
+        //System.out.println("lat lon and Y" + point1X + " +" + point1Y);
+        this.pixelPoint = new MutablePoint(pointX, pointY);
         if(deviceType == 3){
-            ArrayList<Double> point1 = mercatorProjection(latitude, longitude, width, height);
-            double point1X = point1.get(0);
-            double point1Y = point1.get(1);
-            //System.out.println("lat lon and Y" + point1X + " +" + point1Y);
-            MutablePoint pixel = new MutablePoint(point1X, point1Y);
             MutablePoint GPS = new MutablePoint(latitude, longitude);
-
-            this.courseFeature = new Mark(sourceID.toString(), pixel, GPS, 0);
-//            this.mark = new MutablePoint(point1X, point1Y);
+            this.courseFeature = new Mark(sourceID.toString(), this.pixelPoint, GPS, 0);
         }
+
         return new BoatData(sourceID, deviceType, latitude, longitude, heading, convertedSpeed);
     }
 
@@ -88,12 +82,12 @@ public class BoatDataParser {
     }
 
 
-    public MutablePoint getMark() {
-        return mark;
+    public MutablePoint getPixelPoint() {
+        return pixelPoint;
     }
 
-    public void setMark(MutablePoint mark) {
-        this.mark = mark;
+    public void setPixelPoint(MutablePoint pixelPoint) {
+        this.pixelPoint = pixelPoint;
     }
 
 
@@ -119,6 +113,9 @@ public class BoatDataParser {
 
 
 
+    public Competitor getCompetitor() {
+        return competitor;
+    }
 
 
     public BoatData getBoatData() {
