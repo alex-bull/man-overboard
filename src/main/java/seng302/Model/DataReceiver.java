@@ -1,12 +1,15 @@
 package seng302.Model;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.scene.paint.Color;
 import org.jdom2.JDOMException;
 import seng302.Parsers.*;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
+
+import static java.util.Collections.shuffle;
 
 /**
  * Created by khe60 on 10/04/17.
@@ -38,6 +41,7 @@ public class DataReceiver extends TimerTask {
     private BoatXMLParser boatXMLParser;
     List<MarkData> startMarks = new ArrayList<>();
     List<MarkData> finishMarks = new ArrayList<>();
+    private ColourPool colourPool = new ColourPool();
 
     //Getters
     public List<CourseFeature> getCourseFeatures() { return courseFeatures; }
@@ -231,9 +235,18 @@ public class DataReceiver extends TimerTask {
 //                            System.out.println("boat lat and lon " + x +  "   " + y);
                             MutablePoint location = new MutablePoint(x, y);
                             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX/2,bufferY/2);
-                            competitor.setPosition(location);;
-                            System.out.println(location.getXValue() +  "   " + location.getYValue());
+                            competitor.setPosition(location);
 
+                            // boat colour
+                            if(competitor.getColor() == null) {
+                                Color colour = this.colourPool.getColours().get(0);
+                                competitor.setColor(colour);
+                                colourPool.getColours().remove(colour);
+                            }
+
+                            //speed
+//                            System.out.println("boat speed " + boatData.getSpeed());
+//                            competitor.setVelocity(boatData.getSpeed() * 1000);
                             this.storedCompetitors.put(boatID, competitor);
 
                             List<Competitor> comps = new ArrayList<>();
