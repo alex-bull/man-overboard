@@ -1,5 +1,7 @@
 package seng302.Parsers;
 
+import seng302.Model.MutablePoint;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,13 +13,13 @@ public class CompoundMarkData {
     private int ID;
     private String name;
     private List<MarkData> marks = new ArrayList<>();
+    private List<Integer> markIDs = new ArrayList<>();
 
     public CompoundMarkData(int ID, String name, List<MarkData> marks) {
         this.ID = ID;
         this.name = name;
         this.marks = marks;
     }
-
 
     public List<MarkData> getMarks() {
         return marks;
@@ -27,6 +29,12 @@ public class CompoundMarkData {
         this.marks = marks;
     }
 
+    public List<Integer> getMarkIDs() {
+        for (MarkData mark : marks) {
+            markIDs.add(mark.getSourceID());
+        }
+        return markIDs;
+    }
 
     public int getID() {
         return ID;

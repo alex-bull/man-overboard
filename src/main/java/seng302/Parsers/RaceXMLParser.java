@@ -1,6 +1,7 @@
 package seng302.Parsers;
 
 import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
+import edu.princeton.cs.introcs.In;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -99,6 +100,10 @@ public class RaceXMLParser {
         }
 
         List<CompoundMarkData> course = new ArrayList<>();
+        List<MarkData> startMarks = new ArrayList<>();
+        List<MarkData> finishMarks = new ArrayList<>();
+
+//        CourseParser courseParser = new CourseParser()
         for(Element compoundMark:race.getChild("Course").getChildren()){
             int compoundMarkID = Integer.parseInt(compoundMark.getAttribute("CompoundMarkID").getValue());
             String compoundMarkName = compoundMark.getAttribute("Name").getValue();
@@ -129,6 +134,8 @@ public class RaceXMLParser {
         raceData.setCourse(course);
 
         for(Element corner: race.getChild("CompoundMarkSequence").getChildren()) {
+            int size = race.getChild("CompoundMarkSequence").getChildren().size();
+
             int cornerSeqID = Integer.parseInt(corner.getAttributeValue("SeqID"));
             int compoundMarkID = Integer.parseInt(corner.getAttributeValue("CompoundMarkID"));
             String rounding = corner.getAttributeValue("Rounding");
@@ -139,6 +146,22 @@ public class RaceXMLParser {
 //            System.out.println("Rounding: " + rounding);
 //            System.out.println("Zone size: " + zoneSize);
             CornerData cornerData = new CornerData(cornerSeqID, compoundMarkID, rounding, zoneSize);
+            if (cornerSeqID == 1) {
+                for (CompoundMarkData mark : course) {
+                    if (mark.getID() == compoundMarkID) {
+                        startMarks.addAll(mark.getMarks());
+                    }
+                }
+            }
+            if (cornerSeqID == size) {
+                for (CompoundMarkData mark : course) {
+                    if (mark.getID() == compoundMarkID) {
+                        finishMarks.addAll(mark.getMarks());
+                    }
+                }
+            }
+            raceData.setStartMarks(startMarks);
+            raceData.setFinishMarks(finishMarks);
             raceData.getCompoundMarkSequence().add(cornerData);
 
         }

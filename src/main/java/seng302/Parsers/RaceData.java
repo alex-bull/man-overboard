@@ -17,6 +17,8 @@ public class RaceData {
     private String raceStartTime;
     private boolean raceStartTimePostpone;
     private List<YachtData> participants = new ArrayList<>();
+    private List<MarkData> startMarks = new ArrayList<>();
+    private List<MarkData> finishMarks = new ArrayList<>();
 
 
     //    private Map<Integer, CompoundMarkData> course = new HashMap<>();
@@ -41,7 +43,14 @@ public class RaceData {
     public RaceData() {
     }
 
-
+    public List<MarkData> getStartMarks() {return this.startMarks;}
+    public List<MarkData> getFinishMarks() {return this.finishMarks;}
+    public void setStartMarks(List<MarkData> startMarks) {
+        this.startMarks = startMarks;
+    }
+    public void setFinishMarks(List<MarkData> finishMarks) {
+        this.finishMarks = finishMarks;
+    }
 
     public List<CompoundMarkData> getCourse() {
         return course;

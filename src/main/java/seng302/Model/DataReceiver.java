@@ -29,11 +29,15 @@ public class DataReceiver extends TimerTask {
     private List<CourseFeature> courseFeatures = new ArrayList<>();
     private List<MutablePoint> courseBoundary = new ArrayList<>();
     private FileOutputStream fileOutputStream;
+    List<MarkData> startMarks = new ArrayList<>();
+    List<MarkData> finishMarks = new ArrayList<>();
 
     //Getters
     public List<CourseFeature> getCourseFeatures() { return courseFeatures; }
     public List<MutablePoint> getCourseBoundary() { return courseBoundary; }
     public String getCourseTimezone() { return timezone; }
+    public List<MarkData> getStartMarks() {return startMarks;}
+    public List<MarkData> getFinishMarks() {return finishMarks;}
 
     //Setters
     public void setCompetitors(List<Competitor> competitors){
@@ -187,6 +191,8 @@ public class DataReceiver extends TimerTask {
                         }
                         if(boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
                             //make scaling in proportion
+                            startMarks = raceData.getStartMarks();
+                            finishMarks = raceData.getFinishMarks();
                             double bufferX = raceXMLParser.getBufferX();
                             double bufferY = raceXMLParser.getBufferY();
                             double scaleFactor = raceXMLParser.getScaleFactor();
@@ -197,6 +203,21 @@ public class DataReceiver extends TimerTask {
                             CourseFeature courseFeature = boatDataParser.getCourseFeature();
 //                            this.storedFeatures.add(courseFeature);
                             courseFeature.factor(scaleFactor,scaleFactor,Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2);
+
+                            for (MarkData mark : startMarks) {
+                                if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
+                                    mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
+                                    mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
+                                }
+                            }
+
+                            for (MarkData mark : finishMarks) {
+                                if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
+                                    mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
+                                    mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
+                                }
+                            }
+
                             this.storedFeatures.put(boatData.getSourceID(), courseFeature);
 
 

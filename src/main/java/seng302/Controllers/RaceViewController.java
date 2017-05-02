@@ -17,10 +17,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Polyline;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
@@ -28,6 +25,8 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import seng302.Model.*;
 import seng302.Parsers.BoatData;
+import seng302.Parsers.CompoundMarkData;
+import seng302.Parsers.MarkData;
 
 import javax.xml.crypto.Data;
 import java.awt.event.ActionEvent;
@@ -75,7 +74,10 @@ public class RaceViewController implements ClockHandler, Initializable {
     private DataReceiver dataReceiver;
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
+    private List<MarkData> startMarks = null;
+    private List<MarkData> finishMarks = null;
     private Map<String, Shape> markModels = new HashMap<>();
+    private Map<String, Shape> lineModels = new HashMap<>();
 
 
     @Override
@@ -186,10 +188,27 @@ public class RaceViewController implements ClockHandler, Initializable {
                 this.raceViewPane.getChildren().remove(mark);
             }
             drawMark(courseFeature);
-
         }
     }
+    private void drawLine() {
+        this.startMarks = dataReceiver.getStartMarks();
+        this.finishMarks = dataReceiver.getFinishMarks();
+        double x1 = startMarks.get(0).getTargetLat();
+        double y1 = startMarks.get(0).getTargetLon();
+        double x2 = startMarks.get(1).getTargetLat();
+        double y2 = startMarks.get(1).getTargetLon();
+        Line start = new Line(x1,y1,x2,y2);
+        this.raceViewPane.getChildren().add(start);
+        this.lineModels.put("start line", start);
+        double x3 = finishMarks.get(0).getTargetLat();
+        double y3 = finishMarks.get(0).getTargetLon();
+        double x4 = finishMarks.get(1).getTargetLat();
+        double y4 = finishMarks.get(1).getTargetLon();
+        Line finish = new Line(x3,y3,x4,y4);
+        this.raceViewPane.getChildren().add(finish);
+        this.lineModels.put("finish line", finish);
 
+    }
 
     private void drawMark(CourseFeature courseFeature) {
 
@@ -539,12 +558,6 @@ public class RaceViewController implements ClockHandler, Initializable {
                     counter = 0;
                 }
 
-                // check if boundary needs to be redrawn
-                if(dataReceiver.getCourseBoundary() != courseBoundary) {
-                    courseBoundary = dataReceiver.getCourseBoundary();
-                    drawBoundary(gc);
-                }
-
                 // check if course features need to be redrawn
                 count++;
                 if (count % 100 == 0){
@@ -557,6 +570,12 @@ public class RaceViewController implements ClockHandler, Initializable {
 //                                courseFeature.getPixelLocations().get(0).getYValue());
 //                    }
 //                }
+                // check if boundary needs to be redrawn
+                if(dataReceiver.getCourseBoundary() != courseBoundary) {
+                    courseBoundary = dataReceiver.getCourseBoundary();
+                    drawBoundary(gc);
+                    drawLine();
+                }
                 }}
 
                 //move competitors and draw tracks

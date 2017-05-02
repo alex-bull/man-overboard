@@ -65,7 +65,6 @@ public class BoatDataParser {
 
             this.courseFeature = new Mark(sourceID.toString(), pixel, GPS, 0);
 //            this.mark = new MutablePoint(point1X, point1Y);
-
         }
         return new BoatData(sourceID, deviceType, latitude, longitude, heading, convertedSpeed);
     }

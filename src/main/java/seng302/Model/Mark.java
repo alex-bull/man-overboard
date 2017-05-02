@@ -17,7 +17,8 @@ public class Mark implements CourseFeature {
     private boolean isFinish = false;
     private boolean isLine = false;
     private int index;
-
+    private int zoneSize;
+    private int rounding;
 
     /**
      * Creates a course mark
