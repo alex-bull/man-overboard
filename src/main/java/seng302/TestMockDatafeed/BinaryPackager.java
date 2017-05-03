@@ -97,7 +97,7 @@ public class BinaryPackager {
 
         //CRC
         Checksum crc32=new CRC32();
-        crc32.update(packet,0,packet.length);
+        crc32.update(packet,0,packet.length-4);
         packetBuffer.putInt((int) crc32.getValue());
 
 //        System.out.println();
@@ -139,7 +139,7 @@ public class BinaryPackager {
 
         //CRC
         Checksum crc32=new CRC32();
-        crc32.update(packet,0,packet.length);
+        crc32.update(packet,0,packet.length-4);
         packetBuffer.putInt((int) crc32.getValue());
 
         return packet;
@@ -291,7 +291,7 @@ public class BinaryPackager {
 
         //CRC
         Checksum crc32=new CRC32();
-        crc32.update(packet,0,packet.length);
+        crc32.update(packet,0,packet.length-4);
         packetBuffer.putInt((int) crc32.getValue());
         return packet;
     }
