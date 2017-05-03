@@ -85,6 +85,8 @@
             <Font size="25.0" />
          </font>
       </Text>
-      <Button fx:id="confirmStream" layoutX="397.0" layoutY="80.0" mnemonicParsing="false" onAction="#confirmStream" text="Confirm" />
+      <Button layoutX="397.0" layoutY="80.0" mnemonicParsing="false" onAction="#confirmStream" text="Confirm" />
+      <Text layoutX="141.0" layoutY="122.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Race status:" />
+      <Text fx:id="raceStatus" fill="#6179f2" layoutX="223.0" layoutY="122.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please click confirm" />
                </children>
             </AnchorPane>

@@ -44,7 +44,7 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML private ChoiceBox<Integer> numBoatsInput;
     @FXML private ChoiceBox<Integer> durationInput;
     @FXML private Button countdownButton;
-    @FXML private Button confirmStream;
+    @FXML private Text raceStatus;
 
     private Clock worldClock;
     private Stage primaryStage;
@@ -202,6 +202,10 @@ public class StarterController implements Initializable, ClockHandler {
         });
     }
 
+
+    /**
+     * Called when the user clicks confirm. Updates the competitors table.
+     */
     @FXML
     public void confirmStream() {
         if(dataReceiver.getCompetitors().size() == 0) {
@@ -220,6 +224,7 @@ public class StarterController implements Initializable, ClockHandler {
         r = new RaceFactory().createRace(numBoats, 1, raceCourse);
 
         compList.setAll(dataReceiver.getCompetitors());
+        raceStatus.setText(dataReceiver.getRaceStatus());
     }
 
 

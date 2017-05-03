@@ -23,8 +23,10 @@ public class DataReceiver extends TimerTask {
     private double canvasWidth;
     private double canvasHeight;
     private BoatData boatData;
+    private RaceStatusData raceStatusData;
     private RaceData raceData;
     private String timezone;
+    private String raceStatus;
     private RaceXMLParser raceXMLParser;
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
@@ -47,6 +49,9 @@ public class DataReceiver extends TimerTask {
     public String getCourseTimezone() { return timezone; }
     public List<MarkData> getStartMarks() {return startMarks;}
     public List<MarkData> getFinishMarks() {return finishMarks;}
+    public String getRaceStatus() {
+        return raceStatus;
+    }
     public List<Competitor> getCompetitors() {
         return competitors;
     }
@@ -185,6 +190,7 @@ public class DataReceiver extends TimerTask {
 
                     int XMLMessageType = 26;
                     int boatLocationMessageType = 37;
+                    int raceStatusMessageType = 12;
                     int messageType = (int) byteStreamConverter.getMessageType();
                     int messageLength = (int) byteStreamConverter.getMessageLength();
 
@@ -197,6 +203,12 @@ public class DataReceiver extends TimerTask {
                         } catch (JDOMException e) {
                             e.printStackTrace();
                         }
+                    }
+                    else if(messageType == raceStatusMessageType) {
+                        RaceStatusParser raceStatusParser = new RaceStatusParser(message);
+                        this.raceStatusData = raceStatusParser.getRaceStatus();
+                        this.raceStatus = raceStatusData.getRaceStatus();
+
                     }
                     else if (messageType == boatLocationMessageType) {
                         BoatDataParser boatDataParser = new BoatDataParser(message, canvasWidth, canvasHeight);
