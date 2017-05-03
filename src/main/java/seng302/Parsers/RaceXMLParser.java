@@ -127,7 +127,6 @@ public class RaceXMLParser {
 //                System.out.println("Mark name: " + markName);
 //                System.out.println("Target lat: " +targetLat);
 //                System.out.println("Target Lng: " + targetLng);
-                System.out.println("Source id: " + sourceID);
                 markIDs.add(sourceID);
                 MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
                 marks.add(markData);
@@ -200,7 +199,7 @@ public class RaceXMLParser {
         try {
             parseBoundary(width, height, bufferX, bufferY);
         } catch (Exception e) {
-            System.out.println(e);
+
         }
     }
 
@@ -214,7 +213,6 @@ public class RaceXMLParser {
      * @param bufferY canvas buffer height
      */
     private void parseBoundary(double width, double height, double bufferX, double bufferY) throws Exception {
-        System.out.println("----------------PARSING BOUNDARY------------------");
 
         this.xMercatorCoords=new ArrayList<>();
         this.yMercatorCoords=new ArrayList<>();

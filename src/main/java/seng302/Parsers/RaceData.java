@@ -26,19 +26,6 @@ public class RaceData {
     private List<CornerData> compoundMarkSequence = new ArrayList<>();
     private List<LimitData> courseLimit = new ArrayList<>();
 
-//    public RaceData(int raceID, String raceType, String creationTimeDate, String raceStartTime,
-//                    boolean raceStartTimePostpone, List<YachtData> participants, List<CompoundMarkData> course,
-//                    List<CornerData> compoundMarkSequence, List<LimitData> courseLimit) {
-//        this.raceID = raceID;
-//        this.raceType = raceType;
-//        this.creationTimeDate = creationTimeDate;
-//        this.raceStartTime = raceStartTime;
-//        this.raceStartTimePostpone = raceStartTimePostpone;
-//        this.participants = participants;
-//        this.course = course;
-//        this.compoundMarkSequence = compoundMarkSequence;
-//        this.courseLimit = courseLimit;
-//    }
 
     public RaceData() {
     }
@@ -59,14 +46,6 @@ public class RaceData {
     public void setCourse(List<CompoundMarkData> course) {
         this.course = course;
     }
-
-//    public Map<Integer, CompoundMarkData> getCourse() {
-//        return course;
-//    }
-//
-//    public void setCourse(Map<Integer, CompoundMarkData> course) {
-//        this.course = course;
-//    }
 
     public int getRaceID() {
         return raceID;

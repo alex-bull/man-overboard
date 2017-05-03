@@ -1,6 +1,5 @@
 package seng302.Model;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
 import org.jdom2.JDOMException;
 import seng302.Parsers.*;
@@ -9,7 +8,6 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
-import static java.util.Collections.shuffle;
 
 /**
  * Created by khe60 on 10/04/17.
@@ -104,8 +102,6 @@ public class DataReceiver extends TimerTask {
                 break;
             case BOAT:
                 this.boatXMLParser = new BoatXMLParser(xml.trim());
-//                System.out.println("mark boats" + boatParser.getBoats());
-
                 break;
         }
     }
@@ -181,7 +177,6 @@ public class DataReceiver extends TimerTask {
      * Identify the start of a packet, determine the message type and length, then read.
      */
     public void run() {
-//        while(true){
             try {
                 boolean isStartOfPacket = checkForSyncBytes();
 
@@ -197,7 +192,6 @@ public class DataReceiver extends TimerTask {
                     dis.readFully(message);
 
                     if (messageType == XMLMessageType) {
-                        System.out.println("XML");
                         try {
                             readXMLMessage(message);
                         } catch (JDOMException e) {
@@ -207,110 +201,12 @@ public class DataReceiver extends TimerTask {
                     else if (messageType == boatLocationMessageType) {
                         BoatDataParser boatDataParser = new BoatDataParser(message, canvasWidth, canvasHeight);
                         this.boatData = boatDataParser.getBoatData();
-
-                        //update boat with boat data
-//                        if(competitors!=null){
-//                            //TODO: get rid of this hack
-//                            int index=boatData.getSourceID() - 101;
-//                            if(index<competitors.size()) {
-//                                competitors.get(index).setProperties(boatData.getSpeed(), boatData.getHeading(), boatData.getLatitude(), boatData.getLongitude());
-//                            }
-//
-//
-//                        }
-
-//                        System.out.println("BOATSSS" + boatXMLParser.getBoats());
                         if(boatData.getDeviceType() == 1 && raceXMLParser.getBoatIDs().contains(boatData.getSourceID())) {
-                            int boatID = boatData.getSourceID();
-
-                            Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
-
-                            System.out.println("boat country " + competitor.getAbbreName() + "  " +  competitor.getTeamName());
-                            System.out.println("heading " + boatData.getHeading());
-                            System.out.println("speed " + boatData.getSpeed());
-                            competitor.setCurrentHeading(boatData.getHeading());
-
-                            double x = boatDataParser.getPixelPoint().getXValue();
-                            double y = boatDataParser.getPixelPoint().getYValue();
-//                            System.out.println("boat lat and lon " + x +  "   " + y);
-                            MutablePoint location = new MutablePoint(x, y);
-                            location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX/2,bufferY/2);
-                            competitor.setPosition(location);
-                            competitor.setVelocity(boatData.getSpeed());
-
-                            // boat colour
-                            if(competitor.getColor() == null) {
-                                Color colour = this.colourPool.getColours().get(0);
-                                competitor.setColor(colour);
-                                colourPool.getColours().remove(colour);
-                            }
-
-                            //speed
-//                            System.out.println("boat speed " + boatData.getSpeed());
-//                            competitor.setVelocity(boatData.getSpeed() * 1000);
-                            this.storedCompetitors.put(boatID, competitor);
-
-                            List<Competitor> comps = new ArrayList<>();
-                            for(Integer id: this.storedCompetitors.keySet()) {
-                                comps.add(this.storedCompetitors.get(id));
-                            }
-
-                            this.competitors = comps;
-//                            this.boatXMLParser.getBoats().containsKey(boatData.getSourceID());
-//                            // then there are competitors
-//                            List<Competitor> boats = new ArrayList<>();
-//                            Competitor competitor = boatDataParser.getCompetitor();
-//                            System.out.println("BOAT ID: " + boatData.getSourceID());
-//
-
+                            updateBoatProperties(boatDataParser);
                         }
                         else if(boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
-                            //make scaling in proportion
-                            startMarks = raceData.getStartMarks();
-                            finishMarks = raceData.getFinishMarks();
-                            double bufferX = raceXMLParser.getBufferX();
-                            double bufferY = raceXMLParser.getBufferY();
-                            double scaleFactor = raceXMLParser.getScaleFactor();
-                            List<CourseFeature> points = new ArrayList<>();
-//                            CourseFeature courseFeature = boatDataParser.getCourseFeature();
-                            CourseFeature courseFeature = boatDataParser.getCourseFeature();
-//                            this.storedFeatures.add(courseFeature);
+                            updateCourseMarks(boatDataParser);
 
-                            courseFeature.factor(scaleFactor,scaleFactor,minXMercatorCoord,minYMercatorCoord,bufferX/2,bufferY/2);
-                            for (MarkData mark : startMarks) {
-                                if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
-                                    mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
-                                    mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
-                                }
-                            }
-
-                            for (MarkData mark : finishMarks) {
-                                if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
-                                    mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
-                                    mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
-                                }
-                            }
-
-
-                            this.storedFeatures.put(boatData.getSourceID(), courseFeature);
-
-
-                            for(Integer id: this.storedFeatures.keySet()) {
-                                points.add(this.storedFeatures.get(id));
-                            }
-
-
-                            this.courseFeatures = points;
-//                            System.out.println("------STORED FEATURES------");
-//                            for(CourseFeature feature: this.courseFeatures) {
-//                                System.out.println("name---" + feature.getName());
-//                                System.out.println(feature.getExitHeading());
-//                                System.out.println(feature.getPixelLocations().get(0).getXValue());
-//                                System.out.println(feature.getPixelLocations().get(0).getYValue());
-//
-//                                System.out.println("x and y values above");
-//                            }
-//                            System.out.println("---END STORED FEATURES -------");
                         }
                     }
                 }
@@ -321,13 +217,84 @@ public class DataReceiver extends TimerTask {
             catch (IOException e) {
                 e.printStackTrace();
             }
-//        }
+    }
+
+    /**
+     * Updates the course features/marks
+     * @param boatDataParser BoatDataParser the boat data parser
+     */
+    private void updateCourseMarks(BoatDataParser boatDataParser) {
+        //make scaling in proportion
+        startMarks = raceData.getStartMarks();
+        finishMarks = raceData.getFinishMarks();
+        double bufferX = raceXMLParser.getBufferX();
+        double bufferY = raceXMLParser.getBufferY();
+        double scaleFactor = raceXMLParser.getScaleFactor();
+        List<CourseFeature> points = new ArrayList<>();
+        CourseFeature courseFeature = boatDataParser.getCourseFeature();
+
+        courseFeature.factor(scaleFactor,scaleFactor,minXMercatorCoord,minYMercatorCoord,bufferX/2,bufferY/2);
+        for (MarkData mark : startMarks) {
+            if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
+                mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
+                mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
+            }
+        }
+
+        for (MarkData mark : finishMarks) {
+            if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
+                mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
+                mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
+            }
+        }
+
+        this.storedFeatures.put(boatData.getSourceID(), courseFeature);
+
+        for(Integer id: this.storedFeatures.keySet()) {
+            points.add(this.storedFeatures.get(id));
+        }
+        this.courseFeatures = points;
+    }
+
+    /**
+     * Updates the boat properties as data is being received.
+     * @param boatDataParser BoatDataParser the boat data parser
+     */
+    private void updateBoatProperties(BoatDataParser boatDataParser) {
+        int boatID = boatData.getSourceID();
+
+        Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
+        competitor.setCurrentHeading(boatData.getHeading());
+
+        double x = boatDataParser.getPixelPoint().getXValue();
+        double y = boatDataParser.getPixelPoint().getYValue();
+        MutablePoint location = new MutablePoint(x, y);
+        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX/2,bufferY/2);
+        competitor.setPosition(location);
+        competitor.setVelocity(boatData.getSpeed());
+
+        // boat colour
+        if(competitor.getColor() == null) {
+            Color colour = this.colourPool.getColours().get(0);
+            competitor.setColor(colour);
+            colourPool.getColours().remove(colour);
+        }
+
+        //speed
+        this.storedCompetitors.put(boatID, competitor);
+
+        List<Competitor> comps = new ArrayList<>();
+        for(Integer id: this.storedCompetitors.keySet()) {
+            comps.add(this.storedCompetitors.get(id));
+        }
+
+        this.competitors = comps;
     }
 
     /**
      * Creates a new data receiver and runs at the period of 100ms
-     * @param args
-     * @throws InterruptedException
+     * @param args String[]
+     * @throws InterruptedException Interrupted Exception
      */
     public static void main (String [] args) throws InterruptedException {
         DataReceiver dataReceiver = null;

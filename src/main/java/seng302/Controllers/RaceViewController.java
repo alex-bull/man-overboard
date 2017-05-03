@@ -116,9 +116,9 @@ public class RaceViewController implements ClockHandler, Initializable {
         raceClock.start();
 
         String timezone = dataReceiver.getCourseTimezone();
-        System.out.println("Timezone " + timezone);
         this.worldClock = new WorldClock(this, timezone);
         worldClock.start();
+
 
         animate(width, height);
     }
@@ -161,7 +161,6 @@ public class RaceViewController implements ClockHandler, Initializable {
         //System.out.println("DRAWING COURSE.." + courseFeatures.size());
 
         // loops through all course features
-        System.out.println("COURSE FEATURE " + courseFeatures.size());
         for (CourseFeature courseFeature : courseFeatures) {
             //System.out.println("FEATURE " + courseFeature.getName());
             Shape mark = this.markModels.get(courseFeature.getName());
@@ -193,7 +192,6 @@ public class RaceViewController implements ClockHandler, Initializable {
 
         double x = courseFeature.getPixelLocations().get(0).getXValue();
         double y = courseFeature.getPixelLocations().get(0).getYValue();
-        System.out.println("DRAWING MARK " + courseFeature.getName() + " " + x + " " + y);
         Circle circle = new Circle(x, y, 7.5, ORANGERED);
         this.raceViewPane.getChildren().add(circle);
         this.markModels.put(courseFeature.getName(), circle);
@@ -208,8 +206,6 @@ public class RaceViewController implements ClockHandler, Initializable {
     public void drawBoundary(GraphicsContext gc) {
 
         if(courseBoundary != null) {
-            System.out.println("HELLO");
-            System.out.println(courseBoundary.size());
             gc.save();
             ArrayList<Double> boundaryX = new ArrayList<>();
             ArrayList<Double> boundaryY = new ArrayList<>();
@@ -217,7 +213,6 @@ public class RaceViewController implements ClockHandler, Initializable {
             for (MutablePoint point: courseBoundary) {
                 boundaryX.add(point.getXValue());
                 boundaryY.add(point.getYValue());
-                System.out.println(point.getXValue() + "  " + point.getYValue());
             }
             gc.setLineDashes(5);
             gc.setLineWidth(0.8);
@@ -439,7 +434,6 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     private void animate(double width, double height){
 
-//        List<Competitor> competitors = race.getCompetitors();
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
 
         //draw the course
@@ -448,21 +442,14 @@ public class RaceViewController implements ClockHandler, Initializable {
 
         //draw wind direction arrow
         drawArrow(race.getWindDirection(), gc);
+
         List<Competitor> competitors = dataReceiver.getCompetitors();
 
-        for (int i = 0; i < competitors.size(); i++) {
-            Competitor boat = competitors.get(i);
+        for (Competitor boat: competitors) {
             drawWake(boat);
             drawBoat(boat);
             drawAnnotations(boat);
         }
-
-//        for(CourseFeature courseFeature: dataReceiver.getCourseFeatures()) {
-//            System.out.println("hello " + courseFeature.getName());
-//            drawMark(courseFeature);
-//        }
-
-
 
         AnimationTimer timer = new AnimationTimer() {
 
@@ -485,27 +472,18 @@ public class RaceViewController implements ClockHandler, Initializable {
 
                 // check if course features need to be redrawn
                 count++;
-                if (count % 100 == 0){
                 if(dataReceiver.getCourseFeatures() != (courseFeatures)) {
                     courseFeatures = dataReceiver.getCourseFeatures();
                     drawCourse();
-//                    for(CourseFeature courseFeature: courseFeatures) {
-//
-//                        moveMark(courseFeature.getName(), courseFeature.getPixelLocations().get(0).getXValue(),
-//                                courseFeature.getPixelLocations().get(0).getYValue());
-//                    }
-//                }
+
                 // check if boundary needs to be redrawn
                 if(dataReceiver.getCourseBoundary() != courseBoundary) {
                     courseBoundary = dataReceiver.getCourseBoundary();
                     drawBoundary(gc);
                     drawLine(dataReceiver.getStartMarks());
                     drawLine(dataReceiver.getFinishMarks());
+                    }
                 }
-                }}
-
-
-//                competitors = dataReceiver.getCompetitors();
 
                 //move competitors and draw tracks
                 for (int i = 0; i < competitors.size(); i++) {
@@ -519,12 +497,10 @@ public class RaceViewController implements ClockHandler, Initializable {
 
                 }
 
-
             }
         };
 
         timer.start();
-//        t.play();
     }
 
 

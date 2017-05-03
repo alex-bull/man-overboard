@@ -20,11 +20,11 @@ public class App extends Application
     private static String courseFile;
     private DataReceiver dataReceiver;
     private static int choice;
-    private Rectangle2D primaryScreenBounds;
-    private Race r;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
+        // Code for starter controller
 //        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("starters.fxml"));
 //        Parent root = loader.load();
 //        StarterController starterController = loader.getController();
@@ -35,7 +35,7 @@ public class App extends Application
 //        primaryStage.setScene(new Scene(root));
 //        primaryStage.show();
 
-        primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
         if (choice == 1) {
             try {
@@ -79,7 +79,7 @@ public class App extends Application
         //TODO: Number of the boats and race duration are hard-coded and get rid of courseFile.
         double height = primaryScreenBounds.getHeight() * 0.8;
         Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height, courseFile);
-        r = new RaceFactory().createRace(6, 1, raceCourse);
+        Race r = new RaceFactory().createRace(6, 1, raceCourse);
 
         MainController mainController = loader.getController();
         mainController.setRace(r, dataReceiver, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), 6);
@@ -102,7 +102,7 @@ public class App extends Application
         System.out.println("3. Test AC35 feed at livedata.americascup.com port 4941");
         Scanner scan = new Scanner(System.in);
         while (!scan.hasNextInt()) {
-            System.out.println("Please enter value between 1 to 3!");
+            System.out.println("Please enter a value from 1 to 3!");
             scan.nextLine();
         }
         choice = scan.nextInt();

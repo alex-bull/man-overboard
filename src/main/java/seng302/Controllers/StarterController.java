@@ -1,18 +1,12 @@
 package seng302.Controllers;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableStringValue;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,24 +16,18 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import org.w3c.dom.css.Rect;
 import seng302.Factories.CourseFactory;
 import seng302.Factories.RaceFactory;
 import seng302.Model.*;
-import seng302.Parsers.RegattaXMLParser;
-
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.ResourceBundle;
-import java.util.Scanner;
 import java.util.Timer;
 
 /**
@@ -206,8 +194,7 @@ public class StarterController implements Initializable, ClockHandler {
                 primaryStage.setMinHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinWidth(primaryScreenBounds.getWidth());
                 primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
-//                primaryStage.setX(primaryScreenBounds.getMinX());
-//                primaryStage.setY(primaryScreenBounds.getMinY());
+
 
             }
         });
@@ -222,7 +209,6 @@ public class StarterController implements Initializable, ClockHandler {
 
         //checks duration and number of boats have been selected
         if (numBoatsInput.getValue() == null || durationInput.getValue() == null) {
-            //System.out.println("Fields not set");
             return;
         }
 
@@ -236,7 +222,6 @@ public class StarterController implements Initializable, ClockHandler {
 
         r = new RaceFactory().createRace(numBoats, duration, raceCourse);
 
-        //compList.setAll(r.getCompetitors());
         compList.setAll(dataReceiver.getCompetitors());
     }
 }

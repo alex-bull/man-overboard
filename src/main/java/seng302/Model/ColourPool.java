@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class ColourPool {
 
-    List<Color> colours = new ArrayList<>();
+    private List<Color> colours = new ArrayList<>();
 
     /**
      * Constructs a colour pool with colours.

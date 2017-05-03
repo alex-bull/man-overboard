@@ -1,12 +1,7 @@
 package seng302.Controllers;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.AnchorPane;
 import seng302.Model.DataReceiver;
 import seng302.Model.Race;
 

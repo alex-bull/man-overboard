@@ -14,9 +14,7 @@ import static seng302.Parsers.Converter.hexByteArrayToInt;
  * Parser for boat location data.
  */
 public class BoatDataParser {
-    private double latitude;
-    private double longitude;
-    private Integer sourceID;
+
     private double width;
     private double height;
     private CourseFeature courseFeature;
@@ -40,10 +38,11 @@ public class BoatDataParser {
      */
     public BoatData processMessage(byte[] body) {
 
-        this.sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7,11));
+
+        Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7,11));
         int deviceType = hexByteArrayToInt(Arrays.copyOfRange(body,15, 16));
-        this.latitude = parseCoordinate(Arrays.copyOfRange(body, 16,20));
-        this.longitude = parseCoordinate(Arrays.copyOfRange(body, 20,24));
+        double latitude = parseCoordinate(Arrays.copyOfRange(body, 16,20));
+        double longitude = parseCoordinate(Arrays.copyOfRange(body, 20,24));
         double heading = parseHeading(Arrays.copyOfRange(body, 28,30));
         //speed in mm/sec
         int speed = hexByteArrayToInt(Arrays.copyOfRange(body, 38,40));
