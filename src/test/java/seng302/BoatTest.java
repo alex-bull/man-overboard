@@ -36,7 +36,7 @@ public class BoatTest {
 
     @Test
     public void getVelocity() throws Exception {
-        assertEquals(boat.getVelocity(),10);
+        assertEquals(boat.getVelocity(),10,0.1);
     }
 
     @Test
