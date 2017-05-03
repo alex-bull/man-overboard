@@ -18,8 +18,15 @@ public class Boat implements Competitor {
     private int currentLegIndex;
     private int sourceID;
     private int status;
+    private String type;
 
+    public String getType() {
+        return type;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
 
     /**
      * Creates a boat
@@ -101,6 +108,37 @@ public class Boat implements Competitor {
 
 
     /**
+     * Empty Constructor
+     */
+    public Boat(){
+
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public void setAbbreName(String abbreName) {
+        this.abbreName = abbreName;
+    }
+
+    public int getSourceID() {
+        return sourceID;
+    }
+
+    public void setSourceID(int sourceID) {
+        this.sourceID = sourceID;
+    }
+
+    /**
+     * Parse the Source ID as a string
+     * @param sourceID the Source ID as string
+     */
+    public void setSourceID(String sourceID) {
+        this.sourceID = Integer.parseInt(sourceID);
+    }
+
+    /**
      * Getter for the boat's team name
      *
      * @return String The name of the boat team
@@ -114,7 +152,7 @@ public class Boat implements Competitor {
      *
      * @param velocity boat's velocity m/s
      */
-    public void setVelocity(int velocity) {
+    public void setVelocity(double velocity) {
         this.velocity = velocity;
     }
 
@@ -145,6 +183,7 @@ public class Boat implements Competitor {
     private void setPosition(MutablePoint newPos) {
         this.position = newPos;
     }
+
 
     /**
      * Getter for the abbreviated team name
@@ -218,5 +257,26 @@ public class Boat implements Competitor {
         //turn the new lat and lng back to degress
         setPosition(new MutablePoint(lat2*180/Math.PI, lng2*180/Math.PI));
 
+    }
+
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void setProperties(double velocity, double heading, double latitude, double longitude){
+        this.velocity=velocity;
+        this.currentHeading.setValue(heading);
+        this.position=new MutablePoint(latitude,longitude);
+
+    }
+
+    @Override
+    public String toString() {
+        return "Boat{" +
+                "teamName='" + teamName + '\'' +
+                ", abbreName='" + abbreName + '\'' +
+                ", sourceID=" + sourceID +
+                '}';
     }
 }

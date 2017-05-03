@@ -14,6 +14,13 @@ import java.io.StringReader;
  * Parser for Regatta XML
  */
 public class RegattaXMLParser {
+
+    private String offsetUTC;
+
+    /**
+     * Parse the Regatta Data
+     * @param xmlStr XML String of regatta data
+     */
     public RegattaXMLParser(String xmlStr) {
 
         try {
@@ -70,35 +77,36 @@ public class RegattaXMLParser {
                 @Override
                 public void characters(char ch[], int start, int length) throws SAXException {
                     if (hasRegattaId) {
-                        System.out.println("Regatta ID : " + new String(ch, start, length));
+//                        System.out.println("Regatta ID : " + new String(ch, start, length));
                         hasRegattaId = false;
 
                     } else if (hasRegattaName) {
-                        System.out.println("Regatta Name : " + new String(ch, start, length));
+//                        System.out.println("Regatta Name : " + new String(ch, start, length));
                         hasRegattaName = false;
 
                     } else if (hasCourseName) {
-                        System.out.println("Course Name : " + new String(ch, start, length));
+//                        System.out.println("Course Name : " + new String(ch, start, length));
                         hasCourseName = false;
 
                     } else if (hasCentralLatitude) {
-                        System.out.println("Central Latitude : " + new String(ch, start, length));
+//                        System.out.println("Central Latitude : " + new String(ch, start, length));
                         hasCentralLatitude = false;
 
                     } else if (hasCentralLongitude) {
-                        System.out.println("Central Longitude : " + new String(ch, start, length));
+//                        System.out.println("Central Longitude : " + new String(ch, start, length));
                         hasCentralLongitude = false;
 
                     } else if (hasCentralAltitude) {
-                        System.out.println("Central Altitude : " + new String(ch, start, length));
+//                        System.out.println("Central Altitude : " + new String(ch, start, length));
                         hasCentralAltitude = false;
 
                     } else if (hasUtcOffset) {
-                        System.out.println("UTC : " + new String(ch, start, length));
+                        offsetUTC = new String(ch, start, length);
+//                        System.out.println("UTC : " + offsetUTC);
                         hasUtcOffset = false;
 
                     } else if (hasMagneticVariation) {
-                        System.out.println("Magnetic Variation : " + new String(ch, start, length));
+//                        System.out.println("Magnetic Variation : " + new String(ch, start, length));
                         hasMagneticVariation = false;
 
                     }
@@ -110,9 +118,13 @@ public class RegattaXMLParser {
             saxParser.parse(new InputSource(new StringReader(xmlStr)), handler);
 
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
 
+    }
+
+    public String getOffsetUTC() {
+        return this.offsetUTC;
     }
 
     public static void main(String[] args){

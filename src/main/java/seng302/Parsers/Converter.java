@@ -9,20 +9,17 @@ import java.util.List;
 public class Converter {
 
     /**
-     * Convert a list of little endian hex values into an integer
-     * @param hexValues List a list of hexadecimal bytes in little endian format
-     * @return Long the value of the hexadecimal bytes
+     * Convert a byte array of little endian hex values into an integer
+     * @param hexValues byte[] a byte array of hexadecimal bytes in little endian format
+     * @return int the value of the hexadecimal bytes
      */
-    public static Long hexListToDecimal(List hexValues) {
-        String hexString = "";
-        for(Object hexValue: hexValues) {
-            String hex = hexValue.toString();
-            String reverseHex = new StringBuilder(hex).reverse().toString();
-            hexString += reverseHex;
+    public static int hexByteArrayToInt(byte[] hexValues) {
+        Long value = 0L;
+        for (int i = 0; i < hexValues.length; i++)
+        {
+            value += ((long) hexValues[i] & 0xffL) << (8 * i);
         }
-        String reverseHexString = new StringBuilder(hexString).reverse().toString();
-        return Long.parseLong(reverseHexString, 16);
-        //return Integer.parseInt(reverseHexString, 16);
+        return value.intValue();
     }
 
 }

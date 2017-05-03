@@ -1,12 +1,8 @@
 package seng302.Controllers;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.AnchorPane;
+import seng302.Model.DataReceiver;
 import seng302.Model.Race;
 
 /**
@@ -27,13 +23,11 @@ public class MainController {
 
     /**
      * Sets the race
-     * @param race Race a group of competitors across multiple races on a course
      */
-    public void setRace(Race race, double width, double height, int numBoats) {
-        this.race=race;
-        this.race.setRaceEventHandler(tableController);
+    public void setRace(DataReceiver dataReceiver, double width, double height, int numBoats) {
+//        this.race.setRaceEventHandler(tableController);
         this.tableController.setNumBoats(numBoats);
-        raceViewController.begin(race, width, height);
+        raceViewController.begin(width, height, dataReceiver);
 
     }
 }

@@ -1,20 +1,77 @@
 package seng302.Model;
 
+import javafx.scene.paint.Color;
+import org.jdom2.JDOMException;
 import seng302.Parsers.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
+import static seng302.Parsers.Converter.hexByteArrayToInt;
+
 
 /**
  * Created by khe60 on 10/04/17.
  * The Receiver class, currently receives messages 1 byte at a time
  * Can't connect to the test port for some reason (internet enabler)
  */
-public class DataReceiver {
+public class DataReceiver extends TimerTask {
+
     private Socket receiveSock;
     private DataInputStream dis;
+    private ByteStreamConverter byteStreamConverter;
+    private List<Competitor> competitors;
+    private double windDirection;
+    private double canvasWidth;
+    private double canvasHeight;
+    private BoatData boatData;
+    private RaceStatusData raceStatusData;
+    private RaceData raceData;
+    private String timezone;
+    private String raceStatus;
+    private RaceXMLParser raceXMLParser;
+    private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
+    private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
+    private List<CourseFeature> courseFeatures = new ArrayList<>();
+    private List<MutablePoint> courseBoundary = new ArrayList<>();
+    private FileOutputStream fileOutputStream;
+    private double bufferX;
+    private double bufferY;
+    private double scaleFactor;
+    private double minXMercatorCoord;
+    private double minYMercatorCoord;
+    private BoatXMLParser boatXMLParser;
+    List<MarkData> startMarks = new ArrayList<>();
+    List<MarkData> finishMarks = new ArrayList<>();
+    private ColourPool colourPool = new ColourPool();
+
+    //Getters
+    public List<CourseFeature> getCourseFeatures() { return courseFeatures; }
+    public List<MutablePoint> getCourseBoundary() { return courseBoundary; }
+    public String getCourseTimezone() { return timezone; }
+    public List<MarkData> getStartMarks() {return startMarks;}
+    public List<MarkData> getFinishMarks() {return finishMarks;}
+    public String getRaceStatus() {
+        return raceStatus;
+    }
+    public List<Competitor> getCompetitors() {
+        return competitors;
+    }
+    public double getWindDirection() {
+        return windDirection;
+    }
+
+
+    //Setters
+    public void setCompetitors(List<Competitor> competitors){
+        this.competitors=competitors;
+    }
+    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
+        this.courseBoundary = courseBoundary;
+    }
+
+    ////////////////////////////////////////////////
 
     /**
      * Initializes port to receive binary data from
@@ -25,6 +82,62 @@ public class DataReceiver {
     public DataReceiver(String host, int port) throws IOException {
         receiveSock = new Socket(host, port);
         dis = new DataInputStream(receiveSock.getInputStream());
+//        fileOutputStream=new FileOutputStream(new File("src/main/resources/BinaryFiles/"+host));
+//        System.setOut(new PrintStream(new BufferedOutputStream(fileOutputStream)));
+        byteStreamConverter = new ByteStreamConverter();
+        System.out.println("Start connection to server...");
+    }
+
+
+    /**
+     * Parse binary data into XML and create a new parser dependant on the XmlSubType
+     * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
+     * @throws IOException IOException
+     * @throws JDOMException JDOMException
+     */
+    private void readXMLMessage(byte[] message) throws IOException, JDOMException {
+        String xml = byteStreamConverter.parseXMLMessage(message);
+        XmlSubtype subType = byteStreamConverter.getXmlSubType();
+        switch (subType) {
+            case REGATTA:
+                RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
+                this.timezone = regattaParser.getOffsetUTC();
+                if (timezone.substring(0,1) != "-") {
+                    timezone = "+" + timezone;
+                }
+                break;
+            case RACE:
+                this.raceXMLParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
+                this.raceData = raceXMLParser.getRaceData();
+                this.courseBoundary = raceXMLParser.getCourseBoundary();
+                setScalingFactors();
+                break;
+            case BOAT:
+                this.boatXMLParser = new BoatXMLParser(xml.trim());
+                break;
+        }
+    }
+
+    /**
+     * Sets the scaling values after the boundary has been received and parsed by the raceXMLParser.
+     */
+    private void setScalingFactors()
+    {
+        this.bufferX = raceXMLParser.getBufferX();
+        this.bufferY = raceXMLParser.getBufferY();
+        this.scaleFactor = raceXMLParser.getScaleFactor();
+        this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
+        this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
+    }
+
+    /**
+     * Sets the canvas width and height so that the parser can scale values to screen.
+     * @param width double the width of the canvas
+     * @param height double the height of the canvas
+     */
+    public void setCanvasDimensions(double width, double height) {
+        this.canvasWidth = width;
+        this.canvasHeight = height;
     }
 
 
@@ -38,74 +151,33 @@ public class DataReceiver {
     }
 
     /**
-     * Receives one byte from server and returns it, test server only sends one byte at a time so this is gonna get changed
-     * @return the byte received
-     * @throws IOException
+     * Read the message header (13 bytes) and parse information
+     * @throws IOException IOException
      */
-    public byte[] receive() throws IOException {
-        byte[] received=new byte[1];
-        dis.readFully(received);
-        return received;
-
-    }
-
-    private static void readMessage(DataReceiver dataReceiver, ByteStreamConverter byteStreamConverter) throws IOException {
-        // TODO shouldn't be static?
-        int XMLMessageType = 26;
-        int boatLocationMessageType = 37;
-
-
-        int messageLength = (int) byteStreamConverter.getMessageLength();
-        int messageType = (int) byteStreamConverter.getMessageType();
-
-        byte[] message = new byte[messageLength];
-        dataReceiver.dis.readFully(message);
-
-        if (messageType == XMLMessageType) {
-            String xml = byteStreamConverter.parseXMLMessage(message);
-            XmlSubtype subType = byteStreamConverter.getXmlSubType();
-
-            System.out.println(xml);
-
-            switch (subType) {
-                case REGATTA:
-                    RegattaXMLParser regattaParser = new RegattaXMLParser(xml);
-                    break;
-                case RACE:
-                    RaceXMLParser raceParser = new RaceXMLParser(xml);
-                    break;
-                case BOAT:
-                    BoatXMLParser boatParser = new BoatXMLParser(xml);
-                    break;
-            }
-        }
-        else if (messageType == boatLocationMessageType) {
-            byteStreamConverter.parseBoatLocationMessage(message);
-        }
-
-    }
-
-    private static void readHeader(DataReceiver dataReceiver, ByteStreamConverter byteStreamConverter) throws IOException {
-        // TODO shouldn't be static?
+    public void readHeader() throws IOException {
+        // 13 because already read sync bytes
         byte[] header = new byte[13];
-        dataReceiver.dis.readFully(header);
+        dis.readFully(header);
         byteStreamConverter.parseHeader(header);
-
     }
 
-    private static boolean checkForSyncBytes(DataReceiver dataReceiver) throws IOException {
-        // TODO shouldn't be static?
-        String firstSyncByte = "47";
-        String secondSyncByte = "83";
+    /**
+     * Check for the first and second sync byte
+     * @return Boolean if Sync Byte found
+     * @throws IOException IOException
+     */
+    public boolean checkForSyncBytes() throws IOException {
+        byte firstSyncByte = 0x47;
+        // -125 is equivalent to 0x83 unsigned
+        byte secondSyncByte = -125;
 
         byte[] b1 = new byte[1];
-
-        dataReceiver.dis.readFully(b1);
-        if (String.format("%02X", b1[0]).equals(firstSyncByte)) {
+        dis.readFully(b1);
+        if (b1[0] == firstSyncByte) {
             byte[] b2 = new byte[1];
 
-            dataReceiver.dis.readFully(b2);
-            if (String.format("%02X", b2[0]).equals(secondSyncByte)) {
+            dis.readFully(b2);
+            if (b2[0] == secondSyncByte) {
                 return true;
             }
         }
@@ -113,36 +185,150 @@ public class DataReceiver {
     }
 
 
-    public static void main (String [] args) throws InterruptedException {
-        ByteStreamConverter byteStreamConverter = new ByteStreamConverter();
-        DataReceiver dataReceiver = null;
-        System.out.println("Start connection to server...");
-
-        while(dataReceiver==null){
+    /**
+     * Identify the start of a packet, determine the message type and length, then read.
+     */
+    public void run() {
             try {
-//                me = new DataReceiver("livedata.americascup.com",4941);
-                dataReceiver = new DataReceiver("127.0.0.1",4941);
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("connection failed retry in 1 sec");
-                Thread.sleep(1000);
-            }
+                boolean isStartOfPacket = checkForSyncBytes();
 
-        }
-        System.out.println("connected");
-        while(true){
-            try {
-                boolean isStartOfPacket = checkForSyncBytes(dataReceiver);
-                System.out.println(isStartOfPacket);
                 if (isStartOfPacket) {
-                    readHeader(dataReceiver, byteStreamConverter);
-                    readMessage(dataReceiver, byteStreamConverter);
-                    System.out.println("received");
-                }
+                    readHeader();
 
-            } catch (IOException e) {
-                System.out.println(e);
-                break;
+                    int XMLMessageType = 26;
+                    int boatLocationMessageType = 37;
+                    int raceStatusMessageType = 12;
+                    int messageType = (int) byteStreamConverter.getMessageType();
+                    int messageLength = (int) byteStreamConverter.getMessageLength();
+
+                    byte[] message = new byte[messageLength];
+                    dis.readFully(message);
+
+                    if (messageType == XMLMessageType) {
+                        try {
+                            readXMLMessage(message);
+                        } catch (JDOMException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else if(messageType == raceStatusMessageType) {
+                        RaceStatusParser raceStatusParser = new RaceStatusParser(message);
+                        this.raceStatusData = raceStatusParser.getRaceStatus();
+                        this.raceStatus = raceStatusData.getRaceStatus();
+                        this.windDirection = raceStatusData.getWindDirection();
+
+                    }
+                    else if (messageType == boatLocationMessageType) {
+                        BoatDataParser boatDataParser = new BoatDataParser(message, canvasWidth, canvasHeight);
+                        this.boatData = boatDataParser.getBoatData();
+                        if(boatData.getDeviceType() == 1 && raceXMLParser.getBoatIDs().contains(boatData.getSourceID())) {
+                            updateBoatProperties(boatDataParser);
+                        }
+                        else if(boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
+                            updateCourseMarks(boatDataParser);
+
+                        }
+                    }
+                }
+            }
+            catch (EOFException e) {
+                System.out.println("End of file.");
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
+
+    /**
+     * Updates the course features/marks
+     * @param boatDataParser BoatDataParser the boat data parser
+     */
+    private void updateCourseMarks(BoatDataParser boatDataParser) {
+        //make scaling in proportion
+        startMarks = raceData.getStartMarks();
+        finishMarks = raceData.getFinishMarks();
+        double bufferX = raceXMLParser.getBufferX();
+        double bufferY = raceXMLParser.getBufferY();
+        double scaleFactor = raceXMLParser.getScaleFactor();
+        List<CourseFeature> points = new ArrayList<>();
+        CourseFeature courseFeature = boatDataParser.getCourseFeature();
+
+        courseFeature.factor(scaleFactor,scaleFactor,minXMercatorCoord,minYMercatorCoord,bufferX/2,bufferY/2);
+        for (MarkData mark : startMarks) {
+            if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
+                mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
+                mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
+            }
+        }
+
+        for (MarkData mark : finishMarks) {
+            if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
+                mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
+                mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
+            }
+        }
+
+        this.storedFeatures.put(boatData.getSourceID(), courseFeature);
+
+        for(Integer id: this.storedFeatures.keySet()) {
+            points.add(this.storedFeatures.get(id));
+        }
+        this.courseFeatures = points;
+    }
+
+    /**
+     * Updates the boat properties as data is being received.
+     * @param boatDataParser BoatDataParser the boat data parser
+     */
+    private void updateBoatProperties(BoatDataParser boatDataParser) {
+        int boatID = boatData.getSourceID();
+
+        Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
+        competitor.setCurrentHeading(boatData.getHeading());
+
+        double x = boatDataParser.getPixelPoint().getXValue();
+        double y = boatDataParser.getPixelPoint().getYValue();
+        MutablePoint location = new MutablePoint(x, y);
+        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX/2,bufferY/2);
+        competitor.setPosition(location);
+        competitor.setVelocity(boatData.getSpeed());
+
+        // boat colour
+        if(competitor.getColor() == null) {
+            Color colour = this.colourPool.getColours().get(0);
+            competitor.setColor(colour);
+            colourPool.getColours().remove(colour);
+        }
+
+        //speed
+        this.storedCompetitors.put(boatID, competitor);
+
+        List<Competitor> comps = new ArrayList<>();
+        for(Integer id: this.storedCompetitors.keySet()) {
+            comps.add(this.storedCompetitors.get(id));
+        }
+
+        this.competitors = comps;
+    }
+
+    /**
+     * Creates a new data receiver and runs at the period of 100ms
+     * @param args String[]
+     * @throws InterruptedException Interrupted Exception
+     */
+    public static void main (String [] args) throws InterruptedException {
+        DataReceiver dataReceiver = null;
+        while(dataReceiver == null) {
+            try {
+                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
+//                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+
+                Timer timer = new Timer();
+                timer.schedule(dataReceiver,0,100);
+
+            }
+            catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

@@ -10,14 +10,11 @@ import java.util.List;
  */
 public class ByteStreamConverter extends Converter {
     private BoatDataParser boatDataParser;
-    private long messageType;
-    private long messageLength;
+    private int messageType;
+    private int messageLength;
     private XmlSubtype xmlSubType;
 
 
-    public ByteStreamConverter() {
-        boatDataParser = new BoatDataParser();
-    }
 
     public long getMessageType() {
         return this.messageType;
@@ -33,37 +30,18 @@ public class ByteStreamConverter extends Converter {
 
     ///////////////////////////////////////////
 
-    /**
-     * Convert byte to hex string
-     * @param b byte a byte
-     * @return String two letter hex string
-     */
-    private String byteToHex(byte b) {
-        return String.format("%02X", b);
-    }
-
-    /**
-     * Convert hex string to decimal
-     * @param hex String a string of hexadecimal characters
-     * @return long the decimal value of the hex string
-     */
-    private long hexToLong(String hex) {
-        return Long.parseLong(hex, 16);
-    }
 
     /**
      * Find information about the message
      * @param header byte[] an array of 15 bytes corresponding to the message header
      */
     public void parseHeader(byte[] header) {
-        messageType = hexToLong(byteToHex(header[0]));
+        messageType = header[0];
 
         // can get timestamp and source id from here if needed
 
-        List tempBytes = new ArrayList();
-        tempBytes.add(byteToHex(header[11]));
-        tempBytes.add(byteToHex(header[12]));
-        messageLength = hexListToDecimal(tempBytes);
+        byte[] messageLengthBytes=Arrays.copyOfRange(header, 11,13);
+        messageLength = hexByteArrayToInt(messageLengthBytes);
     }
 
     /**
@@ -77,7 +55,7 @@ public class ByteStreamConverter extends Converter {
         int boatType = 7;
         // can get version number, ack number, timestamp if needed
 
-        long subType = hexToLong(byteToHex(message[9]));
+        int subType = message[9];
         if (subType == regattaType) {
             xmlSubType = XmlSubtype.REGATTA;
         }
@@ -90,13 +68,11 @@ public class ByteStreamConverter extends Converter {
 
         // can get sequence number if needed
 
-        List tempBytes = new ArrayList();
-        tempBytes.add(byteToHex(message[12]));
-        tempBytes.add(byteToHex(message[13]));
-        long xmlLength = hexListToDecimal(tempBytes);
+        byte[] xmlLengthBytes = Arrays.copyOfRange(message, 12,14);
+        int xmlLength = hexByteArrayToInt(xmlLengthBytes);
 
         int start = 14;
-        int end = start + (int)xmlLength;
+        int end = start + xmlLength;
 
         byte[] xmlBytes = Arrays.copyOfRange(message, start, end);
         String charset = "UTF-8";
@@ -111,47 +87,6 @@ public class ByteStreamConverter extends Converter {
         return xmlString;
     }
 
-    /**
-     * Parses binary data into boat location data
-     * @param message byte[] an array of bytes which includes information about the boat location
-     */
-    public void parseBoatLocationMessage(byte[] message) {
-        List msgBody = new ArrayList();
-        for(byte b: message) {
-            msgBody.add(byteToHex(b));
-        }
-        boatDataParser.processMessage(msgBody);
-    }
-
-
-    /**
-     * Confirm the message's message type and message length with protocol
-     * @param data List a list of data in hexadecimal bytes
-     * @return boolean True if the data received is a valid boat location
-     */
-    private boolean validBoatLocation(List data) {
-        // from protocol byte 2: message type = 37 in dec and 13: length is 57 in dec
-        String hexMsgType = "25";
-        String hexMsgLen = "38";
-        if(data.get(2).equals(hexMsgType) && data.get(13).equals(hexMsgLen)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Confirm the message's message type and message length with protocol
-     * @param data List a list of data in hexadecimal bytes
-     * @return boolean True if the data received is a valid XML location
-     */
-    private boolean validXMLMessage(List data) {
-        // from protocol byte 2: message type = 26 in dec and length is not fixed
-        String hexMsgType = "1A";
-        if(data.get(2).equals(hexMsgType)) {
-            return true;
-        }
-        return false;
-    }
 
 
 

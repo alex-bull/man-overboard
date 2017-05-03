@@ -14,12 +14,11 @@ public class Mark implements CourseFeature {
     private MutablePoint pixelLocation;
     private MutablePoint GPSLocation;
     private double exitHeading;
-    private int zoneSize;
     private boolean isFinish = false;
     private boolean isLine = false;
     private int index;
-    private String rounding;
-
+    private int zoneSize;
+    private int rounding;
 
     /**
      * Creates a course mark

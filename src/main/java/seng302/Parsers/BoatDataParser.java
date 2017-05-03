@@ -1,113 +1,136 @@
 package seng302.Parsers;
 
+import seng302.Model.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static seng302.Parsers.Converter.hexListToDecimal;
+import static seng302.Parsers.Converter.hexByteArrayToInt;
 
 /**
  * Created by psu43 on 13/04/17.
- * Parser for boat data.
+ * Parser for boat location data.
  */
 public class BoatDataParser {
 
-    private long sourceID;
-    private double latitude;
-    private double longitude;
-    private double heading;
-    private long speed;
+    private double width;
+    private double height;
+    private CourseFeature courseFeature;
+    private Competitor competitor;
+    private MutablePoint pixelPoint;
+    private BoatData boatData;
+
+
+    public BoatDataParser(byte[] message, double width, double height) {
+        this.width = width;
+        this.height = height;
+        this.boatData = processMessage(message);
+    }
+
+
 
     /**
-     * Process the given list of data and parse source id, latitude, longitude, heading, speed
-     * @param body List a list of hexadecimal bytes
+     * Process the given data and parse source id, latitude, longitude, heading, speed
+     * @param body byte[] a byte array of the boat data message
+     * @return BoatData boat data object
      */
-    public void processMessage(List body) {
-
-        List sourceIDHexValues = body.subList(7, 11);
-        this.sourceID = hexListToDecimal(sourceIDHexValues);
-
-        List latitudeHexValues = body.subList(16, 20);
-        this.latitude = parseCoordinate(latitudeHexValues);
-
-        List longitudeHexValues = body.subList(20, 24);
-        this.longitude = parseCoordinate(longitudeHexValues);
-
-        List headingHexValues = body.subList(28, 30);
-        this.heading = parseHeading(headingHexValues);
-
-        List speedHexValues = body.subList(34, 36);
-        this.speed = hexListToDecimal(speedHexValues);
+    public BoatData processMessage(byte[] body) {
 
 
-        /////// comment this out to disable printing values ////////
-        System.out.println("sourceID " + sourceIDHexValues);
-        System.out.println("lat " + latitudeHexValues);
-        System.out.println("long " + longitudeHexValues);
-        System.out.println("head " + headingHexValues);
-        System.out.println("Speed " + speedHexValues);
+        Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7,11));
+        int deviceType = hexByteArrayToInt(Arrays.copyOfRange(body,15, 16));
+        double latitude = parseCoordinate(Arrays.copyOfRange(body, 16,20));
+        double longitude = parseCoordinate(Arrays.copyOfRange(body, 20,24));
+        double heading = parseHeading(Arrays.copyOfRange(body, 28,30));
+        //speed in mm/sec
+        int speed = hexByteArrayToInt(Arrays.copyOfRange(body, 38,40));
+        //speed in m/sec
+        double convertedSpeed=speed/1000.0;
 
-        System.out.println("parsed source ID: " + sourceID);
-        System.out.println("parsed lat: " + latitude);
-        System.out.println("parsed long: " + longitude);
-        System.out.println("parsed heading : " + heading);
-        System.out.println("parsed speed: " + speed);
+        ArrayList<Double> point = mercatorProjection(latitude, longitude, width, height);
+        double pointX = point.get(0);
+        double pointY = point.get(1);
+        //System.out.println("lat lon and Y" + point1X + " +" + point1Y);
+        this.pixelPoint = new MutablePoint(pointX, pointY);
+        if(deviceType == 3){
+            MutablePoint GPS = new MutablePoint(latitude, longitude);
+            this.courseFeature = new Mark(sourceID.toString(), this.pixelPoint, GPS, 0);
+        }
+
+        return new BoatData(sourceID, deviceType, latitude, longitude, heading, convertedSpeed);
     }
 
     /**
-     * Convert a list of little endian hex values into a decimal heading
-     * @param hexValues List a list of (2) hexadecimal bytes in little endian format
+     * Convert a byte array of little endian hex values into a decimal heading
+     * @param hexValues byte[] a byte array of (2) hexadecimal bytes in little endian format
      * @return Double the value of the heading
      */
-    private Double parseHeading(List hexValues) {
-        return (double) hexListToDecimal(hexValues) * 360.0 / 65536.0;
+    private Double parseHeading(byte[] hexValues) {
+        return (double) hexByteArrayToInt(hexValues) * 360.0 / 65536.0;
     }
 
     /**
-     * Convert a list of little endian hex values into a decimal latitude or longitude
-     * @param hexValues List a list of (4) hexadecimal bytes in little endian format
+     * Convert a byte array of little endian hex values into a decimal latitude or longitude
+     * @param hexValues byte[] a byte array of (4) hexadecimal bytes in little endian format
      * @return Double the value of the coordinate value
      */
-    private Double parseCoordinate(List hexValues) {
-        return (double) hexListToDecimal(hexValues) * 180.0 /  2147483648.0;
+    private Double parseCoordinate(byte[] hexValues) {
+        return (double) hexByteArrayToInt(hexValues) * 180.0 /  2147483648.0;
     }
 
-    public long getSourceID() {
-        return sourceID;
+
+    public MutablePoint getPixelPoint() {
+        return pixelPoint;
     }
 
-    public void setSourceID(long sourceID) {
-        this.sourceID = sourceID;
+    public void setPixelPoint(MutablePoint pixelPoint) {
+        this.pixelPoint = pixelPoint;
     }
 
-    public double getLatitude() {
-        return latitude;
+
+    /**
+     * Function to map latitude and longitude to screen coordinates
+     * @param lat latitude
+     * @param lon longitude
+     * @param width width of the screen
+     * @param height height of the screen
+     * @return ArrayList the coordinates in metres
+     */
+    private ArrayList<Double> mercatorProjection(double lat, double lon, double width, double height){
+        ArrayList<Double> ret=new ArrayList<>();
+        double x = (lon+180)*(width/360);
+        double latRad = lat*Math.PI/180;
+        double merc = Math.log(Math.tan((Math.PI/4)+(latRad/2)));
+        double y = (height/2)-(width*merc/(2*Math.PI));
+        ret.add(x);
+        ret.add(y);
+        return ret;
+
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+
+
+    public Competitor getCompetitor() {
+        return competitor;
     }
 
-    public double getLongitude() {
-        return longitude;
+
+    public BoatData getBoatData() {
+        return boatData;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setBoatData(BoatData boatData) {
+        this.boatData = boatData;
+
     }
 
-    public double getHeading() {
-        return heading;
+    public CourseFeature getCourseFeature() {
+        return courseFeature;
     }
 
-    public void setHeading(double heading) {
-        this.heading = heading;
+    public void setCourseFeature(CourseFeature courseFeature) {
+        this.courseFeature = courseFeature;
     }
-
-    public long getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(long speed) {
-        this.speed = speed;
-    }
-
 }

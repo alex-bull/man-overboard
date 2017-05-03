@@ -15,12 +15,14 @@ public class Gate implements CourseFeature {
     private MutablePoint pixelPoint2;
     private MutablePoint GPSPoint1;
     private MutablePoint GPSPoint2;
-    private String rounding;
 
     private double exitHeading;
     private boolean isFinish;
     private boolean isLine;
     private int index;
+    private String rounding;
+    private int zoneSize;
+    private int sourceID;
     private int zoneSize;
 
     /**
@@ -34,6 +36,7 @@ public class Gate implements CourseFeature {
      * @param isLine boolean true if the gate needs a line
      */
     public Gate (String name, MutablePoint GPSPoint1, MutablePoint GPSPoint2, MutablePoint pixelPoint1, MutablePoint pixelPoint2, boolean isFinish, boolean isLine, int index) {
+
         this.name = name;
         this.GPSPoint1 = GPSPoint1;
         this.GPSPoint2 = GPSPoint2;

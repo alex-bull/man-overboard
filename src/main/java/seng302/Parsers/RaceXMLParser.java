@@ -1,13 +1,25 @@
 package seng302.Parsers;
 
+import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
+import edu.princeton.cs.introcs.In;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import seng302.Model.CourseFeature;
+import seng302.Model.Gate;
+import seng302.Model.Mark;
+import seng302.Model.MutablePoint;
 
+import javax.print.Doc;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.StringReader;
+import java.io.*;
+import java.util.*;
 
 /**
  * Created by jar156 on 13/04/17.
@@ -15,170 +27,269 @@ import java.io.StringReader;
  */
 public class RaceXMLParser {
 
-    public RaceXMLParser(String xmlStr) {
-
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser saxParser = factory.newSAXParser();
-
-            DefaultHandler handler = new DefaultHandler() {
-
-                boolean hasRaceId = false;
-                boolean hasRaceType = false;
-                boolean hasCreationTimeDate = false;
-
-                @Override
-                public void startElement(String uri, String localName, String qName, Attributes attributes) {
-                    if (qName.equalsIgnoreCase("RaceID")) {
-                        hasRaceId = true;
-
-                    } else if (qName.equalsIgnoreCase("RaceType")) {
-                        hasRaceType = true;
-
-                    } else if (qName.equalsIgnoreCase("CreationTimeDate")) {
-                        hasCreationTimeDate = true;
-
-                    } else if (qName.equalsIgnoreCase("RaceStartTime")) {
-                        System.out.println("Race Start Time : " + attributes.getValue("Time"));
-                        System.out.println("Postponed? : " + attributes.getValue("Postpone"));
+    private RaceData raceData;
+    private List<MutablePoint> courseBoundary;
+    private List<CourseFeature> courseFeatures;
+    private double scaleFactor;
+    private double bufferX;
+    private double bufferY;
+    private List <Double> xMercatorCoords;
+    private List <Double> yMercatorCoords;
+    private Set<Integer> markIDs = new HashSet<>();
+    private Set<Integer> boatIDs = new HashSet<>();
+    private double width;
+    private double height;
 
 
-                    } else if (qName.equalsIgnoreCase("Yacht")) {
-                        System.out.println("Source ID : " + attributes.getValue("SourceID"));
-                        System.out.println("Entry : " + attributes.getValue("Entry"));
-
-                    } else if (qName.equalsIgnoreCase("CompoundMark")) {
-                        System.out.println("Compound Mark ID : " + attributes.getValue("CompoundMarkID"));
-                        System.out.println("Name : " + attributes.getValue("Name"));
-
-                    } else if (qName.equalsIgnoreCase("Mark")) {
-                        System.out.println("Seq ID : " + attributes.getValue("SeqID"));
-                        System.out.println("Name : " + attributes.getValue("Name"));
-                        System.out.println("Target Lat : " + attributes.getValue("TargetLat"));
-                        System.out.println("Target Lon : " + attributes.getValue("TargetLng"));
-                        System.out.println("Source ID : " + attributes.getValue("SourceID"));
-
-                    } else if (qName.equalsIgnoreCase("Corner")) {
-                        System.out.println("Seq ID : " + attributes.getValue("SeqID"));
-                        System.out.println("Compound Mark ID : " + attributes.getValue("CompoundMarkID"));
-                        System.out.println("Rounding : " + attributes.getValue("Rounding"));
-                        System.out.println("Zone Size : " + attributes.getValue("ZoneSize"));
-
-                    } else if (qName.equalsIgnoreCase("Limit")) {
-                        System.out.println("Seq ID : " + attributes.getValue("SeqID"));
-                        System.out.println("Lat : " + attributes.getValue("Lat"));
-                        System.out.println("Lon : " + attributes.getValue("Lon"));
-
-                    }
-
-                }
-
-                @Override
-                public void endElement(String uri, String localName, String qName) throws SAXException {
-                    // we don't care about any end elements
-                }
-
-                @Override
-                public void characters(char ch[], int start, int length) throws SAXException {
-                    if (hasRaceId) {
-                        System.out.println("Race ID : " + new String(ch, start, length));
-                        hasRaceId = false;
-
-                    } else if (hasRaceType) {
-                        System.out.println("Race Type : " + new String(ch, start, length));
-                        hasRaceType = false;
-
-                    } else if (hasCreationTimeDate) {
-                        System.out.println("Creation Time Date : " + new String(ch, start, length));
-                        hasCreationTimeDate = false;
-
-                    }
-                }
+    public RaceData getRaceData() {
+        return raceData;
+    }
+    public List<MutablePoint> getCourseBoundary() {
+        return courseBoundary;
+    }
+    public List<CourseFeature> getCourseFeatures() {
+        return courseFeatures;
+    }
+    public Set<Integer> getMarkIDs() {
+        return markIDs;
+    }
+    public Set<Integer> getBoatIDs() {
+        return boatIDs;
+    }
 
 
-            };
+    /**
+     * Parse XML race data
+     * @param xmlStr XML String of race data
+     * @param width double width of the course view
+     * @param height double height of the course view
+     * @throws IOException IOException
+     * @throws JDOMException JDOMException
+     */
+    public RaceXMLParser(String xmlStr, double width, double height) throws IOException, JDOMException {
+        this.width = width;
+        this.height = height;
+        this.raceData = new RaceData();
+        SAXBuilder builder = new SAXBuilder();
+        InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
+        Document root= builder.build(stream);
+        Element race = root.getRootElement();
 
-            saxParser.parse(new InputSource(new StringReader(xmlStr)), handler);
+        int raceID = Integer.parseInt(race.getChild("RaceID").getValue());
+        String raceType = race.getChild("RaceType").getValue();
+        String creationTimeDate = race.getChild("CreationTimeDate").getValue();
+        String raceStartTime = race.getChild("RaceStartTime").getAttributeValue("Time");
+        boolean raceStartTimePostponed = Boolean.parseBoolean(race.getChild("RaceStartTime").getAttributeValue("Postpone"));
 
-        } catch (Exception e) {
-//            e.printStackTrace();
+//        System.out.println("Race ID : " + raceID);
+//        System.out.println("Race type: " + raceType);
+//        System.out.println("Creation time date: " + creationTimeDate);
+//        System.out.println("Race start time: " +raceStartTime);
+//        System.out.println("Postpone: " + raceStartTimePostponed);
+
+        raceData.setRaceID(raceID);
+        raceData.setRaceType(raceType);
+        raceData.setCreationTimeDate(creationTimeDate);
+        raceData.setRaceStartTime(raceStartTime);
+        raceData.setRaceStartTimePostpone(raceStartTimePostponed);
+
+        for(Element yacht: race.getChild("Participants").getChildren()) {
+            int sourceID = Integer.parseInt(yacht.getAttributeValue("SourceID"));
+            String entry = yacht.getAttributeValue("Entry");
+//            System.out.println("Yacht ID:" + sourceID);
+//            System.out.println("Entry: "+ entry);
+            YachtData yachtData = new YachtData(sourceID, entry);
+            this.boatIDs.add(sourceID);
+            raceData.getParticipants().add(yachtData);
+
         }
 
+        List<CompoundMarkData> course = new ArrayList<>();
+        List<MarkData> startMarks = new ArrayList<>();
+        List<MarkData> finishMarks = new ArrayList<>();
+
+//        CourseParser courseParser = new CourseParser()
+        for(Element compoundMark:race.getChild("Course").getChildren()){
+            int compoundMarkID = Integer.parseInt(compoundMark.getAttribute("CompoundMarkID").getValue());
+            String compoundMarkName = compoundMark.getAttribute("Name").getValue();
+//            System.out.println("Compound mark ID: " + compoundMarkID);
+//            System.out.println("Compound mark name: " + compoundMarkName);
+
+            List<MarkData> marks = new ArrayList<>();
+            for(Element mark: compoundMark.getChildren()) {
+                int seqID = Integer.parseInt(mark.getAttributeValue("SeqID"));
+//                System.out.println("Seq ID: " + seqID);
+                String markName = mark.getAttributeValue("Name");
+                double targetLat = Double.parseDouble(mark.getAttributeValue("TargetLat"));
+                double targetLng =  Double.parseDouble(mark.getAttributeValue("TargetLng"));
+                int sourceID = Integer.parseInt(mark.getAttributeValue("SourceID"));
+
+//                System.out.println("Mark name: " + markName);
+//                System.out.println("Target lat: " +targetLat);
+//                System.out.println("Target Lng: " + targetLng);
+                markIDs.add(sourceID);
+                MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
+                marks.add(markData);
+            }
+
+            CompoundMarkData compoundMarkData = new CompoundMarkData(compoundMarkID, compoundMarkName, marks);
+            course.add(compoundMarkData);
+        }
+        raceData.setCourse(course);
+
+        for(Element corner: race.getChild("CompoundMarkSequence").getChildren()) {
+            int size = race.getChild("CompoundMarkSequence").getChildren().size();
+
+            int cornerSeqID = Integer.parseInt(corner.getAttributeValue("SeqID"));
+            int compoundMarkID = Integer.parseInt(corner.getAttributeValue("CompoundMarkID"));
+            String rounding = corner.getAttributeValue("Rounding");
+            int zoneSize = Integer.parseInt(corner.getAttributeValue("ZoneSize"));
+
+//            System.out.println("Corner seq id: " + cornerSeqID);
+//            System.out.println("Compound mark id : " + compoundMarkID);
+//            System.out.println("Rounding: " + rounding);
+//            System.out.println("Zone size: " + zoneSize);
+            CornerData cornerData = new CornerData(cornerSeqID, compoundMarkID, rounding, zoneSize);
+            if (cornerSeqID == 1) {
+                for (CompoundMarkData mark : course) {
+                    if (mark.getID() == compoundMarkID) {
+                        startMarks.addAll(mark.getMarks());
+                    }
+                }
+            }
+            if (cornerSeqID == size) {
+                for (CompoundMarkData mark : course) {
+                    if (mark.getID() == compoundMarkID) {
+                        finishMarks.addAll(mark.getMarks());
+                    }
+                }
+            }
+            raceData.setStartMarks(startMarks);
+            raceData.setFinishMarks(finishMarks);
+            raceData.getCompoundMarkSequence().add(cornerData);
+
+        }
+        int count= 0;
+        for(Element limit: race.getChild("CourseLimit").getChildren()) {
+            int limitSeqID =  Integer.parseInt(limit.getAttributeValue("SeqID"));
+            double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
+            double lon = Double.parseDouble(limit.getAttributeValue("Lon"));
+//
+//            System.out.println("Limit seq id:" + limitSeqID);
+//            System.out.println("Lat:" + lat);
+//            System.out.println("Lon:" + lon);
+            LimitData limitData  = new LimitData(limitSeqID, lat, lon);
+            raceData.getCourseLimit().add(limitData);
+            count++;
+
+        }
+        parseRace(width, height);
     }
 
-    public static void main(String[] args){
 
-        RaceXMLParser p = new RaceXMLParser("<?xml version=\"1.0\"?>\n" +
-                "<Race>\n" +
-                "    <RaceID>123546789</RaceID>\n" +
-                "\n" +
-                "    <RaceType>Match</RaceType>\n" +
-                "\n" +
-                "    <CreationTimeDate>2011-08-06T13:25:00-0000</CreationTimeDate >\n" +
-                "\n" +
-                "    <RaceStartTime Time=\"2011-08-06T13:30:00-0700\" Postpone=\"false\" />\n" +
-                "\n" +
-                "    <Participants>\n" +
-                "        <Yacht SourceID=\"101\" />\n" +
-                "        <Yacht SourceID=\"102\" />\n" +
-                "        <Yacht SourceID=\"103\" />\n" +
-                "        <Yacht SourceID=\"104\" />\n" +
-                "        <Yacht SourceID=\"105\" />\n" +
-                "        <Yacht SourceID=\"106\" />\n" +
-                "    </Participants>\n" +
-                "\n" +
-                "    <Course>\n" +
-                "        <CompoundMark CompoundMarkID=\"1\" Name=\"Mark0\">\n" +
-                "            <Mark SeqID=\"1\" Name=\"Start Line 1\" TargetLat=\"32.296577\" TargetLng=\"-64.854304\" SourceID=\"122\" />\n" +
-                "            <Mark SeqID=\"2\" Name=\"Start Line 2\" TargetLat=\"32.293771\" TargetLng=\"-64.855242\" SourceID=\"123\" />\n" +
-                "        </CompoundMark>\n" +
-                "\n" +
-                "        <CompoundMark CompoundMarkID=\"2\" Name=\"Mark1\">\n" +
-                "            <Mark SeqID=\"1\" Name=\"Mark 1\" TargetLat=\"32.293039\" TargetLng=\"-64.843983\" SourceID=\"131\" />\n" +
-                "        </CompoundMark>\n" +
-                "\n" +
-                "        <CompoundMark CompoundMarkID=\"3\" Name=\"Mark2\">\n" +
-                "            <Mark SeqID=\"1\" Name=\"Lee Gate 1\" TargetLat=\"32.309693\" TargetLng=\"-64.835249\" SourceID=\"124\" />\n" +
-                "            <Mark SeqID=\"2\" Name=\"Lee Gate 2\" TargetLat=\"32.308046\" TargetLng=\"-64.831785\" SourceID=\"125\" />\n" +
-                "        </CompoundMark>\n" +
-                "\n" +
-                "        <CompoundMark CompoundMarkID=\"4\" Name=\"Mark3\">\n" +
-                "            <Mark SeqID=\"1\" Name=\"Wind Gate 1\" TargetLat=\"32.284680\" TargetLng=\"-64.850045\" SourceID=\"126\" />\n" +
-                "            <Mark SeqID=\"2\" Name=\"Wind Gate 2\" TargetLat=\"32.280164\" TargetLng=\"-64.847591\" SourceID=\"127\" />\n" +
-                "        </CompoundMark>\n" +
-                "\n" +
-                "        <CompoundMark CompoundMarkID=\"5\" Name=\"Mark2\">\n" +
-                "            <Mark SeqID=\"1\" Name=\"Lee Gate 1\" TargetLat=\"32.309693\" TargetLng=\"-64.835249\" SourceID=\"124\" />\n" +
-                "            <Mark SeqID=\"2\" Name=\"Lee Gate 2\" TargetLat=\"32.308046\" TargetLng=\"-64.831785\" SourceID=\"125\" />\n" +
-                "        </CompoundMark>\n" +
-                "\n" +
-                "        <CompoundMark CompoundMarkID=\"6\" Name=\"Mark4\" isfinish=\"true\">\n" +
-                "            <Mark SeqID=\"1\" Name=\"Finish Line 1\" TargetLat=\"32.317379\" TargetLng=\"-64.839291\" SourceID=\"128\" />\n" +
-                "            <Mark SeqID=\"2\" Name=\"Finish Line 2\" TargetLat=\"32.317257\" TargetLng=\"-64.836260\" SourceID=\"129\" />\n" +
-                "        </CompoundMark>\n" +
-                "\n" +
-                "        <CompoundMarkSequence>\n" +
-                "            <Corner SeqID=\"1\" CompoundMarkID=\"1\" Rounding=\"PS\" ZoneSize=\"3\" />\n" +
-                "            <Corner SeqID=\"2\" CompoundMarkID=\"2\" Rounding=\"Port\" ZoneSize=\"3\" />\n" +
-                "            <Corner SeqID=\"3\" CompoundMarkID=\"3\" Rounding=\"SP\" ZoneSize=\"3\" />\n" +
-                "            <Corner SeqID=\"4\" CompoundMarkID=\"4\" Rounding=\"PS\" ZoneSize=\"3\" />\n" +
-                "            <Corner SeqID=\"5\" CompoundMarkID=\"5\" Rounding=\"SP\" ZoneSize=\"3\" />\n" +
-                "            <Corner SeqID=\"6\" CompoundMarkID=\"6\" Rounding=\"PS\" ZoneSize=\"3\" />\n" +
-                "        </CompoundMarkSequence>\n" +
-                "        <CourseLimit>\n" +
-                "            <Limit SeqID=\"1\" Lat=\"32.3177476\" Lon=\"-64.8403001\" />\n" +
-                "            <Limit SeqID=\"2\" Lat=\"32.3174575\" Lon=\"-64.8328543\" />\n" +
-                "            <Limit SeqID=\"3\" Lat=\"32.3028767\" Lon=\"-64.8209667\" />\n" +
-                "            <Limit SeqID=\"4\" Lat=\"32.2776994\" Lon=\"-64.8418236\" />\n" +
-                "            <Limit SeqID=\"5\" Lat=\"32.2768286\" Lon=\"-64.8519516\" />\n" +
-                "            <Limit SeqID=\"6\" Lat=\"32.2918489\" Lon=\"-64.8545266\" />\n" +
-                "            <Limit SeqID=\"7\" Lat=\"32.2935902\" Lon=\"-64.8600197\" />\n" +
-                "            <Limit SeqID=\"8\" Lat=\"32.299467\" Lon=\"-64.8581314\" />\n" +
-                "            <Limit SeqID=\"9\" Lat=\"32.2982336\" Lon=\"-64.8480892\" />\n" +
-                "            <Limit SeqID=\"10\" Lat=\"32.3122319\" Lon=\"-64.8378754\" />\n" +
-                "        </CourseLimit>\n" +
-                "    </Course>\n" +
-                "</Race>");
+    /**
+     * Set buffers and call course parsers
+     * @param width double width of the race canvas
+     * @param height double height of the race canvas
+     */
+    private void parseRace(double width, double height) {
+        this.bufferX=Math.max(1000,width*0.6);
+        this.bufferY=Math.max(10,height*0.1);
+
+        try {
+            parseBoundary(width, height, bufferX, bufferY);
+        } catch (Exception e) {
+
+        }
     }
+
+
+
+    /**
+     * Parse the boundary of the course
+     * @param width double - width of the race canvas
+     * @param height double - height of the race canvas
+     * @param bufferX canvas buffer width
+     * @param bufferY canvas buffer height
+     */
+    private void parseBoundary(double width, double height, double bufferX, double bufferY) throws Exception {
+
+        this.xMercatorCoords=new ArrayList<>();
+        this.yMercatorCoords=new ArrayList<>();
+        List<MutablePoint> boundary = new ArrayList<>();
+
+        //loop through the parsed boundary points
+        for(LimitData limit: this.raceData.getCourseLimit()) {
+            double lat = limit.getLat();
+            double lon = limit.getLon();
+
+            ArrayList<Double> projectedPoint=mercatorProjection(lat,lon,width,height);
+            double point1X = projectedPoint.get(0);
+            double point1Y = projectedPoint.get(1);
+            xMercatorCoords.add(point1X);
+            yMercatorCoords.add(point1Y);
+            MutablePoint pixel = new MutablePoint(point1X, point1Y);
+            boundary.add(pixel);
+        }
+
+        double xDifference = (Collections.max(xMercatorCoords)-Collections.min(xMercatorCoords));
+        double yDifference = (Collections.max(yMercatorCoords)-Collections.min(yMercatorCoords));
+
+        if (xDifference == 0 || yDifference == 0) {
+            throw new Exception("Attempted to divide by zero");
+        }
+        double xFactor = (width-bufferX)/xDifference;
+        double yFactor = (height-bufferY)/yDifference;
+
+        //make scaling in proportion
+        scaleFactor = Math.min(xFactor,yFactor);
+        boundary.forEach(p->p.factor(scaleFactor,scaleFactor, Collections.min(xMercatorCoords),Collections.min(yMercatorCoords),bufferX/2,bufferY/2));
+        this.courseBoundary = boundary;
+
+    }
+
+    /**
+     * Function to map latitude and longitude to screen coordinates
+     * @param lat latitude
+     * @param lon longitude
+     * @param width width of the screen
+     * @param height height of the screen
+     * @return ArrayList the coordinates in metres
+     */
+    private ArrayList<Double> mercatorProjection(double lat, double lon, double width, double height){
+        ArrayList<Double> ret=new ArrayList<>();
+        double x = (lon+180)*(width/360);
+        double latRad = lat*Math.PI/180;
+        double merc = Math.log(Math.tan((Math.PI/4)+(latRad/2)));
+        double y = (height/2)-(width*merc/(2*Math.PI));
+        ret.add(x);
+        ret.add(y);
+        return ret;
+
+    }
+
+
+    public double getScaleFactor() {
+        return scaleFactor;
+    }
+
+    public double getBufferX() {
+        return bufferX;
+    }
+
+    public double getBufferY() {
+        return bufferY;
+    }
+
+    public List<Double> getxMercatorCoords() {
+        return xMercatorCoords;
+    }
+
+    public List<Double> getyMercatorCoords() {
+        return yMercatorCoords;
+    }
+
+
+
 
 }
