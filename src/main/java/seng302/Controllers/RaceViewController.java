@@ -45,6 +45,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     @FXML private CheckBox nameButton;
     @FXML private CheckBox fpsToggle;
     @FXML public Text worldClockValue;
+    @FXML private Text status;
 
     private Clock raceClock;
     private Clock worldClock;
@@ -462,6 +463,12 @@ public class RaceViewController implements ClockHandler, Initializable {
             int count = 0;
             @Override
             public void handle(long now) {
+
+                // update race status string if it changed
+                String statusString = "Race status: " + dataReceiver.getRaceStatus();
+                if(!statusString.equals(status.getText())) {
+                    status.setText("Race status: " + dataReceiver.getRaceStatus());
+                }
 
                 counter++; // increment fps counter
 
