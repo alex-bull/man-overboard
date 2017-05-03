@@ -15,14 +15,14 @@ public class RaceStatusData {
     private Integer raceID;
     private String raceStatus;
     private Integer expectedStartTime;
-    private Integer windDirection;
+    private Double windDirection;
     private Integer windSpeed;
     private Integer numBoatsInRace;
     private Integer raceType;
     private HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
 
 
-    public RaceStatusData(Integer currentTime, Integer raceID, String raceStatus, Integer expectedStartTime, Integer windDirection, Integer windSpeed, Integer numBoatsInRace, Integer raceType, HashMap<Integer, BoatStatus> boatStatuses) {
+    public RaceStatusData(Integer currentTime, Integer raceID, String raceStatus, Integer expectedStartTime, Double windDirection, Integer windSpeed, Integer numBoatsInRace, Integer raceType, HashMap<Integer, BoatStatus> boatStatuses) {
         this.currentTime = currentTime;
         this.raceID = raceID;
         this.raceStatus = raceStatus;
@@ -51,7 +51,7 @@ public class RaceStatusData {
         return expectedStartTime;
     }
 
-    public Integer getWindDirection() {
+    public Double getWindDirection() {
         return windDirection;
     }
 

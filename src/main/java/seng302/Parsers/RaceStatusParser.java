@@ -31,8 +31,10 @@ public class RaceStatusParser {
         Integer windSpeed = hexByteArrayToInt(Arrays.copyOfRange(body, 20,22));
         Integer numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22,23));
         Integer raceType = hexByteArrayToInt(Arrays.copyOfRange(body, 23,24));
+        Double doubleWindDirection = windDirection * 360.0 / 65536.0;
 
-//        System.out.println("current time " + currentTime);
+
+// System.out.println("current time " + currentTime);
 //        System.out.println("race id " + raceID);
 //        System.out.println("race status " + raceStatus);
 //        System.out.println("expected start time " + expectedStartTime);
@@ -43,6 +45,7 @@ public class RaceStatusParser {
 //        System.out.println("FORMAT " + sdf.format(resultdate));
 //
 //        System.out.println("wind direction " + windDirection);
+//        System.out.println(doubleWindDirection);
 //        System.out.println("wind speed " + windSpeed);
 //        System.out.println("# boats in race " + numBoatsInRace);
 //        System.out.println("Race type " + raceType);
@@ -75,7 +78,7 @@ public class RaceStatusParser {
 
         }
 
-        return new RaceStatusData(currentTime, raceID, raceStatusToString(raceStatus), expectedStartTime, windDirection,
+        return new RaceStatusData(currentTime, raceID, raceStatusToString(raceStatus), expectedStartTime, doubleWindDirection,
                 windSpeed, numBoatsInRace, raceType,boatStatuses);
     }
 

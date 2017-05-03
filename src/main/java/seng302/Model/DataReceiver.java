@@ -8,6 +8,8 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
+import static seng302.Parsers.Converter.hexByteArrayToInt;
+
 
 /**
  * Created by khe60 on 10/04/17.
@@ -20,6 +22,7 @@ public class DataReceiver extends TimerTask {
     private DataInputStream dis;
     private ByteStreamConverter byteStreamConverter;
     private List<Competitor> competitors;
+    private double windDirection;
     private double canvasWidth;
     private double canvasHeight;
     private BoatData boatData;
@@ -55,6 +58,10 @@ public class DataReceiver extends TimerTask {
     public List<Competitor> getCompetitors() {
         return competitors;
     }
+    public double getWindDirection() {
+        return windDirection;
+    }
+
 
     //Setters
     public void setCompetitors(List<Competitor> competitors){
@@ -208,6 +215,7 @@ public class DataReceiver extends TimerTask {
                         RaceStatusParser raceStatusParser = new RaceStatusParser(message);
                         this.raceStatusData = raceStatusParser.getRaceStatus();
                         this.raceStatus = raceStatusData.getRaceStatus();
+                        this.windDirection = raceStatusData.getWindDirection();
 
                     }
                     else if (messageType == boatLocationMessageType) {

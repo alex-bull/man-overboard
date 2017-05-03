@@ -441,7 +441,8 @@ public class RaceViewController implements ClockHandler, Initializable {
         gc.fillRect(0,0,width,height);
 
         //draw wind direction arrow
-        drawArrow(race.getWindDirection(), gc);
+        drawArrow(dataReceiver.getWindDirection(), gc);
+
         while(dataReceiver.getCompetitors()==null) {
             try {
                 Thread.sleep(1000);
