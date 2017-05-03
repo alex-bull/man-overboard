@@ -1,6 +1,7 @@
 package seng302.TestMockDatafeed;
 
 import com.google.common.io.ByteStreams;
+import com.google.common.primitives.Longs;
 import com.google.common.primitives.UnsignedBytes;
 import edu.princeton.cs.introcs.In;
 import seng302.Model.Boat;
@@ -11,6 +12,7 @@ import java.nio.ByteOrder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
@@ -74,21 +76,22 @@ public class BinaryPackager {
         packetBuffer.putShort((short) 1); // Roll- can also be ignored
 
         double speed = boatSpeed; //Boat speed
-        packetBuffer.putChar((char) speed);
+//        System.out.println(boatSpeed);
+        packetBuffer.putShort((short) speed);
 
-        packetBuffer.putChar('0'); //COG
-        packetBuffer.putChar('0'); //SOG
-        packetBuffer.putChar('0'); //Apparent wind speed
+        packetBuffer.putShort((short)0); //COG
+        packetBuffer.putShort((short) speed); //SOG
+        packetBuffer.putShort((short) 0); //Apparent wind speed
         packetBuffer.putShort((short) 1); // Apparent wind angle
-        packetBuffer.putChar('0'); //True wind speed
-        packetBuffer.putChar('0'); //True wind direction
+        packetBuffer.putShort((short) 0); //True wind speed
+        packetBuffer.putShort((short) 0); //True wind direction
 
         double trueWindAngle = 25.0; //true wind angle
         trueWindAngle = trueWindAngle * 32768.0 / 180.0;
         packetBuffer.putShort((short) trueWindAngle);
 
-        packetBuffer.putChar('0'); //Current drift
-        packetBuffer.putChar('0'); //Current set
+        packetBuffer.putShort((short) 0); //Current drift
+        packetBuffer.putShort((short) 0); //Current set
         packetBuffer.putShort((short) 1); // Rudder angle
 
 
@@ -194,16 +197,16 @@ public class BinaryPackager {
      * @param time long the time
      * @return byte[] the remaining 6 bytes
      */
-    private byte[] get48bitTime(long time) {
-        byte[] buffer = new byte[6];
-        buffer[0] = (byte)(time >>> 40);
-        buffer[1] = (byte)(time >>> 32);
-        buffer[2] = (byte)(time >>> 24);
-        buffer[3] = (byte)(time >>> 16);
-        buffer[4] = (byte)(time >>>  8);
-        buffer[5] = (byte)(time >>>  0);
+    private byte[] get48bitTime(Long time) {
+        byte[] returnArray=new byte[8];
+        byte[] tempArray;
 
-        return  buffer;
+        ByteBuffer buf = ByteBuffer.wrap(returnArray).order(ByteOrder.LITTLE_ENDIAN);
+        buf.putLong(time);
+
+        tempArray=Arrays.copyOfRange(returnArray,0,6);
+
+        return tempArray;
     }
 
 
