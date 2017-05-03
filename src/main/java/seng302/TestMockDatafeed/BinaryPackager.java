@@ -99,7 +99,6 @@ public class BinaryPackager {
         Checksum crc32=new CRC32();
         crc32.update(packet,0,packet.length-4);
         packetBuffer.putInt((int) crc32.getValue());
-
 //        System.out.println();
         return packet;
 
