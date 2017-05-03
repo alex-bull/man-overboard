@@ -38,7 +38,6 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML private ListView<Competitor> starterList;
     @FXML private Label countdownText;
     @FXML private Text worldClockValue;
-    @FXML private Button confirmButton;
     @FXML private Button countdownButton;
     @FXML private Text raceStatus;
 
@@ -148,7 +147,7 @@ public class StarterController implements Initializable, ClockHandler {
         }
         else {
             // inform user to press confirm
-            Stage thisStage = (Stage) confirmButton.getScene().getWindow();
+            Stage thisStage = (Stage) countdownButton.getScene().getWindow();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
             alert.initOwner(thisStage);
@@ -203,7 +202,7 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML
     public void confirmStream() {
         if(dataReceiver.getCompetitors().size() == 0) {
-            Stage thisStage = (Stage) confirmButton.getScene().getWindow();
+            Stage thisStage = (Stage) countdownButton.getScene().getWindow();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
             alert.initOwner(thisStage);
