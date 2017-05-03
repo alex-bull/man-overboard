@@ -44,6 +44,7 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML private ChoiceBox<Integer> numBoatsInput;
     @FXML private ChoiceBox<Integer> durationInput;
     @FXML private Button countdownButton;
+    @FXML private Button confirmStream;
 
     private Clock worldClock;
     private Stage primaryStage;
@@ -93,7 +94,8 @@ public class StarterController implements Initializable, ClockHandler {
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
         try {
-            dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+            dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
+//            dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
             dataReceiver.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
 
         } catch (IOException e) {
@@ -157,7 +159,7 @@ public class StarterController implements Initializable, ClockHandler {
             alert.setTitle("Information Dialog");
             alert.initOwner(thisStage);
             alert.setHeaderText(null);
-            alert.setContentText("Please make sure to confirm duration and number of boats for the race.");
+            alert.setContentText("Please make sure there are competitors.");
             alert.showAndWait();
         }
 
@@ -199,6 +201,27 @@ public class StarterController implements Initializable, ClockHandler {
             }
         });
     }
+
+    @FXML
+    public void confirmStream() {
+        if(dataReceiver.getCompetitors().size() == 0) {
+            Stage thisStage = (Stage) confirmButton.getScene().getWindow();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information Dialog");
+            alert.initOwner(thisStage);
+            alert.setHeaderText(null);
+            alert.setContentText("Sorry there are no competitors at the moment.");
+            alert.showAndWait();
+        }
+        //create course
+        double height = primaryScreenBounds.getHeight() * 0.8;
+        Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height, courseFile);
+
+        r = new RaceFactory().createRace(numBoats, 1, raceCourse);
+
+        compList.setAll(dataReceiver.getCompetitors());
+    }
+
 
     /**
      * Collects the information about the number of boats and duration of the race. Called when user clicks confirm.

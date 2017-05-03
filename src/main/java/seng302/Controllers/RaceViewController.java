@@ -450,7 +450,6 @@ public class RaceViewController implements ClockHandler, Initializable {
             }
         }
         List<Competitor> competitors = dataReceiver.getCompetitors();
-        System.out.println(competitors);
         for (Competitor boat: competitors) {
             drawWake(boat);
             drawBoat(boat);

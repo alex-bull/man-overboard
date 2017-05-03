@@ -300,8 +300,8 @@ public class DataReceiver extends TimerTask {
         DataReceiver dataReceiver = null;
         while(dataReceiver == null) {
             try {
-//                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
-                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
+//                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
 
                 Timer timer = new Timer();
                 timer.schedule(dataReceiver,0,100);

@@ -1,35 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="548.0" prefWidth="530.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controllers.StarterController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="548.0" prefWidth="530.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controllers.StarterController">
 
                <children>
-                   <ChoiceBox fx:id="durationInput" layoutX="226.0" layoutY="42.0" prefHeight="25.0" prefWidth="50.0" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+                   <ChoiceBox fx:id="durationInput" layoutX="226.0" layoutY="42.0" prefHeight="25.0" prefWidth="50.0" visible="false" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets top="55.0" />
                      </GridPane.margin>
                   </ChoiceBox>
-                  <Button fx:id="confirmButton" layoutX="365.0" layoutY="82.0" mnemonicParsing="false" onAction="#collectInfo" text="Confirm" AnchorPane.rightAnchor="95.0" GridPane.columnIndex="1" GridPane.valignment="TOP">
+                  <Button fx:id="confirmButton" layoutX="365.0" layoutY="82.0" mnemonicParsing="false" onAction="#collectInfo" text="Confirm" visible="false" AnchorPane.rightAnchor="95.0" GridPane.columnIndex="1" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets left="20.0" top="95.0" />
                      </GridPane.margin>
@@ -39,7 +28,7 @@
                         <Insets left="10.0" top="70.0" />
                      </GridPane.margin>
                   </Text>
-                   <ChoiceBox fx:id="numBoatsInput" layoutX="225.0" layoutY="82.0" prefHeight="25.0" prefWidth="52.0" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+                   <ChoiceBox fx:id="numBoatsInput" layoutX="225.0" layoutY="82.0" prefHeight="25.0" prefWidth="52.0" visible="false" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets top="95.0" />
                      </GridPane.margin>
@@ -72,7 +61,7 @@
                         <Insets left="200.0" right="150.0" />
                      </GridPane.margin>
                   </ListView>
-                   <Text layoutX="73.0" layoutY="99.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number of boats:" GridPane.valignment="TOP">
+                   <Text layoutX="73.0" layoutY="99.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number of boats:" visible="false" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets top="100.0" />
                      </GridPane.margin>
@@ -85,10 +74,17 @@
                         <Insets bottom="10.0" />
                      </GridPane.margin>
                   </Label>
-                   <Text layoutX="51.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duration of the race:" GridPane.valignment="TOP">
+                   <Text layoutX="51.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duration of the race:" visible="false" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets top="60.0" />
                      </GridPane.margin>
                   </Text>
+      <Text layoutX="59.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Currently streaming from: livedata.americascup.com" />
+      <Text layoutX="109.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to RaceVision" textAlignment="CENTER" wrappingWidth="311.31396484375">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Text>
+      <Button fx:id="confirmStream" layoutX="397.0" layoutY="80.0" mnemonicParsing="false" onAction="#confirmStream" text="Confirm" />
                </children>
             </AnchorPane>
