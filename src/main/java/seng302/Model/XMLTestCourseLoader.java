@@ -202,7 +202,7 @@ public class XMLTestCourseLoader {
                         if (corner.getAttributeValue("CompoundMarkID").equals(
                                 String.valueOf(courseFeature.getIndex()))) {
                             String rounding = corner.getAttributeValue("Rounding");
-                            courseFeature.setRounding(rounding);
+                            courseFeature.setRounding(Integer.parseInt(rounding));
                             String zoneSize = corner.getAttributeValue("ZoneSize");
                             courseFeature.setZoneSize(zoneSize);
                         }

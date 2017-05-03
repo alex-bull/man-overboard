@@ -2,10 +2,8 @@ package seng302.TestMockDatafeed;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import seng302.Factories.CourseFactory;
-import seng302.Model.Boat;
-import seng302.Model.Course;
-import seng302.Model.MutablePoint;
+import org.jdom2.JDOMException;
+import seng302.Model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +18,8 @@ public class BoatMocker extends TimerTask{
     private  MutablePoint prestart;
     List<Boat> competitors;
     List<Boat> markBoats;
-    Course raceCourse;
+    List<CourseFeature> courseFeatures;
+    RaceCourse course;
     int raceStatus;
     ZonedDateTime expectedStartTime;
 
@@ -38,10 +37,11 @@ public class BoatMocker extends TimerTask{
     /**
      * finds the current course of the race
      */
-    public void generateCourse(){
-        CourseFactory cf=new CourseFactory();
+    public void generateCourse() throws JDOMException, IOException {
+        XMLTestCourseLoader cl=new XMLTestCourseLoader(new File("src/main/resources/mockXML/new_format_course.xml"));
         //screen size is not important
-        raceCourse=cf.createCourse(1000.0,1000.0,"src/main/resources/mockXML/new_format_course.xml");
+        course=new RaceCourse(cl.parseCourse(1000,1000),cl.parseCourseBoundary(1000,1000),cl.getWindDirection(),false);
+        courseFeatures=course.getPoints();
     }
 
 
@@ -75,7 +75,7 @@ public class BoatMocker extends TimerTask{
 
         //set initial heading
         for(Boat b: competitors){
-            b.setCurrentHeading(raceCourse.getPoints().get(0).getExitHeading());
+            b.setCurrentHeading(courseFeatures.get(0).getExitHeading());
         }
 
         //randomly select competitors
@@ -120,6 +120,8 @@ public class BoatMocker extends TimerTask{
         catch (IOException e) {
             e.printStackTrace();
 
+        } catch (JDOMException e) {
+            e.printStackTrace();
         }
 
 
@@ -195,7 +197,7 @@ public class BoatMocker extends TimerTask{
         //check if boats are at the end of the leg
         for(Boat b: competitors){
             //if at the end stop
-            if(b.getCurrentLegIndex()==raceCourse.getPoints().size()-1){
+            if(b.getCurrentLegIndex()==courseFeatures.size()-1){
                 b.setVelocity(0);
                 b.setStatus(3);
                 continue;
@@ -208,9 +210,9 @@ public class BoatMocker extends TimerTask{
 
 
 //            //update direction if they are close enough
-            if(b.getPosition().isWithin(raceCourse.getPoints().get(b.getCurrentLegIndex()+1).getGPSPoint())){
+            if(b.getPosition().isWithin(courseFeatures.get(b.getCurrentLegIndex()+1).getGPSPoint())){
                 b.setCurrentLegIndex(b.getCurrentLegIndex()+1);
-                b.setCurrentHeading(raceCourse.getPoints().get(b.getCurrentLegIndex()).getExitHeading());
+                b.setCurrentHeading(courseFeatures.get(b.getCurrentLegIndex()).getExitHeading());
 //                System.out.println(b.getCurrentLegIndex());
             }
         }

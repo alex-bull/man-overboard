@@ -89,8 +89,9 @@ public class StarterController implements Initializable, ClockHandler {
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
         try {
-            dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
+//            dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
 //            dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+            dataReceiver = new DataReceiver("127.0.0.1", 4941);
             dataReceiver.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
 
         } catch (IOException e) {

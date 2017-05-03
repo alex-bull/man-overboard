@@ -20,8 +20,7 @@ public class Gate implements CourseFeature {
     private boolean isFinish;
     private boolean isLine;
     private int index;
-    private String rounding;
-    private int zoneSize;
+    private int rounding;
     private int sourceID;
     private int zoneSize;
 
@@ -60,7 +59,7 @@ public class Gate implements CourseFeature {
      * @return String rounding. Represents how the course feature is passed.
      */
     @Override
-    public String getRounding() {
+    public int getRounding() {
         return this.rounding;
     }
 
@@ -69,7 +68,7 @@ public class Gate implements CourseFeature {
      * @param rounding the rounding of the course feature
      */
     @Override
-    public void setRounding(String rounding) {
+    public void setRounding(int rounding) {
         this.rounding = rounding;
     }
 

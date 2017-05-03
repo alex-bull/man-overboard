@@ -16,8 +16,8 @@ public interface CourseFeature {
     MutablePoint getGPSCentre();
     MutablePoint getGPSPoint();
     void factor(double xFactor,double yFactor,double minX,double minY,double xBuffer,double yBuffer);
-    String getRounding();
-    void setRounding(String rounding);
+    int getRounding();
+    void setRounding(int rounding);
     void setZoneSize(String zoneSize);
     int getZoneSize();
     boolean isLine();

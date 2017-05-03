@@ -47,7 +47,7 @@ public class Mark implements CourseFeature {
      * @return String rounding. Represents how the course feature is passed.
      */
     @Override
-    public String getRounding() {
+    public int getRounding() {
         return this.rounding;
     }
 
@@ -56,7 +56,7 @@ public class Mark implements CourseFeature {
      * @param rounding
      */
     @Override
-    public void setRounding(String rounding) {
+    public void setRounding(int rounding) {
         this.rounding = rounding;
     }
 

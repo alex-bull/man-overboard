@@ -122,9 +122,6 @@ public class Boat implements Competitor {
         this.abbreName = abbreName;
     }
 
-    public int getSourceID() {
-        return sourceID;
-    }
 
     public void setSourceID(int sourceID) {
         this.sourceID = sourceID;
@@ -180,7 +177,7 @@ public class Boat implements Competitor {
      *
      * @param newPos the new position of the boat
      */
-    private void setPosition(MutablePoint newPos) {
+    public void setPosition(MutablePoint newPos) {
         this.position = newPos;
     }
 
