@@ -16,11 +16,11 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import seng302.EnvironmentConfig;
 import seng302.Model.*;
 
 import java.io.IOException;
@@ -37,28 +37,18 @@ public class StarterController implements Initializable, ClockHandler {
 
     @FXML private ListView<Competitor> starterList;
     @FXML private Label countdownText;
-    @FXML private Text worldClockValue;
+    @FXML private Label worldClockValue;
     @FXML private Button countdownButton;
-    @FXML private Text raceStatus;
+    @FXML private Label raceStatus;
+    @FXML private ComboBox<String> streamCombo;
 
     private Clock worldClock;
     private Stage primaryStage;
-    private String courseFile;
-//    private Race racer;
     private ObservableList<Competitor> compList;
-    private int numBoats;
     private Rectangle2D primaryScreenBounds;
     private final int STARTTIME = 1;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private DataReceiver dataReceiver;
-
-    /**
-     * Takes an XML course file so the course information is set
-     * @param courseFile String the XML courseFile
-     */
-    public void setCourseFile(String courseFile) {
-        this.courseFile = courseFile;
-    }
 
     /**
      * Sets the stage
@@ -86,28 +76,8 @@ public class StarterController implements Initializable, ClockHandler {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        this.countdownButton.setDisable(true);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
-        try {
-//            dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
-//            dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
-            dataReceiver = new DataReceiver("127.0.0.1", 4941);
-            dataReceiver.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Timer receiverTimer=new Timer();
-        receiverTimer.schedule(dataReceiver,0,1);
-
-        while (dataReceiver.getCourseTimezone() == null) {
-            System.out.print("");
-        }
-
-        this.worldClock = new WorldClock(this, dataReceiver.getCourseTimezone());
-        worldClock.start();
-
         countdownText.textProperty().bind(timeSeconds.asString());
         compList = FXCollections.observableArrayList();
 
@@ -130,7 +100,9 @@ public class StarterController implements Initializable, ClockHandler {
             }
         });
         starterList.setItems(compList);
-        dataReceiver.setCompetitors(compList);
+
+        streamCombo.getItems().addAll(EnvironmentConfig.liveStream, EnvironmentConfig.csseStream, EnvironmentConfig.mockStream);
+
 
     }
 
@@ -163,6 +135,9 @@ public class StarterController implements Initializable, ClockHandler {
      * Countdown until the race start, updates the countdown time text.
      */
     private void startCountdown() {
+
+
+
         //count down for 5 seconds
         timeSeconds.set(STARTTIME);
         Timeline timeline = new Timeline();
@@ -182,6 +157,7 @@ public class StarterController implements Initializable, ClockHandler {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                int numBoats = dataReceiver.getNumBoats();
                 MainController mainController = loader.getController();
                 mainController.setRace(dataReceiver, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), numBoats);
                 primaryStage.setTitle("RaceVision");
@@ -189,6 +165,8 @@ public class StarterController implements Initializable, ClockHandler {
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinWidth(primaryScreenBounds.getWidth());
+                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth())/2);
+                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight())/2);
                 primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
 
 
@@ -196,13 +174,26 @@ public class StarterController implements Initializable, ClockHandler {
         });
     }
 
-
     /**
-     * Called when the user clicks confirm. Updates the competitors table.
+     * Set fields using data from the stream
      */
-    @FXML
-    public void confirmStream() {
-        if(dataReceiver.getCompetitors().size() == 0) {
+    private void setFields() {
+
+
+        while (dataReceiver.getCourseTimezone() == null) {
+            System.out.print("");
+        }
+
+        this.worldClock = new WorldClock(this, dataReceiver.getCourseTimezone());
+        worldClock.start();
+
+        //dataReceiver.setCompetitors(compList);
+        compList.setAll(dataReceiver.getCompetitors());
+        raceStatus.setText(dataReceiver.getRaceStatus());
+
+        System.out.println(dataReceiver.getRaceStatus());
+
+        if (dataReceiver.getCompetitors().size() == 0) {
             Stage thisStage = (Stage) countdownButton.getScene().getWindow();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
@@ -211,14 +202,55 @@ public class StarterController implements Initializable, ClockHandler {
             alert.setContentText("Sorry there are no competitors at the moment.");
             alert.showAndWait();
         }
-        //create course
-//        double height = primaryScreenBounds.getHeight() * 0.8;
-//        Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height, courseFile);
+        this.countdownButton.setDisable(false);
+    }
 
-//        racer = new RaceFactory().createRace(numBoats, 1, raceCourse);
 
-        compList.setAll(dataReceiver.getCompetitors());
-        raceStatus.setText(dataReceiver.getRaceStatus());
+    /**
+     * Called when the user clicks confirm.
+     * Begins streaming data from the selected server
+     * Calls setFields when data is received
+     */
+    @FXML
+    public void confirmStream() {
+
+        if (this.dataReceiver == null) {
+
+            //get the selected stream
+            String host = this.streamCombo.getSelectionModel().getSelectedItem();
+            if (host == "" || host == null) {
+                System.out.println("No stream selected");
+                return;
+            }
+
+            //create a data reciever
+            try {
+                dataReceiver = new DataReceiver(host, EnvironmentConfig.port);
+                dataReceiver.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+
+            } catch (IOException e) {
+                //e.printStackTrace();
+                System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
+                dataReceiver = null;
+                return;
+            }
+
+            //start receiving data
+            Timer receiverTimer = new Timer();
+            receiverTimer.schedule(dataReceiver, 0, 1);
+
+            //wait for data to come in before setting fields
+            while (dataReceiver.getNumBoats() < 1 || dataReceiver.getCompetitors().size() < dataReceiver.getNumBoats()) {
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (Exception e) {
+                    System.out.println("Thread sleep error");
+                }
+            }
+            this.setFields();
+
+        }
     }
 
 }
