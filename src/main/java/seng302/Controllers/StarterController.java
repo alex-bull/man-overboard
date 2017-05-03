@@ -188,6 +188,8 @@ public class StarterController implements Initializable, ClockHandler {
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinWidth(primaryScreenBounds.getWidth());
+                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth())/2);
+                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight())/2);
                 primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
 
 
