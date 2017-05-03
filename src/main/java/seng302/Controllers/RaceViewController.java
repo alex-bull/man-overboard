@@ -359,7 +359,7 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     private void moveWake(Competitor boat, Integer index) {
 
-        double newLength = boat.getVelocity();
+        double newLength = boat.getVelocity() * 1.5;
         double boatLength = 20;
 
         Polyline wakeModel = wakeModels.get(index);
@@ -449,9 +449,9 @@ public class RaceViewController implements ClockHandler, Initializable {
         }
         List<Competitor> competitors = dataReceiver.getCompetitors();
         for (Competitor boat: competitors) {
-            drawWake(boat);
-            drawBoat(boat);
-            drawAnnotations(boat);
+            this.drawWake(boat);
+            this.drawBoat(boat);
+            this.drawAnnotations(boat);
         }
 
         AnimationTimer timer = new AnimationTimer() {
@@ -491,7 +491,7 @@ public class RaceViewController implements ClockHandler, Initializable {
                 //move competitors and draw tracks
                 for (int i = 0; i < competitors.size(); i++) {
                     Competitor boat = competitors.get(i);
-                    if (counter % 20 == 0) {
+                    if (counter % 70 == 0) {
                         drawTrack(boat, gc);
                     }
                     moveWake(boat, i);
