@@ -46,7 +46,7 @@
             <Mark SeqID="1" Name="Finish Line 1" TargetLat="32.317379" TargetLng="-64.839291" SourceID="128" />
             <Mark SeqID="2" Name="Finish Line 2" TargetLat="32.317257" TargetLng="-64.836260" SourceID="129" />
         </CompoundMark>
-
+        </Course>
         <CompoundMarkSequence>
             <Corner SeqID="1" CompoundMarkID="1" Rounding="PS" ZoneSize="3" />
             <Corner SeqID="2" CompoundMarkID="2" Rounding="Port" ZoneSize="3" />
@@ -68,5 +68,5 @@
             <Limit SeqID="9" Lat="32.2982336" Lon="-64.8480892" />
             <Limit SeqID="10" Lat="32.3122319" Lon="-64.8378754" />
         </CourseLimit>
-    </Course>
+
 </Race>

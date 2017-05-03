@@ -40,7 +40,7 @@ public class BinaryPackager {
      * @param boatSpeed Double, the current speed of the boat
      * @return byte[], the binary packet
      */
-    public byte[] packageBoatLocation(Integer sourceId, Double latitude, Double longitude, Double heading, Double boatSpeed) {
+    public byte[] packageBoatLocation(Integer sourceId, Double latitude, Double longitude, Double heading, Double boatSpeed, int deviceType) {
 
         byte[] packet = new byte[75];
 
@@ -59,7 +59,7 @@ public class BinaryPackager {
         packetBuffer.put(this.getCurrentTimeStamp()); //timestamp
         packetBuffer.putInt(sourceId); //boat id
         packetBuffer.putInt(sequenceNumber); //sequence number
-        packetBuffer.put((byte) 13); //device type: App
+        packetBuffer.put((byte) deviceType); //device type:
 
         latitude = latitude * 2147483648.0 / 180.0; //latitude
         packetBuffer.putInt(latitude.intValue());
@@ -299,7 +299,7 @@ public class BinaryPackager {
 
     public static void main(String[] args) {
         BinaryPackager a = new BinaryPackager();
-        byte[] b = a.packageBoatLocation(12, 123.444, 234.434, 65535.0, 20.3);
+        byte[] b = a.packageBoatLocation(12, 123.444, 234.434, 65535.0, 20.3,11);
         for (byte c: b) {
             System.out.println(c);
         }

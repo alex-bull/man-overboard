@@ -132,7 +132,7 @@ public class BoatMocker extends TimerTask{
         //send competitor boats
         for(Boat boat: competitors){
             byte[] boatinfo=binaryPackager.packageBoatLocation(boat.getSourceID(),boat.getPosition().getXValue(),boat.getPosition().getYValue(),
-                    boat.getCurrentHeading(),boat.getVelocity()*1000);
+                    boat.getCurrentHeading(),boat.getVelocity()*1000, 1);
             dataSender.sendData(boatinfo);
 
 //            System.out.println(competitors.size());
@@ -141,7 +141,7 @@ public class BoatMocker extends TimerTask{
         //send mark boats
         for(Boat markBoat:markBoats){
             byte[] boatinfo=binaryPackager.packageBoatLocation(markBoat.getSourceID(),markBoat.getPosition().getXValue(),markBoat.getPosition().getYValue(),
-                    markBoat.getCurrentHeading(),markBoat.getVelocity()*1000);
+                    markBoat.getCurrentHeading(),markBoat.getVelocity()*1000, 3);
             dataSender.sendData(boatinfo);
         }
     }
