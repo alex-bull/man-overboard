@@ -236,6 +236,7 @@ public class StarterController implements Initializable, ClockHandler {
 
         r = new RaceFactory().createRace(numBoats, duration, raceCourse);
 
-        compList.setAll(r.getCompetitors());
+        //compList.setAll(r.getCompetitors());
+        compList.setAll(dataReceiver.getCompetitors());
     }
 }

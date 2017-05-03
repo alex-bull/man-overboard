@@ -2,46 +2,28 @@ package seng302.Controllers;
 
 import com.google.common.primitives.Doubles;
 import javafx.animation.AnimationTimer;
-import javafx.animation.Timeline;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Control;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import seng302.Model.*;
-import seng302.Parsers.BoatData;
-import seng302.Parsers.CompoundMarkData;
 import seng302.Parsers.MarkData;
-
-import javax.xml.crypto.Data;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.DARKBLUE;
 import static javafx.scene.paint.Color.ORANGERED;
@@ -435,8 +417,6 @@ public class RaceViewController implements ClockHandler, Initializable {
         gc.strokeLine(xValue, yValue, x2, y2);
     }
 
-
-
     private void moveMark(String name, double x, double y) {
         this.markModels.get(name).setLayoutX(x);
         this.markModels.get(name).setLayoutY(y);
@@ -462,23 +442,15 @@ public class RaceViewController implements ClockHandler, Initializable {
 //        List<Competitor> competitors = race.getCompetitors();
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
 
-
-        System.out.println("HI");
-        System.out.println(dataReceiver.getCourseBoundary().size());
-        System.out.println("BYTE");
-
-
         //draw the course
         gc.setFill(Color.LIGHTBLUE);
         gc.fillRect(0,0,width,height);
 
         //draw wind direction arrow
         drawArrow(race.getWindDirection(), gc);
-
         List<Competitor> competitors = dataReceiver.getCompetitors();
-        System.out.println("COMPS " + dataReceiver.getCompetitors().size());
-        //draw moving entities
-        for(int i =0; i< competitors.size(); i++)  {
+
+        for (int i = 0; i < competitors.size(); i++) {
             Competitor boat = competitors.get(i);
             drawWake(boat);
             drawBoat(boat);
@@ -489,6 +461,7 @@ public class RaceViewController implements ClockHandler, Initializable {
 //            System.out.println("hello " + courseFeature.getName());
 //            drawMark(courseFeature);
 //        }
+
 
 
         AnimationTimer timer = new AnimationTimer() {

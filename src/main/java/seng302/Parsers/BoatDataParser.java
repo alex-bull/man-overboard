@@ -46,7 +46,7 @@ public class BoatDataParser {
         this.longitude = parseCoordinate(Arrays.copyOfRange(body, 20,24));
         double heading = parseHeading(Arrays.copyOfRange(body, 28,30));
         //speed in mm/sec
-        int speed = hexByteArrayToInt(Arrays.copyOfRange(body, 34,36));
+        int speed = hexByteArrayToInt(Arrays.copyOfRange(body, 38,40));
         //speed in m/sec
         double convertedSpeed=speed/1000.0;
 

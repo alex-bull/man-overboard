@@ -76,7 +76,6 @@ public class DataReceiver extends TimerTask {
 //        System.setOut(new PrintStream(new BufferedOutputStream(fileOutputStream)));
         byteStreamConverter = new ByteStreamConverter();
         System.out.println("Start connection to server...");
-
     }
 
 
@@ -228,6 +227,7 @@ public class DataReceiver extends TimerTask {
 
                             System.out.println("boat country " + competitor.getAbbreName() + "  " +  competitor.getTeamName());
                             System.out.println("heading " + boatData.getHeading());
+                            System.out.println("speed " + boatData.getSpeed());
                             competitor.setCurrentHeading(boatData.getHeading());
 
                             double x = boatDataParser.getPixelPoint().getXValue();
@@ -236,6 +236,7 @@ public class DataReceiver extends TimerTask {
                             MutablePoint location = new MutablePoint(x, y);
                             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX/2,bufferY/2);
                             competitor.setPosition(location);
+                            competitor.setVelocity(boatData.getSpeed());
 
                             // boat colour
                             if(competitor.getColor() == null) {
