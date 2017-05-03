@@ -22,18 +22,4 @@ public class Converter {
         return value.intValue();
     }
 
-    /**
-     * Convert a byte array of little endian hex values into Long
-     * @param hexValues byte[] a byte array of hexadecimal bytes in little endian format
-     * @return Long the value of the hexadecimal bytes
-     */
-    public static Long hexByteArrayToLong(byte[] hexValues) {
-        Long value = 0L;
-        for (int i = 0; i < hexValues.length; i++)
-        {
-            value += ((long) hexValues[i] & 0xffL) << (8 * i);
-        }
-        return value;
-    }
-
 }

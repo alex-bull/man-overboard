@@ -21,8 +21,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import seng302.Factories.CourseFactory;
-import seng302.Factories.RaceFactory;
 import seng302.Model.*;
 
 import java.io.IOException;
@@ -41,15 +39,13 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML private Label countdownText;
     @FXML private Text worldClockValue;
     @FXML private Button confirmButton;
-    @FXML private ChoiceBox<Integer> numBoatsInput;
-    @FXML private ChoiceBox<Integer> durationInput;
     @FXML private Button countdownButton;
     @FXML private Text raceStatus;
 
     private Clock worldClock;
     private Stage primaryStage;
     private String courseFile;
-    private Race r;
+//    private Race racer;
     private ObservableList<Competitor> compList;
     private int numBoats;
     private Rectangle2D primaryScreenBounds;
@@ -113,8 +109,6 @@ public class StarterController implements Initializable, ClockHandler {
         worldClock.start();
 
         countdownText.textProperty().bind(timeSeconds.asString());
-        numBoatsInput.setItems(FXCollections.observableArrayList(2, 3, 4, 5, 6));
-        durationInput.setItems(FXCollections.observableArrayList(1, 5));
         compList = FXCollections.observableArrayList();
 
         starterList.setCellFactory(new Callback<ListView<Competitor>, ListCell<Competitor>>() {
@@ -189,7 +183,7 @@ public class StarterController implements Initializable, ClockHandler {
                     e.printStackTrace();
                 }
                 MainController mainController = loader.getController();
-                mainController.setRace(r, dataReceiver, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), numBoats);
+                mainController.setRace(dataReceiver, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), numBoats);
                 primaryStage.setTitle("RaceVision");
                 primaryStage.setWidth(primaryScreenBounds.getWidth());
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
@@ -218,38 +212,13 @@ public class StarterController implements Initializable, ClockHandler {
             alert.showAndWait();
         }
         //create course
-        double height = primaryScreenBounds.getHeight() * 0.8;
-        Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height, courseFile);
+//        double height = primaryScreenBounds.getHeight() * 0.8;
+//        Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height, courseFile);
 
-        r = new RaceFactory().createRace(numBoats, 1, raceCourse);
+//        racer = new RaceFactory().createRace(numBoats, 1, raceCourse);
 
         compList.setAll(dataReceiver.getCompetitors());
         raceStatus.setText(dataReceiver.getRaceStatus());
     }
 
-
-    /**
-     * Collects the information about the number of boats and duration of the race. Called when user clicks confirm.
-     * Display the starting boat information in a listView (starterList)
-     */
-    @FXML
-    public void collectInfo() throws Exception {
-
-        //checks duration and number of boats have been selected
-        if (numBoatsInput.getValue() == null || durationInput.getValue() == null) {
-            return;
-        }
-
-        //retrieve input values
-        numBoats = numBoatsInput.getValue();
-        int duration = durationInput.getValue();
-
-        //create course
-        double height = primaryScreenBounds.getHeight() * 0.8;
-        Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height, courseFile);
-
-        r = new RaceFactory().createRace(numBoats, duration, raceCourse);
-
-        compList.setAll(dataReceiver.getCompetitors());
-    }
 }

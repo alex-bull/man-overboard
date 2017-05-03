@@ -48,7 +48,6 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     private Clock raceClock;
     private Clock worldClock;
-    private Race race;
     private List<Polygon> boatModels = new ArrayList<>();
     private List<Polyline> wakeModels = new ArrayList<>();
     private List<Label> nameAnnotations = new ArrayList<>();
@@ -98,11 +97,10 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     /**
      * Sets the race and the race start time and then animates the race
-     * @param race Race  group of competitors across multiple races on a course
      * @param width double the width of the canvas
      * @param height double the height of the canvas
      */
-    public void begin(Race race, double width, double height, DataReceiver dataReceiver) {
+    public void begin(double width, double height, DataReceiver dataReceiver) {
 
         raceViewCanvas.setHeight(height);
         raceViewCanvas.setWidth(width);
@@ -110,9 +108,8 @@ public class RaceViewController implements ClockHandler, Initializable {
         raceViewPane.setPrefWidth(width);
 
         this.dataReceiver = dataReceiver;
-        this.race=race;
 
-        this.raceClock = new RaceClock(this, race.getVelocityScaleFactor(), 27000);
+        this.raceClock = new RaceClock(this, 1, 27000);
         raceClock.start();
 
         String timezone = dataReceiver.getCourseTimezone();
