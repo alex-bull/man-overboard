@@ -69,7 +69,7 @@ public class BoatMocker extends TimerTask {
      * finds the current course of the race
      */
     public void generateCourse() throws JDOMException, IOException {
-        XMLTestCourseLoader cl = new XMLTestCourseLoader(new File("src/main/resources/mockXML/new_format_course.xml"));
+        XMLTestCourseLoader cl = new XMLTestCourseLoader(new File("app-0.0.jar/mockXML/new_format_course.xml"));
         //screen size is not important
         course = new RaceCourse(cl.parseCourse(1000, 1000), cl.parseCourseBoundary(1000, 1000), cl.getWindDirection(), false);
         courseFeatures = course.getPoints();
