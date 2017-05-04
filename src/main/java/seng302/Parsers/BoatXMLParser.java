@@ -47,9 +47,6 @@ public class BoatXMLParser {
                 competitor.setAbbreName(boat.getAttributeValue("ShortName"));
                 competitor.setSourceID(sourceID);
                 competitor.setType("Yacht");
-//                System.out.println("Boat name : " + competitor.getTeamName());
-//                System.out.println("Abbre: " + competitor.getAbbreName());
-//                System.out.println("Source ID: " + competitor.getSourceID());
                 boats.put(sourceID, competitor);
             }
             //add to mark boats if type is mark
@@ -59,10 +56,6 @@ public class BoatXMLParser {
                 mark.setAbbreName(boat.getAttributeValue("ShortName"));
                 mark.setSourceID(boat.getAttributeValue("SourceID"));
                 mark.setType("Mark");
-
-//                System.out.println("Boatname: " + mark.getTeamName());
-//                System.out.println("Short name : " + mark.getAbbreName());
-//                System.out.println("Source id: " + mark.getSourceID());
                 markBoats.add(mark);
             }
         }

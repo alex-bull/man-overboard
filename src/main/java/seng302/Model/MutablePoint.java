@@ -25,6 +25,22 @@ public class MutablePoint {
     }
 
     /**
+     * Sets the value of the x property
+     * @param x Double the new value
+     */
+    public void setX(Double x) {
+        this.x.setValue(x);
+    }
+
+    /**
+     * Sets the value of the y property
+     * @param y Double the new value
+     */
+    public void setY(Double y) {
+        this.y.setValue(y);
+    }
+
+    /**
      * Getter for the x property
      *
      * @return DoubleProperty x

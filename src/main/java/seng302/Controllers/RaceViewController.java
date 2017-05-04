@@ -33,33 +33,21 @@ import static javafx.scene.paint.Color.*;
  */
 public class RaceViewController implements ClockHandler, Initializable {
 
-    @FXML
-    public Text worldClockValue;
-    @FXML
-    private AnchorPane raceView;
-    @FXML
-    private Pane raceViewPane;
-    @FXML
-    private Canvas raceViewCanvas;
-    @FXML
-    private Text timerText;
-    @FXML
-    private Label fpsCounter;
-    @FXML
-    private RadioButton allAnnotationsRadio;
-    @FXML
-    private RadioButton noAnnotationsRadio;
-    @FXML
-    private RadioButton someAnnotationsRadio;
-    @FXML
-    private CheckBox speedButton;
-    @FXML
-    private CheckBox nameButton;
-    @FXML
-    private CheckBox fpsToggle;
-    @FXML
-    private Text status;
+    @FXML private AnchorPane raceView;
+    @FXML private Pane raceViewPane;
+    @FXML private Canvas raceViewCanvas;
+    @FXML private Text timerText;
+    @FXML private Label fpsCounter;
+    @FXML private RadioButton allAnnotationsRadio;
+    @FXML private RadioButton noAnnotationsRadio;
+    @FXML private RadioButton someAnnotationsRadio;
+    @FXML private CheckBox speedButton;
+    @FXML private CheckBox nameButton;
+    @FXML private CheckBox fpsToggle;
+    @FXML public Text worldClockValue;
+    @FXML private Text status;
 
+    private TableController tableController;
     private Clock raceClock;
     private Clock worldClock;
     private List<Polygon> boatModels = new ArrayList<>();
@@ -87,6 +75,10 @@ public class RaceViewController implements ClockHandler, Initializable {
         showAllAnnotations();
 
         fpsToggle.setSelected(true);
+    }
+
+    public void setTableController(TableController tb){
+        tableController = tb;
     }
 
     /**
@@ -124,8 +116,17 @@ public class RaceViewController implements ClockHandler, Initializable {
 
         this.dataReceiver = dataReceiver;
 
-        this.raceClock = new RaceClock(this, 1, 27000);
-        raceClock.start();
+        long expectedStartTime = dataReceiver.getExpectedStartTime();
+        long firstMessageTime = dataReceiver.getMessageTime();
+        if (expectedStartTime != 0 && firstMessageTime != 0) {
+            this.raceClock = new RaceClock(this, 1, 0);
+            long raceTime = firstMessageTime - expectedStartTime;
+            long startTime = System.currentTimeMillis() - raceTime;
+            raceClock.start(startTime);
+        } else {
+            this.raceClock = new RaceClock(this, 1, 27000);
+            raceClock.start();
+        }
 
         String timezone = dataReceiver.getCourseTimezone();
         this.worldClock = new WorldClock(this, timezone);
@@ -439,15 +440,6 @@ public class RaceViewController implements ClockHandler, Initializable {
         this.markModels.get(name).setLayoutY(y);
     }
 
-    /**
-     * Implementation of ClockHandler interface method
-     *
-     * @param newTime The currentTime of the clock
-     */
-    public void clockTicked(String newTime) {
-        timerText.setText(newTime);
-    }
-
 
     /**
      * Starts the animation timer to animate the race
@@ -532,7 +524,8 @@ public class RaceViewController implements ClockHandler, Initializable {
                     moveAnnotations(boat, i);
 
                 }
-
+                //update table
+                tableController.setTable(competitors);
             }
         };
 

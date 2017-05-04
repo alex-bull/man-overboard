@@ -78,36 +78,28 @@ public class RegattaXMLParser {
                 @Override
                 public void characters(char ch[], int start, int length) throws SAXException {
                     if (hasRegattaId) {
-//                        System.out.println("Regatta ID : " + new String(ch, start, length));
                         hasRegattaId = false;
 
                     } else if (hasRegattaName) {
-//                        System.out.println("Regatta Name : " + new String(ch, start, length));
                         hasRegattaName = false;
 
                     } else if (hasCourseName) {
-//                        System.out.println("Course Name : " + new String(ch, start, length));
                         hasCourseName = false;
 
                     } else if (hasCentralLatitude) {
-//                        System.out.println("Central Latitude : " + new String(ch, start, length));
                         hasCentralLatitude = false;
 
                     } else if (hasCentralLongitude) {
-//                        System.out.println("Central Longitude : " + new String(ch, start, length));
                         hasCentralLongitude = false;
 
                     } else if (hasCentralAltitude) {
-//                        System.out.println("Central Altitude : " + new String(ch, start, length));
                         hasCentralAltitude = false;
 
                     } else if (hasUtcOffset) {
                         offsetUTC = new String(ch, start, length);
-//                        System.out.println("UTC : " + offsetUTC);
                         hasUtcOffset = false;
 
                     } else if (hasMagneticVariation) {
-//                        System.out.println("Magnetic Variation : " + new String(ch, start, length));
                         hasMagneticVariation = false;
 
                     }

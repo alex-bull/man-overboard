@@ -23,18 +23,18 @@ public interface Competitor {
     void setColor(Color color);
 
     String getAbbreName();
-
+    String getLastMarkPassed();
     double getCurrentHeading();
-
-    void setCurrentHeading(double currentHeading);
-
+    int getLegIndex();
     DoubleProperty getHeadingProperty();
-
-    void setProperties(double velocity, double heading, double latitude, double longitude);
+    void setCurrentHeading(double currentHeading);
     int getSourceID();
-    int getStatus();
-    int getCurrentLegIndex();
-    void updatePosition(double dt);
-    void setStatus(int status);
-    void setCurrentLegIndex(int currentLegIndex);
+    void setLastMarkPassed(String lastMarkPassed);
+    void setColor(Color color);
+    void setVelocity(double velocity);
+    void setPosition(MutablePoint position);
+    void setLegIndex(int legIndex);
+    void setProperties(double velocity, double heading, double latitude, double longitude);
+
+
 }

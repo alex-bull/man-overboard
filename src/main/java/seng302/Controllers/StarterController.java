@@ -35,23 +35,18 @@ import java.util.Timer;
 public class StarterController implements Initializable, ClockHandler {
 
 
-    private final int STARTTIME = 1;
-    @FXML
-    private ListView<Competitor> starterList;
-    @FXML
-    private Label countdownText;
-    @FXML
-    private Label worldClockValue;
-    @FXML
-    private Button countdownButton;
-    @FXML
-    private Label raceStatus;
-    @FXML
-    private ComboBox<String> streamCombo;
+    @FXML private ListView<Competitor> starterList;
+    @FXML private Label worldClockValue;
+    @FXML private Button countdownButton;
+    @FXML private Button confirmButton;
+    @FXML private Label raceStatus;
+    @FXML private ComboBox<String> streamCombo;
+
     private Clock worldClock;
     private Stage primaryStage;
     private ObservableList<Competitor> compList;
     private Rectangle2D primaryScreenBounds;
+    private final int STARTTIME = 0;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private DataReceiver dataReceiver;
 
@@ -86,7 +81,6 @@ public class StarterController implements Initializable, ClockHandler {
 
         this.countdownButton.setDisable(true);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        countdownText.textProperty().bind(timeSeconds.asString());
         compList = FXCollections.observableArrayList();
 
         starterList.setCellFactory(new Callback<ListView<Competitor>, ListCell<Competitor>>() {
@@ -143,7 +137,6 @@ public class StarterController implements Initializable, ClockHandler {
      */
     private void startCountdown() {
 
-
         //count down for 5 seconds
         timeSeconds.set(STARTTIME);
         Timeline timeline = new Timeline();
@@ -171,8 +164,8 @@ public class StarterController implements Initializable, ClockHandler {
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinWidth(primaryScreenBounds.getWidth());
-                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth())/2);
+                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight())/2);
                 primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
 
 
@@ -205,7 +198,7 @@ public class StarterController implements Initializable, ClockHandler {
             alert.setTitle("Information Dialog");
             alert.initOwner(thisStage);
             alert.setHeaderText(null);
-            alert.setContentText("Sorry there are no competitors at the moment.");
+            alert.setContentText("Sorry, this data stream hasn't started.");
             alert.showAndWait();
         }
         this.countdownButton.setDisable(false);
@@ -233,6 +226,8 @@ public class StarterController implements Initializable, ClockHandler {
             try {
                 dataReceiver = new DataReceiver(host, EnvironmentConfig.port);
                 dataReceiver.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                this.streamCombo.setDisable(true);
+                this.confirmButton.setDisable(true);
 
             } catch (IOException e) {
                 //e.printStackTrace();

@@ -1,10 +1,15 @@
 package seng302.Parsers;
 
-
+import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
+import edu.princeton.cs.introcs.In;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 import seng302.Model.CourseFeature;
 import seng302.Model.MutablePoint;
 
@@ -28,9 +33,30 @@ public class RaceXMLParser {
     private List<Double> xMercatorCoords;
     private List<Double> yMercatorCoords;
     private Set<Integer> markIDs = new HashSet<>();
+    private Set<Integer> compoundMarkIDs = new HashSet<>();
     private Set<Integer> boatIDs = new HashSet<>();
     private double width;
     private double height;
+
+
+    public RaceData getRaceData() {
+        return raceData;
+    }
+    public List<MutablePoint> getCourseBoundary() {
+        return courseBoundary;
+    }
+    public List<CourseFeature> getCourseFeatures() {
+        return courseFeatures;
+    }
+    public Set<Integer> getMarkIDs() {
+        return markIDs;
+    }
+    public Set<Integer> getCompoundMarkIDs() {
+        return compoundMarkIDs;
+    }
+    public Set<Integer> getBoatIDs() {
+        return boatIDs;
+    }
 
 
     /**
@@ -57,12 +83,6 @@ public class RaceXMLParser {
         String raceStartTime = race.getChild("RaceStartTime").getAttributeValue("Time");
         boolean raceStartTimePostponed = Boolean.parseBoolean(race.getChild("RaceStartTime").getAttributeValue("Postpone"));
 
-//        System.out.println("Race ID : " + raceID);
-//        System.out.println("Race type: " + raceType);
-//        System.out.println("Creation time date: " + creationTimeDate);
-//        System.out.println("Race start time: " +raceStartTime);
-//        System.out.println("Postpone: " + raceStartTimePostponed);
-
         raceData.setRaceID(raceID);
         raceData.setRaceType(raceType);
         raceData.setCreationTimeDate(creationTimeDate);
@@ -72,12 +92,9 @@ public class RaceXMLParser {
         for (Element yacht : race.getChild("Participants").getChildren()) {
             int sourceID = Integer.parseInt(yacht.getAttributeValue("SourceID"));
             String entry = yacht.getAttributeValue("Entry");
-//            System.out.println("Yacht ID:" + sourceID);
-//            System.out.println("Entry: "+ entry);
             YachtData yachtData = new YachtData(sourceID, entry);
             this.boatIDs.add(sourceID);
             raceData.getParticipants().add(yachtData);
-
         }
 
         List<CompoundMarkData> course = new ArrayList<>();
@@ -86,28 +103,22 @@ public class RaceXMLParser {
 
 //        CourseParser courseParser = new CourseParser()
         for (Element compoundMark : race.getChild("Course").getChildren()) {
+        for(Element compoundMark:race.getChild("Course").getChildren()){
             int compoundMarkID = Integer.parseInt(compoundMark.getAttribute("CompoundMarkID").getValue());
             String compoundMarkName = compoundMark.getAttribute("Name").getValue();
-//            System.out.println("Compound mark ID: " + compoundMarkID);
-//            System.out.println("Compound mark name: " + compoundMarkName);
-
             List<MarkData> marks = new ArrayList<>();
-            for (Element mark : compoundMark.getChildren()) {
+
+            for(Element mark: compoundMark.getChildren()) {
                 int seqID = Integer.parseInt(mark.getAttributeValue("SeqID"));
-//                System.out.println("Seq ID: " + seqID);
                 String markName = mark.getAttributeValue("Name");
                 double targetLat = Double.parseDouble(mark.getAttributeValue("TargetLat"));
                 double targetLng = Double.parseDouble(mark.getAttributeValue("TargetLng"));
                 int sourceID = Integer.parseInt(mark.getAttributeValue("SourceID"));
-
-//                System.out.println("Mark name: " + markName);
-//                System.out.println("Target lat: " +targetLat);
-//                System.out.println("Target Lng: " + targetLng);
                 markIDs.add(sourceID);
                 MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
                 marks.add(markData);
             }
-
+            compoundMarkIDs.add(compoundMarkID);
             CompoundMarkData compoundMarkData = new CompoundMarkData(compoundMarkID, compoundMarkName, marks);
             course.add(compoundMarkData);
         }
@@ -115,17 +126,12 @@ public class RaceXMLParser {
 
         for (Element corner : race.getChild("CompoundMarkSequence").getChildren()) {
             int size = race.getChild("CompoundMarkSequence").getChildren().size();
-
             int cornerSeqID = Integer.parseInt(corner.getAttributeValue("SeqID"));
             int compoundMarkID = Integer.parseInt(corner.getAttributeValue("CompoundMarkID"));
             String rounding = corner.getAttributeValue("Rounding");
             int zoneSize = Integer.parseInt(corner.getAttributeValue("ZoneSize"));
-
-//            System.out.println("Corner seq id: " + cornerSeqID);
-//            System.out.println("Compound mark id : " + compoundMarkID);
-//            System.out.println("Rounding: " + rounding);
-//            System.out.println("Zone size: " + zoneSize);
             CornerData cornerData = new CornerData(cornerSeqID, compoundMarkID, rounding, zoneSize);
+
             if (cornerSeqID == 1) {
                 for (CompoundMarkData mark : course) {
                     if (mark.getID() == compoundMarkID) {
@@ -150,11 +156,7 @@ public class RaceXMLParser {
             int limitSeqID = Integer.parseInt(limit.getAttributeValue("SeqID"));
             double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
             double lon = Double.parseDouble(limit.getAttributeValue("Lon"));
-//
-//            System.out.println("Limit seq id:" + limitSeqID);
-//            System.out.println("Lat:" + lat);
-//            System.out.println("Lon:" + lon);
-            LimitData limitData = new LimitData(limitSeqID, lat, lon);
+            LimitData limitData  = new LimitData(limitSeqID, lat, lon);
             raceData.getCourseLimit().add(limitData);
             count++;
 
@@ -162,25 +164,6 @@ public class RaceXMLParser {
         parseRace(width, height);
     }
 
-    public RaceData getRaceData() {
-        return raceData;
-    }
-
-    public List<MutablePoint> getCourseBoundary() {
-        return courseBoundary;
-    }
-
-    public List<CourseFeature> getCourseFeatures() {
-        return courseFeatures;
-    }
-
-    public Set<Integer> getMarkIDs() {
-        return markIDs;
-    }
-
-    public Set<Integer> getBoatIDs() {
-        return boatIDs;
-    }
 
     /**
      * Set buffers and call course parsers

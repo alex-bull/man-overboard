@@ -19,6 +19,10 @@ public class WorldClock extends AnimationTimer implements Clock {
         this.offsetUTC = offsetUTC;
     }
 
+    public void start(long startTime) {
+        // no op
+    }
+
     @Override
     public void start() {
         super.start();
@@ -57,7 +61,11 @@ public class WorldClock extends AnimationTimer implements Clock {
             hour = "12";
         }
 
-        return hour + ":" + minutes + ":" + seconds + " " + ampm + "  UTC" + offsetUTC;
+        if (offsetUTC != null) {
+            return hour + ":" + minutes + ":" + seconds + " " + ampm + "  UTC" + offsetUTC;
+        } else {
+            return hour + ":" + minutes + ":" + seconds + " " + ampm + " NZT";
+        }
     }
 
 }

@@ -53,7 +53,6 @@ public class BoatDataParser {
         ArrayList<Double> point = mercatorProjection(latitude, longitude, width, height);
         double pointX = point.get(0);
         double pointY = point.get(1);
-        //System.out.println("lat lon and Y" + point1X + " +" + point1Y);
         this.pixelPoint = new MutablePoint(pointX, pointY);
         if (deviceType == 3) {
             MutablePoint GPS = new MutablePoint(latitude, longitude);

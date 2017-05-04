@@ -15,10 +15,22 @@ public class Boat implements Competitor {
     private Color color;
     private String abbreName;
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
-    private int currentLegIndex;
     private int sourceID;
     private int status;
     private String type;
+    private String lastMarkPassed;
+
+
+    private int legIndex;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
 
     /**
      * Creates a boat
@@ -35,9 +47,8 @@ public class Boat implements Competitor {
         this.position = startPosition;
         this.color = color;
         this.abbreName = abbreName;
-        currentLegIndex = 0;
+        legIndex = 0;
     }
-
     /**
      * Creates a boat, for mock class only
      *
@@ -57,43 +68,41 @@ public class Boat implements Competitor {
         this.status = status;
     }
 
-    /**
-     * Empty Constructor
-     */
-    public Boat() {
+
+    public Boat(){
 
     }
 
-    public String getType() {
-        return type;
+    public int getLegIndex() {
+        return legIndex;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setLegIndex(int legIndex) {
+        this.legIndex = legIndex;
     }
 
-    public int getStatus() {
-        return status;
+    public void setLastMarkPassed(String lastMarkPassed) {
+        this.lastMarkPassed = lastMarkPassed;
     }
 
-    /**
-     * setter for status
-     *
-     * @param status 0 -> Undefined
-     *               1 -> Prestart
-     *               2 -> Racing
-     *               3 -> Finished
-     *               4 -> DNS (did not start)
-     *               5 -> DNF (did not finish)
-     *               6 -> DSQ (disqualified)
-     *               7 -> OCS (On Course Side – across start line early)
-     */
-    public void setStatus(int status) {
-        this.status = status;
+    public String getLastMarkPassed() {
+        return lastMarkPassed;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public void setAbbreName(String abbreName) {
+        this.abbreName = abbreName;
     }
 
     public int getSourceID() {
         return sourceID;
+    }
+
+    public void setSourceID(int sourceID) {
+        this.sourceID = sourceID;
     }
 
     /**
@@ -106,29 +115,6 @@ public class Boat implements Competitor {
     }
 
     /**
-     * Getter for Current Leg Index
-     *
-     * @return the current leg index
-     */
-    public int getCurrentLegIndex() {
-
-        return currentLegIndex;
-    }
-
-    /**
-     * Sets the current Leg Index
-     *
-     * @param currentLegIndex the current leg index
-     */
-    public void setCurrentLegIndex(int currentLegIndex) {
-        this.currentLegIndex = currentLegIndex;
-    }
-
-    public void setSourceID(int sourceID) {
-        this.sourceID = sourceID;
-    }
-
-    /**
      * Getter for the boat's team name
      *
      * @return String The name of the boat team
@@ -137,8 +123,12 @@ public class Boat implements Competitor {
         return this.teamName;
     }
 
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
+    /**
+     * Setter for the boat's velocity
+     * @param velocity boat's velocity m/s
+     */
+    public void setVelocity(double velocity) {
+        this.velocity = velocity;
     }
 
     /**
@@ -148,15 +138,6 @@ public class Boat implements Competitor {
      */
     public double getVelocity() {
         return this.velocity;
-    }
-
-    /**
-     * Setter for the boat's velocity
-     *
-     * @param velocity boat's velocity m/s
-     */
-    public void setVelocity(double velocity) {
-        this.velocity = velocity;
     }
 
     /**
@@ -187,10 +168,6 @@ public class Boat implements Competitor {
         return abbreName;
     }
 
-    public void setAbbreName(String abbreName) {
-        this.abbreName = abbreName;
-    }
-
     /**
      * Getter for the team color
      *
@@ -201,8 +178,12 @@ public class Boat implements Competitor {
         return color;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    /**
+     * Setter for the current heading
+     * @param currentHeading double the angle of the heading
+     */
+    public void setCurrentHeading(double currentHeading) {
+        this.currentHeading.setValue(currentHeading);
     }
 
     /**
