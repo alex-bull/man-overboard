@@ -5,17 +5,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.jdom2.JDOMException;
+import seng302.TestMockDatafeed.BoatMocker;
+import seng302.TestMockDatafeed.Mock;
+
+import java.io.IOException;
+import java.net.SocketException;
+import java.util.Timer;
 
 public class App extends Application {
     public static void main(String[] args) {
         launch(args);
-
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
         // Code for starter controller
+
+
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("startView.fxml"));
         Parent root = loader.load();
         StarterController starterController = loader.getController();
@@ -25,6 +32,8 @@ public class App extends Application {
         primaryStage.setMinWidth(548);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+        (new Thread(new Mock())).start();
+
     }
 
 
