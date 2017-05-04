@@ -6,7 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import seng302.Model.*;
+import seng302.Model.RaceEvent;
+import seng302.Model.RaceEventHandler;
 
 import java.util.Collections;
 
@@ -46,9 +47,9 @@ public class TableController implements RaceEventHandler {
 
         // initialise race table
         positionCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, Integer>("position"));
-        nameCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("teamName"));
-        featureCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("featureName"));
-        speedCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,Integer>("speed"));
+        nameCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, String>("teamName"));
+        featureCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, String>("featureName"));
+        speedCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, Integer>("speed"));
         raceTable.setItems(events);
 
     }
@@ -61,25 +62,26 @@ public class TableController implements RaceEventHandler {
     /**
      * Adds an event to table, also removes redundant event and sort them based on last feature passed by boat.
      * Can change compareTo in race event to make it compare time instead.
+     *
      * @param event RaceEvent an event in the race
      */
-   public void handleRaceEvent(RaceEvent event) {
+    public void handleRaceEvent(RaceEvent event) {
 
-       // loop through all events in the table and remove events with the same team name as this event
-       for (int i = 0; i < events.size(); i++) {
-           if (events.get(i).getTeamName().equals(event.getTeamName())) {
-               events.remove(i);
-           }
-       }
+        // loop through all events in the table and remove events with the same team name as this event
+        for (int i = 0; i < events.size(); i++) {
+            if (events.get(i).getTeamName().equals(event.getTeamName())) {
+                events.remove(i);
+            }
+        }
 
-       // add this event to the race table
-       events.add(event);
-       Collections.sort(events);  //events are sorted by index of the features
+        // add this event to the race table
+        events.add(event);
+        Collections.sort(events);  //events are sorted by index of the features
 
-       for (RaceEvent e: events) {
-           e.setPosition(events.indexOf(e) + 1);
-       }
+        for (RaceEvent e : events) {
+            e.setPosition(events.indexOf(e) + 1);
+        }
 
-   }
+    }
 
 }

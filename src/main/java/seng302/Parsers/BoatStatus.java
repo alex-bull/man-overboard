@@ -24,7 +24,6 @@ public class BoatStatus {
     }
 
 
-
     public int getSourceID() {
         return sourceID;
     }

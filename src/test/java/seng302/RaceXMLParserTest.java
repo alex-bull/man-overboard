@@ -4,8 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import seng302.Parsers.RaceXMLParser;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by khe60 on 27/04/17.
  */
@@ -101,7 +99,7 @@ public class RaceXMLParserTest {
     }
 
     @Test
-    public void parserTest() throws  Exception{
+    public void parserTest() throws Exception {
         System.out.println(raceXMLParser.getCourseBoundary());
         System.out.println(raceXMLParser.getCourseFeatures());
     }

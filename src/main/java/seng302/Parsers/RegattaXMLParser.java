@@ -19,6 +19,7 @@ public class RegattaXMLParser {
 
     /**
      * Parse the Regatta Data
+     *
      * @param xmlStr XML String of regatta data
      */
     public RegattaXMLParser(String xmlStr) {
@@ -123,11 +124,7 @@ public class RegattaXMLParser {
 
     }
 
-    public String getOffsetUTC() {
-        return this.offsetUTC;
-    }
-
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         RegattaXMLParser p = new RegattaXMLParser("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "\n" +
@@ -150,5 +147,9 @@ public class RegattaXMLParser {
                 "<MagneticVariation>14.1</MagneticVariation>\n" +
                 "\n" +
                 "</RegattaConfig>");
+    }
+
+    public String getOffsetUTC() {
+        return this.offsetUTC;
     }
 }

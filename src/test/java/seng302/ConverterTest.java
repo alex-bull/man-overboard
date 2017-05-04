@@ -1,13 +1,5 @@
 package seng302;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static seng302.Parsers.Converter.hexByteArrayToInt;
-
 /**
  * Created by psu43 on 13/04/17.
  */
