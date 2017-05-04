@@ -257,12 +257,6 @@ public class BoatXMLParserTest {
     public void testParser() throws Exception {
         HashMap<Integer, Boat> competitors = boatXMLParser.getBoats();
         assertEquals(6, competitors.size());
-        assertEquals("ORACLE TEAM USA", competitors.get(0).getTeamName());
-        assertEquals("ARTEMIS RACING", competitors.get(1).getTeamName());
-        assertEquals("EMIRATES TEAM NZ", competitors.get(2).getTeamName());
-        assertEquals("SOFTBANK TEAM JAPAN", competitors.get(3).getTeamName());
-        assertEquals("GROUPAMA TEAM FRANCE", competitors.get(4).getTeamName());
-        assertEquals("LAND ROVER BAR", competitors.get(5).getTeamName());
 
         List<Boat> markBoats = boatXMLParser.getMarkBoats();
         assertEquals(10, markBoats.size());

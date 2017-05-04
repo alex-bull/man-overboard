@@ -36,7 +36,7 @@ public class BinaryPackagerTest {
         String g;
 
         try {
-            br = new BufferedReader(new FileReader(new File("mock_boats.xml")));
+            br = new BufferedReader(new FileReader(new File("src/main/resources/mockXML/mock_boats.xml")));
             String line;
             StringBuilder sb = new StringBuilder();
 
@@ -51,7 +51,7 @@ public class BinaryPackagerTest {
 
         try {
             byte[] b = a.packageXML(g.length(), g, 23);
-            assertEquals(56, b.length);
+            assertEquals(9693, b.length);
             assertEquals(71, b[0]);
 
         }
