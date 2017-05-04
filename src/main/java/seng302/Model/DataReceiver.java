@@ -28,6 +28,7 @@ public class DataReceiver extends TimerTask {
     private BoatData boatData;
     private RaceStatusData raceStatusData;
     private RaceData raceData;
+    private MarkRoundingData markRoundingData;
     private String timezone;
     private String raceStatus;
     private long messageTime;
@@ -44,13 +45,16 @@ public class DataReceiver extends TimerTask {
     private double minXMercatorCoord;
     private double minYMercatorCoord;
     private BoatXMLParser boatXMLParser;
-    List<MarkData> startMarks = new ArrayList<>();
-    List<MarkData> finishMarks = new ArrayList<>();
+    private List<MarkData> startMarks = new ArrayList<>();
+    private List<MarkData> finishMarks = new ArrayList<>();
     private ColourPool colourPool = new ColourPool();
+    private int numBoats = 0;
+    private List<CompoundMarkData> compoundMarks = new ArrayList<>();
 
     //Getters
     public List<CourseFeature> getCourseFeatures() { return courseFeatures; }
     public List<MutablePoint> getCourseBoundary() { return courseBoundary; }
+    public List<CompoundMarkData> getCompoundMarks() {return compoundMarks;}
     public String getCourseTimezone() { return timezone; }
     public List<MarkData> getStartMarks() {return startMarks;}
     public List<MarkData> getFinishMarks() {return finishMarks;}
@@ -65,6 +69,14 @@ public class DataReceiver extends TimerTask {
     public double getWindDirection() {
         return windDirection;
     }
+    public HashMap<Integer, Competitor> getStoredCompetitors() {
+        return storedCompetitors;
+    }
+    public MarkRoundingData getMarkRoundingData() {
+        return markRoundingData;
+    }
+
+    public int getNumBoats() {return this.numBoats;}
 
 
     //Setters
@@ -114,6 +126,7 @@ public class DataReceiver extends TimerTask {
                 this.raceXMLParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
                 this.raceData = raceXMLParser.getRaceData();
                 this.courseBoundary = raceXMLParser.getCourseBoundary();
+                this.compoundMarks = raceData.getCourse();
                 setScalingFactors();
                 break;
             case BOAT:
@@ -198,10 +211,10 @@ public class DataReceiver extends TimerTask {
 
                 if (isStartOfPacket) {
                     readHeader();
-
                     int XMLMessageType = 26;
                     int boatLocationMessageType = 37;
                     int raceStatusMessageType = 12;
+                    int markRoundingMessageType = 38;
                     int messageType = (int) byteStreamConverter.getMessageType();
                     int messageLength = (int) byteStreamConverter.getMessageLength();
 
@@ -222,6 +235,12 @@ public class DataReceiver extends TimerTask {
                         this.messageTime = raceStatusData.getCurrentTime();
                         this.expectedStartTime = raceStatusData.getExpectedStartTime();
                         this.windDirection = raceStatusData.getWindDirection();
+                        this.numBoats = raceStatusData.getNumBoatsInRace();
+
+                    }
+                    else if(messageType == markRoundingMessageType) {
+                        MarkRoundingParser markRoundingParser = new MarkRoundingParser(message);
+                        this.markRoundingData = markRoundingParser.getMarkRoundingData();
 
                     }
                     else if (messageType == boatLocationMessageType) {

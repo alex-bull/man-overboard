@@ -3,38 +3,35 @@ package seng302.Controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import seng302.Model.*;
+import seng302.Parsers.CompoundMarkData;
+import seng302.Parsers.MarkRoundingData;
 
+import javax.xml.crypto.Data;
+import java.net.URL;
 import java.util.Collections;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by msl47 on 21/03/17.
  * The controller for the table
  */
 
-public class TableController implements RaceEventHandler {
+public class TableController implements Initializable{
 
-    @FXML
-    private TableView raceTable;
+    @FXML private TableView raceTable;
+    @FXML private TableColumn positionCol;
+    @FXML private TableColumn featureCol;
+    @FXML private TableColumn nameCol;
+    @FXML private TableColumn speedCol;
 
-    @FXML
-    private TableColumn positionCol;
-
-    @FXML
-    private TableColumn featureCol;
-
-    @FXML
-    private TableColumn nameCol;
-
-    @FXML
-    private TableColumn speedCol;
-
-    private int order = 1;
-    private int numBoats;
-    private int finalOrder = 1;
+//    private List<Competitor> competitors;
+    private DataReceiver dataReceiver;
     private ObservableList<RaceEvent> events = FXCollections.observableArrayList();
 
 
@@ -42,44 +39,34 @@ public class TableController implements RaceEventHandler {
      * Initialiser for the raceViewController
      */
     @FXML
-    void initialize() {
+    public void initialize(URL location, ResourceBundle resources) {
 
         // initialise race table
-        positionCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, Integer>("position"));
+//        positionCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, Integer>("position"));
         nameCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("teamName"));
-        featureCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("featureName"));
+//        featureCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("featureName"));
         speedCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,Integer>("speed"));
         raceTable.setItems(events);
 
     }
 
 
-    void setNumBoats(int numBoats) {
-        this.numBoats = numBoats;
+
+    public void setTable(DataReceiver dataReceiver) {
+        this.dataReceiver=dataReceiver;
+
+        List<Competitor> competitors = dataReceiver.getCompetitors();
+        events.clear();
+
+        for(Competitor competitor : competitors) {
+            String teamName = competitor.getTeamName();
+            Double speed = competitor.getVelocity();
+
+            RaceEvent raceEvent = new RaceEvent(teamName, speed);
+            events.add(raceEvent);
+        }
     }
 
-    /**
-     * Adds an event to table, also removes redundant event and sort them based on last feature passed by boat.
-     * Can change compareTo in race event to make it compare time instead.
-     * @param event RaceEvent an event in the race
-     */
-   public void handleRaceEvent(RaceEvent event) {
 
-       // loop through all events in the table and remove events with the same team name as this event
-       for (int i = 0; i < events.size(); i++) {
-           if (events.get(i).getTeamName().equals(event.getTeamName())) {
-               events.remove(i);
-           }
-       }
-
-       // add this event to the race table
-       events.add(event);
-       Collections.sort(events);  //events are sorted by index of the features
-
-       for (RaceEvent e: events) {
-           e.setPosition(events.indexOf(e) + 1);
-       }
-
-   }
 
 }

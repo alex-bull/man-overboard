@@ -36,6 +36,7 @@ public class RaceXMLParser {
     private List <Double> xMercatorCoords;
     private List <Double> yMercatorCoords;
     private Set<Integer> markIDs = new HashSet<>();
+    private Set<Integer> compoundMarkIDs = new HashSet<>();
     private Set<Integer> boatIDs = new HashSet<>();
     private double width;
     private double height;
@@ -52,6 +53,9 @@ public class RaceXMLParser {
     }
     public Set<Integer> getMarkIDs() {
         return markIDs;
+    }
+    public Set<Integer> getCompoundMarkIDs() {
+        return compoundMarkIDs;
     }
     public Set<Integer> getBoatIDs() {
         return boatIDs;
@@ -131,7 +135,7 @@ public class RaceXMLParser {
                 MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
                 marks.add(markData);
             }
-
+            compoundMarkIDs.add(compoundMarkID);
             CompoundMarkData compoundMarkData = new CompoundMarkData(compoundMarkID, compoundMarkName, marks);
             course.add(compoundMarkData);
         }
@@ -139,7 +143,6 @@ public class RaceXMLParser {
 
         for(Element corner: race.getChild("CompoundMarkSequence").getChildren()) {
             int size = race.getChild("CompoundMarkSequence").getChildren().size();
-
             int cornerSeqID = Integer.parseInt(corner.getAttributeValue("SeqID"));
             int compoundMarkID = Integer.parseInt(corner.getAttributeValue("CompoundMarkID"));
             String rounding = corner.getAttributeValue("Rounding");
@@ -193,7 +196,7 @@ public class RaceXMLParser {
      * @param height double height of the race canvas
      */
     private void parseRace(double width, double height) {
-        this.bufferX=Math.max(1000,width*0.6);
+        this.bufferX=Math.max(600,width*0.6);
         this.bufferY=Math.max(10,height*0.1);
 
         try {

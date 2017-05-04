@@ -47,6 +47,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     @FXML public Text worldClockValue;
     @FXML private Text status;
 
+    private TableController tableController;
     private Clock raceClock;
     private Clock worldClock;
     private List<Polygon> boatModels = new ArrayList<>();
@@ -74,6 +75,10 @@ public class RaceViewController implements ClockHandler, Initializable {
         showAllAnnotations();
 
         fpsToggle.setSelected(true);
+    }
+
+    public void setTableController(TableController tb){
+        tableController = tb;
     }
 
     /**
@@ -369,7 +374,7 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     private void moveWake(Competitor boat, Integer index) {
 
-        double newLength = boat.getVelocity();
+        double newLength = boat.getVelocity() * 1.5;
         double boatLength = 20;
 
         Polyline wakeModel = wakeModels.get(index);
@@ -449,10 +454,11 @@ public class RaceViewController implements ClockHandler, Initializable {
             }
         }
         List<Competitor> competitors = dataReceiver.getCompetitors();
+
         for (Competitor boat: competitors) {
-            drawWake(boat);
-            drawBoat(boat);
-            drawAnnotations(boat);
+            this.drawWake(boat);
+            this.drawBoat(boat);
+            this.drawAnnotations(boat);
         }
 
         AnimationTimer timer = new AnimationTimer() {
@@ -507,7 +513,8 @@ public class RaceViewController implements ClockHandler, Initializable {
                     moveAnnotations(boat, i);
 
                 }
-
+                //update table
+                tableController.setTable(dataReceiver);
             }
         };
 
