@@ -33,27 +33,9 @@ public class RaceStatusParser {
         Integer numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22,23));
         Integer raceType = hexByteArrayToInt(Arrays.copyOfRange(body, 23,24));
         Double doubleWindDirection = windDirection * 360.0 / 65536.0;
-
-
-// System.out.println("current time " + currentTime);
-//        System.out.println("race id " + raceID);
-//        System.out.println("race status " + raceStatus);
-//        System.out.println("expected start time " + expectedStartTime);
-
-        // format date
-//        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-//        Date resultdate = new Date(expectedStartTime);
-//        System.out.println("FORMAT " + sdf.format(resultdate));
-//
-//        System.out.println("wind direction " + windDirection);
-//        System.out.println(doubleWindDirection);
-//        System.out.println("wind speed " + windSpeed);
-//        System.out.println("# boats in race " + numBoatsInRace);
-//        System.out.println("Race type " + raceType);
-
         HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
-
         int currentByte = 24;
+
         for(int i = 0; i < numBoatsInRace; i++) {
 
             Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte,currentByte + 4));
@@ -64,19 +46,9 @@ public class RaceStatusParser {
             Integer estTimeAtNextMark = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 8,currentByte + 14));
             Integer estTimeAtFinish = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 14,currentByte + 20));
 
-//            System.out.println("boat source id " + sourceID);
-//            System.out.println("boat status " + boatStatus);
-//            System.out.println("leg num " + legNumber);
-//            System.out.println("num penalties awarded " + numPenaltiesAwarded);
-//            System.out.println("num penalties served " + numPenaltiesServed);
-//            System.out.println("est time at next mark " + estTimeAtNextMark);
-//            System.out.println("est time at finish " + estTimeAtFinish);
-
             boatStatuses.put(sourceID, new BoatStatus(sourceID,boatStatus, legNumber,
                     numPenaltiesAwarded, numPenaltiesServed, estTimeAtNextMark, estTimeAtFinish));
             currentByte+=20;
-
-
         }
 
         return new RaceStatusData(currentTime, raceID, raceStatusToString(raceStatus), expectedStartTime, doubleWindDirection,
