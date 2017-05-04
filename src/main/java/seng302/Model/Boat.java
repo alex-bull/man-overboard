@@ -20,6 +20,30 @@ public class Boat implements Competitor {
     private String type;
     private String lastMarkPassed;
 
+    @Override
+    public void setCurrentLegIndex(int legIndex) {
+        this.legIndex=legIndex;
+    }
+
+    @Override
+    public int getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setStatus(int status) {
+    this.status=status;
+    }
+
+    @Override
+    public void setColor(Color color) {
+this.color=color;
+    }
+
+    @Override
+    public int getCurrentLegIndex() {
+        return legIndex;
+    }
 
     private int legIndex;
 
@@ -63,7 +87,7 @@ public class Boat implements Competitor {
         this.teamName = teamName;
         this.position = startPosition;
         this.abbreName = abbreName;
-        currentLegIndex = 0;
+        legIndex = 0;
         this.sourceID = sourceID;
         this.status = status;
     }
@@ -195,14 +219,7 @@ public class Boat implements Competitor {
         return currentHeading.getValue();
     }
 
-    /**
-     * Setter for the current heading
-     *
-     * @param currentHeading double the angle of the heading
-     */
-    public void setCurrentHeading(double currentHeading) {
-        this.currentHeading.setValue(currentHeading);
-    }
+
 
     /**
      * Getter for the double property of the heading

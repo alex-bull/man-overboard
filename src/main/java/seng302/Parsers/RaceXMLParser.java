@@ -103,7 +103,7 @@ public class RaceXMLParser {
 
 //        CourseParser courseParser = new CourseParser()
         for (Element compoundMark : race.getChild("Course").getChildren()) {
-        for(Element compoundMark:race.getChild("Course").getChildren()){
+
             int compoundMarkID = Integer.parseInt(compoundMark.getAttribute("CompoundMarkID").getValue());
             String compoundMarkName = compoundMark.getAttribute("Name").getValue();
             List<MarkData> marks = new ArrayList<>();

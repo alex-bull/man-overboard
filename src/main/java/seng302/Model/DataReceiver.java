@@ -19,8 +19,7 @@ import java.util.*;
  */
 public class DataReceiver extends TimerTask {
 
-    List<MarkData> startMarks = new ArrayList<>();
-    List<MarkData> finishMarks = new ArrayList<>();
+
     private Socket receiveSock;
     private DataInputStream dis;
     private ByteStreamConverter byteStreamConverter;
@@ -130,53 +129,6 @@ public class DataReceiver extends TimerTask {
         }
     }
 
-    //Getters
-    public List<CourseFeature> getCourseFeatures() {
-        return courseFeatures;
-    }
-
-    public List<MutablePoint> getCourseBoundary() {
-        return courseBoundary;
-    }
-
-    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
-        this.courseBoundary = courseBoundary;
-    }
-
-    public String getCourseTimezone() {
-        return timezone;
-    }
-
-    public List<MarkData> getStartMarks() {
-        return startMarks;
-    }
-
-    public List<MarkData> getFinishMarks() {
-        return finishMarks;
-    }
-
-    public String getRaceStatus() {
-        return raceStatus;
-    }
-
-    public List<Competitor> getCompetitors() {
-        return competitors;
-    }
-
-    //Setters
-    public void setCompetitors(List<Competitor> competitors) {
-        this.competitors = competitors;
-    }
-
-    ////////////////////////////////////////////////
-
-    public double getWindDirection() {
-        return windDirection;
-    }
-
-    public int getNumBoats() {
-        return this.numBoats;
-    }
 
     /**
      * Parse binary data into XML and create a new parser dependant on the XmlSubType
@@ -301,7 +253,7 @@ public class DataReceiver extends TimerTask {
                         readXMLMessage(message);
                     } catch (JDOMException e) {
                         e.printStackTrace();
-                    }
+                    }}
                     else if(messageType == raceStatusMessageType) {
                         RaceStatusParser raceStatusParser = new RaceStatusParser(message);
                         this.raceStatusData = raceStatusParser.getRaceStatus();
