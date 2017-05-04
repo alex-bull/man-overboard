@@ -46,6 +46,7 @@ public class DataReceiver extends TimerTask {
     private List<MarkData> startMarks = new ArrayList<>();
     private List<MarkData> finishMarks = new ArrayList<>();
     private ColourPool colourPool = new ColourPool();
+    private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
 
     //Getters
@@ -71,6 +72,7 @@ public class DataReceiver extends TimerTask {
         return markRoundingData;
     }
 
+    public int getNumBoats() {return this.numBoats;}
 
 
     //Setters
@@ -205,7 +207,6 @@ public class DataReceiver extends TimerTask {
 
                 if (isStartOfPacket) {
                     readHeader();
-
                     int XMLMessageType = 26;
                     int boatLocationMessageType = 37;
                     int raceStatusMessageType = 12;
@@ -228,6 +229,7 @@ public class DataReceiver extends TimerTask {
                         this.raceStatusData = raceStatusParser.getRaceStatus();
                         this.raceStatus = raceStatusData.getRaceStatus();
                         this.windDirection = raceStatusData.getWindDirection();
+                        this.numBoats = raceStatusData.getNumBoatsInRace();
 
                     }
                     else if(messageType == markRoundingMessageType) {
