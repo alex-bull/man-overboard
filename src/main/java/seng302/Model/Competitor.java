@@ -13,12 +13,18 @@ public interface Competitor {
     MutablePoint getPosition();
     Color getColor();
     String getAbbreName();
+    String getLastMarkPassed();
     double getCurrentHeading();
+    int getLegIndex();
     DoubleProperty getHeadingProperty();
     void setCurrentHeading(double currentHeading);
     int getSourceID();
+    void setLastMarkPassed(String lastMarkPassed);
     void setColor(Color color);
     void setVelocity(double velocity);
     void setPosition(MutablePoint position);
+    void setLegIndex(int legIndex);
     void setProperties(double velocity, double heading, double latitude, double longitude);
+
+
 }

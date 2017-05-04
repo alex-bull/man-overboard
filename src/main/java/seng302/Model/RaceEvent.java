@@ -13,15 +13,23 @@ public class RaceEvent {
     private String teamName;
     private String featureName;
     private Double speed;
+    private int position;
 
-
-    public RaceEvent(String teamName, Double speed) {
+    public RaceEvent(String teamName, Double speed, String featureName, int position) {
         this.teamName = teamName;
         this.speed = speed;
+        this.featureName = featureName;
+        this.position = position;
     }
 
 
+    public int getPosition() {
+        return position;
+    }
 
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     public String getFeatureName() {
         return featureName;
@@ -30,6 +38,7 @@ public class RaceEvent {
     public void setFeatureName(String featureName) {
         this.featureName = featureName;
     }
+
     public String getTeamName() {
         return teamName;
     }

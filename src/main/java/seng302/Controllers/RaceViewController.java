@@ -548,7 +548,7 @@ public class RaceViewController implements ClockHandler, Initializable {
 
                 }
                 //update table
-                tableController.setTable(dataReceiver);
+                tableController.setTable(competitors);
             }
         };
 

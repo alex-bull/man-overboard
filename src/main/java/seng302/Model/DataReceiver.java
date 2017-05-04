@@ -236,11 +236,32 @@ public class DataReceiver extends TimerTask {
                         this.expectedStartTime = raceStatusData.getExpectedStartTime();
                         this.windDirection = raceStatusData.getWindDirection();
                         this.numBoats = raceStatusData.getNumBoatsInRace();
-
+                        for(int id :raceStatusData.getBoatStatuses().keySet()){
+                            for(Competitor competitor: competitors){
+                                if(competitor.getSourceID() == id){
+                                    competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+                                }
+                            }
+                        }
                     }
                     else if(messageType == markRoundingMessageType) {
                         MarkRoundingParser markRoundingParser = new MarkRoundingParser(message);
                         this.markRoundingData = markRoundingParser.getMarkRoundingData();
+                        int markID = markRoundingData.getMarkID();
+
+                        for(CompoundMarkData mark : this.compoundMarks){
+                            if(mark.getID() == markID){
+                                markRoundingData.setMarkName(mark.getName());
+                            }
+                        }
+
+                        String markName = markRoundingData.getMarkName();
+                        for(Competitor competitor: this.competitors){
+                            if(competitor.getSourceID() == this.markRoundingData.getSourceID() ){
+                                competitor.setLastMarkPassed(markName);
+                            }
+                        }
+
 
                     }
                     else if (messageType == boatLocationMessageType) {
@@ -320,6 +341,7 @@ public class DataReceiver extends TimerTask {
 
         // boat colour
         if(competitor.getColor() == null) {
+
             Color colour = this.colourPool.getColours().get(0);
             competitor.setColor(colour);
             colourPool.getColours().remove(colour);

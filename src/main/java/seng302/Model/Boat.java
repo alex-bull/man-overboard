@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
  * Created by mgo65 on 3/03/17.
  * Boat object
  */
-public class Boat implements Competitor {
+public class Boat implements Competitor{
     private String teamName;
     private double velocity;
     private MutablePoint position;
@@ -17,6 +17,10 @@ public class Boat implements Competitor {
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
     private int sourceID;
     private String type;
+    private String lastMarkPassed;
+
+
+    private int legIndex;
 
     public String getType() {
         return type;
@@ -25,6 +29,7 @@ public class Boat implements Competitor {
     public void setType(String type) {
         this.type = type;
     }
+
 
     /**
      * Creates a boat
@@ -47,6 +52,22 @@ public class Boat implements Competitor {
      */
     public Boat(){
 
+    }
+
+    public int getLegIndex() {
+        return legIndex;
+    }
+
+    public void setLegIndex(int legIndex) {
+        this.legIndex = legIndex;
+    }
+
+    public void setLastMarkPassed(String lastMarkPassed) {
+        this.lastMarkPassed = lastMarkPassed;
+    }
+
+    public String getLastMarkPassed() {
+        return lastMarkPassed;
     }
 
     public void setTeamName(String teamName) {
