@@ -207,7 +207,7 @@ public class StarterController implements Initializable, ClockHandler {
             alert.setTitle("Information Dialog");
             alert.initOwner(thisStage);
             alert.setHeaderText(null);
-            alert.setContentText("Sorry there are no competitors at the moment.");
+            alert.setContentText("Sorry, this data stream hasn't started.");
             alert.showAndWait();
         }
         //create course

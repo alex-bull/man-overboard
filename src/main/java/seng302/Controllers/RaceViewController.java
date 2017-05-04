@@ -110,8 +110,17 @@ public class RaceViewController implements ClockHandler, Initializable {
 
         this.dataReceiver = dataReceiver;
 
-        this.raceClock = new RaceClock(this, 1, 27000);
-        raceClock.start();
+        long expectedStartTime = dataReceiver.getExpectedStartTime();
+        long firstMessageTime = dataReceiver.getMessageTime();
+        if (expectedStartTime != 0 && firstMessageTime != 0) {
+            this.raceClock = new RaceClock(this, 1, 0);
+            long raceTime = firstMessageTime - expectedStartTime;
+            long startTime = System.currentTimeMillis() - raceTime;
+            raceClock.start(startTime);
+        } else {
+            this.raceClock = new RaceClock(this, 1, 27000);
+            raceClock.start();
+        }
 
         String timezone = dataReceiver.getCourseTimezone();
         this.worldClock = new WorldClock(this, timezone);
@@ -415,15 +424,6 @@ public class RaceViewController implements ClockHandler, Initializable {
         this.markModels.get(name).setLayoutY(y);
     }
 
-    /**
-     * Implementation of ClockHandler interface method
-     * @param newTime The currentTime of the clock
-     */
-    public void clockTicked(String newTime) {
-        timerText.setText(newTime);
-    }
-
-
 
     /**
      * Starts the animation timer to animate the race
@@ -498,7 +498,8 @@ public class RaceViewController implements ClockHandler, Initializable {
                 //move competitors and draw tracks
                 for (int i = 0; i < competitors.size(); i++) {
                     Competitor boat = competitors.get(i);
-                    if (counter % 20 == 0) {
+                    int dotSeparationFactor = 70;
+                    if (counter % dotSeparationFactor == 0) {
                         drawTrack(boat, gc);
                     }
                     moveWake(boat, i);

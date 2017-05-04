@@ -11,10 +11,10 @@ import static seng302.Parsers.Converter.hexByteArrayToInt;
  */
 public class RaceStatusData {
 
-    private Integer currentTime;
+    private long currentTime;
     private Integer raceID;
     private String raceStatus;
-    private Integer expectedStartTime;
+    private long expectedStartTime;
     private Double windDirection;
     private Integer windSpeed;
     private Integer numBoatsInRace;
@@ -22,7 +22,7 @@ public class RaceStatusData {
     private HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
 
 
-    public RaceStatusData(Integer currentTime, Integer raceID, String raceStatus, Integer expectedStartTime, Double windDirection, Integer windSpeed, Integer numBoatsInRace, Integer raceType, HashMap<Integer, BoatStatus> boatStatuses) {
+    public RaceStatusData(long currentTime, Integer raceID, String raceStatus, long expectedStartTime, Double windDirection, Integer windSpeed, Integer numBoatsInRace, Integer raceType, HashMap<Integer, BoatStatus> boatStatuses) {
         this.currentTime = currentTime;
         this.raceID = raceID;
         this.raceStatus = raceStatus;
@@ -35,7 +35,7 @@ public class RaceStatusData {
     }
 
 
-    public Integer getCurrentTime() {
+    public long getCurrentTime() {
         return currentTime;
     }
 
@@ -47,7 +47,7 @@ public class RaceStatusData {
         return raceStatus;
     }
 
-    public Integer getExpectedStartTime() {
+    public long getExpectedStartTime() {
         return expectedStartTime;
     }
 

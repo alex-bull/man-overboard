@@ -12,6 +12,7 @@ import static seng302.Parsers.Converter.hexByteArrayToInt;
  */
 public class RaceStatusParser {
     RaceStatusData raceStatus;
+    long expectedStartTime;
 
     public RaceStatusParser(byte[] message) {
         this.raceStatus = processMessage(message);
@@ -23,10 +24,10 @@ public class RaceStatusParser {
      * @return RaceStatusData the data from the race status message
      */
     private RaceStatusData processMessage(byte[] body) {
-        Integer currentTime = hexByteArrayToInt(Arrays.copyOfRange(body, 1,7));
+        long currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1,7));
         Integer raceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7,11));
         Integer raceStatus = hexByteArrayToInt(Arrays.copyOfRange(body, 11,12));
-        Integer expectedStartTime = hexByteArrayToInt(Arrays.copyOfRange(body, 12,18));
+        long expectedStartTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 12,18));
         Integer windDirection = hexByteArrayToInt(Arrays.copyOfRange(body, 18,20));
         Integer windSpeed = hexByteArrayToInt(Arrays.copyOfRange(body, 20,22));
         Integer numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22,23));

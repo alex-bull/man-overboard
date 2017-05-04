@@ -30,6 +30,8 @@ public class DataReceiver extends TimerTask {
     private RaceData raceData;
     private String timezone;
     private String raceStatus;
+    private long messageTime;
+    private long expectedStartTime;
     private RaceXMLParser raceXMLParser;
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
@@ -55,6 +57,8 @@ public class DataReceiver extends TimerTask {
     public String getRaceStatus() {
         return raceStatus;
     }
+    public long getMessageTime() { return messageTime; }
+    public long getExpectedStartTime() {return expectedStartTime; }
     public List<Competitor> getCompetitors() {
         return competitors;
     }
@@ -215,6 +219,8 @@ public class DataReceiver extends TimerTask {
                         RaceStatusParser raceStatusParser = new RaceStatusParser(message);
                         this.raceStatusData = raceStatusParser.getRaceStatus();
                         this.raceStatus = raceStatusData.getRaceStatus();
+                        this.messageTime = raceStatusData.getCurrentTime();
+                        this.expectedStartTime = raceStatusData.getExpectedStartTime();
                         this.windDirection = raceStatusData.getWindDirection();
 
                     }
