@@ -8,6 +8,7 @@ public class MarkRoundingData {
 
     Integer sourceID;
     Integer markID;
+    String markName;
 
     public MarkRoundingData(Integer sourceID, Integer markID) {
         this.sourceID = sourceID;
@@ -21,5 +22,9 @@ public class MarkRoundingData {
     public Integer getMarkID() {
         return markID;
     }
+
+    public void setMarkName(String markName) { this.markName = markName; }
+
+    public String getMarkName(){ return markName; }
 
 }

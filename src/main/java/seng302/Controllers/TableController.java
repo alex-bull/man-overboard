@@ -13,9 +13,7 @@ import seng302.Parsers.MarkRoundingData;
 
 import javax.xml.crypto.Data;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by msl47 on 21/03/17.
@@ -42,9 +40,9 @@ public class TableController implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
 
         // initialise race table
-//        positionCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, Integer>("position"));
+        positionCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, Integer>("position"));
         nameCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("teamName"));
-//        featureCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("featureName"));
+        featureCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,String>("featureName"));
         speedCol.setCellValueFactory(new PropertyValueFactory<RaceEvent,Integer>("speed"));
         raceTable.setItems(events);
 
@@ -52,17 +50,20 @@ public class TableController implements Initializable{
 
 
 
-    public void setTable(DataReceiver dataReceiver) {
-        this.dataReceiver=dataReceiver;
-
-        List<Competitor> competitors = dataReceiver.getCompetitors();
+    public void setTable(List<Competitor> competitors) {
+        List<Competitor> cpy=new ArrayList<>(competitors);
+        cpy.sort(new Comparator<Competitor>() {
+            @Override
+            public int compare(Competitor o1, Competitor o2) {
+                return (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ?  0 :  -1);
+            }
+        });
         events.clear();
-
-        for(Competitor competitor : competitors) {
-            String teamName = competitor.getTeamName();
-            Double speed = competitor.getVelocity();
-
-            RaceEvent raceEvent = new RaceEvent(teamName, speed);
+        for(int i = 0 ; i < cpy.size(); i++) {
+            String teamName = cpy.get(i).getTeamName();
+            Double speed = cpy.get(i).getVelocity();
+            String featureName = cpy.get(i).getLastMarkPassed();
+            RaceEvent raceEvent = new RaceEvent(teamName, speed, featureName, i+1);
             events.add(raceEvent);
         }
     }
