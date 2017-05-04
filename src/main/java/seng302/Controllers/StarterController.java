@@ -39,6 +39,7 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML private Label countdownText;
     @FXML private Label worldClockValue;
     @FXML private Button countdownButton;
+    @FXML private Button confirmButton;
     @FXML private Label raceStatus;
     @FXML private ComboBox<String> streamCombo;
 
@@ -227,6 +228,8 @@ public class StarterController implements Initializable, ClockHandler {
             try {
                 dataReceiver = new DataReceiver(host, EnvironmentConfig.port);
                 dataReceiver.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                this.streamCombo.setDisable(true);
+                this.confirmButton.setDisable(true);
 
             } catch (IOException e) {
                 //e.printStackTrace();
