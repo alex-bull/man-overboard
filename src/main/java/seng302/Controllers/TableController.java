@@ -54,6 +54,8 @@ public class TableController implements RaceEventHandler {
     }
 
 
+
+
     void setNumBoats(int numBoats) {
         this.numBoats = numBoats;
     }
