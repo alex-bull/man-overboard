@@ -26,8 +26,9 @@ public class MainController {
      */
     public void setRace(DataReceiver dataReceiver, double width, double height, int numBoats) {
 //        this.race.setRaceEventHandler(tableController);
-        this.tableController.setNumBoats(numBoats);
+        raceViewController.setTableController(tableController);
         raceViewController.begin(width, height, dataReceiver);
+
 
     }
 }

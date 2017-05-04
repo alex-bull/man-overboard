@@ -16,6 +16,7 @@ public interface Competitor {
     double getCurrentHeading();
     DoubleProperty getHeadingProperty();
     void setCurrentHeading(double currentHeading);
+    int getSourceID();
     void setColor(Color color);
     void setVelocity(double velocity);
     void setPosition(MutablePoint position);
