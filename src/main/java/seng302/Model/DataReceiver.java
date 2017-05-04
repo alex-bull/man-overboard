@@ -30,7 +30,7 @@ public class DataReceiver extends TimerTask {
     private RaceData raceData;
     private MarkRoundingData markRoundingData;
     private String timezone;
-    private String raceStatus;
+    private RaceStatusEnum raceStatus;
     private long messageTime;
     private long expectedStartTime;
     private RaceXMLParser raceXMLParser;
@@ -58,7 +58,7 @@ public class DataReceiver extends TimerTask {
     public String getCourseTimezone() { return timezone; }
     public List<MarkData> getStartMarks() {return startMarks;}
     public List<MarkData> getFinishMarks() {return finishMarks;}
-    public String getRaceStatus() {
+    public RaceStatusEnum getRaceStatus() {
         return raceStatus;
     }
     public long getMessageTime() { return messageTime; }

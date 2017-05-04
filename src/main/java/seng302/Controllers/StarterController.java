@@ -22,6 +22,7 @@ import javafx.util.Callback;
 import javafx.util.Duration;
 import seng302.EnvironmentConfig;
 import seng302.Model.*;
+import seng302.Parsers.Converter;
 
 import java.io.IOException;
 import java.net.URL;
@@ -176,7 +177,6 @@ public class StarterController implements Initializable, ClockHandler {
      */
     private void setFields() {
 
-
         while (dataReceiver.getCourseTimezone() == null) {
             System.out.print("");
         }
@@ -186,7 +186,7 @@ public class StarterController implements Initializable, ClockHandler {
 
         //dataReceiver.setCompetitors(compList);
         compList.setAll(dataReceiver.getCompetitors());
-        raceStatus.setText(dataReceiver.getRaceStatus());
+        raceStatus.setText(Converter.raceStatusToString(dataReceiver.getRaceStatus()));
 
         System.out.println(dataReceiver.getRaceStatus());
 

@@ -18,7 +18,10 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import seng302.Model.*;
+import seng302.Parsers.Converter;
 import seng302.Parsers.MarkData;
+import seng302.Parsers.RaceStatusEnum;
+
 import java.net.URL;
 import java.util.*;
 
@@ -102,6 +105,24 @@ public class RaceViewController implements ClockHandler, Initializable {
     }
 
     /**
+     * Creates a new race clock and starts it
+     * @param dataReceiver
+     */
+    private void startRaceClock(DataReceiver dataReceiver) {
+        long expectedStartTime = dataReceiver.getExpectedStartTime();
+        long firstMessageTime = dataReceiver.getMessageTime();
+        if (expectedStartTime != 0 && firstMessageTime != 0) {
+            this.raceClock = new RaceClock(this, 1, 0);
+            long raceTime = firstMessageTime - expectedStartTime;
+            long startTime = System.currentTimeMillis() - raceTime;
+            raceClock.start(startTime);
+        } else {
+            this.raceClock = new RaceClock(this, 1, 27000);
+            raceClock.start();
+        }
+    }
+
+    /**
      * Sets the race and the race start time and then animates the race
      * @param width double the width of the canvas
      * @param height double the height of the canvas
@@ -115,17 +136,7 @@ public class RaceViewController implements ClockHandler, Initializable {
 
         this.dataReceiver = dataReceiver;
 
-        long expectedStartTime = dataReceiver.getExpectedStartTime();
-        long firstMessageTime = dataReceiver.getMessageTime();
-        if (expectedStartTime != 0 && firstMessageTime != 0) {
-            this.raceClock = new RaceClock(this, 1, 0);
-            long raceTime = firstMessageTime - expectedStartTime;
-            long startTime = System.currentTimeMillis() - raceTime;
-            raceClock.start(startTime);
-        } else {
-            this.raceClock = new RaceClock(this, 1, 27000);
-            raceClock.start();
-        }
+        startRaceClock(dataReceiver);
 
         String timezone = dataReceiver.getCourseTimezone();
         this.worldClock = new WorldClock(this, timezone);
@@ -142,8 +153,31 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     public void clockTicked(String newTime, Clock clock) {
         if(clock == raceClock) {
-            timerText.setText(newTime);
+            RaceStatusEnum status = dataReceiver.getRaceStatus();
+            switch (status) {
+                case PRESTART:
+                case WARNING:
+                    // reset clock (if the stream has looped back to the start)
+                    startRaceClock(dataReceiver);
+                case PREPARATORY:
+                case STARTED:
+                    timerText.setText(newTime);
+                    break;
+                case TERMINATED:
+                case FINISHED:
+                    // keep current timer text
+                    break;
+                case ABANDONED:
+                case NOT_SET:
+                case NOT_ACTIVE:
+                case NOT_VALID:
+                case RETIRED:
+                case POSTPONED:
+                    timerText.setText("Unknown");
+
+            }
         }
+
         if(clock == worldClock) {
             worldClockValue.setText(newTime);
         }
@@ -471,9 +505,9 @@ public class RaceViewController implements ClockHandler, Initializable {
             public void handle(long now) {
 
                 // update race status string if it changed
-                String statusString = "Race status: " + dataReceiver.getRaceStatus();
+                String statusString = "Race status: " + Converter.raceStatusToString(dataReceiver.getRaceStatus());
                 if(!statusString.equals(status.getText())) {
-                    status.setText("Race status: " + dataReceiver.getRaceStatus());
+                    status.setText("Race status: " + Converter.raceStatusToString(dataReceiver.getRaceStatus()));
                 }
 
                 counter++; // increment fps counter
