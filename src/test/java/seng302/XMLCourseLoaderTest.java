@@ -1,4 +1,4 @@
-package seng302.TestClasses;
+package seng302;
 
 import org.junit.Assert;
 import org.junit.Test;

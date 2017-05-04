@@ -1,7 +1,8 @@
-package seng302.Parsers;
+package seng302;
 
 import org.junit.Before;
 import org.junit.Test;
+import seng302.Parsers.RaceXMLParser;
 
 import static org.junit.Assert.*;
 

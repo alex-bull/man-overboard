@@ -5,6 +5,7 @@ import com.google.common.primitives.Longs;
 import com.google.common.primitives.UnsignedBytes;
 import edu.princeton.cs.introcs.In;
 import seng302.Model.Boat;
+import seng302.Model.Competitor;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -106,7 +107,7 @@ public class BinaryPackager {
 
     /**
      * Packages XML files into bytearray to be sent
-     * @param length length of the xmlFile
+     * @param length length of the xmlFile String
      * @param xmlFileString the xml file to be sent
      * @param messageType the type of the xml file
      *                    5-Regatta
@@ -256,12 +257,12 @@ public class BinaryPackager {
      * @param competitors the list of boats
      * @return byte[] of each boat's section in RaceStatus Message
      */
-    public byte[] packageEachBoat(List<Boat> competitors){
+    public byte[] packageEachBoat(List<Competitor> competitors){
         byte[] packet=new byte[20*competitors.size()];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        for(Boat competitor: competitors){
+        for(Competitor competitor: competitors){
             packetBuffer.putInt(competitor.getSourceID()); //SourceID
             packetBuffer.put((byte) competitor.getStatus());//Boat Status
             packetBuffer.put((byte) competitor.getCurrentLegIndex()); //Leg Number
@@ -280,7 +281,7 @@ public class BinaryPackager {
      * @param eachBoat the each boat bytearray
      * @return byte[] of the entire RaceStatus packet
      */
-    public byte[] packetRaceStatus(byte[] raceStatus, byte[] eachBoat){
+    public byte[] packageRaceStatus(byte[] raceStatus, byte[] eachBoat){
         byte[] packet=new byte[19+raceStatus.length+eachBoat.length];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -295,14 +296,5 @@ public class BinaryPackager {
         return packet;
     }
 
-
-    public static void main(String[] args) {
-        BinaryPackager a = new BinaryPackager();
-        byte[] b = a.packageBoatLocation(12, 123.444, 234.434, 65535.0, 20.3,11);
-        for (byte c: b) {
-            System.out.println(c);
-        }
-        System.out.println(b.length);
-    }
 
 }

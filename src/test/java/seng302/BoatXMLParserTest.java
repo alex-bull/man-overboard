@@ -1,8 +1,9 @@
-package seng302.Parsers;
+package seng302;
 
 import org.junit.Before;
 import org.junit.Test;
 import seng302.Model.Boat;
+import seng302.Parsers.BoatXMLParser;
 
 import java.util.HashMap;
 import java.util.List;

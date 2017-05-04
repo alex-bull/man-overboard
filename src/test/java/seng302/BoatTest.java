@@ -1,4 +1,4 @@
-package seng302.TestClasses;
+package seng302;
 
 import javafx.scene.paint.Color;
 import org.junit.Before;

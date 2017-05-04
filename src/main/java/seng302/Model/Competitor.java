@@ -20,4 +20,10 @@ public interface Competitor {
     void setVelocity(double velocity);
     void setPosition(MutablePoint position);
     void setProperties(double velocity, double heading, double latitude, double longitude);
+    int getSourceID();
+    int getStatus();
+    int getCurrentLegIndex();
+    void updatePosition(double dt);
+    void setStatus(int status);
+    void setCurrentLegIndex(int currentLegIndex);
 }

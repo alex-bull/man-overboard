@@ -16,8 +16,8 @@ import java.util.*;
  */
 public class BoatMocker extends TimerTask{
     private  MutablePoint prestart;
-    List<Boat> competitors;
-    List<Boat> markBoats;
+    List<Competitor> competitors;
+    List<Competitor> markBoats;
     List<CourseFeature> courseFeatures;
     RaceCourse course;
     int raceStatus;
@@ -74,7 +74,7 @@ public class BoatMocker extends TimerTask{
         markBoats.add(new Boat("Finish Line 2",0,new MutablePoint(32.317257,-64.836260),"FL2",129,0));
 
         //set initial heading
-        for(Boat b: competitors){
+        for(Competitor b: competitors){
             b.setCurrentHeading(courseFeatures.get(0).getExitHeading());
         }
 
@@ -89,7 +89,7 @@ public class BoatMocker extends TimerTask{
      */
     private void updatePosition(double dt){
 
-        for(Boat boat: competitors){
+        for(Competitor boat: competitors){
             boat.updatePosition(dt);
         }
     }
@@ -132,7 +132,7 @@ public class BoatMocker extends TimerTask{
      */
     public void sendBoatLocation() throws IOException {
         //send competitor boats
-        for(Boat boat: competitors){
+        for(Competitor boat: competitors){
             byte[] boatinfo=binaryPackager.packageBoatLocation(boat.getSourceID(),boat.getPosition().getXValue(),boat.getPosition().getYValue(),
                     boat.getCurrentHeading(),boat.getVelocity()*1000, 1);
             dataSender.sendData(boatinfo);
@@ -141,7 +141,7 @@ public class BoatMocker extends TimerTask{
 
         }
         //send mark boats
-        for(Boat markBoat:markBoats){
+        for(Competitor markBoat:markBoats){
             byte[] boatinfo=binaryPackager.packageBoatLocation(markBoat.getSourceID(),markBoat.getPosition().getXValue(),markBoat.getPosition().getYValue(),
                     markBoat.getCurrentHeading(),markBoat.getVelocity()*1000, 3);
             dataSender.sendData(boatinfo);
@@ -156,7 +156,7 @@ public class BoatMocker extends TimerTask{
         //TODO: make race status message
         byte[] raceStatusPacket=binaryPackager.raceStatusHeader(123546789,raceStatus,expectedStartTime );
         byte[] eachBoatPacket=binaryPackager.packageEachBoat(competitors);
-        dataSender.sendData(binaryPackager.packetRaceStatus(raceStatusPacket,eachBoatPacket));
+        dataSender.sendData(binaryPackager.packageRaceStatus(raceStatusPacket,eachBoatPacket));
 //        System.out.println("sent race status");
     }
 
@@ -195,7 +195,7 @@ public class BoatMocker extends TimerTask{
 //        System.out.println(competitors.get(0).getPosition());
 //        System.out.println(raceCourse.getPoints().get(competitors.get(0).getCurrentLegIndex()+1).getGPSPoint());
         //check if boats are at the end of the leg
-        for(Boat b: competitors){
+        for(Competitor b: competitors){
             //if at the end stop
             if(b.getCurrentLegIndex()==courseFeatures.size()-1){
                 b.setVelocity(0);
