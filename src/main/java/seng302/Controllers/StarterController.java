@@ -36,7 +36,6 @@ public class StarterController implements Initializable, ClockHandler {
 
 
     @FXML private ListView<Competitor> starterList;
-    @FXML private Label countdownText;
     @FXML private Label worldClockValue;
     @FXML private Button countdownButton;
     @FXML private Button confirmButton;
@@ -47,7 +46,7 @@ public class StarterController implements Initializable, ClockHandler {
     private Stage primaryStage;
     private ObservableList<Competitor> compList;
     private Rectangle2D primaryScreenBounds;
-    private final int STARTTIME = 1;
+    private final int STARTTIME = 0;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private DataReceiver dataReceiver;
 
@@ -79,7 +78,6 @@ public class StarterController implements Initializable, ClockHandler {
 
         this.countdownButton.setDisable(true);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        countdownText.textProperty().bind(timeSeconds.asString());
         compList = FXCollections.observableArrayList();
 
         starterList.setCellFactory(new Callback<ListView<Competitor>, ListCell<Competitor>>() {
@@ -136,8 +134,6 @@ public class StarterController implements Initializable, ClockHandler {
      * Countdown until the race start, updates the countdown time text.
      */
     private void startCountdown() {
-
-
 
         //count down for 5 seconds
         timeSeconds.set(STARTTIME);
