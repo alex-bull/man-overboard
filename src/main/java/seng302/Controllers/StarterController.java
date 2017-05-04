@@ -35,23 +35,29 @@ import java.util.Timer;
 public class StarterController implements Initializable, ClockHandler {
 
 
-    @FXML private ListView<Competitor> starterList;
-    @FXML private Label countdownText;
-    @FXML private Label worldClockValue;
-    @FXML private Button countdownButton;
-    @FXML private Label raceStatus;
-    @FXML private ComboBox<String> streamCombo;
-
+    private final int STARTTIME = 1;
+    @FXML
+    private ListView<Competitor> starterList;
+    @FXML
+    private Label countdownText;
+    @FXML
+    private Label worldClockValue;
+    @FXML
+    private Button countdownButton;
+    @FXML
+    private Label raceStatus;
+    @FXML
+    private ComboBox<String> streamCombo;
     private Clock worldClock;
     private Stage primaryStage;
     private ObservableList<Competitor> compList;
     private Rectangle2D primaryScreenBounds;
-    private final int STARTTIME = 1;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private DataReceiver dataReceiver;
 
     /**
      * Sets the stage
+     *
      * @param primaryStage Stage the stage for this window
      */
     public void setStage(Stage primaryStage) {
@@ -60,17 +66,19 @@ public class StarterController implements Initializable, ClockHandler {
 
     /**
      * Implementation of ClockHandler interface method
+     *
      * @param newTime The currentTime of the clock
      */
     public void clockTicked(String newTime, Clock clock) {
-        if(clock == worldClock) {
+        if (clock == worldClock) {
             worldClockValue.setText(newTime);
         }
     }
 
     /**
      * Initialiser for StarterController
-     * @param location URL
+     *
+     * @param location  URL
      * @param resources ResourceBundle
      */
     @Override
@@ -111,14 +119,13 @@ public class StarterController implements Initializable, ClockHandler {
      * Starts countdown if the list of starters is not empty.
      */
     @FXML
-    void switchToCourseView(){
+    void switchToCourseView() {
         // check that starter table is not empty
-        if(!starterList.getItems().isEmpty()) {
+        if (!starterList.getItems().isEmpty()) {
             startCountdown();
             countdownButton.setDisable(true);
 
-        }
-        else {
+        } else {
             // inform user to press confirm
             Stage thisStage = (Stage) countdownButton.getScene().getWindow();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -135,7 +142,6 @@ public class StarterController implements Initializable, ClockHandler {
      * Countdown until the race start, updates the countdown time text.
      */
     private void startCountdown() {
-
 
 
         //count down for 5 seconds
@@ -165,8 +171,8 @@ public class StarterController implements Initializable, ClockHandler {
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinWidth(primaryScreenBounds.getWidth());
-                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth())/2);
-                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight())/2);
+                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
                 primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
 
 
@@ -243,8 +249,7 @@ public class StarterController implements Initializable, ClockHandler {
             while (dataReceiver.getNumBoats() < 1 || dataReceiver.getCompetitors().size() < dataReceiver.getNumBoats()) {
                 try {
                     Thread.sleep(1000);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println("Thread sleep error");
                 }
             }

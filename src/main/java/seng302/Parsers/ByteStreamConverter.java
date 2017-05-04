@@ -1,8 +1,7 @@
 package seng302.Parsers;
+
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by psu43 on 10/04/17.
@@ -13,7 +12,6 @@ public class ByteStreamConverter extends Converter {
     private int messageType;
     private int messageLength;
     private XmlSubtype xmlSubType;
-
 
 
     public long getMessageType() {
@@ -33,6 +31,7 @@ public class ByteStreamConverter extends Converter {
 
     /**
      * Find information about the message
+     *
      * @param header byte[] an array of 15 bytes corresponding to the message header
      */
     public void parseHeader(byte[] header) {
@@ -40,12 +39,13 @@ public class ByteStreamConverter extends Converter {
 
         // can get timestamp and source id from here if needed
 
-        byte[] messageLengthBytes=Arrays.copyOfRange(header, 11,13);
+        byte[] messageLengthBytes = Arrays.copyOfRange(header, 11, 13);
         messageLength = hexByteArrayToInt(messageLengthBytes);
     }
 
     /**
      * Parse binary data into XML
+     *
      * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
      * @return String XML string describing Regatta, Race, or Boat
      */
@@ -68,7 +68,7 @@ public class ByteStreamConverter extends Converter {
 
         // can get sequence number if needed
 
-        byte[] xmlLengthBytes = Arrays.copyOfRange(message, 12,14);
+        byte[] xmlLengthBytes = Arrays.copyOfRange(message, 12, 14);
         int xmlLength = hexByteArrayToInt(xmlLengthBytes);
 
         int start = 14;
@@ -86,8 +86,6 @@ public class ByteStreamConverter extends Converter {
 
         return xmlString;
     }
-
-
 
 
 }

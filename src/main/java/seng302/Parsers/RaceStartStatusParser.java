@@ -12,7 +12,7 @@ public class RaceStartStatusParser {
 
 
     public RaceStartStatusParser(byte[] body) {
-        Integer startTime = hexByteArrayToInt(Arrays.copyOfRange(body, 9,15));
+        Integer startTime = hexByteArrayToInt(Arrays.copyOfRange(body, 9, 15));
         System.out.println("start time" + startTime);
 
     }

@@ -4,11 +4,12 @@ import javafx.scene.paint.Color;
 import org.jdom2.JDOMException;
 import seng302.Parsers.*;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
-
-import static seng302.Parsers.Converter.hexByteArrayToInt;
 
 
 /**
@@ -18,6 +19,8 @@ import static seng302.Parsers.Converter.hexByteArrayToInt;
  */
 public class DataReceiver extends TimerTask {
 
+    List<MarkData> startMarks = new ArrayList<>();
+    List<MarkData> finishMarks = new ArrayList<>();
     private Socket receiveSock;
     private DataInputStream dis;
     private ByteStreamConverter byteStreamConverter;
@@ -42,41 +45,12 @@ public class DataReceiver extends TimerTask {
     private double minXMercatorCoord;
     private double minYMercatorCoord;
     private BoatXMLParser boatXMLParser;
-    List<MarkData> startMarks = new ArrayList<>();
-    List<MarkData> finishMarks = new ArrayList<>();
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
 
-    //Getters
-    public List<CourseFeature> getCourseFeatures() { return courseFeatures; }
-    public List<MutablePoint> getCourseBoundary() { return courseBoundary; }
-    public String getCourseTimezone() { return timezone; }
-    public List<MarkData> getStartMarks() {return startMarks;}
-    public List<MarkData> getFinishMarks() {return finishMarks;}
-    public String getRaceStatus() {
-        return raceStatus;
-    }
-    public List<Competitor> getCompetitors() {
-        return competitors;
-    }
-    public double getWindDirection() {
-        return windDirection;
-    }
-    public int getNumBoats() {return this.numBoats;}
-
-
-    //Setters
-    public void setCompetitors(List<Competitor> competitors){
-        this.competitors=competitors;
-    }
-    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
-        this.courseBoundary = courseBoundary;
-    }
-
-    ////////////////////////////////////////////////
-
     /**
      * Initializes port to receive binary data from
+     *
      * @param host String host of the server
      * @param port int number of port of the server
      * @throws IOException IOException
@@ -90,11 +64,81 @@ public class DataReceiver extends TimerTask {
         System.out.println("Start connection to server...");
     }
 
+    /**
+     * Creates a new data receiver and runs at the period of 100ms
+     *
+     * @param args String[]
+     * @throws InterruptedException Interrupted Exception
+     */
+    public static void main(String[] args) throws InterruptedException {
+        DataReceiver dataReceiver = null;
+        while (dataReceiver == null) {
+            try {
+                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
+//                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
+
+                Timer timer = new Timer();
+                timer.schedule(dataReceiver, 0, 100);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //Getters
+    public List<CourseFeature> getCourseFeatures() {
+        return courseFeatures;
+    }
+
+    public List<MutablePoint> getCourseBoundary() {
+        return courseBoundary;
+    }
+
+    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
+        this.courseBoundary = courseBoundary;
+    }
+
+    public String getCourseTimezone() {
+        return timezone;
+    }
+
+    public List<MarkData> getStartMarks() {
+        return startMarks;
+    }
+
+    public List<MarkData> getFinishMarks() {
+        return finishMarks;
+    }
+
+    public String getRaceStatus() {
+        return raceStatus;
+    }
+
+    public List<Competitor> getCompetitors() {
+        return competitors;
+    }
+
+    //Setters
+    public void setCompetitors(List<Competitor> competitors) {
+        this.competitors = competitors;
+    }
+
+    ////////////////////////////////////////////////
+
+    public double getWindDirection() {
+        return windDirection;
+    }
+
+    public int getNumBoats() {
+        return this.numBoats;
+    }
 
     /**
      * Parse binary data into XML and create a new parser dependant on the XmlSubType
+     *
      * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
-     * @throws IOException IOException
+     * @throws IOException   IOException
      * @throws JDOMException JDOMException
      */
     private void readXMLMessage(byte[] message) throws IOException, JDOMException {
@@ -104,7 +148,7 @@ public class DataReceiver extends TimerTask {
             case REGATTA:
                 RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
                 this.timezone = regattaParser.getOffsetUTC();
-                if (timezone.substring(0,1) != "-") {
+                if (timezone.substring(0, 1) != "-") {
                     timezone = "+" + timezone;
                 }
                 break;
@@ -123,8 +167,7 @@ public class DataReceiver extends TimerTask {
     /**
      * Sets the scaling values after the boundary has been received and parsed by the raceXMLParser.
      */
-    private void setScalingFactors()
-    {
+    private void setScalingFactors() {
         this.bufferX = raceXMLParser.getBufferX();
         this.bufferY = raceXMLParser.getBufferY();
         this.scaleFactor = raceXMLParser.getScaleFactor();
@@ -134,7 +177,8 @@ public class DataReceiver extends TimerTask {
 
     /**
      * Sets the canvas width and height so that the parser can scale values to screen.
-     * @param width double the width of the canvas
+     *
+     * @param width  double the width of the canvas
      * @param height double the height of the canvas
      */
     public void setCanvasDimensions(double width, double height) {
@@ -142,9 +186,9 @@ public class DataReceiver extends TimerTask {
         this.canvasHeight = height;
     }
 
-
     /**
      * Close the established streams and sockets
+     *
      * @throws IOException IOException
      */
     public void close() throws IOException {
@@ -154,6 +198,7 @@ public class DataReceiver extends TimerTask {
 
     /**
      * Read the message header (13 bytes) and parse information
+     *
      * @throws IOException IOException
      */
     public void readHeader() throws IOException {
@@ -165,6 +210,7 @@ public class DataReceiver extends TimerTask {
 
     /**
      * Check for the first and second sync byte
+     *
      * @return Boolean if Sync Byte found
      * @throws IOException IOException
      */
@@ -186,63 +232,58 @@ public class DataReceiver extends TimerTask {
         return false;
     }
 
-
     /**
      * Identify the start of a packet, determine the message type and length, then read.
      */
     public void run() {
-            try {
-                boolean isStartOfPacket = checkForSyncBytes();
+        try {
+            boolean isStartOfPacket = checkForSyncBytes();
 
-                if (isStartOfPacket) {
-                    readHeader();
-                    int XMLMessageType = 26;
-                    int boatLocationMessageType = 37;
-                    int raceStatusMessageType = 12;
-                    int messageType = (int) byteStreamConverter.getMessageType();
-                    int messageLength = (int) byteStreamConverter.getMessageLength();
+            if (isStartOfPacket) {
+                readHeader();
+                int XMLMessageType = 26;
+                int boatLocationMessageType = 37;
+                int raceStatusMessageType = 12;
+                int messageType = (int) byteStreamConverter.getMessageType();
+                int messageLength = (int) byteStreamConverter.getMessageLength();
 
-                    byte[] message = new byte[messageLength];
-                    dis.readFully(message);
+                byte[] message = new byte[messageLength];
+                dis.readFully(message);
 
-                    if (messageType == XMLMessageType) {
-                        try {
-                            readXMLMessage(message);
-                        } catch (JDOMException e) {
-                            e.printStackTrace();
-                        }
+                if (messageType == XMLMessageType) {
+                    try {
+                        readXMLMessage(message);
+                    } catch (JDOMException e) {
+                        e.printStackTrace();
                     }
-                    else if(messageType == raceStatusMessageType) {
-                        RaceStatusParser raceStatusParser = new RaceStatusParser(message);
-                        this.raceStatusData = raceStatusParser.getRaceStatus();
-                        this.raceStatus = raceStatusData.getRaceStatus();
-                        this.windDirection = raceStatusData.getWindDirection();
-                        this.numBoats = raceStatusData.getNumBoatsInRace();
+                } else if (messageType == raceStatusMessageType) {
+                    RaceStatusParser raceStatusParser = new RaceStatusParser(message);
+                    this.raceStatusData = raceStatusParser.getRaceStatus();
+                    this.raceStatus = raceStatusData.getRaceStatus();
+                    this.windDirection = raceStatusData.getWindDirection();
+                    this.numBoats = raceStatusData.getNumBoatsInRace();
 
-                    }
-                    else if (messageType == boatLocationMessageType) {
-                        BoatDataParser boatDataParser = new BoatDataParser(message, canvasWidth, canvasHeight);
-                        this.boatData = boatDataParser.getBoatData();
-                        if(boatData.getDeviceType() == 1 && raceXMLParser.getBoatIDs().contains(boatData.getSourceID())) {
-                            updateBoatProperties(boatDataParser);
-                        }
-                        else if(boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
-                            updateCourseMarks(boatDataParser);
+                } else if (messageType == boatLocationMessageType) {
+                    BoatDataParser boatDataParser = new BoatDataParser(message, canvasWidth, canvasHeight);
+                    this.boatData = boatDataParser.getBoatData();
+                    if (boatData.getDeviceType() == 1 && raceXMLParser.getBoatIDs().contains(boatData.getSourceID())) {
+                        updateBoatProperties(boatDataParser);
+                    } else if (boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
+                        updateCourseMarks(boatDataParser);
 
-                        }
                     }
                 }
             }
-            catch (EOFException e) {
-                System.out.println("End of file.");
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (EOFException e) {
+            System.out.println("End of file.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Updates the course features/marks
+     *
      * @param boatDataParser BoatDataParser the boat data parser
      */
     private void updateCourseMarks(BoatDataParser boatDataParser) {
@@ -255,7 +296,7 @@ public class DataReceiver extends TimerTask {
         List<CourseFeature> points = new ArrayList<>();
         CourseFeature courseFeature = boatDataParser.getCourseFeature();
 
-        courseFeature.factor(scaleFactor,scaleFactor,minXMercatorCoord,minYMercatorCoord,bufferX/2,bufferY/2);
+        courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
         for (MarkData mark : startMarks) {
             if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
                 mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
@@ -272,7 +313,7 @@ public class DataReceiver extends TimerTask {
 
         this.storedFeatures.put(boatData.getSourceID(), courseFeature);
 
-        for(Integer id: this.storedFeatures.keySet()) {
+        for (Integer id : this.storedFeatures.keySet()) {
             points.add(this.storedFeatures.get(id));
         }
         this.courseFeatures = points;
@@ -280,6 +321,7 @@ public class DataReceiver extends TimerTask {
 
     /**
      * Updates the boat properties as data is being received.
+     *
      * @param boatDataParser BoatDataParser the boat data parser
      */
     private void updateBoatProperties(BoatDataParser boatDataParser) {
@@ -291,12 +333,12 @@ public class DataReceiver extends TimerTask {
         double x = boatDataParser.getPixelPoint().getXValue();
         double y = boatDataParser.getPixelPoint().getYValue();
         MutablePoint location = new MutablePoint(x, y);
-        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX/2,bufferY/2);
+        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
         competitor.setPosition(location);
         competitor.setVelocity(boatData.getSpeed());
 
         // boat colour
-        if(competitor.getColor() == null) {
+        if (competitor.getColor() == null) {
             Color colour = this.colourPool.getColours().get(0);
             competitor.setColor(colour);
             colourPool.getColours().remove(colour);
@@ -306,33 +348,11 @@ public class DataReceiver extends TimerTask {
         this.storedCompetitors.put(boatID, competitor);
 
         List<Competitor> comps = new ArrayList<>();
-        for(Integer id: this.storedCompetitors.keySet()) {
+        for (Integer id : this.storedCompetitors.keySet()) {
             comps.add(this.storedCompetitors.get(id));
         }
 
         this.competitors = comps;
-    }
-
-    /**
-     * Creates a new data receiver and runs at the period of 100ms
-     * @param args String[]
-     * @throws InterruptedException Interrupted Exception
-     */
-    public static void main (String [] args) throws InterruptedException {
-        DataReceiver dataReceiver = null;
-        while(dataReceiver == null) {
-            try {
-                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
-//                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
-
-                Timer timer = new Timer();
-                timer.schedule(dataReceiver,0,100);
-
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 

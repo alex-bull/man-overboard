@@ -7,16 +7,17 @@ import seng302.Model.Boat;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by khe60 on 27/04/17.
  */
 public class BoatXMLParserTest {
     BoatXMLParser boatXMLParser;
+
     @Before
     public void setUp() throws Exception {
-        boatXMLParser=new BoatXMLParser("<BoatConfig>\n" +
+        boatXMLParser = new BoatXMLParser("<BoatConfig>\n" +
                 "\t<Modified>2015-08-28T17:32:59+0100</Modified>\n" +
                 "\t<Version>12</Version>\n" +
                 "\t<Snapshot>219</Snapshot>\n" +
@@ -252,18 +253,18 @@ public class BoatXMLParserTest {
     }
 
     @Test
-    public void testParser() throws Exception{
-        HashMap<Integer, Boat> competitors=boatXMLParser.getBoats();
-        assertEquals(6,competitors.size());
-        assertEquals("ORACLE TEAM USA",competitors.get(0).getTeamName());
-        assertEquals("ARTEMIS RACING",competitors.get(1).getTeamName());
-        assertEquals("EMIRATES TEAM NZ",competitors.get(2).getTeamName());
-        assertEquals("SOFTBANK TEAM JAPAN",competitors.get(3).getTeamName());
-        assertEquals("GROUPAMA TEAM FRANCE",competitors.get(4).getTeamName());
-        assertEquals("LAND ROVER BAR",competitors.get(5).getTeamName());
+    public void testParser() throws Exception {
+        HashMap<Integer, Boat> competitors = boatXMLParser.getBoats();
+        assertEquals(6, competitors.size());
+        assertEquals("ORACLE TEAM USA", competitors.get(0).getTeamName());
+        assertEquals("ARTEMIS RACING", competitors.get(1).getTeamName());
+        assertEquals("EMIRATES TEAM NZ", competitors.get(2).getTeamName());
+        assertEquals("SOFTBANK TEAM JAPAN", competitors.get(3).getTeamName());
+        assertEquals("GROUPAMA TEAM FRANCE", competitors.get(4).getTeamName());
+        assertEquals("LAND ROVER BAR", competitors.get(5).getTeamName());
 
-        List<Boat> markBoats=boatXMLParser.getMarkBoats();
-        assertEquals(10,markBoats.size());
+        List<Boat> markBoats = boatXMLParser.getMarkBoats();
+        assertEquals(10, markBoats.size());
     }
 
 }

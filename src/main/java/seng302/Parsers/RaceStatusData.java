@@ -1,9 +1,6 @@
 package seng302.Parsers;
 
-import java.util.Arrays;
 import java.util.HashMap;
-
-import static seng302.Parsers.Converter.hexByteArrayToInt;
 
 /**
  * Created by Pang on 3/05/17.
@@ -70,7 +67,6 @@ public class RaceStatusData {
     public HashMap<Integer, BoatStatus> getBoatStatuses() {
         return boatStatuses;
     }
-
 
 
 }

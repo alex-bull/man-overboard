@@ -5,8 +5,6 @@ import javafx.animation.AnimationTimer;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import static java.lang.Math.abs;
-
 /**
  * Created by psu43 on 6/04/17.
  * Live clock

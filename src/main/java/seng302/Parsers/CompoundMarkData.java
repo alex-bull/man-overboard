@@ -1,7 +1,5 @@
 package seng302.Parsers;
 
-import seng302.Model.MutablePoint;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,8 +49,6 @@ public class CompoundMarkData {
     public void setName(String name) {
         this.name = name;
     }
-
-
 
 
 }

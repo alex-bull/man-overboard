@@ -12,7 +12,6 @@
     </pixelPoint>
 
 
-
     <gate isLine="true">
         <name>Startline</name>
         <compoundMark>
@@ -36,7 +35,7 @@
 
 
     <gate type="leeward">
-        <name >Northern Gate</name>
+        <name>Northern Gate</name>
         <compoundMark>
             <latitude>32.309693</latitude>
             <longtitude>-64.835249</longtitude>
@@ -48,7 +47,7 @@
     </gate>
 
     <gate type="windward">
-        <name >Southern Gate</name>
+        <name>Southern Gate</name>
         <compoundMark>
             <latitude>32.284680</latitude>
             <longtitude>-64.850045</longtitude>

@@ -3,21 +3,8 @@ package seng302.TestMockDatafeed;
 import com.google.common.io.ByteStreams;
 
 import java.io.*;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Created by khe60 on 10/04/17.
@@ -30,6 +17,7 @@ public class DataSender {
 
     /**
      * Constructor for DataSender, creates port at given portnum
+     *
      * @param portnum int The port number
      * @throws IOException
      */
@@ -42,6 +30,7 @@ public class DataSender {
 
     /**
      * close the socket
+     *
      * @throws IOException
      */
     private void close() throws IOException {
@@ -50,6 +39,7 @@ public class DataSender {
 
     /**
      * sends tests data to the output stream
+     *
      * @throws IOException
      * @throws InterruptedException
      */
@@ -61,7 +51,7 @@ public class DataSender {
         //read data from test file
         byte[] content = ByteStreams.toByteArray(is);
 
-        for(int i=0; i<content.length; i++){
+        for (int i = 0; i < content.length; i++) {
             os.write(content[i]);
             Thread.sleep(1000);
         }
@@ -69,12 +59,12 @@ public class DataSender {
 
     /**
      * sends the data to the output socket
+     *
      * @param data
      */
     public void sendData(byte[] data) throws IOException {
         os.write(data);
     }
-
 
 
 //    public static void main (String [] args) throws IOException, InterruptedException {

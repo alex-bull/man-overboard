@@ -16,7 +16,6 @@ public class RaceClock extends AnimationTimer implements Clock {
     private ClockHandler clockHandler;
 
 
-
     public RaceClock(ClockHandler handler, int scaleFactor, int negativeTime) {
 
         this.clockHandler = handler;
@@ -41,16 +40,17 @@ public class RaceClock extends AnimationTimer implements Clock {
 
     /**
      * Creates a formatted display time string in mm:ss and takes into account the scale factor
+     *
      * @param display long the current duration of the race
      * @return String the time string
-     * */
-    private String formatDisplayTime (long display) {
+     */
+    private String formatDisplayTime(long display) {
 
         // calculate the actual race time using the scale factor
         display = (display - (negativeTime / scaleFactor)) * scaleFactor;
 
         // format the time shown
-        int displayTime = abs((int)display/1000);
+        int displayTime = abs((int) display / 1000);
         int minutes = displayTime / 60;
         int seconds = displayTime - (60 * minutes);
         String formattedTime = "";
@@ -72,7 +72,6 @@ public class RaceClock extends AnimationTimer implements Clock {
 
         return formattedTime;
     }
-
 
 
 }

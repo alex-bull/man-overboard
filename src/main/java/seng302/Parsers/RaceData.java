@@ -1,9 +1,7 @@
 package seng302.Parsers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by psu43 on 26/04/17.
@@ -30,11 +28,18 @@ public class RaceData {
     public RaceData() {
     }
 
-    public List<MarkData> getStartMarks() {return this.startMarks;}
-    public List<MarkData> getFinishMarks() {return this.finishMarks;}
+    public List<MarkData> getStartMarks() {
+        return this.startMarks;
+    }
+
     public void setStartMarks(List<MarkData> startMarks) {
         this.startMarks = startMarks;
     }
+
+    public List<MarkData> getFinishMarks() {
+        return this.finishMarks;
+    }
+
     public void setFinishMarks(List<MarkData> finishMarks) {
         this.finishMarks = finishMarks;
     }
