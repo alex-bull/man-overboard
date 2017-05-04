@@ -3,19 +3,8 @@ package seng302.TestMockDatafeed;
 import com.google.common.io.ByteStreams;
 
 import java.io.*;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Created by khe60 on 10/04/17.
@@ -74,7 +63,6 @@ public class DataSender {
     public void sendData(byte[] data) throws IOException {
         os.write(data);
     }
-
 
 
 }

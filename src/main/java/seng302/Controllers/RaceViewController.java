@@ -33,19 +33,32 @@ import static javafx.scene.paint.Color.*;
  */
 public class RaceViewController implements ClockHandler, Initializable {
 
-    @FXML private AnchorPane raceView;
-    @FXML private Pane raceViewPane;
-    @FXML private Canvas raceViewCanvas;
-    @FXML private Text timerText;
-    @FXML private Label fpsCounter;
-    @FXML private RadioButton allAnnotationsRadio;
-    @FXML private RadioButton noAnnotationsRadio;
-    @FXML private RadioButton someAnnotationsRadio;
-    @FXML private CheckBox speedButton;
-    @FXML private CheckBox nameButton;
-    @FXML private CheckBox fpsToggle;
-    @FXML public Text worldClockValue;
-    @FXML private Text status;
+    @FXML
+    public Text worldClockValue;
+    @FXML
+    private AnchorPane raceView;
+    @FXML
+    private Pane raceViewPane;
+    @FXML
+    private Canvas raceViewCanvas;
+    @FXML
+    private Text timerText;
+    @FXML
+    private Label fpsCounter;
+    @FXML
+    private RadioButton allAnnotationsRadio;
+    @FXML
+    private RadioButton noAnnotationsRadio;
+    @FXML
+    private RadioButton someAnnotationsRadio;
+    @FXML
+    private CheckBox speedButton;
+    @FXML
+    private CheckBox nameButton;
+    @FXML
+    private CheckBox fpsToggle;
+    @FXML
+    private Text status;
 
     private TableController tableController;
     private Clock raceClock;
@@ -77,7 +90,7 @@ public class RaceViewController implements ClockHandler, Initializable {
         fpsToggle.setSelected(true);
     }
 
-    public void setTableController(TableController tb){
+    public void setTableController(TableController tb) {
         tableController = tb;
     }
 

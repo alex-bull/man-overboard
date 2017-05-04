@@ -5,13 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.jdom2.JDOMException;
-import seng302.TestMockDatafeed.BoatMocker;
 import seng302.TestMockDatafeed.Mock;
-
-import java.io.IOException;
-import java.net.SocketException;
-import java.util.Timer;
 
 public class App extends Application {
     public static void main(String[] args) {

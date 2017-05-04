@@ -1,8 +1,7 @@
 package seng302.Parsers;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import static seng302.Parsers.Converter.hexByteArrayToInt;
 
@@ -37,7 +36,7 @@ public class RaceStatusParser {
         HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
         int currentByte = 24;
 
-        for(int i = 0; i < numBoatsInRace; i++) {
+        for (int i = 0; i < numBoatsInRace; i++) {
 
             Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte, currentByte + 4));
             Integer boatStatus = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 4, currentByte + 5));
@@ -47,9 +46,9 @@ public class RaceStatusParser {
             Integer estTimeAtNextMark = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
             Integer estTimeAtFinish = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 14, currentByte + 20));
 
-            boatStatuses.put(sourceID, new BoatStatus(sourceID,boatStatus, legNumber,
+            boatStatuses.put(sourceID, new BoatStatus(sourceID, boatStatus, legNumber,
                     numPenaltiesAwarded, numPenaltiesServed, estTimeAtNextMark, estTimeAtFinish));
-            currentByte+=20;
+            currentByte += 20;
         }
 
         return new RaceStatusData(currentTime, raceID, raceStatusToString(raceStatus), expectedStartTime, doubleWindDirection,

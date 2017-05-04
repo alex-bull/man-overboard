@@ -5,5 +5,6 @@ package seng302.Model;
  */
 public interface Clock {
     void start();
+
     void start(long startTime);
 }

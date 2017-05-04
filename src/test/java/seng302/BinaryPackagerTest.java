@@ -7,12 +7,15 @@ import seng302.Model.Competitor;
 import seng302.Model.MutablePoint;
 import seng302.TestMockDatafeed.BinaryPackager;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by mgo65 on 1/05/17.
@@ -22,7 +25,7 @@ public class BinaryPackagerTest {
     @Test
     public void testPackageBoatLocation() {
         BinaryPackager a = new BinaryPackager();
-        byte[] b = a.packageBoatLocation(12, 123.444, 234.434, 65535.0, 20.3,1);
+        byte[] b = a.packageBoatLocation(12, 123.444, 234.434, 65535.0, 20.3, 1);
 
         assertEquals(75, b.length);
         assertEquals(71, b[0]);
@@ -40,7 +43,7 @@ public class BinaryPackagerTest {
             String line;
             StringBuilder sb = new StringBuilder();
 
-            while((line=br.readLine())!= null){
+            while ((line = br.readLine()) != null) {
                 sb.append(line.trim());
             }
             g = sb.toString();
@@ -54,8 +57,7 @@ public class BinaryPackagerTest {
             assertEquals(9693, b.length);
             assertEquals(71, b[0]);
 
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             System.out.println("Failed to package XML");
         }
 
@@ -75,9 +77,9 @@ public class BinaryPackagerTest {
     @Test
     public void testPackageEachBoat() {
         List<Competitor> competitorList = new ArrayList<>();
-        competitorList.add(new Boat("A", 10, new MutablePoint(10.0, 29.0), Color.BLACK,"ABC"));
-        competitorList.add(new Boat("B", 10, new MutablePoint(10.0, 29.0), Color.BLACK,"BCA"));
-        competitorList.add(new Boat("C", 10, new MutablePoint(10.0, 29.0), Color.BLACK,"CAB"));
+        competitorList.add(new Boat("A", 10, new MutablePoint(10.0, 29.0), Color.BLACK, "ABC"));
+        competitorList.add(new Boat("B", 10, new MutablePoint(10.0, 29.0), Color.BLACK, "BCA"));
+        competitorList.add(new Boat("C", 10, new MutablePoint(10.0, 29.0), Color.BLACK, "CAB"));
         BinaryPackager a = new BinaryPackager();
         byte[] boats = a.packageEachBoat(competitorList);
         assertEquals(60, boats.length);
@@ -91,9 +93,9 @@ public class BinaryPackagerTest {
         BinaryPackager a = new BinaryPackager();
         byte[] status = a.raceStatusHeader(1, 0, ZonedDateTime.now());
         List<Competitor> competitorList = new ArrayList<>();
-        competitorList.add(new Boat("A", 10, new MutablePoint(10.0, 29.0), Color.BLACK,"ABC"));
-        competitorList.add(new Boat("B", 10, new MutablePoint(10.0, 29.0), Color.BLACK,"BCA"));
-        competitorList.add(new Boat("C", 10, new MutablePoint(10.0, 29.0), Color.BLACK,"CAB"));
+        competitorList.add(new Boat("A", 10, new MutablePoint(10.0, 29.0), Color.BLACK, "ABC"));
+        competitorList.add(new Boat("B", 10, new MutablePoint(10.0, 29.0), Color.BLACK, "BCA"));
+        competitorList.add(new Boat("C", 10, new MutablePoint(10.0, 29.0), Color.BLACK, "CAB"));
         byte[] boats = a.packageEachBoat(competitorList);
 
         byte[] b = a.packageRaceStatus(status, boats);

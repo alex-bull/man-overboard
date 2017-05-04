@@ -1,9 +1,5 @@
 package seng302.Model;
 
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-
 /**
  * Created by mgo65 on 6/03/17.
  * Represents an event on the race timeline

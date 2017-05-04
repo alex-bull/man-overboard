@@ -1,15 +1,9 @@
 package seng302.Parsers;
 
-import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
-import edu.princeton.cs.introcs.In;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 import seng302.Model.CourseFeature;
 import seng302.Model.MutablePoint;
 
@@ -37,26 +31,6 @@ public class RaceXMLParser {
     private Set<Integer> boatIDs = new HashSet<>();
     private double width;
     private double height;
-
-
-    public RaceData getRaceData() {
-        return raceData;
-    }
-    public List<MutablePoint> getCourseBoundary() {
-        return courseBoundary;
-    }
-    public List<CourseFeature> getCourseFeatures() {
-        return courseFeatures;
-    }
-    public Set<Integer> getMarkIDs() {
-        return markIDs;
-    }
-    public Set<Integer> getCompoundMarkIDs() {
-        return compoundMarkIDs;
-    }
-    public Set<Integer> getBoatIDs() {
-        return boatIDs;
-    }
 
 
     /**
@@ -108,7 +82,7 @@ public class RaceXMLParser {
             String compoundMarkName = compoundMark.getAttribute("Name").getValue();
             List<MarkData> marks = new ArrayList<>();
 
-            for(Element mark: compoundMark.getChildren()) {
+            for (Element mark : compoundMark.getChildren()) {
                 int seqID = Integer.parseInt(mark.getAttributeValue("SeqID"));
                 String markName = mark.getAttributeValue("Name");
                 double targetLat = Double.parseDouble(mark.getAttributeValue("TargetLat"));
@@ -156,7 +130,7 @@ public class RaceXMLParser {
             int limitSeqID = Integer.parseInt(limit.getAttributeValue("SeqID"));
             double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
             double lon = Double.parseDouble(limit.getAttributeValue("Lon"));
-            LimitData limitData  = new LimitData(limitSeqID, lat, lon);
+            LimitData limitData = new LimitData(limitSeqID, lat, lon);
             raceData.getCourseLimit().add(limitData);
             count++;
 
@@ -164,6 +138,29 @@ public class RaceXMLParser {
         parseRace(width, height);
     }
 
+    public RaceData getRaceData() {
+        return raceData;
+    }
+
+    public List<MutablePoint> getCourseBoundary() {
+        return courseBoundary;
+    }
+
+    public List<CourseFeature> getCourseFeatures() {
+        return courseFeatures;
+    }
+
+    public Set<Integer> getMarkIDs() {
+        return markIDs;
+    }
+
+    public Set<Integer> getCompoundMarkIDs() {
+        return compoundMarkIDs;
+    }
+
+    public Set<Integer> getBoatIDs() {
+        return boatIDs;
+    }
 
     /**
      * Set buffers and call course parsers

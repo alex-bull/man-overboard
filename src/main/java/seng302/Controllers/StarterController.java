@@ -35,18 +35,23 @@ import java.util.Timer;
 public class StarterController implements Initializable, ClockHandler {
 
 
-    @FXML private ListView<Competitor> starterList;
-    @FXML private Label worldClockValue;
-    @FXML private Button countdownButton;
-    @FXML private Button confirmButton;
-    @FXML private Label raceStatus;
-    @FXML private ComboBox<String> streamCombo;
-
+    private final int STARTTIME = 0;
+    @FXML
+    private ListView<Competitor> starterList;
+    @FXML
+    private Label worldClockValue;
+    @FXML
+    private Button countdownButton;
+    @FXML
+    private Button confirmButton;
+    @FXML
+    private Label raceStatus;
+    @FXML
+    private ComboBox<String> streamCombo;
     private Clock worldClock;
     private Stage primaryStage;
     private ObservableList<Competitor> compList;
     private Rectangle2D primaryScreenBounds;
-    private final int STARTTIME = 0;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private DataReceiver dataReceiver;
 
@@ -164,8 +169,8 @@ public class StarterController implements Initializable, ClockHandler {
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinWidth(primaryScreenBounds.getWidth());
-                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth())/2);
-                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight())/2);
+                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
                 primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
 
 

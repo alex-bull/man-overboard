@@ -13,7 +13,7 @@ public class Mock implements Runnable {
 
 
     public void run() {
-        BoatMocker me= null;
+        BoatMocker me = null;
         try {
             me = new BoatMocker();
             //find out the coordinates of the course
@@ -25,13 +25,11 @@ public class Mock implements Runnable {
             //send all xml data first
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
-            Timer raceTimer=new Timer();
-            raceTimer.schedule(me,0,100);
-        }
-        catch (SocketException e){
+            Timer raceTimer = new Timer();
+            raceTimer.schedule(me, 0, 100);
+        } catch (SocketException e) {
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
 
         } catch (JDOMException e) {

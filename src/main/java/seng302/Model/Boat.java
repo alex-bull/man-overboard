@@ -19,42 +19,7 @@ public class Boat implements Competitor {
     private int status;
     private String type;
     private String lastMarkPassed;
-
-    @Override
-    public void setCurrentLegIndex(int legIndex) {
-        this.legIndex=legIndex;
-    }
-
-    @Override
-    public int getStatus() {
-        return status;
-    }
-
-    @Override
-    public void setStatus(int status) {
-    this.status=status;
-    }
-
-    @Override
-    public void setColor(Color color) {
-this.color=color;
-    }
-
-    @Override
-    public int getCurrentLegIndex() {
-        return legIndex;
-    }
-
     private int legIndex;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
 
     /**
      * Creates a boat
@@ -73,6 +38,7 @@ this.color=color;
         this.abbreName = abbreName;
         legIndex = 0;
     }
+
     /**
      * Creates a boat, for mock class only
      *
@@ -92,9 +58,36 @@ this.color=color;
         this.status = status;
     }
 
+    public Boat() {
 
-    public Boat(){
+    }
 
+    @Override
+    public int getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    @Override
+    public int getCurrentLegIndex() {
+        return legIndex;
+    }
+
+    @Override
+    public void setCurrentLegIndex(int legIndex) {
+        this.legIndex = legIndex;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getLegIndex() {
@@ -105,28 +98,16 @@ this.color=color;
         this.legIndex = legIndex;
     }
 
-    public void setLastMarkPassed(String lastMarkPassed) {
-        this.lastMarkPassed = lastMarkPassed;
-    }
-
     public String getLastMarkPassed() {
         return lastMarkPassed;
     }
 
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
-    }
-
-    public void setAbbreName(String abbreName) {
-        this.abbreName = abbreName;
+    public void setLastMarkPassed(String lastMarkPassed) {
+        this.lastMarkPassed = lastMarkPassed;
     }
 
     public int getSourceID() {
         return sourceID;
-    }
-
-    public void setSourceID(int sourceID) {
-        this.sourceID = sourceID;
     }
 
     /**
@@ -138,6 +119,10 @@ this.color=color;
         this.sourceID = Integer.parseInt(sourceID);
     }
 
+    public void setSourceID(int sourceID) {
+        this.sourceID = sourceID;
+    }
+
     /**
      * Getter for the boat's team name
      *
@@ -147,12 +132,8 @@ this.color=color;
         return this.teamName;
     }
 
-    /**
-     * Setter for the boat's velocity
-     * @param velocity boat's velocity m/s
-     */
-    public void setVelocity(double velocity) {
-        this.velocity = velocity;
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
     }
 
     /**
@@ -162,6 +143,15 @@ this.color=color;
      */
     public double getVelocity() {
         return this.velocity;
+    }
+
+    /**
+     * Setter for the boat's velocity
+     *
+     * @param velocity boat's velocity m/s
+     */
+    public void setVelocity(double velocity) {
+        this.velocity = velocity;
     }
 
     /**
@@ -192,6 +182,10 @@ this.color=color;
         return abbreName;
     }
 
+    public void setAbbreName(String abbreName) {
+        this.abbreName = abbreName;
+    }
+
     /**
      * Getter for the team color
      *
@@ -202,12 +196,9 @@ this.color=color;
         return color;
     }
 
-    /**
-     * Setter for the current heading
-     * @param currentHeading double the angle of the heading
-     */
-    public void setCurrentHeading(double currentHeading) {
-        this.currentHeading.setValue(currentHeading);
+    @Override
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     /**
@@ -219,7 +210,14 @@ this.color=color;
         return currentHeading.getValue();
     }
 
-
+    /**
+     * Setter for the current heading
+     *
+     * @param currentHeading double the angle of the heading
+     */
+    public void setCurrentHeading(double currentHeading) {
+        this.currentHeading.setValue(currentHeading);
+    }
 
     /**
      * Getter for the double property of the heading

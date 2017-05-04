@@ -53,44 +53,6 @@ public class DataReceiver extends TimerTask {
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
 
-    //Getters
-    public List<CourseFeature> getCourseFeatures() { return courseFeatures; }
-    public List<MutablePoint> getCourseBoundary() { return courseBoundary; }
-    public List<CompoundMarkData> getCompoundMarks() {return compoundMarks;}
-    public String getCourseTimezone() { return timezone; }
-    public List<MarkData> getStartMarks() {return startMarks;}
-    public List<MarkData> getFinishMarks() {return finishMarks;}
-    public String getRaceStatus() {
-        return raceStatus;
-    }
-    public long getMessageTime() { return messageTime; }
-    public long getExpectedStartTime() {return expectedStartTime; }
-    public List<Competitor> getCompetitors() {
-        return competitors;
-    }
-    public double getWindDirection() {
-        return windDirection;
-    }
-    public HashMap<Integer, Competitor> getStoredCompetitors() {
-        return storedCompetitors;
-    }
-    public MarkRoundingData getMarkRoundingData() {
-        return markRoundingData;
-    }
-
-    public int getNumBoats() {return this.numBoats;}
-
-
-    //Setters
-    public void setCompetitors(List<Competitor> competitors){
-        this.competitors=competitors;
-    }
-    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
-        this.courseBoundary = courseBoundary;
-    }
-
-    ////////////////////////////////////////////////
-
     /**
      * Initializes port to receive binary data from
      *
@@ -129,6 +91,73 @@ public class DataReceiver extends TimerTask {
         }
     }
 
+    //Getters
+    public List<CourseFeature> getCourseFeatures() {
+        return courseFeatures;
+    }
+
+    public List<MutablePoint> getCourseBoundary() {
+        return courseBoundary;
+    }
+
+    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
+        this.courseBoundary = courseBoundary;
+    }
+
+    public List<CompoundMarkData> getCompoundMarks() {
+        return compoundMarks;
+    }
+
+    public String getCourseTimezone() {
+        return timezone;
+    }
+
+    public List<MarkData> getStartMarks() {
+        return startMarks;
+    }
+
+    public List<MarkData> getFinishMarks() {
+        return finishMarks;
+    }
+
+    public String getRaceStatus() {
+        return raceStatus;
+    }
+
+    public long getMessageTime() {
+        return messageTime;
+    }
+
+    public long getExpectedStartTime() {
+        return expectedStartTime;
+    }
+
+    public List<Competitor> getCompetitors() {
+        return competitors;
+    }
+
+    //Setters
+    public void setCompetitors(List<Competitor> competitors) {
+        this.competitors = competitors;
+    }
+
+    public double getWindDirection() {
+        return windDirection;
+    }
+
+    public HashMap<Integer, Competitor> getStoredCompetitors() {
+        return storedCompetitors;
+    }
+
+    ////////////////////////////////////////////////
+
+    public MarkRoundingData getMarkRoundingData() {
+        return markRoundingData;
+    }
+
+    public int getNumBoats() {
+        return this.numBoats;
+    }
 
     /**
      * Parse binary data into XML and create a new parser dependant on the XmlSubType
@@ -236,14 +265,14 @@ public class DataReceiver extends TimerTask {
         try {
             boolean isStartOfPacket = checkForSyncBytes();
 
-                if (isStartOfPacket) {
-                    readHeader();
-                    int XMLMessageType = 26;
-                    int boatLocationMessageType = 37;
-                    int raceStatusMessageType = 12;
-                    int markRoundingMessageType = 38;
-                    int messageType = (int) byteStreamConverter.getMessageType();
-                    int messageLength = (int) byteStreamConverter.getMessageLength();
+            if (isStartOfPacket) {
+                readHeader();
+                int XMLMessageType = 26;
+                int boatLocationMessageType = 37;
+                int raceStatusMessageType = 12;
+                int markRoundingMessageType = 38;
+                int messageType = (int) byteStreamConverter.getMessageType();
+                int messageLength = (int) byteStreamConverter.getMessageLength();
 
                 byte[] message = new byte[messageLength];
                 dis.readFully(message);
@@ -253,40 +282,39 @@ public class DataReceiver extends TimerTask {
                         readXMLMessage(message);
                     } catch (JDOMException e) {
                         e.printStackTrace();
-                    }}
-                    else if(messageType == raceStatusMessageType) {
-                        RaceStatusParser raceStatusParser = new RaceStatusParser(message);
-                        this.raceStatusData = raceStatusParser.getRaceStatus();
-                        this.raceStatus = raceStatusData.getRaceStatus();
-                        this.messageTime = raceStatusData.getCurrentTime();
-                        this.expectedStartTime = raceStatusData.getExpectedStartTime();
-                        this.windDirection = raceStatusData.getWindDirection();
-                        this.numBoats = raceStatusData.getNumBoatsInRace();
-                        for(int id :raceStatusData.getBoatStatuses().keySet()){
-                            for(Competitor competitor: competitors){
-                                if(competitor.getSourceID() == id){
-                                    competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
-                                }
+                    }
+                } else if (messageType == raceStatusMessageType) {
+                    RaceStatusParser raceStatusParser = new RaceStatusParser(message);
+                    this.raceStatusData = raceStatusParser.getRaceStatus();
+                    this.raceStatus = raceStatusData.getRaceStatus();
+                    this.messageTime = raceStatusData.getCurrentTime();
+                    this.expectedStartTime = raceStatusData.getExpectedStartTime();
+                    this.windDirection = raceStatusData.getWindDirection();
+                    this.numBoats = raceStatusData.getNumBoatsInRace();
+                    for (int id : raceStatusData.getBoatStatuses().keySet()) {
+                        for (Competitor competitor : competitors) {
+                            if (competitor.getSourceID() == id) {
+                                competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
                             }
                         }
                     }
-                    else if(messageType == markRoundingMessageType) {
-                        MarkRoundingParser markRoundingParser = new MarkRoundingParser(message);
-                        this.markRoundingData = markRoundingParser.getMarkRoundingData();
-                        int markID = markRoundingData.getMarkID();
+                } else if (messageType == markRoundingMessageType) {
+                    MarkRoundingParser markRoundingParser = new MarkRoundingParser(message);
+                    this.markRoundingData = markRoundingParser.getMarkRoundingData();
+                    int markID = markRoundingData.getMarkID();
 
-                        for(CompoundMarkData mark : this.compoundMarks){
-                            if(mark.getID() == markID){
-                                markRoundingData.setMarkName(mark.getName());
-                            }
+                    for (CompoundMarkData mark : this.compoundMarks) {
+                        if (mark.getID() == markID) {
+                            markRoundingData.setMarkName(mark.getName());
                         }
+                    }
 
-                        String markName = markRoundingData.getMarkName();
-                        for(Competitor competitor: this.competitors){
-                            if(competitor.getSourceID() == this.markRoundingData.getSourceID() ){
-                                competitor.setLastMarkPassed(markName);
-                            }
+                    String markName = markRoundingData.getMarkName();
+                    for (Competitor competitor : this.competitors) {
+                        if (competitor.getSourceID() == this.markRoundingData.getSourceID()) {
+                            competitor.setLastMarkPassed(markName);
                         }
+                    }
 
 
                 } else if (messageType == boatLocationMessageType) {
