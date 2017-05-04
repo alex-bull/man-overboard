@@ -52,7 +52,6 @@ public class DataSender {
      * @throws InterruptedException
      */
     private void sendTestData() throws IOException, InterruptedException {
-       // System.out.println("Sending test_data.bin");
 
         File file = new File("src/main/resources/test_data.bin");
         InputStream is = new FileInputStream(file);
