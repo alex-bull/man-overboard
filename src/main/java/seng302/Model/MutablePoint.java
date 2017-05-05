@@ -15,6 +15,7 @@ public class MutablePoint {
 
     /**
      * Creates a point
+     *
      * @param x Double the x coordinate
      * @param y Double the y coordinate
      */
@@ -24,7 +25,17 @@ public class MutablePoint {
     }
 
     /**
+     * Getter for the x property
+     *
+     * @return DoubleProperty x
+     */
+    public DoubleProperty getX() {
+        return this.x;
+    }
+
+    /**
      * Sets the value of the x property
+     *
      * @param x Double the new value
      */
     public void setX(Double x) {
@@ -32,7 +43,26 @@ public class MutablePoint {
     }
 
     /**
+     * Getter for the x value
+     *
+     * @return Double x value
+     */
+    public double getXValue() {
+        return this.x.getValue();
+    }
+
+    /**
+     * Getter for the y property
+     *
+     * @return DoubleProperty y
+     */
+    public DoubleProperty getY() {
+        return this.y;
+    }
+
+    /**
      * Sets the value of the y property
+     *
      * @param y Double the new value
      */
     public void setY(Double y) {
@@ -40,48 +70,26 @@ public class MutablePoint {
     }
 
     /**
-     * Getter for the x property
-     * @return DoubleProperty x
-     */
-    public DoubleProperty getX () {
-        return this.x;
-    }
-
-    /**
-     * Getter for the x value
-     * @return Double x value
-     */
-    public double getXValue () {
-        return this.x.getValue();
-    }
-
-    /**
-     * Getter for the y property
-     * @return DoubleProperty y
-     */
-    public DoubleProperty getY () {
-        return this.y;
-    }
-
-    /**
      * Getter for the y value
+     *
      * @return Double y value
      */
-    public double getYValue () {
+    public double getYValue() {
         return this.y.getValue();
     }
 
 
     /**
      * Scales coordinates by a factor
+     *
      * @param xFactor double the x factor
      * @param yFactor double the y factor
-     * @param minX double the min x value
-     * @param minY double the min y value
+     * @param minX    double the min x value
+     * @param minY    double the min y value
      */
-    public void factor(double xFactor,double yFactor,double minX,double minY,double xBuffer,double yBuffer){
-        setX(((getXValue()-minX)*xFactor+xBuffer));
-        setY(((getYValue()-minY)*yFactor+yBuffer));
+    public void factor(double xFactor, double yFactor, double minX, double minY, double xBuffer, double yBuffer) {
+        setX(((getXValue() - minX) * xFactor + xBuffer));
+        setY(((getYValue() - minY) * yFactor + yBuffer));
     }
 
 
@@ -102,4 +110,29 @@ public class MutablePoint {
         result = 31 * result + y.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "MutablePoint{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
+    /**
+     * Checks in the current point is close enough to the other point, current EPSILON is 0.0002, longitude needs a higher
+     * EPSILON
+     *
+     * @param o the other mutable point
+     * @return true if this point is close enough to o
+     */
+    public boolean isWithin(MutablePoint o) {
+        double EPSILON = 0.0002;
+        if (Math.abs(getXValue() - o.getXValue()) < EPSILON && Math.abs(getYValue() - o.getYValue()) < EPSILON * 2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

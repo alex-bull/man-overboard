@@ -3,14 +3,13 @@
 
 <course>
 
-    <mark>
+    <pixelPoint>
         <name>Prestart</name>
         <compoundMark>
             <latitude>32.29700</latitude>
             <longtitude>-64.861</longtitude>
         </compoundMark>
-    </mark>
-
+    </pixelPoint>
 
 
     <gate isLine="true">
@@ -26,17 +25,17 @@
     </gate>
 
 
-    <mark>
+    <pixelPoint>
         <name>Mark</name>
         <compoundMark>
             <latitude>32.293039</latitude>
             <longtitude>-64.843983</longtitude>
         </compoundMark>
-    </mark>
+    </pixelPoint>
 
 
     <gate type="leeward">
-        <name >Northern Gate</name>
+        <name>Northern Gate</name>
         <compoundMark>
             <latitude>32.309693</latitude>
             <longtitude>-64.835249</longtitude>
@@ -48,7 +47,7 @@
     </gate>
 
     <gate type="windward">
-        <name >Southern Gate</name>
+        <name>Southern Gate</name>
         <compoundMark>
             <latitude>32.284680</latitude>
             <longtitude>-64.850045</longtitude>

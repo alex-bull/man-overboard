@@ -8,7 +8,10 @@ import java.util.List;
  */
 public interface Course {
     List<CourseFeature> getPoints();
+
     List<MutablePoint> getBoundaryPoints();
+
     double getWindDirection();
+
     double distanceBetweenGPSPoints(MutablePoint start, MutablePoint end);
 }

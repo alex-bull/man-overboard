@@ -14,19 +14,21 @@ public class RaceCourse implements Course {
 
     /**
      * A constructor for the RaceCourse
-     * @param points List points on the course
+     *
+     * @param points         List points on the course
      * @param boundaryPoints List the points that make up the course boundary
-     * @param windDirection double the direction of the wind
+     * @param windDirection  double the direction of the wind
      */
-    public RaceCourse(List<CourseFeature> points, List<MutablePoint> boundaryPoints, double windDirection) {
+    public RaceCourse(List<CourseFeature> points, List<MutablePoint> boundaryPoints, double windDirection, boolean useGPS) {
         this.points = points;
         this.boundaryPoints = boundaryPoints;
         this.windDirection = windDirection;
-        this.calculateHeadings();
+        this.calculateHeadings(useGPS);
     }
 
     /**
      * Get wind direction
+     *
      * @return double the angle of wind direction
      */
     public double getWindDirection() {
@@ -35,6 +37,7 @@ public class RaceCourse implements Course {
 
     /**
      * Getter for the points in the course
+     *
      * @return List a list of course points
      */
     public List<CourseFeature> getPoints() {
@@ -43,6 +46,7 @@ public class RaceCourse implements Course {
 
     /**
      * Getter for the boundary points
+     *
      * @return List the points that make up the boundary
      */
     public List<MutablePoint> getBoundaryPoints() {
@@ -50,25 +54,34 @@ public class RaceCourse implements Course {
     }
 
     /**
-     * Calculates exit headings of each course point and sets the course point property
+     * Calculates exit headings of each course point and sets the course point property, can choose between GPS coordinates or Pixel Coordinates
      */
-    private void calculateHeadings () {
-        for (int j = 0; j < this.points.size() - 1; j++) {
-            Double heading = calculateAngle(points.get(j).getPixelLocations().get(0), points.get(j + 1).getPixelLocations().get(0));
-            points.get(j).setExitHeading(heading);
+    private void calculateHeadings(boolean useGPS) {
+        if (useGPS) {
+            for (int j = 0; j < this.points.size() - 1; j++) {
+                Double heading = calculateAngle(points.get(j).getGPSPoint(), points.get(j + 1).getGPSPoint());
+                points.get(j).setExitHeading(heading);
+            }
+        } else {
+            for (int j = 0; j < this.points.size() - 1; j++) {
+//                System.out.println(points.get(j).getGPSPoint()+" "+points.get(j + 1).getGPSPoint());
+                Double heading = calculateAngle(points.get(j).getPixelLocations().get(0), points.get(j + 1).getPixelLocations().get(0));
+                points.get(j).setExitHeading(heading);
+            }
         }
     }
 
     /**
      * Calculates the angle between two course points
+     *
      * @param start MutablePoint the coordinates of the first point
-     * @param end MutablePoint the coordinates of the second point
+     * @param end   MutablePoint the coordinates of the second point
      * @return Double the angle between the points from the y axis
      */
     private Double calculateAngle(MutablePoint start, MutablePoint end) {
         Double angle = 180 - Math.toDegrees(Math.atan2(end.getXValue() - start.getXValue(), end.getYValue() - start.getYValue()));
 
-        if(angle < 0){
+        if (angle < 0) {
             angle += 360;
         }
         return angle;
@@ -77,8 +90,9 @@ public class RaceCourse implements Course {
 
     /**
      * Calculates the distance between two GPS points in metres
+     *
      * @param start MutablePoint the start coordinate
-     * @param end MutablePoint the end coordinate
+     * @param end   MutablePoint the end coordinate
      * @return double the distance in metres
      */
     public double distanceBetweenGPSPoints(MutablePoint start, MutablePoint end) {

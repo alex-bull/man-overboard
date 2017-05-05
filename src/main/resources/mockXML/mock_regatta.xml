@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RegattaConfig>
+
+    <RegattaID>3</RegattaID>
+
+    <RegattaName>New Zealand Test</RegattaName>
+
+    <CourseName>North Head</CourseName>
+
+    <CentralLatitude>32.296663</CentralLatitude>
+
+    <CentralLongitude>-64.844963</CentralLongitude>
+
+    <CentralAltitude>0.00</CentralAltitude>
+
+    <UtcOffset>12</UtcOffset>
+
+    <MagneticVariation>14.1</MagneticVariation>
+
+</RegattaConfig>

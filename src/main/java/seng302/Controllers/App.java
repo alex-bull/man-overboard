@@ -1,56 +1,34 @@
 package seng302.Controllers;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import seng302.Factories.CourseFactory;
-import seng302.Factories.RaceFactory;
-import seng302.Model.*;
+import seng302.TestMockDatafeed.Mock;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
-
-public class App extends Application
-{
-
-    private static String courseFile;
+public class App extends Application {
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("starters.fxml"));
+    public void start(Stage primaryStage) throws Exception {
+        // Code for starter controller
+
+
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("startView.fxml"));
         Parent root = loader.load();
         StarterController starterController = loader.getController();
-        starterController.setCourseFile(courseFile);
+//        starterController.setCourseFile(courseFile);
         starterController.setStage(primaryStage);
         primaryStage.setMinWidth(530);
         primaryStage.setMinWidth(548);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+        (new Thread(new Mock())).start();
 
     }
-
-
-    public static void main( String[] args )
-    {
-        try {
-            courseFile = args[0];
-            launch(args);
-
-        }
-        catch(ArrayIndexOutOfBoundsException e) {
-            System.out.println("No course XML file was provided.");
-            System.exit(1);
-        }
-    }
-
 
 
 }

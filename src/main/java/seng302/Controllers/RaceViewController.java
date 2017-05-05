@@ -2,70 +2,83 @@ package seng302.Controllers;
 
 import com.google.common.primitives.Doubles;
 import javafx.animation.AnimationTimer;
-import javafx.animation.Timeline;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Control;
-import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Polyline;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import seng302.Model.*;
+import seng302.Parsers.MarkData;
 
-import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.*;
 
-import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-
-import static javafx.scene.paint.Color.BLACK;
-import static javafx.scene.paint.Color.DARKBLUE;
+import static javafx.scene.paint.Color.*;
 
 /**
  * Controller for the race view.
  */
 public class RaceViewController implements ClockHandler, Initializable {
 
-    @FXML private AnchorPane raceView;
-    @FXML private Pane raceViewPane;
-    @FXML private Canvas raceViewCanvas;
-    @FXML private Text timerText;
-    @FXML private Label fpsCounter;
-    @FXML private RadioButton allAnnotationsRadio;
-    @FXML private RadioButton noAnnotationsRadio;
-    @FXML private RadioButton someAnnotationsRadio;
-    @FXML private CheckBox speedButton;
-    @FXML private CheckBox nameButton;
-    @FXML private CheckBox fpsToggle;
-    @FXML public Text worldClockValue;
+    @FXML
+    public Text worldClockValue;
+    @FXML
+    private AnchorPane raceView;
+    @FXML
+    private Pane raceViewPane;
+    @FXML
+    private Canvas raceViewCanvas;
+    @FXML
+    private Text timerText;
+    @FXML
+    private Label fpsCounter;
+    @FXML
+    private RadioButton allAnnotationsRadio;
+    @FXML
+    private RadioButton noAnnotationsRadio;
+    @FXML
+    private RadioButton someAnnotationsRadio;
+    @FXML
+    private CheckBox speedButton;
+    @FXML
+    private CheckBox nameButton;
+    @FXML
+    private CheckBox fpsToggle;
+    @FXML
+    private Text status;
 
+    private TableController tableController;
     private Clock raceClock;
     private Clock worldClock;
-    private Race race;
     private List<Polygon> boatModels = new ArrayList<>();
     private List<Polyline> wakeModels = new ArrayList<>();
     private List<Label> nameAnnotations = new ArrayList<>();
     private List<Label> speedAnnotations = new ArrayList<>();
+    private DataReceiver dataReceiver;
+    private List<MutablePoint> courseBoundary = null;
+    private List<CourseFeature> courseFeatures = null;
+    private List<MarkData> startMarks = null;
+    private List<MarkData> finishMarks = null;
+    private Map<String, Shape> markModels = new HashMap<>();
+    private List<Line> lineModels = new ArrayList<>();
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
         noAnnotationsRadio.setToggleGroup(annotations);
@@ -77,12 +90,16 @@ public class RaceViewController implements ClockHandler, Initializable {
         fpsToggle.setSelected(true);
     }
 
+    public void setTableController(TableController tb) {
+        tableController = tb;
+    }
+
     /**
      * Called when the user clicks no annotations button.
      * Clears individual annotations
      */
     @FXML
-    public void clearAnnotations(){
+    public void clearAnnotations() {
         speedButton.setSelected(false);
         nameButton.setSelected(false);
     }
@@ -92,46 +109,64 @@ public class RaceViewController implements ClockHandler, Initializable {
      * Clears individual annotations
      */
     @FXML
-    public void showAllAnnotations(){
+    public void showAllAnnotations() {
         speedButton.setSelected(true);
         nameButton.setSelected(true);
     }
 
     /**
      * Sets the race and the race start time and then animates the race
-     * @param race Race  group of competitors across multiple races on a course
-     * @param width double the width of the canvas
+     *
+     * @param width  double the width of the canvas
      * @param height double the height of the canvas
      */
-    public void begin(Race race, double width, double height) {
-        this.race=race;
-        this.raceClock = new RaceClock(this, race.getVelocityScaleFactor(), 27000);
-        this.worldClock = new WorldClock(this);
+    public void begin(double width, double height, DataReceiver dataReceiver) {
+
         raceViewCanvas.setHeight(height);
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
         raceViewPane.setPrefWidth(width);
-        raceClock.start();
+
+        this.dataReceiver = dataReceiver;
+
+        long expectedStartTime = dataReceiver.getExpectedStartTime();
+        long firstMessageTime = dataReceiver.getMessageTime();
+        if (expectedStartTime != 0 && firstMessageTime != 0) {
+            this.raceClock = new RaceClock(this, 1, 0);
+            long raceTime = firstMessageTime - expectedStartTime;
+            long startTime = System.currentTimeMillis() - raceTime;
+            raceClock.start(startTime);
+        } else {
+            this.raceClock = new RaceClock(this, 1, 27000);
+            raceClock.start();
+        }
+
+        String timezone = dataReceiver.getCourseTimezone();
+        this.worldClock = new WorldClock(this, timezone);
         worldClock.start();
+
+
         animate(width, height);
     }
 
 
     /**
      * Implementation of ClockHandler interface method
+     *
      * @param newTime The currentTime of the clock
      */
     public void clockTicked(String newTime, Clock clock) {
-        if(clock == raceClock) {
+        if (clock == raceClock) {
             timerText.setText(newTime);
         }
-        if(clock == worldClock) {
+        if (clock == worldClock) {
             worldClockValue.setText(newTime);
         }
     }
 
     /**
      * Draws an arrow on the screen at top left corner
+     *
      * @param angle double the angle of rotation
      */
     void drawArrow(double angle, GraphicsContext gc) {
@@ -140,7 +175,7 @@ public class RaceViewController implements ClockHandler, Initializable {
         Rotate r = new Rotate(angle, 55, 105); // rotate object
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
         gc.translate(0.0, 30.0);
-        gc.fillPolygon(new double[]{40,50,50,60,60,70,55}, new double[]{70,70,110,110,70,70,50},
+        gc.fillPolygon(new double[]{40, 50, 50, 60, 60, 70, 55}, new double[]{70, 70, 110, 110, 70, 70, 50},
                 7);
         gc.restore();
     }
@@ -148,73 +183,84 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     /**
      * Draws the course features on the canvas
-     * @param gc GraphicContext the context to draw on
      */
-    private void drawCourse(GraphicsContext gc) {
+    private void drawCourse() {
 
-        drawBoundary(gc);
+        //System.out.println("DRAWING COURSE.." + courseFeatures.size());
 
         // loops through all course features
-        for (CourseFeature courseFeature : this.race.getCourseFeatures().subList(1, race.getCourseFeatures().size())) {
-            gc.setFill(Color.ORANGERED); // buoy colour
-            gc.setStroke(Color.BLUE); // line colour between gates
-
-            // get the pixel locations of the course feature
-            List<MutablePoint> marks = courseFeature.getPixelLocations();
-            Double x1 = marks.get(0).getXValue(); // first x pixel coordinate
-            Double y1 = marks.get(0).getYValue(); // first y pixel coordinate
-            int d = 15; // diameter of the circle
-            double r = d/2; // radius of the circle
-
-            // if it is a gate it will have two pixel location coordinates
-            if (marks.size() == 2) {
-                gc.setLineWidth(3);
-
-                double x2 = marks.get(1).getXValue(); // second x pixel coordinate
-                double y2 = marks.get(1).getYValue(); // second y pixel coordinate
-
-                // check if gate needs line
-                if(courseFeature.isLine()){
-                    gc.strokeLine(x1, y1, x2, y2);
-                }
-
-                // draw gate points
-                gc.fillOval(x1 - r, y1 - r, d, d);
-                gc.fillOval(x2 - r, y2 - r, d, d);
-
-            } else {
-                gc.fillOval(x1 - r, y1 - r, d, d); // draw mark point
+        for (CourseFeature courseFeature : courseFeatures) {
+            //System.out.println("FEATURE " + courseFeature.getName());
+            Shape mark = this.markModels.get(courseFeature.getName());
+            //System.out.println(mark);
+            if (mark != null) {
+                this.raceViewPane.getChildren().remove(mark);
             }
+            drawMark(courseFeature);
         }
     }
 
+    /**
+     * Draws the line for gates
+     *
+     * @param gates List of MarkData
+     */
+    private void drawLine(List<MarkData> gates) {
+        double x1 = gates.get(0).getTargetLat();
+        double y1 = gates.get(0).getTargetLon();
+        double x2 = gates.get(1).getTargetLat();
+        double y2 = gates.get(1).getTargetLon();
+        Line line = new Line(x1, y1, x2, y2);
+        this.raceViewPane.getChildren().add(line);
+        this.lineModels.add(line);
+
+    }
+
+    private void drawMark(CourseFeature courseFeature) {
+
+
+        double x = courseFeature.getPixelLocations().get(0).getXValue();
+        double y = courseFeature.getPixelLocations().get(0).getYValue();
+        Circle circle = new Circle(x, y, 7.5, ORANGERED);
+        this.raceViewPane.getChildren().add(circle);
+        this.markModels.put(courseFeature.getName(), circle);
+
+
+    }
 
     /**
      * Draw boundary
+     *
      * @param gc GraphicsContext
      */
     public void drawBoundary(GraphicsContext gc) {
 
-        gc.save();
-        ArrayList<Double> boundaryX = new ArrayList<>();
-        ArrayList<Double> boundaryY = new ArrayList<>();
+        if (courseBoundary != null) {
+            gc.save();
+            ArrayList<Double> boundaryX = new ArrayList<>();
+            ArrayList<Double> boundaryY = new ArrayList<>();
 
-        for (MutablePoint point: this.race.getCourseBoundary()) {
-            boundaryX.add(point.getXValue());
-            boundaryY.add(point.getYValue());
+            for (MutablePoint point : courseBoundary) {
+                boundaryX.add(point.getXValue());
+                boundaryY.add(point.getYValue());
+            }
+            gc.setLineDashes(5);
+            gc.setLineWidth(0.8);
+            gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
+            gc.setFill(Color.POWDERBLUE);
+
+            //shade inside the boundary
+            gc.fillPolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
+            gc.restore();
+
         }
-        gc.setLineDashes(5);
-        gc.setLineWidth(0.8);
-        gc.strokePolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
-        gc.setFill(Color.POWDERBLUE);
-        //shade inside the boundary
-        gc.fillPolygon(Doubles.toArray(boundaryX),Doubles.toArray(boundaryY),boundaryX.size());
-        gc.restore();
+
     }
 
 
     /**
      * Draw annotations
+     *
      * @param boat Competitor a competing boat
      */
     private void drawAnnotations(Competitor boat) {
@@ -236,7 +282,8 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     /**
      * Moves the annotation labels with the boat
-     * @param boat The boat to position the labels with
+     *
+     * @param boat  The boat to position the labels with
      * @param index The index of the annotations in the list
      */
     private void moveAnnotations(Competitor boat, Integer index) {
@@ -247,7 +294,7 @@ public class RaceViewController implements ClockHandler, Initializable {
         Label speedLabel = this.speedAnnotations.get(index);
 
         //draws name
-        if(nameButton.isSelected()) {
+        if (nameButton.isSelected()) {
             nameLabel.toFront();
             nameLabel.setText(boat.getAbbreName());
             nameLabel.setLayoutX(xValue - 25);
@@ -257,7 +304,7 @@ public class RaceViewController implements ClockHandler, Initializable {
         }
 
         //draws speed
-        if(speedButton.isSelected()) {
+        if (speedButton.isSelected()) {
             speedLabel.toFront();
             speedLabel.setText(String.valueOf(boat.getVelocity()) + "m/s");
             speedLabel.setLayoutX(xValue + 5);
@@ -266,21 +313,21 @@ public class RaceViewController implements ClockHandler, Initializable {
             speedLabel.setText("");
         }
 
-        if(!(nameButton.isSelected() && speedButton.isSelected() || !nameButton.isSelected() && !speedButton.isSelected())) {
+        if (!(nameButton.isSelected() && speedButton.isSelected() || !nameButton.isSelected() && !speedButton.isSelected())) {
             someAnnotationsRadio.setSelected(true);
         }
 
         // draws FPS counter
-        if(fpsToggle.isSelected()) {
+        if (fpsToggle.isSelected()) {
             fpsCounter.setVisible(true);
-        }
-        else {
+        } else {
             fpsCounter.setVisible(false);
         }
     }
 
     /**
      * Draw boat competitor
+     *
      * @param boat Competitor a competing boat
      */
     private void drawBoat(Competitor boat) {
@@ -300,10 +347,10 @@ public class RaceViewController implements ClockHandler, Initializable {
     }
 
 
-
     /**
      * Moves the visual boat model to the current position in boat
-     * @param boat Boat the boat to move
+     *
+     * @param boat  Boat the boat to move
      * @param index The index of the boat model in the list
      */
     private void moveBoat(Competitor boat, Integer index) {
@@ -313,15 +360,14 @@ public class RaceViewController implements ClockHandler, Initializable {
         boatModels.get(index).setLayoutY(boat.getPosition().getYValue());
         boatModels.get(index).toFront();
         boatModels.get(index).getTransforms().clear();
-        boatModels.get(index).getTransforms().add(new Rotate(boat.getCurrentHeading(), 0,0));
+        boatModels.get(index).getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
 
     }
 
 
-
-
     /**
      * Draw boat competitor
+     *
      * @param boat Competitor a competing boat
      */
     private void drawWake(Competitor boat) {
@@ -329,10 +375,10 @@ public class RaceViewController implements ClockHandler, Initializable {
         //draw the line
         double wakeLength = boat.getVelocity();
         Polyline wake = new Polyline();
-        double boatLength=20;
+        double boatLength = 20;
         wake.getPoints().addAll(
                 0.0, boatLength,
-                0.0, wakeLength+boatLength);
+                0.0, wakeLength + boatLength);
         wake.setStrokeWidth(4);
         wake.setStroke(DARKBLUE);
 
@@ -344,18 +390,19 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     /**
      * Draw boat wakes and factor it with its velocity
-     * @param boat Competitor a competitor
-     * @param index
+     *
+     * @param boat  Competitor a competitor
+     * @param index Index
      */
     private void moveWake(Competitor boat, Integer index) {
 
-        double newLength = boat.getVelocity();
-        double boatLength=20;
+        double newLength = boat.getVelocity() * 1.5;
+        double boatLength = 20;
 
         Polyline wakeModel = wakeModels.get(index);
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
-        wakeModel.getPoints().addAll(0.0, boatLength,0.0, newLength+boatLength);
+        wakeModel.getPoints().addAll(0.0, boatLength, 0.0, newLength + boatLength);
         wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
         wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
     }
@@ -363,17 +410,18 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     /**
      * Draw the next dot of track for the boat on the canvas
+     *
      * @param boat Competitor
-     * @param gc GraphicsContext the gc to draw the track on
+     * @param gc   GraphicsContext the gc to draw the track on
      */
     private void drawTrack(Competitor boat, GraphicsContext gc) {
         gc.setFill(boat.getColor());
         gc.save();
-        Rotate r=new Rotate(boat.getCurrentHeading(),boat.getPosition().getXValue(),boat.getPosition().getYValue());
-        Rotate rr=new Rotate(-boat.getCurrentHeading(),boat.getPosition().getXValue(),boat.getPosition().getYValue());
+        Rotate r = new Rotate(boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
+        Rotate rr = new Rotate(-boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
 
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-        gc.translate(0,3);
+        gc.translate(0, 3);
         gc.fillOval(boat.getPosition().getXValue() - 1, boat.getPosition().getYValue() - 1, 2, 2);
         gc.setTransform(rr.getMxx(), rr.getMyx(), rr.getMxy(), rr.getMyy(), rr.getTx(), rr.getTy());
 
@@ -383,8 +431,9 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     /**
      * Draw boat wakes and factor it with its velocity
+     *
      * @param boat Competitor a competitor
-     * @param gc Graphics Context
+     * @param gc   Graphics Context
      */
     private void drawWake(Competitor boat, GraphicsContext gc) {
         double xValue = boat.getPosition().getXValue();
@@ -399,42 +448,41 @@ public class RaceViewController implements ClockHandler, Initializable {
         gc.strokeLine(xValue, yValue, x2, y2);
     }
 
-
-    /**
-     * Implementation of ClockHandler interface method
-     * @param newTime The currentTime of the clock
-     */
-    public void clockTicked(String newTime) {
-        timerText.setText(newTime);
+    private void moveMark(String name, double x, double y) {
+        this.markModels.get(name).setLayoutX(x);
+        this.markModels.get(name).setLayoutY(y);
     }
 
 
     /**
      * Starts the animation timer to animate the race
-     * @param width the width of the canvas
+     *
+     * @param width  the width of the canvas
      * @param height the height of the canvas
      */
-    private void animate(double width, double height){
+    private void animate(double width, double height) {
 
-        // start the race using the timeline
-        Timeline t = race.generateTimeline();
-        List<Competitor> competitors = race.getCompetitors();
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
 
         //draw the course
         gc.setFill(Color.LIGHTBLUE);
-        gc.fillRect(0,0,width,height);
-        drawCourse(gc);
+        gc.fillRect(0, 0, width, height);
 
         //draw wind direction arrow
-        drawArrow(race.getWindDirection(), gc);
+        drawArrow(dataReceiver.getWindDirection(), gc);
 
-        //draw moving entities
-        for(int i =0; i< competitors.size(); i++)  {
-            Competitor boat = competitors.get(i);
-            drawWake(boat);
-            drawBoat(boat);
-            drawAnnotations(boat);
+        while (dataReceiver.getCompetitors() == null) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        List<Competitor> competitors = dataReceiver.getCompetitors();
+        for (Competitor boat : competitors) {
+            this.drawWake(boat);
+            this.drawBoat(boat);
+            this.drawAnnotations(boat);
         }
 
         AnimationTimer timer = new AnimationTimer() {
@@ -442,36 +490,60 @@ public class RaceViewController implements ClockHandler, Initializable {
             long startTimeNano = System.nanoTime();
             long currentTimeNano = System.nanoTime();
             int counter = 0;
+            int count = 0;
 
             @Override
             public void handle(long now) {
+
+                // update race status string if it changed
+                String statusString = "Race status: " + dataReceiver.getRaceStatus();
+                if (!statusString.equals(status.getText())) {
+                    status.setText("Race status: " + dataReceiver.getRaceStatus());
+                }
+
                 counter++; // increment fps counter
 
                 // calculate fps
                 currentTimeNano = System.nanoTime();
-                if (currentTimeNano > startTimeNano + 1000000000){
+                if (currentTimeNano > startTimeNano + 1000000000) {
                     startTimeNano = System.nanoTime();
-                    fpsCounter.setText(String.format("FPS: %d",counter));
+                    fpsCounter.setText(String.format("FPS: %d", counter));
                     counter = 0;
+                }
+
+                // check if course features need to be redrawn
+                count++;
+                if (dataReceiver.getCourseFeatures() != (courseFeatures)) {
+                    courseFeatures = dataReceiver.getCourseFeatures();
+                    drawCourse();
+
+                    // check if boundary needs to be redrawn
+                    if (dataReceiver.getCourseBoundary() != courseBoundary) {
+                        courseBoundary = dataReceiver.getCourseBoundary();
+                        drawBoundary(gc);
+                        drawLine(dataReceiver.getStartMarks());
+                        drawLine(dataReceiver.getFinishMarks());
+                    }
                 }
 
                 //move competitors and draw tracks
                 for (int i = 0; i < competitors.size(); i++) {
                     Competitor boat = competitors.get(i);
-                    if (counter % 20 == 0) drawTrack(boat, gc);
+                    if (counter % 70 == 0) {
+                        drawTrack(boat, gc);
+                    }
                     moveWake(boat, i);
                     moveBoat(boat, i);
                     moveAnnotations(boat, i);
+
                 }
+                //update table
+                tableController.setTable(competitors);
             }
         };
 
         timer.start();
-        t.play();
     }
-
-
-
 
 
 }

@@ -17,16 +17,18 @@ public class Mark implements CourseFeature {
     private boolean isFinish = false;
     private boolean isLine = false;
     private int index;
-
+    private int zoneSize;
+    private int rounding;
 
     /**
      * Creates a course mark
-     * @param name String the name of the mark
+     *
+     * @param name          String the name of the mark
      * @param pixelLocation MutablePoint the pixel coordinates of the mark
-     * @param GPSLocation MutablePoint the GPS coordinates of the mark
-     * @param index int the index of the mark
+     * @param GPSLocation   MutablePoint the GPS coordinates of the mark
+     * @param index         int the index of the mark
      */
-    public Mark (String name, MutablePoint pixelLocation, MutablePoint GPSLocation, int index) {
+    public Mark(String name, MutablePoint pixelLocation, MutablePoint GPSLocation, int index) {
         this.name = name;
         this.pixelLocation = pixelLocation;
         this.GPSLocation = GPSLocation;
@@ -35,6 +37,7 @@ public class Mark implements CourseFeature {
 
     /**
      * Always returns false for a mark
+     *
      * @return boolean false there is no line for a mark
      */
     public boolean isLine() {
@@ -42,7 +45,48 @@ public class Mark implements CourseFeature {
     }
 
     /**
+     * Getter for rounding
+     *
+     * @return String rounding. Represents how the course feature is passed.
+     */
+    @Override
+    public int getRounding() {
+        return this.rounding;
+    }
+
+    /**
+     * Setter for rounding
+     *
+     * @param rounding
+     */
+    @Override
+    public void setRounding(int rounding) {
+        this.rounding = rounding;
+    }
+
+    /**
+     * Getter for zoneSize
+     *
+     * @return int zoneSize
+     */
+    @Override
+    public int getZoneSize() {
+        return this.zoneSize;
+    }
+
+    /**
+     * Setter for zoneSize
+     *
+     * @param zoneSize
+     */
+    @Override
+    public void setZoneSize(String zoneSize) {
+        this.zoneSize = Integer.valueOf(zoneSize);
+    }
+
+    /**
      * Getter for isFinish flag
+     *
      * @return boolean isFinish
      */
     public boolean isFinish() {
@@ -51,14 +95,16 @@ public class Mark implements CourseFeature {
 
     /**
      * Getter for the mark name
+     *
      * @return String the name
      */
-    public String getName () {
+    public String getName() {
         return this.name;
     }
 
     /**
      * Getter for the course pixelLocation
+     *
      * @return MutablePoint, the coordinates of the mark
      */
     public List<MutablePoint> getPixelLocations() {
@@ -70,41 +116,35 @@ public class Mark implements CourseFeature {
 
     /**
      * Getter for the centre GPS Location of the marker
+     *
      * @return MutablePoint the GPS Location
      */
     public MutablePoint getGPSCentre() {
-
         return this.GPSLocation;
     }
 
     /**
      * Setter for the index of the mark
+     *
      * @return int index of the mark
      */
 
-    public int getIndex () {
+    public int getIndex() {
         return this.index;
     }
 
 
     /**
      * Factors point to fit the screen
+     *
      * @param xFactor double the factor to scale by in the x axis
      * @param yFactor double the factor to scale by in the y axis
-     * @param minX double the min x value
-     * @param minY double the min y value
+     * @param minX    double the min x value
+     * @param minY    double the min y value
      */
     @Override
-    public void factor(double xFactor, double yFactor,double minX, double minY,double xBuffer,double yBuffer) {
+    public void factor(double xFactor, double yFactor, double minX, double minY, double xBuffer, double yBuffer) {
         pixelLocation.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
-    }
-
-    /**
-     * Sets the exitHeading property
-     * @param exitHeading Double the direction in which competitors exit the mark.
-     */
-    public void setExitHeading(Double exitHeading) {
-        this.exitHeading = exitHeading;
     }
 
     @Override
@@ -129,10 +169,24 @@ public class Mark implements CourseFeature {
 
     /**
      * Getter for the exitHeading property
+     *
      * @return Double the heading
      */
-    public double getExitHeading () {
+    public double getExitHeading() {
         return this.exitHeading;
     }
 
+    /**
+     * Sets the exitHeading property
+     *
+     * @param exitHeading Double the direction in which competitors exit the mark.
+     */
+    public void setExitHeading(Double exitHeading) {
+        this.exitHeading = exitHeading;
+    }
+
+    @Override
+    public MutablePoint getGPSPoint() {
+        return GPSLocation;
+    }
 }

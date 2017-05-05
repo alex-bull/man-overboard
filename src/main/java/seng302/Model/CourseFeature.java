@@ -8,12 +8,30 @@ import java.util.List;
  */
 public interface CourseFeature {
     String getName();
+
     List<MutablePoint> getPixelLocations();
+
+    double getExitHeading();
+
     void setExitHeading(Double exitHeading);
-    double getExitHeading ();
+
     boolean isFinish();
+
     int getIndex();
+
     MutablePoint getGPSCentre();
-    void factor(double xFactor,double yFactor,double minX,double minY,double xBuffer,double yBuffer);
+
+    MutablePoint getGPSPoint();
+
+    void factor(double xFactor, double yFactor, double minX, double minY, double xBuffer, double yBuffer);
+
+    int getRounding();
+
+    void setRounding(int rounding);
+
+    int getZoneSize();
+
+    void setZoneSize(String zoneSize);
+
     boolean isLine();
 }

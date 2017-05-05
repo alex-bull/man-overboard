@@ -9,12 +9,48 @@ import javafx.scene.paint.Color;
  */
 public interface Competitor {
     String getTeamName();
-    int getVelocity();
+
+    double getVelocity();
+
+    void setVelocity(double velocity);
+
     MutablePoint getPosition();
+
+    void setPosition(MutablePoint position);
+
+    void updatePosition(double dt);
+
+    int getStatus();
+
+    void setStatus(int status);
+
     Color getColor();
+
+    void setColor(Color color);
+
+    int getCurrentLegIndex();
+
+    void setCurrentLegIndex(int legIndex);
+
     String getAbbreName();
+
+    String getLastMarkPassed();
+
+    void setLastMarkPassed(String lastMarkPassed);
+
     double getCurrentHeading();
-    DoubleProperty getHeadingProperty();
+
     void setCurrentHeading(double currentHeading);
-    void setVelocity(int velocity);
+
+    int getLegIndex();
+
+    void setLegIndex(int legIndex);
+
+    DoubleProperty getHeadingProperty();
+
+    int getSourceID();
+
+    void setProperties(double velocity, double heading, double latitude, double longitude);
+
+
 }

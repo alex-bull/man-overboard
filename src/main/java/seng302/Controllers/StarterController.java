@@ -5,13 +5,8 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableStringValue;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -21,23 +16,17 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import org.w3c.dom.css.Rect;
-import seng302.Factories.CourseFactory;
-import seng302.Factories.RaceFactory;
+import seng302.EnvironmentConfig;
 import seng302.Model.*;
-
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.ResourceBundle;
-import java.util.Scanner;
+import java.util.Timer;
 
 /**
  * Created by rjc249 on 5/04/17.
@@ -46,34 +35,29 @@ import java.util.Scanner;
 public class StarterController implements Initializable, ClockHandler {
 
 
-    @FXML private ListView<Competitor> starterList;
-    @FXML private Label countdownText;
-    @FXML private Text worldClockValue;
-    @FXML private Button confirmButton;
-    @FXML private ChoiceBox<Integer> numBoatsInput;
-    @FXML private ChoiceBox<Integer> durationInput;
-    @FXML private Button countdownButton;
-
+    private final int STARTTIME = 0;
+    @FXML
+    private ListView<Competitor> starterList;
+    @FXML
+    private Label worldClockValue;
+    @FXML
+    private Button countdownButton;
+    @FXML
+    private Button confirmButton;
+    @FXML
+    private Label raceStatus;
+    @FXML
+    private ComboBox<String> streamCombo;
     private Clock worldClock;
     private Stage primaryStage;
-    private String courseFile;
-    private Race r;
     private ObservableList<Competitor> compList;
-    private int numBoats;
     private Rectangle2D primaryScreenBounds;
-    private final int STARTTIME = 1;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
-
-    /**
-     * Takes an XML course file so the course information is set
-     * @param courseFile String the XML coureFile
-     */
-    public void setCourseFile(String courseFile) {
-        this.courseFile = courseFile;
-    }
+    private DataReceiver dataReceiver;
 
     /**
      * Sets the stage
+     *
      * @param primaryStage Stage the stage for this window
      */
     public void setStage(Stage primaryStage) {
@@ -82,27 +66,26 @@ public class StarterController implements Initializable, ClockHandler {
 
     /**
      * Implementation of ClockHandler interface method
+     *
      * @param newTime The currentTime of the clock
      */
     public void clockTicked(String newTime, Clock clock) {
-        if(clock == worldClock) {
+        if (clock == worldClock) {
             worldClockValue.setText(newTime);
         }
     }
 
     /**
      * Initialiser for StarterController
-     * @param location URL
+     *
+     * @param location  URL
      * @param resources ResourceBundle
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.worldClock = new WorldClock(this);
-        worldClock.start();
-        countdownText.textProperty().bind(timeSeconds.asString());
+
+        this.countdownButton.setDisable(true);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        numBoatsInput.setItems(FXCollections.observableArrayList(2, 3, 4, 5, 6));
-        durationInput.setItems(FXCollections.observableArrayList(1, 5));
         compList = FXCollections.observableArrayList();
 
         starterList.setCellFactory(new Callback<ListView<Competitor>, ListCell<Competitor>>() {
@@ -125,28 +108,30 @@ public class StarterController implements Initializable, ClockHandler {
         });
         starterList.setItems(compList);
 
+        streamCombo.getItems().addAll(EnvironmentConfig.liveStream, EnvironmentConfig.csseStream, EnvironmentConfig.mockStream);
+
+
     }
 
     /**
-     * Switches from start view to course view.
+     * Switches from start view to course view. Called when user clicks start button.
      * Starts countdown if the list of starters is not empty.
      */
     @FXML
-    void switchToCourseView(){
-
+    void switchToCourseView() {
         // check that starter table is not empty
-        if(!starterList.getItems().isEmpty()) {
+        if (!starterList.getItems().isEmpty()) {
             startCountdown();
             countdownButton.setDisable(true);
-        }
-        else {
+
+        } else {
             // inform user to press confirm
-            Stage thisStage = (Stage) confirmButton.getScene().getWindow();
+            Stage thisStage = (Stage) countdownButton.getScene().getWindow();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
             alert.initOwner(thisStage);
             alert.setHeaderText(null);
-            alert.setContentText("Please make sure to confirm duration and number of boats for the race.");
+            alert.setContentText("Please make sure there are competitors.");
             alert.showAndWait();
         }
 
@@ -156,6 +141,7 @@ public class StarterController implements Initializable, ClockHandler {
      * Countdown until the race start, updates the countdown time text.
      */
     private void startCountdown() {
+
         //count down for 5 seconds
         timeSeconds.set(STARTTIME);
         Timeline timeline = new Timeline();
@@ -163,6 +149,7 @@ public class StarterController implements Initializable, ClockHandler {
                 new KeyFrame(Duration.seconds(STARTTIME + 1),
                         new KeyValue(timeSeconds, 0)));
         timeline.play();
+
         timeline.setOnFinished(new EventHandler<ActionEvent>() {
             //after 5 seconds, load race course view
             @Override
@@ -174,40 +161,101 @@ public class StarterController implements Initializable, ClockHandler {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                int numBoats = dataReceiver.getNumBoats();
                 MainController mainController = loader.getController();
-                mainController.setRace(r, 4000, 4000, numBoats);
+                mainController.setRace(dataReceiver, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), numBoats);
                 primaryStage.setTitle("RaceVision");
-                primaryStage.setMinHeight(900);
-                primaryStage.setMinWidth(1300);
-                primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
-                primaryStage.setX(primaryScreenBounds.getMinX());
-                primaryStage.setY(primaryScreenBounds.getMinY());
                 primaryStage.setWidth(primaryScreenBounds.getWidth());
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
+                primaryStage.setMinHeight(primaryScreenBounds.getHeight());
+                primaryStage.setMinWidth(primaryScreenBounds.getWidth());
+                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
+
+
             }
         });
     }
 
     /**
-     * Collects the information about the number of boats and duration of the race.
-     * Display the starting boat information in a listView (starterList)
+     * Set fields using data from the stream
      */
-    public void collectInfo() throws Exception {
+    private void setFields() {
 
-        //checks duration and number of boats have been selected
-        if (numBoatsInput.getValue() == null || durationInput.getValue() == null) {
-            System.out.println("Fields not set");
-            return;
+
+        while (dataReceiver.getCourseTimezone() == null) {
+            System.out.print("");
         }
-        numBoats = numBoatsInput.getValue();    //retrieves input values
-        int duration = durationInput.getValue();
 
-        //create course
-        double height = primaryScreenBounds.getHeight() * 0.8;
-        Course raceCourse = new CourseFactory().createCourse(primaryScreenBounds.getWidth() * 0.70, height, courseFile);
+        this.worldClock = new WorldClock(this, dataReceiver.getCourseTimezone());
+        worldClock.start();
 
-        r = new RaceFactory().createRace(numBoats, duration, raceCourse);
+        //dataReceiver.setCompetitors(compList);
+        compList.setAll(dataReceiver.getCompetitors());
+        raceStatus.setText(dataReceiver.getRaceStatus());
 
-        compList.setAll(r.getCompetitors());
+        System.out.println(dataReceiver.getRaceStatus());
+
+        if (dataReceiver.getCompetitors().size() == 0) {
+            Stage thisStage = (Stage) countdownButton.getScene().getWindow();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information Dialog");
+            alert.initOwner(thisStage);
+            alert.setHeaderText(null);
+            alert.setContentText("Sorry, this data stream hasn't started.");
+            alert.showAndWait();
+        }
+        this.countdownButton.setDisable(false);
     }
+
+
+    /**
+     * Called when the user clicks confirm.
+     * Begins streaming data from the selected server
+     * Calls setFields when data is received
+     */
+    @FXML
+    public void confirmStream() {
+
+        if (this.dataReceiver == null) {
+
+            //get the selected stream
+            String host = this.streamCombo.getSelectionModel().getSelectedItem();
+            if (host == "" || host == null) {
+                System.out.println("No stream selected");
+                return;
+            }
+
+            //create a data reciever
+            try {
+                dataReceiver = new DataReceiver(host, EnvironmentConfig.port);
+                dataReceiver.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                this.streamCombo.setDisable(true);
+                this.confirmButton.setDisable(true);
+
+            } catch (IOException e) {
+                //e.printStackTrace();
+                System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
+                dataReceiver = null;
+                return;
+            }
+
+            //start receiving data
+            Timer receiverTimer = new Timer();
+            receiverTimer.schedule(dataReceiver, 0, 1);
+
+            //wait for data to come in before setting fields
+            while (dataReceiver.getNumBoats() < 1 || dataReceiver.getCompetitors().size() < dataReceiver.getNumBoats()) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    System.out.println("Thread sleep error");
+                }
+            }
+            this.setFields();
+
+        }
+    }
+
 }
