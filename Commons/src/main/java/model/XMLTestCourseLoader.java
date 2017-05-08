@@ -6,8 +6,8 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 public class XMLTestCourseLoader {
     List<Double> xMercatorCoords = new ArrayList<>();
     List<Double> yMercatorCoords = new ArrayList<>();
-    private File inputFile;
+    private Document document;
     private ArrayList<Gate> winds = new ArrayList<>();
     private Double scaleFactor;
     private Double bufferX;
@@ -31,8 +31,10 @@ public class XMLTestCourseLoader {
      *
      * @param inputFile File a XML file with course features
      */
-    public XMLTestCourseLoader(File inputFile) {
-        this.inputFile = inputFile;
+    public XMLTestCourseLoader(InputStream inputFile) throws IOException, JDOMException {
+        SAXBuilder saxbuilder = new SAXBuilder();
+
+        document = saxbuilder.build(inputFile);
     }
 
     /**
@@ -71,13 +73,12 @@ public class XMLTestCourseLoader {
 
     public List<MutablePoint> parseCourseBoundary(double width, double height) throws JDOMException, IOException {
 
-        SAXBuilder saxbuilder = new SAXBuilder();
-        Document document = saxbuilder.build(inputFile);
+
+
         Element raceCourse = document.getRootElement();
         List<Element> features = raceCourse.getChild("Course").getChildren();
 
         List<MutablePoint> boundary = new ArrayList<>();
-
 
         for (Element feature : features) {
 
@@ -119,8 +120,7 @@ public class XMLTestCourseLoader {
         bufferX = Math.max(150, width * 0.6);
         bufferY = Math.max(10, height * 0.1);
 
-        SAXBuilder saxbuilder = new SAXBuilder();
-        Document document = saxbuilder.build(inputFile);
+
         Element raceCourse = document.getRootElement();
 //        System.out.println(raceCourse);
         List<Element> features = raceCourse.getChild("Course").getChildren();

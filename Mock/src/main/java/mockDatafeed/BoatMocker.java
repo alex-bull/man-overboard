@@ -1,12 +1,13 @@
 package mockDatafeed;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.CharStreams;
 import model.*;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.jdom2.JDOMException;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.SocketException;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -69,7 +70,8 @@ public class BoatMocker extends TimerTask {
      * finds the current course of the race
      */
     public void generateCourse() throws JDOMException, IOException {
-        XMLTestCourseLoader cl = new XMLTestCourseLoader(new File("Mock/src/main/resources/new_format_course.xml"));
+        InputStream mockBoatStream= new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/new_format_course.xml")));
+        XMLTestCourseLoader cl = new XMLTestCourseLoader(mockBoatStream);
         //screen size is not important
         course = new RaceCourse(cl.parseCourse(1000, 1000), cl.parseCourseBoundary(1000, 1000), cl.getWindDirection(), false);
         courseFeatures = course.getPoints();
@@ -161,8 +163,9 @@ public class BoatMocker extends TimerTask {
      * Send a xml file
      */
     public void sendXml(String xmlPath, int messageType) throws IOException {
-        String mockBoatsString = Files.toString(new File(xmlPath), Charsets.UTF_8);
-        dataSender.sendData(binaryPackager.packageXML(mockBoatsString.length(), mockBoatsString, messageType));
+        String mockBoatString= CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
+        //        String mockBoatsString = Files.toString(new File(xmlPath), Charsets.UTF_8);
+        dataSender.sendData(binaryPackager.packageXML(mockBoatString.length(), mockBoatString, messageType));
 
     }
 
@@ -172,9 +175,9 @@ public class BoatMocker extends TimerTask {
     public void sendAllXML() {
 
         try {
-            sendXml("Mock/src/main/resources/mock_boats.xml", 7);
-            sendXml("Mock/src/main/resources/mock_regatta.xml", 5);
-            sendXml("Mock/src/main/resources/new_format_course.xml", 6);
+            sendXml("/mock_boats.xml", 7);
+            sendXml("/mock_regatta.xml", 5);
+            sendXml("/new_format_course.xml", 6);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("asfd");
