@@ -63,8 +63,6 @@ public class DataReceiver extends TimerTask {
     public DataReceiver(String host, int port) throws IOException {
         receiveSock = new Socket(host, port);
         dis = new DataInputStream(receiveSock.getInputStream());
-//        fileOutputStream=new FileOutputStream(new File("src/main/resources/BinaryFiles/"+host));
-//        System.setOut(new PrintStream(new BufferedOutputStream(fileOutputStream)));
         byteStreamConverter = new ByteStreamConverter();
         System.out.println("Start connection to server...");
     }
@@ -80,8 +78,6 @@ public class DataReceiver extends TimerTask {
         while (dataReceiver == null) {
             try {
                 dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
-//                dataReceiver = new DataReceiver("csse-s302staff.canterbury.ac.nz", 4941);
-
                 Timer timer = new Timer();
                 timer.schedule(dataReceiver, 0, 100);
 

@@ -17,9 +17,6 @@ public class RaceData {
     private List<YachtData> participants = new ArrayList<>();
     private List<MarkData> startMarks = new ArrayList<>();
     private List<MarkData> finishMarks = new ArrayList<>();
-
-
-    //    private Map<Integer, CompoundMarkData> course = new HashMap<>();
     private List<CompoundMarkData> course = new ArrayList<>();
     private List<CornerData> compoundMarkSequence = new ArrayList<>();
     private List<LimitData> courseLimit = new ArrayList<>();

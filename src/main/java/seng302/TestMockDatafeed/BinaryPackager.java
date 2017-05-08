@@ -70,7 +70,6 @@ public class BinaryPackager {
         packetBuffer.putShort((short) 1); // Roll- can also be ignored
 
         double speed = boatSpeed; //Boat speed
-//        System.out.println(boatSpeed);
         packetBuffer.putShort((short) speed);
 
         packetBuffer.putShort((short) 0); //COG
@@ -93,7 +92,6 @@ public class BinaryPackager {
         Checksum crc32 = new CRC32();
         crc32.update(packet, 0, packet.length - 4);
         packetBuffer.putInt((int) crc32.getValue());
-//        System.out.println();
         return packet;
 
     }

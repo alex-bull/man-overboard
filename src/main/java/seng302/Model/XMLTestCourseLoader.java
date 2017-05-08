@@ -41,7 +41,6 @@ public class XMLTestCourseLoader {
      * @return double the angle of the wind direction
      */
     public double getWindDirection() {
-        //System.out.println(winds.get(0).getPixelLocations().get(0).getXValue());
         double x1 = winds.get(0).getPixelLocations().get(0).getXValue();
         double y1 = winds.get(0).getPixelLocations().get(0).getYValue();
         double x2 = winds.get(1).getPixelLocations().get(0).getXValue();

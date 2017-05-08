@@ -186,13 +186,9 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     private void drawCourse() {
 
-        //System.out.println("DRAWING COURSE.." + courseFeatures.size());
-
         // loops through all course features
         for (CourseFeature courseFeature : courseFeatures) {
-            //System.out.println("FEATURE " + courseFeature.getName());
             Shape mark = this.markModels.get(courseFeature.getName());
-            //System.out.println(mark);
             if (mark != null) {
                 this.raceViewPane.getChildren().remove(mark);
             }

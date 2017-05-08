@@ -35,7 +35,6 @@ public class TableController implements Initializable {
     @FXML
     private TableColumn speedCol;
 
-    //    private List<Competitor> competitors;
     private DataReceiver dataReceiver;
     private ObservableList<RaceEvent> events = FXCollections.observableArrayList();
 

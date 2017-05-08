@@ -20,9 +20,6 @@ public class MarkRoundingParser {
         Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 13, 17));
         Integer markID = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 21));
 
-//        System.out.println(sourceID);
-//        System.out.println(markID);
-
         return new MarkRoundingData(sourceID, markID);
     }
 

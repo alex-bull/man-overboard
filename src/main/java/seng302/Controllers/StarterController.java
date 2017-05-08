@@ -191,7 +191,6 @@ public class StarterController implements Initializable, ClockHandler {
         this.worldClock = new WorldClock(this, dataReceiver.getCourseTimezone());
         worldClock.start();
 
-        //dataReceiver.setCompetitors(compList);
         compList.setAll(dataReceiver.getCompetitors());
         raceStatus.setText(dataReceiver.getRaceStatus());
 
@@ -235,7 +234,6 @@ public class StarterController implements Initializable, ClockHandler {
                 this.confirmButton.setDisable(true);
 
             } catch (IOException e) {
-                //e.printStackTrace();
                 System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
                 dataReceiver = null;
                 return;

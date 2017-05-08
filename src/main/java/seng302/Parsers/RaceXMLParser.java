@@ -75,7 +75,6 @@ public class RaceXMLParser {
         List<MarkData> startMarks = new ArrayList<>();
         List<MarkData> finishMarks = new ArrayList<>();
 
-//        CourseParser courseParser = new CourseParser()
         for (Element compoundMark : race.getChild("Course").getChildren()) {
 
             int compoundMarkID = Integer.parseInt(compoundMark.getAttribute("CompoundMarkID").getValue());
