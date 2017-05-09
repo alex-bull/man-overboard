@@ -2,9 +2,7 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
-import model.*;
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import models.*;
 import org.jdom2.JDOMException;
 
 import java.io.*;
@@ -14,16 +12,17 @@ import java.util.*;
 
 /**
  * Created by khe60 on 24/04/17.
+ * Boat mocker
  */
 public class BoatMocker extends TimerTask {
-    List<Competitor> competitors;
-    List<Competitor> markBoats;
-    List<CourseFeature> courseFeatures;
-    RaceCourse course;
-    int raceStatus;
-    ZonedDateTime expectedStartTime;
-    BinaryPackager binaryPackager;
-    DataSender dataSender;
+    private List<Competitor> competitors;
+    private List<Competitor> markBoats;
+    private List<CourseFeature> courseFeatures;
+    private RaceCourse course;
+    private int raceStatus;
+    private ZonedDateTime expectedStartTime;
+    private BinaryPackager binaryPackager;
+    private DataSender dataSender;
     private MutablePoint prestart;
 
     public BoatMocker() throws IOException {
@@ -180,7 +179,6 @@ public class BoatMocker extends TimerTask {
             sendXml("/new_format_course.xml", 6);
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("asfd");
         }
 
     }

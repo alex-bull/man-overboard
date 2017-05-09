@@ -1,7 +1,7 @@
 package controllers;
 
-import model.*;
-import parsers.MarkData;
+import models.*;
+import parsers.xml.race.MarkData;
 import com.google.common.primitives.Doubles;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
@@ -345,14 +345,14 @@ public class RaceViewController implements ClockHandler, Initializable {
 
 
     /**
-     * Moves the visual boat model to the current position in boat
+     * Moves the visual boat models to the current position in boat
      *
      * @param boat  Boat the boat to move
-     * @param index The index of the boat model in the list
+     * @param index The index of the boat models in the list
      */
     private void moveBoat(Competitor boat, Integer index) {
 
-        //Translate and rotate the corresponding boat model
+        //Translate and rotate the corresponding boat models
         boatModels.get(index).setLayoutX(boat.getPosition().getXValue());
         boatModels.get(index).setLayoutY(boat.getPosition().getYValue());
         boatModels.get(index).toFront();

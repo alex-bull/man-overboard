@@ -1,9 +1,9 @@
 package controllers;
 
-import model.Clock;
-import model.ClockHandler;
-import model.Competitor;
-import model.WorldClock;
+import models.Clock;
+import models.ClockHandler;
+import models.Competitor;
+import models.WorldClock;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -225,7 +225,7 @@ public class StarterController implements Initializable, ClockHandler {
 
             //get the selected stream
             String host = this.streamCombo.getSelectionModel().getSelectedItem();
-            if (host == "" || host == null) {
+            if (host == null || host.equals("")) {
                 System.out.println("No stream selected");
                 return;
             }
@@ -247,14 +247,22 @@ public class StarterController implements Initializable, ClockHandler {
             Timer receiverTimer = new Timer();
             receiverTimer.schedule(dataReceiver, 0, 1);
 
-            //wait for data to come in before setting fields
-            while (dataReceiver.getNumBoats() < 1 || dataReceiver.getCompetitors().size() < dataReceiver.getNumBoats()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    System.out.println("Thread sleep error");
+            try {
+                //wait for data to come in before setting fields
+                while (dataReceiver.getNumBoats() < 1 || dataReceiver.getCompetitors().size() < dataReceiver.getNumBoats()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        System.out.println("Thread sleep error");
+                    }
                 }
+
             }
+            catch(NullPointerException e) {
+                System.out.println("Live stream is down");
+            }
+
+
             this.setFields();
 
         }

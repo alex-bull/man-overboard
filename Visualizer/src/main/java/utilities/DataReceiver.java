@@ -1,12 +1,24 @@
 package utilities;
 
-import model.ColourPool;
-import model.Competitor;
-import model.CourseFeature;
-import model.MutablePoint;
+import models.ColourPool;
+import models.Competitor;
+import models.CourseFeature;
+import models.MutablePoint;
 import parsers.*;
 import javafx.scene.paint.Color;
 import org.jdom2.JDOMException;
+import parsers.boatLocation.BoatData;
+import parsers.boatLocation.BoatDataParser;
+import parsers.markRounding.MarkRoundingData;
+import parsers.markRounding.MarkRoundingParser;
+import parsers.raceStatus.RaceStatusData;
+import parsers.raceStatus.RaceStatusParser;
+import parsers.xml.race.CompoundMarkData;
+import parsers.xml.race.MarkData;
+import parsers.xml.race.RaceData;
+import parsers.xml.race.RaceXMLParser;
+import parsers.xml.boat.BoatXMLParser;
+import parsers.xml.regatta.RegattaXMLParser;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -261,7 +273,7 @@ public class DataReceiver extends TimerTask {
     /**
      * Identify the start of a packet, determine the message type and length, then read.
      */
-    public void run() {
+    public void run() throws NullPointerException{
         try {
             boolean isStartOfPacket = checkForSyncBytes();
 

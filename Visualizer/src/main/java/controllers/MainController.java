@@ -1,6 +1,6 @@
 package controllers;
 
-import model.Race;
+import models.Race;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import utilities.DataReceiver;

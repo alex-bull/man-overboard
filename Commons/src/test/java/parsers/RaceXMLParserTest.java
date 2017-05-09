@@ -2,6 +2,7 @@ package parsers;
 
 import org.junit.Before;
 import org.junit.Test;
+import parsers.xml.race.RaceXMLParser;
 
 /**
  * Created by khe60 on 27/04/17.
@@ -99,8 +100,8 @@ public class RaceXMLParserTest {
 
     @Test
     public void parserTest() throws Exception {
-        System.out.println(raceXMLParser.getCourseBoundary());
-        System.out.println(raceXMLParser.getCourseFeatures());
+//        System.out.println(raceXMLParser.getCourseBoundary());
+//        System.out.println(raceXMLParser.getCourseFeatures());
     }
 
 }

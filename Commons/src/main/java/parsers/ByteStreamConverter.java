@@ -1,5 +1,7 @@
 package parsers;
 
+import parsers.boatLocation.BoatDataParser;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
