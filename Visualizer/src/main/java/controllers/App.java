@@ -1,10 +1,12 @@
 package controllers;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class App extends Application {
     public static void main(String[] args) {
@@ -24,6 +26,9 @@ public class App extends Application {
         primaryStage.setMinWidth(530);
         primaryStage.setMinWidth(548);
         primaryStage.setScene(new Scene(root));
+
+        //set on close requests
+        primaryStage.setOnCloseRequest(event -> System.exit(0));
         primaryStage.show();
 
 
