@@ -57,8 +57,8 @@ public class DataReceiver extends TimerTask {
     private List<CourseFeature> courseFeatures = new ArrayList<>();
     private List<MutablePoint> courseBoundary = new ArrayList<>();
     private FileOutputStream fileOutputStream;
-    private double bufferX;
-    private double bufferY;
+    private double paddingX;
+    private double paddingY;
     private double scaleFactor;
     private double minXMercatorCoord;
     private double minYMercatorCoord;
@@ -206,8 +206,8 @@ public class DataReceiver extends TimerTask {
      * Sets the scaling values after the boundary has been received and parsed by the raceXMLParser.
      */
     private void setScalingFactors() {
-        this.bufferX = raceXMLParser.getBufferX();
-        this.bufferY = raceXMLParser.getBufferY();
+        this.paddingX = raceXMLParser.getPaddingX();
+        this.paddingY = raceXMLParser.getPaddingY();
         this.scaleFactor = raceXMLParser.getScaleFactor();
         this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
         this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
@@ -356,13 +356,11 @@ public class DataReceiver extends TimerTask {
         //make scaling in proportion
         startMarks = raceData.getStartMarks();
         finishMarks = raceData.getFinishMarks();
-        double bufferX = raceXMLParser.getBufferX();
-        double bufferY = raceXMLParser.getBufferY();
         double scaleFactor = raceXMLParser.getScaleFactor();
         List<CourseFeature> points = new ArrayList<>();
         CourseFeature courseFeature = boatDataParser.getCourseFeature();
 
-        courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
+        courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
         for (MarkData mark : startMarks) {
             if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
                 mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
@@ -399,7 +397,7 @@ public class DataReceiver extends TimerTask {
         double x = boatDataParser.getPixelPoint().getXValue();
         double y = boatDataParser.getPixelPoint().getYValue();
         MutablePoint location = new MutablePoint(x, y);
-        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
+        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
         competitor.setPosition(location);
         competitor.setVelocity(boatData.getSpeed());
 

@@ -24,6 +24,8 @@ public class RaceXMLParser {
     private double scaleFactor;
     private double bufferX;
     private double bufferY;
+    private double paddingX;
+    private double paddingY;
     private List<Double> xMercatorCoords;
     private List<Double> yMercatorCoords;
     private Set<Integer> markIDs = new HashSet<>();
@@ -161,10 +163,11 @@ public class RaceXMLParser {
 
     /**
      * Set buffers and call course parsers
+     * buffers are calculated by the size of widgets surrounding the course
      */
     private void parseRace() {
-        this.bufferX = Math.max(600, width * 0.6);
-        this.bufferY = Math.max(10, height * 0.1);
+        bufferX = 500;
+        bufferY = 280;
 
         try {
             parseBoundary(bufferX, bufferY);
@@ -210,7 +213,11 @@ public class RaceXMLParser {
 
         //make scaling in proportion
         scaleFactor = Math.min(xFactor, yFactor);
-        boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, Collections.min(xMercatorCoords), Collections.min(yMercatorCoords), bufferX / 2, bufferY / 2));
+        //set padding
+        paddingX=(width-xDifference*scaleFactor)/2;
+        paddingY=10;
+
+        boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, Collections.min(xMercatorCoords), Collections.min(yMercatorCoords),paddingX , paddingY));
         this.courseBoundary = boundary;
 
     }
@@ -238,12 +245,12 @@ public class RaceXMLParser {
         return scaleFactor;
     }
 
-    public double getBufferX() {
-        return bufferX;
+    public double getPaddingX() {
+        return paddingX;
     }
 
-    public double getBufferY() {
-        return bufferY;
+    public double getPaddingY() {
+        return paddingY;
     }
 
     public List<Double> getxMercatorCoords() {

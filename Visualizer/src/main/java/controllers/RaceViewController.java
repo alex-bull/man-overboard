@@ -218,7 +218,7 @@ public class RaceViewController implements ClockHandler, Initializable {
 
         double x = courseFeature.getPixelLocations().get(0).getXValue();
         double y = courseFeature.getPixelLocations().get(0).getYValue();
-        Circle circle = new Circle(x, y, 7.5, ORANGERED);
+        Circle circle = new Circle(x, y, 4.5, ORANGERED);
         this.raceViewPane.getChildren().add(circle);
         this.markModels.put(courseFeature.getName(), circle);
 
