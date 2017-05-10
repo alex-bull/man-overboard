@@ -295,6 +295,7 @@ public class DataReceiver extends TimerTask {
                         for (Competitor competitor : competitors) {
                             if (competitor.getSourceID() == id) {
                                 competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+                                competitor.setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                             }
                         }
                     }

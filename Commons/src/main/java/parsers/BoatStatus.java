@@ -10,10 +10,10 @@ public class BoatStatus {
     private int legNumber;
     private int penaltiesAwarded;
     private int penaltiesServed;
-    private int estimatedTimeAtNextMark;
-    private int estimatedTimeAtFinish;
+    private long estimatedTimeAtNextMark;
+    private long estimatedTimeAtFinish;
 
-    public BoatStatus(int sourceID, int boatStatus, int legNumber, int penaltiesAwarded, int penaltiesServed, int estimatedTimeAtNextMark, int estimatedTimeAtFinish) {
+    public BoatStatus(int sourceID, int boatStatus, int legNumber, int penaltiesAwarded, int penaltiesServed, long estimatedTimeAtNextMark, long estimatedTimeAtFinish) {
         this.sourceID = sourceID;
         this.boatStatus = boatStatus;
         this.legNumber = legNumber;
@@ -44,11 +44,11 @@ public class BoatStatus {
         return penaltiesServed;
     }
 
-    public int getEstimatedTimeAtNextMark() {
+    public long getEstimatedTimeAtNextMark() {
         return estimatedTimeAtNextMark;
     }
 
-    public int getEstimatedTimeAtFinish() {
+    public long getEstimatedTimeAtFinish() {
         return estimatedTimeAtFinish;
     }
 

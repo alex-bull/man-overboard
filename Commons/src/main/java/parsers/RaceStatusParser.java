@@ -32,6 +32,7 @@ public class RaceStatusParser {
         Integer windSpeed = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 22));
         Integer numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22, 23));
         Integer raceType = hexByteArrayToInt(Arrays.copyOfRange(body, 23, 24));
+
         Double doubleWindDirection = windDirection * 360.0 / 65536.0;
         HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
         int currentByte = 24;
@@ -43,8 +44,8 @@ public class RaceStatusParser {
             Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));
             Integer numPenaltiesAwarded = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 6, currentByte + 7));
             Integer numPenaltiesServed = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 7, currentByte + 8));
-            Integer estTimeAtNextMark = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
-            Integer estTimeAtFinish = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 14, currentByte + 20));
+            long estTimeAtNextMark = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
+            long estTimeAtFinish = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 14, currentByte + 20));
 
             boatStatuses.put(sourceID, new BoatStatus(sourceID, boatStatus, legNumber,
                     numPenaltiesAwarded, numPenaltiesServed, estTimeAtNextMark, estTimeAtFinish));

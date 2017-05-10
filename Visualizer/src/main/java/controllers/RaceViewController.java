@@ -277,7 +277,7 @@ public class RaceViewController implements ClockHandler, Initializable {
         this.speedAnnotations.put(boat, speedLabel);
 
         //est time to next mark annotation
-        Label timeToMarkLabel = new Label();
+        Label timeToMarkLabel = new Label(String.valueOf(boat.getTimeToNextMark()) + "seconds");
         timeToMarkLabel.setFont(Font.font("Monospaced"));
         timeToMarkLabel.setTextFill(boat.getColor());
         this.raceViewPane.getChildren().add(timeToMarkLabel);
@@ -300,11 +300,14 @@ public class RaceViewController implements ClockHandler, Initializable {
 
         Label nameLabel = this.nameAnnotations.get(boat);
         Label speedLabel = this.speedAnnotations.get(boat);
+        Label timeToMarkLabel = this.timeToMarkAnnotations.get(boat);
 
         nameLabel.setVisible(false);
         speedLabel.setVisible(false);
 
+
         List<CheckBox> selectedButtons = new ArrayList<>();
+
 
         //draws name
         if (nameButton.isSelected()) {
@@ -314,7 +317,7 @@ public class RaceViewController implements ClockHandler, Initializable {
             nameLabel.setLayoutY(yValue + offset);
 
             selectedButtons.add(nameButton);
-            offset += 10;
+            offset += 12;
         }
 
         //draws speed
@@ -324,7 +327,12 @@ public class RaceViewController implements ClockHandler, Initializable {
             speedLabel.setLayoutX(xValue + 5);
             speedLabel.setLayoutY(yValue + offset);
             selectedButtons.add(speedButton);
+            offset += 12;
         }
+
+        timeToMarkLabel.setText(String.valueOf(boat.getTimeToNextMark()) + "seconds");
+        timeToMarkLabel.setLayoutX(xValue + 5);
+        timeToMarkLabel.setLayoutY(yValue + offset);
 
         if (!(selectedButtons.isEmpty() || selectedButtons.size() == numButtons)) {
             someAnnotationsRadio.setSelected(true);
