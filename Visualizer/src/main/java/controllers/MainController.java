@@ -4,6 +4,7 @@ import models.Race;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import utilities.DataReceiver;
+import utilities.Interpreter;
 
 /**
  * Created by psu43 on 22/03/17.
@@ -27,9 +28,9 @@ public class MainController {
     /**
      * Sets the race
      */
-    public void setRace(DataReceiver dataReceiver, double width, double height, int numBoats) {
+    public void setRace(Interpreter interpreter, double width, double height, int numBoats) {
         raceViewController.setTableController(tableController);
-        raceViewController.begin(width, height, dataReceiver);
+        raceViewController.begin(width, height, interpreter);
 
 
     }

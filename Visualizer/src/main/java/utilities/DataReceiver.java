@@ -35,38 +35,42 @@ import java.util.*;
  */
 public class DataReceiver extends TimerTask {
 
+    public Interpreter getInterpreter() {
+        return interpreter;
+    }
 
+    private Interpreter interpreter;
     private Socket receiveSock;
     private DataInputStream dis;
     private ByteStreamConverter byteStreamConverter;
-    private List<Competitor> competitors;
-    private double windDirection;
-    private double canvasWidth;
-    private double canvasHeight;
-    private BoatData boatData;
-    private RaceStatusData raceStatusData;
-    private RaceData raceData;
-    private MarkRoundingData markRoundingData;
-    private String timezone;
-    private String raceStatus;
-    private long messageTime;
-    private long expectedStartTime;
-    private RaceXMLParser raceXMLParser;
+//    private List<Competitor> competitors;
+//    private double windDirection;
+//    private double canvasWidth;
+//    private double canvasHeight;
+//    private BoatData boatData;
+//    private RaceStatusData raceStatusData;
+//    private RaceData raceData;
+//    private MarkRoundingData markRoundingData;
+//    private String timezone;
+//    private String raceStatus;
+//    private long messageTime;
+//    private long expectedStartTime;
+//    private RaceXMLParser raceXMLParser;
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
     private List<CourseFeature> courseFeatures = new ArrayList<>();
     private List<MutablePoint> courseBoundary = new ArrayList<>();
     private FileOutputStream fileOutputStream;
-    private double bufferX;
-    private double bufferY;
-    private double scaleFactor;
-    private double minXMercatorCoord;
-    private double minYMercatorCoord;
+//    private double bufferX;
+//    private double bufferY;
+//    private double scaleFactor;
+//    private double minXMercatorCoord;
+//    private double minYMercatorCoord;
     private BoatXMLParser boatXMLParser;
     private List<MarkData> startMarks = new ArrayList<>();
     private List<MarkData> finishMarks = new ArrayList<>();
     private ColourPool colourPool = new ColourPool();
-    private int numBoats = 0;
+//    private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
 
     /**
@@ -80,6 +84,7 @@ public class DataReceiver extends TimerTask {
         receiveSock = new Socket(host, port);
         dis = new DataInputStream(receiveSock.getInputStream());
         byteStreamConverter = new ByteStreamConverter();
+        interpreter = new Interpreter();
         System.out.println("Start connection to server...");
     }
 
@@ -120,9 +125,9 @@ public class DataReceiver extends TimerTask {
         return compoundMarks;
     }
 
-    public String getCourseTimezone() {
-        return timezone;
-    }
+//    public String getCourseTimezone() {
+//        return timezone;
+//    }
 
     public List<MarkData> getStartMarks() {
         return startMarks;
@@ -132,86 +137,46 @@ public class DataReceiver extends TimerTask {
         return finishMarks;
     }
 
-    public String getRaceStatus() {
-        return raceStatus;
-    }
+//    public String getRaceStatus() {
+//        return raceStatus;
+//    }
+//
+//    public long getMessageTime() {
+//        return messageTime;
+//    }
+//
+//    public long getExpectedStartTime() {
+//        return expectedStartTime;
+//    }
 
-    public long getMessageTime() {
-        return messageTime;
-    }
+//    public List<Competitor> getCompetitors() {
+//        return competitors;
+//    }
+//
+//    //Setters
+//    public void setCompetitors(List<Competitor> competitors) {
+//        this.competitors = competitors;
+//    }
 
-    public long getExpectedStartTime() {
-        return expectedStartTime;
-    }
+//    public double getWindDirection() {
+//        return windDirection;
+//    }
 
-    public List<Competitor> getCompetitors() {
-        return competitors;
-    }
-
-    //Setters
-    public void setCompetitors(List<Competitor> competitors) {
-        this.competitors = competitors;
-    }
-
-    public double getWindDirection() {
-        return windDirection;
-    }
-
-    public HashMap<Integer, Competitor> getStoredCompetitors() {
-        return storedCompetitors;
-    }
+//    public HashMap<Integer, Competitor> getStoredCompetitors() {
+//        return storedCompetitors;
+//    }
 
     ////////////////////////////////////////////////
+//
+//    public MarkRoundingData getMarkRoundingData() {
+//        return markRoundingData;
+//    }
+//
+//    public int getNumBoats() {
+//        return this.numBoats;
+//    }
 
-    public MarkRoundingData getMarkRoundingData() {
-        return markRoundingData;
-    }
 
-    public int getNumBoats() {
-        return this.numBoats;
-    }
-
-    /**
-     * Parse binary data into XML and create a new parser dependant on the XmlSubType
-     *
-     * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
-     * @throws IOException   IOException
-     * @throws JDOMException JDOMException
-     */
-    private void readXMLMessage(byte[] message) throws IOException, JDOMException {
-        String xml = byteStreamConverter.parseXMLMessage(message);
-        XmlSubtype subType = byteStreamConverter.getXmlSubType();
-        switch (subType) {
-            case REGATTA:
-                RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
-                this.timezone = regattaParser.getOffsetUTC();
-                if (timezone.substring(0, 1) != "-") {
-                    timezone = "+" + timezone;
-                }
-                break;
-            case RACE:
-                this.raceXMLParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
-                this.raceData = raceXMLParser.getRaceData();
-                this.courseBoundary = raceXMLParser.getCourseBoundary();
-                this.compoundMarks = raceData.getCourse();
-                setScalingFactors();
-                break;
-            case BOAT:
-                this.boatXMLParser = new BoatXMLParser(xml.trim());
-                break;
-        }
-    }
-
-    /**
-     * Sets the scaling values after the boundary has been received and parsed by the raceXMLParser.
-     */
-    private void setScalingFactors() {
-        this.bufferX = raceXMLParser.getBufferX();
-        this.bufferY = raceXMLParser.getBufferY();
-        this.scaleFactor = raceXMLParser.getScaleFactor();
-        this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
-        this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
-    }
 
     /**
      * Sets the canvas width and height so that the parser can scale values to screen.
@@ -220,8 +185,7 @@ public class DataReceiver extends TimerTask {
      * @param height double the height of the canvas
      */
     public void setCanvasDimensions(double width, double height) {
-        this.canvasWidth = width;
-        this.canvasHeight = height;
+        interpreter.setCanvasDimensions(width, height);
     }
 
     /**
@@ -234,17 +198,6 @@ public class DataReceiver extends TimerTask {
         dis.close();
     }
 
-    /**
-     * Read the message header (13 bytes) and parse information
-     *
-     * @throws IOException IOException
-     */
-    public void readHeader() throws IOException {
-        // 13 because already read sync bytes
-        byte[] header = new byte[13];
-        dis.readFully(header);
-        byteStreamConverter.parseHeader(header);
-    }
 
     /**
      * Check for the first and second sync byte
@@ -278,67 +231,8 @@ public class DataReceiver extends TimerTask {
             boolean isStartOfPacket = checkForSyncBytes();
 
             if (isStartOfPacket) {
-                readHeader();
-                int XMLMessageType = 26;
-                int boatLocationMessageType = 37;
-                int raceStatusMessageType = 12;
-                int markRoundingMessageType = 38;
-                int messageType = (int) byteStreamConverter.getMessageType();
-                int messageLength = (int) byteStreamConverter.getMessageLength();
+                interpreter.interpretPacket();
 
-                byte[] message = new byte[messageLength];
-                dis.readFully(message);
-
-                if (messageType == XMLMessageType) {
-                    try {
-                        readXMLMessage(message);
-                    } catch (JDOMException e) {
-                        e.printStackTrace();
-                    }
-                } else if (messageType == raceStatusMessageType) {
-                    RaceStatusParser raceStatusParser = new RaceStatusParser(message);
-                    this.raceStatusData = raceStatusParser.getRaceStatus();
-                    this.raceStatus = raceStatusData.getRaceStatus();
-                    this.messageTime = raceStatusData.getCurrentTime();
-                    this.expectedStartTime = raceStatusData.getExpectedStartTime();
-                    this.windDirection = raceStatusData.getWindDirection();
-                    this.numBoats = raceStatusData.getNumBoatsInRace();
-                    for (int id : raceStatusData.getBoatStatuses().keySet()) {
-                        for (Competitor competitor : competitors) {
-                            if (competitor.getSourceID() == id) {
-                                competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
-                            }
-                        }
-                    }
-                } else if (messageType == markRoundingMessageType) {
-                    MarkRoundingParser markRoundingParser = new MarkRoundingParser(message);
-                    this.markRoundingData = markRoundingParser.getMarkRoundingData();
-                    int markID = markRoundingData.getMarkID();
-
-                    for (CompoundMarkData mark : this.compoundMarks) {
-                        if (mark.getID() == markID) {
-                            markRoundingData.setMarkName(mark.getName());
-                        }
-                    }
-
-                    String markName = markRoundingData.getMarkName();
-                    for (Competitor competitor : this.competitors) {
-                        if (competitor.getSourceID() == this.markRoundingData.getSourceID()) {
-                            competitor.setLastMarkPassed(markName);
-                        }
-                    }
-
-
-                } else if (messageType == boatLocationMessageType) {
-                    BoatDataParser boatDataParser = new BoatDataParser(message, canvasWidth, canvasHeight);
-                    this.boatData = boatDataParser.getBoatData();
-                    if (boatData.getDeviceType() == 1 && raceXMLParser.getBoatIDs().contains(boatData.getSourceID())) {
-                        updateBoatProperties(boatDataParser);
-                    } else if (boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
-                        updateCourseMarks(boatDataParser);
-
-                    }
-                }
             }
         } catch (EOFException e) {
             System.out.println("End of file.");
@@ -347,79 +241,6 @@ public class DataReceiver extends TimerTask {
         }
     }
 
-    /**
-     * Updates the course features/marks
-     *
-     * @param boatDataParser BoatDataParser the boat data parser
-     */
-    private void updateCourseMarks(BoatDataParser boatDataParser) {
-        //make scaling in proportion
-        startMarks = raceData.getStartMarks();
-        finishMarks = raceData.getFinishMarks();
-        double bufferX = raceXMLParser.getBufferX();
-        double bufferY = raceXMLParser.getBufferY();
-        double scaleFactor = raceXMLParser.getScaleFactor();
-        List<CourseFeature> points = new ArrayList<>();
-        CourseFeature courseFeature = boatDataParser.getCourseFeature();
-
-        courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
-        for (MarkData mark : startMarks) {
-            if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
-                mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
-                mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
-            }
-        }
-
-        for (MarkData mark : finishMarks) {
-            if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
-                mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
-                mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
-            }
-        }
-
-        this.storedFeatures.put(boatData.getSourceID(), courseFeature);
-
-        for (Integer id : this.storedFeatures.keySet()) {
-            points.add(this.storedFeatures.get(id));
-        }
-        this.courseFeatures = points;
-    }
-
-    /**
-     * Updates the boat properties as data is being received.
-     *
-     * @param boatDataParser BoatDataParser the boat data parser
-     */
-    private void updateBoatProperties(BoatDataParser boatDataParser) {
-        int boatID = boatData.getSourceID();
-
-        Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
-        competitor.setCurrentHeading(boatData.getHeading());
-
-        double x = boatDataParser.getPixelPoint().getXValue();
-        double y = boatDataParser.getPixelPoint().getYValue();
-        MutablePoint location = new MutablePoint(x, y);
-        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
-        competitor.setPosition(location);
-        competitor.setVelocity(boatData.getSpeed());
-
-        // boat colour
-        if (competitor.getColor() == null) {
-            Color colour = this.colourPool.getColours().get(0);
-            competitor.setColor(colour);
-            colourPool.getColours().remove(colour);
-        }
-
-        //speed
-        this.storedCompetitors.put(boatID, competitor);
-
-        List<Competitor> comps = new ArrayList<>();
-        for (Integer id : this.storedCompetitors.keySet()) {
-            comps.add(this.storedCompetitors.get(id));
-        }
-
-        this.competitors = comps;
-    }
 
 
 }

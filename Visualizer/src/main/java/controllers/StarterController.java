@@ -26,6 +26,7 @@ import javafx.util.Callback;
 import javafx.util.Duration;
 import utilities.DataReceiver;
 import utilities.EnvironmentConfig;
+import utilities.Interpreter;
 
 import java.io.IOException;
 import java.net.URL;
@@ -58,6 +59,7 @@ public class StarterController implements Initializable, ClockHandler {
     private Rectangle2D primaryScreenBounds;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private DataReceiver dataReceiver;
+    private Interpreter interpreter;
 
     /**
      * Sets the stage
@@ -165,9 +167,9 @@ public class StarterController implements Initializable, ClockHandler {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                int numBoats = dataReceiver.getNumBoats();
+                int numBoats = interpreter.getNumBoats();
                 MainController mainController = loader.getController();
-                mainController.setRace(dataReceiver, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), numBoats);
+                mainController.setRace(interpreter, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), numBoats);
                 primaryStage.setTitle("RaceVision");
                 primaryStage.setWidth(primaryScreenBounds.getWidth());
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
@@ -188,19 +190,19 @@ public class StarterController implements Initializable, ClockHandler {
     private void setFields() {
 
 
-        while (dataReceiver.getCourseTimezone() == null) {
+        while (interpreter.getCourseTimezone() == null) {
             System.out.print("");
         }
 
-        this.worldClock = new WorldClock(this, dataReceiver.getCourseTimezone());
+        this.worldClock = new WorldClock(this, interpreter.getCourseTimezone());
         worldClock.start();
 
-        compList.setAll(dataReceiver.getCompetitors());
-        raceStatus.setText(dataReceiver.getRaceStatus());
+        compList.setAll(interpreter.getCompetitors());
+        raceStatus.setText(interpreter.getRaceStatus());
 
-        System.out.println(dataReceiver.getRaceStatus());
+        System.out.println(interpreter.getRaceStatus());
 
-        if (dataReceiver.getCompetitors().size() == 0) {
+        if (interpreter.getCompetitors().size() == 0) {
             Stage thisStage = (Stage) countdownButton.getScene().getWindow();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
@@ -233,6 +235,7 @@ public class StarterController implements Initializable, ClockHandler {
             //create a data reciever
             try {
                 dataReceiver = new DataReceiver(host, EnvironmentConfig.port);
+                interpreter = dataReceiver.getInterpreter();
                 dataReceiver.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 this.streamCombo.setDisable(true);
                 this.confirmButton.setDisable(true);
@@ -249,7 +252,7 @@ public class StarterController implements Initializable, ClockHandler {
 
             try {
                 //wait for data to come in before setting fields
-                while (dataReceiver.getNumBoats() < 1 || dataReceiver.getCompetitors().size() < dataReceiver.getNumBoats()) {
+                while (interpreter.getNumBoats() < 1 || interpreter.getCompetitors().size() < interpreter.getNumBoats()) {
                     try {
                         Thread.sleep(1000);
                     } catch (Exception e) {
