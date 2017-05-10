@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.scene.control.*;
 import model.*;
 import parsers.MarkData;
 import com.google.common.primitives.Doubles;
@@ -8,10 +9,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -66,8 +63,8 @@ public class RaceViewController implements ClockHandler, Initializable {
     private Clock worldClock;
     private List<Polygon> boatModels = new ArrayList<>();
     private List<Polyline> wakeModels = new ArrayList<>();
-    private List<Label> nameAnnotations = new ArrayList<>();
-    private List<Label> speedAnnotations = new ArrayList<>();
+    private Map<Competitor, Label> nameAnnotations = new HashMap<>();
+    private Map<Competitor, Label> speedAnnotations = new HashMap<>();
     private DataReceiver dataReceiver;
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
@@ -75,6 +72,8 @@ public class RaceViewController implements ClockHandler, Initializable {
     private List<MarkData> finishMarks = null;
     private Map<String, Shape> markModels = new HashMap<>();
     private List<Line> lineModels = new ArrayList<>();
+    private Map<CheckBox, Map<Competitor, Label>> annotations = new HashMap<>();
+
 
 
     @Override
@@ -113,6 +112,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     public void showAllAnnotations() {
         speedButton.setSelected(true);
         nameButton.setSelected(true);
+
     }
 
     /**
@@ -267,48 +267,68 @@ public class RaceViewController implements ClockHandler, Initializable {
         nameLabel.setFont(Font.font("Monospaced"));
         nameLabel.setTextFill(boat.getColor());
         this.raceViewPane.getChildren().add(nameLabel);
-        this.nameAnnotations.add(nameLabel);
+        this.nameAnnotations.put(boat, nameLabel);
+        this.annotations.put(nameButton, nameAnnotations);
 
         //speed annotation
         Label speedLabel = new Label(String.valueOf(boat.getVelocity()) + "m/s");
         speedLabel.setFont(Font.font("Monospaced"));
         speedLabel.setTextFill(boat.getColor());
         this.raceViewPane.getChildren().add(speedLabel);
-        this.speedAnnotations.add(speedLabel);
+        this.speedAnnotations.put(boat, speedLabel);
+        this.annotations.put(speedButton, speedAnnotations);
     }
 
     /**
      * Moves the annotation labels with the boat
      *
      * @param boat  The boat to position the labels with
-     * @param index The index of the annotations in the list
      */
-    private void moveAnnotations(Competitor boat, Integer index) {
-
+    private void moveAnnotations(Competitor boat) {
+        int offset = 10;
         Double xValue = boat.getPosition().getXValue();
         Double yValue = boat.getPosition().getYValue();
-        Label nameLabel = this.nameAnnotations.get(index);
-        Label speedLabel = this.speedAnnotations.get(index);
+//        Label nameLabel = this.nameAnnotations.get(index);
+//        Label speedLabel = this.speedAnnotations.get(index);
 
-        //draws name
-        if (nameButton.isSelected()) {
-            nameLabel.toFront();
-            nameLabel.setText(boat.getAbbreName());
-            nameLabel.setLayoutX(xValue - 25);
-            nameLabel.setLayoutY(yValue - 25);
-        } else {
-            nameLabel.setText("");
+        for(CheckBox button: annotations.keySet()){
+           Map<Competitor, Label> labels =  this.annotations.get(button);
+
+            Label label = labels.get(boat);
+            if(button.isSelected()){
+                label.setVisible(true);
+                label.toFront();
+                label.setLayoutX(xValue + 5);
+                label.setLayoutY(yValue + offset);
+
+                offset += 15;
+            } else{
+                label.setVisible(false);
+            }
         }
 
-        //draws speed
-        if (speedButton.isSelected()) {
-            speedLabel.toFront();
-            speedLabel.setText(String.valueOf(boat.getVelocity()) + "m/s");
-            speedLabel.setLayoutX(xValue + 5);
-            speedLabel.setLayoutY(yValue + 15);
-        } else {
-            speedLabel.setText("");
-        }
+
+
+
+//        //draws name
+//        if (nameButton.isSelected()) {
+//            nameLabel.toFront();
+//            nameLabel.setText(boat.getAbbreName());
+//            nameLabel.setLayoutX(xValue - 25);
+//            nameLabel.setLayoutY(yValue - 25);
+//        } else {
+//            nameLabel.setText("");
+//        }
+//
+//        //draws speed
+//        if (speedButton.isSelected()) {
+//            speedLabel.toFront();
+//            speedLabel.setText(String.valueOf(boat.getVelocity()) + "m/s");
+//            speedLabel.setLayoutX(xValue + 5);
+//            speedLabel.setLayoutY(yValue + 15);
+//        } else {
+//            speedLabel.setText("");
+//        }
 
         if (!(nameButton.isSelected() && speedButton.isSelected() || !nameButton.isSelected() && !speedButton.isSelected())) {
             someAnnotationsRadio.setSelected(true);
@@ -531,7 +551,7 @@ public class RaceViewController implements ClockHandler, Initializable {
                     }
                     moveWake(boat, i);
                     moveBoat(boat, i);
-                    moveAnnotations(boat, i);
+                    moveAnnotations(boat);
 
                 }
                 //update table
