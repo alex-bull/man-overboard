@@ -100,8 +100,8 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     @FXML
     public void clearAnnotations() {
-        speedButton.setSelected(false);
         nameButton.setSelected(false);
+        speedButton.setSelected(false);
     }
 
     /**
@@ -110,8 +110,8 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     @FXML
     public void showAllAnnotations() {
-        speedButton.setSelected(true);
         nameButton.setSelected(true);
+        speedButton.setSelected(true);
 
     }
 
@@ -286,10 +286,10 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     private void moveAnnotations(Competitor boat) {
         int offset = 10;
+        List<CheckBox> selectedButtons = new ArrayList<>();
+
         Double xValue = boat.getPosition().getXValue();
         Double yValue = boat.getPosition().getYValue();
-//        Label nameLabel = this.nameAnnotations.get(index);
-//        Label speedLabel = this.speedAnnotations.get(index);
 
         for(CheckBox button: annotations.keySet()){
            Map<Competitor, Label> labels =  this.annotations.get(button);
@@ -302,35 +302,14 @@ public class RaceViewController implements ClockHandler, Initializable {
                 label.setLayoutY(yValue + offset);
 
                 offset += 15;
+                selectedButtons.add(button);
+
             } else{
                 label.setVisible(false);
             }
         }
 
-
-
-
-//        //draws name
-//        if (nameButton.isSelected()) {
-//            nameLabel.toFront();
-//            nameLabel.setText(boat.getAbbreName());
-//            nameLabel.setLayoutX(xValue - 25);
-//            nameLabel.setLayoutY(yValue - 25);
-//        } else {
-//            nameLabel.setText("");
-//        }
-//
-//        //draws speed
-//        if (speedButton.isSelected()) {
-//            speedLabel.toFront();
-//            speedLabel.setText(String.valueOf(boat.getVelocity()) + "m/s");
-//            speedLabel.setLayoutX(xValue + 5);
-//            speedLabel.setLayoutY(yValue + 15);
-//        } else {
-//            speedLabel.setText("");
-//        }
-
-        if (!(nameButton.isSelected() && speedButton.isSelected() || !nameButton.isSelected() && !speedButton.isSelected())) {
+        if (!(selectedButtons.isEmpty() || selectedButtons.size() == annotations.keySet().size())) {
             someAnnotationsRadio.setSelected(true);
         }
 
