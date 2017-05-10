@@ -54,6 +54,8 @@ public class RaceViewController implements ClockHandler, Initializable {
     @FXML
     private CheckBox nameButton;
     @FXML
+    private CheckBox timeToMarkButton;
+    @FXML
     private CheckBox fpsToggle;
     @FXML
     private Text status;
@@ -102,6 +104,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     public void clearAnnotations() {
         nameButton.setSelected(false);
         speedButton.setSelected(false);
+        timeToMarkButton.setSelected(false);
     }
 
     /**
@@ -112,6 +115,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     public void showAllAnnotations() {
         nameButton.setSelected(true);
         speedButton.setSelected(true);
+        timeToMarkButton.setSelected(true);
 
     }
 
@@ -294,7 +298,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     private void moveAnnotations(Competitor boat) {
 
         int offset = 10;
-        int numButtons = 2;
+        int numButtons = 3;
         Double xValue = boat.getPosition().getXValue();
         Double yValue = boat.getPosition().getYValue();
 
@@ -304,7 +308,7 @@ public class RaceViewController implements ClockHandler, Initializable {
 
         nameLabel.setVisible(false);
         speedLabel.setVisible(false);
-
+        timeToMarkLabel.setVisible(false);
 
         List<CheckBox> selectedButtons = new ArrayList<>();
 
@@ -330,9 +334,16 @@ public class RaceViewController implements ClockHandler, Initializable {
             offset += 12;
         }
 
-        timeToMarkLabel.setText(String.valueOf(boat.getTimeToNextMark()) + "seconds");
-        timeToMarkLabel.setLayoutX(xValue + 5);
-        timeToMarkLabel.setLayoutY(yValue + offset);
+        //draw est time to next mark
+        if(timeToMarkButton.isSelected()){
+            timeToMarkLabel.setVisible(true);
+            timeToMarkLabel.setText(String.valueOf(boat.getTimeToNextMark()) + "seconds");
+            timeToMarkLabel.setLayoutX(xValue + 5);
+            timeToMarkLabel.setLayoutY(yValue + offset);
+            selectedButtons.add(timeToMarkButton);
+        }
+
+
 
         if (!(selectedButtons.isEmpty() || selectedButtons.size() == numButtons)) {
             someAnnotationsRadio.setSelected(true);
