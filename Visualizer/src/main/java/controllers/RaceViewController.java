@@ -65,6 +65,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     private List<Polyline> wakeModels = new ArrayList<>();
     private Map<Competitor, Label> nameAnnotations = new HashMap<>();
     private Map<Competitor, Label> speedAnnotations = new HashMap<>();
+    private Map<Competitor, Label> timeToMarkAnnotations = new HashMap<>();
     private DataReceiver dataReceiver;
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
@@ -274,6 +275,15 @@ public class RaceViewController implements ClockHandler, Initializable {
         speedLabel.setTextFill(boat.getColor());
         this.raceViewPane.getChildren().add(speedLabel);
         this.speedAnnotations.put(boat, speedLabel);
+
+        //est time to next mark annotation
+        Label timeToMarkLabel = new Label();
+        timeToMarkLabel.setFont(Font.font("Monospaced"));
+        timeToMarkLabel.setTextFill(boat.getColor());
+        this.raceViewPane.getChildren().add(timeToMarkLabel);
+        this.timeToMarkAnnotations.put(boat, timeToMarkLabel);
+
+
     }
 
     /**
