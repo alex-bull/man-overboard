@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.util.*;
 
 /**
- * Created by jar156 on 13/04/17.
+ * Created by jar156 on 13/04/17.https://eng-git.canterbury.ac.nz/groups/seng302-2017
  * parsers for Race XML
  */
 public class RaceXMLParser {
