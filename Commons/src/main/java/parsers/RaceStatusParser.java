@@ -44,11 +44,12 @@ public class RaceStatusParser {
             Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));
             Integer numPenaltiesAwarded = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 6, currentByte + 7));
             Integer numPenaltiesServed = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 7, currentByte + 8));
-            long estTimeAtNextMark = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
+            long estTimeToNextMark = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
+            estTimeToNextMark = Converter.convertToRelativeTime(estTimeToNextMark, currentTime);
             long estTimeAtFinish = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 14, currentByte + 20));
 
             boatStatuses.put(sourceID, new BoatStatus(sourceID, boatStatus, legNumber,
-                    numPenaltiesAwarded, numPenaltiesServed, estTimeAtNextMark, estTimeAtFinish));
+                    numPenaltiesAwarded, numPenaltiesServed, estTimeToNextMark, estTimeAtFinish));
             currentByte += 20;
         }
 

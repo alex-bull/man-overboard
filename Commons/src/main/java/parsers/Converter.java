@@ -34,4 +34,20 @@ public class Converter {
         return value;
     }
 
+
+    /**
+     * Convert the real time to relative time
+     *
+     * @param realTime real time from parser
+     * @param messageTime time message was received
+     * @return converted time in milliseconds
+     */
+    public static long convertToRelativeTime(long realTime, long messageTime){
+        long relativeTime = 0;
+        if (realTime != 0 && messageTime != 0) {
+            relativeTime = realTime - messageTime;
+        }
+        return relativeTime;
+    }
+
 }

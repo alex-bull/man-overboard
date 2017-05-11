@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.scene.control.*;
 import model.*;
+import parsers.Converter;
 import parsers.MarkData;
 import com.google.common.primitives.Doubles;
 import javafx.animation.AnimationTimer;
@@ -136,15 +137,12 @@ public class RaceViewController implements ClockHandler, Initializable {
 
         long expectedStartTime = dataReceiver.getExpectedStartTime();
         long firstMessageTime = dataReceiver.getMessageTime();
-        if (expectedStartTime != 0 && firstMessageTime != 0) {
-            this.raceClock = new RaceClock(this, 1, 0);
-            long raceTime = firstMessageTime - expectedStartTime;
-            long startTime = System.currentTimeMillis() - raceTime;
-            raceClock.start(startTime);
-        } else {
-            this.raceClock = new RaceClock(this, 1, 27000);
-            raceClock.start();
-        }
+
+        this.raceClock = new RaceClock(this, 1, 0);
+        long raceTime = Converter.convertToRelativeTime(firstMessageTime, expectedStartTime);
+        long startTime = System.currentTimeMillis() - raceTime;
+        raceClock.start(startTime);
+
 
         String timezone = dataReceiver.getCourseTimezone();
         this.worldClock = new WorldClock(this, timezone);
@@ -281,12 +279,11 @@ public class RaceViewController implements ClockHandler, Initializable {
         this.speedAnnotations.put(boat, speedLabel);
 
         //est time to next mark annotation
-        Label timeToMarkLabel = new Label(String.valueOf(boat.getTimeToNextMark()) + "seconds");
+        Label timeToMarkLabel = new Label(String.valueOf(boat.getTimeToNextMark()/1000) + " seconds");
         timeToMarkLabel.setFont(Font.font("Monospaced"));
         timeToMarkLabel.setTextFill(boat.getColor());
         this.raceViewPane.getChildren().add(timeToMarkLabel);
         this.timeToMarkAnnotations.put(boat, timeToMarkLabel);
-
 
     }
 
@@ -316,12 +313,10 @@ public class RaceViewController implements ClockHandler, Initializable {
         //draws name
         if (nameButton.isSelected()) {
             nameLabel.setVisible(true);
-            nameLabel.setText(boat.getAbbreName());
             nameLabel.setLayoutX(xValue + 5);
             nameLabel.setLayoutY(yValue + offset);
-
             selectedButtons.add(nameButton);
-            offset += 12;
+            offset+= 12;
         }
 
         //draws speed
@@ -337,12 +332,11 @@ public class RaceViewController implements ClockHandler, Initializable {
         //draw est time to next mark
         if(timeToMarkButton.isSelected()){
             timeToMarkLabel.setVisible(true);
-            timeToMarkLabel.setText(String.valueOf(boat.getTimeToNextMark()) + "seconds");
+            timeToMarkLabel.setText(String.valueOf(boat.getTimeToNextMark()/1000) + " seconds");
             timeToMarkLabel.setLayoutX(xValue + 5);
             timeToMarkLabel.setLayoutY(yValue + offset);
             selectedButtons.add(timeToMarkButton);
         }
-
 
 
         if (!(selectedButtons.isEmpty() || selectedButtons.size() == numButtons)) {
