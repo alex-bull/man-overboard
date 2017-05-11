@@ -1,9 +1,10 @@
 package controllers;
 
-import model.Race;
+import models.Race;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import utilities.DataReceiver;
+import utilities.DataSource;
 
 /**
  * Created by psu43 on 22/03/17.
@@ -27,9 +28,9 @@ public class MainController {
     /**
      * Sets the race
      */
-    public void setRace(DataReceiver dataReceiver, double width, double height, int numBoats) {
+    public void setRace(DataSource dataSource, double width, double height) {
         raceViewController.setTableController(tableController);
-        raceViewController.begin(width, height, dataReceiver);
+        raceViewController.begin(width, height, dataSource);
 
 
     }

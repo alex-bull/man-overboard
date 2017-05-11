@@ -21,10 +21,10 @@ public class Converter {
     }
 
     /**
-     * Convert a byte array of little endian hex values into an integer
+     * Convert a byte array of little endian hex values into a long
      *
      * @param hexValues byte[] a byte array of hexadecimal bytes in little endian format
-     * @return int the value of the hexadecimal bytes
+     * @return long the value of the hexadecimal bytes
      */
     public static long hexByteArrayToLong(byte[] hexValues) {
         Long value = 0L;

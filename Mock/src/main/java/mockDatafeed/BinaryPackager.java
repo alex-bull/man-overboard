@@ -1,7 +1,7 @@
 package mockDatafeed;
 
 
-import model.Competitor;
+import models.Competitor;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

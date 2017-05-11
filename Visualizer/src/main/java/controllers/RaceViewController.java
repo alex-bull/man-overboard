@@ -1,7 +1,7 @@
 package controllers;
 
-import model.*;
-import parsers.MarkData;
+import models.*;
+import parsers.xml.race.MarkData;
 import com.google.common.primitives.Doubles;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
@@ -21,7 +21,9 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import utilities.DataReceiver;
+import utilities.DataSource;
 
+import javax.xml.crypto.Data;
 import java.net.URL;
 import java.util.*;
 
@@ -68,13 +70,13 @@ public class RaceViewController implements ClockHandler, Initializable {
     private List<Polyline> wakeModels = new ArrayList<>();
     private List<Label> nameAnnotations = new ArrayList<>();
     private List<Label> speedAnnotations = new ArrayList<>();
-    private DataReceiver dataReceiver;
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
     private List<MarkData> startMarks = null;
     private List<MarkData> finishMarks = null;
     private Map<String, Shape> markModels = new HashMap<>();
     private List<Line> lineModels = new ArrayList<>();
+    private DataSource dataSource;
 
 
     @Override
@@ -121,17 +123,17 @@ public class RaceViewController implements ClockHandler, Initializable {
      * @param width  double the width of the canvas
      * @param height double the height of the canvas
      */
-    public void begin(double width, double height, DataReceiver dataReceiver) {
+    public void begin(double width, double height, DataSource dataSource) {
 
         raceViewCanvas.setHeight(height);
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
         raceViewPane.setPrefWidth(width);
 
-        this.dataReceiver = dataReceiver;
+        this.dataSource = dataSource;
 
-        long expectedStartTime = dataReceiver.getExpectedStartTime();
-        long firstMessageTime = dataReceiver.getMessageTime();
+        long expectedStartTime = dataSource.getExpectedStartTime();
+        long firstMessageTime = dataSource.getMessageTime();
         if (expectedStartTime != 0 && firstMessageTime != 0) {
             this.raceClock = new RaceClock(this, 1, 0);
             long raceTime = firstMessageTime - expectedStartTime;
@@ -142,7 +144,7 @@ public class RaceViewController implements ClockHandler, Initializable {
             raceClock.start();
         }
 
-        String timezone = dataReceiver.getCourseTimezone();
+        String timezone = dataSource.getCourseTimezone();
         this.worldClock = new WorldClock(this, timezone);
         worldClock.start();
 
@@ -345,14 +347,14 @@ public class RaceViewController implements ClockHandler, Initializable {
 
 
     /**
-     * Moves the visual boat model to the current position in boat
+     * Moves the visual boat models to the current position in boat
      *
      * @param boat  Boat the boat to move
-     * @param index The index of the boat model in the list
+     * @param index The index of the boat models in the list
      */
     private void moveBoat(Competitor boat, Integer index) {
 
-        //Translate and rotate the corresponding boat model
+        //Translate and rotate the corresponding boat models
         boatModels.get(index).setLayoutX(boat.getPosition().getXValue());
         boatModels.get(index).setLayoutY(boat.getPosition().getYValue());
         boatModels.get(index).toFront();
@@ -466,16 +468,16 @@ public class RaceViewController implements ClockHandler, Initializable {
         gc.fillRect(0, 0, width, height);
 
         //draw wind direction arrow
-        drawArrow(dataReceiver.getWindDirection(), gc);
+        drawArrow(dataSource.getWindDirection(), gc);
 
-        while (dataReceiver.getCompetitors() == null) {
+        while (dataSource.getCompetitors() == null) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        List<Competitor> competitors = dataReceiver.getCompetitors();
+        List<Competitor> competitors = dataSource.getCompetitors();
         for (Competitor boat : competitors) {
             this.drawWake(boat);
             this.drawBoat(boat);
@@ -493,9 +495,9 @@ public class RaceViewController implements ClockHandler, Initializable {
             public void handle(long now) {
 
                 // update race status string if it changed
-                String statusString = "Race status: " + dataReceiver.getRaceStatus();
+                String statusString = "Race status: " + dataSource.getRaceStatus();
                 if (!statusString.equals(status.getText())) {
-                    status.setText("Race status: " + dataReceiver.getRaceStatus());
+                    status.setText("Race status: " + dataSource.getRaceStatus());
                 }
 
                 counter++; // increment fps counter
@@ -510,16 +512,16 @@ public class RaceViewController implements ClockHandler, Initializable {
 
                 // check if course features need to be redrawn
                 count++;
-                if (dataReceiver.getCourseFeatures() != (courseFeatures)) {
-                    courseFeatures = dataReceiver.getCourseFeatures();
+                if (dataSource.getCourseFeatures() != (courseFeatures)) {
+                    courseFeatures = dataSource.getCourseFeatures();
                     drawCourse();
 
                     // check if boundary needs to be redrawn
-                    if (dataReceiver.getCourseBoundary() != courseBoundary) {
-                        courseBoundary = dataReceiver.getCourseBoundary();
+                    if (dataSource.getCourseBoundary() != courseBoundary) {
+                        courseBoundary = dataSource.getCourseBoundary();
                         drawBoundary(gc);
-                        drawLine(dataReceiver.getStartMarks());
-                        drawLine(dataReceiver.getFinishMarks());
+                        drawLine(dataSource.getStartMarks());
+                        drawLine(dataSource.getFinishMarks());
                     }
                 }
 
