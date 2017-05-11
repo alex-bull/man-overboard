@@ -21,8 +21,9 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import utilities.DataReceiver;
-import utilities.Interpreter;
+import utilities.DataSource;
 
+import javax.xml.crypto.Data;
 import java.net.URL;
 import java.util.*;
 
@@ -75,7 +76,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     private List<MarkData> finishMarks = null;
     private Map<String, Shape> markModels = new HashMap<>();
     private List<Line> lineModels = new ArrayList<>();
-    private Interpreter interpreter;
+    private DataSource dataSource;
 
 
     @Override
@@ -122,17 +123,17 @@ public class RaceViewController implements ClockHandler, Initializable {
      * @param width  double the width of the canvas
      * @param height double the height of the canvas
      */
-    public void begin(double width, double height, Interpreter interpreter) {
+    public void begin(double width, double height, DataSource dataSource) {
 
         raceViewCanvas.setHeight(height);
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
         raceViewPane.setPrefWidth(width);
 
-        this.interpreter = interpreter;
+        this.dataSource = dataSource;
 
-        long expectedStartTime = interpreter.getExpectedStartTime();
-        long firstMessageTime = interpreter.getMessageTime();
+        long expectedStartTime = dataSource.getExpectedStartTime();
+        long firstMessageTime = dataSource.getMessageTime();
         if (expectedStartTime != 0 && firstMessageTime != 0) {
             this.raceClock = new RaceClock(this, 1, 0);
             long raceTime = firstMessageTime - expectedStartTime;
@@ -143,7 +144,7 @@ public class RaceViewController implements ClockHandler, Initializable {
             raceClock.start();
         }
 
-        String timezone = interpreter.getCourseTimezone();
+        String timezone = dataSource.getCourseTimezone();
         this.worldClock = new WorldClock(this, timezone);
         worldClock.start();
 
@@ -467,16 +468,16 @@ public class RaceViewController implements ClockHandler, Initializable {
         gc.fillRect(0, 0, width, height);
 
         //draw wind direction arrow
-        drawArrow(interpreter.getWindDirection(), gc);
+        drawArrow(dataSource.getWindDirection(), gc);
 
-        while (interpreter.getCompetitors() == null) {
+        while (dataSource.getCompetitors() == null) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        List<Competitor> competitors = interpreter.getCompetitors();
+        List<Competitor> competitors = dataSource.getCompetitors();
         for (Competitor boat : competitors) {
             this.drawWake(boat);
             this.drawBoat(boat);
@@ -494,9 +495,9 @@ public class RaceViewController implements ClockHandler, Initializable {
             public void handle(long now) {
 
                 // update race status string if it changed
-                String statusString = "Race status: " + interpreter.getRaceStatus();
+                String statusString = "Race status: " + dataSource.getRaceStatus();
                 if (!statusString.equals(status.getText())) {
-                    status.setText("Race status: " + interpreter.getRaceStatus());
+                    status.setText("Race status: " + dataSource.getRaceStatus());
                 }
 
                 counter++; // increment fps counter
@@ -511,16 +512,16 @@ public class RaceViewController implements ClockHandler, Initializable {
 
                 // check if course features need to be redrawn
                 count++;
-                if (interpreter.getCourseFeatures() != (courseFeatures)) {
-                    courseFeatures = interpreter.getCourseFeatures();
+                if (dataSource.getCourseFeatures() != (courseFeatures)) {
+                    courseFeatures = dataSource.getCourseFeatures();
                     drawCourse();
 
                     // check if boundary needs to be redrawn
-                    if (interpreter.getCourseBoundary() != courseBoundary) {
-                        courseBoundary = interpreter.getCourseBoundary();
+                    if (dataSource.getCourseBoundary() != courseBoundary) {
+                        courseBoundary = dataSource.getCourseBoundary();
                         drawBoundary(gc);
-                        drawLine(interpreter.getStartMarks());
-                        drawLine(interpreter.getFinishMarks());
+                        drawLine(dataSource.getStartMarks());
+                        drawLine(dataSource.getFinishMarks());
                     }
                 }
 

@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
 
+import static parsers.Converter.hexByteArrayToInt;
+
 
 /**
  * Created by khe60 on 10/04/17.
@@ -35,43 +37,10 @@ import java.util.*;
  */
 public class DataReceiver extends TimerTask {
 
-    public Interpreter getInterpreter() {
-        return interpreter;
-    }
 
-    private Interpreter interpreter;
     private Socket receiveSock;
     private DataInputStream dis;
-    private ByteStreamConverter byteStreamConverter;
-//    private List<Competitor> competitors;
-//    private double windDirection;
-//    private double canvasWidth;
-//    private double canvasHeight;
-//    private BoatData boatData;
-//    private RaceStatusData raceStatusData;
-//    private RaceData raceData;
-//    private MarkRoundingData markRoundingData;
-//    private String timezone;
-//    private String raceStatus;
-//    private long messageTime;
-//    private long expectedStartTime;
-//    private RaceXMLParser raceXMLParser;
-    private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
-    private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
-    private List<CourseFeature> courseFeatures = new ArrayList<>();
-    private List<MutablePoint> courseBoundary = new ArrayList<>();
-    private FileOutputStream fileOutputStream;
-//    private double bufferX;
-//    private double bufferY;
-//    private double scaleFactor;
-//    private double minXMercatorCoord;
-//    private double minYMercatorCoord;
-    private BoatXMLParser boatXMLParser;
-    private List<MarkData> startMarks = new ArrayList<>();
-    private List<MarkData> finishMarks = new ArrayList<>();
-    private ColourPool colourPool = new ColourPool();
-//    private int numBoats = 0;
-    private List<CompoundMarkData> compoundMarks = new ArrayList<>();
+    private PacketHandler handler;
 
     /**
      * Initializes port to receive binary data from
@@ -80,123 +49,43 @@ public class DataReceiver extends TimerTask {
      * @param port int number of port of the server
      * @throws IOException IOException
      */
-    public DataReceiver(String host, int port) throws IOException {
+    public DataReceiver(String host, int port, PacketHandler handler) throws IOException {
         receiveSock = new Socket(host, port);
+        this.handler = handler;
         dis = new DataInputStream(receiveSock.getInputStream());
-        byteStreamConverter = new ByteStreamConverter();
-        interpreter = new Interpreter();
         System.out.println("Start connection to server...");
     }
 
-    /**
-     * Creates a new data receiver and runs at the period of 100ms
-     *
-     * @param args String[]
-     * @throws InterruptedException Interrupted Exception
-     */
-    public static void main(String[] args) throws InterruptedException {
-        DataReceiver dataReceiver = null;
-        while (dataReceiver == null) {
-            try {
-                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
-                Timer timer = new Timer();
-                timer.schedule(dataReceiver, 0, 100);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    //Getters
-    public List<CourseFeature> getCourseFeatures() {
-        return courseFeatures;
-    }
-
-    public List<MutablePoint> getCourseBoundary() {
-        return courseBoundary;
-    }
-
-    public void setCourseBoundary(List<MutablePoint> courseBoundary) {
-        this.courseBoundary = courseBoundary;
-    }
-
-    public List<CompoundMarkData> getCompoundMarks() {
-        return compoundMarks;
-    }
-
-//    public String getCourseTimezone() {
-//        return timezone;
-//    }
-
-    public List<MarkData> getStartMarks() {
-        return startMarks;
-    }
-
-    public List<MarkData> getFinishMarks() {
-        return finishMarks;
-    }
-
-//    public String getRaceStatus() {
-//        return raceStatus;
-//    }
+//    /**
+//     * Creates a new data receiver and runs at the period of 100ms
+//     *
+//     * @param args String[]
+//     * @throws InterruptedException Interrupted Exception
+//     */
+//    public static void main(String[] args) throws InterruptedException {
+//        DataReceiver dataReceiver = null;
+//        while (dataReceiver == null) {
+//            try {
+//                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
+//                Timer timer = new Timer();
+//                timer.schedule(dataReceiver, 0, 100);
 //
-//    public long getMessageTime() {
-//        return messageTime;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 //    }
-//
-//    public long getExpectedStartTime() {
-//        return expectedStartTime;
-//    }
-
-//    public List<Competitor> getCompetitors() {
-//        return competitors;
-//    }
-//
-//    //Setters
-//    public void setCompetitors(List<Competitor> competitors) {
-//        this.competitors = competitors;
-//    }
-
-//    public double getWindDirection() {
-//        return windDirection;
-//    }
-
-//    public HashMap<Integer, Competitor> getStoredCompetitors() {
-//        return storedCompetitors;
-//    }
-
-    ////////////////////////////////////////////////
-//
-//    public MarkRoundingData getMarkRoundingData() {
-//        return markRoundingData;
-//    }
-//
-//    public int getNumBoats() {
-//        return this.numBoats;
-//    }
-
-
-
-    /**
-     * Sets the canvas width and height so that the parser can scale values to screen.
-     *
-     * @param width  double the width of the canvas
-     * @param height double the height of the canvas
-     */
-    public void setCanvasDimensions(double width, double height) {
-        interpreter.setCanvasDimensions(width, height);
-    }
 
     /**
      * Close the established streams and sockets
      *
      * @throws IOException IOException
      */
-    public void close() throws IOException {
+    private void close() throws IOException {
         receiveSock.close();
         dis.close();
     }
+
 
 
     /**
@@ -205,7 +94,7 @@ public class DataReceiver extends TimerTask {
      * @return Boolean if Sync Byte found
      * @throws IOException IOException
      */
-    public boolean checkForSyncBytes() throws IOException {
+    private boolean checkForSyncBytes() throws IOException {
         byte firstSyncByte = 0x47;
         // -125 is equivalent to 0x83 unsigned
         byte secondSyncByte = -125;
@@ -224,6 +113,28 @@ public class DataReceiver extends TimerTask {
     }
 
     /**
+     * Returns the first 13 bytes from a packet
+     * @return byte[] the header byte array
+     * @throws IOException IOException
+     */
+    private byte[] getHeader() throws IOException {
+        byte[] header = new byte[13];
+        dis.readFully(header);
+        return header;
+    }
+
+    /**
+     * returns the length field from a 13 byte header
+     * @param header byte[] the header byte array
+     * @return int the message length
+     */
+    private int getMessageLength(byte[] header) {
+        byte[] messageLengthBytes = Arrays.copyOfRange(header, 11, 13);
+        return hexByteArrayToInt(messageLengthBytes);
+    }
+
+
+    /**
      * Identify the start of a packet, determine the message type and length, then read.
      */
     public void run() throws NullPointerException{
@@ -231,7 +142,12 @@ public class DataReceiver extends TimerTask {
             boolean isStartOfPacket = checkForSyncBytes();
 
             if (isStartOfPacket) {
-                interpreter.interpretPacket();
+
+                byte[] header = this.getHeader();
+                int length = this.getMessageLength(header);
+                byte[] message = new byte[length];
+                dis.readFully(message);
+                this.handler.interpretPacket(header, message);
 
             }
         } catch (EOFException e) {

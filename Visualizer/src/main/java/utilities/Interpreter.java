@@ -1,12 +1,13 @@
 package utilities;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import models.ColourPool;
 import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
 import org.jdom2.JDOMException;
-import parsers.ByteStreamConverter;
 import parsers.XmlSubtype;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
@@ -21,25 +22,20 @@ import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
 
-import java.io.DataInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
+
+import static parsers.Converter.hexByteArrayToInt;
 
 /**
- * Created by psu43 on 10/05/17.
- * Inteprets a data packet
+ * Created by mgo65 on 11/05/17.
+ * Interprets packets
  */
-public class Interpreter {
+public class Interpreter implements DataSource, PacketHandler {
 
-
-    private Socket receiveSock;
-    private DataInputStream dis;
-    private ByteStreamConverter byteStreamConverter;
+    private XmlSubtype xmlSubType;
     private List<Competitor> competitors;
     private double windDirection;
     private double canvasWidth;
@@ -69,22 +65,7 @@ public class Interpreter {
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
-
-    public Interpreter() {
-
-    }
-
-    /**
-     * Sets the canvas width and height so that the parser can scale values to screen.
-     *
-     * @param width  double the width of the canvas
-     * @param height double the height of the canvas
-     */
-    public void setCanvasDimensions(double width, double height) {
-        this.canvasWidth = width;
-        this.canvasHeight = height;
-    }
-
+    private DataReceiver dataReceiver;
 
     //Getters
     public List<CourseFeature> getCourseFeatures() {
@@ -144,8 +125,6 @@ public class Interpreter {
         return storedCompetitors;
     }
 
-    ////////////////////////////////////////////////
-
     public MarkRoundingData getMarkRoundingData() {
         return markRoundingData;
     }
@@ -156,26 +135,65 @@ public class Interpreter {
 
 
 
-    public void interpretPacket() throws IOException {
-        readHeader();
+
+    /**
+     * Begins data receiver streaming from port.
+     * @param host String the host to stream from
+     * @param port Int the port to stream from
+     * @return boolean, true if the stream succeeds
+     */
+    public boolean receive(String host, int port) {
+
+        //create a data receiver
+        try {
+            dataReceiver = new DataReceiver(host, port, this);
+            Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+            this.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+
+        } catch (IOException e) {
+            System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
+            dataReceiver = null;
+            return false;
+        }
+        //start receiving data
+        Timer receiverTimer = new Timer();
+        receiverTimer.schedule(dataReceiver, 0, 1);
+
+        try {
+            //wait for data to come in before setting fields
+            while (this.numBoats < 1 || this.competitors.size() < this.numBoats) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    System.out.println("Thread sleep error");
+                }
+            }
+
+        }
+        catch(NullPointerException e) {
+            System.out.println("Live stream is down");
+            return false;
+        }
+        return true;
+    }
+
+
+    public void interpretPacket(byte[] header, byte[] packet) {
+
         int XMLMessageType = 26;
         int boatLocationMessageType = 37;
         int raceStatusMessageType = 12;
         int markRoundingMessageType = 38;
-        int messageType = (int) byteStreamConverter.getMessageType();
-        int messageLength = (int) byteStreamConverter.getMessageLength();
-
-        byte[] message = new byte[messageLength];
-        dis.readFully(message);
+        int messageType = header[0];
 
         if (messageType == XMLMessageType) {
             try {
-                readXMLMessage(message);
-            } catch (JDOMException e) {
+                readXMLMessage(packet);
+            } catch (JDOMException | IOException e) {
                 e.printStackTrace();
             }
         } else if (messageType == raceStatusMessageType) {
-            RaceStatusParser raceStatusParser = new RaceStatusParser(message);
+            RaceStatusParser raceStatusParser = new RaceStatusParser(packet);
             this.raceStatusData = raceStatusParser.getRaceStatus();
             this.raceStatus = raceStatusData.getRaceStatus();
             this.messageTime = raceStatusData.getCurrentTime();
@@ -190,7 +208,7 @@ public class Interpreter {
                 }
             }
         } else if (messageType == markRoundingMessageType) {
-            MarkRoundingParser markRoundingParser = new MarkRoundingParser(message);
+            MarkRoundingParser markRoundingParser = new MarkRoundingParser(packet);
             this.markRoundingData = markRoundingParser.getMarkRoundingData();
             int markID = markRoundingData.getMarkID();
 
@@ -209,7 +227,7 @@ public class Interpreter {
 
 
         } else if (messageType == boatLocationMessageType) {
-            BoatDataParser boatDataParser = new BoatDataParser(message, canvasWidth, canvasHeight);
+            BoatDataParser boatDataParser = new BoatDataParser(packet, canvasWidth, canvasHeight);
             this.boatData = boatDataParser.getBoatData();
             if (boatData.getDeviceType() == 1 && raceXMLParser.getBoatIDs().contains(boatData.getSourceID())) {
                 updateBoatProperties(boatDataParser);
@@ -222,59 +240,40 @@ public class Interpreter {
 
 
     /**
-     * Read the message header (13 bytes) and parse information
+     * Updates the boat properties as data is being received.
      *
-     * @throws IOException IOException
+     * @param boatDataParser BoatDataParser the boat data parser
      */
-    public void readHeader() throws IOException {
-        // 13 because already read sync bytes
-        byte[] header = new byte[13];
-        dis.readFully(header);
-        byteStreamConverter.parseHeader(header);
-    }
+    private void updateBoatProperties(BoatDataParser boatDataParser) {
+        int boatID = boatData.getSourceID();
 
-    /**
-     * Sets the scaling values after the boundary has been received and parsed by the raceXMLParser.
-     */
-    private void setScalingFactors() {
-        this.bufferX = raceXMLParser.getBufferX();
-        this.bufferY = raceXMLParser.getBufferY();
-        this.scaleFactor = raceXMLParser.getScaleFactor();
-        this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
-        this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
-    }
+        Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
+        competitor.setCurrentHeading(boatData.getHeading());
 
-    /**
-     * Parse binary data into XML and create a new parser dependant on the XmlSubType
-     *
-     * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
-     * @throws IOException   IOException
-     * @throws JDOMException JDOMException
-     */
-    private void readXMLMessage(byte[] message) throws IOException, JDOMException {
-        String xml = byteStreamConverter.parseXMLMessage(message);
-        XmlSubtype subType = byteStreamConverter.getXmlSubType();
-        switch (subType) {
-            case REGATTA:
-                RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
-                this.timezone = regattaParser.getOffsetUTC();
-                if (timezone.substring(0, 1) != "-") {
-                    timezone = "+" + timezone;
-                }
-                break;
-            case RACE:
-                this.raceXMLParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
-                this.raceData = raceXMLParser.getRaceData();
-                this.courseBoundary = raceXMLParser.getCourseBoundary();
-                this.compoundMarks = raceData.getCourse();
-                setScalingFactors();
-                break;
-            case BOAT:
-                this.boatXMLParser = new BoatXMLParser(xml.trim());
-                break;
+        double x = boatDataParser.getPixelPoint().getXValue();
+        double y = boatDataParser.getPixelPoint().getYValue();
+        MutablePoint location = new MutablePoint(x, y);
+        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
+        competitor.setPosition(location);
+        competitor.setVelocity(boatData.getSpeed());
+
+        // boat colour
+        if (competitor.getColor() == null) {
+            Color colour = this.colourPool.getColours().get(0);
+            competitor.setColor(colour);
+            colourPool.getColours().remove(colour);
         }
-    }
 
+        //speed
+        this.storedCompetitors.put(boatID, competitor);
+
+        List<Competitor> comps = new ArrayList<>();
+        for (Integer id : this.storedCompetitors.keySet()) {
+            comps.add(this.storedCompetitors.get(id));
+        }
+
+        this.competitors = comps;
+    }
 
     /**
      * Updates the course features/marks
@@ -314,41 +313,106 @@ public class Interpreter {
         this.courseFeatures = points;
     }
 
+
+
     /**
-     * Updates the boat properties as data is being received.
+     * Parse binary data into XML and create a new parser dependant on the XmlSubType
      *
-     * @param boatDataParser BoatDataParser the boat data parser
+     * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
+     * @throws IOException   IOException
+     * @throws JDOMException JDOMException
      */
-    private void updateBoatProperties(BoatDataParser boatDataParser) {
-        int boatID = boatData.getSourceID();
-
-        Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
-        competitor.setCurrentHeading(boatData.getHeading());
-
-        double x = boatDataParser.getPixelPoint().getXValue();
-        double y = boatDataParser.getPixelPoint().getYValue();
-        MutablePoint location = new MutablePoint(x, y);
-        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
-        competitor.setPosition(location);
-        competitor.setVelocity(boatData.getSpeed());
-
-        // boat colour
-        if (competitor.getColor() == null) {
-            Color colour = this.colourPool.getColours().get(0);
-            competitor.setColor(colour);
-            colourPool.getColours().remove(colour);
+    private void readXMLMessage(byte[] message) throws IOException, JDOMException {
+        String xml = parseXMLMessage(message);
+        switch (this.xmlSubType) {
+            case REGATTA:
+                RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
+                this.timezone = regattaParser.getOffsetUTC();
+                if (!Objects.equals(timezone.substring(0, 1), "-")) {
+                    timezone = "+" + timezone;
+                }
+                break;
+            case RACE:
+                this.raceXMLParser = new RaceXMLParser(xml.trim(), canvasWidth, canvasHeight);
+                this.raceData = raceXMLParser.getRaceData();
+                this.courseBoundary = raceXMLParser.getCourseBoundary();
+                this.compoundMarks = raceData.getCourse();
+                setScalingFactors();
+                break;
+            case BOAT:
+                this.boatXMLParser = new BoatXMLParser(xml.trim());
+                break;
         }
-
-        //speed
-        this.storedCompetitors.put(boatID, competitor);
-
-        List<Competitor> comps = new ArrayList<>();
-        for (Integer id : this.storedCompetitors.keySet()) {
-            comps.add(this.storedCompetitors.get(id));
-        }
-
-        this.competitors = comps;
     }
+
+
+    /**
+     * Parse binary data into XML
+     *
+     * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
+     * @return String XML string describing Regatta, Race, or Boat
+     */
+    public String parseXMLMessage(byte[] message) {
+        int regattaType = 5;
+        int raceType = 6;
+        int boatType = 7;
+        // can get version number, ack number, timestamp if needed
+
+        int subType = message[9];
+        if (subType == regattaType) {
+            xmlSubType = XmlSubtype.REGATTA;
+        }
+        if (subType == raceType) {
+            xmlSubType = XmlSubtype.RACE;
+        }
+        if (subType == boatType) {
+            xmlSubType = XmlSubtype.BOAT;
+        }
+
+        // can get sequence number if needed
+
+        byte[] xmlLengthBytes = Arrays.copyOfRange(message, 12, 14);
+        int xmlLength = hexByteArrayToInt(xmlLengthBytes);
+
+        int start = 14;
+        int end = start + xmlLength;
+
+        byte[] xmlBytes = Arrays.copyOfRange(message, start, end);
+        String charset = "UTF-8";
+        String xmlString = "";
+
+        try {
+            xmlString = new String(xmlBytes, charset);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return xmlString;
+    }
+
+
+    /**
+     * Sets the scaling values after the boundary has been received and parsed by the raceXMLParser.
+     */
+    private void setScalingFactors() {
+        this.bufferX = raceXMLParser.getBufferX();
+        this.bufferY = raceXMLParser.getBufferY();
+        this.scaleFactor = raceXMLParser.getScaleFactor();
+        this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
+        this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
+    }
+
+    /**
+     * Sets the canvas width and height so that the parser can scale values to screen.
+     *
+     * @param width  double the width of the canvas
+     * @param height double the height of the canvas
+     */
+    private void setCanvasDimensions(double width, double height) {
+        this.canvasWidth = width;
+        this.canvasHeight = height;
+    }
+
 
 
 }
