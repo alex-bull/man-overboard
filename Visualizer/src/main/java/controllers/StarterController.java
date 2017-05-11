@@ -173,12 +173,12 @@ public class StarterController implements Initializable, ClockHandler {
         this.worldClock = new WorldClock(this, dataSource.getCourseTimezone());
         worldClock.start();
 
-        compList.setAll(dataSource.getCompetitors());
+        compList.setAll(dataSource.getCompetitorsPosition());
         raceStatus.setText(dataSource.getRaceStatus());
 
         System.out.println(dataSource.getRaceStatus());
 
-        if (dataSource.getCompetitors().size() == 0) {
+        if (dataSource.getCompetitorsPosition().size() == 0) {
             Stage thisStage = (Stage) countdownButton.getScene().getWindow();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");

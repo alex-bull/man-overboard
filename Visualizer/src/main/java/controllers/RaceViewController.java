@@ -410,7 +410,7 @@ public class RaceViewController implements ClockHandler, Initializable {
                 drawLine(dataSource.getFinishMarks());
             }
         }
-        List<Competitor> competitors = dataSource.getCompetitors();
+        List<Competitor> competitors = dataSource.getCompetitorsPosition();
         //move competitors and draw tracks
         for (Competitor boat : competitors) {
             if (counter % 70 == 0) {
@@ -439,7 +439,7 @@ public class RaceViewController implements ClockHandler, Initializable {
         //draw wind direction arrow
         drawArrow(dataSource.getWindDirection(), gc);
 
-        while (dataSource.getCompetitors() == null) {
+        while (dataSource.getCompetitorsPosition() == null) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

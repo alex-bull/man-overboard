@@ -24,7 +24,7 @@ public interface DataSource {
     String getRaceStatus();
     long getMessageTime();
     long getExpectedStartTime();
-    List<Competitor> getCompetitors();
+    List<Competitor> getCompetitorsPosition();
     double getWindDirection();
     int getNumBoats();
 }

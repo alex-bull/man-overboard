@@ -35,7 +35,7 @@ import static parsers.Converter.hexByteArrayToInt;
 public class Interpreter implements DataSource, PacketHandler {
 
     private XmlSubtype xmlSubType;
-    private List<Competitor> competitors;
+    private List<Competitor> competitorsPosition;
     private double windDirection;
     private Rectangle2D primaryScreenBounds;
     private BoatData boatData;
@@ -63,7 +63,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
 
 public Interpreter(){
-    competitors=new ArrayList<>();
+    competitorsPosition =new ArrayList<>();
 }
 
     public List<CourseFeature> getCourseFeatures() {
@@ -98,8 +98,8 @@ public Interpreter(){
         return expectedStartTime;
     }
 
-    public List<Competitor> getCompetitors() {
-        return competitors;
+    public List<Competitor> getCompetitorsPosition() {
+        return competitorsPosition;
     }
 
     public double getWindDirection() {
@@ -137,7 +137,7 @@ public Interpreter(){
 
         try {
             //wait for data to come in before setting fields
-            while (this.numBoats < 1 || this.competitors.size() < this.numBoats) {
+            while (this.numBoats < 1 || this.competitorsPosition.size() < this.numBoats) {
                 try {
                     Thread.sleep(1000);
                 } catch (Exception e) {
@@ -182,11 +182,12 @@ public Interpreter(){
             this.windDirection = raceStatusData.getWindDirection();
             this.numBoats = raceStatusData.getNumBoatsInRace();
             for (int id : raceStatusData.getBoatStatuses().keySet()) {
-                for (Competitor competitor : competitors) {
-                    if (competitor.getSourceID() == id) {
-                        competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
-                    }
-                }
+//                for (Competitor competitor : competitorsPosition) {
+//                    if (competitor.getSourceID() == id) {
+//                        competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+//                    }
+//                }
+                storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
             }
         } else if (messageType == markRoundingMessageType) {
             MarkRoundingParser markRoundingParser = new MarkRoundingParser(packet);
@@ -200,7 +201,7 @@ public Interpreter(){
             }
 
             String markName = markRoundingData.getMarkName();
-            for (Competitor competitor : this.competitors) {
+            for (Competitor competitor : this.competitorsPosition) {
                 if (competitor.getSourceID() == this.markRoundingData.getSourceID()) {
                     competitor.setLastMarkPassed(markName);
                 }
@@ -244,19 +245,16 @@ public Interpreter(){
             colourPool.getColours().remove(colour);
         }
 
-        //add to competitors
+        //add to competitorsPosition and storedCompetitors if they are new
         if(!storedCompetitors.keySet().contains(boatID)) {
             this.storedCompetitors.put(boatID, competitor);
-            competitors.add(competitor);
+            competitorsPosition.add(competitor);
         }
 
-//        List<Competitor> comps = new ArrayList<>();
-//        for (Integer id : this.storedCompetitors.keySet()) {
-//            comps.add(this.storedCompetitors.get(id));
-//        }
 
-        competitors.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
-//        this.competitors = comps;
+        //order the list of competitors
+        competitorsPosition.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+//        this.competitorsPosition = comps;
     }
 
     /**

@@ -12,7 +12,6 @@ import models.RaceEvent;
 import utilities.DataSource;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -52,7 +51,7 @@ public class TableController implements Initializable {
      * @param dataSource DataSource the latest race data
      */
     void refresh(DataSource dataSource) {
-        this.setTable(dataSource.getCompetitors());
+        this.setTable(dataSource.getCompetitorsPosition());
     }
 
     /**
