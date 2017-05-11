@@ -18,8 +18,6 @@ public interface DataSource {
     boolean receive(String host, int port);
     List<CourseFeature> getCourseFeatures();
     List<MutablePoint> getCourseBoundary();
-    void setCourseBoundary(List<MutablePoint> courseBoundary);
-    List<CompoundMarkData> getCompoundMarks();
     String getCourseTimezone();
     List<MarkData> getStartMarks();
     List<MarkData> getFinishMarks();
@@ -27,10 +25,6 @@ public interface DataSource {
     long getMessageTime();
     long getExpectedStartTime();
     List<Competitor> getCompetitors();
-    //Setters
-    void setCompetitors(List<Competitor> competitors);
     double getWindDirection();
-    HashMap<Integer, Competitor> getStoredCompetitors();
-    MarkRoundingData getMarkRoundingData();
     int getNumBoats();
 }

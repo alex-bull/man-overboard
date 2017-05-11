@@ -1,9 +1,8 @@
 package controllers;
 
-import models.Race;
+import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
-import utilities.DataReceiver;
 import utilities.DataSource;
 
 /**
@@ -13,25 +12,29 @@ import utilities.DataSource;
 public class MainController {
 
 
-    private Race race;
-
-    @FXML
-    private TableController tableController;
-
-    @FXML
-    private RaceViewController raceViewController;
-
-    @FXML
-    private SplitPane splitPane;
+    @FXML private TableController tableController;
+    @FXML private RaceViewController raceViewController;
+    @FXML private SplitPane splitPane;
 
 
     /**
-     * Sets the race
+     * Begins the race loop which updates child controllers at ~60fps
+     * @param dataSource DataSource the data to display
+     * @param width double the screen width
+     * @param height double the screen height
      */
-    public void setRace(DataSource dataSource, double width, double height) {
-        raceViewController.setTableController(tableController);
+    public void beginRace(DataSource dataSource, double width, double height) {
         raceViewController.begin(width, height, dataSource);
 
+        AnimationTimer timer = new AnimationTimer() {
 
+            @Override
+            public void handle(long now) {
+                raceViewController.refresh(dataSource);
+                tableController.refresh(dataSource);
+            }
+        };
+
+        timer.start();
     }
 }

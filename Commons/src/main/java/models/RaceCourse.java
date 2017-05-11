@@ -14,7 +14,6 @@ public class RaceCourse implements Course {
 
     /**
      * A constructor for the RaceCourse
-     *
      * @param points         List points on the course
      * @param boundaryPoints List the points that make up the course boundary
      * @param windDirection  double the direction of the wind

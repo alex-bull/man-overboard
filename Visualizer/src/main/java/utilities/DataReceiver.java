@@ -1,31 +1,11 @@
 package utilities;
 
-import models.ColourPool;
-import models.Competitor;
-import models.CourseFeature;
-import models.MutablePoint;
-import parsers.*;
-import javafx.scene.paint.Color;
-import org.jdom2.JDOMException;
-import parsers.boatLocation.BoatData;
-import parsers.boatLocation.BoatDataParser;
-import parsers.markRounding.MarkRoundingData;
-import parsers.markRounding.MarkRoundingParser;
-import parsers.raceStatus.RaceStatusData;
-import parsers.raceStatus.RaceStatusParser;
-import parsers.xml.race.CompoundMarkData;
-import parsers.xml.race.MarkData;
-import parsers.xml.race.RaceData;
-import parsers.xml.race.RaceXMLParser;
-import parsers.xml.boat.BoatXMLParser;
-import parsers.xml.regatta.RegattaXMLParser;
-
 import java.io.DataInputStream;
 import java.io.EOFException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.*;
+import java.util.Arrays;
+import java.util.TimerTask;
 
 import static parsers.Converter.hexByteArrayToInt;
 
@@ -37,56 +17,22 @@ import static parsers.Converter.hexByteArrayToInt;
  */
 public class DataReceiver extends TimerTask {
 
-
-    private Socket receiveSock;
     private DataInputStream dis;
     private PacketHandler handler;
 
     /**
      * Initializes port to receive binary data from
-     *
      * @param host String host of the server
      * @param port int number of port of the server
+     * @param handler PacketHandler handler for incoming packets
      * @throws IOException IOException
      */
-    public DataReceiver(String host, int port, PacketHandler handler) throws IOException {
-        receiveSock = new Socket(host, port);
+    DataReceiver(String host, int port, PacketHandler handler) throws IOException {
+        Socket receiveSock = new Socket(host, port);
         this.handler = handler;
         dis = new DataInputStream(receiveSock.getInputStream());
         System.out.println("Start connection to server...");
     }
-
-//    /**
-//     * Creates a new data receiver and runs at the period of 100ms
-//     *
-//     * @param args String[]
-//     * @throws InterruptedException Interrupted Exception
-//     */
-//    public static void main(String[] args) throws InterruptedException {
-//        DataReceiver dataReceiver = null;
-//        while (dataReceiver == null) {
-//            try {
-//                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
-//                Timer timer = new Timer();
-//                timer.schedule(dataReceiver, 0, 100);
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
-    /**
-     * Close the established streams and sockets
-     *
-     * @throws IOException IOException
-     */
-    private void close() throws IOException {
-        receiveSock.close();
-        dis.close();
-    }
-
-
 
     /**
      * Check for the first and second sync byte
@@ -157,6 +103,25 @@ public class DataReceiver extends TimerTask {
         }
     }
 
+    //    /**
+//     * Creates a new data receiver and runs at the period of 100ms
+//     *
+//     * @param args String[]
+//     * @throws InterruptedException Interrupted Exception
+//     */
+//    public static void main(String[] args) throws InterruptedException {
+//        DataReceiver dataReceiver = null;
+//        while (dataReceiver == null) {
+//            try {
+//                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
+//                Timer timer = new Timer();
+//                timer.schedule(dataReceiver, 0, 100);
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
 
 }
