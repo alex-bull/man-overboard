@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -27,18 +28,25 @@ public class SparklinesController implements Initializable {
     @FXML
     private LineChart sparklinesChart;
 
-    private DataReceiver dataReceiver;
+    private List<Competitor> competitors;
 
+    private List<XYChart.Series> seriesList;
 
-
-    /**
+    public SparklinesController(List<Competitor> competitors) {
+        this.competitors = competitors;
+    }
+/**
      * Initialiser for the SparklinesController
      */
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
 
-        // initialise race table
-        //sparklinesChart.
+        XYChart.Series series = new XYChart.Series();
+
+        for(Competitor boat: competitors){
+            seriesList.add(new XYChart.Series());
+            //seriesList.get(boat.in)
+        }
 
     }
 
