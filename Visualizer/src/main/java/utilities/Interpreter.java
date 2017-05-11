@@ -151,7 +151,7 @@ public class Interpreter implements DataSource, PacketHandler {
             this.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
 
         } catch (IOException e) {
-            System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
+            System.out.println("Could not connect to: " + host + ":" + port);
             dataReceiver = null;
             return false;
         }
@@ -352,7 +352,7 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
      * @return String XML string describing Regatta, Race, or Boat
      */
-    public String parseXMLMessage(byte[] message) {
+    private String parseXMLMessage(byte[] message) {
         int regattaType = 5;
         int raceType = 6;
         int boatType = 7;

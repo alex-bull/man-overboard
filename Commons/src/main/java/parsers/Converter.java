@@ -34,4 +34,53 @@ public class Converter {
         return value;
     }
 
+    /**
+     * Converts the received race status integer to a string with meaning.
+     *
+     * @param status Integer the race status integer
+     * @return String the description of the race status
+     */
+    public static String raceStatusToString(Integer status) {
+        String statusString;
+        switch (status) {
+            case 0:
+                statusString = "Not Active";
+                break;
+            case 1:
+                statusString = "Warning";
+                break;
+            case 2:
+                statusString = "Preparatory";
+                break;
+            case 3:
+                statusString = "Started";
+                break;
+            case 4:
+                statusString = "Finished";
+                break;
+            case 5:
+                statusString = "Retired";
+                break;
+            case 6:
+                statusString = "Abandoned";
+                break;
+            case 7:
+                statusString = "Postponed";
+                break;
+            case 8:
+                statusString = "Terminated";
+                break;
+            case 9:
+                statusString = "Race start time not set";
+                break;
+            case 10:
+                statusString = "Prestart";
+                break;
+            default:
+                statusString = "No status found";
+                break;
+        }
+        return statusString;
+    }
+
 }
