@@ -60,13 +60,11 @@ public class TableController implements Initializable {
      * @param competitors List the competitors in the race
      */
     private void setTable(List<Competitor> competitors) {
-        List<Competitor> cpy = new ArrayList<>(competitors);
-        cpy.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
         events.clear();
-        for (int i = 0; i < cpy.size(); i++) {
-            String teamName = cpy.get(i).getTeamName();
-            Double speed = cpy.get(i).getVelocity();
-            String featureName = cpy.get(i).getLastMarkPassed();
+        for (int i = 0; i < competitors.size(); i++) {
+            String teamName = competitors.get(i).getTeamName();
+            Double speed = competitors.get(i).getVelocity();
+            String featureName = competitors.get(i).getLastMarkPassed();
             RaceEvent raceEvent = new RaceEvent(teamName, speed, featureName, i + 1);
             events.add(raceEvent);
         }

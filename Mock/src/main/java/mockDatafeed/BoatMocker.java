@@ -84,12 +84,12 @@ public class BoatMocker extends TimerTask {
     public void generateCompetitors(int numBoats) {
         competitors = new ArrayList<>();
         //generate all boats
-        competitors.add(new Boat("Oracle Team USA", 22, prestart, "USA", 101, 1));
-        competitors.add(new Boat("Emirates Team New Zealand", 20, prestart, "NZL", 103, 1));
-        competitors.add(new Boat("Ben Ainslie Racing", 18, prestart, "GBR", 106, 1));
-        competitors.add(new Boat("SoftBank Team Japan", 16, prestart, "JPN", 104, 1));
-        competitors.add(new Boat("Team France", 15, prestart, "FRA", 105, 1));
-        competitors.add(new Boat("Artemis Racing", 19, prestart, "SWE", 102, 1));
+        competitors.add(new Boat("Oracle Team USA", 44, prestart, "USA", 101, 1));
+        competitors.add(new Boat("Emirates Team New Zealand", 40, prestart, "NZL", 103, 1));
+        competitors.add(new Boat("Ben Ainslie Racing", 41, prestart, "GBR", 106, 1));
+        competitors.add(new Boat("SoftBank Team Japan", 42, prestart, "JPN", 104, 1));
+        competitors.add(new Boat("Team France", 43, prestart, "FRA", 105, 1));
+        competitors.add(new Boat("Artemis Racing", 45, prestart, "SWE", 102, 1));
 
         //generate mark boats
         markBoats = new ArrayList<>();

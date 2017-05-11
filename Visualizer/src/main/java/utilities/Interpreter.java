@@ -62,6 +62,9 @@ public class Interpreter implements DataSource, PacketHandler {
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
 
+public Interpreter(){
+    competitors=new ArrayList<>();
+}
 
     public List<CourseFeature> getCourseFeatures() {
         return courseFeatures;
@@ -241,15 +244,19 @@ public class Interpreter implements DataSource, PacketHandler {
             colourPool.getColours().remove(colour);
         }
 
-        //speed
-        this.storedCompetitors.put(boatID, competitor);
-
-        List<Competitor> comps = new ArrayList<>();
-        for (Integer id : this.storedCompetitors.keySet()) {
-            comps.add(this.storedCompetitors.get(id));
+        //add to competitors
+        if(!storedCompetitors.keySet().contains(boatID)) {
+            this.storedCompetitors.put(boatID, competitor);
+            competitors.add(competitor);
         }
 
-        this.competitors = comps;
+//        List<Competitor> comps = new ArrayList<>();
+//        for (Integer id : this.storedCompetitors.keySet()) {
+//            comps.add(this.storedCompetitors.get(id));
+//        }
+
+        competitors.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+//        this.competitors = comps;
     }
 
     /**
