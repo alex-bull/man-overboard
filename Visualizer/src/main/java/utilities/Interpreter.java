@@ -182,12 +182,12 @@ public Interpreter(){
             this.windDirection = raceStatusData.getWindDirection();
             this.numBoats = raceStatusData.getNumBoatsInRace();
             for (int id : raceStatusData.getBoatStatuses().keySet()) {
-//                for (Competitor competitor : competitorsPosition) {
-//                    if (competitor.getSourceID() == id) {
-//                        competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
-//                    }
-//                }
-                storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+                for (Competitor competitor : competitorsPosition) {
+                    if (competitor.getSourceID() == id) {
+                        competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+                    }
+                }
+//                storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
             }
         } else if (messageType == markRoundingMessageType) {
             MarkRoundingParser markRoundingParser = new MarkRoundingParser(packet);
