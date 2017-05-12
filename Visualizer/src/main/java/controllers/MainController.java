@@ -15,6 +15,7 @@ public class MainController {
     @FXML private TableController tableController;
     @FXML private RaceViewController raceViewController;
     @FXML private SplitPane splitPane;
+    @FXML private PeripheralController peripheralController;
 
 
     /**
@@ -32,6 +33,7 @@ public class MainController {
             public void handle(long now) {
                 raceViewController.refresh(dataSource);
                 tableController.refresh(dataSource);
+                peripheralController.refresh(dataSource);
             }
         };
 

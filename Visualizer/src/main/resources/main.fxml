@@ -18,6 +18,9 @@
     <children>
         <fx:include fx:id="raceView" source="raceView.fxml"/>
         <fx:include fx:id="table" source="table.fxml"/>
+        <fx:include fx:id="peripheral" source="windDirection.fxml"/>
+
+
 
     </children>
 </AnchorPane>

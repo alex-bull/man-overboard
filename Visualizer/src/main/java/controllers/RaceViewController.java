@@ -55,7 +55,6 @@ public class RaceViewController implements ClockHandler, Initializable {
     private List<CourseFeature> courseFeatures = null;
     private Map<String, Shape> markModels = new HashMap<>();
     private DataSource dataSource;
-
     private long startTimeNano = System.nanoTime();
     private int counter = 0;
 
@@ -72,6 +71,7 @@ public class RaceViewController implements ClockHandler, Initializable {
         showAllAnnotations();
 
         fpsToggle.setSelected(true);
+
     }
 
     /*
@@ -141,22 +141,6 @@ public class RaceViewController implements ClockHandler, Initializable {
         if (clock == worldClock) {
             worldClockValue.setText(newTime);
         }
-    }
-
-    /**
-     * Draws an arrow on the screen at top left corner
-     *
-     * @param angle double the angle of rotation
-     */
-    void drawArrow(double angle, GraphicsContext gc) {
-        gc.save();
-        gc.setFill(Color.BLACK);
-        Rotate r = new Rotate(angle, 55, 105); // rotate object
-        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-        gc.translate(0.0, 30.0);
-        gc.fillPolygon(new double[]{40, 50, 50, 60, 60, 70, 55}, new double[]{70, 70, 110, 110, 70, 70, 50},
-                7);
-        gc.restore();
     }
 
 
@@ -435,10 +419,6 @@ public class RaceViewController implements ClockHandler, Initializable {
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
         gc.setFill(Color.LIGHTBLUE);
         gc.fillRect(0, 0, width, height);
-
-        //draw wind direction arrow
-        drawArrow(dataSource.getWindDirection(), gc);
-
         while (dataSource.getCompetitorsPosition() == null) {
             try {
                 Thread.sleep(1000);
