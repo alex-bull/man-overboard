@@ -324,7 +324,6 @@ public class DataReceiver extends TimerTask {
                         updateBoatProperties(boatDataParser);
                     } else if (boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
                         updateCourseMarks(boatDataParser);
-
                     }
                 }
             }
@@ -342,8 +341,8 @@ public class DataReceiver extends TimerTask {
      */
     private void updateCourseMarks(BoatDataParser boatDataParser) {
         //make scaling in proportion
-        startMarks = raceData.getStartMarks();
-        finishMarks = raceData.getFinishMarks();
+        List<MarkData> startMarksNotScaled = raceData.getStartMarks();
+        List<MarkData> finishMarksNotScaled = raceData.getFinishMarks();
         double bufferX = raceXMLParser.getBufferX();
         double bufferY = raceXMLParser.getBufferY();
         double scaleFactor = raceXMLParser.getScaleFactor();
@@ -351,20 +350,22 @@ public class DataReceiver extends TimerTask {
         CourseFeature courseFeature = boatDataParser.getCourseFeature();
 
         courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
-        for (MarkData mark : startMarks) {
+        //Update start line marks
+        for (MarkData mark : startMarksNotScaled) {
             if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
                 mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
                 mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
             }
         }
-
-        for (MarkData mark : finishMarks) {
+        //Update finish line marks
+        for (MarkData mark : finishMarksNotScaled) {
             if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
                 mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
                 mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
             }
         }
-
+        startMarks = startMarksNotScaled;
+        finishMarks = finishMarksNotScaled;
         this.storedFeatures.put(boatData.getSourceID(), courseFeature);
 
         for (Integer id : this.storedFeatures.keySet()) {

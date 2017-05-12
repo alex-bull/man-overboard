@@ -105,6 +105,7 @@ public class RaceXMLParser {
             int zoneSize = Integer.parseInt(corner.getAttributeValue("ZoneSize"));
             CornerData cornerData = new CornerData(cornerSeqID, compoundMarkID, rounding, zoneSize);
 
+            //Start Line
             if (cornerSeqID == 1) {
                 for (CompoundMarkData mark : course) {
                     if (mark.getID() == compoundMarkID) {
@@ -112,6 +113,7 @@ public class RaceXMLParser {
                     }
                 }
             }
+            //Finish Line
             if (cornerSeqID == size) {
                 for (CompoundMarkData mark : course) {
                     if (mark.getID() == compoundMarkID) {

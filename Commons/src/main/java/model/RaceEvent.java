@@ -4,7 +4,7 @@ package model;
  * Created by mgo65 on 6/03/17.
  * Represents an event on the race timeline
  */
-public class RaceEvent {
+public class RaceEvent{
 
     private String teamName;
     private String featureName;
@@ -50,6 +50,5 @@ public class RaceEvent {
     public void setSpeed(Double speed) {
         this.speed = speed;
     }
-
 
 }

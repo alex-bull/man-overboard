@@ -34,32 +34,19 @@ import static javafx.scene.paint.Color.*;
  */
 public class RaceViewController implements ClockHandler, Initializable {
 
-    @FXML
-    public Text worldClockValue;
-    @FXML
-    private AnchorPane raceView;
-    @FXML
-    private Pane raceViewPane;
-    @FXML
-    private Canvas raceViewCanvas;
-    @FXML
-    private Text timerText;
-    @FXML
-    private Label fpsCounter;
-    @FXML
-    private RadioButton allAnnotationsRadio;
-    @FXML
-    private RadioButton noAnnotationsRadio;
-    @FXML
-    private RadioButton someAnnotationsRadio;
-    @FXML
-    private CheckBox speedButton;
-    @FXML
-    private CheckBox nameButton;
-    @FXML
-    private CheckBox fpsToggle;
-    @FXML
-    private Text status;
+    @FXML public Text worldClockValue;
+    @FXML private AnchorPane raceView;
+    @FXML private Pane raceViewPane;
+    @FXML private Canvas raceViewCanvas;
+    @FXML private Text timerText;
+    @FXML private Label fpsCounter;
+    @FXML private RadioButton allAnnotationsRadio;
+    @FXML private RadioButton noAnnotationsRadio;
+    @FXML private RadioButton someAnnotationsRadio;
+    @FXML private CheckBox speedButton;
+    @FXML private CheckBox nameButton;
+    @FXML private CheckBox fpsToggle;
+    @FXML private Text status;
 
     private TableController tableController;
     private Clock raceClock;
@@ -71,10 +58,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     private DataReceiver dataReceiver;
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
-    private List<MarkData> startMarks = null;
-    private List<MarkData> finishMarks = null;
     private Map<String, Shape> markModels = new HashMap<>();
-    private List<Line> lineModels = new ArrayList<>();
 
 
     @Override
@@ -208,8 +192,12 @@ public class RaceViewController implements ClockHandler, Initializable {
         double x2 = gates.get(1).getTargetLat();
         double y2 = gates.get(1).getTargetLon();
         Line line = new Line(x1, y1, x2, y2);
+        System.out.println("X1 " + x1);
+        System.out.println("Y1 " + y1);
+        System.out.println("X2 " + x2);
+        System.out.println("Y2 " + y2);
+        System.out.println("------------------------------------------");
         this.raceViewPane.getChildren().add(line);
-        this.lineModels.add(line);
 
     }
 
@@ -243,9 +231,10 @@ public class RaceViewController implements ClockHandler, Initializable {
             }
             gc.setLineDashes(5);
             gc.setLineWidth(0.8);
+            gc.clearRect(0,0,4000,4000);
+            drawBackGround(gc,4000,4000);
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.setFill(Color.POWDERBLUE);
-
             //shade inside the boundary
             gc.fillPolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.restore();
@@ -414,13 +403,16 @@ public class RaceViewController implements ClockHandler, Initializable {
     private void drawTrack(Competitor boat, GraphicsContext gc) {
         gc.setFill(boat.getColor());
         gc.save();
-        Rotate r = new Rotate(boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
-        Rotate rr = new Rotate(-boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
-
-        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-        gc.translate(0, 3);
-        gc.fillOval(boat.getPosition().getXValue() - 1, boat.getPosition().getYValue() - 1, 2, 2);
-        gc.setTransform(rr.getMxx(), rr.getMyx(), rr.getMxy(), rr.getMyy(), rr.getTx(), rr.getTy());
+        Dot dot = new Dot(boat.getPosition().getXValue(), boat.getPosition().getYValue());
+//        Rotate r = new Rotate(boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
+//        Rotate rr = new Rotate(-boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
+//
+//        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
+//        gc.translate(0, 3);
+//        gc.fillOval(boat.getPosition().getXValue() - 1, boat.getPosition().getYValue() - 1, 2, 2);
+//        gc.setTransform(rr.getMxx(), rr.getMyx(), rr.getMxy(), rr.getMyy(), rr.getTx(), rr.getTy());
+        Circle circle = new Circle(dot.getX(), dot.getY(), 2, boat.getColor());
+        this.raceViewPane.getChildren().add(circle);
 
         gc.restore();
     }
@@ -450,6 +442,17 @@ public class RaceViewController implements ClockHandler, Initializable {
         this.markModels.get(name).setLayoutY(y);
     }
 
+    /**
+     *
+     * @param gc
+     * @param width
+     * @param height
+     */
+    public void drawBackGround(GraphicsContext gc, double width, double height) {
+        gc.setFill(Color.LIGHTBLUE);
+        gc.fillRect(0, 0, width, height);
+    }
+
 
     /**
      * Starts the animation timer to animate the race
@@ -462,8 +465,7 @@ public class RaceViewController implements ClockHandler, Initializable {
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
 
         //draw the course
-        gc.setFill(Color.LIGHTBLUE);
-        gc.fillRect(0, 0, width, height);
+        drawBackGround(gc,width,height);
 
         //draw wind direction arrow
         drawArrow(dataReceiver.getWindDirection(), gc);
@@ -522,6 +524,7 @@ public class RaceViewController implements ClockHandler, Initializable {
                         drawLine(dataReceiver.getFinishMarks());
                     }
                 }
+
 
                 //move competitors and draw tracks
                 for (int i = 0; i < competitors.size(); i++) {

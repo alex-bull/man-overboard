@@ -13,8 +13,10 @@ import utilities.DataReceiver;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by msl47 on 21/03/17.
@@ -53,10 +55,14 @@ public class TableController implements Initializable {
 
     }
 
+    public ObservableList<RaceEvent> getEvents() {
+        return events;
+    }
 
-    public void setTable(List<Competitor> competitors) {
+    public List<Competitor> setTable(List<Competitor> competitors) {
         List<Competitor> cpy = new ArrayList<>(competitors);
         cpy.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+
         events.clear();
         for (int i = 0; i < cpy.size(); i++) {
             String teamName = cpy.get(i).getTeamName();
@@ -65,7 +71,14 @@ public class TableController implements Initializable {
             RaceEvent raceEvent = new RaceEvent(teamName, speed, featureName, i + 1);
             events.add(raceEvent);
         }
+        return cpy;
     }
 
+    public void printTable(){
+        for(RaceEvent raceEvent:events){
+            System.out.println(raceEvent.getTeamName());
+        }
+        System.out.println();
+    }
 
 }
