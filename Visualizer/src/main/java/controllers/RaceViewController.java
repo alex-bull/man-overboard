@@ -29,13 +29,10 @@ import static javafx.scene.paint.Color.*;
 /**
  * Controller for the race view.
  */
-public class RaceViewController implements ClockHandler, Initializable {
+public class RaceViewController implements Initializable {
 
-    @FXML public Text worldClockValue;
-    @FXML private AnchorPane raceView;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
-    @FXML private Text timerText;
     @FXML private Label fpsCounter;
     @FXML private RadioButton allAnnotationsRadio;
     @FXML private RadioButton noAnnotationsRadio;
@@ -45,8 +42,6 @@ public class RaceViewController implements ClockHandler, Initializable {
     @FXML private CheckBox fpsToggle;
     @FXML private Text status;
 
-    private Clock raceClock;
-    private Clock worldClock;
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polyline> wakeModels = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
@@ -100,7 +95,7 @@ public class RaceViewController implements ClockHandler, Initializable {
      * @param width  double the width of the canvas
      * @param height double the height of the canvas
      */
-    public void begin(double width, double height, DataSource dataSource) {
+    void begin(double width, double height, DataSource dataSource) {
 
         raceViewCanvas.setHeight(height);
         raceViewCanvas.setWidth(width);
@@ -109,38 +104,7 @@ public class RaceViewController implements ClockHandler, Initializable {
 
         this.dataSource = dataSource;
 
-        long expectedStartTime = dataSource.getExpectedStartTime();
-        long firstMessageTime = dataSource.getMessageTime();
-        if (expectedStartTime != 0 && firstMessageTime != 0) {
-            this.raceClock = new RaceClock(this, 1, 0);
-            long raceTime = firstMessageTime - expectedStartTime;
-            long startTime = System.currentTimeMillis() - raceTime;
-            raceClock.start(startTime);
-        } else {
-            this.raceClock = new RaceClock(this, 1, 27000);
-            raceClock.start();
-        }
-
-        String timezone = dataSource.getCourseTimezone();
-        this.worldClock = new WorldClock(this, timezone);
-        worldClock.start();
-
         animate(width, height);
-    }
-
-
-    /**
-     * Implementation of ClockHandler interface method
-     *
-     * @param newTime The currentTime of the clock
-     */
-    public void clockTicked(String newTime, Clock clock) {
-        if (clock == raceClock) {
-            timerText.setText(newTime);
-        }
-        if (clock == worldClock) {
-            worldClockValue.setText(newTime);
-        }
     }
 
 
@@ -190,7 +154,7 @@ public class RaceViewController implements ClockHandler, Initializable {
      *
      * @param gc GraphicsContext
      */
-    public void drawBoundary(GraphicsContext gc) {
+    private void drawBoundary(GraphicsContext gc) {
 
         if (courseBoundary != null) {
             gc.save();
@@ -209,7 +173,6 @@ public class RaceViewController implements ClockHandler, Initializable {
             //shade inside the boundary
             gc.fillPolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.restore();
-
         }
 
     }
@@ -217,7 +180,6 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     /**
      * Draw annotations
-     *
      * @param boat Competitor a competing boat
      */
     private void drawAnnotations(Competitor boat) {
@@ -362,7 +324,7 @@ public class RaceViewController implements ClockHandler, Initializable {
      * Refreshes the contents of the display to match the datasource
      * @param dataSource DataSource the data to display
      */
-    public void refresh(DataSource dataSource) {
+    void refresh(DataSource dataSource) {
 
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
         this.dataSource = dataSource;
@@ -410,7 +372,6 @@ public class RaceViewController implements ClockHandler, Initializable {
 
     /**
      * Starts the animation timer to animate the race
-     *
      * @param width  the width of the canvas
      * @param height the height of the canvas
      */

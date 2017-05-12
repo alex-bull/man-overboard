@@ -5,7 +5,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
-import utilities.DataSource;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -16,7 +15,7 @@ import static javafx.scene.paint.Color.BLACK;
  * Created by psu43 on 12/05/17.
  * Controller for components for the race display that do not rely on the canvas
  */
-public class PeripheralController implements Initializable{
+public class WindController implements Initializable{
 
     @FXML Pane windPane;
     private Polygon arrow;
@@ -24,7 +23,6 @@ public class PeripheralController implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.arrow = new Polygon();
-
         arrow.setLayoutX(80);
         arrow.setLayoutY(80);
         arrow.getPoints().addAll(
@@ -43,23 +41,15 @@ public class PeripheralController implements Initializable{
 
 
     /**
-     * Draws an arrow on the screen at top left corner
+     * Updates the heading of the wind direction arrow
      * @param angle double the angle of rotation
      */
-    void drawArrow(double angle) {
+    void refresh(double angle) {
         arrow.toFront();
         arrow.getTransforms().clear();
         arrow.getTransforms().add(new Rotate(angle, 0, 0));
-
     }
 
-    /**
-     * Called when the race display updates
-     * @param dataSource DataSource the latest race data
-     */
-    void refresh(DataSource dataSource) {
-        this.drawArrow(dataSource.getWindDirection());
-    }
 
 
 }
