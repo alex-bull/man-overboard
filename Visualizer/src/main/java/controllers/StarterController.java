@@ -226,7 +226,6 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML
     public void confirmStream() {
 
-
         //get the selected stream
         String host = this.streamCombo.getSelectionModel().getSelectedItem();
         if (host == null || host.equals("")) {
@@ -234,16 +233,14 @@ public class StarterController implements Initializable, ClockHandler {
             return;
         }
 
-        this.streamCombo.setDisable(true);
-        this.confirmButton.setDisable(true);
         boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port);
 
-        this.streamCombo.setDisable(streaming);
-        this.confirmButton.setDisable(streaming);
+        if (streaming) {
+            this.streamCombo.setDisable(streaming);
+            this.confirmButton.setDisable(streaming);
 
-        this.setFields();
-
-
+            this.setFields();
+        }
     }
 
 }

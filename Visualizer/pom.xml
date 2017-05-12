@@ -16,6 +16,16 @@
             <artifactId>Commons</artifactId>
             <version>0.0</version>
         </dependency>
+        <dependency>
+            <groupId>seng302</groupId>
+            <artifactId>Mock</artifactId>
+            <version>0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>seng302</groupId>
+            <artifactId>Mock</artifactId>
+            <version>0.0</version>
+        </dependency>
 
     </dependencies>
 

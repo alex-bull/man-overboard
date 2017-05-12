@@ -17,10 +17,14 @@ public class MarkRoundingParser {
     }
 
     private MarkRoundingData processMessage(byte[] body) {
-        Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 13, 17));
-        Integer markID = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 21));
+        try {
+            Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 13, 17));
+            Integer markID = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 21));
 
-        return new MarkRoundingData(sourceID, markID);
+            return new MarkRoundingData(sourceID, markID);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 
