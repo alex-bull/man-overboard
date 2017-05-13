@@ -18,7 +18,6 @@ import java.util.*;
  */
 public class RaceXMLParser {
 
-    private RaceData raceData;
     private List<MutablePoint> courseBoundary;
     private List<CourseFeature> courseFeatures;
     private double scaleFactor;
@@ -26,9 +25,6 @@ public class RaceXMLParser {
     private double bufferY;
     private List<Double> xMercatorCoords;
     private List<Double> yMercatorCoords;
-    private Set<Integer> markIDs = new HashSet<>();
-    private Set<Integer> compoundMarkIDs = new HashSet<>();
-    private Set<Integer> boatIDs = new HashSet<>();
     private double width;
     private double height;
 
@@ -37,15 +33,14 @@ public class RaceXMLParser {
      * Parse XML race data
      *
      * @param xmlStr XML String of race data
-     * @param width  double width of the course view
-     * @param height double height of the course view
      * @throws IOException   IOException
      * @throws JDOMException JDOMException
      */
-    public RaceXMLParser(String xmlStr, double width, double height) throws IOException, JDOMException {
+    public RaceData parseRaceData(String xmlStr, double width, double height) throws IOException, JDOMException {
         this.width = width;
         this.height = height;
-        this.raceData = new RaceData();
+
+        RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
         Document root = builder.build(stream);
@@ -63,13 +58,15 @@ public class RaceXMLParser {
         raceData.setRaceStartTime(raceStartTime);
         raceData.setRaceStartTimePostpone(raceStartTimePostponed);
 
+        Set<Integer> participantIDs = new HashSet<>();
         for (Element yacht : race.getChild("Participants").getChildren()) {
             int sourceID = Integer.parseInt(yacht.getAttributeValue("SourceID"));
             String entry = yacht.getAttributeValue("Entry");
             YachtData yachtData = new YachtData(sourceID, entry);
-            this.boatIDs.add(sourceID);
+            participantIDs.add(sourceID);
             raceData.getParticipants().add(yachtData);
         }
+        raceData.setParticipantIDs(participantIDs);
 
         List<CompoundMarkData> course = new ArrayList<>();
         List<MarkData> startMarks = new ArrayList<>();
@@ -87,11 +84,11 @@ public class RaceXMLParser {
                 double targetLat = Double.parseDouble(mark.getAttributeValue("TargetLat"));
                 double targetLng = Double.parseDouble(mark.getAttributeValue("TargetLng"));
                 int sourceID = Integer.parseInt(mark.getAttributeValue("SourceID"));
-                markIDs.add(sourceID);
+                raceData.addMarkID(sourceID);
                 MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
                 marks.add(markData);
             }
-            compoundMarkIDs.add(compoundMarkID);
+            raceData.addCompoundMarkID(compoundMarkID);
             CompoundMarkData compoundMarkData = new CompoundMarkData(compoundMarkID, compoundMarkName, marks);
             course.add(compoundMarkData);
         }
@@ -129,45 +126,28 @@ public class RaceXMLParser {
             double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
             double lon = Double.parseDouble(limit.getAttributeValue("Lon"));
             LimitData limitData = new LimitData(limitSeqID, lat, lon);
-            raceData.getCourseLimit().add(limitData);
+            raceData.addCourseLimit(limitData);
 
         }
-        parseRace();
-    }
-
-    public RaceData getRaceData() {
+        parseRace(raceData);
         return raceData;
     }
+
+
 
     public List<MutablePoint> getCourseBoundary() {
         return courseBoundary;
     }
 
-    public List<CourseFeature> getCourseFeatures() {
-        return courseFeatures;
-    }
-
-    public Set<Integer> getMarkIDs() {
-        return markIDs;
-    }
-
-    public Set<Integer> getCompoundMarkIDs() {
-        return compoundMarkIDs;
-    }
-
-    public Set<Integer> getBoatIDs() {
-        return boatIDs;
-    }
-
     /**
      * Set buffers and call course parsers
      */
-    private void parseRace() {
+    private void parseRace(RaceData raceData) {
         this.bufferX = Math.max(600, width * 0.6);
         this.bufferY = Math.max(10, height * 0.1);
 
         try {
-            parseBoundary(bufferX, bufferY);
+            parseBoundary(raceData, bufferX, bufferY);
         } catch (Exception ignored) {
         }
     }
@@ -175,18 +155,17 @@ public class RaceXMLParser {
 
     /**
      * Parse the boundary of the course
-     *
+     * @param raceData RaceData
      * @param bufferX canvas buffer width
      * @param bufferY canvas buffer height
      */
-    private void parseBoundary(double bufferX, double bufferY) throws Exception {
+    private void parseBoundary(RaceData raceData, double bufferX, double bufferY) throws Exception {
 
         this.xMercatorCoords = new ArrayList<>();
         this.yMercatorCoords = new ArrayList<>();
         List<MutablePoint> boundary = new ArrayList<>();
-
         //loop through the parsed boundary points
-        for (LimitData limit : this.raceData.getCourseLimit()) {
+        for (LimitData limit : raceData.getCourseLimit()) {
             double lat = limit.getLat();
             double lon = limit.getLon();
 

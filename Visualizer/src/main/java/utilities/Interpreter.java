@@ -62,9 +62,10 @@ public class Interpreter implements DataSource, PacketHandler {
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
 
-public Interpreter(){
-    competitorsPosition =new ArrayList<>();
-}
+    public Interpreter(){
+        competitorsPosition = new ArrayList<>();
+        this.raceXMLParser = new RaceXMLParser();
+    }
 
     public List<CourseFeature> getCourseFeatures() {
         return courseFeatures;
@@ -211,9 +212,9 @@ public Interpreter(){
         } else if (messageType == boatLocationMessageType) {
             BoatDataParser boatDataParser = new BoatDataParser(packet, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
             this.boatData = boatDataParser.getBoatData();
-            if (boatData.getDeviceType() == 1 && raceXMLParser.getBoatIDs().contains(boatData.getSourceID())) {
+            if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                 updateBoatProperties(boatDataParser);
-            } else if (boatData.getDeviceType() == 3 && raceXMLParser.getMarkIDs().contains(boatData.getSourceID())) {
+            } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
                 updateCourseMarks(boatDataParser);
 
             }
@@ -313,8 +314,8 @@ public Interpreter(){
                 }
                 break;
             case RACE:
-                this.raceXMLParser = new RaceXMLParser(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                this.raceData = raceXMLParser.getRaceData();
+               // this.raceXMLParser = new RaceXMLParser(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                this.raceData = raceXMLParser.parseRaceData(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 this.courseBoundary = raceXMLParser.getCourseBoundary();
                 this.compoundMarks = raceData.getCourse();
                 setScalingFactors();
