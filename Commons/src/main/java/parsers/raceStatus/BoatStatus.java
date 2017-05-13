@@ -13,7 +13,7 @@ public class BoatStatus {
     private int estimatedTimeAtNextMark;
     private int estimatedTimeAtFinish;
 
-    public BoatStatus(int sourceID, int boatStatus, int legNumber, int penaltiesAwarded, int penaltiesServed, int estimatedTimeAtNextMark, int estimatedTimeAtFinish) {
+    BoatStatus(int sourceID, int boatStatus, int legNumber, int penaltiesAwarded, int penaltiesServed, int estimatedTimeAtNextMark, int estimatedTimeAtFinish) {
         this.sourceID = sourceID;
         this.boatStatus = boatStatus;
         this.legNumber = legNumber;

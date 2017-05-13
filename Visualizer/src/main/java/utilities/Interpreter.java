@@ -172,8 +172,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 e.printStackTrace();
             }
         } else if (messageType == raceStatusMessageType) {
-            RaceStatusParser raceStatusParser = new RaceStatusParser(packet);
-            RaceStatusData raceStatusData = raceStatusParser.getRaceStatus();
+            RaceStatusData raceStatusData = new RaceStatusParser().processMessage(packet);
             this.raceStatus = raceStatusData.getRaceStatus();
             this.messageTime = raceStatusData.getCurrentTime();
             this.expectedStartTime = raceStatusData.getExpectedStartTime();
@@ -185,7 +184,6 @@ public class Interpreter implements DataSource, PacketHandler {
                         competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
                     }
                 }
-//                storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
             }
         } else if (messageType == markRoundingMessageType) {
             this.markRoundingData = new MarkRoundingParser().processMessage(packet);

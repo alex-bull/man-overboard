@@ -12,12 +12,6 @@ import static parsers.Converter.hexByteArrayToInt;
  * Parse for race status message
  */
 public class RaceStatusParser {
-    RaceStatusData raceStatus;
-    long expectedStartTime;
-
-    public RaceStatusParser(byte[] message) {
-        this.raceStatus = processMessage(message);
-    }
 
     /**
      * Parse the race status message
@@ -25,7 +19,7 @@ public class RaceStatusParser {
      * @param body byte[] a byte array of the message that needs parsing
      * @return RaceStatusData the data from the race status message
      */
-    private RaceStatusData processMessage(byte[] body) {
+    public RaceStatusData processMessage(byte[] body) {
         long currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
         Integer raceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
         Integer raceStatus = hexByteArrayToInt(Arrays.copyOfRange(body, 11, 12));
@@ -108,9 +102,6 @@ public class RaceStatusParser {
 
     }
 
-    public RaceStatusData getRaceStatus() {
-        return raceStatus;
-    }
 
 
 }
