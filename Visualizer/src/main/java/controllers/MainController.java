@@ -37,7 +37,6 @@ public class MainController {
                 tableController.refresh(dataSource);
                 windController.refresh(dataSource.getWindDirection());
 
-
             }
         };
 

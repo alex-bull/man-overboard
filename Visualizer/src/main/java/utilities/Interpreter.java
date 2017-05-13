@@ -99,7 +99,7 @@ public Interpreter(){
     }
 
     public List<Competitor> getCompetitorsPosition() {
-        return competitorsPosition;
+        return new ArrayList<>(competitorsPosition); //return a shallow copy for thread safety
     }
 
     public double getWindDirection() {
