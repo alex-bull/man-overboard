@@ -10,23 +10,15 @@ import static parsers.Converter.hexByteArrayToInt;
  */
 public class MarkRoundingParser {
 
-    private MarkRoundingData markRoundingData;
 
-    public MarkRoundingParser(byte[] messsage) {
-        this.markRoundingData = processMessage(messsage);
-    }
+    public MarkRoundingData processMessage(byte[] body) {
 
-    private MarkRoundingData processMessage(byte[] body) {
         Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 13, 17));
         Integer markID = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 21));
 
         return new MarkRoundingData(sourceID, markID);
     }
 
-
-    public MarkRoundingData getMarkRoundingData() {
-        return markRoundingData;
-    }
 
 
 }

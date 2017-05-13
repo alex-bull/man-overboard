@@ -1,5 +1,7 @@
 package parsers.boatLocation;
 
+import models.MutablePoint;
+
 /**
  * Created by psu43 on 25/04/17.
  * Boat data
@@ -11,14 +13,16 @@ public class BoatData {
     private double longitude;
     private double heading;
     private double speed;
+    private MutablePoint pixelPoint;
 
-    public BoatData(int sourceID, int deviceType, double latitude, double longitude, double heading, double speed) {
+    public BoatData(int sourceID, int deviceType, double latitude, double longitude, double heading, double speed, MutablePoint pixelPoint) {
         this.sourceID = sourceID;
         this.deviceType = deviceType;
         this.latitude = latitude;
         this.longitude = longitude;
         this.heading = heading;
         this.speed = speed;
+        this.pixelPoint = pixelPoint;
     }
 
 
@@ -79,5 +83,9 @@ public class BoatData {
                 ", heading=" + heading +
                 ", speed=" + speed +
                 '}';
+    }
+
+    public MutablePoint getPixelPoint() {
+        return pixelPoint;
     }
 }

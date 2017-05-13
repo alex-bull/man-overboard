@@ -3,10 +3,7 @@ package utilities;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
-import models.ColourPool;
-import models.Competitor;
-import models.CourseFeature;
-import models.MutablePoint;
+import models.*;
 import org.jdom2.JDOMException;
 import parsers.XmlSubtype;
 import parsers.boatLocation.BoatData;
@@ -191,8 +188,7 @@ public class Interpreter implements DataSource, PacketHandler {
 //                storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
             }
         } else if (messageType == markRoundingMessageType) {
-            MarkRoundingParser markRoundingParser = new MarkRoundingParser(packet);
-            this.markRoundingData = markRoundingParser.getMarkRoundingData();
+            this.markRoundingData = new MarkRoundingParser().processMessage(packet);
             int markID = markRoundingData.getMarkID();
 
             for (CompoundMarkData mark : this.compoundMarks) {
@@ -210,12 +206,13 @@ public class Interpreter implements DataSource, PacketHandler {
 
 
         } else if (messageType == boatLocationMessageType) {
-            BoatDataParser boatDataParser = new BoatDataParser(packet, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-            this.boatData = boatDataParser.getBoatData();
+            BoatDataParser boatDataParser = new BoatDataParser();
+            this.boatData = boatDataParser.processMessage(packet, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
             if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
-                updateBoatProperties(boatDataParser);
+                updateBoatProperties();
             } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
-                updateCourseMarks(boatDataParser);
+                CourseFeature courseFeature = boatDataParser.getCourseFeature();
+                updateCourseMarks(courseFeature);
 
             }
         }
@@ -224,16 +221,15 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * Updates the boat properties as data is being received.
-     * @param boatDataParser BoatDataParser the boat data parser
      */
-    private void updateBoatProperties(BoatDataParser boatDataParser) {
+    private void updateBoatProperties() {
         int boatID = boatData.getSourceID();
 
         Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
         competitor.setCurrentHeading(boatData.getHeading());
 
-        double x = boatDataParser.getPixelPoint().getXValue();
-        double y = boatDataParser.getPixelPoint().getYValue();
+        double x = this.boatData.getPixelPoint().getXValue();
+        double y = this.boatData.getPixelPoint().getYValue();
         MutablePoint location = new MutablePoint(x, y);
         location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
         competitor.setPosition(location);
@@ -260,9 +256,9 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * Updates the course features/marks
-     * @param boatDataParser BoatDataParser the boat data parser
+     * @param courseFeature CourseFeature
      */
-    private void updateCourseMarks(BoatDataParser boatDataParser) {
+    private void updateCourseMarks(CourseFeature courseFeature) {
         //make scaling in proportion
         startMarks = raceData.getStartMarks();
         finishMarks = raceData.getFinishMarks();
@@ -270,7 +266,6 @@ public class Interpreter implements DataSource, PacketHandler {
         double bufferY = raceXMLParser.getBufferY();
         double scaleFactor = raceXMLParser.getScaleFactor();
         List<CourseFeature> points = new ArrayList<>();
-        CourseFeature courseFeature = boatDataParser.getCourseFeature();
 
         courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
         for (MarkData mark : startMarks) {
