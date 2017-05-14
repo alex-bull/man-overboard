@@ -59,5 +59,14 @@ public class MarkData {
         this.sourceID = sourceID;
     }
 
-
+    @Override
+    public String toString() {
+        return "MarkData{" +
+                "seqID=" + seqID +
+                ", name='" + name + '\'' +
+                ", targetLat=" + targetLat +
+                ", targetLon=" + targetLon +
+                ", sourceID=" + sourceID +
+                '}';
+    }
 }

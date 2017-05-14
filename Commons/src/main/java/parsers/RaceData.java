@@ -24,7 +24,20 @@ public class RaceData {
 
     public RaceData() {
     }
-
+    public List<Integer> getStartMarksID(){
+        List<Integer> returnList=new ArrayList<>();
+        for(MarkData mark:startMarks){
+            returnList.add(mark.getSourceID());
+        }
+        return returnList;
+    }
+    public List<Integer> getFinishMarksID(){
+        List<Integer> returnList=new ArrayList<>();
+        for(MarkData mark:finishMarks){
+            returnList.add(mark.getSourceID());
+        }
+        return returnList;
+    }
     public List<MarkData> getStartMarks() {
         return this.startMarks;
     }

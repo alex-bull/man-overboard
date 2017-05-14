@@ -59,11 +59,15 @@ public class RaceViewController implements ClockHandler, Initializable {
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
     private Map<String, Shape> markModels = new HashMap<>();
-
+    private Line startLine;
+    private Line finishLine;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        startLine=new Line();
+        finishLine=new Line();
+        raceViewPane.getChildren().add(startLine);
+        raceViewPane.getChildren().add(finishLine);
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
         noAnnotationsRadio.setToggleGroup(annotations);
@@ -184,20 +188,23 @@ public class RaceViewController implements ClockHandler, Initializable {
     /**
      * Draws the line for gates
      *
-     * @param gates List of MarkData
+     * @param gatesID List of integer of the gates
      */
-    private void drawLine(List<MarkData> gates) {
-        double x1 = gates.get(0).getTargetLat();
-        double y1 = gates.get(0).getTargetLon();
-        double x2 = gates.get(1).getTargetLat();
-        double y2 = gates.get(1).getTargetLon();
-        Line line = new Line(x1, y1, x2, y2);
-        System.out.println("X1 " + x1);
-        System.out.println("Y1 " + y1);
-        System.out.println("X2 " + x2);
-        System.out.println("Y2 " + y2);
-        System.out.println("------------------------------------------");
-        this.raceViewPane.getChildren().add(line);
+    private void drawLine(Line line, List<Integer> gatesID) {
+        double x1 = dataReceiver.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
+        double y1 = dataReceiver.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
+        double x2 = dataReceiver.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
+        double y2 = dataReceiver.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
+        line.setStartX(x1);
+        line.setStartY(y1);
+        line.setEndX(x2);
+        line.setEndY(y2);
+//        System.out.println("X1 " + x1);
+//        System.out.println("Y1 " + y1);
+//        System.out.println("X2 " + x2);
+//        System.out.println("Y2 " + y2);
+//
+//        System.out.println("------------------------------------------");
 
     }
 
@@ -460,7 +467,7 @@ public class RaceViewController implements ClockHandler, Initializable {
      * @param width  the width of the canvas
      * @param height the height of the canvas
      */
-    private void animate(double width, double height) {
+    private synchronized void animate(double width, double height) {
 
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
 
@@ -492,7 +499,7 @@ public class RaceViewController implements ClockHandler, Initializable {
             int count = 0;
 
             @Override
-            public void handle(long now) {
+            public synchronized void handle(long now) {
 
                 // update race status string if it changed
                 String statusString = "Race status: " + dataReceiver.getRaceStatus();
@@ -512,7 +519,7 @@ public class RaceViewController implements ClockHandler, Initializable {
 
                 // check if course features need to be redrawn
                 count++;
-                if (dataReceiver.getCourseFeatures() != (courseFeatures)) {
+                if (dataReceiver.getCourseFeatures() != courseFeatures) {
                     courseFeatures = dataReceiver.getCourseFeatures();
                     drawCourse();
 
@@ -520,8 +527,10 @@ public class RaceViewController implements ClockHandler, Initializable {
                     if (dataReceiver.getCourseBoundary() != courseBoundary) {
                         courseBoundary = dataReceiver.getCourseBoundary();
                         drawBoundary(gc);
-                        drawLine(dataReceiver.getStartMarks());
-                        drawLine(dataReceiver.getFinishMarks());
+                        System.out.println("draw start");
+                        drawLine(startLine, dataReceiver.getStartMarks());
+                        System.out.println("draw finish");
+                        drawLine(finishLine, dataReceiver.getFinishMarks());
                     }
                 }
 

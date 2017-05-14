@@ -51,8 +51,8 @@ public class DataReceiver extends TimerTask {
     private double minXMercatorCoord;
     private double minYMercatorCoord;
     private BoatXMLParser boatXMLParser;
-    private List<MarkData> startMarks = new ArrayList<>();
-    private List<MarkData> finishMarks = new ArrayList<>();
+    private List<CourseFeature> startMarks = new ArrayList<>();
+    private List<CourseFeature> finishMarks = new ArrayList<>();
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
@@ -112,12 +112,12 @@ public class DataReceiver extends TimerTask {
         return timezone;
     }
 
-    public List<MarkData> getStartMarks() {
-        return startMarks;
+    public List<Integer> getStartMarks() {
+        return raceData.getStartMarksID();
     }
 
-    public List<MarkData> getFinishMarks() {
-        return finishMarks;
+    public List<Integer> getFinishMarks() {
+        return raceData.getFinishMarksID();
     }
 
     public String getRaceStatus() {
@@ -261,7 +261,7 @@ public class DataReceiver extends TimerTask {
     /**
      * Identify the start of a packet, determine the message type and length, then read.
      */
-    public void run() {
+    public synchronized void run() {
         try {
             boolean isStartOfPacket = checkForSyncBytes();
 
@@ -341,8 +341,7 @@ public class DataReceiver extends TimerTask {
      */
     private void updateCourseMarks(BoatDataParser boatDataParser) {
         //make scaling in proportion
-        List<MarkData> startMarksNotScaled = raceData.getStartMarks();
-        List<MarkData> finishMarksNotScaled = raceData.getFinishMarks();
+
         double bufferX = raceXMLParser.getBufferX();
         double bufferY = raceXMLParser.getBufferY();
         double scaleFactor = raceXMLParser.getScaleFactor();
@@ -350,27 +349,15 @@ public class DataReceiver extends TimerTask {
         CourseFeature courseFeature = boatDataParser.getCourseFeature();
 
         courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
-        //Update start line marks
-        for (MarkData mark : startMarksNotScaled) {
-            if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
-                mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
-                mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
-            }
-        }
-        //Update finish line marks
-        for (MarkData mark : finishMarksNotScaled) {
-            if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
-                mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
-                mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
-            }
-        }
-        startMarks = startMarksNotScaled;
-        finishMarks = finishMarksNotScaled;
+
         this.storedFeatures.put(boatData.getSourceID(), courseFeature);
 
         for (Integer id : this.storedFeatures.keySet()) {
             points.add(this.storedFeatures.get(id));
         }
+
+
+
         this.courseFeatures = points;
     }
 
@@ -410,5 +397,7 @@ public class DataReceiver extends TimerTask {
         this.competitors = comps;
     }
 
-
+    public HashMap<Integer, CourseFeature> getStoredFeatures() {
+        return storedFeatures;
+    }
 }

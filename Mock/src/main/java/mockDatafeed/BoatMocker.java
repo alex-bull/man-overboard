@@ -181,7 +181,11 @@ public class BoatMocker extends TimerTask {
         }
 
     }
-    private void sendDifferentCourse() {
+
+    /**
+     * sends different courses for testing
+     */
+    private void sendCourse() {
         int index = competitors.get(0).getCurrentLegIndex();
         if (index % 2 == 1) {
             try {
@@ -218,10 +222,11 @@ public class BoatMocker extends TimerTask {
             if (b.getCurrentLegIndex() == 0) {
                 b.setStatus(1);
             }
-         //   sendDifferentCourse();
+
 
 //            //update direction if they are close enough
             if (b.getPosition().isWithin(courseFeatures.get(b.getCurrentLegIndex() + 1).getGPSPoint())) {
+                sendCourse();
                 b.setCurrentLegIndex(b.getCurrentLegIndex() + 1);
                 b.setCurrentHeading(courseFeatures.get(b.getCurrentLegIndex()).getExitHeading());
             }
