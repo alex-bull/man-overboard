@@ -1,5 +1,12 @@
 package controllers;
 
+import javafx.animation.FadeTransition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.util.Duration;
 import model.*;
 import parsers.MarkData;
 import com.google.common.primitives.Doubles;
@@ -52,7 +59,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     private Clock raceClock;
     private Clock worldClock;
     private List<Polygon> boatModels = new ArrayList<>();
-    private List<Polyline> wakeModels = new ArrayList<>();
+    private List<Polygon> wakeModels = new ArrayList<>();
     private List<Label> nameAnnotations = new ArrayList<>();
     private List<Label> speedAnnotations = new ArrayList<>();
     private DataReceiver dataReceiver;
@@ -61,6 +68,9 @@ public class RaceViewController implements ClockHandler, Initializable {
     private Map<String, Shape> markModels = new HashMap<>();
     private Line startLine;
     private Line finishLine;
+    private final double boatLength = 20;
+    private final double startWakeOffset= 3;
+    private final double wakeWidthFactor=0.2;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -364,20 +374,25 @@ public class RaceViewController implements ClockHandler, Initializable {
      * @param boat Competitor a competing boat
      */
     private void drawWake(Competitor boat) {
-
         //draw the line
         double wakeLength = boat.getVelocity();
+        Polygon wake2=new Polygon();
+
         Polyline wake = new Polyline();
-        double boatLength = 20;
+
+        wake2.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+wakeLength*wakeWidthFactor,wakeLength + boatLength,-startWakeOffset-wakeLength*wakeWidthFactor,wakeLength + boatLength);
         wake.getPoints().addAll(
                 0.0, boatLength,
                 0.0, wakeLength + boatLength);
         wake.setStrokeWidth(4);
-        wake.setStroke(DARKBLUE);
 
+        LinearGradient linearGradient=new LinearGradient(0.0,0,0.0,1,true, CycleMethod.NO_CYCLE,new Stop(0.0f,Color.rgb(0,0,255,0.7)),new Stop(1.0f,TRANSPARENT));
+        wake.setStroke(linearGradient);
+        wake2.setFill(linearGradient);
         //add to pane and store a reference
-        this.raceViewPane.getChildren().add(wake);
-        this.wakeModels.add(wake);
+//        this.raceViewPane.getChildren().add(wake);
+        raceViewPane.getChildren().add(wake2);
+        this.wakeModels.add(wake2);
     }
 
 
@@ -389,15 +404,15 @@ public class RaceViewController implements ClockHandler, Initializable {
      */
     private void moveWake(Competitor boat, Integer index) {
 
-        double newLength = boat.getVelocity() * 1.5;
-        double boatLength = 20;
+        double newLength = boat.getVelocity() * 2;
 
-        Polyline wakeModel = wakeModels.get(index);
+        Polygon wakeModel = wakeModels.get(index);
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
-        wakeModel.getPoints().addAll(0.0, boatLength, 0.0, newLength + boatLength);
+        wakeModel.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+newLength*wakeWidthFactor,newLength + boatLength,-startWakeOffset-newLength*wakeWidthFactor,newLength + boatLength);
         wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
         wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
+        wakeModel.toFront();
     }
 
 
@@ -418,9 +433,14 @@ public class RaceViewController implements ClockHandler, Initializable {
 //        gc.translate(0, 3);
 //        gc.fillOval(boat.getPosition().getXValue() - 1, boat.getPosition().getYValue() - 1, 2, 2);
 //        gc.setTransform(rr.getMxx(), rr.getMyx(), rr.getMxy(), rr.getMyy(), rr.getTx(), rr.getTy());
-        Circle circle = new Circle(dot.getX(), dot.getY(), 2, boat.getColor());
+        Circle circle = new Circle(dot.getX(), dot.getY(), 1.5, boat.getColor());
+        //add fade transition
+        FadeTransition ft=new FadeTransition(Duration.millis(20000),circle);
+        ft.setFromValue(1);
+        ft.setToValue(0);
+        ft.setOnFinished(event -> raceViewPane.getChildren().remove(circle));
+        ft.play();
         this.raceViewPane.getChildren().add(circle);
-
         gc.restore();
     }
 
@@ -527,9 +547,9 @@ public class RaceViewController implements ClockHandler, Initializable {
                     if (dataReceiver.getCourseBoundary() != courseBoundary) {
                         courseBoundary = dataReceiver.getCourseBoundary();
                         drawBoundary(gc);
-                        System.out.println("draw start");
+//                        System.out.println("draw start");
                         drawLine(startLine, dataReceiver.getStartMarks());
-                        System.out.println("draw finish");
+//                        System.out.println("draw finish");
                         drawLine(finishLine, dataReceiver.getFinishMarks());
                     }
                 }
@@ -548,6 +568,9 @@ public class RaceViewController implements ClockHandler, Initializable {
                 }
                 //update table
                 tableController.setTable(competitors);
+
+                //print the total number of nodes to check memory usage
+//                System.out.println(raceViewPane.getChildren().size());
             }
         };
 
