@@ -376,23 +376,16 @@ public class RaceViewController implements ClockHandler, Initializable {
     private void drawWake(Competitor boat) {
         //draw the line
         double wakeLength = boat.getVelocity();
-        Polygon wake2=new Polygon();
+        Polygon wake=new Polygon();
 
-        Polyline wake = new Polyline();
-
-        wake2.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+wakeLength*wakeWidthFactor,wakeLength + boatLength,-startWakeOffset-wakeLength*wakeWidthFactor,wakeLength + boatLength);
-        wake.getPoints().addAll(
-                0.0, boatLength,
-                0.0, wakeLength + boatLength);
-        wake.setStrokeWidth(4);
+        wake.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+wakeLength*wakeWidthFactor,wakeLength + boatLength,-startWakeOffset-wakeLength*wakeWidthFactor,wakeLength + boatLength);
 
         LinearGradient linearGradient=new LinearGradient(0.0,0,0.0,1,true, CycleMethod.NO_CYCLE,new Stop(0.0f,Color.rgb(0,0,255,0.7)),new Stop(1.0f,TRANSPARENT));
-        wake.setStroke(linearGradient);
-        wake2.setFill(linearGradient);
+        wake.setFill(linearGradient);
         //add to pane and store a reference
 //        this.raceViewPane.getChildren().add(wake);
-        raceViewPane.getChildren().add(wake2);
-        this.wakeModels.add(wake2);
+        raceViewPane.getChildren().add(wake);
+        this.wakeModels.add(wake);
     }
 
 
