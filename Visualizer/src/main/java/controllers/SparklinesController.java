@@ -9,6 +9,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import model.Competitor;
 import model.RaceEvent;
 import utilities.DataReceiver;
@@ -19,8 +20,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Created by msl47 on 21/03/17.
- * The controller for the table
+ * Created by abu59
+ * The controller for the sparklines chart
  */
 
 public class SparklinesController implements Initializable {
@@ -33,24 +34,30 @@ public class SparklinesController implements Initializable {
     private List<XYChart.Series> seriesList;
 
     public SparklinesController(List<Competitor> competitors) {
-        this.competitors = competitors;
-    }
-/**
-     * Initialiser for the SparklinesController
-     */
-    @FXML
-    public void initialize(URL location, ResourceBundle resources) {
 
-        XYChart.Series series = new XYChart.Series();
+        this.competitors = competitors;
 
         for(Competitor boat: competitors){
             seriesList.add(new XYChart.Series());
-            //seriesList.get(boat.in)
+            seriesList.get(competitors.indexOf(boat)).getNode().setStyle("-fx-stroke: " + boat.getColor());
+            seriesList.get(competitors.indexOf(boat)).getData().add(new XYChart.Data(seriesList.size() + 1, 3)); //replace y with team position
+            sparklinesChart.getData().add(seriesList.get(competitors.indexOf(boat)));
         }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
 
     }
 
+    public void setSparklinesChart(){
 
+        for(Competitor boat: competitors){
+            //seriesList.get(competitors.indexOf(boat)).getNode().setStyle("-fx-stroke: " + boat.getColor());
+            seriesList.get(competitors.indexOf(boat)).getData().add(new XYChart.Data(seriesList.size() + 1, 3)); //replace y with team position
+            sparklinesChart.getData().add(seriesList.get(competitors.indexOf(boat)));
+        }
+    }
 
 
 }

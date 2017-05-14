@@ -1,5 +1,7 @@
 package controllers;
 
+import javafx.scene.chart.LineChart;
+import javafx.scene.layout.AnchorPane;
 import model.Race;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
@@ -22,6 +24,9 @@ public class MainController {
 
     @FXML
     private SplitPane splitPane;
+
+    @FXML
+    private SparklinesController sparklinesController;
 
 
     /**

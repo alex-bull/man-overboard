@@ -18,7 +18,6 @@
     <children>
         <fx:include fx:id="raceView" source="raceView.fxml"/>
         <fx:include fx:id="table" source="table.fxml"/>
-        <fx:include fx:id="sparklines" source="sparklines.fxml"/>
-
+        <fx:include fx:id="sparklines" source="sparkLines.fxml"/>
     </children>
 </AnchorPane>

@@ -62,6 +62,7 @@ public class RaceViewController implements ClockHandler, Initializable {
     private Text status;
 
     private TableController tableController;
+    private SparklinesController sparklinesController;
     private Clock raceClock;
     private Clock worldClock;
     private List<Polygon> boatModels = new ArrayList<>();
@@ -539,6 +540,8 @@ public class RaceViewController implements ClockHandler, Initializable {
                 }
                 //update table
                 tableController.setTable(competitors);
+
+                sparklinesController.setSparklinesChart();
             }
         };
 
