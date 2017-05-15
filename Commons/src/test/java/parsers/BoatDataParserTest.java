@@ -2,6 +2,7 @@ package parsers;
 
 import org.junit.Assert;
 import org.junit.Test;
+import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
 
 import java.util.Arrays;
@@ -19,8 +20,8 @@ public class BoatDataParserTest {
         byte[] packet = {};
 
         try {
-            BoatDataParser boatDataParser = new BoatDataParser(packet, 100, 100);
-            Assert.assertNull(boatDataParser.getBoatData());
+            BoatDataParser boatDataParser = new BoatDataParser();
+            Assert.assertNull(boatDataParser.processMessage(packet, 100, 100));
         } catch (Exception e) {
             Assert.fail();
         }
@@ -31,8 +32,8 @@ public class BoatDataParserTest {
         byte[] packet = new byte[12];
 
         try {
-            BoatDataParser boatDataParser = new BoatDataParser(packet, 100, 100);
-            Assert.assertNull(boatDataParser.getBoatData());
+            BoatDataParser boatDataParser = new BoatDataParser();
+            Assert.assertNull(boatDataParser.processMessage(packet, 100, 100));
         } catch (Exception e) {
             Assert.fail();
         }
@@ -47,8 +48,8 @@ public class BoatDataParserTest {
         int expectedSpeedInMms = hexByteArrayToInt(Arrays.copyOfRange(packet, 38, 40));
 
         try {
-            BoatDataParser boatDataParser = new BoatDataParser(packet, 100, 100);
-            assertTrue(boatDataParser.getBoatData().getSpeed() == (double)expectedSpeedInMms / 1000);
+            BoatDataParser boatDataParser = new BoatDataParser();
+            assertTrue(boatDataParser.processMessage(packet, 100, 100).getSpeed() == (double)expectedSpeedInMms / 1000);
         } catch (Exception e) {
             Assert.fail();
         }

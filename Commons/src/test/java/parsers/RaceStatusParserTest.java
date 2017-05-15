@@ -19,9 +19,9 @@ public class RaceStatusParserTest {
         byte[] packet = {};
 
         try {
-            RaceStatusParser raceStatusParser = new RaceStatusParser(packet);
+            RaceStatusParser raceStatusParser = new RaceStatusParser();
             assertNotNull(raceStatusParser);
-            assertNull(raceStatusParser.getRaceStatus());
+            assertNull(raceStatusParser.processMessage(packet));
         } catch (Exception e) {
             Assert.fail();
         }
@@ -32,7 +32,7 @@ public class RaceStatusParserTest {
         byte[] packet = new byte[12];
 
         try {
-            RaceStatusParser raceStatusParser = new RaceStatusParser(packet);
+            RaceStatusParser raceStatusParser = new RaceStatusParser();
             assertNotNull(raceStatusParser);
         } catch (Exception e) {
             Assert.fail();
@@ -45,8 +45,8 @@ public class RaceStatusParserTest {
         packet[11] = 8;
 
         try {
-            RaceStatusParser raceStatusParser = new RaceStatusParser(packet);
-            assertEquals("Terminated", raceStatusParser.getRaceStatus().getRaceStatus());
+            RaceStatusParser raceStatusParser = new RaceStatusParser();
+            assertEquals("Terminated", raceStatusParser.processMessage(packet).getRaceStatus());
         } catch (Exception e) {
             Assert.fail();
         }
