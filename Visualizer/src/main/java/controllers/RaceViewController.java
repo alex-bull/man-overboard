@@ -1,5 +1,12 @@
 package controllers;
 
+import javafx.animation.FadeTransition;
+
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.util.Duration;
+import model.*;
 import com.google.common.primitives.Doubles;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,7 +16,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -18,7 +24,6 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import models.*;
-import parsers.xml.race.MarkData;
 import utilities.DataSource;
 
 import java.net.URL;
@@ -43,7 +48,7 @@ public class RaceViewController implements Initializable {
     @FXML private Text status;
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
-    private Map<Integer, Polyline> wakeModels = new HashMap<>();
+    private Map<Integer, Polygon> wakeModels = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
     private Map<Integer, Label> speedAnnotations = new HashMap<>();
     private List<MutablePoint> courseBoundary = null;
@@ -53,23 +58,29 @@ public class RaceViewController implements Initializable {
     private long startTimeNano = System.nanoTime();
     private int counter = 0;
 
+    private Line startLine;
+    private Line finishLine;
+    private final double boatLength = 20;
+    private final double startWakeOffset= 3;
+    private final double wakeWidthFactor=0.2;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        startLine=new Line();
+        finishLine=new Line();
+        raceViewPane.getChildren().add(startLine);
+        raceViewPane.getChildren().add(finishLine);
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
         noAnnotationsRadio.setToggleGroup(annotations);
         someAnnotationsRadio.setToggleGroup(annotations);
-
         allAnnotationsRadio.setSelected(true);
         showAllAnnotations();
-
         fpsToggle.setSelected(true);
 
     }
 
-    /*
+    /**
      * Called when the user clicks no annotations button.
      * Clears individual annotations
      */
@@ -126,15 +137,24 @@ public class RaceViewController implements Initializable {
     /**
      * Draws the line for gates
      *
-     * @param gates List of MarkData
+     * @param gatesID List of integer of the gates
      */
-    private void drawLine(List<MarkData> gates) {
-        double x1 = gates.get(0).getTargetLat();
-        double y1 = gates.get(0).getTargetLon();
-        double x2 = gates.get(1).getTargetLat();
-        double y2 = gates.get(1).getTargetLon();
-        Line line = new Line(x1, y1, x2, y2);
-        this.raceViewPane.getChildren().add(line);
+    private void drawLine(Line line, List<Integer> gatesID) {
+        double x1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
+        double y1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
+        double x2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
+        double y2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
+        line.setStartX(x1);
+        line.setStartY(y1);
+        line.setEndX(x2);
+        line.setEndY(y2);
+//        System.out.println("X1 " + x1);
+//        System.out.println("Y1 " + y1);
+//        System.out.println("X2 " + x2);
+//        System.out.println("Y2 " + y2);
+//
+//        System.out.println("------------------------------------------");
+
     }
 
     private void drawMark(CourseFeature courseFeature) {
@@ -167,12 +187,15 @@ public class RaceViewController implements Initializable {
             }
             gc.setLineDashes(5);
             gc.setLineWidth(0.8);
+            gc.clearRect(0,0,4000,4000);
+            drawBackGround(gc,4000,4000);
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.setFill(Color.POWDERBLUE);
 
             //shade inside the boundary
             gc.fillPolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.restore();
+
         }
 
     }
@@ -267,34 +290,50 @@ public class RaceViewController implements Initializable {
         boatModels.get(sourceId).getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
     }
 
-
-
     /**
-     * Draw or move a wake for a competitor
+     * Draw boat competitor
+     *
      * @param boat Competitor a competing boat
      */
     private void drawWake(Competitor boat) {
-
         if (wakeModels.get(boat.getSourceID()) == null) {
             double wakeLength = boat.getVelocity();
-            Polyline wake = new Polyline();
-            double boatLength = 20;
-            wake.getPoints().addAll(0.0, boatLength, 0.0, wakeLength + boatLength);
-            wake.setStrokeWidth(4);
-            wake.setStroke(DARKBLUE);
-            //add to pane and store a reference
-            this.raceViewPane.getChildren().add(wake);
+            Polygon wake=new Polygon();
+            wake.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+wakeLength*wakeWidthFactor,wakeLength + boatLength,-startWakeOffset-wakeLength*wakeWidthFactor,wakeLength + boatLength);
+            LinearGradient linearGradient=new LinearGradient(0.0,0,0.0,1,true, CycleMethod.NO_CYCLE,new Stop(0.0f,Color.rgb(0,0,255,0.7)),new Stop(1.0f,TRANSPARENT));
+            wake.setFill(linearGradient);
+            raceViewPane.getChildren().add(wake);
             this.wakeModels.put(boat.getSourceID(), wake);
         }
-        double newLength = boat.getVelocity() * 1.5;
-        double boatLength = 20;
-
-        Polyline wakeModel = wakeModels.get(boat.getSourceID());
+        double newLength = boat.getVelocity() * 2;
+        Polygon wakeModel = wakeModels.get(boat.getSourceID());
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
-        wakeModel.getPoints().addAll(0.0, boatLength, 0.0, newLength + boatLength);
+        wakeModel.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+newLength*wakeWidthFactor,newLength + boatLength,-startWakeOffset-newLength*wakeWidthFactor,newLength + boatLength);
         wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
         wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
+        wakeModel.toFront();
+
+    }
+
+
+    /**
+     * Draw boat wakes and factor it with its velocity
+     *
+     * @param boat  Competitor a competitor
+     * @param index Index
+     */
+    private void moveWake(Competitor boat, Integer index) {
+
+        double newLength = boat.getVelocity() * 2;
+
+        Polygon wakeModel = wakeModels.get(index);
+        wakeModel.getTransforms().clear();
+        wakeModel.getPoints().clear();
+        wakeModel.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+newLength*wakeWidthFactor,newLength + boatLength,-startWakeOffset-newLength*wakeWidthFactor,newLength + boatLength);
+        wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
+        wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
+        wakeModel.toFront();
     }
 
 
@@ -308,17 +347,41 @@ public class RaceViewController implements Initializable {
     private void drawTrack(Competitor boat, GraphicsContext gc) {
         gc.setFill(boat.getColor());
         gc.save();
-        Rotate r = new Rotate(boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
-        Rotate rr = new Rotate(-boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
-
-        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-        gc.translate(0, 3);
-        gc.fillOval(boat.getPosition().getXValue() - 1, boat.getPosition().getYValue() - 1, 2, 2);
-        gc.setTransform(rr.getMxx(), rr.getMyx(), rr.getMxy(), rr.getMyy(), rr.getTx(), rr.getTy());
-
+        Dot dot = new Dot(boat.getPosition().getXValue(), boat.getPosition().getYValue());
+//        Rotate r = new Rotate(boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
+//        Rotate rr = new Rotate(-boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
+//
+//        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
+//        gc.translate(0, 3);
+//        gc.fillOval(boat.getPosition().getXValue() - 1, boat.getPosition().getYValue() - 1, 2, 2);
+//        gc.setTransform(rr.getMxx(), rr.getMyx(), rr.getMxy(), rr.getMyy(), rr.getTx(), rr.getTy());
+        Circle circle = new Circle(dot.getX(), dot.getY(), 1.5, boat.getColor());
+        //add fade transition
+        FadeTransition ft=new FadeTransition(Duration.millis(20000),circle);
+        ft.setFromValue(1);
+        ft.setToValue(0);
+        ft.setOnFinished(event -> raceViewPane.getChildren().remove(circle));
+        ft.play();
+        this.raceViewPane.getChildren().add(circle);
         gc.restore();
     }
 
+
+    private void moveMark(String name, double x, double y) {
+        this.markModels.get(name).setLayoutX(x);
+        this.markModels.get(name).setLayoutY(y);
+    }
+
+    /**
+     *
+     * @param gc
+     * @param width
+     * @param height
+     */
+    public void drawBackGround(GraphicsContext gc, double width, double height) {
+        gc.setFill(Color.LIGHTBLUE);
+        gc.fillRect(0, 0, width, height);
+    }
 
     /**
      * Refreshes the contents of the display to match the datasource
@@ -342,7 +405,6 @@ public class RaceViewController implements Initializable {
             fpsCounter.setText(String.format("FPS: %d", counter));
             counter = 0;
         }
-
         // check if course features need to be redrawn
         if (dataSource.getCourseFeatures() != (courseFeatures)) {
             courseFeatures = dataSource.getCourseFeatures();
@@ -352,8 +414,8 @@ public class RaceViewController implements Initializable {
             if (dataSource.getCourseBoundary() != courseBoundary) {
                 courseBoundary = dataSource.getCourseBoundary();
                 drawBoundary(gc);
-                drawLine(dataSource.getStartMarks());
-                drawLine(dataSource.getFinishMarks());
+                drawLine(startLine, dataSource.getStartMarks());
+                drawLine(finishLine, dataSource.getFinishMarks());
             }
         }
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
@@ -367,7 +429,9 @@ public class RaceViewController implements Initializable {
             this.drawAnnotations(boat);
 
         }
+
     }
+
 
 
     /**

@@ -53,8 +53,8 @@ public class Interpreter implements DataSource, PacketHandler {
     private double minXMercatorCoord;
     private double minYMercatorCoord;
     private BoatXMLParser boatXMLParser;
-    private List<MarkData> startMarks = new ArrayList<>();
-    private List<MarkData> finishMarks = new ArrayList<>();
+    private List<CourseFeature> startMarks = new ArrayList<>();
+    private List<CourseFeature> finishMarks = new ArrayList<>();
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
@@ -76,12 +76,12 @@ public class Interpreter implements DataSource, PacketHandler {
         return timezone;
     }
 
-    public List<MarkData> getStartMarks() {
-        return startMarks;
+    public List<Integer> getStartMarks() {
+        return raceData.getStartMarksID();
     }
 
-    public List<MarkData> getFinishMarks() {
-        return finishMarks;
+    public List<Integer> getFinishMarks() {
+        return raceData.getFinishMarksID();
     }
 
     public String getRaceStatus() {
@@ -258,27 +258,12 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     private void updateCourseMarks(CourseFeature courseFeature) {
         //make scaling in proportion
-        startMarks = raceData.getStartMarks();
-        finishMarks = raceData.getFinishMarks();
         double bufferX = raceXMLParser.getBufferX();
         double bufferY = raceXMLParser.getBufferY();
         double scaleFactor = raceXMLParser.getScaleFactor();
         List<CourseFeature> points = new ArrayList<>();
 
         courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
-        for (MarkData mark : startMarks) {
-            if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
-                mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
-                mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
-            }
-        }
-
-        for (MarkData mark : finishMarks) {
-            if (Integer.valueOf(courseFeature.getName()).equals(mark.getSourceID())) {
-                mark.setTargetLat(courseFeature.getPixelLocations().get(0).getXValue());
-                mark.setTargetLon(courseFeature.getPixelLocations().get(0).getYValue());
-            }
-        }
 
         this.storedFeatures.put(boatData.getSourceID(), courseFeature);
 
@@ -374,6 +359,9 @@ public class Interpreter implements DataSource, PacketHandler {
         this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
     }
 
+    public HashMap<Integer, CourseFeature> getStoredFeatures() {
+        return storedFeatures;
+    }
 
 
 }

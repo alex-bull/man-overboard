@@ -1,5 +1,7 @@
 package controllers;
 
+import models.Competitor;
+import models.RaceEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,11 +9,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import models.Competitor;
-import models.RaceEvent;
 import utilities.DataSource;
-
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -46,6 +47,10 @@ public class TableController implements Initializable {
 
     }
 
+    public ObservableList<RaceEvent> getEvents() {
+        return events;
+    }
+
     /**
      * Called when the race display updates
      * @param dataSource DataSource the latest race data
@@ -58,16 +63,26 @@ public class TableController implements Initializable {
      * Sets the data in the table
      * @param competitors List the competitors in the race
      */
-    private void setTable(List<Competitor> competitors) {
+    public List<Competitor> setTable(List<Competitor> competitors) {
+        List<Competitor> cpy = new ArrayList<>(competitors);
+        cpy.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+
         events.clear();
-        for (int i = 0; i < competitors.size(); i++) {
-            String teamName = competitors.get(i).getTeamName();
-            Double speed = competitors.get(i).getVelocity();
-            String featureName = competitors.get(i).getLastMarkPassed();
+        for (int i = 0; i < cpy.size(); i++) {
+            String teamName = cpy.get(i).getTeamName();
+            Double speed = cpy.get(i).getVelocity();
+            String featureName = cpy.get(i).getLastMarkPassed();
             RaceEvent raceEvent = new RaceEvent(teamName, speed, featureName, i + 1);
             events.add(raceEvent);
         }
+        return cpy;
     }
 
+    public void printTable(){
+        for(RaceEvent raceEvent:events){
+            System.out.println(raceEvent.getTeamName());
+        }
+        System.out.println();
+    }
 
 }
