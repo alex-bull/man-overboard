@@ -478,7 +478,8 @@ public class RaceViewController implements ClockHandler, Initializable {
         }
 
         List<Competitor> competitors = dataReceiver.getCompetitors();
-        SparklinesController sparklinesController = new SparklinesController(competitors);
+        SparklinesController sparklinesController = new SparklinesController();
+        sparklinesController.setCompetitors(competitors);
 
         for (Competitor boat : competitors) {
             this.drawWake(boat);

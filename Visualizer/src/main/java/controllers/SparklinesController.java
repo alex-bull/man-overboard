@@ -33,11 +33,12 @@ public class SparklinesController implements Initializable {
 
     private List<XYChart.Series> seriesList;
 
-    public SparklinesController(List<Competitor> competitors) {
+    public void setCompetitors(List<Competitor> competitors){
 
         this.competitors = competitors;
 
         for(Competitor boat: competitors){
+            System.out.println(seriesList);
             seriesList.add(new XYChart.Series());
             seriesList.get(competitors.indexOf(boat)).getNode().setStyle("-fx-stroke: " + boat.getColor());
             seriesList.get(competitors.indexOf(boat)).getData().add(new XYChart.Data(seriesList.size() + 1, 3)); //replace y with team position
@@ -47,7 +48,8 @@ public class SparklinesController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        seriesList=new ArrayList<>();
+        System.out.println(seriesList);
     }
 
     public void setSparklinesChart(){
