@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.animation.FadeTransition;
 
+import javafx.scene.Group;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
@@ -23,6 +24,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import models.*;
+import utilities.Annotation;
 import utilities.DataSource;
 
 import java.net.URL;
@@ -35,6 +37,9 @@ import static javafx.scene.paint.Color.*;
  */
 public class RaceViewController implements Initializable {
 
+    private final double boatLength = 20;
+    private final double startWakeOffset= 3;
+    private final double wakeWidthFactor=0.2;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
     @FXML private Label fpsCounter;
@@ -43,9 +48,11 @@ public class RaceViewController implements Initializable {
     @FXML private RadioButton someAnnotationsRadio;
     @FXML private CheckBox speedButton;
     @FXML private CheckBox nameButton;
+    @FXML private CheckBox timeToMarkButton;
     @FXML private CheckBox fpsToggle;
     @FXML private Text status;
-
+    @FXML private Group annotationGroup;
+    private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
@@ -56,12 +63,8 @@ public class RaceViewController implements Initializable {
     private DataSource dataSource;
     private long startTimeNano = System.nanoTime();
     private int counter = 0;
-
     private Line startLine;
     private Line finishLine;
-    private final double boatLength = 20;
-    private final double startWakeOffset= 3;
-    private final double wakeWidthFactor=0.2;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -87,6 +90,7 @@ public class RaceViewController implements Initializable {
     public void clearAnnotations() {
         speedButton.setSelected(false);
         nameButton.setSelected(false);
+        timeToMarkButton.setSelected(false);
     }
 
     /**
@@ -97,6 +101,7 @@ public class RaceViewController implements Initializable {
     public void showAllAnnotations() {
         speedButton.setSelected(true);
         nameButton.setSelected(true);
+        timeToMarkButton.setSelected(true);
     }
 
     /**
@@ -113,7 +118,7 @@ public class RaceViewController implements Initializable {
         raceViewPane.setPrefWidth(width);
 
         this.dataSource = dataSource;
-
+        drawAnnotations();
         animate(width, height);
     }
 
@@ -147,18 +152,13 @@ public class RaceViewController implements Initializable {
         line.setStartY(y1);
         line.setEndX(x2);
         line.setEndY(y2);
-//        System.out.println("X1 " + x1);
-//        System.out.println("Y1 " + y1);
-//        System.out.println("X2 " + x2);
-//        System.out.println("Y2 " + y2);
-//
-//        System.out.println("------------------------------------------");
-
     }
 
+    /**
+     * Draw the mark of the course feature
+     * @param courseFeature CourseFeature
+     */
     private void drawMark(CourseFeature courseFeature) {
-
-
         double x = courseFeature.getPixelLocations().get(0).getXValue();
         double y = courseFeature.getPixelLocations().get(0).getYValue();
         Circle circle = new Circle(x, y, 7.5, ORANGERED);
@@ -187,7 +187,7 @@ public class RaceViewController implements Initializable {
             gc.setLineDashes(5);
             gc.setLineWidth(0.8);
             gc.clearRect(0,0,4000,4000);
-            drawBackGround(gc,4000,4000);
+            drawBackground(gc,4000,4000);
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.setFill(Color.POWDERBLUE);
 
@@ -201,64 +201,99 @@ public class RaceViewController implements Initializable {
 
 
     /**
-     * Draw annotations
-     * @param boat Competitor a competing boat
+     * Draw annotations and move with boat positions
      */
-    private void drawAnnotations(Competitor boat) {
+    private void drawAnnotations() {
+        List<Competitor> competitors = dataSource.getCompetitorsPosition();
+        //move competitors and draw tracks
+        for (Competitor boat : competitors) {
+            int sourceID = boat.getSourceID();
 
-        Double xValue = boat.getPosition().getXValue();
-        Double yValue = boat.getPosition().getYValue();
-        Label nameLabel;
-        Label speedLabel;
+            for (int i = 0; i < annotationGroup.getChildren().size(); i++) {
+                String annotationType = ((CheckBox) annotationGroup.getChildren().get(i)).getText();
+                Annotation annotation = Annotation.stringToAnnotation(annotationType);
+                Label label = null;
+                assert annotation != null;
+                switch (annotation) {
+                    case TEAM_NAME:
+                        //name annotation
+                        label = new Label(boat.getAbbreName());
+                        this.nameAnnotations.put(sourceID, label);
+                        break;
+                    case BOAT_SPEED:
+                        //speed annotation
+                        label = new Label(String.valueOf(boat.getVelocity()) + "m/s");
+                        this.speedAnnotations.put(sourceID, label);
+                        break;
+                    case EST_TIME_TO_NEXT_MARK:
+                        //est time to next mark annotation
+                        label = new Label(String.valueOf(boat.getTimeToNextMark() / 1000) + " seconds");
+                        this.timeToMarkAnnotations.put(sourceID, label);
 
-        if (nameAnnotations.get(boat.getSourceID()) == null) {
-            nameLabel = new Label(boat.getAbbreName());
-            nameLabel.setFont(Font.font("Monospaced"));
-            nameLabel.setTextFill(boat.getColor());
-            this.raceViewPane.getChildren().add(nameLabel);
-            this.nameAnnotations.put(boat.getSourceID(), nameLabel);
-        }
+                }
 
-        if (speedAnnotations.get(boat.getSourceID()) == null) {
-            speedLabel = new Label(String.valueOf(boat.getVelocity()) + "m/s");
-            speedLabel.setFont(Font.font("Monospaced"));
-            speedLabel.setTextFill(boat.getColor());
-            this.raceViewPane.getChildren().add(speedLabel);
-            this.speedAnnotations.put(boat.getSourceID(), speedLabel);
-        }
+                label.setFont(Font.font("Monospaced"));
+                label.setTextFill(boat.getColor());
+                this.raceViewPane.getChildren().add(label);
 
-        nameLabel = nameAnnotations.get(boat.getSourceID());
-        speedLabel = speedAnnotations.get(boat.getSourceID());
-
-        if (nameButton.isSelected()) {
-            nameLabel.toFront();
-            nameLabel.setText(boat.getAbbreName());
-            nameLabel.setLayoutX(xValue - 25);
-            nameLabel.setLayoutY(yValue - 25);
-        } else {
-            nameLabel.setText("");
-        }
-
-        if (speedButton.isSelected()) {
-            speedLabel.toFront();
-            speedLabel.setText(String.valueOf(boat.getVelocity()) + "m/s");
-            speedLabel.setLayoutX(xValue + 5);
-            speedLabel.setLayoutY(yValue + 15);
-        } else {
-            speedLabel.setText("");
-        }
-
-        if (!(nameButton.isSelected() && speedButton.isSelected() || !nameButton.isSelected() && !speedButton.isSelected())) {
-            someAnnotationsRadio.setSelected(true);
-        }
-        // draws FPS counter
-        if (fpsToggle.isSelected()) {
-            fpsCounter.setVisible(true);
-        } else {
-            fpsCounter.setVisible(false);
+            }
         }
     }
 
+
+    /**
+     * Move annotations with competing boat positions
+     * @param boat Competitor of competing boat
+     */
+    private void moveAnnotations(Competitor boat){
+        int sourceID = boat.getSourceID();
+
+        int offset = 10;
+        Double xValue = boat.getPosition().getXValue();
+        Double yValue = boat.getPosition().getYValue();
+
+        //all selected will be true if all selected
+        boolean allSelected = true;
+        //none selected will be false if none selected
+        boolean noneSelected = false;
+        //change radio button depending on what is selected
+        for (int i = 0; i < annotationGroup.getChildren().size(); i++) {
+            CheckBox checkBox = (CheckBox) annotationGroup.getChildren().get(i);
+            Annotation annotation = Annotation.stringToAnnotation(checkBox.getText());
+            Label label = null;
+            allSelected = allSelected && checkBox.isSelected();
+            noneSelected = noneSelected || checkBox.isSelected();
+            assert annotation != null;
+            switch (annotation) {
+                case TEAM_NAME:
+                    label = this.nameAnnotations.get(sourceID);
+                    break;
+                case BOAT_SPEED:
+                    label = this.speedAnnotations.get(sourceID);
+                    label.setText(String.valueOf(boat.getVelocity()) + "m/s");
+                    break;
+                case EST_TIME_TO_NEXT_MARK:
+                    label = this.timeToMarkAnnotations.get(sourceID);
+                    label.setText(String.valueOf(boat.getTimeToNextMark() / 1000) + " seconds");
+                    break;
+            }
+            label.setVisible(checkBox.isSelected());
+            label.setLayoutX(xValue + 5);
+            label.setLayoutY(yValue + offset);
+            if (checkBox.isSelected()) {
+                offset += 12;
+            }
+
+        }
+
+        allAnnotationsRadio.setSelected(allSelected);
+        noAnnotationsRadio.setSelected(!noneSelected);
+        someAnnotationsRadio.setSelected(!allSelected && noneSelected);
+
+        // draws FPS counter
+        fpsCounter.setVisible(fpsToggle.isSelected());
+
+    }
 
 
     /**
@@ -347,13 +382,6 @@ public class RaceViewController implements Initializable {
         gc.setFill(boat.getColor());
         gc.save();
         Dot dot = new Dot(boat.getPosition().getXValue(), boat.getPosition().getYValue());
-//        Rotate r = new Rotate(boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
-//        Rotate rr = new Rotate(-boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
-//
-//        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-//        gc.translate(0, 3);
-//        gc.fillOval(boat.getPosition().getXValue() - 1, boat.getPosition().getYValue() - 1, 2, 2);
-//        gc.setTransform(rr.getMxx(), rr.getMyx(), rr.getMxy(), rr.getMyy(), rr.getTx(), rr.getTy());
         Circle circle = new Circle(dot.getX(), dot.getY(), 1.5, boat.getColor());
         //add fade transition
         FadeTransition ft=new FadeTransition(Duration.millis(20000),circle);
@@ -366,21 +394,17 @@ public class RaceViewController implements Initializable {
     }
 
 
-    private void moveMark(String name, double x, double y) {
-        this.markModels.get(name).setLayoutX(x);
-        this.markModels.get(name).setLayoutY(y);
-    }
-
     /**
-     *
-     * @param gc
-     * @param width
-     * @param height
+     * Draw background of the racecourse
+     * @param gc GraphicsContext
+     * @param width double - width of the canvas
+     * @param height double- height of the canvas
      */
-    public void drawBackGround(GraphicsContext gc, double width, double height) {
+    private void drawBackground(GraphicsContext gc, double width, double height) {
         gc.setFill(Color.LIGHTBLUE);
         gc.fillRect(0, 0, width, height);
     }
+
 
     /**
      * Refreshes the contents of the display to match the datasource
@@ -425,7 +449,7 @@ public class RaceViewController implements Initializable {
             }
             this.drawWake(boat);
             this.drawBoat(boat);
-            this.drawAnnotations(boat);
+            this.moveAnnotations(boat);
 
         }
 

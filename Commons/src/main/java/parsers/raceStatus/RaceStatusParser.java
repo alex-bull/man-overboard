@@ -1,5 +1,6 @@
 package parsers.raceStatus;
 
+import parsers.BoatStatus;
 import parsers.Converter;
 import parsers.RaceStatusEnum;
 
@@ -40,11 +41,12 @@ public class RaceStatusParser {
                 Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));
                 Integer numPenaltiesAwarded = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 6, currentByte + 7));
                 Integer numPenaltiesServed = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 7, currentByte + 8));
-                Integer estTimeAtNextMark = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
-                Integer estTimeAtFinish = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 14, currentByte + 20));
+                long estTimeToNextMark = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
+                estTimeToNextMark = convertToRelativeTime(estTimeToNextMark, currentTime);
+                long estTimeAtFinish = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 14, currentByte + 20));
 
                 boatStatuses.put(sourceID, new BoatStatus(sourceID, boatStatus, legNumber,
-                        numPenaltiesAwarded, numPenaltiesServed, estTimeAtNextMark, estTimeAtFinish));
+                        numPenaltiesAwarded, numPenaltiesServed, estTimeToNextMark, estTimeAtFinish));
                 currentByte += 20;
             }
 

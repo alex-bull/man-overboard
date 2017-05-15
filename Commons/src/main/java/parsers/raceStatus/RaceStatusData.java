@@ -2,6 +2,8 @@ package parsers.raceStatus;
 
 import parsers.RaceStatusEnum;
 
+import parsers.BoatStatus;
+
 import java.util.HashMap;
 
 /**
