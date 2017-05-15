@@ -119,7 +119,7 @@ public class RaceViewController implements Initializable {
         raceViewPane.setPrefWidth(width);
 
         this.dataSource = dataSource;
-
+        drawAnnotations();
         animate(width, height);
     }
 
@@ -153,18 +153,13 @@ public class RaceViewController implements Initializable {
         line.setStartY(y1);
         line.setEndX(x2);
         line.setEndY(y2);
-//        System.out.println("X1 " + x1);
-//        System.out.println("Y1 " + y1);
-//        System.out.println("X2 " + x2);
-//        System.out.println("Y2 " + y2);
-//
-//        System.out.println("------------------------------------------");
-
     }
 
+    /**
+     * Draw the mark of the course feature
+     * @param courseFeature CourseFeature
+     */
     private void drawMark(CourseFeature courseFeature) {
-
-
         double x = courseFeature.getPixelLocations().get(0).getXValue();
         double y = courseFeature.getPixelLocations().get(0).getYValue();
         Circle circle = new Circle(x, y, 7.5, ORANGERED);
@@ -193,7 +188,7 @@ public class RaceViewController implements Initializable {
             gc.setLineDashes(5);
             gc.setLineWidth(0.8);
             gc.clearRect(0,0,4000,4000);
-            drawBackGround(gc,4000,4000);
+            drawBackground(gc,4000,4000);
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.setFill(Color.POWDERBLUE);
 
@@ -208,43 +203,51 @@ public class RaceViewController implements Initializable {
 
     /**
      * Draw annotations and move with boat positions
-     * @param boat Competitor a competing boat
      */
-    private void drawAnnotations(Competitor boat) {
-        int sourceID = boat.getSourceID();
+    private void drawAnnotations() {
+        List<Competitor> competitors = dataSource.getCompetitorsPosition();
+        //move competitors and draw tracks
+        for (Competitor boat : competitors) {
+            int sourceID = boat.getSourceID();
 
-        for (int i = 0; i < annotationGroup.getChildren().size(); i++) {
-            String annotationType = ((CheckBox) annotationGroup.getChildren().get(i)).getText();
-            Annotation annotation = Annotation.stringToAnnotation(annotationType);
-            Label label = null;
-            switch (annotation) {
-                case TEAM_NAME:
-                    //name annotation
-                    if (nameAnnotations.get(boat.getSourceID()) == null) {
+            for (int i = 0; i < annotationGroup.getChildren().size(); i++) {
+                String annotationType = ((CheckBox) annotationGroup.getChildren().get(i)).getText();
+                Annotation annotation = Annotation.stringToAnnotation(annotationType);
+                Label label = null;
+                assert annotation != null;
+                switch (annotation) {
+                    case TEAM_NAME:
+                        //name annotation
                         label = new Label(boat.getAbbreName());
                         this.nameAnnotations.put(sourceID, label);
-                    }
-                    break;
-                case BOAT_SPEED:
-                    //speed annotation
-                    if (speedAnnotations.get(boat.getSourceID()) == null) {
+                        break;
+                    case BOAT_SPEED:
+                        //speed annotation
                         label = new Label(String.valueOf(boat.getVelocity()) + "m/s");
                         this.speedAnnotations.put(sourceID, label);
-                    }
-                    break;
-                case EST_TIME_TO_NEXT_MARK:
-                    //est time to next mark annotation
-                    if (timeToMarkAnnotations.get(boat.getSourceID()) == null) {
+                        break;
+                    case EST_TIME_TO_NEXT_MARK:
+                        //est time to next mark annotation
                         label = new Label(String.valueOf(boat.getTimeToNextMark() / 1000) + " seconds");
                         this.timeToMarkAnnotations.put(sourceID, label);
-                    }
-            }
-            if(label != null) {
+
+                }
+
                 label.setFont(Font.font("Monospaced"));
                 label.setTextFill(boat.getColor());
                 this.raceViewPane.getChildren().add(label);
+
             }
         }
+    }
+
+
+    /**
+     * Move annotations with competing boat positions
+     * @param boat Competitor of competing boat
+     */
+    private void moveAnnotations(Competitor boat){
+        int sourceID = boat.getSourceID();
 
         int offset = 10;
         Double xValue = boat.getPosition().getXValue();
@@ -261,6 +264,7 @@ public class RaceViewController implements Initializable {
             Label label = null;
             allSelected = allSelected && checkBox.isSelected();
             noneSelected = noneSelected || checkBox.isSelected();
+            assert annotation != null;
             switch (annotation) {
                 case TEAM_NAME:
                     label = this.nameAnnotations.get(sourceID);
@@ -280,6 +284,7 @@ public class RaceViewController implements Initializable {
             if (checkBox.isSelected()) {
                 offset += 12;
             }
+
         }
 
         allAnnotationsRadio.setSelected(allSelected);
@@ -290,7 +295,6 @@ public class RaceViewController implements Initializable {
         fpsCounter.setVisible(fpsToggle.isSelected());
 
     }
-
 
 
     /**
@@ -379,13 +383,6 @@ public class RaceViewController implements Initializable {
         gc.setFill(boat.getColor());
         gc.save();
         Dot dot = new Dot(boat.getPosition().getXValue(), boat.getPosition().getYValue());
-//        Rotate r = new Rotate(boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
-//        Rotate rr = new Rotate(-boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
-//
-//        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-//        gc.translate(0, 3);
-//        gc.fillOval(boat.getPosition().getXValue() - 1, boat.getPosition().getYValue() - 1, 2, 2);
-//        gc.setTransform(rr.getMxx(), rr.getMyx(), rr.getMxy(), rr.getMyy(), rr.getTx(), rr.getTy());
         Circle circle = new Circle(dot.getX(), dot.getY(), 1.5, boat.getColor());
         //add fade transition
         FadeTransition ft=new FadeTransition(Duration.millis(20000),circle);
@@ -398,21 +395,17 @@ public class RaceViewController implements Initializable {
     }
 
 
-    private void moveMark(String name, double x, double y) {
-        this.markModels.get(name).setLayoutX(x);
-        this.markModels.get(name).setLayoutY(y);
-    }
-
     /**
-     *
-     * @param gc
-     * @param width
-     * @param height
+     * Draw background of the racecourse
+     * @param gc GraphicsContext
+     * @param width double - width of the canvas
+     * @param height double- height of the canvas
      */
-    public void drawBackGround(GraphicsContext gc, double width, double height) {
+    private void drawBackground(GraphicsContext gc, double width, double height) {
         gc.setFill(Color.LIGHTBLUE);
         gc.fillRect(0, 0, width, height);
     }
+
 
     /**
      * Refreshes the contents of the display to match the datasource
@@ -457,7 +450,7 @@ public class RaceViewController implements Initializable {
             }
             this.drawWake(boat);
             this.drawBoat(boat);
-            this.drawAnnotations(boat);
+            this.moveAnnotations(boat);
 
         }
 
