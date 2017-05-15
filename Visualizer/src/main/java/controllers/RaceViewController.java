@@ -3,9 +3,13 @@ package controllers;
 import javafx.animation.FadeTransition;
 
 import javafx.scene.Group;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import com.google.common.primitives.Doubles;
 import javafx.fxml.FXML;
@@ -27,6 +31,8 @@ import models.*;
 import utilities.Annotation;
 import utilities.DataSource;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
@@ -52,6 +58,7 @@ public class RaceViewController implements Initializable {
     @FXML private CheckBox fpsToggle;
     @FXML private Text status;
     @FXML private Group annotationGroup;
+    @FXML private ImageView mapView;
     private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
@@ -79,6 +86,8 @@ public class RaceViewController implements Initializable {
         allAnnotationsRadio.setSelected(true);
         showAllAnnotations();
         fpsToggle.setSelected(true);
+
+
 
     }
 
@@ -168,6 +177,15 @@ public class RaceViewController implements Initializable {
 
     }
 
+
+    private void drawBackgroundImage(){
+
+        mapView.setImage(new Image("https://maps.googleapis.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&zoom=13&size=600x300&maptype=roadmap" +
+                "&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318" +
+                "&markers=color:red%7Clabel:C%7C40.718217,-73.998284" +
+                "&key=AIzaSyAIeO7DcE0uki_7afuzZaUTdVGezpYQpbA"));
+    }
+
     /**
      * Draw boundary
      *
@@ -187,7 +205,8 @@ public class RaceViewController implements Initializable {
             gc.setLineDashes(5);
             gc.setLineWidth(0.8);
             gc.clearRect(0,0,4000,4000);
-            drawBackground(gc,4000,4000);
+            //drawBackground(gc,4000,4000);
+drawBackgroundImage();
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.setFill(Color.POWDERBLUE);
 
