@@ -49,8 +49,8 @@ public class Interpreter implements DataSource, PacketHandler {
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
     private List<CourseFeature> courseFeatures = new ArrayList<>();
     private List<MutablePoint> courseBoundary = new ArrayList<>();
-    private double bufferX;
-    private double bufferY;
+    private double paddingX;
+    private double paddingY;
     private double scaleFactor;
     private double minXMercatorCoord;
     private double minYMercatorCoord;
@@ -246,7 +246,7 @@ public class Interpreter implements DataSource, PacketHandler {
         double x = this.boatData.getPixelPoint().getXValue();
         double y = this.boatData.getPixelPoint().getYValue();
         MutablePoint location = new MutablePoint(x, y);
-        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
+        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
         competitor.setPosition(location);
         competitor.setVelocity(boatData.getSpeed());
 
@@ -275,12 +275,10 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     private void updateCourseMarks(CourseFeature courseFeature) {
         //make scaling in proportion
-        double bufferX = raceXMLParser.getBufferX();
-        double bufferY = raceXMLParser.getBufferY();
         double scaleFactor = raceXMLParser.getScaleFactor();
         List<CourseFeature> points = new ArrayList<>();
 
-        courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, bufferX / 2, bufferY / 2);
+        courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
         this.storedFeatures.put(boatData.getSourceID(), courseFeature);
 
@@ -379,8 +377,8 @@ public class Interpreter implements DataSource, PacketHandler {
      * Sets the scaling values after the boundary has been received and parsed by the raceXMLParser.
      */
     private void setScalingFactors() {
-        this.bufferX = raceXMLParser.getBufferX();
-        this.bufferY = raceXMLParser.getBufferY();
+        this.paddingX=raceXMLParser.getPaddingX();
+        this.paddingY=raceXMLParser.getPaddingY();
         this.scaleFactor = raceXMLParser.getScaleFactor();
         this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
         this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());

@@ -147,7 +147,7 @@ public class RaceXMLParser {
      * Set buffers and call course parsers
      * buffers are calculated by the size of widgets surrounding the course
      */
-    private void parseRace() {
+    private void parseRace(RaceData raceData) {
         bufferX = 500;
         bufferY = 280;
 

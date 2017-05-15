@@ -7,6 +7,7 @@ import parsers.RaceStatusEnum;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static parsers.Converter.convertToRelativeTime;
 import static parsers.Converter.hexByteArrayToInt;
 
 /**
