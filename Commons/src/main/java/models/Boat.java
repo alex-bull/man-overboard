@@ -20,6 +20,7 @@ public class Boat implements Competitor {
     private String type;
     private String lastMarkPassed;
     private int legIndex;
+    private long timeToNextMark;
 
     /**
      * Creates a boat
@@ -37,6 +38,7 @@ public class Boat implements Competitor {
         this.color = color;
         this.abbreName = abbreName;
         legIndex = 0;
+        timeToNextMark = 0;
     }
 
     /**
@@ -54,6 +56,7 @@ public class Boat implements Competitor {
         this.position = startPosition;
         this.abbreName = abbreName;
         legIndex = 0;
+        timeToNextMark = 0;
         this.sourceID = sourceID;
         this.status = status;
     }
@@ -61,6 +64,8 @@ public class Boat implements Competitor {
     public Boat() {
 
     }
+
+
 
     @Override
     public int getStatus() {
@@ -80,6 +85,14 @@ public class Boat implements Competitor {
     @Override
     public void setCurrentLegIndex(int legIndex) {
         this.legIndex = legIndex;
+    }
+
+    public long getTimeToNextMark() {
+        return timeToNextMark;
+    }
+
+    public void setTimeToNextMark(long timeToNextMark) {
+        this.timeToNextMark = timeToNextMark;
     }
 
     public String getType() {

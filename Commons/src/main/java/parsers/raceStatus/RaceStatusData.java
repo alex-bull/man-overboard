@@ -1,5 +1,9 @@
 package parsers.raceStatus;
 
+import parsers.RaceStatusEnum;
+
+import parsers.BoatStatus;
+
 import java.util.HashMap;
 
 /**
@@ -10,7 +14,7 @@ public class RaceStatusData {
 
     private long currentTime;
     private Integer raceID;
-    private String raceStatus;
+    private RaceStatusEnum raceStatus;
     private long expectedStartTime;
     private Double windDirection;
     private Integer windSpeed;
@@ -19,7 +23,7 @@ public class RaceStatusData {
     private HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
 
 
-    public RaceStatusData(long currentTime, Integer raceID, String raceStatus, long expectedStartTime, Double windDirection, Integer windSpeed, Integer numBoatsInRace, Integer raceType, HashMap<Integer, BoatStatus> boatStatuses) {
+    public RaceStatusData(long currentTime, Integer raceID, RaceStatusEnum raceStatus, long expectedStartTime, Double windDirection, Integer windSpeed, Integer numBoatsInRace, Integer raceType, HashMap<Integer, BoatStatus> boatStatuses) {
         this.currentTime = currentTime;
         this.raceID = raceID;
         this.raceStatus = raceStatus;
@@ -40,7 +44,7 @@ public class RaceStatusData {
         return raceID;
     }
 
-    public String getRaceStatus() {
+    public RaceStatusEnum getRaceStatus() {
         return raceStatus;
     }
 

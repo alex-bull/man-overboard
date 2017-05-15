@@ -189,4 +189,12 @@ public class Mark implements CourseFeature {
     public MutablePoint getGPSPoint() {
         return GPSLocation;
     }
+
+    @Override
+    public String toString() {
+        return "Mark{" +
+                "name='" + name + '\'' +
+                ", pixelLocation=" + pixelLocation +
+                '}';
+    }
 }

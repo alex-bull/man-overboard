@@ -16,50 +16,44 @@ import static parsers.Converter.hexByteArrayToInt;
  */
 public class BoatDataParser {
 
-    private double width;
-    private double height;
+
     private CourseFeature courseFeature;
-    private Competitor competitor;
-    private MutablePoint pixelPoint;
-    private BoatData boatData;
-
-
-    public BoatDataParser(byte[] message, double width, double height) {
-        this.width = width;
-        this.height = height;
-        this.boatData = processMessage(message);
-    }
 
 
     /**
      * Process the given data and parse source id, latitude, longitude, heading, speed
-     *
      * @param body byte[] a byte array of the boat data message
+     * @param width double the width of the screen
+     * @param height double the height of the screen
      * @return BoatData boat data object
      */
-    public BoatData processMessage(byte[] body) {
+    public BoatData processMessage(byte[] body,  double width, double height) {
+        try {
+            Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
+            int deviceType = hexByteArrayToInt(Arrays.copyOfRange(body, 15, 16));
+            double latitude = parseCoordinate(Arrays.copyOfRange(body, 16, 20));
+            double longitude = parseCoordinate(Arrays.copyOfRange(body, 20, 24));
+            double heading = parseHeading(Arrays.copyOfRange(body, 28, 30));
+            //speed in mm/sec
+            int speed = hexByteArrayToInt(Arrays.copyOfRange(body, 38, 40));
+            //speed in m/sec
+            double convertedSpeed = speed / 1000.0;
 
+            ArrayList<Double> point = mercatorProjection(latitude, longitude, width, height);
+            double pointX = point.get(0);
+            double pointY = point.get(1);
+            MutablePoint pixelPoint = new MutablePoint(pointX, pointY);
+            if (deviceType == 3) {
+                MutablePoint GPS = new MutablePoint(latitude, longitude);
+                this.courseFeature = new Mark(sourceID.toString(), pixelPoint, GPS, 0);
+            }
 
-        Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
-        int deviceType = hexByteArrayToInt(Arrays.copyOfRange(body, 15, 16));
-        double latitude = parseCoordinate(Arrays.copyOfRange(body, 16, 20));
-        double longitude = parseCoordinate(Arrays.copyOfRange(body, 20, 24));
-        double heading = parseHeading(Arrays.copyOfRange(body, 28, 30));
-        //speed in mm/sec
-        int speed = hexByteArrayToInt(Arrays.copyOfRange(body, 38, 40));
-        //speed in m/sec
-        double convertedSpeed = speed / 1000.0;
-
-        ArrayList<Double> point = mercatorProjection(latitude, longitude, width, height);
-        double pointX = point.get(0);
-        double pointY = point.get(1);
-        this.pixelPoint = new MutablePoint(pointX, pointY);
-        if (deviceType == 3) {
-            MutablePoint GPS = new MutablePoint(latitude, longitude);
-            this.courseFeature = new Mark(sourceID.toString(), this.pixelPoint, GPS, 0);
+            return new BoatData(sourceID, deviceType, latitude, longitude, heading, convertedSpeed, pixelPoint);
+        }
+        catch (Exception e) {
+            return null;
         }
 
-        return new BoatData(sourceID, deviceType, latitude, longitude, heading, convertedSpeed);
     }
 
     /**
@@ -83,14 +77,6 @@ public class BoatDataParser {
     }
 
 
-    public MutablePoint getPixelPoint() {
-        return pixelPoint;
-    }
-
-    public void setPixelPoint(MutablePoint pixelPoint) {
-        this.pixelPoint = pixelPoint;
-    }
-
 
     /**
      * Function to map latitude and longitude to screen coordinates
@@ -113,26 +99,8 @@ public class BoatDataParser {
 
     }
 
-
-    public Competitor getCompetitor() {
-        return competitor;
-    }
-
-
-    public BoatData getBoatData() {
-        return boatData;
-    }
-
-    public void setBoatData(BoatData boatData) {
-        this.boatData = boatData;
-
-    }
-
     public CourseFeature getCourseFeature() {
         return courseFeature;
     }
 
-    public void setCourseFeature(CourseFeature courseFeature) {
-        this.courseFeature = courseFeature;
-    }
 }

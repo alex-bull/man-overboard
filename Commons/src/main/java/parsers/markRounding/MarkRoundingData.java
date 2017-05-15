@@ -6,9 +6,9 @@ package parsers.markRounding;
  */
 public class MarkRoundingData {
 
-    Integer sourceID;
-    Integer markID;
-    String markName;
+    private Integer sourceID;
+    private Integer markID;
+    private String markName;
 
     public MarkRoundingData(Integer sourceID, Integer markID) {
         this.sourceID = sourceID;

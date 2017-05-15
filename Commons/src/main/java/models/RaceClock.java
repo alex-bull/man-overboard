@@ -35,13 +35,11 @@ public class RaceClock extends AnimationTimer implements Clock {
         super.start();
     }
 
-
     @Override
     public void handle(long now) {
         String newTime = this.formatDisplayTime(System.currentTimeMillis() - startTime);
         this.clockHandler.clockTicked(newTime, this);
     }
-
 
     /**
      * Creates a formatted display time string in mm:ss and takes into account the scale factor

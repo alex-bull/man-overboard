@@ -34,4 +34,68 @@ public class Converter {
         return value;
     }
 
+
+    /**
+     * Convert the real time to relative time
+     *
+     * @param realTime real time from parser
+     * @param messageTime time message was received
+     * @return converted time in milliseconds
+     */
+    public static long convertToRelativeTime(long realTime, long messageTime){
+        long relativeTime = 0;
+        if (realTime != 0 && messageTime != 0) {
+            relativeTime = realTime - messageTime;
+        }
+        return relativeTime;
+    }
+
+    /**
+     * Converts the received race status integer to a string with meaning.
+     * @param status Integer the race status integer
+     * @return String the description of the race status
+     */
+    public static String raceStatusToString(RaceStatusEnum status) {
+        String statusString;
+        switch(status) {
+            case NOT_ACTIVE:
+                statusString = "Not Active";
+                break;
+            case WARNING:
+                statusString = "Warning";
+                break;
+            case PREPARATORY:
+                statusString = "Preparatory";
+                break;
+            case STARTED:
+                statusString = "Started";
+                break;
+            case FINISHED:
+                statusString = "Finished";
+                break;
+            case RETIRED:
+                statusString = "Retired";
+                break;
+            case ABANDONED:
+                statusString = "Abandoned";
+                break;
+            case POSTPONED:
+                statusString = "Postponed";
+                break;
+            case TERMINATED:
+                statusString = "Terminated";
+                break;
+            case NOT_SET:
+                statusString = "Race start time not set";
+                break;
+            case PRESTART:
+                statusString = "Prestart";
+                break;
+            default:
+                statusString = "No status found";
+                break;
+        }
+        return statusString;
+    }
+
 }

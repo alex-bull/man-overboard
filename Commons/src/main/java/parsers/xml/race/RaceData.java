@@ -1,7 +1,9 @@
 package parsers.xml.race;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by psu43 on 26/04/17.
@@ -15,16 +17,32 @@ public class RaceData {
     private String raceStartTime;
     private boolean raceStartTimePostpone;
     private List<YachtData> participants = new ArrayList<>();
+    private Set<Integer> participantIDs = new HashSet<>();
     private List<MarkData> startMarks = new ArrayList<>();
     private List<MarkData> finishMarks = new ArrayList<>();
     private List<CompoundMarkData> course = new ArrayList<>();
     private List<CornerData> compoundMarkSequence = new ArrayList<>();
+    private Set<Integer> compoundMarkIDs = new HashSet<>();
+    private Set<Integer> markIDs = new HashSet<>();
     private List<LimitData> courseLimit = new ArrayList<>();
 
 
     public RaceData() {
     }
-
+    public List<Integer> getStartMarksID(){
+        List<Integer> returnList=new ArrayList<>();
+        for(MarkData mark:startMarks){
+            returnList.add(mark.getSourceID());
+        }
+        return returnList;
+    }
+    public List<Integer> getFinishMarksID(){
+        List<Integer> returnList=new ArrayList<>();
+        for(MarkData mark:finishMarks){
+            returnList.add(mark.getSourceID());
+        }
+        return returnList;
+    }
     public List<MarkData> getStartMarks() {
         return this.startMarks;
     }
@@ -97,6 +115,9 @@ public class RaceData {
         this.participants = participants;
     }
 
+    public void setParticipantIDs(Set<Integer> participantIDs) {
+        this.participantIDs = participantIDs;
+    }
 
     public List<CornerData> getCompoundMarkSequence() {
         return compoundMarkSequence;
@@ -110,8 +131,39 @@ public class RaceData {
         return courseLimit;
     }
 
+    public void addCourseLimit(LimitData limitData) {
+        this.courseLimit.add(limitData);
+    }
+
     public void setCourseLimit(List<LimitData> courseLimit) {
         this.courseLimit = courseLimit;
     }
 
+    public Set<Integer> getParticipantIDs() {
+        return participantIDs;
+    }
+
+    public Set<Integer> getCompoundMarkIDs() {
+        return compoundMarkIDs;
+    }
+
+    public void setCompoundMarkIDs(Set<Integer> compoundMarkIDs) {
+        this.compoundMarkIDs = compoundMarkIDs;
+    }
+
+    public void addCompoundMarkID(Integer id) {
+        this.compoundMarkIDs.add(id);
+    }
+
+    public Set<Integer> getMarkIDs() {
+        return markIDs;
+    }
+
+    public void setMarkIDs(Set<Integer> markIDs) {
+        this.markIDs = markIDs;
+    }
+
+    public void addMarkID(Integer markId) {
+        this.markIDs.add(markId);
+    }
 }

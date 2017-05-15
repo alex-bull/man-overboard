@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import utilities.Interpreter;
 
 public class App extends Application {
     public static void main(String[] args) {
@@ -17,10 +18,10 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
         // Code for starter controller
 
-
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("startView.fxml"));
         Parent root = loader.load();
         StarterController starterController = loader.getController();
+        starterController.setDataSource(new Interpreter());
 //        starterController.setCourseFile(courseFile);
         starterController.setStage(primaryStage);
         primaryStage.setMinWidth(530);
