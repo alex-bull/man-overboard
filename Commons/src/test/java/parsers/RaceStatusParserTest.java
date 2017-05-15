@@ -46,7 +46,7 @@ public class RaceStatusParserTest {
 
         try {
             RaceStatusParser raceStatusParser = new RaceStatusParser();
-            assertEquals("Terminated", raceStatusParser.processMessage(packet).getRaceStatus());
+            assertEquals("TERMINATED", raceStatusParser.processMessage(packet).getRaceStatus());
         } catch (Exception e) {
             Assert.fail();
         }

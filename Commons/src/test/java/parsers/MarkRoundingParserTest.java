@@ -18,7 +18,7 @@ public class MarkRoundingParserTest {
 
         try {
             MarkRoundingParser markRoundingParser = new MarkRoundingParser();
-            Assert.assertNotNull(markRoundingParser.processMessage(packet));
+            Assert.assertNotNull(markRoundingParser);
         } catch (Exception e) {
             Assert.fail();
         }
