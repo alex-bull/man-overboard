@@ -7,7 +7,7 @@
 
 <AnchorPane fx:id="sparklines" maxHeight="200.0" maxWidth="490.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="300.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="600.0" AnchorPane.rightAnchor="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SparklinesController">
    <children>
-      <LineChart fx:id="sparklinesChart" layoutX="-1.0" layoutY="1.0" prefHeight="200.0" prefWidth="300.0">
+      <LineChart fx:id="sparkChart" layoutX="-1.0" layoutY="1.0" prefHeight="200.0" prefWidth="300.0">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
