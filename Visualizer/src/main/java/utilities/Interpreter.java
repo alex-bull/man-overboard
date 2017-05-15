@@ -26,7 +26,6 @@ import java.util.*;
 
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
-import static parsers.MessageType.RACE_STATUS;
 
 /**
  * Created by mgo65 on 11/05/17.
@@ -193,13 +192,14 @@ public class Interpreter implements DataSource, PacketHandler {
                         }
                     }
                 }
+
                 break;
             case MARK_ROUNDING:
                 this.markRoundingData = new MarkRoundingParser().processMessage(packet);
 
-
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
+
                     for (CompoundMarkData mark : this.compoundMarks) {
                         if (mark.getID() == markID) {
                             markRoundingData.setMarkName(mark.getName());
@@ -212,13 +212,12 @@ public class Interpreter implements DataSource, PacketHandler {
                             competitor.setLastMarkPassed(markName);
                         }
                     }
-
                 }
                 break;
             case BOAT_LOCATION:
                 BoatDataParser boatDataParser = new BoatDataParser();
-                if(boatData != null) {
-                    this.boatData = boatDataParser.processMessage(packet, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                this.boatData = boatDataParser.processMessage(packet, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                if (boatData != null) {
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties();
                     } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
