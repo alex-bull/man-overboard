@@ -37,7 +37,7 @@ public class BoatDataParser {
      * @param body byte[] a byte array of the boat data message
      * @return BoatData boat data object
      */
-    public BoatData processMessage(byte[] body) {
+    private BoatData processMessage(byte[] body) {
 
         try {
             Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
