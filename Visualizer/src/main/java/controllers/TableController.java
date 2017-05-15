@@ -9,14 +9,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import utilities.DataReceiver;
+import models.Competitor;
+import models.RaceEvent;
+import utilities.DataSource;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by msl47 on 21/03/17.
@@ -25,32 +26,26 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TableController implements Initializable {
 
-    @FXML
-    private TableView raceTable;
-    @FXML
-    private TableColumn positionCol;
-    @FXML
-    private TableColumn featureCol;
-    @FXML
-    private TableColumn nameCol;
-    @FXML
-    private TableColumn speedCol;
+    @FXML private TableView<RaceEvent> raceTable;
+    @FXML private TableColumn<RaceEvent, Integer> positionCol;
+    @FXML private TableColumn<RaceEvent, String> featureCol;
+    @FXML private TableColumn<RaceEvent, String> nameCol;
+    @FXML private TableColumn<RaceEvent, Integer> speedCol;
 
-    private DataReceiver dataReceiver;
     private ObservableList<RaceEvent> events = FXCollections.observableArrayList();
 
 
     /**
-     * Initialiser for the raceViewController
+     * Initialiser for the TableViewController
      */
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
 
         // initialise race table
-        positionCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, Integer>("position"));
-        nameCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, String>("teamName"));
-        featureCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, String>("featureName"));
-        speedCol.setCellValueFactory(new PropertyValueFactory<RaceEvent, Integer>("speed"));
+        positionCol.setCellValueFactory(new PropertyValueFactory<>("position"));
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("teamName"));
+        featureCol.setCellValueFactory(new PropertyValueFactory<>("featureName"));
+        speedCol.setCellValueFactory(new PropertyValueFactory<>("speed"));
         raceTable.setItems(events);
 
     }
@@ -59,6 +54,18 @@ public class TableController implements Initializable {
         return events;
     }
 
+    /**
+     * Called when the race display updates
+     * @param dataSource DataSource the latest race data
+     */
+    void refresh(DataSource dataSource) {
+        this.setTable(dataSource.getCompetitorsPosition());
+    }
+
+    /**
+     * Sets the data in the table
+     * @param competitors List the competitors in the race
+     */
     public List<Competitor> setTable(List<Competitor> competitors) {
         List<Competitor> cpy = new ArrayList<>(competitors);
         cpy.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));

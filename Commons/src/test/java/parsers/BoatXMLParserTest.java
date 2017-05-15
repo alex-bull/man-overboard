@@ -2,7 +2,8 @@ package parsers;
 
 import org.junit.Before;
 import org.junit.Test;
-import model.Boat;
+import models.Boat;
+import parsers.xml.boat.BoatXMLParser;
 
 import java.util.HashMap;
 import java.util.List;

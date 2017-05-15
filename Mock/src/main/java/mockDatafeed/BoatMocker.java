@@ -2,7 +2,7 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
-import model.*;
+import models.*;
 import org.jdom2.JDOMException;
 
 import java.io.*;
@@ -12,18 +12,18 @@ import java.util.*;
 
 /**
  * Created by khe60 on 24/04/17.
+ * Boat mocker
  */
 public class BoatMocker extends TimerTask {
-    List<Competitor> competitors;
-    List<Competitor> markBoats;
-    List<CourseFeature> courseFeatures;
-    RaceCourse course;
-    int raceStatus;
-    ZonedDateTime expectedStartTime;
-    BinaryPackager binaryPackager;
-    DataSender dataSender;
+    private List<Competitor> competitors;
+    private List<Competitor> markBoats;
+    private List<CourseFeature> courseFeatures;
+    private RaceCourse course;
+    private int raceStatus;
+    private ZonedDateTime expectedStartTime;
+    private BinaryPackager binaryPackager;
+    private DataSender dataSender;
     private MutablePoint prestart;
-    int count = 0;
 
     public BoatMocker() throws IOException {
         binaryPackager = new BinaryPackager();
@@ -231,11 +231,10 @@ public class BoatMocker extends TimerTask {
                 b.setCurrentHeading(courseFeatures.get(b.getCurrentLegIndex()).getExitHeading());
             }
         }
-
-
         //update the position of the boats given the current position, heading and velocity
         updatePosition(0.1);
         //send the boat info to receiver
+
         try {
             sendBoatLocation();
             sendRaceStatus();
@@ -245,6 +244,4 @@ public class BoatMocker extends TimerTask {
         }
 
     }
-
-
 }
