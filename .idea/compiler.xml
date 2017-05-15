@@ -6,11 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="app" />
+        <module name="Commons" />
+        <module name="Mock" />
+        <module name="Visualizer" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="app" target="1.8" />
+      <module name="Commons" target="1.8" />
+      <module name="Mock" target="1.8" />
+      <module name="Visualizer" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

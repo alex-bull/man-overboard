@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--<AnchorPane prefHeight="668.0" prefWidth="977.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.controllers.MainController">-->
+<!--<children>-->
+<!--<SplitPane dividerPositions="0.70" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">-->
+<!--<items>-->
+<!--<fx:include fx:id="raceView" source="raceView.fxml" />-->
+<!--<fx:include fx:id="table" source="table.fxml" />-->
+<!--</items>-->
+<!--</SplitPane>-->
+<!--</children>-->
+<!--</AnchorPane>-->
+
+
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="668.0" prefWidth="977.0" xmlns="http://javafx.com/javafx/8"
+            fx:controller="controllers.MainController">
+    <children>
+        <fx:include fx:id="raceView" source="raceView.fxml"/>
+        <fx:include fx:id="table" source="table.fxml"/>
+        <fx:include fx:id="wind" source="windDirection.fxml"/>
+        <fx:include fx:id="timer" source="timer.fxml"/>
+
+    </children>
+</AnchorPane>
