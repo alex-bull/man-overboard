@@ -1,4 +1,4 @@
-package seng302.Controllers;
+package controllers;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -26,9 +26,6 @@ import models.Competitor;
 import models.WorldClock;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
-import seng302.EnvironmentConfig;
-import seng302.Model.*;
-import seng302.Parsers.Converter;
 
 import java.io.IOException;
 import java.net.URL;
@@ -48,7 +45,6 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML private Button confirmButton;
     @FXML private Label raceStatus;
     @FXML private ComboBox<String> streamCombo;
-
     private Clock worldClock;
     private Stage primaryStage;
     private ObservableList<Competitor> compList;
@@ -69,6 +65,7 @@ public class StarterController implements Initializable, ClockHandler {
 
     /**
      * Implementation of ClockHandler interface method
+     *
      * @param newTime The currentTime of the clock
      */
     public void clockTicked(String newTime, Clock clock) {
@@ -79,7 +76,8 @@ public class StarterController implements Initializable, ClockHandler {
 
     /**
      * Initialiser for StarterController
-     * @param location URL
+     *
+     * @param location  URL
      * @param resources ResourceBundle
      */
     @Override
@@ -132,10 +130,12 @@ public class StarterController implements Initializable, ClockHandler {
         this.confirmButton.setDisable(true);
         boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port);
 
-        this.streamCombo.setDisable(streaming);
-        this.confirmButton.setDisable(streaming);
+        if (streaming) {
+            this.streamCombo.setDisable(true);
+            this.confirmButton.setDisable(true);
 
-        this.setFields();
+            this.setFields();
+        }
 
 
     }
@@ -176,7 +176,7 @@ public class StarterController implements Initializable, ClockHandler {
         worldClock.start();
 
         compList.setAll(dataSource.getCompetitorsPosition());
-        raceStatus.setText(dataSource.getRaceStatus());
+        raceStatus.setText(dataSource.getRaceStatus().toString());
 
         System.out.println(dataSource.getRaceStatus());
 
@@ -231,86 +231,6 @@ public class StarterController implements Initializable, ClockHandler {
 
             }
         });
-    }
-
-    /**
-     * Set fields using data from the stream
-     */
-    private void setFields() {
-
-        while (dataReceiver.getCourseTimezone() == null) {
-            System.out.print("");
-        }
-
-        this.worldClock = new WorldClock(this, dataReceiver.getCourseTimezone());
-        worldClock.start();
-
-        //dataReceiver.setCompetitors(compList);
-        compList.setAll(dataReceiver.getCompetitors());
-        raceStatus.setText(Converter.raceStatusToString(dataReceiver.getRaceStatus()));
-
-        System.out.println(dataReceiver.getRaceStatus());
-
-        if (dataReceiver.getCompetitors().size() == 0) {
-            Stage thisStage = (Stage) countdownButton.getScene().getWindow();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Information Dialog");
-            alert.initOwner(thisStage);
-            alert.setHeaderText(null);
-            alert.setContentText("Sorry, this data stream hasn't started.");
-            alert.showAndWait();
-        }
-        this.countdownButton.setDisable(false);
-    }
-
-
-    /**
-     * Called when the user clicks confirm.
-     * Begins streaming data from the selected server
-     * Calls setFields when data is received
-     */
-    @FXML
-    public void confirmStream() {
-
-        if (this.dataReceiver == null) {
-
-            //get the selected stream
-            String host = this.streamCombo.getSelectionModel().getSelectedItem();
-            if (host == "" || host == null) {
-                System.out.println("No stream selected");
-                return;
-            }
-
-            //create a data reciever
-            try {
-                dataReceiver = new DataReceiver(host, EnvironmentConfig.port);
-                dataReceiver.setCanvasDimensions(primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                this.streamCombo.setDisable(true);
-                this.confirmButton.setDisable(true);
-
-            } catch (IOException e) {
-                //e.printStackTrace();
-                System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
-                dataReceiver = null;
-                return;
-            }
-
-            //start receiving data
-            Timer receiverTimer = new Timer();
-            receiverTimer.schedule(dataReceiver, 0, 1);
-
-            //wait for data to come in before setting fields
-            while (dataReceiver.getNumBoats() < 1 || dataReceiver.getCompetitors().size() < dataReceiver.getNumBoats()) {
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (Exception e) {
-                    System.out.println("Thread sleep error");
-                }
-            }
-            this.setFields();
-
-        }
     }
 
 }

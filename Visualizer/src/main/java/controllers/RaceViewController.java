@@ -6,7 +6,6 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.util.Duration;
-import model.*;
 import com.google.common.primitives.Doubles;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

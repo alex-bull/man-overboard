@@ -5,6 +5,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import models.*;
 import org.jdom2.JDOMException;
+import parsers.MessageType;
+import parsers.RaceStatusEnum;
 import parsers.XmlSubtype;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
@@ -14,7 +16,6 @@ import parsers.raceStatus.RaceStatusData;
 import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.boat.BoatXMLParser;
 import parsers.xml.race.CompoundMarkData;
-import parsers.xml.race.MarkData;
 import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
@@ -24,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import static parsers.Converter.hexByteArrayToInt;
+import static parsers.MessageType.UNKNOWN;
 
 /**
  * Created by mgo65 on 11/05/17.
@@ -39,7 +41,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private RaceData raceData;
     private MarkRoundingData markRoundingData;
     private String timezone;
-    private String raceStatus;
+    private RaceStatusEnum raceStatus;
     private long messageTime;
     private long expectedStartTime;
     private RaceXMLParser raceXMLParser;
@@ -84,7 +86,7 @@ public class Interpreter implements DataSource, PacketHandler {
         return raceData.getFinishMarksID();
     }
 
-    public String getRaceStatus() {
+    public RaceStatusEnum getRaceStatus() {
         return raceStatus;
     }
 
@@ -159,61 +161,68 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     public void interpretPacket(byte[] header, byte[] packet) {
 
-        int XMLMessageType = 26;
-        int boatLocationMessageType = 37;
-        int raceStatusMessageType = 12;
-        int markRoundingMessageType = 38;
-        int messageType = header[0];
-
-        if (messageType == XMLMessageType) {
-            try {
-                readXMLMessage(packet);
-            } catch (JDOMException | IOException e) {
-                e.printStackTrace();
-            }
-        } else if (messageType == raceStatusMessageType) {
-            RaceStatusData raceStatusData = new RaceStatusParser().processMessage(packet);
-            this.raceStatus = raceStatusData.getRaceStatus();
-            this.messageTime = raceStatusData.getCurrentTime();
-            this.expectedStartTime = raceStatusData.getExpectedStartTime();
-            this.windDirection = raceStatusData.getWindDirection();
-            this.numBoats = raceStatusData.getNumBoatsInRace();
-            for (int id : raceStatusData.getBoatStatuses().keySet()) {
-                for (Competitor competitor : competitorsPosition) {
-                    if (competitor.getSourceID() == id) {
-                        competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
-                    }
-                }
-            }
-        } else if (messageType == markRoundingMessageType) {
-            this.markRoundingData = new MarkRoundingParser().processMessage(packet);
-            int markID = markRoundingData.getMarkID();
-
-            for (CompoundMarkData mark : this.compoundMarks) {
-                if (mark.getID() == markID) {
-                    markRoundingData.setMarkName(mark.getName());
-                }
-            }
-
-            String markName = markRoundingData.getMarkName();
-            for (Competitor competitor : this.competitorsPosition) {
-                if (competitor.getSourceID() == this.markRoundingData.getSourceID()) {
-                    competitor.setLastMarkPassed(markName);
-                }
-            }
-
-
-        } else if (messageType == boatLocationMessageType) {
-            BoatDataParser boatDataParser = new BoatDataParser();
-            this.boatData = boatDataParser.processMessage(packet, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-            if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
-                updateBoatProperties();
-            } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
-                CourseFeature courseFeature = boatDataParser.getCourseFeature();
-                updateCourseMarks(courseFeature);
-
+        MessageType messageType = UNKNOWN;
+        for(MessageType messageEnum : MessageType.values()) {
+            if (header[0] == messageEnum.getValue()) {
+                messageType = messageEnum;
             }
         }
+
+        switch(messageType) {
+            case XML:
+                try {
+                    readXMLMessage(packet);
+                } catch (JDOMException | IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case RACE_STATUS:
+                RaceStatusData raceStatusData = new RaceStatusParser().processMessage(packet);
+                this.raceStatus = raceStatusData.getRaceStatus();
+                this.messageTime = raceStatusData.getCurrentTime();
+                this.expectedStartTime = raceStatusData.getExpectedStartTime();
+                this.windDirection = raceStatusData.getWindDirection();
+                this.numBoats = raceStatusData.getNumBoatsInRace();
+                for (int id : raceStatusData.getBoatStatuses().keySet()) {
+                    for (Competitor competitor : competitorsPosition) {
+                        if (competitor.getSourceID() == id) {
+                            competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+                        }
+                    }
+                }
+                break;
+            case MARK_ROUNDING:
+                this.markRoundingData = new MarkRoundingParser().processMessage(packet);
+                int markID = markRoundingData.getMarkID();
+
+                for (CompoundMarkData mark : this.compoundMarks) {
+                    if (mark.getID() == markID) {
+                        markRoundingData.setMarkName(mark.getName());
+                    }
+                }
+
+                String markName = markRoundingData.getMarkName();
+                for (Competitor competitor : this.competitorsPosition) {
+                    if (competitor.getSourceID() == this.markRoundingData.getSourceID()) {
+                        competitor.setLastMarkPassed(markName);
+                    }
+                }
+                break;
+            case BOAT_LOCATION:
+                BoatDataParser boatDataParser = new BoatDataParser();
+                this.boatData = boatDataParser.processMessage(packet, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
+                    updateBoatProperties();
+                } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
+                    CourseFeature courseFeature = boatDataParser.getCourseFeature();
+                    updateCourseMarks(courseFeature);
+
+                }
+                break;
+            default:
+                break;
+        }
+
     }
 
 
@@ -283,25 +292,28 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     private void readXMLMessage(byte[] message) throws IOException, JDOMException {
         String xml = parseXMLMessage(message);
-        switch (this.xmlSubType) {
-            case REGATTA:
-                RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
-                this.timezone = regattaParser.getOffsetUTC();
-                if (!Objects.equals(timezone.substring(0, 1), "-")) {
-                    timezone = "+" + timezone;
-                }
-                break;
-            case RACE:
-               // this.raceXMLParser = new RaceXMLParser(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                this.raceData = raceXMLParser.parseRaceData(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                this.courseBoundary = raceXMLParser.getCourseBoundary();
-                this.compoundMarks = raceData.getCourse();
-                setScalingFactors();
-                break;
-            case BOAT:
-                this.boatXMLParser = new BoatXMLParser(xml.trim());
-                break;
+        if (xml != null) {
+            switch (this.xmlSubType) {
+                case REGATTA:
+                    RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
+                    this.timezone = regattaParser.getOffsetUTC();
+                    if (!Objects.equals(timezone.substring(0, 1), "-")) {
+                        timezone = "+" + timezone;
+                    }
+                    break;
+                case RACE:
+                    // this.raceXMLParser = new RaceXMLParser(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                    this.raceData = raceXMLParser.parseRaceData(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                    this.courseBoundary = raceXMLParser.getCourseBoundary();
+                    this.compoundMarks = raceData.getCourse();
+                    setScalingFactors();
+                    break;
+                case BOAT:
+                    this.boatXMLParser = new BoatXMLParser(xml.trim());
+                    break;
+            }
         }
+
     }
 
 
@@ -311,40 +323,47 @@ public class Interpreter implements DataSource, PacketHandler {
      * @return String XML string describing Regatta, Race, or Boat
      */
     private String parseXMLMessage(byte[] message) {
-        int regattaType = 5;
-        int raceType = 6;
-        int boatType = 7;
-        // can get version number, ack number, timestamp if needed
-
-        int subType = message[9];
-        if (subType == regattaType) {
-            xmlSubType = XmlSubtype.REGATTA;
-        }
-        if (subType == raceType) {
-            xmlSubType = XmlSubtype.RACE;
-        }
-        if (subType == boatType) {
-            xmlSubType = XmlSubtype.BOAT;
-        }
-
-        // can get sequence number if needed
-        byte[] xmlLengthBytes = Arrays.copyOfRange(message, 12, 14);
-        int xmlLength = hexByteArrayToInt(xmlLengthBytes);
-
-        int start = 14;
-        int end = start + xmlLength;
-
-        byte[] xmlBytes = Arrays.copyOfRange(message, start, end);
-        String charset = "UTF-8";
-        String xmlString = "";
 
         try {
-            xmlString = new String(xmlBytes, charset);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            int regattaType = 5;
+            int raceType = 6;
+            int boatType = 7;
+            // can get version number, ack number, timestamp if needed
+
+            int subType = message[9];
+            if (subType == regattaType) {
+                xmlSubType = XmlSubtype.REGATTA;
+            }
+            if (subType == raceType) {
+                xmlSubType = XmlSubtype.RACE;
+            }
+            if (subType == boatType) {
+                xmlSubType = XmlSubtype.BOAT;
+            }
+
+            // can get sequence number if needed
+            byte[] xmlLengthBytes = Arrays.copyOfRange(message, 12, 14);
+            int xmlLength = hexByteArrayToInt(xmlLengthBytes);
+
+            int start = 14;
+            int end = start + xmlLength;
+
+            byte[] xmlBytes = Arrays.copyOfRange(message, start, end);
+            String charset = "UTF-8";
+            String xmlString = "";
+
+            try {
+                xmlString = new String(xmlBytes, charset);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            return xmlString;
+        }
+        catch (Exception e) {
+            return null;
         }
 
-        return xmlString;
     }
 
 

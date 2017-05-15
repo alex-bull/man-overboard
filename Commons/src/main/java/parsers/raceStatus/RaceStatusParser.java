@@ -1,6 +1,7 @@
 package parsers.raceStatus;
 
 import parsers.Converter;
+import parsers.RaceStatusEnum;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,35 +20,41 @@ public class RaceStatusParser {
      * @return RaceStatusData the data from the race status message
      */
     public RaceStatusData processMessage(byte[] body) {
-        long currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
-        Integer raceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
-        Integer raceStatus = hexByteArrayToInt(Arrays.copyOfRange(body, 11, 12));
-        long expectedStartTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 12, 18));
-        Integer windDirection = hexByteArrayToInt(Arrays.copyOfRange(body, 18, 20));
-        Integer windSpeed = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 22));
-        Integer numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22, 23));
-        Integer raceType = hexByteArrayToInt(Arrays.copyOfRange(body, 23, 24));
-        Double doubleWindDirection = windDirection * 360.0 / 65536.0;
-        HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
-        int currentByte = 24;
+        try {
+            long currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
+            Integer raceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
+            Integer raceStatus = hexByteArrayToInt(Arrays.copyOfRange(body, 11, 12));
+            long expectedStartTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 12, 18));
+            Integer windDirection = hexByteArrayToInt(Arrays.copyOfRange(body, 18, 20));
+            Integer windSpeed = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 22));
+            Integer numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22, 23));
+            Integer raceType = hexByteArrayToInt(Arrays.copyOfRange(body, 23, 24));
+            Double doubleWindDirection = windDirection * 360.0 / 65536.0;
+            HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
+            int currentByte = 24;
 
-        for (int i = 0; i < numBoatsInRace; i++) {
+            for (int i = 0; i < numBoatsInRace; i++) {
 
-            Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte, currentByte + 4));
-            Integer boatStatus = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 4, currentByte + 5));
-            Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));
-            Integer numPenaltiesAwarded = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 6, currentByte + 7));
-            Integer numPenaltiesServed = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 7, currentByte + 8));
-            Integer estTimeAtNextMark = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
-            Integer estTimeAtFinish = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 14, currentByte + 20));
+                Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte, currentByte + 4));
+                Integer boatStatus = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 4, currentByte + 5));
+                Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));
+                Integer numPenaltiesAwarded = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 6, currentByte + 7));
+                Integer numPenaltiesServed = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 7, currentByte + 8));
+                Integer estTimeAtNextMark = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
+                Integer estTimeAtFinish = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 14, currentByte + 20));
 
-            boatStatuses.put(sourceID, new BoatStatus(sourceID, boatStatus, legNumber,
-                    numPenaltiesAwarded, numPenaltiesServed, estTimeAtNextMark, estTimeAtFinish));
-            currentByte += 20;
+                boatStatuses.put(sourceID, new BoatStatus(sourceID, boatStatus, legNumber,
+                        numPenaltiesAwarded, numPenaltiesServed, estTimeAtNextMark, estTimeAtFinish));
+                currentByte += 20;
+            }
+
+            return new RaceStatusData(currentTime, raceID, raceStatusToEnum(raceStatus), expectedStartTime, doubleWindDirection,
+                    windSpeed, numBoatsInRace, raceType, boatStatuses);
+
         }
-
-        return new RaceStatusData(currentTime, raceID, raceStatusToString(raceStatus), expectedStartTime, doubleWindDirection,
-                windSpeed, numBoatsInRace, raceType, boatStatuses);
+        catch (Exception e) {
+            return null;
+        }
 
     }
 
@@ -58,10 +65,6 @@ public class RaceStatusParser {
      */
     private RaceStatusEnum raceStatusToEnum(Integer status) {
         return RaceStatusEnum.values()[status];
-    }
-
-    public RaceStatusData getRaceStatus() {
-        return raceStatus;
     }
 
 

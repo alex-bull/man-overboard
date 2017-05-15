@@ -1,5 +1,7 @@
 package parsers.raceStatus;
 
+import parsers.RaceStatusEnum;
+
 import java.util.HashMap;
 
 /**
