@@ -1,5 +1,7 @@
 package parsers.raceStatus;
 
+import parsers.BoatStatus;
+
 import java.util.HashMap;
 
 /**

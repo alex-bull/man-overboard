@@ -1,5 +1,6 @@
 package parsers.raceStatus;
 
+import parsers.BoatStatus;
 import parsers.Converter;
 
 import java.util.Arrays;

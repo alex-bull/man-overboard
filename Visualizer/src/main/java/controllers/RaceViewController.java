@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.animation.FadeTransition;
 
+import javafx.scene.Group;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
@@ -24,6 +25,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import models.*;
+import utilities.Annotation;
 import utilities.DataSource;
 
 import java.net.URL;
@@ -36,6 +38,9 @@ import static javafx.scene.paint.Color.*;
  */
 public class RaceViewController implements Initializable {
 
+    private final double boatLength = 20;
+    private final double startWakeOffset= 3;
+    private final double wakeWidthFactor=0.2;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
     @FXML private Label fpsCounter;
@@ -44,9 +49,11 @@ public class RaceViewController implements Initializable {
     @FXML private RadioButton someAnnotationsRadio;
     @FXML private CheckBox speedButton;
     @FXML private CheckBox nameButton;
+    @FXML private CheckBox timeToMarkButton;
     @FXML private CheckBox fpsToggle;
     @FXML private Text status;
-
+    @FXML private Group annotationGroup;
+    private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
@@ -57,12 +64,8 @@ public class RaceViewController implements Initializable {
     private DataSource dataSource;
     private long startTimeNano = System.nanoTime();
     private int counter = 0;
-
     private Line startLine;
     private Line finishLine;
-    private final double boatLength = 20;
-    private final double startWakeOffset= 3;
-    private final double wakeWidthFactor=0.2;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -88,6 +91,7 @@ public class RaceViewController implements Initializable {
     public void clearAnnotations() {
         speedButton.setSelected(false);
         nameButton.setSelected(false);
+        timeToMarkButton.setSelected(false);
     }
 
     /**
@@ -98,6 +102,7 @@ public class RaceViewController implements Initializable {
     public void showAllAnnotations() {
         speedButton.setSelected(true);
         nameButton.setSelected(true);
+        timeToMarkButton.setSelected(true);
     }
 
     /**
@@ -202,62 +207,88 @@ public class RaceViewController implements Initializable {
 
 
     /**
-     * Draw annotations
+     * Draw annotations and move with boat positions
      * @param boat Competitor a competing boat
      */
     private void drawAnnotations(Competitor boat) {
+        int sourceID = boat.getSourceID();
 
+        for (int i = 0; i < annotationGroup.getChildren().size(); i++) {
+            String annotationType = ((CheckBox) annotationGroup.getChildren().get(i)).getText();
+            Annotation annotation = Annotation.stringToAnnotation(annotationType);
+            Label label = null;
+            switch (annotation) {
+                case TEAM_NAME:
+                    //name annotation
+                    if (nameAnnotations.get(boat.getSourceID()) == null) {
+                        label = new Label(boat.getAbbreName());
+                        this.nameAnnotations.put(sourceID, label);
+                    }
+                    break;
+                case BOAT_SPEED:
+                    //speed annotation
+                    if (speedAnnotations.get(boat.getSourceID()) == null) {
+                        label = new Label(String.valueOf(boat.getVelocity()) + "m/s");
+                        this.speedAnnotations.put(sourceID, label);
+                    }
+                    break;
+                case EST_TIME_TO_NEXT_MARK:
+                    //est time to next mark annotation
+                    if (timeToMarkAnnotations.get(boat.getSourceID()) == null) {
+                        label = new Label(String.valueOf(boat.getTimeToNextMark() / 1000) + " seconds");
+                        this.timeToMarkAnnotations.put(sourceID, label);
+                    }
+            }
+            if(label != null) {
+                label.setFont(Font.font("Monospaced"));
+                label.setTextFill(boat.getColor());
+                this.raceViewPane.getChildren().add(label);
+            }
+        }
+
+        int offset = 10;
         Double xValue = boat.getPosition().getXValue();
         Double yValue = boat.getPosition().getYValue();
-        Label nameLabel;
-        Label speedLabel;
 
-        if (nameAnnotations.get(boat.getSourceID()) == null) {
-            nameLabel = new Label(boat.getAbbreName());
-            nameLabel.setFont(Font.font("Monospaced"));
-            nameLabel.setTextFill(boat.getColor());
-            this.raceViewPane.getChildren().add(nameLabel);
-            this.nameAnnotations.put(boat.getSourceID(), nameLabel);
+        //all selected will be true if all selected
+        boolean allSelected = true;
+        //none selected will be false if none selected
+        boolean noneSelected = false;
+        //change radio button depending on what is selected
+        for (int i = 0; i < annotationGroup.getChildren().size(); i++) {
+            CheckBox checkBox = (CheckBox) annotationGroup.getChildren().get(i);
+            Annotation annotation = Annotation.stringToAnnotation(checkBox.getText());
+            Label label = null;
+            allSelected = allSelected && checkBox.isSelected();
+            noneSelected = noneSelected || checkBox.isSelected();
+            switch (annotation) {
+                case TEAM_NAME:
+                    label = this.nameAnnotations.get(sourceID);
+                    break;
+                case BOAT_SPEED:
+                    label = this.speedAnnotations.get(sourceID);
+                    label.setText(String.valueOf(boat.getVelocity()) + "m/s");
+                    break;
+                case EST_TIME_TO_NEXT_MARK:
+                    label = this.timeToMarkAnnotations.get(sourceID);
+                    label.setText(String.valueOf(boat.getTimeToNextMark() / 1000) + " seconds");
+                    break;
+            }
+            label.setVisible(checkBox.isSelected());
+            label.setLayoutX(xValue + 5);
+            label.setLayoutY(yValue + offset);
+            if (checkBox.isSelected()) {
+                offset += 12;
+            }
         }
 
-        if (speedAnnotations.get(boat.getSourceID()) == null) {
-            speedLabel = new Label(String.valueOf(boat.getVelocity()) + "m/s");
-            speedLabel.setFont(Font.font("Monospaced"));
-            speedLabel.setTextFill(boat.getColor());
-            this.raceViewPane.getChildren().add(speedLabel);
-            this.speedAnnotations.put(boat.getSourceID(), speedLabel);
-        }
+        allAnnotationsRadio.setSelected(allSelected);
+        noAnnotationsRadio.setSelected(!noneSelected);
+        someAnnotationsRadio.setSelected(!allSelected && noneSelected);
 
-        nameLabel = nameAnnotations.get(boat.getSourceID());
-        speedLabel = speedAnnotations.get(boat.getSourceID());
-
-        if (nameButton.isSelected()) {
-            nameLabel.toFront();
-            nameLabel.setText(boat.getAbbreName());
-            nameLabel.setLayoutX(xValue - 25);
-            nameLabel.setLayoutY(yValue - 25);
-        } else {
-            nameLabel.setText("");
-        }
-
-        if (speedButton.isSelected()) {
-            speedLabel.toFront();
-            speedLabel.setText(String.valueOf(boat.getVelocity()) + "m/s");
-            speedLabel.setLayoutX(xValue + 5);
-            speedLabel.setLayoutY(yValue + 15);
-        } else {
-            speedLabel.setText("");
-        }
-
-        if (!(nameButton.isSelected() && speedButton.isSelected() || !nameButton.isSelected() && !speedButton.isSelected())) {
-            someAnnotationsRadio.setSelected(true);
-        }
         // draws FPS counter
-        if (fpsToggle.isSelected()) {
-            fpsCounter.setVisible(true);
-        } else {
-            fpsCounter.setVisible(false);
-        }
+        fpsCounter.setVisible(fpsToggle.isSelected());
+
     }
 
 

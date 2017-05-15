@@ -182,6 +182,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 for (Competitor competitor : competitorsPosition) {
                     if (competitor.getSourceID() == id) {
                         competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+                        competitor.setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                     }
                 }
             }
