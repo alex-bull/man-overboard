@@ -28,6 +28,7 @@
         <CheckBox fx:id="fpsToggle" layoutX="8.0" layoutY="337.0" mnemonicParsing="false" text="Show FPS"/>
         <CheckBox fx:id="nameButton" layoutX="10.0" layoutY="265.0" mnemonicParsing="false" text="Team Name"/>
         <CheckBox fx:id="speedButton" layoutX="10.0" layoutY="229.0" mnemonicParsing="false" text="Speed"/>
+        <CheckBox fx:id="timeSinceMarkButton" layoutX="10.0" layoutY="301.0" mnemonicParsing="false" text="Time Since Last Mark"/>
         <RadioButton fx:id="noAnnotationsRadio" layoutX="136.0" layoutY="195.0" mnemonicParsing="false"
                      onAction="#clearAnnotations" text="None"/>
         <RadioButton fx:id="someAnnotationsRadio" layoutX="64.0" layoutY="195.0" mnemonicParsing="false"

@@ -9,7 +9,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -39,6 +38,7 @@ public class RaceViewController implements Initializable {
     @FXML private RadioButton someAnnotationsRadio;
     @FXML private CheckBox speedButton;
     @FXML private CheckBox nameButton;
+    @FXML private CheckBox timeSinceMarkButton;
     @FXML private CheckBox fpsToggle;
     @FXML private Text status;
 
@@ -46,6 +46,7 @@ public class RaceViewController implements Initializable {
     private Map<Integer, Polyline> wakeModels = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
     private Map<Integer, Label> speedAnnotations = new HashMap<>();
+    private Map<Integer, Label> timeSinceMarkAnnotations = new HashMap<>();
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
     private Map<String, Shape> markModels = new HashMap<>();
@@ -77,6 +78,7 @@ public class RaceViewController implements Initializable {
     public void clearAnnotations() {
         speedButton.setSelected(false);
         nameButton.setSelected(false);
+        timeSinceMarkButton.setSelected(false);
     }
 
     /**
@@ -87,6 +89,7 @@ public class RaceViewController implements Initializable {
     public void showAllAnnotations() {
         speedButton.setSelected(true);
         nameButton.setSelected(true);
+        timeSinceMarkButton.setSelected(true);
     }
 
     /**
@@ -188,6 +191,7 @@ public class RaceViewController implements Initializable {
         Double yValue = boat.getPosition().getYValue();
         Label nameLabel;
         Label speedLabel;
+        Label sinceLastMarkLabel;
 
         if (nameAnnotations.get(boat.getSourceID()) == null) {
             nameLabel = new Label(boat.getAbbreName());
@@ -205,8 +209,19 @@ public class RaceViewController implements Initializable {
             this.speedAnnotations.put(boat.getSourceID(), speedLabel);
         }
 
+        int timeSinceLastMark = 0; // ToDo calculate
+
+        if (timeSinceMarkAnnotations.get(boat.getSourceID()) == null) {
+            sinceLastMarkLabel = new Label(String.valueOf(timeSinceLastMark) + "s");
+            sinceLastMarkLabel.setFont(Font.font("Monospaced"));
+            sinceLastMarkLabel.setTextFill(boat.getColor());
+            this.raceViewPane.getChildren().add(sinceLastMarkLabel);
+            this.speedAnnotations.put(boat.getSourceID(), sinceLastMarkLabel);
+        }
+
         nameLabel = nameAnnotations.get(boat.getSourceID());
         speedLabel = speedAnnotations.get(boat.getSourceID());
+        sinceLastMarkLabel = timeSinceMarkAnnotations.get(boat.getSourceID());
 
         if (nameButton.isSelected()) {
             nameLabel.toFront();
@@ -224,6 +239,15 @@ public class RaceViewController implements Initializable {
             speedLabel.setLayoutY(yValue + 15);
         } else {
             speedLabel.setText("");
+        }
+
+        if (timeSinceMarkButton.isSelected()) {
+            sinceLastMarkLabel.toFront();
+            sinceLastMarkLabel.setText(String.valueOf(timeSinceLastMark) + "s");
+            sinceLastMarkLabel.setLayoutX(xValue);
+            sinceLastMarkLabel.setLayoutY(yValue);
+        } else {
+            sinceLastMarkLabel.setText("");
         }
 
         if (!(nameButton.isSelected() && speedButton.isSelected() || !nameButton.isSelected() && !speedButton.isSelected())) {
