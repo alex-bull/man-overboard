@@ -83,7 +83,7 @@ public class DataReceiver extends TimerTask {
     /**
      * Identify the start of a packet, determine the message type and length, then read.
      */
-    public synchronized run() throws NullPointerException{
+    public void run() throws NullPointerException{
         try {
             boolean isStartOfPacket = checkForSyncBytes();
 

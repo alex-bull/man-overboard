@@ -1,7 +1,7 @@
 package controllers;
 
-import model.Competitor;
-import model.RaceEvent;
+import models.Competitor;
+import models.RaceEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,10 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import models.Competitor;
-import models.RaceEvent;
 import utilities.DataSource;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;

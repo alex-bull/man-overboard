@@ -1,8 +1,8 @@
 package controllers;
 
 import javafx.scene.control.TableColumn;
-import model.Boat;
-import model.Competitor;
+import models.Boat;
+import models.Competitor;
 import org.junit.Test;
 
 import java.util.ArrayList;

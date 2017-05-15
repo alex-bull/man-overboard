@@ -19,12 +19,13 @@ public interface DataSource {
     List<CourseFeature> getCourseFeatures();
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
-    List<MarkData> getStartMarks();
-    List<MarkData> getFinishMarks();
+    List<Integer> getStartMarks();
+    List<Integer> getFinishMarks();
     String getRaceStatus();
     long getMessageTime();
     long getExpectedStartTime();
     List<Competitor> getCompetitorsPosition();
     double getWindDirection();
     int getNumBoats();
+    HashMap<Integer, CourseFeature> getStoredFeatures();
 }
