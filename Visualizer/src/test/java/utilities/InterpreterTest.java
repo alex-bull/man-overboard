@@ -89,25 +89,25 @@ public class InterpreterTest {
 
     }
 
-//    @Test
-//    public void parsesValidMarkRoundingPacket() {
-//
-//        List<Competitor> competitors = new ArrayList<>();
-//        Boat boat = new Boat();
-//        boat.setSourceID(0);
-//        competitors.add(boat);
-//        interpreter.setCompetitors(competitors);
-//
-//        CompoundMarkData data = new CompoundMarkData(0, "Test Mark", new ArrayList<>());
-//        interpreter.getCompoundMarks().add(data);
-//
-//        byte[] header = {38,0,0,0};
-//        byte[] packet = new byte[22];
-//
-//        interpreter.interpretPacket(header, packet);
-//        assertTrue(interpreter.getCompetitors().get(0).getLastMarkPassed() == "Test Mark");
-//
-//    }
+/*    @Test
+    public void parsesValidMarkRoundingPacket() {
+
+        List<Competitor> competitors = new ArrayList<>();
+        Boat boat = new Boat();
+        boat.setSourceID(0);
+        competitors.add(boat);
+        interpreter.setCompetitors(competitors);
+
+        CompoundMarkData data = new CompoundMarkData(0, "Test Mark", new ArrayList<>());
+        interpreter.getCompoundMarks().add(data);
+
+        byte[] header = {38,0,0,0};
+        byte[] packet = new byte[22];
+
+        interpreter.interpretPacket(header, packet);
+        assertTrue(interpreter.getCompetitors().get(0).getLastMarkPassed() == "Test Mark");
+
+    }*/
 
     @Test
     public void ignoresPacketWithUnknownMessageType() {
