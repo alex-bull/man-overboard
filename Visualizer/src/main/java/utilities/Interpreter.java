@@ -137,7 +137,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
         try {
             //wait for data to come in before setting fields
-            while (this.numBoats < 1 || this.competitorsPosition.size() < this.numBoats) {
+            while (this.numBoats < 1 || storedCompetitors.size() < this.numBoats) {
                 try {
                     Thread.sleep(1000);
                 } catch (Exception e) {
@@ -184,13 +184,17 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.windDirection = raceStatusData.getWindDirection();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
-                    for (int id : raceStatusData.getBoatStatuses().keySet()) {
-                        for (Competitor competitor : competitorsPosition) {
-                            if (competitor.getSourceID() == id) {
-                                competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
-                            }
-                        }
+                    for (int id : storedCompetitors.keySet()) {
+//                        for (Competitor competitor : competitorsPosition) {
+//                            if (competitor.getSourceID() == id) {
+//                                competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+//                                competitor.setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
+//                            }
+//                        }
+                        storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+                        storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                     }
+
                 }
 
                 break;
@@ -199,7 +203,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
-
                     for (CompoundMarkData mark : this.compoundMarks) {
                         if (mark.getID() == markID) {
                             markRoundingData.setMarkName(mark.getName());
@@ -207,11 +210,12 @@ public class Interpreter implements DataSource, PacketHandler {
                     }
 
                     String markName = markRoundingData.getMarkName();
-                    for (Competitor competitor : this.competitorsPosition) {
-                        if (competitor.getSourceID() == this.markRoundingData.getSourceID()) {
-                            competitor.setLastMarkPassed(markName);
-                        }
-                    }
+//                    for (Competitor competitor : this.competitorsPosition) {
+//                        if (competitor.getSourceID() == this.markRoundingData.getSourceID()) {
+//                            competitor.setLastMarkPassed(markName);
+//                        }
+//                    }
+                    storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
                 }
                 break;
             case BOAT_LOCATION:

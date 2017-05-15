@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import static parsers.Converter.convertToRelativeTime;
 import static parsers.Converter.hexByteArrayToInt;
+import static parsers.Converter.hexByteArrayToLong;
 
 /**
  * Created by Pang on 3/05/17.
@@ -42,9 +43,9 @@ public class RaceStatusParser {
                 Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));
                 Integer numPenaltiesAwarded = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 6, currentByte + 7));
                 Integer numPenaltiesServed = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 7, currentByte + 8));
-                long estTimeToNextMark = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
+                long estTimeToNextMark = hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
                 estTimeToNextMark = convertToRelativeTime(estTimeToNextMark, currentTime);
-                long estTimeAtFinish = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 14, currentByte + 20));
+                long estTimeAtFinish = hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 14, currentByte + 20));
 
                 boatStatuses.put(sourceID, new BoatStatus(sourceID, boatStatus, legNumber,
                         numPenaltiesAwarded, numPenaltiesServed, estTimeToNextMark, estTimeAtFinish));
