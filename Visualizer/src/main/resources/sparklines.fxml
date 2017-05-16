@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.chart.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="sparklines" maxHeight="200.0" maxWidth="490.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="300.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="600.0" AnchorPane.rightAnchor="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SparklinesController">
+    <children>
+        <LineChart fx:id="sparkChart" layoutX="-1.0" layoutY="1.0" prefHeight="200.0" prefWidth="300.0">
+            <xAxis>
+                <CategoryAxis side="BOTTOM" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis autoRanging="false" label="Position" lowerBound="1.0" minorTickVisible="false" side="LEFT" tickUnit="1.0" upperBound="5.0" />
+            </yAxis>
+        </LineChart>
+    </children>
+</AnchorPane>
+
