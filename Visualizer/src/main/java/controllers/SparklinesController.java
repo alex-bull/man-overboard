@@ -1,59 +1,66 @@
 package controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import models.Competitor;
+import utilities.DataSource;
 
-
-import java.net.URL;
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Created by abu59
  * The controller for the sparklines chart
  */
 
-public class SparklinesController implements Initializable {
+public class SparklinesController {
 
-    @FXML private LineChart sparkChart;
+    @FXML private LineChart<String, Double> sparkChart;
 
     private List<Competitor> competitors;
-
-
     private ArrayList<XYChart.Series> seriesList;
+    private DataSource dataSource;
 
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        sparkChart.isVisible();
-    }
-
-
-    public void setCompetitors(List<Competitor> competitors){
+    void setCompetitors(DataSource dataSource){
+        this.dataSource = dataSource;
+        this.competitors = dataSource.getCompetitorsPosition();
 
         seriesList = new ArrayList<>();
         System.out.println("init: " + seriesList);
 
-        this.competitors = competitors;
+        XYChart.Series<String, Double> series = new XYChart.Series<>();
 
+        //series.getData().add(new XYChart.Data<>("A", 15.1));
+        System.out.println(competitors.size());
+        //series.getData().add(new XYChart.Data(2,2));
+
+
+        for(Competitor boat: competitors) {
+            series.getData().add(new XYChart.Data<>(boat.getAbbreName(),2.2));
+
+        }
+
+        sparkChart.getData().add(series);
+        /*
         for(Competitor boat: competitors){
             System.out.println("setComp: " + seriesList);
-            XYChart.Series series = new XYChart.Series();
             seriesList.add(series);
             System.out.println(competitors.indexOf(boat));
             //seriesList.get(competitors.indexOf(boat)).getNode().setStyle("-fx-stroke: " + boat.getColor());
             seriesList.get(competitors.indexOf(boat)).getData().add(new XYChart.Data(seriesList.size() + 1, 3)); //replace y with team position
             sparkChart.getData().add(seriesList.get(competitors.indexOf(boat)));
         }
+
+        */
+
     }
 
 
-    public void setSparklinesChart(){
+    public void refresh(){
 
         for(Competitor boat: competitors){
             //seriesList.get(competitors.indexOf(boat)).getNode().setStyle("-fx-stroke: " + boat.getColor());
