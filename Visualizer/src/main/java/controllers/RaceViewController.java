@@ -138,24 +138,26 @@ public class RaceViewController implements Initializable {
         mapView.setVisible(true);
         mapEngine.setJavaScriptEnabled(true);
         mapView.toBack();
-
-//        mapEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
-//            if (newState == Worker.State.SUCCEEDED) {
-//                // new page has loaded, process:
-//                mapEngine.executeScript(String.format("relocate(%s,%s);", "0", "0"));
-//                System.out.println("asdf");
-//            }
-//            else {
-//                System.out.println(newState);
-//                mapEngine.executeScript(String.format("relocate(%s,%s);", "0", "0"));
-//            }
-//        });
-
         try {
             mapEngine.load(getClass().getClassLoader().getResource("maps.html").toURI().toString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+
+
+        mapEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                // new page has loaded, process:
+                mapEngine.executeScript(String.format("relocate(%s,%s);", "0", "0"));
+                System.out.println("asdf");
+            }
+            else {
+                System.out.println(newState);
+                mapEngine.executeScript(String.format("relocate(%s,%s);", "0", "0"));
+            }
+        });
+
+
 
     }
 
@@ -211,7 +213,7 @@ public class RaceViewController implements Initializable {
             mapEngine.executeScript(String.format("relocate(%s,%s);", lat, lng));
         }
         catch (JSException e){
-            System.out.println("error");
+           e.printStackTrace();
         }
         }
 

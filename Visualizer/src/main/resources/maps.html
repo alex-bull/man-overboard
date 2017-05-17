@@ -40,14 +40,18 @@
         })}
 
 
-    function relocate(lat,lng){
-        map.setCenter({lat:lat,lng:lng})
+    function relocate(lat,lng) {
+        if (map != null) {
+            map.setCenter({lat: lat, lng: lng})
+        }
     }
+
+
 
 
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzOciYkpka9RhAVpxko1Z0vm-bdJEjWHw&libraries=places&callback=initMap"
-        async defer></script>
+        defer></script>
 <!--<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5TgdDXm27koP5Biy24Q3-Nay9fJCeJOo&libraries=places"></script>-->
 
 </body>

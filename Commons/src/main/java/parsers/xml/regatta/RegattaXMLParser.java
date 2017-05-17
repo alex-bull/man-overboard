@@ -101,7 +101,6 @@ public class RegattaXMLParser {
 
                     } else if (hasMagneticVariation) {
                         hasMagneticVariation = false;
-
                     }
                 }
 
