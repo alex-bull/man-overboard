@@ -6,12 +6,14 @@ package models;
  */
 public class RaceEvent{
 
+    private Integer boatSourceId;
     private String teamName;
     private String featureName;
     private Double speed;
     private int position;
 
-    public RaceEvent(String teamName, Double speed, String featureName, int position) {
+    public RaceEvent(Integer boatSourceId, String teamName, Double speed, String featureName, int position) {
+        this.boatSourceId = boatSourceId;
         this.teamName = teamName;
         this.speed = speed;
         this.featureName = featureName;
@@ -49,6 +51,10 @@ public class RaceEvent{
 
     public void setSpeed(Double speed) {
         this.speed = speed;
+    }
+
+    public Integer getBoatSourceId() {
+        return this.boatSourceId;
     }
 
 }

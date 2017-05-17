@@ -16,10 +16,11 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="668.0" prefWidth="977.0" xmlns="http://javafx.com/javafx/8"
             fx:controller="controllers.MainController">
     <children>
+
         <fx:include fx:id="raceView" source="raceView.fxml"/>
-        <fx:include fx:id="table" source="table.fxml"/>
+
         <fx:include fx:id="wind" source="windDirection.fxml"/>
         <fx:include fx:id="timer" source="timer.fxml"/>
-
+        <fx:include fx:id="table" source="table.fxml"/>
     </children>
 </AnchorPane>
