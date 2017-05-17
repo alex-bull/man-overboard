@@ -197,9 +197,11 @@ public class Interpreter implements DataSource, PacketHandler {
             }
 
             String markName = markRoundingData.getMarkName();
+            long roundingTime = markRoundingData.getRoundingTime();
             for (Competitor competitor : this.competitorsPosition) {
                 if (competitor.getSourceID() == this.markRoundingData.getSourceID()) {
                     competitor.setLastMarkPassed(markName);
+                    competitor.setTimeFromLastMark(roundingTime);
                 }
             }
 

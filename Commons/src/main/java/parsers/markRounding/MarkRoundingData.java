@@ -33,7 +33,7 @@ public class MarkRoundingData {
         this.markName = markName;
     }
 
-    public long roundingTime() {
+    public long getRoundingTime() {
         return roundingTime;
     }
 

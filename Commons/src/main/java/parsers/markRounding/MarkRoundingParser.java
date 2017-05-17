@@ -17,6 +17,7 @@ public class MarkRoundingParser {
     public MarkRoundingData processMessage(byte[] body) {
 
         long roundingTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
+        roundingTime = Converter.convertToRelativeTime(System.currentTimeMillis(), roundingTime);
         Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 13, 17));
         Integer markID = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 21));
 

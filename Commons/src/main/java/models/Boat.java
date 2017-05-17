@@ -95,7 +95,7 @@ public class Boat implements Competitor {
     }
 
     public void setTimeToNextMark(long timeToNextMark) {
-        this.timeToNextMark = timeToNextMark;
+        this.timeToNextMark =  timeToNextMark;
     }
 
     public long getTimeFromLastMark() {
@@ -134,6 +134,10 @@ public class Boat implements Competitor {
         return sourceID;
     }
 
+    public void setSourceID(int sourceID) {
+        this.sourceID = sourceID;
+    }
+
     /**
      * Parse the Source ID as a string
      *
@@ -141,10 +145,6 @@ public class Boat implements Competitor {
      */
     public void setSourceID(String sourceID) {
         this.sourceID = Integer.parseInt(sourceID);
-    }
-
-    public void setSourceID(int sourceID) {
-        this.sourceID = sourceID;
     }
 
     /**
