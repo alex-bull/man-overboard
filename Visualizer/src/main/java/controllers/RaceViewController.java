@@ -316,28 +316,6 @@ public class RaceViewController implements Initializable {
 
     }
 
-
-    /**
-     * Draw boat wakes and factor it with its velocity
-     *
-     * @param boat  Competitor a competitor
-     * @param index Index
-     */
-    private void moveWake(Competitor boat, Integer index) {
-
-        double newLength = boat.getVelocity() * 2;
-
-        Polygon wakeModel = wakeModels.get(index);
-        wakeModel.getTransforms().clear();
-        wakeModel.getPoints().clear();
-        wakeModel.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+newLength*wakeWidthFactor,newLength + boatLength,-startWakeOffset-newLength*wakeWidthFactor,newLength + boatLength);
-        wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
-        wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
-        wakeModel.toFront();
-    }
-
-
-
     /**
      * Draw the next dot of track for the boat on the canvas
      *
@@ -348,19 +326,12 @@ public class RaceViewController implements Initializable {
         gc.setFill(boat.getColor());
         gc.save();
         Dot dot = new Dot(boat.getPosition().getXValue(), boat.getPosition().getYValue());
-//        Rotate r = new Rotate(boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
-//        Rotate rr = new Rotate(-boat.getCurrentHeading(), boat.getPosition().getXValue(), boat.getPosition().getYValue());
-//
-//        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-//        gc.translate(0, 3);
-//        gc.fillOval(boat.getPosition().getXValue() - 1, boat.getPosition().getYValue() - 1, 2, 2);
-//        gc.setTransform(rr.getMxx(), rr.getMyx(), rr.getMxy(), rr.getMyy(), rr.getTx(), rr.getTy());
         Circle circle = new Circle(dot.getX(), dot.getY(), 1.5, boat.getColor());
         //add fade transition
         FadeTransition ft=new FadeTransition(Duration.millis(20000),circle);
         ft.setFromValue(1);
-        ft.setToValue(0);
-        ft.setOnFinished(event -> raceViewPane.getChildren().remove(circle));
+        ft.setToValue(0.15);
+//        ft.setOnFinished(event -> raceViewPane.getChildren().remove(circle));
         ft.play();
         this.raceViewPane.getChildren().add(circle);
         gc.restore();
