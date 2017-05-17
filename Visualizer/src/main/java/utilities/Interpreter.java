@@ -54,6 +54,8 @@ public class Interpreter implements DataSource, PacketHandler {
     private double scaleFactor;
     private double minXMercatorCoord;
     private double minYMercatorCoord;
+    private double centralLatitude;
+    private double centralLongitude;
     private BoatXMLParser boatXMLParser;
     private List<CourseFeature> startMarks = new ArrayList<>();
     private List<CourseFeature> finishMarks = new ArrayList<>();
@@ -65,53 +67,6 @@ public class Interpreter implements DataSource, PacketHandler {
         competitorsPosition = new ArrayList<>();
         this.raceXMLParser = new RaceXMLParser();
     }
-
-    public List<CourseFeature> getCourseFeatures() {
-        return courseFeatures;
-    }
-
-    public List<MutablePoint> getCourseBoundary() {
-        return courseBoundary;
-    }
-
-    public String getCourseTimezone() {
-        return timezone;
-    }
-
-    public List<Integer> getStartMarks() {
-        return raceData.getStartMarksID();
-    }
-
-    public List<Integer> getFinishMarks() {
-        return raceData.getFinishMarksID();
-    }
-
-    public RaceStatusEnum getRaceStatus() {
-        return raceStatus;
-    }
-
-    public long getMessageTime() {
-        return messageTime;
-    }
-
-    public long getExpectedStartTime() {
-        return expectedStartTime;
-    }
-
-    public List<Competitor> getCompetitorsPosition() {
-        return new ArrayList<>(competitorsPosition); //return a shallow copy for thread safety
-    }
-
-    public double getWindDirection() {
-        return windDirection;
-    }
-
-    public int getNumBoats() {
-        return this.numBoats;
-    }
-
-
-
 
     /**
      * Begins data receiver streaming from port.
@@ -307,6 +262,9 @@ public class Interpreter implements DataSource, PacketHandler {
                 case REGATTA:
                     RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
                     this.timezone = regattaParser.getOffsetUTC();
+                    this.centralLatitude = regattaParser.getCentralLatitude();
+                    this.centralLongitude = regattaParser.getCentralLongitude();
+
                     if (!Objects.equals(timezone.substring(0, 1), "-")) {
                         timezone = "+" + timezone;
                     }
@@ -387,10 +345,59 @@ public class Interpreter implements DataSource, PacketHandler {
         this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
         this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
     }
+    public List<CourseFeature> getCourseFeatures() {
+        return courseFeatures;
+    }
+
+    public List<MutablePoint> getCourseBoundary() {
+        return courseBoundary;
+    }
+
+    public String getCourseTimezone() {
+        return timezone;
+    }
+
+    public List<Integer> getStartMarks() {
+        return raceData.getStartMarksID();
+    }
+
+    public List<Integer> getFinishMarks() {
+        return raceData.getFinishMarksID();
+    }
+
+    public RaceStatusEnum getRaceStatus() {
+        return raceStatus;
+    }
+
+    public long getMessageTime() {
+        return messageTime;
+    }
+
+    public long getExpectedStartTime() {
+        return expectedStartTime;
+    }
+
+    public List<Competitor> getCompetitorsPosition() {
+        return new ArrayList<>(competitorsPosition); //return a shallow copy for thread safety
+    }
+
+    public double getWindDirection() {
+        return windDirection;
+    }
+
+    public int getNumBoats() {
+        return this.numBoats;
+    }
 
     public HashMap<Integer, CourseFeature> getStoredFeatures() {
         return storedFeatures;
     }
 
+    public double getCentralLongitude() {
+        return centralLongitude;
+    }
 
+    public double getCentralLatitude() {
+        return centralLatitude;
+    }
 }

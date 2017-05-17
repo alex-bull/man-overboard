@@ -75,6 +75,7 @@ public class RaceViewController implements Initializable {
     private int counter = 0;
     private Line startLine;
     private Line finishLine;
+    private boolean isLoaded = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -148,13 +149,10 @@ public class RaceViewController implements Initializable {
         mapEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
             if (newState == Worker.State.SUCCEEDED) {
                 // new page has loaded, process:
-                mapEngine.executeScript(String.format("relocate(%s,%s);", "0", "0"));
-                System.out.println("asdf");
+
+                isLoaded = true;
             }
-            else {
-                System.out.println(newState);
-                mapEngine.executeScript(String.format("relocate(%s,%s);", "0", "0"));
-            }
+
         });
 
 
@@ -207,10 +205,12 @@ public class RaceViewController implements Initializable {
 
     }
 
-    private void drawBackgroundImage(String lat, String lng){
-        System.out.println("draw");
+    private void drawBackgroundImage(double lat, double lng){
+        System.out.println(lat +   "    "  + lng);
         try {
-            mapEngine.executeScript(String.format("relocate(%s,%s);", lat, lng));
+            if(isLoaded) {
+                mapEngine.executeScript(String.format("relocate(%.9f,%.9f);", lat, lng));
+            }
         }
         catch (JSException e){
            e.printStackTrace();
@@ -237,7 +237,7 @@ public class RaceViewController implements Initializable {
             gc.setLineWidth(0.8);
             gc.clearRect(0,0,4000,4000);
             //drawBackground(gc,4000,4000);
-            drawBackgroundImage("57.6679590","11.8503233");
+            drawBackgroundImage(dataSource.getCentralLatitude(), dataSource.getCentralLongitude());
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.setGlobalAlpha(0.4);
             gc.setFill(Color.POWDERBLUE);

@@ -19,10 +19,7 @@ import java.util.*;
 public class RaceXMLParser {
 
     private List<MutablePoint> courseBoundary;
-    private List<CourseFeature> courseFeatures;
     private double scaleFactor;
-    private double bufferX;
-    private double bufferY;
     private double paddingX;
     private double paddingY;
     private List<Double> xMercatorCoords;
@@ -148,8 +145,8 @@ public class RaceXMLParser {
      * buffers are calculated by the size of widgets surrounding the course
      */
     private void parseRace(RaceData raceData) {
-        bufferX = 500;
-        bufferY = 280;
+        double bufferX = 500;
+        double bufferY = 280;
 
         try {
             parseBoundary(raceData, bufferX, bufferY);

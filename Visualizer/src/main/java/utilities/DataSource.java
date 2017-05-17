@@ -29,4 +29,7 @@ public interface DataSource {
     double getWindDirection();
     int getNumBoats();
     HashMap<Integer, CourseFeature> getStoredFeatures();
+    double getCentralLongitude();
+    double getCentralLatitude();
+
 }
