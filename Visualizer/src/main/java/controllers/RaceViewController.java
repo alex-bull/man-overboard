@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.animation.FadeTransition;
 
+import javafx.concurrent.Worker;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,6 +29,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import models.*;
+import netscape.javascript.JSException;
 import utilities.Annotation;
 import utilities.DataSource;
 
@@ -58,7 +60,8 @@ public class RaceViewController implements Initializable {
     @FXML private CheckBox fpsToggle;
     @FXML private Text status;
     @FXML private Group annotationGroup;
-    @FXML private ImageView mapView;
+    @FXML private WebView mapView;
+    private WebEngine mapEngine;
     private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
@@ -75,6 +78,7 @@ public class RaceViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        System.out.println("initialize");
         startLine=new Line();
         finishLine=new Line();
         raceViewPane.getChildren().add(startLine);
@@ -86,7 +90,6 @@ public class RaceViewController implements Initializable {
         allAnnotationsRadio.setSelected(true);
         showAllAnnotations();
         fpsToggle.setSelected(true);
-
 
 
     }
@@ -120,7 +123,7 @@ public class RaceViewController implements Initializable {
      * @param height double the height of the canvas
      */
     void begin(double width, double height, DataSource dataSource) {
-
+        System.out.println("begin");
         raceViewCanvas.setHeight(height);
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
@@ -129,6 +132,31 @@ public class RaceViewController implements Initializable {
         this.dataSource = dataSource;
         drawAnnotations();
         animate(width, height);
+
+
+        mapEngine = mapView.getEngine();
+        mapView.setVisible(true);
+        mapEngine.setJavaScriptEnabled(true);
+        mapView.toBack();
+
+//        mapEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+//            if (newState == Worker.State.SUCCEEDED) {
+//                // new page has loaded, process:
+//                mapEngine.executeScript(String.format("relocate(%s,%s);", "0", "0"));
+//                System.out.println("asdf");
+//            }
+//            else {
+//                System.out.println(newState);
+//                mapEngine.executeScript(String.format("relocate(%s,%s);", "0", "0"));
+//            }
+//        });
+
+        try {
+            mapEngine.load(getClass().getClassLoader().getResource("maps.html").toURI().toString());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -177,14 +205,15 @@ public class RaceViewController implements Initializable {
 
     }
 
-
-    private void drawBackgroundImage(){
-
-        mapView.setImage(new Image("https://maps.googleapis.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&zoom=13&size=600x300&maptype=roadmap" +
-                "&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318" +
-                "&markers=color:red%7Clabel:C%7C40.718217,-73.998284" +
-                "&key=AIzaSyAIeO7DcE0uki_7afuzZaUTdVGezpYQpbA"));
-    }
+    private void drawBackgroundImage(String lat, String lng){
+        System.out.println("draw");
+        try {
+            mapEngine.executeScript(String.format("relocate(%s,%s);", lat, lng));
+        }
+        catch (JSException e){
+            System.out.println("error");
+        }
+        }
 
     /**
      * Draw boundary
@@ -206,12 +235,13 @@ public class RaceViewController implements Initializable {
             gc.setLineWidth(0.8);
             gc.clearRect(0,0,4000,4000);
             //drawBackground(gc,4000,4000);
-drawBackgroundImage();
+            drawBackgroundImage("57.6679590","11.8503233");
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
+            gc.setGlobalAlpha(0.4);
             gc.setFill(Color.POWDERBLUE);
-
             //shade inside the boundary
             gc.fillPolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
+            gc.setGlobalAlpha(1.0);
             gc.restore();
 
         }
