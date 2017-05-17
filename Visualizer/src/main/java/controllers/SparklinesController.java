@@ -37,7 +37,7 @@ public class SparklinesController {
         for(Competitor boat: competitors){
             XYChart.Series<String, Double> series = new XYChart.Series<>();
             seriesMap.put(boat.getSourceID(), series);
-            series.getData().add(new XYChart.Data<>("-", 3.0)); //replace y with team position
+            series.getData().add(new XYChart.Data<>("-", 0.0)); //replace y with team position
             sparkChart.getData().add(series);
             series.setName(boat.getAbbreName());
 
@@ -58,17 +58,15 @@ public class SparklinesController {
 
         comps.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
         for (int i = 0; i < comps.size(); i++) {
-            Competitor boat = comps.get(i);
             XYChart.Series<String, Double> series = seriesMap.get(comps.get(i).getSourceID());
             int pos = i + 1;
-            series.getData().add(new XYChart.Data<>(Long.toString(raceTime), (double) pos));
-//            if(boat.getLastMarkPassed() == null) {
-//                series.getData().add(new XYChart.Data<>("-", (double) pos));
-//            }
-//            else {
-//                series.getData().add(new XYChart.Data<>(boat.getLastMarkPassed(), (double) pos));
-//            }
-
+            if(series.getData().size() < 500) {
+                series.getData().add(new XYChart.Data<>(Long.toString(raceTime), (double) -pos));
+            }
+            else {
+                series.getData().add(new XYChart.Data<>(Long.toString(raceTime), (double) -pos));
+                series.getData().remove(0, 1);
+            }
         }
     }
 

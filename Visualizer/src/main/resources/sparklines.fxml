@@ -14,12 +14,11 @@
     <children>
         <LineChart fx:id="sparkChart" layoutX="-1.0" layoutY="1.0" prefHeight="200.0" prefWidth="600.0">
             <xAxis>
-                <CategoryAxis side="BOTTOM" />
+                <CategoryAxis label="Race time" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
             </xAxis>
             <yAxis>
-                <NumberAxis autoRanging="false" label="Position" lowerBound="1.0" minorTickVisible="false" side="LEFT" tickUnit="1.0" upperBound="7.0" />
+                <NumberAxis autoRanging="false" label="Position" lowerBound="-7.0" minorTickVisible="false" side="LEFT" tickUnit="1.0" upperBound="0.0" />
             </yAxis>
         </LineChart>
     </children>
 </AnchorPane>
-
