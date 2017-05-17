@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.Group?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="raceView" layoutX="69.0" layoutY="26.0" prefHeight="1080.0"
+            prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8"
+            fx:controller="controllers.RaceViewController">
+
+    <children>
+        <Canvas fx:id="raceViewCanvas" height="1000.0" width="1000.0" AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+        <Pane fx:id="raceViewPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+              prefHeight="4000.0" prefWidth="4000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+        <Text fx:id="status" strokeType="OUTSIDE" strokeWidth="0.0" text="-" AnchorPane.rightAnchor="10.0"
+              AnchorPane.topAnchor="10.0"/>
+        <Label fx:id="fpsCounter" layoutX="955.0" layoutY="1006.0" text="-" AnchorPane.bottomAnchor="10.0"
+               AnchorPane.rightAnchor="10.0">
+            <font>
+                <Font size="23.0"/>
+            </font>
+        </Label>
+        <RadioButton fx:id="allAnnotationsRadio" layoutX="10.0" layoutY="195.0" mnemonicParsing="false"
+                     onAction="#showAllAnnotations" selected="true" text="All"/>
+        <CheckBox fx:id="fpsToggle" layoutX="8.0" layoutY="337.0" mnemonicParsing="false" text="Show FPS"/>
+        <RadioButton fx:id="noAnnotationsRadio" layoutX="136.0" layoutY="195.0" mnemonicParsing="false"
+                     onAction="#clearAnnotations" text="None"/>
+        <RadioButton fx:id="someAnnotationsRadio" layoutX="64.0" layoutY="195.0" mnemonicParsing="false"
+                     text="Partial"/>
+        <Text layoutX="12.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Annotations"/>
+        <Group fx:id="annotationGroup" layoutX="10.0" layoutY="230.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="230.0">
+            <children>
+                <CheckBox fx:id="nameButton" mnemonicParsing="false" text="Team Name" />
+                <CheckBox fx:id="speedButton" layoutY="30.0" mnemonicParsing="false" text="Speed" />
+                <CheckBox fx:id="timeToMarkButton" layoutY="60.0" mnemonicParsing="false" text="Est Time to Next Mark" />
+            </children>
+        </Group>
+    </children>
+
+
+</AnchorPane>
