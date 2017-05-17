@@ -46,20 +46,28 @@ public class SparklinesController {
     }
 
 
+    /**
+     * Refreshes the spark line with the new received data
+     */
     void refresh(){
         List<Competitor> comps = new ArrayList<>(dataSource.getCompetitorsPosition());
+
+        long expectedStartTime = dataSource.getExpectedStartTime();
+        long firstMessageTime = dataSource.getMessageTime();
+        long raceTime = firstMessageTime - expectedStartTime;
 
         comps.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
         for (int i = 0; i < comps.size(); i++) {
             Competitor boat = comps.get(i);
             XYChart.Series<String, Double> series = seriesMap.get(comps.get(i).getSourceID());
             int pos = i + 1;
-            if(boat.getLastMarkPassed() == null) {
-                series.getData().add(new XYChart.Data<>("-", (double) pos));
-            }
-            else {
-                series.getData().add(new XYChart.Data<>(boat.getLastMarkPassed(), (double) pos));
-            }
+            series.getData().add(new XYChart.Data<>(Long.toString(raceTime), (double) pos));
+//            if(boat.getLastMarkPassed() == null) {
+//                series.getData().add(new XYChart.Data<>("-", (double) pos));
+//            }
+//            else {
+//                series.getData().add(new XYChart.Data<>(boat.getLastMarkPassed(), (double) pos));
+//            }
 
         }
     }
