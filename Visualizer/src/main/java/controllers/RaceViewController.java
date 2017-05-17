@@ -2,7 +2,9 @@ package controllers;
 
 import javafx.animation.FadeTransition;
 
+import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
@@ -315,6 +317,13 @@ public class RaceViewController implements Initializable {
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(boat.getSourceID(), boatModel);
+            //Boats selected can be selected by clicking on them
+            boatModel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    //displayLaylines();
+                }
+            });
         }
         //Translate and rotate the corresponding boat models
         boatModels.get(sourceId).setLayoutX(boat.getPosition().getXValue());
@@ -450,7 +459,6 @@ public class RaceViewController implements Initializable {
             this.drawWake(boat);
             this.drawBoat(boat);
             this.moveAnnotations(boat);
-
         }
 
     }
