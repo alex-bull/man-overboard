@@ -87,9 +87,9 @@ public class MutablePoint {
      * @param minX    double the min x value
      * @param minY    double the min y value
      */
-    public void factor(double xFactor, double yFactor, double minX, double minY, double xBuffer, double yBuffer) {
-        setX(((getXValue() - minX) * xFactor + xBuffer));
-        setY(((getYValue() - minY) * yFactor + yBuffer));
+    public void factor(double xFactor, double yFactor, double minX, double minY, double paddingX, double paddingY) {
+        setX(((getXValue() - minX) * xFactor + paddingX));
+        setY(((getYValue() - minY) * yFactor + paddingY));
     }
 
 

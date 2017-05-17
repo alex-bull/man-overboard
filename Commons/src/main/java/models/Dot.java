@@ -1,7 +1,8 @@
-package model;
+package models;
 
 /**
  * Created by msl47 on 11/05/17.
+ * A dot for the boat location
  */
 public class Dot {
 

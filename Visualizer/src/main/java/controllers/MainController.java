@@ -17,6 +17,7 @@ public class MainController {
     @FXML private SplitPane splitPane;
     @FXML private WindController windController;
     @FXML private TimerController timerController;
+    @FXML private SparklinesController sparklinesController;
 
 
     /**
@@ -28,6 +29,7 @@ public class MainController {
     void beginRace(DataSource dataSource, double width, double height) {
         raceViewController.begin(width, height, dataSource);
         timerController.begin(dataSource);
+        sparklinesController.setCompetitors(dataSource);
 
         AnimationTimer timer = new AnimationTimer() {
 
@@ -36,6 +38,7 @@ public class MainController {
                 raceViewController.refresh(dataSource);
                 tableController.refresh(dataSource);
                 windController.refresh(dataSource.getWindDirection());
+                sparklinesController.refresh();
 
             }
         };

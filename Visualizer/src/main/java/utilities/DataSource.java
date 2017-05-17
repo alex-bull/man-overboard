@@ -3,6 +3,7 @@ package utilities;
 import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
+import parsers.RaceStatusEnum;
 import parsers.markRounding.MarkRoundingData;
 import parsers.xml.race.CompoundMarkData;
 import parsers.xml.race.MarkData;
@@ -21,7 +22,7 @@ public interface DataSource {
     String getCourseTimezone();
     List<Integer> getStartMarks();
     List<Integer> getFinishMarks();
-    String getRaceStatus();
+    RaceStatusEnum getRaceStatus();
     long getMessageTime();
     long getExpectedStartTime();
     List<Competitor> getCompetitorsPosition();

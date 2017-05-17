@@ -130,10 +130,12 @@ public class StarterController implements Initializable, ClockHandler {
         this.confirmButton.setDisable(true);
         boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port);
 
-        this.streamCombo.setDisable(streaming);
-        this.confirmButton.setDisable(streaming);
+        if (streaming) {
+            this.streamCombo.setDisable(true);
+            this.confirmButton.setDisable(true);
 
-        this.setFields();
+            this.setFields();
+        }
 
 
     }
@@ -174,7 +176,7 @@ public class StarterController implements Initializable, ClockHandler {
         worldClock.start();
 
         compList.setAll(dataSource.getCompetitorsPosition());
-        raceStatus.setText(dataSource.getRaceStatus());
+        raceStatus.setText(dataSource.getRaceStatus().toString());
 
         System.out.println(dataSource.getRaceStatus());
 

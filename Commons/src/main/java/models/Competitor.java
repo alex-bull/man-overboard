@@ -32,6 +32,14 @@ public interface Competitor {
 
     void setCurrentLegIndex(int legIndex);
 
+    long getTimeToNextMark();
+
+    void setTimeToNextMark(long timeToNextMark);
+
+    long getTimeAtLastMark();
+
+    void setTimeAtLastMark(long timeAtLastMark);
+
     String getAbbreName();
 
     String getLastMarkPassed();

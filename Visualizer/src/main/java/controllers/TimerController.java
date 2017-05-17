@@ -7,6 +7,7 @@ import models.Clock;
 import models.ClockHandler;
 import models.RaceClock;
 import models.WorldClock;
+import parsers.RaceStatusEnum;
 import utilities.DataSource;
 
 /**
@@ -19,13 +20,14 @@ public class TimerController implements ClockHandler {
     @FXML Text timerText;
     private Clock raceClock;
     private Clock worldClock;
+    private DataSource dataSource;
 
     /**
      * Begins the race clock and the world clock
      * @param dataSource DataSource the data to display
      */
     void begin(DataSource dataSource) {
-
+        this.dataSource = dataSource;
         long expectedStartTime = dataSource.getExpectedStartTime();
         long firstMessageTime = dataSource.getMessageTime();
         if (expectedStartTime != 0 && firstMessageTime != 0) {
@@ -50,7 +52,29 @@ public class TimerController implements ClockHandler {
      */
     public void clockTicked(String newTime, Clock clock) {
         if (clock == raceClock) {
-            timerText.setText(newTime);
+            RaceStatusEnum status = dataSource.getRaceStatus();
+            switch (status) {
+                case PRESTART:
+                case WARNING:
+                    // reset clock (if the stream has looped back to the start)
+                    begin(dataSource);
+                case PREPARATORY:
+                case STARTED:
+                    timerText.setText(newTime);
+                    break;
+                case TERMINATED:
+                case FINISHED:
+                    // keep current timer text
+                    break;
+                case ABANDONED:
+                case NOT_SET:
+                case NOT_ACTIVE:
+                case NOT_VALID:
+                case RETIRED:
+                case POSTPONED:
+                    timerText.setText("Unknown");
+
+            }
         }
         if (clock == worldClock) {
             worldClockValue.setText(newTime);
