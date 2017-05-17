@@ -3,6 +3,7 @@ package models;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
+import parsers.Converter;
 
 /**
  * Created by mgo65 on 3/03/17.
@@ -68,8 +69,6 @@ public class Boat implements Competitor {
 
     }
 
-
-
     @Override
     public int getStatus() {
         return status;
@@ -102,8 +101,8 @@ public class Boat implements Competitor {
         return timeFromLastMark;
     }
 
-    public void setTimeFromLastMark(long timeFromLastMark) {
-        this.timeFromLastMark = timeFromLastMark;
+    public void setTimeFromLastMark(long timeAtLastMark) {
+        this.timeFromLastMark = timeAtLastMark;
     }
 
     public String getType() {
@@ -134,10 +133,6 @@ public class Boat implements Competitor {
         return sourceID;
     }
 
-    public void setSourceID(int sourceID) {
-        this.sourceID = sourceID;
-    }
-
     /**
      * Parse the Source ID as a string
      *
@@ -145,6 +140,10 @@ public class Boat implements Competitor {
      */
     public void setSourceID(String sourceID) {
         this.sourceID = Integer.parseInt(sourceID);
+    }
+
+    public void setSourceID(int sourceID) {
+        this.sourceID = sourceID;
     }
 
     /**

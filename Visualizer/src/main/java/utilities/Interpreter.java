@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import models.*;
 import org.jdom2.JDOMException;
+import parsers.Converter;
 import parsers.XmlSubtype;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
