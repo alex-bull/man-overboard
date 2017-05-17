@@ -7,6 +7,7 @@ import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
+import parsers.Converter;
 import parsers.XmlSubtype;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
@@ -210,12 +211,10 @@ public class Interpreter implements DataSource, PacketHandler {
                     }
 
                     String markName = markRoundingData.getMarkName();
-//                    for (Competitor competitor : this.competitorsPosition) {
-//                        if (competitor.getSourceID() == this.markRoundingData.getSourceID()) {
-//                            competitor.setLastMarkPassed(markName);
-//                        }
-//                    }
+                    long roundingTime = markRoundingData.getRoundingTime();
+
                     storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
+                    storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
                 }
                 break;
             case BOAT_LOCATION:
@@ -234,7 +233,6 @@ public class Interpreter implements DataSource, PacketHandler {
             default:
                 break;
         }
-
     }
 
 

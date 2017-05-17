@@ -36,6 +36,10 @@ public interface Competitor {
 
     void setTimeToNextMark(long timeToNextMark);
 
+    long getTimeAtLastMark();
+
+    void setTimeAtLastMark(long timeAtLastMark);
+
     String getAbbreName();
 
     String getLastMarkPassed();
