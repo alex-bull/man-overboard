@@ -40,7 +40,7 @@ public class SparklinesController {
         }
 
     }
-    
+
     /**
      * Refreshes the spark line with the new received data
      */
@@ -54,7 +54,7 @@ public class SparklinesController {
         for (int i = 0; i < comps.size(); i++) {
             XYChart.Series<String, Double> series = seriesMap.get(comps.get(i).getSourceID());
             int pos = i + 1;
-            // scaling to 10 points on spark line
+            // scaling to 7 points on spark line
             if(series.getData().size() < 7) {
                 if(raceTime - waitTime > previousTime){
                     series.getData().add(new XYChart.Data<>(Long.toString(raceTime), (double) -pos));
