@@ -69,6 +69,7 @@ public class RaceViewController implements Initializable {
     private long startTimeNano = System.nanoTime();
     private long timeFromLastMark;
     private int counter = 0;
+
     private Line startLine;
     private Line finishLine;
 
@@ -240,7 +241,7 @@ public class RaceViewController implements Initializable {
                         break;
                     case TIME_FROM_LAST_MARK:
                         //time from the last mark annotation
-                        label = new Label(String.valueOf(timeFromLastMark / 1000) + " seconds");
+                        label = new Label(String.valueOf( timeFromLastMark / 1000) + " seconds");
                         this.timeFromMarkAnnotations.put(sourceID, label);
                 }
 
@@ -286,11 +287,19 @@ public class RaceViewController implements Initializable {
                     break;
                 case EST_TIME_TO_NEXT_MARK:
                     label = this.timeToMarkAnnotations.get(sourceID);
-                    label.setText(String.valueOf(boat.getTimeToNextMark() / 1000) + " seconds");
+                    if(boat.getTimeToNextMark() != 0){
+                        label.setText(String.valueOf(boat.getTimeToNextMark() / 1000) + "s to Next Mark");
+                    } else {
+                        label.setText("--");
+                    }
                     break;
                 case TIME_FROM_LAST_MARK:
                     label= this.timeFromMarkAnnotations.get(sourceID);
-                    label.setText(String.valueOf(timeFromLastMark / 1000) + " seconds");
+                    if( timeFromLastMark != 0) {
+                        label.setText(String.valueOf( timeFromLastMark / 1000) + "s from Last Mark");
+                    } else {
+                        label.setText("--");
+                    }
 
             }
             label.setVisible(checkBox.isSelected());
@@ -463,7 +472,7 @@ public class RaceViewController implements Initializable {
         //move competitors and draw tracks
         for (Competitor boat : competitors) {
 
-            timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeFromLastMark());
+             timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
 
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);

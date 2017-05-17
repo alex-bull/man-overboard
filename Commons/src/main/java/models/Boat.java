@@ -22,7 +22,7 @@ public class Boat implements Competitor {
     private String lastMarkPassed;
     private int legIndex;
     private long timeToNextMark;
-    private long timeFromLastMark;
+    private long timeAtLastMark;
 
     /**
      * Creates a boat
@@ -41,7 +41,7 @@ public class Boat implements Competitor {
         this.abbreName = abbreName;
         legIndex = 0;
         timeToNextMark = 0;
-        timeFromLastMark = 0;
+        timeAtLastMark = 0;
     }
 
     /**
@@ -60,7 +60,7 @@ public class Boat implements Competitor {
         this.abbreName = abbreName;
         legIndex = 0;
         timeToNextMark = 0;
-        timeFromLastMark = 0;
+        timeAtLastMark = 0;
         this.sourceID = sourceID;
         this.status = status;
     }
@@ -97,12 +97,12 @@ public class Boat implements Competitor {
         this.timeToNextMark =  timeToNextMark;
     }
 
-    public long getTimeFromLastMark() {
-        return timeFromLastMark;
+    public long getTimeAtLastMark() {
+        return timeAtLastMark;
     }
 
-    public void setTimeFromLastMark(long timeAtLastMark) {
-        this.timeFromLastMark = timeAtLastMark;
+    public void setTimeAtLastMark(long timeAtLastMark) {
+        this.timeAtLastMark = timeAtLastMark;
     }
 
     public String getType() {

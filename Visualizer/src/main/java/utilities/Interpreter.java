@@ -202,7 +202,7 @@ public class Interpreter implements DataSource, PacketHandler {
             for (Competitor competitor : this.competitorsPosition) {
                 if (competitor.getSourceID() == this.markRoundingData.getSourceID()) {
                     competitor.setLastMarkPassed(markName);
-                    competitor.setTimeFromLastMark(roundingTime);
+                    competitor.setTimeAtLastMark(roundingTime);
                 }
             }
 
