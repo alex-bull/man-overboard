@@ -1,9 +1,12 @@
 package controllers;
 
+import com.sun.javafx.charts.Legend;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import models.Competitor;
 import utilities.DataSource;
@@ -39,7 +42,8 @@ public class SparklinesController {
             sparkChart.getData().add(series);
             series.setName(boat.getAbbreName());
 
-            series.getNode().setStyle("-fx-stroke: #" + boat.getColor().toString().substring(2)); // convert to hex string
+            String boatHexColour = "#" + boat.getColor().toString().substring(2);
+            series.getNode().setStyle("-fx-stroke: " + boatHexColour);
         }
 
     }
@@ -76,10 +80,22 @@ public class SparklinesController {
                 }
             }
 
+            String boatHexColour = "#" + comps.get(i).getColor().toString().substring(2);
+            String backgroundHexColour = "#" + Color.LIGHTBLUE.toString().substring(2);
+
             for (int index = 0; index < series.getData().size(); index++) {
                 XYChart.Data dataPoint = series.getData().get(index);
                 Node lineSymbol = dataPoint.getNode().lookup(".chart-line-symbol");
-                lineSymbol.setStyle("-fx-background-color: #" + comps.get(i).getColor().toString().substring(2) + ", " + Color.LIGHTBLUE.toString().substring(2));
+                lineSymbol.setStyle("-fx-background-color: " + boatHexColour + ", " + backgroundHexColour);
+
+            }
+
+            for (Node k : sparkChart.getChildrenUnmodifiable()) {
+                if (k instanceof Legend) {
+                    final Legend legend = (Legend) k;
+                    legend.setVisible(false);
+                    //legend.setStyle("-fx-background-color: #" + comps.get(i).getColor().toString().substring(2) + ", " + Color.LIGHTBLUE.toString().substring(2));
+                }
             }
         }
 

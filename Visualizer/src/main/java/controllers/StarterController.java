@@ -218,7 +218,6 @@ public class StarterController implements Initializable, ClockHandler {
                 }
 
                 Scene scene = new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                scene.getStylesheets().add("chartpoint.css");
 
                 MainController mainController = loader.getController();
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
