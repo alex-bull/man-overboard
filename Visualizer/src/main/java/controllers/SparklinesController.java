@@ -1,15 +1,16 @@
 package controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.paint.Color;
 import models.Competitor;
 import utilities.DataSource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by abu59
@@ -37,6 +38,8 @@ public class SparklinesController {
             series.getData().add(new XYChart.Data<>("-", (double) -(competitors.size() + 1))); //replace y with team position
             sparkChart.getData().add(series);
             series.setName(boat.getAbbreName());
+
+            series.getNode().setStyle("-fx-stroke: #" + boat.getColor().toString().substring(2)); // convert to hex string
         }
 
     }
@@ -71,6 +74,12 @@ public class SparklinesController {
                         previousTime = raceTime;
                     }
                 }
+            }
+
+            for (int index = 0; index < series.getData().size(); index++) {
+                XYChart.Data dataPoint = series.getData().get(index);
+                Node lineSymbol = dataPoint.getNode().lookup(".chart-line-symbol");
+                lineSymbol.setStyle("-fx-background-color: #" + comps.get(i).getColor().toString().substring(2) + ", " + Color.LIGHTBLUE.toString().substring(2));
             }
         }
 
