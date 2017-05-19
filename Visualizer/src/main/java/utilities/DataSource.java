@@ -31,5 +31,6 @@ public interface DataSource {
     HashMap<Integer, CourseFeature> getStoredFeatures();
     double getCentralLongitude();
     double getCentralLatitude();
+    List<Double> getGPSbounds();
 
 }

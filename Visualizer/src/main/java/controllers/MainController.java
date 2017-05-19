@@ -33,10 +33,11 @@ public class MainController {
 
             @Override
             public void handle(long now) {
-                raceViewController.refresh(dataSource);
-                tableController.refresh(dataSource);
-                windController.refresh(dataSource.getWindDirection());
-
+                if(raceViewController.isLoaded()) {
+                    raceViewController.refresh(dataSource);
+                    tableController.refresh(dataSource);
+                    windController.refresh(dataSource.getWindDirection());
+                }
             }
         };
 

@@ -56,6 +56,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private double minYMercatorCoord;
     private double centralLatitude;
     private double centralLongitude;
+    private List<Double> GPSbounds;
     private BoatXMLParser boatXMLParser;
     private List<CourseFeature> startMarks = new ArrayList<>();
     private List<CourseFeature> finishMarks = new ArrayList<>();
@@ -274,6 +275,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.raceData = raceXMLParser.parseRaceData(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                     this.courseBoundary = raceXMLParser.getCourseBoundary();
                     this.compoundMarks = raceData.getCourse();
+                    GPSbounds=raceXMLParser.getGPSBounds();
                     setScalingFactors();
                     break;
                 case BOAT:
@@ -399,5 +401,9 @@ public class Interpreter implements DataSource, PacketHandler {
 
     public double getCentralLatitude() {
         return centralLatitude;
+    }
+
+    public List<Double> getGPSbounds() {
+        return GPSbounds;
     }
 }

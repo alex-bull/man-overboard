@@ -93,6 +93,25 @@ public class RaceViewController implements Initializable {
         fpsToggle.setSelected(true);
 
 
+        mapEngine = mapView.getEngine();
+        mapView.setVisible(true);
+        mapEngine.setJavaScriptEnabled(true);
+        mapView.toBack();
+        try {
+            mapEngine.load(getClass().getClassLoader().getResource("maps.html").toURI().toString());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+
+        mapEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                // new page has loaded, process:
+                isLoaded = true;
+                System.out.println(newState);
+            }
+
+        });
     }
 
     /**
@@ -133,29 +152,6 @@ public class RaceViewController implements Initializable {
         this.dataSource = dataSource;
         drawAnnotations();
         animate(width, height);
-
-
-        mapEngine = mapView.getEngine();
-        mapView.setVisible(true);
-        mapEngine.setJavaScriptEnabled(true);
-        mapView.toBack();
-        try {
-            mapEngine.load(getClass().getClassLoader().getResource("maps.html").toURI().toString());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-
-        mapEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
-            if (newState == Worker.State.SUCCEEDED) {
-                // new page has loaded, process:
-
-                isLoaded = true;
-            }
-
-        });
-
-
 
     }
 
@@ -205,17 +201,17 @@ public class RaceViewController implements Initializable {
 
     }
 
-    private void drawBackgroundImage(double lat, double lng){
-        System.out.println(lat +   "    "  + lng);
+    private void drawBackgroundImage(List<Double> bounds){
         try {
-            if(isLoaded) {
-                mapEngine.executeScript(String.format("relocate(%.9f,%.9f);", lat, lng));
-            }
+
+                System.out.println(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
+                mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
+
         }
         catch (JSException e){
            e.printStackTrace();
         }
-        }
+    }
 
     /**
      * Draw boundary
@@ -237,7 +233,7 @@ public class RaceViewController implements Initializable {
             gc.setLineWidth(0.8);
             gc.clearRect(0,0,4000,4000);
             //drawBackground(gc,4000,4000);
-            drawBackgroundImage(dataSource.getCentralLatitude(), dataSource.getCentralLongitude());
+            drawBackgroundImage(dataSource.getGPSbounds());
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.setGlobalAlpha(0.4);
             gc.setFill(Color.POWDERBLUE);
@@ -525,5 +521,9 @@ public class RaceViewController implements Initializable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean isLoaded() {
+        return isLoaded;
     }
 }

@@ -31,7 +31,8 @@
 
 
     var map;
-
+var marker;
+var marker2;
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 57.6679590, lng: 11.8503233},
@@ -40,14 +41,41 @@
         })}
 
 
-    function relocate(lat,lng) {
+    function relocate(minLat,minLng,maxLat,maxLng) {
         if (map != null) {
-            map.setCenter({lat: lat, lng: lng})
+            marker=new google.maps.Marker({
+                map:map,
+                position:{lat:minLat,lng:minLng},
+                visible:true
+            });
+            marker2 = new google.maps.Marker({
+                map:map,
+                position:{lat:maxLat,lng:maxLng},
+                visible:true
+            });
+            var bounds = new google.maps.LatLngBounds();
+            bounds.extend({lat:minLat,lng:minLng});
+            bounds.extend({lat:maxLat,lng:maxLng});
+            map.fitBounds(bounds);
+
+            console.log(latLng2Point(marker.position));
         }
+
+        }
+    function latLng2Point(latLng) {
+        var topRight = map.getProjection().fromLatLngToPoint(map.getBounds().getNorthEast());
+        var bottomLeft = map.getProjection().fromLatLngToPoint(map.getBounds().getSouthWest());
+        var scale = Math.pow(2, map.getZoom());
+        var worldPoint = map.getProjection().fromLatLngToPoint(latLng);
+        return new google.maps.Point((worldPoint.x - bottomLeft.x) * scale, (worldPoint.y - topRight.y) * scale);
     }
-
-
-
+    function point2LatLng(point) {
+        var topRight = map.getProjection().fromLatLngToPoint(map.getBounds().getNorthEast());
+        var bottomLeft = map.getProjection().fromLatLngToPoint(map.getBounds().getSouthWest());
+        var scale = Math.pow(2, map.getZoom());
+        var worldPoint = new google.maps.Point(point.x / scale + bottomLeft.x, point.y / scale + topRight.y);
+        return map.getProjection().fromPointToLatLng(worldPoint);
+    }
 
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzOciYkpka9RhAVpxko1Z0vm-bdJEjWHw&libraries=places&callback=initMap"

@@ -1,5 +1,6 @@
 package parsers.xml.race;
 
+import com.google.common.math.DoubleMath;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -11,6 +12,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+
+import static utility.Projection.mercatorProjection;
 
 /**
  * Created by jar156 on 13/04/17.
@@ -26,6 +29,10 @@ public class RaceXMLParser {
     private List<Double> yMercatorCoords;
     private double width;
     private double height;
+    private double maxLat=-180;
+    private double maxLng=-180;
+    private double minLat=180;
+    private double minLng=180;
 
 
     /**
@@ -145,8 +152,10 @@ public class RaceXMLParser {
      * buffers are calculated by the size of widgets surrounding the course
      */
     private void parseRace(RaceData raceData) {
-        double bufferX = 500;
-        double bufferY = 280;
+//        double bufferX = 500;
+//        double bufferY = 280;
+        double bufferX = 0;
+        double bufferY = 0;
 
         try {
             parseBoundary(raceData, bufferX, bufferY);
@@ -171,7 +180,24 @@ public class RaceXMLParser {
             double lat = limit.getLat();
             double lon = limit.getLon();
 
-            ArrayList<Double> projectedPoint = mercatorProjection(lat, lon);
+            //find course boundary
+            if(lat<minLat){
+                minLat=lat;
+            }
+            if(lon<minLng){
+                minLng=lon;
+            }
+
+            if(lat>maxLat){
+                maxLat=lat;
+            }
+            if(lon>maxLng){
+                maxLng=lon;
+            }
+
+
+
+            List<Double> projectedPoint = mercatorProjection(lat, lon);
             double point1X = projectedPoint.get(0);
             double point1Y = projectedPoint.get(1);
             xMercatorCoords.add(point1X);
@@ -191,32 +217,26 @@ public class RaceXMLParser {
 
         //make scaling in proportion
         scaleFactor = Math.min(xFactor, yFactor);
+
+        //set scale factor to the largest power of 2 thats smaller than current value
+        double degree= Math.floor(DoubleMath.log2(scaleFactor));
+
+        scaleFactor=Math.pow(2,degree);
+
+
         //set padding
+//        paddingX=(width-xDifference*scaleFactor)/2;
+//        paddingY=10;
+
         paddingX=(width-xDifference*scaleFactor)/2;
-        paddingY=10;
+        paddingY=(height-yDifference*scaleFactor)/2;
+
 
         boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, Collections.min(xMercatorCoords), Collections.min(yMercatorCoords),paddingX , paddingY));
         this.courseBoundary = boundary;
 
     }
 
-    /**
-     * Function to map latitude and longitude to screen coordinates
-     * @param lat latitude
-     * @param lon longitude
-     * @return ArrayList the coordinates in metres
-     */
-    private ArrayList<Double> mercatorProjection(double lat, double lon) {
-        ArrayList<Double> ret = new ArrayList<>();
-        double x = (lon + 180) * (width / 360);
-        double latRad = lat * Math.PI / 180;
-        double merc = Math.log(Math.tan((Math.PI / 4) + (latRad / 2)));
-        double y = (height / 2) - (width * merc / (2 * Math.PI));
-        ret.add(x);
-        ret.add(y);
-        return ret;
-
-    }
 
 
     public double getScaleFactor() {
@@ -237,6 +257,10 @@ public class RaceXMLParser {
 
     public List<Double> getyMercatorCoords() {
         return yMercatorCoords;
+    }
+
+    public List<Double> getGPSBounds() {
+        return new ArrayList<>(Arrays.asList(minLat,minLng,maxLat,maxLng));
     }
 
 
