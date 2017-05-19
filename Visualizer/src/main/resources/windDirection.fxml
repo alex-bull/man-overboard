@@ -11,5 +11,7 @@
             <Font size="17.0" />
          </font>
       </Text>
+      <Text fx:id="speed" layoutX="38.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />
+      <Text layoutX="85.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="m/s" />
    </children>
 </Pane>

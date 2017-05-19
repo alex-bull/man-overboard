@@ -1,6 +1,5 @@
 package parsers.boatLocation;
 
-import models.Competitor;
 import models.CourseFeature;
 import models.Mark;
 import models.MutablePoint;
@@ -9,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static parsers.Converter.hexByteArrayToInt;
+import static parsers.Converter.parseHeading;
 
 /**
  * Created by psu43 on 13/04/17.
@@ -56,15 +56,6 @@ public class BoatDataParser {
 
     }
 
-    /**
-     * Convert a byte array of little endian hex values into a decimal heading
-     *
-     * @param hexValues byte[] a byte array of (2) hexadecimal bytes in little endian format
-     * @return Double the value of the heading
-     */
-    private Double parseHeading(byte[] hexValues) {
-        return (double) hexByteArrayToInt(hexValues) * 360.0 / 65536.0;
-    }
 
     /**
      * Convert a byte array of little endian hex values into a decimal latitude or longitude

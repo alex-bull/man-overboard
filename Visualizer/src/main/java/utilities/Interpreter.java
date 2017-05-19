@@ -42,6 +42,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private RaceData raceData;
     private MarkRoundingData markRoundingData;
     private String timezone;
+    private double windSpeed;
     private RaceStatusEnum raceStatus;
     private long messageTime;
     private long expectedStartTime;
@@ -111,6 +112,9 @@ public class Interpreter implements DataSource, PacketHandler {
         return this.numBoats;
     }
 
+    public double getWindSpeed() {
+        return windSpeed/1000.0;
+    }
 
 
 
@@ -184,6 +188,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.messageTime = raceStatusData.getCurrentTime();
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.windDirection = raceStatusData.getWindDirection();
+                    this.windSpeed = raceStatusData.getWindSpeed();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
                     for (int id : storedCompetitors.keySet()) {
 //                        for (Competitor competitor : competitorsPosition) {
