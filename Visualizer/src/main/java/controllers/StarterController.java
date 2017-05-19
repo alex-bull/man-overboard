@@ -216,6 +216,9 @@ public class StarterController implements Initializable, ClockHandler {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                Scene scene = new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+
                 MainController mainController = loader.getController();
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 primaryStage.setTitle("RaceVision");
@@ -226,8 +229,7 @@ public class StarterController implements Initializable, ClockHandler {
                 primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
                 primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
                 assert root != null;
-                primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
-
+                primaryStage.setScene(scene);
 
             }
         });

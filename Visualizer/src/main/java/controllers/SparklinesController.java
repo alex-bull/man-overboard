@@ -1,15 +1,19 @@
 package controllers;
 
+import com.sun.javafx.charts.Legend;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import models.Competitor;
 import utilities.DataSource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by abu59
@@ -37,6 +41,9 @@ public class SparklinesController {
             series.getData().add(new XYChart.Data<>("-", (double) -(competitors.size() + 1))); //replace y with team position
             sparkChart.getData().add(series);
             series.setName(boat.getAbbreName());
+
+            String boatHexColour = "#" + boat.getColor().toString().substring(2);
+            series.getNode().setStyle("-fx-stroke: " + boatHexColour);
         }
 
     }
@@ -70,6 +77,23 @@ public class SparklinesController {
                     if(i == comps.size() - 1) {
                         previousTime = raceTime;
                     }
+                }
+            }
+
+            String boatHexColour = "#" + comps.get(i).getColor().toString().substring(2);
+            String backgroundHexColour = "#" + Color.LIGHTBLUE.toString().substring(2);
+
+            for (int index = 0; index < series.getData().size(); index++) {
+                XYChart.Data dataPoint = series.getData().get(index);
+                Node lineSymbol = dataPoint.getNode().lookup(".chart-line-symbol");
+                lineSymbol.setStyle("-fx-background-color: " + boatHexColour + ", " + backgroundHexColour);
+
+            }
+
+            for (Node node : sparkChart.getChildrenUnmodifiable()) {
+                if (node instanceof Legend) {
+                    final Legend legend = (Legend) node;
+                    legend.setVisible(false);
                 }
             }
         }
