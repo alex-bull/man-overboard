@@ -68,7 +68,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private int counter = 0;
     private Line startLine;
     private Line finishLine;
-    private Integer selectedBoatSourceId;
+    private Integer selectedBoatSourceId = 0;
 
 
     @Override
@@ -400,12 +400,19 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor
      */
     private void drawLaylines(Competitor boat) {
+
+        System.out.println("DRAWING");
+
         Integer markId = boat.getCurrentLegIndex() + 1;
-        CourseFeature feature = null;
-        for (CourseFeature f: this.dataSource.getCourseFeatures()) {
-            if (f.getIndex() == markId) feature = f;
-        }
-        if (feature == null) return;
+
+        Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
+        List<Integer> ids = features.get(markId);
+        Integer sourceId = ids.get(0);
+        CourseFeature feature = this.dataSource.getCourseFeatureMap().get(sourceId);
+
+
+
+        if (ids == null) return;
 
         Integer upAngle = 43;
         Integer downAngle = 153;
@@ -420,7 +427,19 @@ public class RaceViewController implements Initializable, TableObserver {
         Double theta = angle1 - angle2;
         Double internalAngle1 = heading - theta;
         Double internalAngel2 = upAngle + theta;
-        //Double pointIntersectX =
+        Double internalAngle3 = 180 - internalAngel2 - internalAngle1;
+        Double d = distanceBoatMark / Math.sin(internalAngle3);
+        Double distanceToTurn = d * Math.sin(angle2);
+        Double x = distanceToTurn * Math.cos(theta);
+        Double y = distanceToTurn * Math.sin(theta);
+
+        System.out.println(x);
+        System.out.println(y);
+
+        System.out.println("***********");
+        Circle circle = new Circle(x + boatX, y + boatY, 3);
+        circle.setFill(Color.RED);
+        this.raceViewPane.getChildren().add(circle);
 
 
     }
@@ -473,9 +492,9 @@ public class RaceViewController implements Initializable, TableObserver {
                 drawLine(finishLine, dataSource.getFinishMarks());
             }
         }
-        List<Competitor> competitors = dataSource.getCompetitorsPosition();
+
         //move competitors and draw tracks
-        for (Competitor boat : competitors) {
+        for (Competitor boat : dataSource.getStoredCompetitors().values()) {
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
             }
@@ -483,7 +502,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawBoat(boat);
             this.moveAnnotations(boat);
 
-            //if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
+            if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
         }
 
     }

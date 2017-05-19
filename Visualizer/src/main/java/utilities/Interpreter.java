@@ -69,6 +69,7 @@ public class Interpreter implements DataSource, PacketHandler {
     public List<CourseFeature> getCourseFeatures() {
         return courseFeatures;
     }
+    public Map<Integer, CourseFeature> getCourseFeatureMap() {return this.storedFeatures;}
 
     public List<MutablePoint> getCourseBoundary() {
         return courseBoundary;
@@ -102,6 +103,8 @@ public class Interpreter implements DataSource, PacketHandler {
         return new ArrayList<>(competitorsPosition); //return a shallow copy for thread safety
     }
 
+    public Map<Integer, Competitor> getStoredCompetitors() {return this.storedCompetitors;}
+
     public double getWindDirection() {
         return windDirection;
     }
@@ -110,6 +113,9 @@ public class Interpreter implements DataSource, PacketHandler {
         return this.numBoats;
     }
 
+    public Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures() {
+        return this.raceData.getIndexToSourceId();
+    }
 
 
 
