@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import models.*;
+import parsers.Converter;
 import utilities.Annotation;
 import utilities.DataSource;
 
@@ -49,20 +50,25 @@ public class RaceViewController implements Initializable {
     @FXML private CheckBox speedButton;
     @FXML private CheckBox nameButton;
     @FXML private CheckBox timeToMarkButton;
+    @FXML private CheckBox timeFromMarkButton;
     @FXML private CheckBox fpsToggle;
     @FXML private Text status;
     @FXML private Group annotationGroup;
-    private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
+
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
     private Map<Integer, Label> speedAnnotations = new HashMap<>();
+    private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
+    private Map<Integer, Label> timeFromMarkAnnotations = new HashMap<>();
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
     private Map<String, Shape> markModels = new HashMap<>();
     private DataSource dataSource;
     private long startTimeNano = System.nanoTime();
+    private long timeFromLastMark;
     private int counter = 0;
+
     private Line startLine;
     private Line finishLine;
 
@@ -91,6 +97,7 @@ public class RaceViewController implements Initializable {
         speedButton.setSelected(false);
         nameButton.setSelected(false);
         timeToMarkButton.setSelected(false);
+        timeFromMarkButton.setSelected(false);
     }
 
     /**
@@ -102,6 +109,7 @@ public class RaceViewController implements Initializable {
         speedButton.setSelected(true);
         nameButton.setSelected(true);
         timeToMarkButton.setSelected(true);
+        timeFromMarkButton.setSelected(true);
     }
 
     /**
@@ -229,7 +237,11 @@ public class RaceViewController implements Initializable {
                         //est time to next mark annotation
                         label = new Label(String.valueOf(boat.getTimeToNextMark() / 1000) + " seconds");
                         this.timeToMarkAnnotations.put(sourceID, label);
-
+                        break;
+                    case TIME_FROM_LAST_MARK:
+                        //time from the last mark annotation
+                        label = new Label(String.valueOf( timeFromLastMark / 1000) + " seconds");
+                        this.timeFromMarkAnnotations.put(sourceID, label);
                 }
 
                 label.setFont(Font.font("Monospaced"));
@@ -274,8 +286,20 @@ public class RaceViewController implements Initializable {
                     break;
                 case EST_TIME_TO_NEXT_MARK:
                     label = this.timeToMarkAnnotations.get(sourceID);
-                    label.setText(String.valueOf(boat.getTimeToNextMark() / 1000) + " seconds");
+                    if(boat.getTimeToNextMark() != 0){
+                        label.setText(String.valueOf(boat.getTimeToNextMark() / 1000) + "s to Next Mark");
+                    } else {
+                        label.setText("--");
+                    }
                     break;
+                case TIME_FROM_LAST_MARK:
+                    label= this.timeFromMarkAnnotations.get(sourceID);
+                    if( timeFromLastMark != 0) {
+                        label.setText(String.valueOf( timeFromLastMark / 1000) + "s from Last Mark");
+                    } else {
+                        label.setText("--");
+                    }
+
             }
             label.setVisible(checkBox.isSelected());
             label.setLayoutX(xValue + 5);
@@ -350,28 +374,6 @@ public class RaceViewController implements Initializable {
 
     }
 
-
-    /**
-     * Draw boat wakes and factor it with its velocity
-     *
-     * @param boat  Competitor a competitor
-     * @param index Index
-     */
-    private void moveWake(Competitor boat, Integer index) {
-
-        double newLength = boat.getVelocity() * 2;
-
-        Polygon wakeModel = wakeModels.get(index);
-        wakeModel.getTransforms().clear();
-        wakeModel.getPoints().clear();
-        wakeModel.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+newLength*wakeWidthFactor,newLength + boatLength,-startWakeOffset-newLength*wakeWidthFactor,newLength + boatLength);
-        wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
-        wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
-        wakeModel.toFront();
-    }
-
-
-
     /**
      * Draw the next dot of track for the boat on the canvas
      *
@@ -386,8 +388,8 @@ public class RaceViewController implements Initializable {
         //add fade transition
         FadeTransition ft=new FadeTransition(Duration.millis(20000),circle);
         ft.setFromValue(1);
-        ft.setToValue(0);
-        ft.setOnFinished(event -> raceViewPane.getChildren().remove(circle));
+        ft.setToValue(0.15);
+//        ft.setOnFinished(event -> raceViewPane.getChildren().remove(circle));
         ft.play();
         this.raceViewPane.getChildren().add(circle);
         gc.restore();
@@ -421,6 +423,8 @@ public class RaceViewController implements Initializable {
 
         counter++; // increment fps counter
 
+
+
         // calculate fps
         long currentTimeNano = System.nanoTime();
         if (currentTimeNano > startTimeNano + 1000000000) {
@@ -444,6 +448,9 @@ public class RaceViewController implements Initializable {
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
         //move competitors and draw tracks
         for (Competitor boat : competitors) {
+
+             timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
+
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
             }
