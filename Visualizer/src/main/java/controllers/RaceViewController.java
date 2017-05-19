@@ -62,6 +62,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
     private Map<String, Shape> markModels = new HashMap<>();
+    private List<Line> layLines = new ArrayList<>();
     private DataSource dataSource;
     private long startTimeNano = System.nanoTime();
     private int counter = 0;
@@ -370,24 +371,6 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-    /**
-     * Draw boat wakes and factor it with its velocity
-     *
-     * @param boat  Competitor a competitor
-     * @param index Index
-     */
-    private void moveWake(Competitor boat, Integer index) {
-
-        double newLength = boat.getVelocity() * 2;
-
-        Polygon wakeModel = wakeModels.get(index);
-        wakeModel.getTransforms().clear();
-        wakeModel.getPoints().clear();
-        wakeModel.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+newLength*wakeWidthFactor,newLength + boatLength,-startWakeOffset-newLength*wakeWidthFactor,newLength + boatLength);
-        wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
-        wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
-        wakeModel.toFront();
-    }
 
 
 
@@ -410,6 +393,36 @@ public class RaceViewController implements Initializable, TableObserver {
         ft.play();
         this.raceViewPane.getChildren().add(circle);
         gc.restore();
+    }
+
+    /**
+     * Draws laylines on the pane for the given boat
+     * @param boat Competitor
+     */
+    private void drawLaylines(Competitor boat) {
+        Integer markId = boat.getCurrentLegIndex() + 1;
+        CourseFeature feature = null;
+        for (CourseFeature f: this.dataSource.getCourseFeatures()) {
+            if (f.getIndex() == markId) feature = f;
+        }
+        if (feature == null) return;
+
+        Integer upAngle = 43;
+        Integer downAngle = 153;
+        Double boatX = boat.getPosition().getXValue();
+        Double boatY = boat.getPosition().getYValue();
+        Double markX = feature.getPixelLocations().get(0).getXValue();
+        Double markY = feature.getPixelLocations().get(0).getYValue();
+        Double heading = boat.getCurrentHeading();
+        Double distanceBoatMark = Math.sqrt(Math.pow((boatX - markX), 2) + Math.pow((boatY - markY), 2));
+        Double angle1 = Math.atan2((boatY+10) - boatY, boatX - boatX);
+        Double angle2 = Math.atan2(markY - boatY, markX - boatX);
+        Double theta = angle1 - angle2;
+        Double internalAngle1 = heading - theta;
+        Double internalAngel2 = upAngle + theta;
+        //Double pointIntersectX =
+
+
     }
 
 
@@ -469,6 +482,8 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawWake(boat);
             this.drawBoat(boat);
             this.moveAnnotations(boat);
+
+            //if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
         }
 
     }
