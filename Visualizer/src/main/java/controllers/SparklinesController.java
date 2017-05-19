@@ -90,11 +90,10 @@ public class SparklinesController {
 
             }
 
-            for (Node k : sparkChart.getChildrenUnmodifiable()) {
-                if (k instanceof Legend) {
-                    final Legend legend = (Legend) k;
+            for (Node node : sparkChart.getChildrenUnmodifiable()) {
+                if (node instanceof Legend) {
+                    final Legend legend = (Legend) node;
                     legend.setVisible(false);
-                    //legend.setStyle("-fx-background-color: #" + comps.get(i).getColor().toString().substring(2) + ", " + Color.LIGHTBLUE.toString().substring(2));
                 }
             }
         }
