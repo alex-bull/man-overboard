@@ -152,14 +152,19 @@ public class RaceViewController implements Initializable {
      * @param gatesID List of integer of the gates
      */
     private void drawLine(Line line, List<Integer> gatesID) {
-        double x1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
-        double y1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
-        double x2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
-        double y2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
-        line.setStartX(x1);
-        line.setStartY(y1);
-        line.setEndX(x2);
-        line.setEndY(y2);
+
+        if(gatesID.size() == 2) {
+            double x1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
+            double y1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
+            double x2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
+            double y2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
+            line.setStartX(x1);
+            line.setStartY(y1);
+            line.setEndX(x2);
+            line.setEndY(y2);
+        }
+
+
     }
 
     /**
@@ -434,6 +439,7 @@ public class RaceViewController implements Initializable {
         }
         // check if course features need to be redrawn
         if (dataSource.getCourseFeatures() != (courseFeatures)) {
+
             courseFeatures = dataSource.getCourseFeatures();
             drawCourse();
 
@@ -441,6 +447,7 @@ public class RaceViewController implements Initializable {
             if (dataSource.getCourseBoundary() != courseBoundary) {
                 courseBoundary = dataSource.getCourseBoundary();
                 drawBoundary(gc);
+
                 drawLine(startLine, dataSource.getStartMarks());
                 drawLine(finishLine, dataSource.getFinishMarks());
             }
