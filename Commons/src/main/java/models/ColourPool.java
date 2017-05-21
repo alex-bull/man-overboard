@@ -18,14 +18,12 @@ public class ColourPool {
      */
     public ColourPool() {
         this.colours.add(Color.CORAL);
-        this.colours.add(Color.YELLOWGREEN);
         this.colours.add(Color.MEDIUMPURPLE);
         this.colours.add(Color.RED);
         this.colours.add(Color.YELLOW);
         this.colours.add(Color.DEEPSKYBLUE);
         this.colours.add(Color.DEEPPINK);
         this.colours.add(Color.ORANGE);
-        this.colours.add(Color.LIGHTSEAGREEN);
         this.colours.add(Color.BLUEVIOLET);
         this.colours.add(Color.GREEN);
         this.colours.add(Color.LAWNGREEN);
