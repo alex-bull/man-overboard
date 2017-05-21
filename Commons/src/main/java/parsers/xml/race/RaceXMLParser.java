@@ -27,6 +27,8 @@ public class RaceXMLParser {
     private double paddingY;
     private List<Double> xMercatorCoords;
     private List<Double> yMercatorCoords;
+
+    private List<MutablePoint> courseGPSBoundary;
     private double width;
     private double height;
     private double maxLat=-180;
@@ -45,7 +47,7 @@ public class RaceXMLParser {
     public RaceData parseRaceData(String xmlStr, double width, double height) throws IOException, JDOMException {
         this.width = width;
         this.height = height;
-
+        courseGPSBoundary=new ArrayList<>();
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
@@ -152,10 +154,10 @@ public class RaceXMLParser {
      * buffers are calculated by the size of widgets surrounding the course
      */
     private void parseRace(RaceData raceData) {
-//        double bufferX = 500;
-//        double bufferY = 280;
-        double bufferX = 0;
-        double bufferY = 0;
+        double bufferX = 500;
+        double bufferY = 280;
+//        double bufferX = 0;
+//        double bufferY = 0;
 
         try {
             parseBoundary(raceData, bufferX, bufferY);
@@ -194,9 +196,8 @@ public class RaceXMLParser {
             if(lon>maxLng){
                 maxLng=lon;
             }
-
-
-
+//            System.out.print(lat+" ");
+//            System.out.println(lon);
             List<Double> projectedPoint = mercatorProjection(lat, lon);
             double point1X = projectedPoint.get(0);
             double point1Y = projectedPoint.get(1);
@@ -204,6 +205,7 @@ public class RaceXMLParser {
             yMercatorCoords.add(point1Y);
             MutablePoint pixel = new MutablePoint(point1X, point1Y);
             boundary.add(pixel);
+            courseGPSBoundary.add(new MutablePoint(limit.getLat(),limit.getLon()));
         }
 
         double xDifference = (Collections.max(xMercatorCoords) - Collections.min(xMercatorCoords));
@@ -220,8 +222,10 @@ public class RaceXMLParser {
 
         //set scale factor to the largest power of 2 thats smaller than current value
         double degree= Math.floor(DoubleMath.log2(scaleFactor));
-
-        scaleFactor=Math.pow(2,degree);
+//
+        scaleFactor=Math.pow(2,degree)-1;
+        System.out.println(degree);
+        System.out.println(scaleFactor);
 
 
         //set padding
@@ -263,5 +267,9 @@ public class RaceXMLParser {
         return new ArrayList<>(Arrays.asList(minLat,minLng,maxLat,maxLng));
     }
 
+
+    public List<MutablePoint> getCourseGPSBoundary() {
+        return courseGPSBoundary;
+    }
 
 }

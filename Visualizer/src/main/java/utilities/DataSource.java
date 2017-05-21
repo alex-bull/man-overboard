@@ -32,5 +32,6 @@ public interface DataSource {
     double getCentralLongitude();
     double getCentralLatitude();
     List<Double> getGPSbounds();
+    List<MutablePoint> getcourseGPSBoundary();
 
 }

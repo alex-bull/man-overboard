@@ -63,6 +63,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
+    private List<MutablePoint> courseGPSBoundary=new ArrayList<>();
 
     public Interpreter(){
         competitorsPosition = new ArrayList<>();
@@ -276,6 +277,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.courseBoundary = raceXMLParser.getCourseBoundary();
                     this.compoundMarks = raceData.getCourse();
                     GPSbounds=raceXMLParser.getGPSBounds();
+                    courseGPSBoundary=raceXMLParser.getCourseGPSBoundary();
                     setScalingFactors();
                     break;
                 case BOAT:
@@ -405,5 +407,8 @@ public class Interpreter implements DataSource, PacketHandler {
 
     public List<Double> getGPSbounds() {
         return GPSbounds;
+    }
+    public List<MutablePoint> getcourseGPSBoundary(){
+        return courseGPSBoundary;
     }
 }

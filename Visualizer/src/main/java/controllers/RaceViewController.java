@@ -229,6 +229,11 @@ public class RaceViewController implements Initializable {
                 boundaryX.add(point.getXValue());
                 boundaryY.add(point.getYValue());
             }
+
+            for(MutablePoint point: dataSource.getcourseGPSBoundary()){
+                mapEngine.executeScript(String.format("drawMarker(%.6f,%.6f)",point.getXValue(),point.getYValue()));
+            }
+
             gc.setLineDashes(5);
             gc.setLineWidth(0.8);
             gc.clearRect(0,0,4000,4000);

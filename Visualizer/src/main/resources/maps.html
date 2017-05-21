@@ -43,25 +43,23 @@ var marker2;
 
     function relocate(minLat,minLng,maxLat,maxLng) {
         if (map != null) {
-            marker=new google.maps.Marker({
-                map:map,
-                position:{lat:minLat,lng:minLng},
-                visible:true
-            });
-            marker2 = new google.maps.Marker({
-                map:map,
-                position:{lat:maxLat,lng:maxLng},
-                visible:true
-            });
             var bounds = new google.maps.LatLngBounds();
             bounds.extend({lat:minLat,lng:minLng});
             bounds.extend({lat:maxLat,lng:maxLng});
-            map.fitBounds(bounds);
 
+            map.setCenter(bounds.getCenter());
             console.log(latLng2Point(marker.position));
         }
 
         }
+
+    function drawMarker(lat,lng){
+        marker=new google.maps.Marker({
+            map:map,
+            position:{lat:lat,lng:lng},
+            visible:true
+        });
+    }
     function latLng2Point(latLng) {
         var topRight = map.getProjection().fromLatLngToPoint(map.getBounds().getNorthEast());
         var bottomLeft = map.getProjection().fromLatLngToPoint(map.getBounds().getSouthWest());
