@@ -74,12 +74,14 @@ public class RaceXMLParser {
         List<MarkData> startMarks = new ArrayList<>();
         List<MarkData> finishMarks = new ArrayList<>();
 
+        Map<Integer, List<Integer>> indexToSourceId = new HashMap<>();
         for (Element compoundMark : race.getChild("Course").getChildren()) {
 
             int compoundMarkID = Integer.parseInt(compoundMark.getAttribute("CompoundMarkID").getValue());
             String compoundMarkName = compoundMark.getAttribute("Name").getValue();
             List<MarkData> marks = new ArrayList<>();
 
+            List<Integer> sourceIds = new ArrayList<>();
             for (Element mark : compoundMark.getChildren()) {
                 int seqID = Integer.parseInt(mark.getAttributeValue("SeqID"));
                 String markName = mark.getAttributeValue("Name");
@@ -87,9 +89,12 @@ public class RaceXMLParser {
                 double targetLng = Double.parseDouble(mark.getAttributeValue("TargetLng"));
                 int sourceID = Integer.parseInt(mark.getAttributeValue("SourceID"));
                 raceData.addMarkID(sourceID);
+                sourceIds.add(sourceID);
                 MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
                 marks.add(markData);
             }
+            indexToSourceId.put(compoundMarkID, sourceIds);
+            raceData.setIndexToSourceId(indexToSourceId);
             raceData.addCompoundMarkID(compoundMarkID);
             CompoundMarkData compoundMarkData = new CompoundMarkData(compoundMarkID, compoundMarkName, marks);
             course.add(compoundMarkData);

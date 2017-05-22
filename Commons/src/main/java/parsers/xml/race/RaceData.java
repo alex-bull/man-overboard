@@ -1,9 +1,6 @@
 package parsers.xml.race;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by psu43 on 26/04/17.
@@ -25,6 +22,7 @@ public class RaceData {
     private Set<Integer> compoundMarkIDs = new HashSet<>();
     private Set<Integer> markIDs = new HashSet<>();
     private List<LimitData> courseLimit = new ArrayList<>();
+    private Map<Integer, List<Integer>> indexToSourceId = new HashMap();
 
 
     public RaceData() {
@@ -43,6 +41,9 @@ public class RaceData {
         }
         return returnList;
     }
+
+
+
     public List<MarkData> getStartMarks() {
         return this.startMarks;
     }
@@ -165,5 +166,13 @@ public class RaceData {
 
     public void addMarkID(Integer markId) {
         this.markIDs.add(markId);
+    }
+
+    public Map<Integer, List<Integer>> getIndexToSourceId() {
+        return indexToSourceId;
+    }
+
+    public void setIndexToSourceId(Map<Integer, List<Integer>> indexToSourceId) {
+        this.indexToSourceId = indexToSourceId;
     }
 }

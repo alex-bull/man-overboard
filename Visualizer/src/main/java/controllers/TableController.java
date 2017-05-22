@@ -29,6 +29,7 @@ public class TableController implements Initializable {
     @FXML private TableColumn<RaceEvent, String> nameCol;
     @FXML private TableColumn<RaceEvent, Integer> speedCol;
 
+    private TableObserver observer;
     private ObservableList<RaceEvent> events = FXCollections.observableArrayList();
 
 
@@ -45,18 +46,33 @@ public class TableController implements Initializable {
         speedCol.setCellValueFactory(new PropertyValueFactory<>("speed"));
         raceTable.setItems(events);
 
-    }
+        raceTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                Integer sourceId = newSelection.getBoatSourceId();
+                this.observer.boatSelected(sourceId);
+            }
+        });
 
-    public ObservableList<RaceEvent> getEvents() {
-        return events;
+
     }
 
     /**
+     * Sets the observer
+     * @param observer TableObserver
+     */
+    public void addObserver(TableObserver observer) {
+        this.observer = observer;
+    }
+
+
+    /**
      * Called when the race display updates
+     * Gets table selection and resets the data in the table.
      * @param dataSource DataSource the latest race data
      */
     void refresh(DataSource dataSource) {
         this.setTable(dataSource.getCompetitorsPosition());
+
     }
 
     /**
@@ -73,6 +89,12 @@ public class TableController implements Initializable {
             Double speed = comps.get(i).getVelocity();
             String featureName = comps.get(i).getLastMarkPassed();
             RaceEvent raceEvent = new RaceEvent(teamName, speed, featureName, i + 1);
+        for (int i = 0; i < cpy.size(); i++) {
+            String teamName = cpy.get(i).getTeamName();
+            Double speed = cpy.get(i).getVelocity();
+            String featureName = cpy.get(i).getLastMarkPassed();
+            Integer sourceId = cpy.get(i).getSourceID();
+            RaceEvent raceEvent = new RaceEvent(sourceId, teamName, speed, featureName, i + 1);
             events.add(raceEvent);
         }
         return comps;

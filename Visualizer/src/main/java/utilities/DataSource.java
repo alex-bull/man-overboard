@@ -10,6 +10,8 @@ import parsers.xml.race.MarkData;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by mgo65 on 11/05/17.
@@ -29,4 +31,7 @@ public interface DataSource {
     double getWindDirection();
     int getNumBoats();
     HashMap<Integer, CourseFeature> getStoredFeatures();
+    Map<Integer, Competitor> getStoredCompetitors();
+    Map<Integer, CourseFeature> getCourseFeatureMap();
+    Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures();
 }

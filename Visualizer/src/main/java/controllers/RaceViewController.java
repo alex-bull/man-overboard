@@ -36,7 +36,7 @@ import static javafx.scene.paint.Color.*;
 /**
  * Controller for the race view.
  */
-public class RaceViewController implements Initializable {
+public class RaceViewController implements Initializable, TableObserver {
 
     private final double boatLength = 20;
     private final double startWakeOffset= 3;
@@ -71,6 +71,8 @@ public class RaceViewController implements Initializable {
 
     private Line startLine;
     private Line finishLine;
+    private Integer selectedBoatSourceId = 0;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -128,6 +130,16 @@ public class RaceViewController implements Initializable {
         this.dataSource = dataSource;
         drawAnnotations();
         animate(width, height);
+    }
+
+    /**
+     * Observer method for table observer
+     * Updates the selected boat property
+     * @param sourceId Integer the sourceId of the selected boat
+     */
+    public void boatSelected(Integer sourceId) {
+        this.selectedBoatSourceId = sourceId;
+        System.out.println(selectedBoatSourceId);
     }
 
 
@@ -339,6 +351,11 @@ public class RaceViewController implements Initializable {
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(boat.getSourceID(), boatModel);
+            //Boats selected can be selected by clicking on them
+            boatModel.setOnMouseClicked(event -> {
+                selectedBoatSourceId = sourceId;
+                System.out.println(selectedBoatSourceId);
+            });
         }
         //Translate and rotate the corresponding boat models
         boatModels.get(sourceId).setLayoutX(boat.getPosition().getXValue());
@@ -373,6 +390,10 @@ public class RaceViewController implements Initializable {
         wakeModel.toFront();
 
     }
+
+
+
+
 
     /**
      * Draw the next dot of track for the boat on the canvas
@@ -422,8 +443,6 @@ public class RaceViewController implements Initializable {
         }
 
         counter++; // increment fps counter
-
-
 
         // calculate fps
         long currentTimeNano = System.nanoTime();

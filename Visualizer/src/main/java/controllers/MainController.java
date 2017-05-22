@@ -4,6 +4,8 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
+import javafx.scene.layout.AnchorPane;
+import sun.plugin.javascript.navig4.Anchor;
 import utilities.DataSource;
 
 /**
@@ -32,6 +34,7 @@ public class MainController {
         timerController.begin(dataSource);
         sparklinesController.setCompetitors(dataSource);
 
+        tableController.addObserver(raceViewController);
         AnimationTimer timer = new AnimationTimer() {
 
             @Override
