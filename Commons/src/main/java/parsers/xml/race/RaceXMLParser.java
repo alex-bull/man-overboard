@@ -31,6 +31,7 @@ public class RaceXMLParser {
     private double height;
 
 
+
     /**
      * Parse XML race data
      *
@@ -73,6 +74,7 @@ public class RaceXMLParser {
         List<CompoundMarkData> course = new ArrayList<>();
         List<MarkData> startMarks = new ArrayList<>();
         List<MarkData> finishMarks = new ArrayList<>();
+        boolean startLineSet = false;
 
         for (Element compoundMark : race.getChild("Course").getChildren()) {
             int size = race.getChild("Course").getChildren().size();
@@ -96,10 +98,11 @@ public class RaceXMLParser {
             course.add(compoundMarkData);
 
             //Start Line
-            if (compoundMarkName.equals("SL1")){
+            if (!startLineSet){
                 for (CompoundMarkData mark : course) {
-                    if (mark.getName().equals("SL1")) {
+                    if (mark.getName().equals(compoundMarkName) && mark.getMarks().size() == 2) {
                         startMarks.addAll(mark.getMarks());
+                        startLineSet = true;
                     }
                 }
             }

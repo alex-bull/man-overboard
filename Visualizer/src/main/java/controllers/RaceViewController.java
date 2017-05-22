@@ -153,7 +153,7 @@ public class RaceViewController implements Initializable {
      */
     private void drawLine(Line line, List<Integer> gatesID) {
 
-        if(gatesID.size() == 2) {
+        if(gatesID.size() >= 2) {
             double x1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
             double y1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
             double x2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
