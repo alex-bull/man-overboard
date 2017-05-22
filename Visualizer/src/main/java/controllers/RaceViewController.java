@@ -281,14 +281,15 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param gatesID List of integer of the gates
      */
     private void drawLine(Line line, List<Integer> gatesID) {
-        double x1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
-        double y1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
-        double x2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
-        double y2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
-        line.setStartX(x1);
-        line.setStartY(y1);
-        line.setEndX(x2);
-        line.setEndY(y2);
+
+            double x1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
+            double y1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
+            double x2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
+            double y2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
+            line.setStartX(x1);
+            line.setStartY(y1);
+            line.setEndX(x2);
+            line.setEndY(y2);
     }
 
     /**
@@ -424,7 +425,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 case TIME_FROM_LAST_MARK:
                     label= this.timeFromMarkAnnotations.get(sourceID);
                     if( timeFromLastMark != 0) {
-                        label.setText(String.valueOf( timeFromLastMark / 1000) + "s from Last Mark");
+                        label.setText(String.valueOf(timeFromLastMark / 1000) + "s from Last Mark");
                     } else {
                         label.setText("--");
                     }
@@ -570,15 +571,16 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         // check if course features need to be redrawn
         if (dataSource.getCourseFeatures() != (courseFeatures)) {
+
             courseFeatures = dataSource.getCourseFeatures();
             drawCourse();
+            drawLine(startLine, dataSource.getStartMarks());
+            drawLine(finishLine, dataSource.getFinishMarks());
 
-            // check if boundary needs to be redrawn
+//            // check if boundary needs to be redrawn
             if (dataSource.getCourseBoundary() != courseBoundary) {
                 courseBoundary = dataSource.getCourseBoundary();
                 drawBoundary(gc);
-                drawLine(startLine, dataSource.getStartMarks());
-                drawLine(finishLine, dataSource.getFinishMarks());
             }
         }
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
