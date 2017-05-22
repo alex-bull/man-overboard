@@ -88,12 +88,7 @@ public class TableController implements Initializable {
             String teamName = comps.get(i).getTeamName();
             Double speed = comps.get(i).getVelocity();
             String featureName = comps.get(i).getLastMarkPassed();
-            RaceEvent raceEvent = new RaceEvent(teamName, speed, featureName, i + 1);
-        for (int i = 0; i < cpy.size(); i++) {
-            String teamName = cpy.get(i).getTeamName();
-            Double speed = cpy.get(i).getVelocity();
-            String featureName = cpy.get(i).getLastMarkPassed();
-            Integer sourceId = cpy.get(i).getSourceID();
+            Integer sourceId = comps.get(i).getSourceID();
             RaceEvent raceEvent = new RaceEvent(sourceId, teamName, speed, featureName, i + 1);
             events.add(raceEvent);
         }

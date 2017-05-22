@@ -207,7 +207,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 break;
             case MARK_ROUNDING:
                 this.markRoundingData = new MarkRoundingParser().processMessage(packet);
-
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
                     for (CompoundMarkData mark : this.compoundMarks) {
