@@ -1,12 +1,11 @@
 package parsers.xml.race;
 
 import com.google.common.math.DoubleMath;
+import models.MutablePoint;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-import models.CourseFeature;
-import models.MutablePoint;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -35,6 +34,7 @@ public class RaceXMLParser {
     private double maxLng=-180;
     private double minLat=180;
     private double minLng=180;
+    private double degree;
 
 
     /**
@@ -155,7 +155,7 @@ public class RaceXMLParser {
      */
     private void parseRace(RaceData raceData) {
         double bufferX = 500;
-        double bufferY = 280;
+        double bufferY = 560;
 //        double bufferX = 0;
 //        double bufferY = 0;
 
@@ -221,9 +221,8 @@ public class RaceXMLParser {
         scaleFactor = Math.min(xFactor, yFactor);
 
         //set scale factor to the largest power of 2 thats smaller than current value
-        double degree= Math.floor(DoubleMath.log2(scaleFactor));
-//
-        scaleFactor=Math.pow(2,degree)-1;
+        this.degree = Math.floor(DoubleMath.log2(scaleFactor)) + 1;
+        scaleFactor = Math.pow(2,degree);
         System.out.println(degree);
         System.out.println(scaleFactor);
 
@@ -233,7 +232,7 @@ public class RaceXMLParser {
 //        paddingY=10;
 
         paddingX=(width-xDifference*scaleFactor)/2;
-        paddingY=(height-yDifference*scaleFactor)/2;
+        paddingY=(height-yDifference*scaleFactor)/2-10;
 
 
         boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, Collections.min(xMercatorCoords), Collections.min(yMercatorCoords),paddingX , paddingY));
@@ -267,6 +266,9 @@ public class RaceXMLParser {
         return new ArrayList<>(Arrays.asList(minLat,minLng,maxLat,maxLng));
     }
 
+    public double getDegree() {
+        return degree;
+    }
 
     public List<MutablePoint> getCourseGPSBoundary() {
         return courseGPSBoundary;

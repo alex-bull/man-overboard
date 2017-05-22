@@ -64,6 +64,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
     private List<MutablePoint> courseGPSBoundary=new ArrayList<>();
+    private int mapZoomLevel;
 
     public Interpreter(){
         competitorsPosition = new ArrayList<>();
@@ -411,4 +412,9 @@ public class Interpreter implements DataSource, PacketHandler {
     public List<MutablePoint> getcourseGPSBoundary(){
         return courseGPSBoundary;
     }
+
+    public int getMapZoomLevel() {
+        return (int) raceXMLParser.getDegree();
+    }
+
 }

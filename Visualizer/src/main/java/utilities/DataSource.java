@@ -33,5 +33,5 @@ public interface DataSource {
     double getCentralLatitude();
     List<Double> getGPSbounds();
     List<MutablePoint> getcourseGPSBoundary();
-
+    int getMapZoomLevel();
 }

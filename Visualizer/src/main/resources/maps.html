@@ -33,6 +33,11 @@
     var map;
 var marker;
 var marker2;
+
+    function setZoom(zoom){
+        map.setZoom(zoom);
+    }
+
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 57.6679590, lng: 11.8503233},
@@ -48,7 +53,6 @@ var marker2;
             bounds.extend({lat:maxLat,lng:maxLng});
 
             map.setCenter(bounds.getCenter());
-            console.log(latLng2Point(marker.position));
         }
 
         }

@@ -234,6 +234,8 @@ public class RaceViewController implements Initializable {
                 mapEngine.executeScript(String.format("drawMarker(%.6f,%.6f)",point.getXValue(),point.getYValue()));
             }
 
+            // set zoom level
+            mapEngine.executeScript(String.format("setZoom(%d)", dataSource.getMapZoomLevel()));
             gc.setLineDashes(5);
             gc.setLineWidth(0.8);
             gc.clearRect(0,0,4000,4000);
