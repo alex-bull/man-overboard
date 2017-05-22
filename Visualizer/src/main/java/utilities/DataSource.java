@@ -1,5 +1,6 @@
 package utilities;
 
+import javafx.scene.Scene;
 import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
@@ -16,7 +17,7 @@ import java.util.List;
  * Data source
  */
 public interface DataSource {
-    boolean receive(String host, int port);
+    boolean receive(String host, int port, Scene scene);
     List<CourseFeature> getCourseFeatures();
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
@@ -34,4 +35,5 @@ public interface DataSource {
     List<Double> getGPSbounds();
     List<MutablePoint> getcourseGPSBoundary();
     int getMapZoomLevel();
+    double getShiftDistance();
 }

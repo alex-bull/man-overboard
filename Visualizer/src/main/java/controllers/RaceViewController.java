@@ -79,7 +79,6 @@ public class RaceViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("initialize");
         startLine=new Line();
         finishLine=new Line();
         raceViewPane.getChildren().add(startLine);
@@ -108,7 +107,6 @@ public class RaceViewController implements Initializable {
             if (newState == Worker.State.SUCCEEDED) {
                 // new page has loaded, process:
                 isLoaded = true;
-                System.out.println(newState);
             }
 
         });
@@ -143,7 +141,6 @@ public class RaceViewController implements Initializable {
      * @param height double the height of the canvas
      */
     void begin(double width, double height, DataSource dataSource) {
-        System.out.println("begin");
         raceViewCanvas.setHeight(height);
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
@@ -203,10 +200,8 @@ public class RaceViewController implements Initializable {
 
     private void drawBackgroundImage(List<Double> bounds){
         try {
-
-                System.out.println(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
                 mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
-
+                mapEngine.executeScript(String.format("shift(%.2f);",dataSource.getShiftDistance()));
         }
         catch (JSException e){
            e.printStackTrace();
@@ -230,9 +225,9 @@ public class RaceViewController implements Initializable {
                 boundaryY.add(point.getYValue());
             }
 
-            for(MutablePoint point: dataSource.getcourseGPSBoundary()){
-                mapEngine.executeScript(String.format("drawMarker(%.6f,%.6f)",point.getXValue(),point.getYValue()));
-            }
+//            for(MutablePoint point: dataSource.getcourseGPSBoundary()){
+//                mapEngine.executeScript(String.format("drawMarker(%.6f,%.6f)",point.getXValue(),point.getYValue()));
+//            }
 
             // set zoom level
             mapEngine.executeScript(String.format("setZoom(%d)", dataSource.getMapZoomLevel()));

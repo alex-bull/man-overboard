@@ -35,7 +35,7 @@ public class RaceXMLParser {
     private double minLat=180;
     private double minLng=180;
     private double degree;
-
+    private double shiftDistance;
 
     /**
      * Parse XML race data
@@ -154,8 +154,8 @@ public class RaceXMLParser {
      * buffers are calculated by the size of widgets surrounding the course
      */
     private void parseRace(RaceData raceData) {
-        double bufferX = 500;
-        double bufferY = 560;
+        double bufferX = 400;
+        double bufferY = 200;
 //        double bufferX = 0;
 //        double bufferY = 0;
 
@@ -219,20 +219,19 @@ public class RaceXMLParser {
 
         //make scaling in proportion
         scaleFactor = Math.min(xFactor, yFactor);
-
+//        System.out.println(scaleFactor);
         //set scale factor to the largest power of 2 thats smaller than current value
-        this.degree = Math.floor(DoubleMath.log2(scaleFactor)) + 1;
+        this.degree = Math.floor(DoubleMath.log2(scaleFactor));
         scaleFactor = Math.pow(2,degree);
-        System.out.println(degree);
-        System.out.println(scaleFactor);
+//        System.out.println(degree);
+//        System.out.println(scaleFactor);
 
 
         //set padding
-//        paddingX=(width-xDifference*scaleFactor)/2;
-//        paddingY=10;
-
+        paddingY=(height-bufferY-yDifference*scaleFactor)/2;
         paddingX=(width-xDifference*scaleFactor)/2;
-        paddingY=(height-yDifference*scaleFactor)/2-10;
+        //calculate shift distance in pixels
+        shiftDistance=bufferY/2;
 
 
         boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, Collections.min(xMercatorCoords), Collections.min(yMercatorCoords),paddingX , paddingY));
@@ -274,4 +273,7 @@ public class RaceXMLParser {
         return courseGPSBoundary;
     }
 
+    public double getShiftDistance() {
+        return shiftDistance;
+    }
 }

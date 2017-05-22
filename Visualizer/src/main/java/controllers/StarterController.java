@@ -28,6 +28,7 @@ import utilities.DataSource;
 import utilities.EnvironmentConfig;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -107,6 +108,9 @@ public class StarterController implements Initializable, ClockHandler {
         starterList.setItems(compList);
 
         streamCombo.getItems().addAll(EnvironmentConfig.liveStream, EnvironmentConfig.csseStream, EnvironmentConfig.mockStream);
+
+
+
     }
 
 
@@ -128,7 +132,8 @@ public class StarterController implements Initializable, ClockHandler {
 
         this.streamCombo.setDisable(true);
         this.confirmButton.setDisable(true);
-        boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port);
+        Scene scene=primaryStage.getScene();
+        boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
 
         if (streaming) {
             this.streamCombo.setDisable(true);
@@ -172,6 +177,8 @@ public class StarterController implements Initializable, ClockHandler {
             System.out.print("");
         }
 
+
+
         this.worldClock = new WorldClock(this, dataSource.getCourseTimezone());
         worldClock.start();
 
@@ -205,6 +212,9 @@ public class StarterController implements Initializable, ClockHandler {
                         new KeyValue(timeSeconds, 0)));
         timeline.play();
 
+
+
+
         timeline.setOnFinished(new EventHandler<ActionEvent>() {
             //after 5 seconds, load race course view
             @Override
@@ -217,15 +227,18 @@ public class StarterController implements Initializable, ClockHandler {
                     e.printStackTrace();
                 }
                 MainController mainController = loader.getController();
+
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 primaryStage.setTitle("RaceVision");
                 primaryStage.setWidth(primaryScreenBounds.getWidth());
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinWidth(primaryScreenBounds.getWidth());
-                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+//                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+//                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
                 assert root != null;
+
+
                 primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
 
 

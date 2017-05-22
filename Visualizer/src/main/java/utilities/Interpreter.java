@@ -1,6 +1,7 @@
 package utilities;
 
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import models.*;
@@ -58,8 +59,8 @@ public class Interpreter implements DataSource, PacketHandler {
     private double centralLongitude;
     private List<Double> GPSbounds;
     private BoatXMLParser boatXMLParser;
-    private List<CourseFeature> startMarks = new ArrayList<>();
-    private List<CourseFeature> finishMarks = new ArrayList<>();
+    private double width;
+    private double height;
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
@@ -77,7 +78,7 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param port Int the port to stream from
      * @return boolean, true if the stream succeeds
      */
-    public boolean receive(String host, int port) {
+    public boolean receive(String host, int port, Scene scene) {
 
         //create a data receiver
         DataReceiver dataReceiver;
@@ -89,6 +90,12 @@ public class Interpreter implements DataSource, PacketHandler {
             System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
             return false;
         }
+
+        //calculate the effective width and height of the screen
+
+        width=primaryScreenBounds.getWidth()-scene.getX();
+        height=primaryScreenBounds.getHeight()-scene.getY();
+
         //start receiving data
         Timer receiverTimer = new Timer();
         receiverTimer.schedule(dataReceiver, 0, 1);
@@ -250,8 +257,6 @@ public class Interpreter implements DataSource, PacketHandler {
         this.courseFeatures = points;
     }
 
-
-
     /**
      * Parse binary data into XML and create a new parser dependant on the XmlSubType
      * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
@@ -274,7 +279,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     break;
                 case RACE:
                     // this.raceXMLParser = new RaceXMLParser(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                    this.raceData = raceXMLParser.parseRaceData(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                    this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
                     this.courseBoundary = raceXMLParser.getCourseBoundary();
                     this.compoundMarks = raceData.getCourse();
                     GPSbounds=raceXMLParser.getGPSBounds();
@@ -415,6 +420,10 @@ public class Interpreter implements DataSource, PacketHandler {
 
     public int getMapZoomLevel() {
         return (int) raceXMLParser.getDegree();
+    }
+
+    public double getShiftDistance(){
+        return raceXMLParser.getShiftDistance();
     }
 
 }
