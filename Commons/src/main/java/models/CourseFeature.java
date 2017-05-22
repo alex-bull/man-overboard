@@ -34,4 +34,6 @@ public interface CourseFeature {
     void setZoneSize(String zoneSize);
 
     boolean isLine();
+
+    MutablePoint getPixelCentre();
 }
