@@ -577,8 +577,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
             System.out.println("AL");
             a1 = 360 - a1;
-            Double mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() + downAngle));
-            Double my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() + downAngle));
+            Double mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() + downAngle -180));
+            Double my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() + downAngle - 180));
 
             Circle circle = new Circle(markX + mx, markY + my, 4.5, ORANGERED);
             raceViewPane.getChildren().add(circle);
@@ -599,6 +599,20 @@ public class RaceViewController implements Initializable, TableObserver {
         //CASE: above-right
         else if (boatY < markY && a1 < 180) {
             System.out.println("AR");
+            Double mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() - downAngle));
+            Double my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() - downAngle));
+
+            Double angle3 = Math.atan2(boatY - markY, boatX - markX);
+            Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
+            Double a3 = abs(360 - Math.toDegrees(angle3 - angle4));
+            Double a2 = 180 - a1 - a3;
+
+            Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
+            x = distanceTurn * Math.sin(Math.toRadians(heading));
+            y = distanceTurn * Math.cos(Math.toRadians(heading));
+            System.out.println(a1);
+            System.out.println(a2);
+            System.out.println(a3);
 
         }
 
