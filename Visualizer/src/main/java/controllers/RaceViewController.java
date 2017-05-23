@@ -64,7 +64,7 @@ public class RaceViewController implements Initializable {
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
     private WebEngine mapEngine;
-    private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
+
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polygon> wakeModels = new HashMap<>();

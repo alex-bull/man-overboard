@@ -242,7 +242,7 @@ public class StarterController implements Initializable, ClockHandler {
                 assert root != null;
 
 
-                primaryStage.setScene(new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight()));
+                primaryStage.setScene(scene);
 
 
             }
