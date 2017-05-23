@@ -186,12 +186,6 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.windDirection = raceStatusData.getWindDirection();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
                     for (int id : storedCompetitors.keySet()) {
-//                        for (Competitor competitor : competitorsPosition) {
-//                            if (competitor.getSourceID() == id) {
-//                                competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
-//                                competitor.setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
-//                            }
-//                        }
                         storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
                         storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                     }

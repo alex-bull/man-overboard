@@ -4,7 +4,7 @@ package utilities;
  * Created by khe60 on 12/05/17.
  */
 public enum Annotation {
-    TEAM_NAME,BOAT_SPEED,EST_TIME_TO_NEXT_MARK,TIME_FROM_LAST_MARK;
+    TEAM_NAME,BOAT_SPEED,EST_TIME_TO_NEXT_MARK,TIME_FROM_LAST_MARK,TIME_TO_STARTLINE;
 
     public static Annotation stringToAnnotation(String annotationString){
         switch (annotationString){
@@ -16,6 +16,8 @@ public enum Annotation {
                 return EST_TIME_TO_NEXT_MARK;
             case "Time from Last Mark":
                 return TIME_FROM_LAST_MARK;
+            case "Time to Start line":
+                return TIME_TO_STARTLINE;
             default:
                 return null;
         }

@@ -1,5 +1,6 @@
 package controllers;
 
+import com.sun.javafx.geom.Point2D;
 import javafx.animation.FadeTransition;
 
 import javafx.scene.Group;
@@ -32,6 +33,7 @@ import java.net.URL;
 import java.util.*;
 
 import static javafx.scene.paint.Color.*;
+import static parsers.RaceStatusEnum.PREPARATORY;
 
 /**
  * Controller for the race view.
@@ -67,6 +69,7 @@ public class RaceViewController implements Initializable {
     private DataSource dataSource;
     private long startTimeNano = System.nanoTime();
     private long timeFromLastMark;
+    private double timeToStartLine;
     private int counter = 0;
 
     private Line startLine;
@@ -301,6 +304,7 @@ public class RaceViewController implements Initializable {
                         label.setText("--");
                     }
 
+
             }
             label.setVisible(checkBox.isSelected());
             label.setLayoutX(xValue + 5);
@@ -410,6 +414,30 @@ public class RaceViewController implements Initializable {
 
 
     /**
+     * Calculate the time to the start line from the given boat
+     * @param boat Competitor
+     * @return the time to the start line of the competitor
+     */
+    private double calculateTimeToStart(Competitor boat){
+        float boatX = (float) boat.getPosition().getXValue();
+        float boatY = (float) boat.getPosition().getYValue();
+
+        float startLineEndX = (float) startLine.getEndX();
+        float startLineEndY = (float) startLine.getEndY();
+        float startLineStartX = (float) startLine.getStartX();
+        float startLineStartY = (float) startLine.getStartY();
+
+        double distanceToStart = Point2D.distance(boatX, boatY, startLineStartX, startLineStartY);
+        double distanceToEnd = Point2D.distance(boatX, boatY, startLineEndX, startLineEndY);
+
+        if(distanceToStart < distanceToEnd){ return distanceToStart * boat.getVelocity(); }
+        else{ return distanceToEnd * boat.getVelocity(); }
+
+    }
+
+
+
+    /**
      * Refreshes the contents of the display to match the datasource
      * @param dataSource DataSource the data to display
      */
@@ -423,8 +451,6 @@ public class RaceViewController implements Initializable {
         }
 
         counter++; // increment fps counter
-
-
 
         // calculate fps
         long currentTimeNano = System.nanoTime();
@@ -451,7 +477,11 @@ public class RaceViewController implements Initializable {
         //move competitors and draw tracks
         for (Competitor boat : competitors) {
 
-             timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
+            timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
+
+            if(dataSource.getRaceStatus().equals(PREPARATORY)) {
+                timeToStartLine = calculateTimeToStart(boat);
+            }
 
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
