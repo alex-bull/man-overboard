@@ -224,7 +224,7 @@ public class RaceViewController implements Initializable {
                 boundaryX.add(point.getXValue());
                 boundaryY.add(point.getYValue());
             }
-
+//for testing
 //            for(MutablePoint point: dataSource.getcourseGPSBoundary()){
 //                mapEngine.executeScript(String.format("drawMarker(%.6f,%.6f)",point.getXValue(),point.getYValue()));
 //            }
@@ -234,7 +234,7 @@ public class RaceViewController implements Initializable {
             gc.setLineDashes(5);
             gc.setLineWidth(0.8);
             gc.clearRect(0,0,4000,4000);
-            //drawBackground(gc,4000,4000);
+
             drawBackgroundImage(dataSource.getGPSbounds());
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.setGlobalAlpha(0.4);

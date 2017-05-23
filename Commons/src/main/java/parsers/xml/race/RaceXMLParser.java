@@ -30,11 +30,11 @@ public class RaceXMLParser {
     private List<MutablePoint> courseGPSBoundary;
     private double width;
     private double height;
-    private double maxLat=-180;
-    private double maxLng=-180;
-    private double minLat=180;
-    private double minLng=180;
-    private double degree;
+    private double maxLat = -180;
+    private double maxLng = -180;
+    private double minLat = 180;
+    private double minLng = 180;
+    private double zoomLevel;
     private double shiftDistance;
 
     /**
@@ -47,7 +47,7 @@ public class RaceXMLParser {
     public RaceData parseRaceData(String xmlStr, double width, double height) throws IOException, JDOMException {
         this.width = width;
         this.height = height;
-        courseGPSBoundary=new ArrayList<>();
+        courseGPSBoundary = new ArrayList<>();
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
@@ -144,7 +144,6 @@ public class RaceXMLParser {
     }
 
 
-
     public List<MutablePoint> getCourseBoundary() {
         return courseBoundary;
     }
@@ -168,9 +167,10 @@ public class RaceXMLParser {
 
     /**
      * Parse the boundary of the course
+     *
      * @param raceData RaceData
-     * @param bufferX canvas buffer width
-     * @param bufferY canvas buffer height
+     * @param bufferX  canvas buffer width
+     * @param bufferY  canvas buffer height
      */
     private void parseBoundary(RaceData raceData, double bufferX, double bufferY) throws Exception {
 
@@ -183,21 +183,21 @@ public class RaceXMLParser {
             double lon = limit.getLon();
 
             //find course boundary
-            if(lat<minLat){
-                minLat=lat;
+            if (lat < minLat) {
+                minLat = lat;
             }
-            if(lon<minLng){
-                minLng=lon;
+            if (lon < minLng) {
+                minLng = lon;
             }
 
-            if(lat>maxLat){
-                maxLat=lat;
+            if (lat > maxLat) {
+                maxLat = lat;
             }
-            if(lon>maxLng){
-                maxLng=lon;
+            if (lon > maxLng) {
+                maxLng = lon;
             }
-//            System.out.print(lat+" ");
-//            System.out.println(lon);
+
+
             List<Double> projectedPoint = mercatorProjection(lat, lon);
             double point1X = projectedPoint.get(0);
             double point1Y = projectedPoint.get(1);
@@ -205,7 +205,7 @@ public class RaceXMLParser {
             yMercatorCoords.add(point1Y);
             MutablePoint pixel = new MutablePoint(point1X, point1Y);
             boundary.add(pixel);
-            courseGPSBoundary.add(new MutablePoint(limit.getLat(),limit.getLon()));
+            courseGPSBoundary.add(new MutablePoint(limit.getLat(), limit.getLon()));
         }
 
         double xDifference = (Collections.max(xMercatorCoords) - Collections.min(xMercatorCoords));
@@ -219,26 +219,23 @@ public class RaceXMLParser {
 
         //make scaling in proportion
         scaleFactor = Math.min(xFactor, yFactor);
-//        System.out.println(scaleFactor);
+
         //set scale factor to the largest power of 2 thats smaller than current value
-        this.degree = Math.floor(DoubleMath.log2(scaleFactor));
-        scaleFactor = Math.pow(2,degree);
-//        System.out.println(degree);
-//        System.out.println(scaleFactor);
+        this.zoomLevel = Math.floor(DoubleMath.log2(scaleFactor));
+        scaleFactor = Math.pow(2, zoomLevel);
 
 
         //set padding
-        paddingY=(height-bufferY-yDifference*scaleFactor)/2;
-        paddingX=(width-xDifference*scaleFactor)/2;
+        paddingY = (height - bufferY - yDifference * scaleFactor) / 2;
+        paddingX = (width - xDifference * scaleFactor) / 2;
         //calculate shift distance in pixels
-        shiftDistance=bufferY/2;
+        shiftDistance = bufferY / 2;
 
 
-        boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, Collections.min(xMercatorCoords), Collections.min(yMercatorCoords),paddingX , paddingY));
+        boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, Collections.min(xMercatorCoords), Collections.min(yMercatorCoords), paddingX, paddingY));
         this.courseBoundary = boundary;
 
     }
-
 
 
     public double getScaleFactor() {
@@ -262,11 +259,11 @@ public class RaceXMLParser {
     }
 
     public List<Double> getGPSBounds() {
-        return new ArrayList<>(Arrays.asList(minLat,minLng,maxLat,maxLng));
+        return new ArrayList<>(Arrays.asList(minLat, minLng, maxLat, maxLng));
     }
 
-    public double getDegree() {
-        return degree;
+    public double getZoomLevel() {
+        return zoomLevel;
     }
 
     public List<MutablePoint> getCourseGPSBoundary() {
