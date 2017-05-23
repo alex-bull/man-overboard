@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import java.lang.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.canvas.*?>
@@ -8,6 +9,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.Group?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.web.*?>
 
 <AnchorPane fx:id="raceView" layoutX="69.0" layoutY="26.0" prefHeight="1080.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
 
@@ -20,12 +23,12 @@
                 <Font size="23.0" />
             </font>
         </Label>
-        <RadioButton fx:id="allAnnotationsRadio" layoutX="10.0" layoutY="220.0" mnemonicParsing="false" onAction="#showAllAnnotations" selected="true" text="All" />
-        <CheckBox fx:id="fpsToggle" layoutX="10.0" layoutY="391.0" mnemonicParsing="false" text="Show FPS" />
-        <RadioButton fx:id="noAnnotationsRadio" layoutX="136.0" layoutY="220.0" mnemonicParsing="false" onAction="#clearAnnotations" text="None" />
-        <RadioButton fx:id="someAnnotationsRadio" layoutX="64.0" layoutY="220.0" mnemonicParsing="false" text="Partial" />
-        <Text layoutX="12.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Annotations" />
-        <Group fx:id="annotationGroup" layoutX="10.0" layoutY="252.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="252.0">
+        <RadioButton fx:id="allAnnotationsRadio" layoutX="10.0" layoutY="195.0" mnemonicParsing="false" onAction="#showAllAnnotations" selected="true" text="All" />
+        <CheckBox fx:id="fpsToggle" layoutX="10.0" layoutY="372.0" mnemonicParsing="false" text="Show FPS" />
+        <RadioButton fx:id="noAnnotationsRadio" layoutX="136.0" layoutY="195.0" mnemonicParsing="false" onAction="#clearAnnotations" text="None" />
+        <RadioButton fx:id="someAnnotationsRadio" layoutX="64.0" layoutY="195.0" mnemonicParsing="false" text="Partial" />
+        <Text layoutX="12.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Annotations" />
+        <Group fx:id="annotationGroup" layoutX="10.0" layoutY="230.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="230.0">
             <children>
                 <CheckBox fx:id="nameButton" mnemonicParsing="false" text="Team Name" />
                 <CheckBox fx:id="speedButton" layoutY="30.0" mnemonicParsing="false" text="Speed" />
@@ -33,6 +36,16 @@
             <CheckBox fx:id="timeFromMarkButton" layoutY="92.0" mnemonicParsing="false" text="Time from Last Mark" />
             </children>
         </Group>
+      <WebView fx:id="mapView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <StackPane fx:id="loading" layoutX="987.0" layoutY="995.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Text fill="#eeeded" strokeType="OUTSIDE" strokeWidth="0.0" text="Please wait the race is loading..." StackPane.alignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+         </children>
+      </StackPane>
     </children>
 
 
