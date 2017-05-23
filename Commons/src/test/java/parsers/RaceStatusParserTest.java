@@ -10,6 +10,7 @@ import static org.junit.Assert.assertNull;
 
 /**
  * Created by jar156 on 15/05/17.
+ * Tests for race status parser
  */
 public class RaceStatusParserTest {
 
