@@ -32,7 +32,7 @@ import utilities.DataSource;
 import java.net.URL;
 import java.util.*;
 
-import static java.lang.Math.sqrt;
+import static java.lang.Math.*;
 import static javafx.scene.paint.Color.*;
 
 /**
@@ -146,7 +146,7 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     /**
-     *
+     * Does a lot. TODO split up
      */
     private void drawVirtualLine() {
         Polygon boatModel = boatModels.get(selectedBoatSourceId);
@@ -178,62 +178,66 @@ public class RaceViewController implements Initializable, TableObserver {
         double xa = (d - c) / (headingGradient - startlineGradient);
         boolean intersects = !( (xa < Double.max(Double.min(x1, x2), Double.min(x3, x4))) || (xa > Double.min(Double.max(x1, x2), Double.max(x3, x4))));
 
-        /* Uncomment this for cool effects
+        /*
+        // Uncomment this for cool effects
         Line line = new Line();
+        for (Competitor boat : dataSource.getCompetitorsPosition()) {
+            if (selectedBoatSourceId == boat.getSourceID()) {
+                line.setStroke(boat.getColor());
+            }
+        }
         line.setStartX(x1);
         line.setStartY(y1);
         line.setEndX(x2);
         line.setEndY(y2);
         raceViewPane.getChildren().add(line);
         */
-        if (intersects) {
-            System.out.println("true");
 
+        if (intersects) {
             double ya = headingGradient * xa + c;
 
-            double deltaX = xa - x1;
-            double deltaY = ya - y1;
-
-            double pixelDistToRealLine = sqrt(deltaX * deltaX + deltaY * deltaY);
+            double deltaX = x1 - xa;
+            double deltaY = y1 - ya;
 
             double distanceToRealLine = calcDistToReal();
             double distanceToVirtualLine = calcDistToVirtual();
 
-            double ratio = distanceToVirtualLine / distanceToRealLine;
-            double pixelDistToVirtual = ratio * pixelDistToRealLine;
+            if (distanceToRealLine != 0) {
+                double ratio = distanceToVirtualLine / distanceToRealLine;
 
-            double difference = pixelDistToRealLine - pixelDistToVirtual;
+                double deltaXRealToVirtual = (1-ratio) * deltaX;
+                double deltaYRealToVirtual = (1-ratio) * deltaY;
 
-            /*Line virtualLine = new Line();
-            virtualLine.setStartX(x5);
-            virtualLine.setStartY(y5);
-            virtualLine.setEndX(x6);
-            virtualLine.setEndY(y6);
-            raceViewPane.getChildren().add(virtualLine);*/
+                double x5 = x3 + deltaXRealToVirtual;
+                double y5 = y3 + deltaYRealToVirtual;
+                double x6 = x4 + deltaXRealToVirtual;
+                double y6 = y4 + deltaYRealToVirtual;
 
+                Line virtualLine = new Line();
 
-        } else {
-            System.out.println("false");
+                for (Competitor boat : dataSource.getCompetitorsPosition()) {
+                    if (selectedBoatSourceId == boat.getSourceID()) {
+                        virtualLine.setStroke(boat.getColor());
+                    }
+                }
 
-            // TODO remove, just for testing
-            double ya = headingGradient * xa + c;
-
-            double deltaX = xa - x1;
-            double deltaY = ya - y1;
-
-            double distanceToRealLine = calcDistToReal(); //sqrt(deltaX * deltaX + deltaY * deltaY);
-            double distanceToVirtualLine = calcDistToVirtual();
-
-            double difference = distanceToRealLine - distanceToVirtualLine;
+                virtualLine.setStartX(x5);
+                virtualLine.setStartY(y5);
+                virtualLine.setEndX(x6);
+                virtualLine.setEndY(y6);
+                raceViewPane.getChildren().add(virtualLine);
+            }
         }
     }
 
+    /**
+     * Calculates the distance in metres from the selected boat to its virtual start line.
+     * @return double distance (m)
+     */
     private double calcDistToVirtual() {
         long expectedStartTime = dataSource.getExpectedStartTime();
         long messageTime = dataSource.getMessageTime();
-        long timeUntilStart = Converter.convertToRelativeTime(messageTime, expectedStartTime) / 1000; // seconds
-
-        System.out.println("time til start: " + timeUntilStart / 60);
+        long timeUntilStart = Converter.convertToRelativeTime(expectedStartTime, messageTime) / 1000; // seconds
 
         double velocity = 0;
         for (Competitor boat :dataSource.getCompetitorsPosition()) {
@@ -245,19 +249,37 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+    /**
+     * Calculates the distance in metres from the selected boat to the race start line.
+     * @return double distance (m)
+     */
     private double calcDistToReal() {
-        long time = 0;
-        double velocity = 0;
+        double boatLat = 0;
+        double boatLon = 0;
+
         for (Competitor boat :dataSource.getCompetitorsPosition()) {
-            if (selectedBoatSourceId == boat.getSourceID() && boat.getCurrentLegIndex() == 0) {
-                velocity = boat.getVelocity(); // metres per second
-                time = boat.getTimeToNextMark() / 1000; // seconds
+            if (selectedBoatSourceId == boat.getSourceID()) {
+                boatLat = boat.getLatitude();
+                boatLon = boat.getLongitude();
             }
         }
-        System.out.println("tiem " + time / 60);
-        return velocity * time; // metres
-    }
+        CourseFeature startline1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0));
+        double startLat = startline1.getGPSPoint().getXValue();
+        double startLon = startline1.getGPSPoint().getYValue();
 
+        long r = 6371000;
+        double phiStart = Math.toRadians(startLat);
+        double phiBoat = Math.toRadians(boatLat);
+
+        double deltaPhi = Math.toRadians(boatLat - startLat);
+        double deltaLambda = Math.toRadians(boatLon - startLon);
+
+        double a = sin(deltaPhi / 2) * sin(deltaPhi / 2) + cos(phiStart) * cos(phiBoat) * sin(deltaLambda / 2) * sin(deltaLambda / 2);
+        double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+        double d = r * c;
+
+        return d;
+    }
 
 
     /**

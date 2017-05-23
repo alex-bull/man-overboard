@@ -32,6 +32,14 @@ public interface Competitor {
 
     void setCurrentLegIndex(int legIndex);
 
+    void setLatitude(double latitude);
+
+    void setLongitude(double longitude);
+
+    double getLatitude();
+
+    double getLongitude();
+
     long getTimeToNextMark();
 
     void setTimeToNextMark(long timeToNextMark);
