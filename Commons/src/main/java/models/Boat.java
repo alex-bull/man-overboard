@@ -3,6 +3,7 @@ package models;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
+import parsers.Converter;
 
 /**
  * Created by mgo65 on 3/03/17.
@@ -21,6 +22,7 @@ public class Boat implements Competitor {
     private String lastMarkPassed;
     private int legIndex;
     private long timeToNextMark;
+    private long timeAtLastMark;
 
     /**
      * Creates a boat
@@ -39,6 +41,7 @@ public class Boat implements Competitor {
         this.abbreName = abbreName;
         legIndex = 0;
         timeToNextMark = 0;
+        timeAtLastMark = 0;
     }
 
     /**
@@ -57,6 +60,7 @@ public class Boat implements Competitor {
         this.abbreName = abbreName;
         legIndex = 0;
         timeToNextMark = 0;
+        timeAtLastMark = 0;
         this.sourceID = sourceID;
         this.status = status;
     }
@@ -64,8 +68,6 @@ public class Boat implements Competitor {
     public Boat() {
 
     }
-
-
 
     @Override
     public int getStatus() {
@@ -92,7 +94,15 @@ public class Boat implements Competitor {
     }
 
     public void setTimeToNextMark(long timeToNextMark) {
-        this.timeToNextMark = timeToNextMark;
+        this.timeToNextMark =  timeToNextMark;
+    }
+
+    public long getTimeAtLastMark() {
+        return timeAtLastMark;
+    }
+
+    public void setTimeAtLastMark(long timeAtLastMark) {
+        this.timeAtLastMark = timeAtLastMark;
     }
 
     public String getType() {
@@ -123,10 +133,6 @@ public class Boat implements Competitor {
         return sourceID;
     }
 
-    public void setSourceID(int sourceID) {
-        this.sourceID = sourceID;
-    }
-
     /**
      * Parse the Source ID as a string
      *
@@ -134,6 +140,10 @@ public class Boat implements Competitor {
      */
     public void setSourceID(String sourceID) {
         this.sourceID = Integer.parseInt(sourceID);
+    }
+
+    public void setSourceID(int sourceID) {
+        this.sourceID = sourceID;
     }
 
     /**

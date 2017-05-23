@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.chart.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="sparklines" maxHeight="200.0" maxWidth="1200.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="600.0" AnchorPane.rightAnchor="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SparklinesController">
+    <children>
+        <LineChart fx:id="sparkChart" blendMode="DARKEN" style="-fx-background-color: transparent;" layoutX="-1.0" layoutY="1.0" prefHeight="200.0" prefWidth="600.0">
+            <xAxis>
+                <CategoryAxis label="Race time" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis autoRanging="false" label="Position" lowerBound="-7.0" minorTickVisible="false" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" tickUnit="1.0" upperBound="0.0" />
+            </yAxis>
+        </LineChart>
+    </children>
+</AnchorPane>

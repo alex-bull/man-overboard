@@ -1,5 +1,7 @@
 package parsers;
 
+import javafx.scene.paint.Color;
+
 /**
  * Created by psu43 on 13/04/17.
  * Common parser functions

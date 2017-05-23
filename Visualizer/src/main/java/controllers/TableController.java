@@ -63,22 +63,22 @@ public class TableController implements Initializable {
      * Sets the data in the table
      * @param competitors List the competitors in the race
      */
-    public List<Competitor> setTable(List<Competitor> competitors) {
-        List<Competitor> cpy = new ArrayList<>(competitors);
-        cpy.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+    List<Competitor> setTable(List<Competitor> competitors) {
+        List<Competitor> comps = new ArrayList<>(competitors);
+        comps.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
 
         events.clear();
-        for (int i = 0; i < cpy.size(); i++) {
-            String teamName = cpy.get(i).getTeamName();
-            Double speed = cpy.get(i).getVelocity();
-            String featureName = cpy.get(i).getLastMarkPassed();
+        for (int i = 0; i < comps.size(); i++) {
+            String teamName = comps.get(i).getTeamName();
+            Double speed = comps.get(i).getVelocity();
+            String featureName = comps.get(i).getLastMarkPassed();
             RaceEvent raceEvent = new RaceEvent(teamName, speed, featureName, i + 1);
             events.add(raceEvent);
         }
-        return cpy;
+        return comps;
     }
 
-    public void printTable(){
+    void printTable(){
         for(RaceEvent raceEvent:events){
             System.out.println(raceEvent.getTeamName());
         }
