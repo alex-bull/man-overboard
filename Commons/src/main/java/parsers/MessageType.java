@@ -9,7 +9,8 @@ public enum MessageType {
     RACE_STATUS(12),
     XML(26),
     BOAT_LOCATION(37),
-    MARK_ROUNDING(38);
+    MARK_ROUNDING(38),
+    COURSE_WIND(44);
 
     private final int value;
 

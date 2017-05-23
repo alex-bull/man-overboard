@@ -1,7 +1,5 @@
 package parsers.boatLocation;
 
-import models.Competitor;
-
 import models.CourseFeature;
 import models.Mark;
 import models.MutablePoint;
