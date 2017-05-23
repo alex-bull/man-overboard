@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import utilities.DataSource;
 
