@@ -27,14 +27,7 @@ public class WindController implements Initializable{
         this.arrow = new Polygon();
         arrow.setLayoutX(80);
         arrow.setLayoutY(80);
-        arrow.getPoints().addAll(
-                -5., -10.0, //tail left
-                5., -10., //tail right
-                5., -20.,
-                15., -20.,
-                0., -40., // tip
-                -15., -20.,
-                -5.,-20.);
+        drawArrow(0, -10);
         arrow.setFill(BLACK);
         arrow.setStroke(BLACK);
         arrow.setStrokeWidth(1);
@@ -53,23 +46,41 @@ public class WindController implements Initializable{
         double factor = 40.0;
         Double windFactor = windSpeed * factor;
         double offset = minWind * factor;
+
         arrow.toFront();
         arrow.getTransforms().clear();
         arrow.getTransforms().add(new Rotate(angle, 0, 25));
         if(windSpeed >= minWind && windSpeed <= maxWind) {
             arrow.getPoints().remove(0,14);
-            arrow.getPoints().addAll(
-                    -5., -offset + windFactor, //tail left
-                    5., -offset + windFactor, //tail right
-                    5., -20.,
-                    15., -20.,
-                    0., -40., // tip
-                    -15., -20.,
-                    -5.,-20.);
+            drawArrow(windFactor, offset);
         }
-        speed.setText(Double.toString(windSpeed));
+        else if(windSpeed > maxWind) {
+            arrow.getPoints().remove(0,14);
+            drawArrow(maxWind * factor, offset);
+        }
+        else if(windSpeed < minWind) {
+            arrow.getPoints().remove(0,14);
+            drawArrow(offset, offset);
+        }
+
+        speed.setText(String.format("%.3f", windSpeed));
     }
 
 
+    /**
+     * Draw the wind arrow given the arrow tail factor
+     * @param factor Double the factor for the arrow tail size, the actual pixels to move
+     * @param offset Double the minimum length the tail should be
+     */
+    private void drawArrow(double factor, double offset) {
+        arrow.getPoints().addAll(
+                -5., -offset + factor, //tail left
+                5., -offset + factor, //tail right
+                5., -20.,
+                15., -20.,
+                0., -40., // tip
+                -15., -20.,
+                -5.,-20.);
+    }
 
 }

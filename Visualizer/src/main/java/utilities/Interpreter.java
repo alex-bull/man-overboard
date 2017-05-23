@@ -11,6 +11,9 @@ import parsers.Converter;
 import parsers.XmlSubtype;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
+import parsers.courseWind.CourseWindData;
+import parsers.courseWind.CourseWindParser;
+import parsers.courseWind.WindStatus;
 import parsers.markRounding.MarkRoundingData;
 import parsers.markRounding.MarkRoundingParser;
 import parsers.raceStatus.RaceStatusData;
@@ -187,8 +190,6 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.raceStatus = raceStatusData.getRaceStatus();
                     this.messageTime = raceStatusData.getCurrentTime();
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
-                    this.windDirection = raceStatusData.getWindDirection();
-                    this.windSpeed = raceStatusData.getWindSpeed();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
                     for (int id : storedCompetitors.keySet()) {
 //                        for (Competitor competitor : competitorsPosition) {
@@ -232,6 +233,17 @@ public class Interpreter implements DataSource, PacketHandler {
                         CourseFeature courseFeature = boatDataParser.getCourseFeature();
                         updateCourseMarks(courseFeature);
 
+                    }
+                }
+                break;
+            case COURSE_WIND:
+                CourseWindParser courseWindParser = new CourseWindParser();
+                CourseWindData courseWindData = courseWindParser.processMessage(packet);
+                if(courseWindData != null) {
+                    if(courseWindData.getWindStatuses().containsKey(10)) {
+                        WindStatus officialWindStatus = courseWindData.getWindStatuses().get(10);
+                        this.windDirection = officialWindStatus.getWindDirection();
+                        this.windSpeed = officialWindStatus.getWindSpeed();
                     }
                 }
                 break;
