@@ -6,6 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.Converter.hexByteArrayToLong;
+import static parsers.Converter.parseHeading;
 
 /**
  * Created by psu43 on 13/04/17.
@@ -53,6 +54,36 @@ public class ConverterTest {
         bytes[0] = b;
         long n = Converter.hexByteArrayToLong(bytes);
         Assert.assertTrue(n == 5);
+    }
+
+
+
+    @Test
+    public void testParseHeadingNorth() {
+        byte[] testByteArray={0x00,0x00};
+        Double heading = parseHeading(testByteArray);
+        Assert.assertTrue(heading == 0);
+    }
+
+    @Test
+    public void testParseHeadingSouth() {
+        byte[] testByteArray={0x7F,0x7F};
+        Double heading = parseHeading(testByteArray);
+        Assert.assertEquals(heading, 180, 1);
+    }
+
+    @Test
+    public void testParseHeading() {
+        byte[] testByteArray={0x68,0x00};
+        Double heading = parseHeading(testByteArray);
+        Assert.assertTrue(heading == 0.5712890625);
+    }
+
+    @Test
+    public void testParseHeading2() {
+        byte[] testByteArray = {0x22, 0x33};
+        Double heading = parseHeading(testByteArray);
+        Assert.assertTrue(heading == 71.905517578125);
     }
 
 }
