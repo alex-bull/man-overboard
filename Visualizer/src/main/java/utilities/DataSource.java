@@ -29,6 +29,7 @@ public interface DataSource {
     List<Competitor> getCompetitorsPosition();
     double getWindDirection();
     int getNumBoats();
+    double getWindSpeed();
     HashMap<Integer, CourseFeature> getStoredFeatures();
     double getCentralLongitude();
     double getCentralLatitude();

@@ -1,13 +1,9 @@
 package utilities;
 
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
-import models.ColourPool;
-import models.Competitor;
-import models.CourseFeature;
-import models.MutablePoint;
+import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
@@ -15,6 +11,9 @@ import parsers.Converter;
 import parsers.XmlSubtype;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
+import parsers.courseWind.CourseWindData;
+import parsers.courseWind.CourseWindParser;
+import parsers.courseWind.WindStatus;
 import parsers.markRounding.MarkRoundingData;
 import parsers.markRounding.MarkRoundingParser;
 import parsers.raceStatus.RaceStatusData;
@@ -46,6 +45,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private RaceData raceData;
     private MarkRoundingData markRoundingData;
     private String timezone;
+    private double windSpeed;
     private RaceStatusEnum raceStatus;
     private long messageTime;
     private long expectedStartTime;
@@ -59,306 +59,16 @@ public class Interpreter implements DataSource, PacketHandler {
     private double scaleFactor;
     private double minXMercatorCoord;
     private double minYMercatorCoord;
-    private double centralLatitude;
-    private double centralLongitude;
-    private List<Double> GPSbounds;
     private BoatXMLParser boatXMLParser;
-    private double width;
-    private double height;
+    private List<CourseFeature> startMarks = new ArrayList<>();
+    private List<CourseFeature> finishMarks = new ArrayList<>();
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
-    private List<MutablePoint> courseGPSBoundary = new ArrayList<>();
-    private int mapZoomLevel;
 
-    public Interpreter() {
+    public Interpreter(){
         competitorsPosition = new ArrayList<>();
         this.raceXMLParser = new RaceXMLParser();
-    }
-
-    /**
-     * Begins data receiver streaming from port.
-     *
-     * @param host  String the host to stream from
-     * @param port  Int the port to stream from
-     * @param scene the scene of the stage, for size calculations
-     * @return boolean, true if the stream succeeds
-     */
-    public boolean receive(String host, int port, Scene scene) {
-
-        //create a data receiver
-        DataReceiver dataReceiver;
-        try {
-            dataReceiver = new DataReceiver(host, port, this);
-            this.primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
-        } catch (IOException e) {
-            System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
-            return false;
-        }
-
-        //calculate the effective width and height of the screen
-
-        width = primaryScreenBounds.getWidth() - scene.getX();
-        height = primaryScreenBounds.getHeight() - scene.getY();
-
-        //start receiving data
-        Timer receiverTimer = new Timer();
-        receiverTimer.schedule(dataReceiver, 0, 1);
-
-        try {
-            //wait for data to come in before setting fields
-            while (this.numBoats < 1 || storedCompetitors.size() < this.numBoats) {
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    System.out.println("Thread sleep error");
-                }
-            }
-
-        } catch (NullPointerException e) {
-            System.out.println("Live stream is down");
-            return false;
-        }
-        return true;
-    }
-
-
-    /**
-     * Reads packet values and updates model data
-     *
-     * @param header byte[] packet header
-     * @param packet byte[] packet body
-     */
-    public void interpretPacket(byte[] header, byte[] packet) {
-
-        MessageType messageType = UNKNOWN;
-        for (MessageType messageEnum : MessageType.values()) {
-            if (header[0] == messageEnum.getValue()) {
-                messageType = messageEnum;
-            }
-        }
-
-        switch (messageType) {
-            case XML:
-                try {
-                    readXMLMessage(packet);
-                } catch (JDOMException | IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case RACE_STATUS:
-                RaceStatusData raceStatusData = new RaceStatusParser().processMessage(packet);
-                if (raceStatusData != null) {
-                    this.raceStatus = raceStatusData.getRaceStatus();
-                    this.messageTime = raceStatusData.getCurrentTime();
-                    this.expectedStartTime = raceStatusData.getExpectedStartTime();
-                    this.windDirection = raceStatusData.getWindDirection();
-                    this.numBoats = raceStatusData.getNumBoatsInRace();
-                    for (int id : storedCompetitors.keySet()) {
-//                        for (Competitor competitor : competitorsPosition) {
-//                            if (competitor.getSourceID() == id) {
-//                                competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
-//                                competitor.setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
-//                            }
-//                        }
-                        storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
-                        storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
-                    }
-
-                }
-
-                break;
-            case MARK_ROUNDING:
-                this.markRoundingData = new MarkRoundingParser().processMessage(packet);
-
-                if (markRoundingData != null) {
-                    int markID = markRoundingData.getMarkID();
-                    for (CompoundMarkData mark : this.compoundMarks) {
-                        if (mark.getID() == markID) {
-                            markRoundingData.setMarkName(mark.getName());
-                        }
-                    }
-
-                    String markName = markRoundingData.getMarkName();
-                    long roundingTime = markRoundingData.getRoundingTime();
-
-                    storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
-                    storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
-                }
-                break;
-            case BOAT_LOCATION:
-                BoatDataParser boatDataParser = new BoatDataParser();
-                this.boatData = boatDataParser.processMessage(packet, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                if (boatData != null) {
-                    if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
-                        updateBoatProperties();
-                    } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
-                        CourseFeature courseFeature = boatDataParser.getCourseFeature();
-                        updateCourseMarks(courseFeature);
-
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-
-    /**
-     * Updates the boat properties as data is being received.
-     */
-    private void updateBoatProperties() {
-        int boatID = boatData.getSourceID();
-
-        Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
-        competitor.setCurrentHeading(boatData.getHeading());
-
-        double x = this.boatData.getPixelPoint().getXValue();
-        double y = this.boatData.getPixelPoint().getYValue();
-        MutablePoint location = new MutablePoint(x, y);
-        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-        competitor.setPosition(location);
-        competitor.setVelocity(boatData.getSpeed());
-
-        // boat colour
-        if (competitor.getColor() == null) {
-            Color colour = this.colourPool.getColours().get(0);
-            competitor.setColor(colour);
-            colourPool.getColours().remove(colour);
-        }
-
-        //add to competitorsPosition and storedCompetitors if they are new
-        if (!storedCompetitors.keySet().contains(boatID)) {
-            this.storedCompetitors.put(boatID, competitor);
-            competitorsPosition.add(competitor);
-        }
-
-
-        //order the list of competitors
-        competitorsPosition.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
-//        this.competitorsPosition = comps;
-    }
-
-    /**
-     * Updates the course features/marks
-     *
-     * @param courseFeature CourseFeature
-     */
-    private void updateCourseMarks(CourseFeature courseFeature) {
-        //make scaling in proportion
-        double scaleFactor = raceXMLParser.getScaleFactor();
-        List<CourseFeature> points = new ArrayList<>();
-
-        courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-
-        this.storedFeatures.put(boatData.getSourceID(), courseFeature);
-
-        for (Integer id : this.storedFeatures.keySet()) {
-            points.add(this.storedFeatures.get(id));
-        }
-        this.courseFeatures = points;
-    }
-
-    /**
-     * Parse binary data into XML and create a new parser dependant on the XmlSubType
-     *
-     * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
-     * @throws IOException   IOException
-     * @throws JDOMException JDOMException
-     */
-    private void readXMLMessage(byte[] message) throws IOException, JDOMException {
-        String xml = parseXMLMessage(message);
-        if (xml != null) {
-            switch (this.xmlSubType) {
-                case REGATTA:
-                    RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
-                    this.timezone = regattaParser.getOffsetUTC();
-                    this.centralLatitude = regattaParser.getCentralLatitude();
-                    this.centralLongitude = regattaParser.getCentralLongitude();
-
-                    if (!Objects.equals(timezone.substring(0, 1), "-")) {
-                        timezone = "+" + timezone;
-                    }
-                    break;
-                case RACE:
-                    // this.raceXMLParser = new RaceXMLParser(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                    this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
-                    this.courseBoundary = raceXMLParser.getCourseBoundary();
-                    this.compoundMarks = raceData.getCourse();
-                    GPSbounds = raceXMLParser.getGPSBounds();
-                    courseGPSBoundary = raceXMLParser.getCourseGPSBoundary();
-                    setScalingFactors();
-                    break;
-                case BOAT:
-                    this.boatXMLParser = new BoatXMLParser(xml.trim());
-                    break;
-            }
-        }
-
-    }
-
-
-    /**
-     * Parse binary data into XML
-     *
-     * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
-     * @return String XML string describing Regatta, Race, or Boat
-     */
-    private String parseXMLMessage(byte[] message) {
-
-        try {
-            int regattaType = 5;
-            int raceType = 6;
-            int boatType = 7;
-            // can get version number, ack number, timestamp if needed
-
-            int subType = message[9];
-            if (subType == regattaType) {
-                xmlSubType = XmlSubtype.REGATTA;
-            }
-            if (subType == raceType) {
-                xmlSubType = XmlSubtype.RACE;
-            }
-            if (subType == boatType) {
-                xmlSubType = XmlSubtype.BOAT;
-            }
-
-            // can get sequence number if needed
-            byte[] xmlLengthBytes = Arrays.copyOfRange(message, 12, 14);
-            int xmlLength = hexByteArrayToInt(xmlLengthBytes);
-
-            int start = 14;
-            int end = start + xmlLength;
-
-            byte[] xmlBytes = Arrays.copyOfRange(message, start, end);
-            String charset = "UTF-8";
-            String xmlString = "";
-
-            try {
-                xmlString = new String(xmlBytes, charset);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-
-            return xmlString;
-        } catch (Exception e) {
-            return null;
-        }
-
-    }
-
-
-    /**
-     * Sets the scaling values after the boundary has been received and parsed by the raceXMLParser.
-     */
-    private void setScalingFactors() {
-        this.paddingX = raceXMLParser.getPaddingX();
-        this.paddingY = raceXMLParser.getPaddingY();
-        this.scaleFactor = raceXMLParser.getScaleFactor();
-        this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
-        this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
     }
 
     public List<CourseFeature> getCourseFeatures() {
@@ -405,32 +115,297 @@ public class Interpreter implements DataSource, PacketHandler {
         return this.numBoats;
     }
 
+    public double getWindSpeed() {
+        return windSpeed/1000.0;
+    }
+
+
+
+    /**
+     * Begins data receiver streaming from port.
+     * @param host String the host to stream from
+     * @param port Int the port to stream from
+     * @return boolean, true if the stream succeeds
+     */
+    public boolean receive(String host, int port) {
+
+        //create a data receiver
+        DataReceiver dataReceiver;
+        try {
+            dataReceiver = new DataReceiver(host, port, this);
+            this.primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+
+        } catch (IOException e) {
+            System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
+            return false;
+        }
+        //start receiving data
+        Timer receiverTimer = new Timer();
+        receiverTimer.schedule(dataReceiver, 0, 1);
+
+        try {
+            //wait for data to come in before setting fields
+            while (this.numBoats < 1 || storedCompetitors.size() < this.numBoats) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    System.out.println("Thread sleep error");
+                }
+            }
+
+        }
+        catch(NullPointerException e) {
+            System.out.println("Live stream is down");
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * Reads packet values and updates model data
+     * @param header byte[] packet header
+     * @param packet byte[] packet body
+     */
+    public void interpretPacket(byte[] header, byte[] packet) {
+
+        MessageType messageType = UNKNOWN;
+        for(MessageType messageEnum : MessageType.values()) {
+            if (header[0] == messageEnum.getValue()) {
+                messageType = messageEnum;
+            }
+        }
+
+        switch(messageType) {
+            case XML:
+                try {
+                    readXMLMessage(packet);
+                } catch (JDOMException | IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case RACE_STATUS:
+                RaceStatusData raceStatusData = new RaceStatusParser().processMessage(packet);
+                if (raceStatusData != null) {
+                    this.raceStatus = raceStatusData.getRaceStatus();
+                    this.messageTime = raceStatusData.getCurrentTime();
+                    this.expectedStartTime = raceStatusData.getExpectedStartTime();
+                    this.numBoats = raceStatusData.getNumBoatsInRace();
+                    for (int id : storedCompetitors.keySet()) {
+//                        for (Competitor competitor : competitorsPosition) {
+//                            if (competitor.getSourceID() == id) {
+//                                competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+//                                competitor.setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
+//                            }
+//                        }
+                        storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+                        storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
+                    }
+
+                }
+
+                break;
+            case MARK_ROUNDING:
+                this.markRoundingData = new MarkRoundingParser().processMessage(packet);
+
+                if (markRoundingData != null) {
+                    int markID = markRoundingData.getMarkID();
+                    for (CompoundMarkData mark : this.compoundMarks) {
+                        if (mark.getID() == markID) {
+                            markRoundingData.setMarkName(mark.getName());
+                        }
+                    }
+
+                    String markName = markRoundingData.getMarkName();
+                    long roundingTime = markRoundingData.getRoundingTime();
+
+                    storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
+                    storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
+                }
+                break;
+            case BOAT_LOCATION:
+                BoatDataParser boatDataParser = new BoatDataParser();
+                this.boatData = boatDataParser.processMessage(packet, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                if (boatData != null) {
+                    if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
+                        updateBoatProperties();
+                    } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
+                        CourseFeature courseFeature = boatDataParser.getCourseFeature();
+                        updateCourseMarks(courseFeature);
+
+                    }
+                }
+                break;
+            case COURSE_WIND:
+                CourseWindParser courseWindParser = new CourseWindParser();
+                CourseWindData courseWindData = courseWindParser.processMessage(packet);
+                if(courseWindData != null) {
+                    if(courseWindData.getWindStatuses().containsKey(10)) {
+                        WindStatus officialWindStatus = courseWindData.getWindStatuses().get(10);
+                        this.windDirection = officialWindStatus.getWindDirection();
+                        this.windSpeed = officialWindStatus.getWindSpeed();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    /**
+     * Updates the boat properties as data is being received.
+     */
+    private void updateBoatProperties() {
+        int boatID = boatData.getSourceID();
+
+        Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
+        competitor.setCurrentHeading(boatData.getHeading());
+
+        double x = this.boatData.getPixelPoint().getXValue();
+        double y = this.boatData.getPixelPoint().getYValue();
+        MutablePoint location = new MutablePoint(x, y);
+        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        competitor.setPosition(location);
+        competitor.setVelocity(boatData.getSpeed());
+
+        // boat colour
+        if (competitor.getColor() == null) {
+            Color colour = this.colourPool.getColours().get(0);
+            competitor.setColor(colour);
+            colourPool.getColours().remove(colour);
+        }
+
+        //add to competitorsPosition and storedCompetitors if they are new
+        if(!storedCompetitors.keySet().contains(boatID)) {
+            this.storedCompetitors.put(boatID, competitor);
+            competitorsPosition.add(competitor);
+        }
+
+
+        //order the list of competitors
+        competitorsPosition.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+//        this.competitorsPosition = comps;
+    }
+
+    /**
+     * Updates the course features/marks
+     * @param courseFeature CourseFeature
+     */
+    private void updateCourseMarks(CourseFeature courseFeature) {
+        //make scaling in proportion
+        double scaleFactor = raceXMLParser.getScaleFactor();
+        List<CourseFeature> points = new ArrayList<>();
+
+        courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+
+        this.storedFeatures.put(boatData.getSourceID(), courseFeature);
+
+        for (Integer id : this.storedFeatures.keySet()) {
+            points.add(this.storedFeatures.get(id));
+        }
+        this.courseFeatures = points;
+    }
+
+
+
+    /**
+     * Parse binary data into XML and create a new parser dependant on the XmlSubType
+     * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
+     * @throws IOException   IOException
+     * @throws JDOMException JDOMException
+     */
+    private void readXMLMessage(byte[] message) throws IOException, JDOMException {
+        String xml = parseXMLMessage(message);
+        if (xml != null) {
+            switch (this.xmlSubType) {
+                case REGATTA:
+                    RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
+                    this.timezone = regattaParser.getOffsetUTC();
+                    if (!Objects.equals(timezone.substring(0, 1), "-")) {
+                        timezone = "+" + timezone;
+                    }
+                    break;
+                case RACE:
+                    // this.raceXMLParser = new RaceXMLParser(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                    this.raceData = raceXMLParser.parseRaceData(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                    this.courseBoundary = raceXMLParser.getCourseBoundary();
+                    this.compoundMarks = raceData.getCourse();
+                    setScalingFactors();
+                    break;
+                case BOAT:
+                    this.boatXMLParser = new BoatXMLParser(xml.trim());
+                    break;
+            }
+        }
+
+    }
+
+
+    /**
+     * Parse binary data into XML
+     * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
+     * @return String XML string describing Regatta, Race, or Boat
+     */
+    private String parseXMLMessage(byte[] message) {
+
+        try {
+            int regattaType = 5;
+            int raceType = 6;
+            int boatType = 7;
+            // can get version number, ack number, timestamp if needed
+
+            int subType = message[9];
+            if (subType == regattaType) {
+                xmlSubType = XmlSubtype.REGATTA;
+            }
+            if (subType == raceType) {
+                xmlSubType = XmlSubtype.RACE;
+            }
+            if (subType == boatType) {
+                xmlSubType = XmlSubtype.BOAT;
+            }
+
+            // can get sequence number if needed
+            byte[] xmlLengthBytes = Arrays.copyOfRange(message, 12, 14);
+            int xmlLength = hexByteArrayToInt(xmlLengthBytes);
+
+            int start = 14;
+            int end = start + xmlLength;
+
+            byte[] xmlBytes = Arrays.copyOfRange(message, start, end);
+            String charset = "UTF-8";
+            String xmlString = "";
+
+            try {
+                xmlString = new String(xmlBytes, charset);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            return xmlString;
+        }
+        catch (Exception e) {
+            return null;
+        }
+
+    }
+
+
+    /**
+     * Sets the scaling values after the boundary has been received and parsed by the raceXMLParser.
+     */
+    private void setScalingFactors() {
+        this.paddingX=raceXMLParser.getPaddingX();
+        this.paddingY=raceXMLParser.getPaddingY();
+        this.scaleFactor = raceXMLParser.getScaleFactor();
+        this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
+        this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
+    }
+
     public HashMap<Integer, CourseFeature> getStoredFeatures() {
         return storedFeatures;
     }
 
-    public double getCentralLongitude() {
-        return centralLongitude;
-    }
-
-    public double getCentralLatitude() {
-        return centralLatitude;
-    }
-
-    public List<Double> getGPSbounds() {
-        return GPSbounds;
-    }
-
-    public List<MutablePoint> getcourseGPSBoundary() {
-        return courseGPSBoundary;
-    }
-
-    public int getMapZoomLevel() {
-        return (int) raceXMLParser.getZoomLevel();
-    }
-
-    public double getShiftDistance() {
-        return raceXMLParser.getShiftDistance();
-    }
 
 }

@@ -4,12 +4,14 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane fx:id="windPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="144.0" prefWidth="151.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.WindController">
+<Pane fx:id="windPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="188.0" prefWidth="151.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.WindController">
    <children>
-      <Text layoutX="14.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wind Direction">
+      <Text layoutX="13.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wind Direction">
          <font>
             <Font size="17.0" />
          </font>
       </Text>
+      <Text fx:id="speed" layoutX="39.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />
+      <Text layoutX="86.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="m/s" />
    </children>
 </Pane>

@@ -12,6 +12,7 @@ import static parsers.Converter.hexByteArrayToInt;
 
 /**
  * Created by jar156 on 15/05/17.
+ * Tests for parsing boat data
  */
 public class BoatDataParserTest {
 

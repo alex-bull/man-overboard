@@ -39,7 +39,7 @@ public class MainController {
                 if(raceViewController.isLoaded()) {
                 raceViewController.refresh(dataSource);
                 tableController.refresh(dataSource);
-                windController.refresh(dataSource.getWindDirection());
+                windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
                 sparklinesController.refresh();
 
                 }

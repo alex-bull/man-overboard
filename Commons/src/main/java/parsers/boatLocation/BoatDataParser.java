@@ -1,17 +1,14 @@
 package parsers.boatLocation;
 
-import models.Competitor;
-
 import models.CourseFeature;
 import models.Mark;
 import models.MutablePoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static parsers.Converter.hexByteArrayToInt;
-import static utility.Projection.mercatorProjection;
+import static parsers.Converter.parseHeading;
 
 /**
  * Created by psu43 on 13/04/17.
@@ -42,7 +39,7 @@ public class BoatDataParser {
             //speed in m/sec
             double convertedSpeed = speed / 1000.0;
 
-            List<Double> point = mercatorProjection(latitude, longitude);
+            ArrayList<Double> point = mercatorProjection(latitude, longitude, width, height);
             double pointX = point.get(0);
             double pointY = point.get(1);
             MutablePoint pixelPoint = new MutablePoint(pointX, pointY);
@@ -59,15 +56,6 @@ public class BoatDataParser {
 
     }
 
-    /**
-     * Convert a byte array of little endian hex values into a decimal heading
-     *
-     * @param hexValues byte[] a byte array of (2) hexadecimal bytes in little endian format
-     * @return Double the value of the heading
-     */
-    private Double parseHeading(byte[] hexValues) {
-        return (double) hexByteArrayToInt(hexValues) * 360.0 / 65536.0;
-    }
 
     /**
      * Convert a byte array of little endian hex values into a decimal latitude or longitude
@@ -79,6 +67,28 @@ public class BoatDataParser {
         return (double) hexByteArrayToInt(hexValues) * 180.0 / 2147483648.0;
     }
 
+
+
+    /**
+     * Function to map latitude and longitude to screen coordinates
+     *
+     * @param lat    latitude
+     * @param lon    longitude
+     * @param width  width of the screen
+     * @param height height of the screen
+     * @return ArrayList the coordinates in metres
+     */
+    private ArrayList<Double> mercatorProjection(double lat, double lon, double width, double height) {
+        ArrayList<Double> ret = new ArrayList<>();
+        double x = (lon + 180) * (width / 360);
+        double latRad = lat * Math.PI / 180;
+        double merc = Math.log(Math.tan((Math.PI / 4) + (latRad / 2)));
+        double y = (height / 2) - (width * merc / (2 * Math.PI));
+        ret.add(x);
+        ret.add(y);
+        return ret;
+
+    }
 
     public CourseFeature getCourseFeature() {
         return courseFeature;
