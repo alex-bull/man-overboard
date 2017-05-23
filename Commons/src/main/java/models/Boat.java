@@ -5,6 +5,8 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
 import parsers.Converter;
 
+import java.awt.geom.Point2D;
+
 /**
  * Created by mgo65 on 3/03/17.
  * Boat object

@@ -56,20 +56,23 @@ public class RaceViewController implements Initializable {
     @FXML private CheckBox fpsToggle;
     @FXML private Text status;
     @FXML private Group annotationGroup;
+    @FXML private CheckBox timeToStartlineButton;
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
+    private Map<Integer, Polygon> estimateLineModels = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
     private Map<Integer, Label> speedAnnotations = new HashMap<>();
     private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
     private Map<Integer, Label> timeFromMarkAnnotations = new HashMap<>();
+    private Map<Integer, Label> timeToStartlineAnnotations = new HashMap<>();
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
     private Map<String, Shape> markModels = new HashMap<>();
     private DataSource dataSource;
     private long startTimeNano = System.nanoTime();
     private long timeFromLastMark;
-    private double timeToStartLine;
+    private String startAnnotation;
     private int counter = 0;
 
     private Line startLine;
@@ -88,6 +91,9 @@ public class RaceViewController implements Initializable {
         allAnnotationsRadio.setSelected(true);
         showAllAnnotations();
         fpsToggle.setSelected(true);
+        timeToStartlineButton.setSelected(true);
+        timeToStartlineButton.setVisible(false);
+
 
     }
 
@@ -246,6 +252,10 @@ public class RaceViewController implements Initializable {
                         //time from the last mark annotation
                         label = new Label(String.valueOf( timeFromLastMark / 1000) + " seconds");
                         this.timeFromMarkAnnotations.put(sourceID, label);
+                    case TIME_TO_STARTLINE:
+                        //time until boat passes starting mark
+                        label = new Label(startAnnotation);
+                        this.timeToStartlineAnnotations.put(sourceID, label);
                 }
 
                 label.setFont(Font.font("Monospaced"));
@@ -303,6 +313,10 @@ public class RaceViewController implements Initializable {
                     } else {
                         label.setText("--");
                     }
+                case TIME_TO_STARTLINE:
+                    //time until boat passes starting mark
+                    label = this.timeToStartlineAnnotations.get(sourceID);
+                    label.setText(startAnnotation);
 
 
             }
@@ -418,7 +432,7 @@ public class RaceViewController implements Initializable {
      * @param boat Competitor
      * @return the time to the start line of the competitor
      */
-    private double calculateTimeToStart(Competitor boat){
+    private String calculateStartAnnotation(Competitor boat){
         float boatX = (float) boat.getPosition().getXValue();
         float boatY = (float) boat.getPosition().getYValue();
 
@@ -430,8 +444,25 @@ public class RaceViewController implements Initializable {
         double distanceToStart = Point2D.distance(boatX, boatY, startLineStartX, startLineStartY);
         double distanceToEnd = Point2D.distance(boatX, boatY, startLineEndX, startLineEndY);
 
-        if(distanceToStart < distanceToEnd){ return distanceToStart * boat.getVelocity(); }
-        else{ return distanceToEnd * boat.getVelocity(); }
+        double selectedTime;
+
+        if(distanceToStart < distanceToEnd){ selectedTime = distanceToStart * boat.getVelocity(); }
+        else{ selectedTime = distanceToEnd * boat.getVelocity(); }
+
+//        System.out.println(selectedTime);
+//        System.out.println(dataSource.getExpectedStartTime());
+//        System.out.println(dataSource.getMessageTime());
+
+        if((dataSource.getMessageTime() + selectedTime) < dataSource.getExpectedStartTime()){
+//            System.out.println("-");
+            return "-";
+        } else if ((dataSource.getMessageTime() + selectedTime) > (dataSource.getExpectedStartTime() + 5000)){
+//            System.out.println("+");
+            return "+";
+        } else {
+//            System.out.println(" ");
+            return null;
+        }
 
     }
 
@@ -480,7 +511,7 @@ public class RaceViewController implements Initializable {
             timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
 
             if(dataSource.getRaceStatus().equals(PREPARATORY)) {
-                timeToStartLine = calculateTimeToStart(boat);
+                startAnnotation = calculateStartAnnotation(boat);
             }
 
             if (counter % 70 == 0) {
