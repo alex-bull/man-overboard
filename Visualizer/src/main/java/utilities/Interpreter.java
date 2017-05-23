@@ -1,9 +1,13 @@
 package utilities;
 
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
-import models.*;
+import models.ColourPool;
+import models.Competitor;
+import models.CourseFeature;
+import models.MutablePoint;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
@@ -59,14 +63,19 @@ public class Interpreter implements DataSource, PacketHandler {
     private double scaleFactor;
     private double minXMercatorCoord;
     private double minYMercatorCoord;
+    private double centralLatitude;
+    private double centralLongitude;
+    private List<Double> GPSbounds;
     private BoatXMLParser boatXMLParser;
-    private List<CourseFeature> startMarks = new ArrayList<>();
-    private List<CourseFeature> finishMarks = new ArrayList<>();
+    private double width;
+    private double height;
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
+    private List<MutablePoint> courseGPSBoundary = new ArrayList<>();
+    private int mapZoomLevel;
 
-    public Interpreter(){
+    public Interpreter() {
         competitorsPosition = new ArrayList<>();
         this.raceXMLParser = new RaceXMLParser();
     }
@@ -123,11 +132,13 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * Begins data receiver streaming from port.
-     * @param host String the host to stream from
-     * @param port Int the port to stream from
+     *
+     * @param host  String the host to stream from
+     * @param port  Int the port to stream from
+     * @param scene the scene of the stage, for size calculations
      * @return boolean, true if the stream succeeds
      */
-    public boolean receive(String host, int port) {
+    public boolean receive(String host, int port, Scene scene) {
 
         //create a data receiver
         DataReceiver dataReceiver;
@@ -139,6 +150,12 @@ public class Interpreter implements DataSource, PacketHandler {
             System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
             return false;
         }
+
+        //calculate the effective width and height of the screen
+
+        width = primaryScreenBounds.getWidth() - scene.getX();
+        height = primaryScreenBounds.getHeight() - scene.getY();
+
         //start receiving data
         Timer receiverTimer = new Timer();
         receiverTimer.schedule(dataReceiver, 0, 1);
@@ -153,8 +170,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 }
             }
 
-        }
-        catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             System.out.println("Live stream is down");
             return false;
         }
@@ -164,19 +180,20 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * Reads packet values and updates model data
+     *
      * @param header byte[] packet header
      * @param packet byte[] packet body
      */
     public void interpretPacket(byte[] header, byte[] packet) {
 
         MessageType messageType = UNKNOWN;
-        for(MessageType messageEnum : MessageType.values()) {
+        for (MessageType messageEnum : MessageType.values()) {
             if (header[0] == messageEnum.getValue()) {
                 messageType = messageEnum;
             }
         }
 
-        switch(messageType) {
+        switch (messageType) {
             case XML:
                 try {
                     readXMLMessage(packet);
@@ -188,6 +205,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 RaceStatusData raceStatusData = new RaceStatusParser().processMessage(packet);
                 if (raceStatusData != null) {
                     this.raceStatus = raceStatusData.getRaceStatus();
+                    System.out.println(raceStatus);
                     this.messageTime = raceStatusData.getCurrentTime();
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
@@ -277,7 +295,7 @@ public class Interpreter implements DataSource, PacketHandler {
         }
 
         //add to competitorsPosition and storedCompetitors if they are new
-        if(!storedCompetitors.keySet().contains(boatID)) {
+        if (!storedCompetitors.keySet().contains(boatID)) {
             this.storedCompetitors.put(boatID, competitor);
             competitorsPosition.add(competitor);
         }
@@ -290,6 +308,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * Updates the course features/marks
+     *
      * @param courseFeature CourseFeature
      */
     private void updateCourseMarks(CourseFeature courseFeature) {
@@ -307,10 +326,9 @@ public class Interpreter implements DataSource, PacketHandler {
         this.courseFeatures = points;
     }
 
-
-
     /**
      * Parse binary data into XML and create a new parser dependant on the XmlSubType
+     *
      * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
      * @throws IOException   IOException
      * @throws JDOMException JDOMException
@@ -322,15 +340,20 @@ public class Interpreter implements DataSource, PacketHandler {
                 case REGATTA:
                     RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
                     this.timezone = regattaParser.getOffsetUTC();
+                    this.centralLatitude = regattaParser.getCentralLatitude();
+                    this.centralLongitude = regattaParser.getCentralLongitude();
+
                     if (!Objects.equals(timezone.substring(0, 1), "-")) {
                         timezone = "+" + timezone;
                     }
                     break;
                 case RACE:
                     // this.raceXMLParser = new RaceXMLParser(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                    this.raceData = raceXMLParser.parseRaceData(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                    this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
                     this.courseBoundary = raceXMLParser.getCourseBoundary();
                     this.compoundMarks = raceData.getCourse();
+                    GPSbounds = raceXMLParser.getGPSBounds();
+                    courseGPSBoundary = raceXMLParser.getCourseGPSBoundary();
                     setScalingFactors();
                     break;
                 case BOAT:
@@ -344,6 +367,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * Parse binary data into XML
+     *
      * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
      * @return String XML string describing Regatta, Race, or Boat
      */
@@ -384,8 +408,7 @@ public class Interpreter implements DataSource, PacketHandler {
             }
 
             return xmlString;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
 
@@ -396,16 +419,40 @@ public class Interpreter implements DataSource, PacketHandler {
      * Sets the scaling values after the boundary has been received and parsed by the raceXMLParser.
      */
     private void setScalingFactors() {
-        this.paddingX=raceXMLParser.getPaddingX();
-        this.paddingY=raceXMLParser.getPaddingY();
+        this.paddingX = raceXMLParser.getPaddingX();
+        this.paddingY = raceXMLParser.getPaddingY();
         this.scaleFactor = raceXMLParser.getScaleFactor();
         this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
         this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
     }
 
+
     public HashMap<Integer, CourseFeature> getStoredFeatures() {
         return storedFeatures;
     }
 
+    public double getCentralLongitude() {
+        return centralLongitude;
+    }
+
+    public double getCentralLatitude() {
+        return centralLatitude;
+    }
+
+    public List<Double> getGPSbounds() {
+        return GPSbounds;
+    }
+
+    public List<MutablePoint> getcourseGPSBoundary() {
+        return courseGPSBoundary;
+    }
+
+    public int getMapZoomLevel() {
+        return (int) raceXMLParser.getZoomLevel();
+    }
+
+    public double getShiftDistance() {
+        return raceXMLParser.getShiftDistance();
+    }
 
 }
