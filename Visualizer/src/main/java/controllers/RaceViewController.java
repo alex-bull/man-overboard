@@ -71,7 +71,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line finishLine;
     private Integer selectedBoatSourceId = 0;
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         startLine=new Line();
@@ -331,9 +330,13 @@ public class RaceViewController implements Initializable, TableObserver {
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(boat.getSourceID(), boatModel);
-            //Boats selected can be selected by clicking on them
+            //Boats selected can be selected/unselected by clicking on them
             boatModel.setOnMouseClicked(event -> {
-                selectedBoatSourceId = sourceId;
+                if (selectedBoatSourceId != sourceId) {
+                    selectedBoatSourceId = sourceId;
+                } else {
+                    selectedBoatSourceId = 0;
+                }
             });
         }
         //Translate and rotate the corresponding boat models
@@ -401,108 +404,6 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawLaylines(Competitor boat) {
 
-        //System.out.println("DRAWING");
-
-//        Integer markId = boat.getCurrentLegIndex() + 1;
-//
-//        Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
-//        List<Integer> ids = features.get(markId);
-//        Integer sourceId = ids.get(0);
-//        CourseFeature feature = this.dataSource.getCourseFeatureMap().get(sourceId);
-//
-//
-//
-//        if (ids == null) return;
-//
-//        Integer upAngle = 43;
-//        Integer downAngle = 153;
-//        Double boatX = boat.getPosition().getXValue();
-//        Double boatY = boat.getPosition().getYValue();
-//        Double markX = feature.getPixelCentre().getXValue();
-//        Double markY = feature.getPixelCentre().getYValue();
-//        Double heading = boat.getCurrentHeading();
-//
-//        if (heading > 180) {
-//            heading = heading - 180;
-//        }
-//
-//        Double distanceBoatMark = Math.sqrt(Math.pow(abs((boatX - markX)), 2) + Math.pow(abs((boatY - markY)), 2));
-//
-//
-//
-//        Double bx = 50 * Math.sin(Math.toRadians(heading));
-//        Double by = 50 * Math.cos(Math.toRadians(heading));
-//        Double mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() + upAngle));
-//        Double my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() + upAngle));
-//
-//        Double angle1 = Math.atan2((boatY-by) - boatY, (boatX+bx) - boatX);
-//        Double angle2 = Math.atan2(markY - boatY, markX - boatX);
-//        Double a1 = Math.toDegrees(angle1 - angle2);
-//
-//        if (a1 < 0) {
-//            a1 = 360 + a1;
-//        }
-//        if (a1 < 180) {
-//            mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() - upAngle));
-//            my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() - upAngle));
-//        }
-//
-//        if (a1 > 180) {
-//            a1 = 360 - a1;
-//        }
-//
-//        Double angle3 = Math.atan2(boatY - markY, boatX - markX);
-//        Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
-//        Double a3 = abs(360 - Math.toDegrees(angle3 - angle4));
-//
-//        if (a3 < 0) {
-//            a3 = 360 + a3;
-//        }
-//        if (a3 > 180) {
-//            a3 = 360 - a3;
-//        }
-//
-//        Double a2 = 180 - a1 - a3;
-//        if (a2 < 0) {
-//            a2 = 360 + a2;
-//        }
-//        if (a2 > 180) {
-//            a2 = 360 - a2;
-//        }
-//
-//        //System.out.println("*************");
-//        //System.out.println(a1);
-//        //System.out.println(a2);
-//        //System.out.println(a3);
-//
-//        Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
-//        Double x = distanceTurn * Math.sin(Math.toRadians(heading));
-//        Double y = distanceTurn * Math.cos(Math.toRadians(heading));
-//
-//        Polyline line = new Polyline();
-//        line.getPoints().addAll(
-//                boatX, boatY, //top
-//                boatX + x, boatY - y);
-//        line.setFill(boat.getColor());
-//        line.setStroke(boat.getColor());
-//        line.setStrokeWidth(1);
-//
-//        Polyline line2 = new Polyline();
-//        line2.getPoints().addAll(
-//                markX, markY, //top
-//                boatX + x, boatY - y);
-//        line2.setFill(boat.getColor());
-//        line2.setStroke(boat.getColor());
-//        line2.setStrokeWidth(1);
-//
-//        raceViewPane.getChildren().add(line);
-//        raceViewPane.getChildren().add(line2);
-//        raceViewPane.getChildren().removeAll(layLines);
-//        layLines.clear();
-//        layLines.add(line);
-//        layLines.add(line2);
-
-
         Integer markId = boat.getCurrentLegIndex() + 1;
 
         Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
@@ -522,46 +423,40 @@ public class RaceViewController implements Initializable, TableObserver {
         Double markX = feature.getPixelCentre().getXValue();
         Double markY = feature.getPixelCentre().getYValue();
         Double heading = boat.getCurrentHeading();
-
+        //distance between boat and next mark
         Double distanceBoatMark = Math.sqrt(Math.pow(abs((boatX - markX)), 2) + Math.pow(abs((boatY - markY)), 2));
-
+        //arbitrary point in front of the boat along the heading angle
         Double bx = 50 * Math.sin(Math.toRadians(heading));
         Double by = 50 * Math.cos(Math.toRadians(heading));
-
+        //finds angle between the heading and mark from the boat
         Double angle1 = Math.atan2(markY - boatY, markX - boatX);
         Double angle2 = Math.atan2((boatY-by) - boatY, (boatX+bx) - boatX);
         Double a1 = Math.toDegrees(angle1 - angle2);
-
 
         if (a1 < 0) {
             a1 = 360 + a1;
         }
 
-
         //CASE: below-right
         if (boatY > markY && a1 > 180) {
-
-            System.out.println("BR");
+            //arbitrary point along the optimum wind angle from the mark
             Double mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() - upAngle));
             Double my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() - upAngle));
-
+            //finds angle between optimum wind angle and boat from the mark
             Double angle3 = Math.atan2(boatY - markY, boatX - markX);
             Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
             Double a3 = abs(360 - Math.toDegrees(angle3 - angle4));
             Double a2 = 180 - a1 - a3;
-
+            //distance to the turn from the boat and it's x and y components
             Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
             x = distanceTurn * Math.sin(Math.toRadians(heading));
             y = distanceTurn * Math.cos(Math.toRadians(heading));
-
         }
+
         //CASE: below-left
         else if (boatY > markY && a1 < 180) {
-
-            System.out.println("BL");
             Double mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() + upAngle));
             Double my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() + upAngle));
-
             Double angle3 = Math.atan2(boatY - markY, boatX - markX);
             Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
             Double a3 = abs(360 - Math.toDegrees(angle3 - angle4));
@@ -570,43 +465,27 @@ public class RaceViewController implements Initializable, TableObserver {
             Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
             x = distanceTurn * Math.sin(Math.toRadians(heading));
             y = distanceTurn * Math.cos(Math.toRadians(heading));
-
         }
+
         //CASE: above-left
         else if (boatY < markY && a1 > 180) {
-
-            System.out.println("AL");
             a1 = 360 - a1;
             Double mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() + downAngle));
             Double my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() + downAngle));
-
-            System.out.println(dataSource.getWindDirection());
-
-            Circle circle = new Circle(markX + mx, markY + my, 4.5, GREENYELLOW);
-            raceViewPane.getChildren().add(circle);
-
             Double angle3 = Math.atan2(boatY - markY, boatX - markX);
             Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
-            Double a4 = Math.toDegrees(angle3 - angle4);
             Double a3 = Math.toDegrees(angle3 - angle4);
             Double a2 = 180 - a1 - a3;
 
             Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
             x = distanceTurn * Math.sin(Math.toRadians(heading));
             y = distanceTurn * Math.cos(Math.toRadians(heading));
-            System.out.println(a1);
-            System.out.println(a2);
-            System.out.println(a3);
-            System.out.println(a4);
-
-
         }
+
         //CASE: above-right
         else if (boatY < markY && a1 < 180) {
-            System.out.println("AR");
             Double mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() - downAngle));
             Double my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() - downAngle));
-
             Double angle3 = Math.atan2(boatY - markY, boatX - markX);
             Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
             Double a3 = abs(360 - Math.toDegrees(angle3 - angle4));
@@ -616,8 +495,6 @@ public class RaceViewController implements Initializable, TableObserver {
             x = distanceTurn * Math.sin(Math.toRadians(heading));
             y = distanceTurn * Math.cos(Math.toRadians(heading));
         }
-
-
 
 
         Polyline line = new Polyline();
@@ -642,8 +519,6 @@ public class RaceViewController implements Initializable, TableObserver {
         layLines.clear();
         layLines.add(line);
         layLines.add(line2);
-//
-
     }
 
 
@@ -705,6 +580,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.moveAnnotations(boat);
 
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
+            if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
         }
 
     }
