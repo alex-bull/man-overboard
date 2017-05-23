@@ -31,8 +31,10 @@ public class SparklinesController {
     /**
      * Sets the competitors on the sparkline chart
      * @param dataSource DataSource the data to display
+     * @param width double the width of the screen
      */
-    void setCompetitors(DataSource dataSource){
+    void setCompetitors(DataSource dataSource, double width){
+        sparkChart.setMaxWidth(width/4);
         this.dataSource = dataSource;
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
         for(Competitor boat: competitors){
@@ -57,12 +59,12 @@ public class SparklinesController {
         long firstMessageTime = dataSource.getMessageTime();
         long raceTime = firstMessageTime - expectedStartTime;
         long waitTime = 45000;
+        int sparklinePoints = 5;
         comps.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
         for (int i = 0; i < comps.size(); i++) {
             XYChart.Series<String, Double> series = seriesMap.get(comps.get(i).getSourceID());
             int pos = i + 1;
-            // scaling to 7 points on spark line
-            if(series.getData().size() < 7) {
+            if(series.getData().size() < sparklinePoints) {
                 if(raceTime - waitTime > previousTime){
                     series.getData().add(new XYChart.Data<>(Long.toString(raceTime), (double) -pos));
                     if(i == comps.size() - 1) {
