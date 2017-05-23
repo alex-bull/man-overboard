@@ -31,6 +31,7 @@ public class RaceXMLParser {
     private double height;
 
 
+
     /**
      * Parse XML race data
      *
@@ -73,14 +74,16 @@ public class RaceXMLParser {
         List<CompoundMarkData> course = new ArrayList<>();
         List<MarkData> startMarks = new ArrayList<>();
         List<MarkData> finishMarks = new ArrayList<>();
+        boolean startLineSet = false;
 
         for (Element compoundMark : race.getChild("Course").getChildren()) {
-
+            int size = race.getChild("Course").getChildren().size();
             int compoundMarkID = Integer.parseInt(compoundMark.getAttribute("CompoundMarkID").getValue());
             String compoundMarkName = compoundMark.getAttribute("Name").getValue();
             List<MarkData> marks = new ArrayList<>();
 
             for (Element mark : compoundMark.getChildren()) {
+
                 int seqID = Integer.parseInt(mark.getAttributeValue("SeqID"));
                 String markName = mark.getAttributeValue("Name");
                 double targetLat = Double.parseDouble(mark.getAttributeValue("TargetLat"));
@@ -93,27 +96,18 @@ public class RaceXMLParser {
             raceData.addCompoundMarkID(compoundMarkID);
             CompoundMarkData compoundMarkData = new CompoundMarkData(compoundMarkID, compoundMarkName, marks);
             course.add(compoundMarkData);
-        }
-        raceData.setCourse(course);
-
-        for (Element corner : race.getChild("CompoundMarkSequence").getChildren()) {
-            int size = race.getChild("CompoundMarkSequence").getChildren().size();
-            int cornerSeqID = Integer.parseInt(corner.getAttributeValue("SeqID"));
-            int compoundMarkID = Integer.parseInt(corner.getAttributeValue("CompoundMarkID"));
-            String rounding = corner.getAttributeValue("Rounding");
-            int zoneSize = Integer.parseInt(corner.getAttributeValue("ZoneSize"));
-            CornerData cornerData = new CornerData(cornerSeqID, compoundMarkID, rounding, zoneSize);
 
             //Start Line
-            if (cornerSeqID == 1) {
+            if (!startLineSet){
                 for (CompoundMarkData mark : course) {
-                    if (mark.getID() == compoundMarkID) {
+                    if (mark.getName().equals(compoundMarkName) && mark.getMarks().size() == 2) {
                         startMarks.addAll(mark.getMarks());
+                        startLineSet = true;
                     }
                 }
             }
             //Finish Line
-            if (cornerSeqID == size) {
+            if (compoundMarkID == size) {
                 for (CompoundMarkData mark : course) {
                     if (mark.getID() == compoundMarkID) {
                         finishMarks.addAll(mark.getMarks());
@@ -122,6 +116,18 @@ public class RaceXMLParser {
             }
             raceData.setStartMarks(startMarks);
             raceData.setFinishMarks(finishMarks);
+
+        }
+        raceData.setCourse(course);
+
+        for (Element corner : race.getChild("CompoundMarkSequence").getChildren()) {
+
+            int cornerSeqID = Integer.parseInt(corner.getAttributeValue("SeqID"));
+            int compoundMarkID = Integer.parseInt(corner.getAttributeValue("CompoundMarkID"));
+            String rounding = corner.getAttributeValue("Rounding");
+            int zoneSize = Integer.parseInt(corner.getAttributeValue("ZoneSize"));
+            CornerData cornerData = new CornerData(cornerSeqID, compoundMarkID, rounding, zoneSize);
+
             raceData.getCompoundMarkSequence().add(cornerData);
 
         }
