@@ -205,6 +205,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 RaceStatusData raceStatusData = new RaceStatusParser().processMessage(packet);
                 if (raceStatusData != null) {
                     this.raceStatus = raceStatusData.getRaceStatus();
+                    System.out.println(raceStatus);
                     this.messageTime = raceStatusData.getCurrentTime();
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
@@ -425,49 +426,6 @@ public class Interpreter implements DataSource, PacketHandler {
         this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
     }
 
-    public List<CourseFeature> getCourseFeatures() {
-        return courseFeatures;
-    }
-
-    public List<MutablePoint> getCourseBoundary() {
-        return courseBoundary;
-    }
-
-    public String getCourseTimezone() {
-        return timezone;
-    }
-
-    public List<Integer> getStartMarks() {
-        return raceData.getStartMarksID();
-    }
-
-    public List<Integer> getFinishMarks() {
-        return raceData.getFinishMarksID();
-    }
-
-    public RaceStatusEnum getRaceStatus() {
-        return raceStatus;
-    }
-
-    public long getMessageTime() {
-        return messageTime;
-    }
-
-    public long getExpectedStartTime() {
-        return expectedStartTime;
-    }
-
-    public List<Competitor> getCompetitorsPosition() {
-        return new ArrayList<>(competitorsPosition); //return a shallow copy for thread safety
-    }
-
-    public double getWindDirection() {
-        return windDirection;
-    }
-
-    public int getNumBoats() {
-        return this.numBoats;
-    }
 
     public HashMap<Integer, CourseFeature> getStoredFeatures() {
         return storedFeatures;
