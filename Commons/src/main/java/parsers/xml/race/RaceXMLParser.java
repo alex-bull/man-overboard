@@ -39,9 +39,11 @@ public class RaceXMLParser {
 
     /**
      * Parse XML race data
-     *
      * @param xmlStr XML String of race data
-     * @throws IOException   IOException
+     * @param width double the width of the screen
+     * @param height height the height of the screen
+     * @return RaceData the parsed race data
+     * @throws IOException IOException
      * @throws JDOMException JDOMException
      */
     public RaceData parseRaceData(String xmlStr, double width, double height) throws IOException, JDOMException {
@@ -155,9 +157,6 @@ public class RaceXMLParser {
     private void parseRace(RaceData raceData) {
         double bufferX = 400;
         double bufferY = 200;
-//        double bufferX = 0;
-//        double bufferY = 0;
-
         try {
             parseBoundary(raceData, bufferX, bufferY);
         } catch (Exception ignored) {

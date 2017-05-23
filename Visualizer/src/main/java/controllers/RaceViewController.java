@@ -3,9 +3,11 @@ package controllers;
 import javafx.animation.FadeTransition;
 
 import javafx.concurrent.Worker;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
@@ -21,7 +23,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
@@ -46,9 +47,6 @@ import static javafx.scene.paint.Color.*;
  */
 public class RaceViewController implements Initializable {
 
-    private final double boatLength = 20;
-    private final double startWakeOffset= 3;
-    private final double wakeWidthFactor=0.2;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
     @FXML private Label fpsCounter;
@@ -63,8 +61,8 @@ public class RaceViewController implements Initializable {
     @FXML private Text status;
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
+    @FXML private StackPane loading;
     private WebEngine mapEngine;
-
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
@@ -86,6 +84,8 @@ public class RaceViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        loading.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
         startLine=new Line();
         finishLine=new Line();
         raceViewPane.getChildren().add(startLine);
@@ -114,6 +114,8 @@ public class RaceViewController implements Initializable {
             if (newState == Worker.State.SUCCEEDED) {
                 // new page has loaded, process:
                 isLoaded = true;
+                loading.setVisible(false);
+
             }
 
         });
@@ -404,10 +406,13 @@ public class RaceViewController implements Initializable {
      * @param boat Competitor a competing boat
      */
     private void drawWake(Competitor boat) {
+        double boatLength = 20;
+        double startWakeOffset = 3;
+        double wakeWidthFactor = 0.2;
         if (wakeModels.get(boat.getSourceID()) == null) {
             double wakeLength = boat.getVelocity();
             Polygon wake=new Polygon();
-            wake.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+wakeLength*wakeWidthFactor,wakeLength + boatLength,-startWakeOffset-wakeLength*wakeWidthFactor,wakeLength + boatLength);
+            wake.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset +wakeLength* wakeWidthFactor,wakeLength + boatLength,-startWakeOffset -wakeLength* wakeWidthFactor,wakeLength + boatLength);
             LinearGradient linearGradient=new LinearGradient(0.0,0,0.0,1,true, CycleMethod.NO_CYCLE,new Stop(0.0f,Color.rgb(0,0,255,0.7)),new Stop(1.0f,TRANSPARENT));
             wake.setFill(linearGradient);
             raceViewPane.getChildren().add(wake);
@@ -417,7 +422,7 @@ public class RaceViewController implements Initializable {
         Polygon wakeModel = wakeModels.get(boat.getSourceID());
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
-        wakeModel.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+newLength*wakeWidthFactor,newLength + boatLength,-startWakeOffset-newLength*wakeWidthFactor,newLength + boatLength);
+        wakeModel.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset +newLength* wakeWidthFactor,newLength + boatLength,-startWakeOffset -newLength* wakeWidthFactor,newLength + boatLength);
         wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
         wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         wakeModel.toFront();
@@ -472,8 +477,6 @@ public class RaceViewController implements Initializable {
         }
 
         counter++; // increment fps counter
-
-
 
         // calculate fps
         long currentTimeNano = System.nanoTime();
