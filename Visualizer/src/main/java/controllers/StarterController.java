@@ -131,6 +131,8 @@ public class StarterController implements Initializable, ClockHandler {
         boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port);
 
         if (streaming) {
+            EnvironmentConfig.currentStream = host;
+
             this.streamCombo.setDisable(true);
             this.confirmButton.setDisable(true);
 

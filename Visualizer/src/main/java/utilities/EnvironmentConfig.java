@@ -10,5 +10,6 @@ public class EnvironmentConfig {
     public static String csseStream = "csse-s302staff.canterbury.ac.nz";
     public static String mockStream = "localhost";
     public static Integer port = 4941;
+    public static String currentStream = "";
 
 }

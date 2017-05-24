@@ -28,6 +28,7 @@ import javafx.scene.transform.Translate;
 import models.*;
 import utilities.Annotation;
 import utilities.DataSource;
+import utilities.EnvironmentConfig;
 
 import java.net.URL;
 import java.util.*;
@@ -406,7 +407,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawLaylines(Competitor boat) {
 
         Integer markId = boat.getCurrentLegIndex() + 1;
-        System.out.println(markId);
+        if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
 
         Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
         if (markId > features.size()) return; //passed the finish line
@@ -541,6 +542,10 @@ public class RaceViewController implements Initializable, TableObserver {
         gc.setFill(Color.LIGHTBLUE);
         gc.fillRect(0, 0, width, height);
     }
+
+
+
+
 
 
     /**
