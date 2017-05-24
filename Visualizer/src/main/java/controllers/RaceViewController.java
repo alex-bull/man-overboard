@@ -61,7 +61,6 @@ public class RaceViewController implements Initializable {
     @FXML private Text status;
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
-    @FXML private StackPane loading;
     private WebEngine mapEngine;
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
@@ -85,7 +84,6 @@ public class RaceViewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        loading.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
         startLine=new Line();
         finishLine=new Line();
         raceViewPane.getChildren().add(startLine);
@@ -114,7 +112,6 @@ public class RaceViewController implements Initializable {
             if (newState == Worker.State.SUCCEEDED) {
                 // new page has loaded, process:
                 isLoaded = true;
-                loading.setVisible(false);
 
             }
 

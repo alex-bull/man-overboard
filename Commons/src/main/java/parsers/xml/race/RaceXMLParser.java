@@ -30,10 +30,10 @@ public class RaceXMLParser {
     private List<MutablePoint> courseGPSBoundary;
     private double width;
     private double height;
-    private double maxLat = -180;
-    private double maxLng = -180;
-    private double minLat = 180;
-    private double minLng = 180;
+    private double maxLat;
+    private double maxLng;
+    private double minLat;
+    private double minLng;
     private double zoomLevel;
     private double shiftDistance;
 
@@ -178,7 +178,10 @@ public class RaceXMLParser {
      * @param bufferY  canvas buffer height
      */
     private void parseBoundary(RaceData raceData, double bufferX, double bufferY) throws Exception {
-
+        maxLat = -180;
+        maxLng = -180;
+        minLat = 180;
+        minLng = 180;
         this.xMercatorCoords = new ArrayList<>();
         this.yMercatorCoords = new ArrayList<>();
         List<MutablePoint> boundary = new ArrayList<>();

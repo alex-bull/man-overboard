@@ -185,7 +185,7 @@ public class StarterController implements Initializable, ClockHandler {
         compList.setAll(dataSource.getCompetitorsPosition());
         raceStatus.setText(dataSource.getRaceStatus().toString());
 
-        System.out.println(dataSource.getRaceStatus());
+//        System.out.println(dataSource.getRaceStatus());
 
         if (dataSource.getCompetitorsPosition().size() == 0) {
             Stage thisStage = (Stage) countdownButton.getScene().getWindow();

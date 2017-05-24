@@ -205,7 +205,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 RaceStatusData raceStatusData = new RaceStatusParser().processMessage(packet);
                 if (raceStatusData != null) {
                     this.raceStatus = raceStatusData.getRaceStatus();
-                    System.out.println(raceStatus);
+//                    System.out.println(raceStatus);
                     this.messageTime = raceStatusData.getCurrentTime();
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
