@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Created by ke on 19/05/17.
+ * Projection utility methods
  */
 public class Projection {
     /**
