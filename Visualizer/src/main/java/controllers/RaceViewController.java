@@ -1,16 +1,11 @@
 package controllers;
 
+import com.google.common.primitives.Doubles;
 import com.sun.javafx.geom.Point2D;
 import javafx.animation.FadeTransition;
-
-import javafx.scene.Group;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.util.Duration;
-import com.google.common.primitives.Doubles;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckBox;
@@ -19,12 +14,23 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
-import models.*;
+import javafx.util.Duration;
+import models.Competitor;
+import models.CourseFeature;
+import models.Dot;
+import models.MutablePoint;
 import parsers.Converter;
 import utilities.Annotation;
 import utilities.DataSource;
@@ -41,22 +47,36 @@ import static parsers.RaceStatusEnum.PREPARATORY;
 public class RaceViewController implements Initializable {
 
     private final double boatLength = 20;
-    private final double startWakeOffset= 3;
-    private final double wakeWidthFactor=0.2;
-    @FXML private Pane raceViewPane;
-    @FXML private Canvas raceViewCanvas;
-    @FXML private Label fpsCounter;
-    @FXML private RadioButton allAnnotationsRadio;
-    @FXML private RadioButton noAnnotationsRadio;
-    @FXML private RadioButton someAnnotationsRadio;
-    @FXML private CheckBox speedButton;
-    @FXML private CheckBox nameButton;
-    @FXML private CheckBox timeToMarkButton;
-    @FXML private CheckBox timeFromMarkButton;
-    @FXML private CheckBox fpsToggle;
-    @FXML private Text status;
-    @FXML private Group annotationGroup;
-    @FXML private CheckBox timeToStartlineButton;
+    private final double startWakeOffset = 3;
+    private final double wakeWidthFactor = 0.2;
+    @FXML
+    private Pane raceViewPane;
+    @FXML
+    private Canvas raceViewCanvas;
+    @FXML
+    private Label fpsCounter;
+    @FXML
+    private RadioButton allAnnotationsRadio;
+    @FXML
+    private RadioButton noAnnotationsRadio;
+    @FXML
+    private RadioButton someAnnotationsRadio;
+    @FXML
+    private CheckBox speedButton;
+    @FXML
+    private CheckBox nameButton;
+    @FXML
+    private CheckBox timeToMarkButton;
+    @FXML
+    private CheckBox timeFromMarkButton;
+    @FXML
+    private CheckBox fpsToggle;
+    @FXML
+    private Text status;
+    @FXML
+    private Group annotationGroup;
+    @FXML
+    private CheckBox timeToStartlineButton;
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
@@ -80,8 +100,8 @@ public class RaceViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        startLine=new Line();
-        finishLine=new Line();
+        startLine = new Line();
+        finishLine = new Line();
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         final ToggleGroup annotations = new ToggleGroup();
@@ -162,18 +182,19 @@ public class RaceViewController implements Initializable {
      */
     private void drawLine(Line line, List<Integer> gatesID) {
 
-            double x1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
-            double y1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
-            double x2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
-            double y2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
-            line.setStartX(x1);
-            line.setStartY(y1);
-            line.setEndX(x2);
-            line.setEndY(y2);
+        double x1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
+        double y1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
+        double x2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
+        double y2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
+        line.setStartX(x1);
+        line.setStartY(y1);
+        line.setEndX(x2);
+        line.setEndY(y2);
     }
 
     /**
      * Draw the mark of the course feature
+     *
      * @param courseFeature CourseFeature
      */
     private void drawMark(CourseFeature courseFeature) {
@@ -204,8 +225,8 @@ public class RaceViewController implements Initializable {
             }
             gc.setLineDashes(5);
             gc.setLineWidth(0.8);
-            gc.clearRect(0,0,4000,4000);
-            drawBackground(gc,4000,4000);
+            gc.clearRect(0, 0, 4000, 4000);
+            drawBackground(gc, 4000, 4000);
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.setFill(Color.POWDERBLUE);
 
@@ -269,9 +290,10 @@ public class RaceViewController implements Initializable {
 
     /**
      * Move annotations with competing boat positions
+     *
      * @param boat Competitor of competing boat
      */
-    private void moveAnnotations(Competitor boat){
+    private void moveAnnotations(Competitor boat) {
         int sourceID = boat.getSourceID();
 
         int offset = 10;
@@ -300,15 +322,15 @@ public class RaceViewController implements Initializable {
                     break;
                 case EST_TIME_TO_NEXT_MARK:
                     label = this.timeToMarkAnnotations.get(sourceID);
-                    if(boat.getTimeToNextMark() > 0){
+                    if (boat.getTimeToNextMark() > 0) {
                         label.setText(String.valueOf(boat.getTimeToNextMark()) + "s to Next Mark");
                     } else {
                         label.setText("--");
                     }
                     break;
                 case TIME_FROM_LAST_MARK:
-                    label= this.timeFromMarkAnnotations.get(sourceID);
-                    if(timeFromLastMark > 0) {
+                    label = this.timeFromMarkAnnotations.get(sourceID);
+                    if (timeFromLastMark > 0) {
                         label.setText(String.valueOf(timeFromLastMark + "s from Last Mark"));
                     } else {
                         label.setText("--");
@@ -317,6 +339,7 @@ public class RaceViewController implements Initializable {
                     //time until boat passes starting mark
                     label = this.timeToStartlineAnnotations.get(sourceID);
                     label.setText(startAnnotation);
+                    label.setFont(Font.font(null, FontWeight.BOLD, 20));
             }
             label.setVisible(checkBox.isSelected());
             label.setLayoutX(xValue + 5);
@@ -339,6 +362,7 @@ public class RaceViewController implements Initializable {
 
     /**
      * Draw or move a boat model for a competitor
+     *
      * @param boat Competitor a competing boat
      */
     private void drawBoat(Competitor boat) {
@@ -373,9 +397,9 @@ public class RaceViewController implements Initializable {
     private void drawWake(Competitor boat) {
         if (wakeModels.get(boat.getSourceID()) == null) {
             double wakeLength = boat.getVelocity();
-            Polygon wake=new Polygon();
-            wake.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+wakeLength*wakeWidthFactor,wakeLength + boatLength,-startWakeOffset-wakeLength*wakeWidthFactor,wakeLength + boatLength);
-            LinearGradient linearGradient=new LinearGradient(0.0,0,0.0,1,true, CycleMethod.NO_CYCLE,new Stop(0.0f,Color.rgb(0,0,255,0.7)),new Stop(1.0f,TRANSPARENT));
+            Polygon wake = new Polygon();
+            wake.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + wakeLength * wakeWidthFactor, wakeLength + boatLength, -startWakeOffset - wakeLength * wakeWidthFactor, wakeLength + boatLength);
+            LinearGradient linearGradient = new LinearGradient(0.0, 0, 0.0, 1, true, CycleMethod.NO_CYCLE, new Stop(0.0f, Color.rgb(0, 0, 255, 0.7)), new Stop(1.0f, TRANSPARENT));
             wake.setFill(linearGradient);
             raceViewPane.getChildren().add(wake);
             this.wakeModels.put(boat.getSourceID(), wake);
@@ -384,7 +408,7 @@ public class RaceViewController implements Initializable {
         Polygon wakeModel = wakeModels.get(boat.getSourceID());
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
-        wakeModel.getPoints().addAll(-startWakeOffset,boatLength,startWakeOffset,boatLength,startWakeOffset+newLength*wakeWidthFactor,newLength + boatLength,-startWakeOffset-newLength*wakeWidthFactor,newLength + boatLength);
+        wakeModel.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + newLength * wakeWidthFactor, newLength + boatLength, -startWakeOffset - newLength * wakeWidthFactor, newLength + boatLength);
         wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
         wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         wakeModel.toFront();
@@ -403,7 +427,7 @@ public class RaceViewController implements Initializable {
         Dot dot = new Dot(boat.getPosition().getXValue(), boat.getPosition().getYValue());
         Circle circle = new Circle(dot.getX(), dot.getY(), 1.5, boat.getColor());
         //add fade transition
-        FadeTransition ft=new FadeTransition(Duration.millis(20000),circle);
+        FadeTransition ft = new FadeTransition(Duration.millis(20000), circle);
         ft.setFromValue(1);
         ft.setToValue(0.15);
 //        ft.setOnFinished(event -> raceViewPane.getChildren().remove(circle));
@@ -415,8 +439,9 @@ public class RaceViewController implements Initializable {
 
     /**
      * Draw background of the racecourse
-     * @param gc GraphicsContext
-     * @param width double - width of the canvas
+     *
+     * @param gc     GraphicsContext
+     * @param width  double - width of the canvas
      * @param height double- height of the canvas
      */
     private void drawBackground(GraphicsContext gc, double width, double height) {
@@ -427,10 +452,11 @@ public class RaceViewController implements Initializable {
 
     /**
      * Calculate the time to the start line from the given boat
+     *
      * @param boat Competitor
      * @return the time to the start line of the competitor
      */
-    private String calculateStartAnnotation(Competitor boat){
+    private String calculateStartAnnotation(Competitor boat) {
         float boatX = (float) boat.getPosition().getXValue();
         float boatY = (float) boat.getPosition().getYValue();
 
@@ -443,15 +469,19 @@ public class RaceViewController implements Initializable {
         double distanceToEnd = Point2D.distance(boatX, boatY, startLineEndX, startLineEndY);
 
         double selectedTime;
+        int timeBound = 5;
 
-        if(distanceToStart < distanceToEnd){ selectedTime = (distanceToStart / boat.getVelocity()); }
-        else{ selectedTime = (distanceToEnd / boat.getVelocity()); }
+        if (distanceToStart < distanceToEnd) {
+            selectedTime = (distanceToStart / boat.getVelocity());
+        } else {
+            selectedTime = (distanceToEnd / boat.getVelocity());
+        }
 
         long expectedStartTime = Converter.convertToRelativeTime(dataSource.getExpectedStartTime(), dataSource.getMessageTime());
 
-        if((selectedTime) < (expectedStartTime)){
+        if (selectedTime < expectedStartTime) {
             return "-";
-        } else if ((selectedTime) > (expectedStartTime + 5)){
+        } else if (selectedTime > (expectedStartTime + timeBound)) {
             return "+";
         } else {
             return "";
@@ -460,9 +490,9 @@ public class RaceViewController implements Initializable {
     }
 
 
-
     /**
      * Refreshes the contents of the display to match the datasource
+     *
      * @param dataSource DataSource the data to display
      */
     void refresh(DataSource dataSource) {
@@ -503,7 +533,7 @@ public class RaceViewController implements Initializable {
 
             timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
 
-            if(dataSource.getRaceStatus().equals(PREPARATORY)) {
+            if (dataSource.getRaceStatus().equals(PREPARATORY)) {
                 startAnnotation = calculateStartAnnotation(boat);
             }
 
@@ -519,9 +549,9 @@ public class RaceViewController implements Initializable {
     }
 
 
-
     /**
      * Starts the animation timer to animate the race
+     *
      * @param width  the width of the canvas
      * @param height the height of the canvas
      */
