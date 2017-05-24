@@ -503,9 +503,9 @@ public class RaceViewController implements Initializable {
 
             timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
 
-            //if(dataSource.getRaceStatus().equals(PREPARATORY)) {
-            startAnnotation = calculateStartAnnotation(boat);
-           // }
+            if(dataSource.getRaceStatus().equals(PREPARATORY)) {
+                startAnnotation = calculateStartAnnotation(boat);
+            }
 
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
