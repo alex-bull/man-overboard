@@ -1,0 +1,25 @@
+
+
+#loadingPane{
+    -fx-background-color: #7dcdcd;
+
+}
+
+#team{
+    -fx-font-size: 5em;
+    -fx-fill: #e0efef;
+
+}
+
+#product{
+    -fx-font-size: 10em;
+    -fx-fill: #e0efef;
+
+}
+#phrase{
+    -fx-font-size:3em;
+    -fx-fill: #e0efef;
+}
+#indicator{
+-fx-progress-color:#c0e8e8;
+}

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.web.*?>
 <?import java.lang.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.canvas.*?>
@@ -25,6 +26,7 @@
         <RadioButton fx:id="noAnnotationsRadio" layoutX="136.0" layoutY="220.0" mnemonicParsing="false" onAction="#clearAnnotations" text="None" />
         <RadioButton fx:id="someAnnotationsRadio" layoutX="64.0" layoutY="220.0" mnemonicParsing="false" text="Partial" />
         <Text layoutX="12.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Annotations" />
+      <WebView fx:id="mapView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
         <Group fx:id="annotationGroup" layoutX="10.0" layoutY="252.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="252.0">
             <children>
                 <CheckBox fx:id="nameButton" mnemonicParsing="false" text="Team Name" />
