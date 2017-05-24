@@ -33,7 +33,7 @@ public class MainController {
     void beginRace(DataSource dataSource, double width, double height) {
         raceViewController.begin(width, height, dataSource);
         timerController.begin(dataSource);
-        sparklinesController.setCompetitors(dataSource);
+        sparklinesController.setCompetitors(dataSource, width);
 
         AnimationTimer timer = new AnimationTimer() {
 

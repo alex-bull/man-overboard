@@ -3,6 +3,8 @@ package models;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
+import java.awt.geom.Point2D;
+
 /**
  * Created by mgo65 on 6/03/17.
  * Represents a moving point on a cartesian plane

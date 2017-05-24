@@ -58,7 +58,7 @@ public class Converter {
     public static long convertToRelativeTime(long realTime, long messageTime){
         long relativeTime = 0;
         if (realTime != 0 && messageTime != 0) {
-            relativeTime = realTime - messageTime;
+            relativeTime = (realTime - messageTime)/1000;
         }
         return relativeTime;
     }

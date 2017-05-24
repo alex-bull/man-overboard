@@ -15,8 +15,11 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import com.google.common.primitives.Doubles;
+import com.sun.javafx.geom.Point2D;
+import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckBox;
@@ -24,13 +27,25 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import models.*;
 import netscape.javascript.JSException;
+import javafx.util.Duration;
+import models.Competitor;
+import models.CourseFeature;
+import models.Dot;
+import models.MutablePoint;
 import parsers.Converter;
 import utilities.Annotation;
 import utilities.DataSource;
@@ -41,6 +56,7 @@ import java.net.URL;
 import java.util.*;
 
 import static javafx.scene.paint.Color.*;
+import static parsers.RaceStatusEnum.PREPARATORY;
 
 /**
  * Controller for the race view.
@@ -69,14 +85,16 @@ public class RaceViewController implements Initializable {
     private Map<Integer, Label> speedAnnotations = new HashMap<>();
     private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
     private Map<Integer, Label> timeFromMarkAnnotations = new HashMap<>();
+    private Map<Integer, Label> timeToStartlineAnnotations = new HashMap<>();
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
     private Map<String, Shape> markModels = new HashMap<>();
     private DataSource dataSource;
     private long startTimeNano = System.nanoTime();
     private long timeFromLastMark;
+    private String startAnnotation;
     private int counter = 0;
-
+    private Label startLabel;
     private Line startLine;
     private Line finishLine;
     private boolean isLoaded = false;
@@ -183,14 +201,14 @@ public class RaceViewController implements Initializable {
      */
     private void drawLine(Line line, List<Integer> gatesID) {
 
-            double x1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
-            double y1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
-            double x2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
-            double y2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
-            line.setStartX(x1);
-            line.setStartY(y1);
-            line.setEndX(x2);
-            line.setEndY(y2);
+        double x1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
+        double y1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
+        double x2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
+        double y2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
+        line.setStartX(x1);
+        line.setStartY(y1);
+        line.setEndX(x2);
+        line.setEndY(y2);
     }
 
     /**
@@ -209,8 +227,8 @@ public class RaceViewController implements Initializable {
 
     private void drawBackgroundImage(List<Double> bounds){
         try {
-                mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
-                mapEngine.executeScript(String.format("shift(%.2f);",dataSource.getShiftDistance()));
+            mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
+            mapEngine.executeScript(String.format("shift(%.2f);",dataSource.getShiftDistance()));
         }
         catch (JSException e){
            e.printStackTrace();
@@ -285,14 +303,21 @@ public class RaceViewController implements Initializable {
                         break;
                     case EST_TIME_TO_NEXT_MARK:
                         //est time to next mark annotation
-                        label = new Label(String.valueOf(boat.getTimeToNextMark() / 1000) + " seconds");
+                        label = new Label(String.valueOf(boat.getTimeToNextMark()) + " seconds");
                         this.timeToMarkAnnotations.put(sourceID, label);
                         break;
                     case TIME_FROM_LAST_MARK:
                         //time from the last mark annotation
-                        label = new Label(String.valueOf( timeFromLastMark / 1000) + " seconds");
+                        label = new Label(String.valueOf(timeFromLastMark) + " seconds");
                         this.timeFromMarkAnnotations.put(sourceID, label);
+                        break;
                 }
+
+                startLabel = new Label(startAnnotation);
+                startLabel.setFont(Font.font(null, FontWeight.BOLD, 20));
+                startLabel.setTextFill(boat.getColor());
+                this.timeToStartlineAnnotations.put(sourceID, startLabel);
+                this.raceViewPane.getChildren().add(startLabel);
 
                 label.setFont(Font.font("Monospaced"));
                 label.setTextFill(boat.getColor());
@@ -336,27 +361,34 @@ public class RaceViewController implements Initializable {
                     break;
                 case EST_TIME_TO_NEXT_MARK:
                     label = this.timeToMarkAnnotations.get(sourceID);
-                    if(boat.getTimeToNextMark() != 0){
-                        label.setText(String.valueOf(boat.getTimeToNextMark() / 1000) + "s to Next Mark");
+                    if (boat.getTimeToNextMark() > 0) {
+                        label.setText(String.valueOf(boat.getTimeToNextMark()) + "s to Next Mark");
                     } else {
                         label.setText("--");
                     }
                     break;
                 case TIME_FROM_LAST_MARK:
-                    label= this.timeFromMarkAnnotations.get(sourceID);
-                    if( timeFromLastMark != 0) {
-                        label.setText(String.valueOf(timeFromLastMark / 1000) + "s from Last Mark");
+                    label = this.timeFromMarkAnnotations.get(sourceID);
+                    if (timeFromLastMark > 0) {
+                        label.setText(String.valueOf(timeFromLastMark) + "s from Last Mark");
                     } else {
                         label.setText("--");
                     }
+                    break;
 
             }
+
             label.setVisible(checkBox.isSelected());
             label.setLayoutX(xValue + 5);
             label.setLayoutY(yValue + offset);
             if (checkBox.isSelected()) {
                 offset += 12;
             }
+
+            startLabel = this.timeToStartlineAnnotations.get(sourceID);
+            startLabel.setText(startAnnotation);
+            startLabel.setLayoutX(xValue + 5);
+            startLabel.setLayoutY(yValue + offset);
 
         }
 
@@ -462,6 +494,46 @@ public class RaceViewController implements Initializable {
 
 
     /**
+     * Calculate the time to the start line from the given boat
+     *
+     * @param boat Competitor
+     * @return the time to the start line of the competitor
+     */
+    private String calculateStartAnnotation(Competitor boat) {
+        float boatX = (float) boat.getPosition().getXValue();
+        float boatY = (float) boat.getPosition().getYValue();
+
+        float startLineEndX = (float) startLine.getEndX();
+        float startLineEndY = (float) startLine.getEndY();
+        float startLineStartX = (float) startLine.getStartX();
+        float startLineStartY = (float) startLine.getStartY();
+
+        double distanceToStart = Point2D.distance(boatX, boatY, startLineStartX, startLineStartY);
+        double distanceToEnd = Point2D.distance(boatX, boatY, startLineEndX, startLineEndY);
+
+        double selectedTime;
+        int timeBound = 5;
+
+        if (distanceToStart < distanceToEnd) {
+            selectedTime = (distanceToStart / boat.getVelocity());
+        } else {
+            selectedTime = (distanceToEnd / boat.getVelocity());
+        }
+
+        long expectedStartTime = Converter.convertToRelativeTime(dataSource.getExpectedStartTime(), dataSource.getMessageTime());
+
+        if (selectedTime < expectedStartTime) {
+            return "-";
+        } else if (selectedTime > (expectedStartTime + timeBound)) {
+            return "+";
+        } else {
+            return "";
+        }
+
+    }
+
+
+    /**
      * Refreshes the contents of the display to match the datasource
      * @param dataSource DataSource the data to display
      */
@@ -501,7 +573,10 @@ public class RaceViewController implements Initializable {
         //move competitors and draw tracks
         for (Competitor boat : competitors) {
 
-             timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
+            timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
+            if (dataSource.getRaceStatus().equals(PREPARATORY)) {
+                startAnnotation = calculateStartAnnotation(boat);
+            }
 
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
