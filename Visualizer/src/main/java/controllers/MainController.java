@@ -4,6 +4,8 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import utilities.DataSource;
 
 /**
@@ -19,6 +21,7 @@ public class MainController {
     @FXML private WindController windController;
     @FXML private TimerController timerController;
     @FXML private SparklinesController sparklinesController;
+    @FXML private GridPane loadingPane;
 
 
     /**
@@ -30,16 +33,22 @@ public class MainController {
     void beginRace(DataSource dataSource, double width, double height) {
         raceViewController.begin(width, height, dataSource);
         timerController.begin(dataSource);
-        sparklinesController.setCompetitors(dataSource);
+        sparklinesController.setCompetitors(dataSource, width);
 
         AnimationTimer timer = new AnimationTimer() {
 
             @Override
             public void handle(long now) {
+                if(raceViewController.isLoaded()) {
                 raceViewController.refresh(dataSource);
                 tableController.refresh(dataSource);
-                windController.refresh(dataSource.getWindDirection());
+                windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
                 sparklinesController.refresh();
+                loadingPane.toBack();
+                }
+                else{
+                    loadingPane.toFront();
+                }
 
             }
         };

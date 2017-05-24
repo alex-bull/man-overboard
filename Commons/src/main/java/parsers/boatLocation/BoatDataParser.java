@@ -1,14 +1,15 @@
 package parsers.boatLocation;
 
-import models.Competitor;
 import models.CourseFeature;
 import models.Mark;
 import models.MutablePoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static parsers.Converter.hexByteArrayToInt;
+import static utility.Projection.mercatorProjection;
 
 /**
  * Created by psu43 on 13/04/17.
@@ -39,7 +40,7 @@ public class BoatDataParser {
             //speed in m/sec
             double convertedSpeed = speed / 1000.0;
 
-            ArrayList<Double> point = mercatorProjection(latitude, longitude, width, height);
+            List<Double> point = mercatorProjection(latitude, longitude);
             double pointX = point.get(0);
             double pointY = point.get(1);
             MutablePoint pixelPoint = new MutablePoint(pointX, pointY);
@@ -76,28 +77,6 @@ public class BoatDataParser {
         return (double) hexByteArrayToInt(hexValues) * 180.0 / 2147483648.0;
     }
 
-
-
-    /**
-     * Function to map latitude and longitude to screen coordinates
-     *
-     * @param lat    latitude
-     * @param lon    longitude
-     * @param width  width of the screen
-     * @param height height of the screen
-     * @return ArrayList the coordinates in metres
-     */
-    private ArrayList<Double> mercatorProjection(double lat, double lon, double width, double height) {
-        ArrayList<Double> ret = new ArrayList<>();
-        double x = (lon + 180) * (width / 360);
-        double latRad = lat * Math.PI / 180;
-        double merc = Math.log(Math.tan((Math.PI / 4) + (latRad / 2)));
-        double y = (height / 2) - (width * merc / (2 * Math.PI));
-        ret.add(x);
-        ret.add(y);
-        return ret;
-
-    }
 
     public CourseFeature getCourseFeature() {
         return courseFeature;

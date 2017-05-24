@@ -37,7 +37,6 @@ public class RaceStatusParser {
             int currentByte = 24;
 
             for (int i = 0; i < numBoatsInRace; i++) {
-
                 Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte, currentByte + 4));
                 Integer boatStatus = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 4, currentByte + 5));
                 Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));

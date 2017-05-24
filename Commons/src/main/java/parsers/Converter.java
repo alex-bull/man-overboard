@@ -23,6 +23,17 @@ public class Converter {
     }
 
     /**
+     * Convert a byte array of little endian hex values into a decimal heading
+     *
+     * @param hexValues byte[] a byte array of (2) hexadecimal bytes in little endian format
+     * @return Double the value of the heading
+     */
+    public static Double parseHeading(byte[] hexValues) {
+        return (double) hexByteArrayToInt(hexValues) * 360.0 / 65536.0;
+    }
+
+
+    /**
      * Convert a byte array of little endian hex values into a long
      *
      * @param hexValues byte[] a byte array of hexadecimal bytes in little endian format
