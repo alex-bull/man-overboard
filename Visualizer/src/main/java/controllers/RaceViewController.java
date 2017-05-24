@@ -30,6 +30,7 @@ import utilities.Annotation;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
 
+import java.awt.geom.Line2D;
 import java.net.URL;
 import java.util.*;
 
@@ -417,13 +418,14 @@ public class RaceViewController implements Initializable, TableObserver {
         Double markX = featureOne.getPixelCentre().getXValue();
         Double markY = featureOne.getPixelCentre().getYValue();
 
-        if (ids.size() > 1) {
+        if (ids.size() > 1) { //Get the centre point of gates
             CourseFeature featureTwo = this.dataSource.getCourseFeatureMap().get(ids.get(1));
             markX = (featureOne.getPixelCentre().getXValue() + featureTwo.getPixelCentre().getXValue()) / 2;
             markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
         }
 
-        Double x = 0.0;
+
+        Double x = 0.0; //Intersection of layline and boat heading
         Double y = 0.0;
 
         Integer upAngle = 43;
@@ -433,102 +435,216 @@ public class RaceViewController implements Initializable, TableObserver {
 
         Double heading = boat.getCurrentHeading();
         //distance between boat and next mark
-        Double distanceBoatMark = Math.sqrt(Math.pow(abs((boatX - markX)), 2) + Math.pow(abs((boatY - markY)), 2));
-        //arbitrary point in front of the boat along the heading angle
-        Double bx = 50 * Math.sin(Math.toRadians(heading));
-        Double by = 50 * Math.cos(Math.toRadians(heading));
+        //Double distanceBoatMark = Math.sqrt(Math.pow(abs((boatX - markX)), 2) + Math.pow(abs((boatY - markY)), 2));
+
+        //semi arbitrary point in front of the boat along the heading angle
+        Double bx = 2000 * Math.sin(Math.toRadians(heading));
+        Double by = 2000 * Math.cos(Math.toRadians(heading));
+
         //finds angle between the heading and mark from the boat
         Double angle1 = Math.atan2(markY - boatY, markX - boatX);
         Double angle2 = Math.atan2((boatY-by) - boatY, (boatX+bx) - boatX);
         Double a1 = Math.toDegrees(angle1 - angle2);
 
+        bx = boatX + bx;
+        by = boatY - by;
+
         if (a1 < 0) {
             a1 = 360 + a1;
         }
 
-        //arbitrary point along the optimum wind angle from the mark
-        Double mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() - upAngle));
-        Double my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() - upAngle));
+        //semi arbitrary point along the optimum wind angle from the mark
+        Double mx = markX + 2000 * Math.sin(Math.toRadians(dataSource.getWindDirection() - upAngle));
+        Double my = markY + 2000 * Math.cos(Math.toRadians(dataSource.getWindDirection() - upAngle));
 
         //CASE: below-right
         if (boatY > markY && a1 > 180) {
-            //finds angle between optimum wind angle and boat from the mark
-            Double angle3 = Math.atan2(boatY - markY, boatX - markX);
-            Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
-            Double a3 = abs(360 - Math.toDegrees(angle3 - angle4));
-            Double a2 = 180 - a1 - a3;
-            //distance to the turn from the boat and it's x and y components
-            Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
-            x = distanceTurn * Math.sin(Math.toRadians(heading));
-            y = distanceTurn * Math.cos(Math.toRadians(heading));
+            mx = markX + 2000 * Math.sin(Math.toRadians(dataSource.getWindDirection() - upAngle));
+            my = markY - 2000 * Math.cos(Math.toRadians(dataSource.getWindDirection() - upAngle));
         }
-
         //CASE: below-left
         else if (boatY > markY && a1 < 180) {
-            mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() + upAngle));
-            my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() + upAngle));
-            Double angle3 = Math.atan2(boatY - markY, boatX - markX);
-            Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
-            Double a3 = abs(360 - Math.toDegrees(angle3 - angle4));
-            Double a2 = 180 - a1 - a3;
-
-            Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
-            x = distanceTurn * Math.sin(Math.toRadians(heading));
-            y = distanceTurn * Math.cos(Math.toRadians(heading));
+            mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() - upAngle));
+            my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() - upAngle));
         }
-
         //CASE: above-left
         else if (boatY < markY && a1 > 180) {
-            a1 = 360 - a1;
             mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() + downAngle));
             my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() + downAngle));
-            Double angle3 = Math.atan2(boatY - markY, boatX - markX);
-            Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
-            Double a3 = Math.toDegrees(angle3 - angle4);
-            Double a2 = 180 - a1 - a3;
-
-            Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
-            x = distanceTurn * Math.sin(Math.toRadians(heading));
-            y = distanceTurn * Math.cos(Math.toRadians(heading));
         }
-
         //CASE: above-right
         else if (boatY < markY && a1 < 180) {
             mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() - downAngle));
             my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() - downAngle));
-            Double angle3 = Math.atan2(boatY - markY, boatX - markX);
-            Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
-            Double a3 = abs(360 - Math.toDegrees(angle3 - angle4));
-            Double a2 = 180 - a1 - a3;
-
-            Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
-            x = distanceTurn * Math.sin(Math.toRadians(heading));
-            y = distanceTurn * Math.cos(Math.toRadians(heading));
         }
 
 
-        Polyline line = new Polyline();
-        line.getPoints().addAll(
-                boatX, boatY, //top
-                boatX + x, boatY - y);
-        line.setFill(boat.getColor());
-        line.setStroke(boat.getColor());
-        line.setStrokeWidth(1);
+        Boolean intersects = Line2D.linesIntersect(boatX, boatY, bx, by, markX, markY, mx, my);
 
-        Polyline line2 = new Polyline();
-        line2.getPoints().addAll(
-                markX, markY, //top
-                boatX + x, boatY - y);
-        line2.setFill(boat.getColor());
-        line2.setStroke(boat.getColor());
-        line2.setStrokeWidth(1);
-
-        raceViewPane.getChildren().add(line);
-        raceViewPane.getChildren().add(line2);
         raceViewPane.getChildren().removeAll(layLines);
         layLines.clear();
-        layLines.add(line);
-        layLines.add(line2);
+
+        if (intersects) {
+
+            //If the line segments intersect then find the intersection point to draw the lines with
+           // System.out.println("Intersection");
+            //first convert to slope intercept
+            Double mBoat = (by - boatY) / (bx - boatX);
+            Double mMark = (my - markY) / (mx - markX);
+
+            //b = y - mx
+            Double bBoat = boatY - mBoat * boatX;
+            Double bMark = markY - mMark * markX;
+
+
+            //the intersection point of the lines
+            x = (bMark - bBoat) / (mBoat - mMark);
+            y = mBoat * x + bBoat;
+
+
+            //TESTING
+            Circle c = new Circle(x, y, 4.0);
+            raceViewPane.getChildren().add(c);
+
+            Polyline line = new Polyline();
+            line.getPoints().addAll(
+                    boatX, boatY, //top
+                    x, y);
+            line.setFill(boat.getColor());
+            line.setStroke(boat.getColor());
+            line.setStrokeWidth(1);
+            raceViewPane.getChildren().add(line);
+            layLines.add(line);
+
+            Polyline line2 = new Polyline();
+            line2.getPoints().addAll(
+                    markX, markY, //top
+                    x, y);
+            line2.setFill(boat.getColor());
+            line2.setStroke(boat.getColor());
+            line2.setStrokeWidth(1);
+
+
+            raceViewPane.getChildren().add(line2);
+
+
+
+            layLines.add(line2);
+
+        }
+        else {
+           // System.out.println("No intersection");
+            Polyline line = new Polyline();
+            line.getPoints().addAll(
+                    boatX, boatY, //top
+                    bx, by);
+            line.setFill(boat.getColor());
+            line.setStroke(boat.getColor());
+            line.setStrokeWidth(1);
+            raceViewPane.getChildren().add(line);
+            layLines.add(line);
+
+            Polyline line2 = new Polyline();
+            line2.getPoints().addAll(
+                    markX, markY, //top
+                    mx, my);
+            line2.setFill(boat.getColor());
+            line2.setStroke(boat.getColor());
+            line2.setStrokeWidth(1);
+
+
+            raceViewPane.getChildren().add(line2);
+
+
+
+            layLines.add(line2);
+        }
+
+
+
+
+
+
+
+        //CASE: below-right
+//        if (boatY > markY && a1 > 180) {
+//            //finds angle between optimum wind angle and boat from the mark
+//            Double angle3 = Math.atan2(boatY - markY, boatX - markX);
+//            Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
+//            Double a3 = abs(360 - Math.toDegrees(angle3 - angle4));
+//            Double a2 = 180 - a1 - a3;
+//            //distance to the turn from the boat and it's x and y components
+//            Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
+//            x = distanceTurn * Math.sin(Math.toRadians(heading));
+//            y = distanceTurn * Math.cos(Math.toRadians(heading));
+//        }
+//
+//        //CASE: below-left
+//        else if (boatY > markY && a1 < 180) {
+//            mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() + upAngle));
+//            my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() + upAngle));
+//            Double angle3 = Math.atan2(boatY - markY, boatX - markX);
+//            Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
+//            Double a3 = abs(360 - Math.toDegrees(angle3 - angle4));
+//            Double a2 = 180 - a1 - a3;
+//
+//            Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
+//            x = distanceTurn * Math.sin(Math.toRadians(heading));
+//            y = distanceTurn * Math.cos(Math.toRadians(heading));
+//        }
+//
+//        //CASE: above-left
+//        else if (boatY < markY && a1 > 180) {
+//            a1 = 360 - a1;
+//            mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() + downAngle));
+//            my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() + downAngle));
+//            Double angle3 = Math.atan2(boatY - markY, boatX - markX);
+//            Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
+//            Double a3 = Math.toDegrees(angle3 - angle4);
+//            Double a2 = 180 - a1 - a3;
+//
+//            Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
+//            x = distanceTurn * Math.sin(Math.toRadians(heading));
+//            y = distanceTurn * Math.cos(Math.toRadians(heading));
+//        }
+//
+//        //CASE: above-right
+//        else if (boatY < markY && a1 < 180) {
+//            mx = 50 * Math.sin(Math.toRadians(dataSource.getWindDirection() - downAngle));
+//            my = 50 * Math.cos(Math.toRadians(dataSource.getWindDirection() - downAngle));
+//            Double angle3 = Math.atan2(boatY - markY, boatX - markX);
+//            Double angle4 = Math.atan2((markY - my) - markY, (markX + mx) - markX);
+//            Double a3 = abs(360 - Math.toDegrees(angle3 - angle4));
+//            Double a2 = 180 - a1 - a3;
+//
+//            Double distanceTurn = (distanceBoatMark / Math.sin(Math.toRadians(a2))) * Math.sin(Math.toRadians(a3));
+//            x = distanceTurn * Math.sin(Math.toRadians(heading));
+//            y = distanceTurn * Math.cos(Math.toRadians(heading));
+//        }
+
+
+//        Polyline line = new Polyline();
+//        line.getPoints().addAll(
+//                boatX, boatY, //top
+//                boatX + x, boatY - y);
+//        line.setFill(boat.getColor());
+//        line.setStroke(boat.getColor());
+//        line.setStrokeWidth(1);
+//
+//        Polyline line2 = new Polyline();
+//        line2.getPoints().addAll(
+//                markX, markY, //top
+//                boatX + x, boatY - y);
+//        line2.setFill(boat.getColor());
+//        line2.setStroke(boat.getColor());
+//        line2.setStrokeWidth(1);
+//
+//        raceViewPane.getChildren().add(line);
+//        raceViewPane.getChildren().add(line2);
+//        raceViewPane.getChildren().removeAll(layLines);
+//        layLines.clear();
+//        layLines.add(line);
+//        layLines.add(line2);
     }
 
 
