@@ -39,7 +39,6 @@ public class ClockTest {
         handler = (newTime, clock) -> {
             int beginIndex = newTime.length() - (3 + offsetUTC.length());
             int endIndex = newTime.length();
-            System.out.println(newTime);
             assertTrue(newTime.substring(beginIndex, endIndex).equals("UTC+09"));
         };
 

@@ -22,7 +22,7 @@ public class ColourPool {
         this.colours.add(Color.ROYALBLUE);
         this.colours.add(Color.DEEPSKYBLUE);
         this.colours.add(Color.BLUEVIOLET);
-        this.colours.add(Color.LIMEGREEN);
+        this.colours.add(Color.GREEN);
         this.colours.add(Color.GREY);
 
 
