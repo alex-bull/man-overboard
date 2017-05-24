@@ -245,12 +245,12 @@ public class RaceViewController implements Initializable {
                         break;
                     case EST_TIME_TO_NEXT_MARK:
                         //est time to next mark annotation
-                        label = new Label(String.valueOf(boat.getTimeToNextMark() / 1000) + " seconds");
+                        label = new Label(String.valueOf(boat.getTimeToNextMark()) + " seconds");
                         this.timeToMarkAnnotations.put(sourceID, label);
                         break;
                     case TIME_FROM_LAST_MARK:
                         //time from the last mark annotation
-                        label = new Label(String.valueOf( timeFromLastMark / 1000) + " seconds");
+                        label = new Label(String.valueOf(timeFromLastMark) + " seconds");
                         this.timeFromMarkAnnotations.put(sourceID, label);
                     case TIME_TO_STARTLINE:
                         //time until boat passes starting mark
@@ -300,16 +300,16 @@ public class RaceViewController implements Initializable {
                     break;
                 case EST_TIME_TO_NEXT_MARK:
                     label = this.timeToMarkAnnotations.get(sourceID);
-                    if(boat.getTimeToNextMark() != 0){
-                        label.setText(String.valueOf(boat.getTimeToNextMark() / 1000) + "s to Next Mark");
+                    if(boat.getTimeToNextMark() > 0){
+                        label.setText(String.valueOf(boat.getTimeToNextMark()) + "s to Next Mark");
                     } else {
                         label.setText("--");
                     }
                     break;
                 case TIME_FROM_LAST_MARK:
                     label= this.timeFromMarkAnnotations.get(sourceID);
-                    if( timeFromLastMark != 0) {
-                        label.setText(String.valueOf(timeFromLastMark / 1000) + "s from Last Mark");
+                    if(timeFromLastMark > 0) {
+                        label.setText(String.valueOf(timeFromLastMark + "s from Last Mark"));
                     } else {
                         label.setText("--");
                     }
@@ -317,8 +317,6 @@ public class RaceViewController implements Initializable {
                     //time until boat passes starting mark
                     label = this.timeToStartlineAnnotations.get(sourceID);
                     label.setText(startAnnotation);
-
-
             }
             label.setVisible(checkBox.isSelected());
             label.setLayoutX(xValue + 5);
@@ -446,22 +444,17 @@ public class RaceViewController implements Initializable {
 
         double selectedTime;
 
-        if(distanceToStart < distanceToEnd){ selectedTime = distanceToStart * boat.getVelocity(); }
-        else{ selectedTime = distanceToEnd * boat.getVelocity(); }
+        if(distanceToStart < distanceToEnd){ selectedTime = (distanceToStart / boat.getVelocity()); }
+        else{ selectedTime = (distanceToEnd / boat.getVelocity()); }
 
-//        System.out.println(selectedTime);
-//        System.out.println(dataSource.getExpectedStartTime());
-//        System.out.println(dataSource.getMessageTime());
+        long expectedStartTime = Converter.convertToRelativeTime(dataSource.getExpectedStartTime(), dataSource.getMessageTime());
 
-        if((dataSource.getMessageTime() + selectedTime) < dataSource.getExpectedStartTime()){
-//            System.out.println("-");
+        if((selectedTime) < (expectedStartTime)){
             return "-";
-        } else if ((dataSource.getMessageTime() + selectedTime) > (dataSource.getExpectedStartTime() + 5000)){
-//            System.out.println("+");
+        } else if ((selectedTime) > (expectedStartTime + 5)){
             return "+";
         } else {
-//            System.out.println(" ");
-            return null;
+            return "";
         }
 
     }
@@ -510,9 +503,9 @@ public class RaceViewController implements Initializable {
 
             timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
 
-            if(dataSource.getRaceStatus().equals(PREPARATORY)) {
-                startAnnotation = calculateStartAnnotation(boat);
-            }
+            //if(dataSource.getRaceStatus().equals(PREPARATORY)) {
+            startAnnotation = calculateStartAnnotation(boat);
+           // }
 
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
