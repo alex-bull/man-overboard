@@ -73,6 +73,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     private Line startLine;
     private Line finishLine;
+    private Line virtualLine;
     private Integer selectedBoatSourceId = 0;
 
 
@@ -80,8 +81,10 @@ public class RaceViewController implements Initializable, TableObserver {
     public void initialize(URL location, ResourceBundle resources) {
         startLine=new Line();
         finishLine=new Line();
+        virtualLine=new Line();
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
+        raceViewPane.getChildren().add(virtualLine);
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
         noAnnotationsRadio.setToggleGroup(annotations);
@@ -234,13 +237,11 @@ public class RaceViewController implements Initializable, TableObserver {
             double y5 = virtualLinePoints.get(0).getYValue();
             double x6 = virtualLinePoints.get(1).getXValue();
             double y6 = virtualLinePoints.get(1).getYValue();
-            Line virtualLine = new Line();
             virtualLine.setStroke(boatColor);
             virtualLine.setStartX(x5);
             virtualLine.setStartY(y5);
             virtualLine.setEndX(x6);
             virtualLine.setEndY(y6);
-            raceViewPane.getChildren().add(virtualLine);
         }
     }
 
@@ -511,7 +512,6 @@ public class RaceViewController implements Initializable, TableObserver {
             //Boats selected can be selected by clicking on them
             boatModel.setOnMouseClicked(event -> {
                 selectedBoatSourceId = sourceId;
-                System.out.println(selectedBoatSourceId);
             });
         }
         //Translate and rotate the corresponding boat models

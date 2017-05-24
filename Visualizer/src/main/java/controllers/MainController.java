@@ -2,10 +2,7 @@ package controllers;
 
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.AnchorPane;
-import sun.plugin.javascript.navig4.Anchor;
 import utilities.DataSource;
 
 /**
