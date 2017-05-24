@@ -255,6 +255,8 @@ public class Interpreter implements DataSource, PacketHandler {
         MutablePoint location = new MutablePoint(x, y);
         location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
         competitor.setPosition(location);
+        competitor.setLatitude(boatData.getLatitude());
+        competitor.setLongitude(boatData.getLongitude());
         competitor.setVelocity(boatData.getSpeed());
 
         // boat colour

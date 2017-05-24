@@ -23,7 +23,8 @@ public class Boat implements Competitor {
     private int legIndex;
     private long timeToNextMark;
     private long timeAtLastMark;
-
+    private double latitude;
+    private double longitude;
     /**
      * Creates a boat
      *
@@ -89,6 +90,21 @@ public class Boat implements Competitor {
         this.legIndex = legIndex;
     }
 
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
     public long getTimeToNextMark() {
         return timeToNextMark;
     }
