@@ -37,19 +37,33 @@ public class RaceXMLParser {
     private double zoomLevel;
     private double shiftDistance;
 
+    /**
+     * initializer to initialize variables
+     */
+    public RaceXMLParser() {
+        xMercatorCoords = new ArrayList<>();
+        yMercatorCoords = new ArrayList<>();
+        maxLat = -180;
+        maxLng = -180;
+        minLat = 180;
+        minLng = 180;
+    }
+
 
     /**
      * Parse XML race data
+     *
      * @param xmlStr XML String of race data
-     * @param width double the width of the screen
+     * @param width  double the width of the screen
      * @param height height the height of the screen
      * @return RaceData the parsed race data
-     * @throws IOException IOException
+     * @throws IOException   IOException
      * @throws JDOMException JDOMException
      */
     public RaceData parseRaceData(String xmlStr, double width, double height) throws IOException, JDOMException {
         this.width = width;
         this.height = height;
+
         courseGPSBoundary = new ArrayList<>();
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
@@ -106,7 +120,7 @@ public class RaceXMLParser {
             course.add(compoundMarkData);
 
             //Start Line
-            if (!startLineSet){
+            if (!startLineSet) {
                 for (CompoundMarkData mark : course) {
                     if (mark.getName().equals(compoundMarkName) && mark.getMarks().size() == 2) {
                         startMarks.addAll(mark.getMarks());
@@ -178,12 +192,7 @@ public class RaceXMLParser {
      * @param bufferY  canvas buffer height
      */
     private void parseBoundary(RaceData raceData, double bufferX, double bufferY) throws Exception {
-        maxLat = -180;
-        maxLng = -180;
-        minLat = 180;
-        minLng = 180;
-        this.xMercatorCoords = new ArrayList<>();
-        this.yMercatorCoords = new ArrayList<>();
+
         List<MutablePoint> boundary = new ArrayList<>();
         //loop through the parsed boundary points
         for (LimitData limit : raceData.getCourseLimit()) {
