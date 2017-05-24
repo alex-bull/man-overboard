@@ -114,7 +114,7 @@ public class Interpreter implements DataSource, PacketHandler {
     }
 
     public Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures() {
-        return this.raceData.getIndexToSourceId();
+        return this.raceData.getLegIndexToSourceId();
     }
 
 
@@ -193,11 +193,11 @@ public class Interpreter implements DataSource, PacketHandler {
                     for (int id : storedCompetitors.keySet()) {
 //                        for (Competitor competitor : competitorsPosition) {
 //                            if (competitor.getSourceID() == id) {
-//                                competitor.setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+//                                competitor.setCurrentLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
 //                                competitor.setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
 //                            }
 //                        }
-                        storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+                        storedCompetitors.get(id).setCurrentLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
                         storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                     }
 
@@ -275,7 +275,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
 
         //order the list of competitors
-        competitorsPosition.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+        competitorsPosition.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
 //        this.competitorsPosition = comps;
     }
 

@@ -22,7 +22,7 @@ public class RaceData {
     private Set<Integer> compoundMarkIDs = new HashSet<>();
     private Set<Integer> markIDs = new HashSet<>();
     private List<LimitData> courseLimit = new ArrayList<>();
-    private Map<Integer, List<Integer>> indexToSourceId = new HashMap();
+    private Map<Integer, List<Integer>> legIndexToSourceId = new HashMap<>();
 
 
     public RaceData() {
@@ -168,11 +168,10 @@ public class RaceData {
         this.markIDs.add(markId);
     }
 
-    public Map<Integer, List<Integer>> getIndexToSourceId() {
-        return indexToSourceId;
-    }
+    public Map<Integer, List<Integer>> getLegIndexToSourceId() {
+        return legIndexToSourceId; }
 
-    public void setIndexToSourceId(Map<Integer, List<Integer>> indexToSourceId) {
-        this.indexToSourceId = indexToSourceId;
+    public void setLegIndexToSourceId(Map<Integer, List<Integer>> indexToSourceId) {
+        this.legIndexToSourceId = indexToSourceId;
     }
 }

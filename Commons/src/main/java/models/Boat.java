@@ -103,13 +103,6 @@ public class Boat implements Competitor {
         this.type = type;
     }
 
-    public int getLegIndex() {
-        return legIndex;
-    }
-
-    public void setLegIndex(int legIndex) {
-        this.legIndex = legIndex;
-    }
 
     public String getLastMarkPassed() {
         return lastMarkPassed;

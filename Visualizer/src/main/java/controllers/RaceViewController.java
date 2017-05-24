@@ -405,11 +405,13 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawLaylines(Competitor boat) {
 
         Integer markId = boat.getCurrentLegIndex() + 1;
+        System.out.println(markId);
 
         Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
         List<Integer> ids = features.get(markId);
         Integer sourceId = ids.get(0);
         CourseFeature feature = this.dataSource.getCourseFeatureMap().get(sourceId);
+        System.out.println(feature.getName());
 
         Double x = 0.0;
         Double y = 0.0;

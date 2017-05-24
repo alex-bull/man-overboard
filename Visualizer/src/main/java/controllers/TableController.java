@@ -12,7 +12,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import utilities.DataSource;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -81,7 +80,7 @@ public class TableController implements Initializable {
      */
     public List<Competitor> setTable(List<Competitor> competitors) {
         List<Competitor> cpy = new ArrayList<>(competitors);
-        cpy.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+        cpy.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
 
         events.clear();
         for (int i = 0; i < cpy.size(); i++) {

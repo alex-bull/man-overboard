@@ -30,8 +30,6 @@ public interface Competitor {
 
     int getCurrentLegIndex();
 
-    void setCurrentLegIndex(int legIndex);
-
     long getTimeToNextMark();
 
     void setTimeToNextMark(long timeToNextMark);
@@ -46,9 +44,7 @@ public interface Competitor {
 
     void setCurrentHeading(double currentHeading);
 
-    int getLegIndex();
-
-    void setLegIndex(int legIndex);
+    void setCurrentLegIndex(int legIndex);
 
     DoubleProperty getHeadingProperty();
 
