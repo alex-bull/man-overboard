@@ -59,8 +59,7 @@ public class RaceXMLParser {
         Set<Integer> participantIDs = new HashSet<>();
         for (Element yacht : race.getChild("Participants").getChildren()) {
             int sourceID = Integer.parseInt(yacht.getAttributeValue("SourceID"));
-            String entry = yacht.getAttributeValue("Entry");
-            YachtData yachtData = new YachtData(sourceID, entry);
+            YachtData yachtData = new YachtData(sourceID);
             participantIDs.add(sourceID);
             raceData.getParticipants().add(yachtData);
         }
