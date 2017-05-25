@@ -401,11 +401,14 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+
+
     /**
-     * Draws laylines on the pane for the given boat
-     * @param boat Competitor
+     * Calculates and draws laylines on the pane for the given boat
+     * @param boat Competitor the boat to draw the laylines for
      */
     private void drawLaylines(Competitor boat) {
+
         //GET MARK DATA
         Integer markId = boat.getCurrentLegIndex() + 1;
         if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
@@ -425,50 +428,47 @@ public class RaceViewController implements Initializable, TableObserver {
         }
 
         //DO MATH
-        Integer upAngle = 43;
-        Integer downAngle = 153;
+        Integer upWindAngle = 43; //Hard coded for now
+        Integer downWindAngle = 153; //Hard coded for now
+
         Double boatX = boat.getPosition().getXValue();
         Double boatY = boat.getPosition().getYValue();
-
         Double heading = boat.getCurrentHeading();
         Double windAngle = dataSource.getWindDirection();
 
         //semi arbitrary point in front of the boat along the heading angle
-        Double bx = 2000 * Math.sin(Math.toRadians(heading));
-        Double by = 2000 * Math.cos(Math.toRadians(heading));
+        Double bx = boatX + (2000 * Math.sin(Math.toRadians(heading)));
+        Double by = boatY - (2000 * Math.cos(Math.toRadians(heading)));
 
-        bx = boatX + bx;
-        by = boatY - by;
-
+        //Difference between heading and wind angle- used to check if boat is going upwind or downwind
         Double anglediff = abs((heading - windAngle + 180 + 360) % 360 - 180);
-        Double angle = 0.0;
-        Double angle2 = 0.0;
+        Double layLineStarboardAngle = 0.0;
+        Double layLinePortAngle = 0.0;
 
         //CASE: upwind
         if (anglediff > 90) {
-            System.out.println("Up RIGHT");
-            angle = windAngle - upAngle;
-            angle2 = windAngle + upAngle;
+            layLineStarboardAngle = windAngle - upWindAngle;
+            layLinePortAngle = windAngle + upWindAngle;
         }
         //CASE: downwind
         else if (anglediff < 90) {
-            System.out.println("Down RIGHT");
-            angle = windAngle + downAngle;
-            angle2 = windAngle - downAngle;
+            layLineStarboardAngle = windAngle + downWindAngle;
+            layLinePortAngle = windAngle - downWindAngle;
         }
 
-        if (angle > 360) angle = angle - 360;
+        if (layLineStarboardAngle > 360) layLineStarboardAngle = layLineStarboardAngle - 360;
+        if (layLinePortAngle > 360) layLinePortAngle = layLinePortAngle - 360;
 
         //THE LAY LINES FROM THE MARK
-        Double mx = markX + 2000 * Math.sin(Math.toRadians(angle));
-        Double my = markY - 2000 * Math.cos(Math.toRadians(angle));
-        Double mx2 = markX -2000 * Math.sin(Math.toRadians(angle));
-        Double my2 = markY + 2000 * Math.cos(Math.toRadians(angle));
+        Double mx = markX + 2000 * Math.sin(Math.toRadians(layLineStarboardAngle));
+        Double my = markY - 2000 * Math.cos(Math.toRadians(layLineStarboardAngle));
+        Double mx2 = markX -2000 * Math.sin(Math.toRadians(layLineStarboardAngle));
+        Double my2 = markY + 2000 * Math.cos(Math.toRadians(layLineStarboardAngle));
 
-        Double mx3 = markX + 2000 * Math.sin(Math.toRadians(angle2));
-        Double my3 = markY - 2000 * Math.cos(Math.toRadians(angle2));
-        Double mx4 = markX -2000 * Math.sin(Math.toRadians(angle2));
-        Double my4 = markY + 2000 * Math.cos(Math.toRadians(angle2));
+        Double mx3 = markX + 2000 * Math.sin(Math.toRadians(layLinePortAngle));
+        Double my3 = markY - 2000 * Math.cos(Math.toRadians(layLinePortAngle));
+        Double mx4 = markX -2000 * Math.sin(Math.toRadians(layLinePortAngle));
+        Double my4 = markY + 2000 * Math.cos(Math.toRadians(layLinePortAngle));
 
         //Intersections of lay lines and boat heading
         Double x = 0.0;
@@ -527,33 +527,33 @@ public class RaceViewController implements Initializable, TableObserver {
 
         //DRAW THE LAYLINES
         if (draw) {
-
-            //boat line
-            Polyline line = new Polyline();
-            line.getPoints().addAll(
-                    boatX, boatY, //top
-                    xIntersection, yIntersection);
-            line.setFill(boat.getColor());
-            line.setStroke(boat.getColor());
-            line.setStrokeWidth(1);
-            raceViewPane.getChildren().add(line);
-            layLines.add(line);
-
-            //mark line
-            Polyline line2 = new Polyline();
-            line2.getPoints().addAll(
-                    markX, markY, //top
-                    xIntersection, yIntersection);
-            line2.setFill(boat.getColor());
-            line2.setStroke(boat.getColor());
-            line2.setStrokeWidth(1);
-
-            raceViewPane.getChildren().add(line2);
-            layLines.add(line2);
+            this.drawLayLine(boatX, boatY, xIntersection, yIntersection, boat.getColor());
+            this.drawLayLine(markX, markY, xIntersection, yIntersection, boat.getColor());
         }
-        
     }
 
+
+
+    /**
+     * Draws a layline on the pane
+     * @param x Double, The first x value
+     * @param y Double, The first y value
+     * @param x2 Double, The second x value
+     * @param y2 Double, The second y value
+     * @param colour Color the colour of the line
+     */
+    private void drawLayLine(Double x, Double y, Double x2, Double y2, Color colour) {
+
+        Polyline line = new Polyline();
+        line.getPoints().addAll(
+                x, y, //top
+                x2, y2);
+        line.setFill(colour);
+        line.setStroke(colour);
+        line.setStrokeWidth(1);
+        raceViewPane.getChildren().add(line);
+        layLines.add(line);
+    }
 
 
 
