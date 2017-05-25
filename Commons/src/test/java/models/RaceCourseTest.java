@@ -5,10 +5,12 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+/**
+ * Tests for the RaceCourse Model
+ */
 public class RaceCourseTest {
     @Test
     public void distanceBetweenGPSPoints() throws Exception {
-
         Course raceCourse = new RaceCourse(new ArrayList<>(), false);
 
         MutablePoint point1 = new MutablePoint(0.0, 0.0);
@@ -21,8 +23,6 @@ public class RaceCourseTest {
         Assert.assertEquals(5721700, raceCourse.distanceBetweenGPSPoints(point2, point3), 100);
         Assert.assertEquals(14597700, raceCourse.distanceBetweenGPSPoints(point3, point4), 100);
         Assert.assertEquals(1398900, raceCourse.distanceBetweenGPSPoints(point4, point5), 100);
-
-
     }
 
 }

@@ -7,7 +7,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-
+/**
+ * Test for the Boat Model
+ */
 public class BoatTest {
     private Boat boat;
 

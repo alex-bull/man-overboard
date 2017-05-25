@@ -1,12 +1,13 @@
 package models;
 
-
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-
+/**
+ * Tests for the Clock Model
+ */
 public class ClockTest {
 
     private WorldClock worldClock;
@@ -46,16 +47,13 @@ public class ClockTest {
 
     @Test
     public void usesDefaultTimeWhenUTCIsNull() throws Exception {
-
-        String offsetUTC = null;
-
         handler = (newTime, clock) -> {
             int beginIndex = newTime.length() - 5;
             int endIndex = newTime.length();
             assertTrue(newTime.substring(beginIndex, endIndex).equals("UTC+0"));
         };
 
-        worldClock = new WorldClock(handler, offsetUTC);
+        worldClock = new WorldClock(handler, null);
         worldClock.handle(System.currentTimeMillis());
 
     }

@@ -10,6 +10,7 @@ import static parsers.Converter.parseHeading;
 
 /**
  * Created by psu43 on 13/04/17.
+ * Tests for the Converter Class
  */
 public class ConverterTest {
     @Test
@@ -25,11 +26,11 @@ public class ConverterTest {
     @Test
     public void hexByteArrayToLongTest() throws Exception {
         byte[] testByteArray={0x68,83,127,-127,12,12};
-        assertEquals(13247851746152l,hexByteArrayToLong(testByteArray));
+        assertEquals(13247851746152L,hexByteArrayToLong(testByteArray));
 
 
-        byte[] testByteArray2={0x68,-83,-38,0x2E,00,00};
-        assertEquals(786083176l,hexByteArrayToLong(testByteArray2));
+        byte[] testByteArray2={0x68,-83,-38,0x2E, 0, 0};
+        assertEquals(786083176L,hexByteArrayToLong(testByteArray2));
     }
 
     @Test

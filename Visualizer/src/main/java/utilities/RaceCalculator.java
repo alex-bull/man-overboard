@@ -2,6 +2,7 @@ package utilities;
 
 /**
  * Created by psu43 on 25/05/17.
+ * Holds all of the calculations for the race
  */
 public class RaceCalculator {
 

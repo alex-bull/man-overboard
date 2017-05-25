@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNull;
  */
 public class RaceStatusParserTest {
 
-
     @Test
     public void ignoresEmptyRacePacket() {
         byte[] packet = {};
@@ -30,8 +29,6 @@ public class RaceStatusParserTest {
 
     @Test
     public void ignoresRacePacketWithMissingInfo() {
-        byte[] packet = new byte[12];
-
         try {
             RaceStatusParser raceStatusParser = new RaceStatusParser();
             assertNotNull(raceStatusParser);

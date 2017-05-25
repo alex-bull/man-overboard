@@ -43,10 +43,8 @@ public class Interpreter implements DataSource, PacketHandler {
     private XmlSubtype xmlSubType;
     private List<Competitor> competitorsPosition;
     private double windDirection;
-    private Rectangle2D primaryScreenBounds;
     private BoatData boatData;
     private RaceData raceData;
-    private MarkRoundingData markRoundingData;
     private String timezone;
     private double windSpeed;
     private RaceStatusEnum raceStatus;
@@ -62,8 +60,6 @@ public class Interpreter implements DataSource, PacketHandler {
     private double scaleFactor;
     private double minXMercatorCoord;
     private double minYMercatorCoord;
-    private double centralLatitude;
-    private double centralLongitude;
     private List<Double> GPSbounds;
     private BoatXMLParser boatXMLParser;
     private double width;
@@ -71,8 +67,6 @@ public class Interpreter implements DataSource, PacketHandler {
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
-    private List<MutablePoint> courseGPSBoundary = new ArrayList<>();
-    private int mapZoomLevel;
 
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
@@ -119,10 +113,6 @@ public class Interpreter implements DataSource, PacketHandler {
         return windDirection;
     }
 
-    public int getNumBoats() {
-        return this.numBoats;
-    }
-
     public double getWindSpeed() {
         return windSpeed/1000.0;
     }
@@ -138,12 +128,11 @@ public class Interpreter implements DataSource, PacketHandler {
      * @return boolean, true if the stream succeeds
      */
     public boolean receive(String host, int port, Scene scene) {
-
-        //create a data receiver
         DataReceiver dataReceiver;
+        Rectangle2D primaryScreenBounds;
         try {
             dataReceiver = new DataReceiver(host, port, this);
-            this.primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+            primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
         } catch (IOException e) {
             System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
@@ -151,7 +140,6 @@ public class Interpreter implements DataSource, PacketHandler {
         }
 
         //calculate the effective width and height of the screen
-
         width = primaryScreenBounds.getWidth() - scene.getX();
         height = primaryScreenBounds.getHeight() - scene.getY();
 
@@ -204,7 +192,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 RaceStatusData raceStatusData = new RaceStatusParser().processMessage(packet);
                 if (raceStatusData != null) {
                     this.raceStatus = raceStatusData.getRaceStatus();
-//                    System.out.println(raceStatus);
                     this.messageTime = raceStatusData.getCurrentTime();
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
@@ -212,12 +199,12 @@ public class Interpreter implements DataSource, PacketHandler {
                         storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
                         storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                     }
-
                 }
 
                 break;
+
             case MARK_ROUNDING:
-                this.markRoundingData = new MarkRoundingParser().processMessage(packet);
+                MarkRoundingData markRoundingData = new MarkRoundingParser().processMessage(packet);
 
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
@@ -234,6 +221,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
                 }
                 break;
+
             case BOAT_LOCATION:
                 BoatDataParser boatDataParser = new BoatDataParser();
                 this.boatData = boatDataParser.processMessage(packet);
@@ -258,6 +246,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     }
                 }
                 break;
+
             default:
                 break;
         }
@@ -295,7 +284,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
         //order the list of competitors
         competitorsPosition.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
-//        this.competitorsPosition = comps;
+
     }
 
     /**
@@ -332,22 +321,19 @@ public class Interpreter implements DataSource, PacketHandler {
                 case REGATTA:
                     RegattaXMLParser regattaParser = new RegattaXMLParser(xml.trim());
                     this.timezone = regattaParser.getOffsetUTC();
-                    this.centralLatitude = regattaParser.getCentralLatitude();
-                    this.centralLongitude = regattaParser.getCentralLongitude();
-
                     if (!Objects.equals(timezone.substring(0, 1), "-")) {
                         timezone = "+" + timezone;
                     }
                     break;
+
                 case RACE:
-                    // this.raceXMLParser = new RaceXMLParser(xml.trim(), primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                     this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
                     this.courseBoundary = raceXMLParser.getCourseBoundary();
                     this.compoundMarks = raceData.getCourse();
                     GPSbounds = raceXMLParser.getGPSBounds();
-                    courseGPSBoundary = raceXMLParser.getCourseGPSBoundary();
                     setScalingFactors();
                     break;
+
                 case BOAT:
                     this.boatXMLParser = new BoatXMLParser(xml.trim());
                     break;
@@ -423,20 +409,8 @@ public class Interpreter implements DataSource, PacketHandler {
         return storedFeatures;
     }
 
-    public double getCentralLongitude() {
-        return centralLongitude;
-    }
-
-    public double getCentralLatitude() {
-        return centralLatitude;
-    }
-
     public List<Double> getGPSbounds() {
         return GPSbounds;
-    }
-
-    public List<MutablePoint> getcourseGPSBoundary() {
-        return courseGPSBoundary;
     }
 
     public int getMapZoomLevel() {
