@@ -51,6 +51,7 @@ public class TableController implements Initializable {
                 this.observer.boatSelected(sourceId);
             }
         });
+    }
 
     public ObservableList<RaceEvent> getEvents() {
         return events;
@@ -80,7 +81,7 @@ public class TableController implements Initializable {
      */
     List<Competitor> setTable(List<Competitor> competitors) {
         List<Competitor> comps = new ArrayList<>(competitors);
-        comps.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+        comps.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
 
         events.clear();
         for (int i = 0; i < comps.size(); i++) {

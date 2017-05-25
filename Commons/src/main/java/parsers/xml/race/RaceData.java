@@ -106,4 +106,8 @@ public class RaceData {
     public void setLegIndexToSourceId(Map<Integer, List<Integer>> indexToSourceId) {
         this.legIndexToSourceId = indexToSourceId;
     }
+
+    public void addCompoundMarkID(Integer markId) {
+        this.compoundMarkIDs.add(markId);
+    }
 }

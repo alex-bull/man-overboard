@@ -86,8 +86,7 @@ public class Gate implements CourseFeature {
      */
     public MutablePoint getGPSCentre() {
 
-        return new MutablePoint((this.GPSPoint1.getXValue() + this.GPSPoint2.getXValue()) / 2,
-                (this.GPSPoint1.getYValue() + this.GPSPoint2.getYValue()) / 2);
+        return this.GPSPoint1;
     }
 
     /**

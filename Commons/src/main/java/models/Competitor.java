@@ -1,5 +1,6 @@
 package models;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
 
 /**
@@ -48,8 +49,6 @@ public interface Competitor {
     void setCurrentHeading(double currentHeading);
 
     void setCurrentLegIndex(int legIndex);
-
-    DoubleProperty getHeadingProperty();
 
     int getSourceID();
 

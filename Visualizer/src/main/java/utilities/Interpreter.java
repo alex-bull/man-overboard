@@ -203,7 +203,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
                     for (int id : storedCompetitors.keySet()) {
-                        storedCompetitors.get(id).setLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+                        storedCompetitors.get(id).setCurrentLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
                         storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                     }
                 }
