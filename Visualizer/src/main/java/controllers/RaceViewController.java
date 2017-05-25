@@ -396,11 +396,6 @@ public class RaceViewController implements Initializable {
 
     }
 
-    @FXML
-    private void showPartialAnnotations(){
-
-        someAnnotationsRadio.setSelected(true);
-    }
     /**
      * Draw or move a boat model for a competitor
      *

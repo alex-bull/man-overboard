@@ -64,9 +64,6 @@ public class Gate implements CourseFeature {
         return this.index;
     }
 
-    public boolean isFinish(){
-        return this.isFinish();
-    }
 
 
     /**
