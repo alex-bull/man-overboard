@@ -30,7 +30,6 @@ public class Converter {
         return (double) hexByteArrayToInt(hexValues) * 360.0 / 65536.0;
     }
 
-
     /**
      * Convert a byte array of little endian hex values into a long
      *
@@ -44,7 +43,6 @@ public class Converter {
         }
         return value;
     }
-
 
     /**
      * Convert the real time to relative time in seconds
@@ -66,7 +64,7 @@ public class Converter {
      * @param status Integer the race status integer
      * @return String the description of the race status
      */
-    public static String raceStatusToString(RaceStatusEnum status) {
+    static String raceStatusToString(RaceStatusEnum status) {
         String statusString;
         switch(status) {
             case NOT_ACTIVE:

@@ -52,6 +52,10 @@ public class Mark implements CourseFeature {
         return this.name;
     }
 
+    public boolean isFinish(){
+        return this.isFinish();
+    }
+
     /**
      * Getter for the a list of pixel locations
      *

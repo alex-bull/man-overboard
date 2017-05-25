@@ -6,13 +6,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by jar156 on 11/05/17.
- */
+
 public class ClockTest {
 
-    WorldClock worldClock;
-    ClockHandler handler;
+    private WorldClock worldClock;
+    private ClockHandler handler;
 
     @Before
     public void setUp() {

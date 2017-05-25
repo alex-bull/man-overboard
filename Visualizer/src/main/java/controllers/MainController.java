@@ -12,7 +12,6 @@ import utilities.DataSource;
  */
 public class MainController {
 
-
     @FXML private TableController tableController;
     @FXML private RaceViewController raceViewController;
     @FXML private SplitPane splitPane;
