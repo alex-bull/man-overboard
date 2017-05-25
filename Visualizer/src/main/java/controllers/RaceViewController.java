@@ -29,11 +29,14 @@ import parsers.Converter;
 import utilities.Annotation;
 import utilities.DataSource;
 
+import java.awt.geom.Line2D;
 import java.net.URL;
 import java.util.*;
 
 import static java.lang.Math.*;
 import static javafx.scene.paint.Color.*;
+import static parsers.RaceStatusEnum.PREPARATORY;
+import static parsers.RaceStatusEnum.STARTED;
 
 /**
  * Controller for the race view.
@@ -144,14 +147,6 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void boatSelected(Integer sourceId) {
         this.selectedBoatSourceId = sourceId;
-        for (Competitor boat : dataSource.getCompetitorsPosition()) {
-            if (selectedBoatSourceId == boat.getSourceID()) {
-                Competitor selectedBoat = boat;
-                Color boatColor = boat.getColor();
-                drawVirtualLine(boatColor, selectedBoat);
-            }
-        }
-
     }
 
     /**
@@ -162,67 +157,75 @@ public class RaceViewController implements Initializable, TableObserver {
      * @return virtualLinePoints List<MutablePoint>
      */
     private List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat) {
-        //TODO: MAYBE SPLIT IT UP EVEN MORE?? AND ALSO MOVE CALCULATION FUNCTIONS OUT OF THE RACEVIEWCONTROLLER?
         List<MutablePoint> virtualLinePoints = new ArrayList<>();
-        Polygon boatModel = boatModels.get(selectedBoatSourceId);
-        CourseFeature startLine1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0));
-        CourseFeature startLine2 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(1));
 
+        Polygon boatModel = boatModels.get(selectedBoatSourceId);
         Point2D boatFront = boatModel.localToParent(0, 0);
         Point2D boatBack = boatModel.localToParent(0, -2000);
 
-        double x1 = boatFront.getX();
-        double x2 = boatBack.getX();
-        double y1 = boatFront.getY();
-        double y2 = boatBack.getY();
+        MutablePoint startMark1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0)).getPixelLocations().get(0);
+        MutablePoint startMark2 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(1)).getPixelLocations().get(0);
 
-        double dy = y1 - y2;
-        double dx = x1 - x2;
+        Line2D startLine = new Line2D.Double(startMark1.getXValue(), startMark1.getYValue(), startMark2.getXValue(), startMark2.getYValue());
+        Line2D headingLine = new Line2D.Double(boatFront.getX(), boatFront.getY(), boatBack.getX(), boatBack.getY());
+        boolean intersects = headingLine.intersectsLine(startLine);
 
-        double headingGradient = dy / dx;
-
-        double c = y1 - (headingGradient * x1);
-
-        double x3 = startLine1.getPixelLocations().get(0).getXValue();
-        double y3 = startLine1.getPixelLocations().get(0).getYValue();
-        double x4 = startLine2.getPixelLocations().get(0).getXValue();
-        double y4 = startLine2.getPixelLocations().get(0).getYValue();
-
-        double startLineGradient = (y3 - y4) / (x3 - x4);
-        double d = y3 - (startLineGradient) * x3;
-
-        double xa = (d - c) / (headingGradient - startLineGradient);
-
-        //formula to check whether boat is heading towards the start line
-        boolean intersects = !((xa < Double.max(Double.min(x1, x2), Double.min(x3, x4))) || (xa > Double.min(Double.max(x1, x2), Double.max(x3, x4))));
         if (intersects) {
-            System.out.println("BOAT HEADING TO START LINE");
-            double ya = headingGradient * xa + c;
+            MutablePoint intersection = calcStartLineIntersection(boatFront, boatBack, startMark1, startMark2);
+            double xDifference = boatFront.getX() - intersection.getXValue();
+            double yDifference = boatFront.getY() - intersection.getYValue();
 
-            double deltaX = x1 - xa;
-            double deltaY = y1 - ya;
-
-            double distanceToRealLine = calcDistToReal(selectedBoat);
+            double distanceToStartLine = calcDistToStart(selectedBoat);
             double distanceToVirtualLine = calcDistToVirtual(selectedBoat);
 
-            if (distanceToRealLine != 0) {
-                double ratio = distanceToVirtualLine / distanceToRealLine;
+            if (distanceToStartLine != 0) {
+                double ratio = distanceToVirtualLine / distanceToStartLine;
 
-                double deltaXRealToVirtual = (1 - ratio) * deltaX;
-                double deltaYRealToVirtual = (1 - ratio) * deltaY;
-
-                double x5 = x3 + deltaXRealToVirtual;
-                double y5 = y3 + deltaYRealToVirtual;
-                double x6 = x4 + deltaXRealToVirtual;
-                double y6 = y4 + deltaYRealToVirtual;
-                MutablePoint virtualLine1 = new MutablePoint(x5, y5);
-                MutablePoint virtualLine2 = new MutablePoint(x6, y6);
-                virtualLinePoints.add(virtualLine1);
-                virtualLinePoints.add(virtualLine2);
+                virtualLinePoints.add(calcVirtualLinePoint(ratio, xDifference, yDifference, startMark1));
+                virtualLinePoints.add(calcVirtualLinePoint(ratio, xDifference, yDifference, startMark2));
             }
         }
-        System.out.println("BOAT Not HEADING TO START LINE");
         return virtualLinePoints;
+    }
+
+    /**
+     * Calculates the point of intersection of the boat's heading line and the start line.
+     * @param boatFront Point2D The front of the boat.
+     * @param boatBack Point2D The back of the boat.
+     * @param startMark1 MutablePoint One end of the start line.
+     * @param startMark2 MutablePoint The other end of the start line.
+     * @return MutablePoint Point of intersection.
+     */
+    private MutablePoint calcStartLineIntersection(Point2D boatFront, Point2D boatBack, MutablePoint startMark1, MutablePoint startMark2) {
+
+        double headingGradient = (boatFront.getY() - boatBack.getY()) / (boatFront.getX() - boatBack.getX());
+        double headingIntercept = boatFront.getY() - (headingGradient * boatFront.getX());
+
+        double startLineGradient = (startMark1.getYValue() - startMark2.getYValue()) / (startMark1.getXValue() - startMark2.getXValue());
+        double startLineIntercept = startMark1.getYValue() - (startLineGradient) * startMark1.getXValue();
+
+        double intersectionX = (startLineIntercept - headingIntercept) / (headingGradient - startLineGradient);
+        double intersectionY = headingGradient * intersectionX + headingIntercept;
+
+        return new MutablePoint(intersectionX, intersectionY);
+    }
+
+    /**
+     * Calculates the position of a point on the virtual start line corresponding to a point on the real start line.
+     * @param ratio double The ratio of the distance from the boat to virtual and real start lines.
+     * @param xDifference double The difference between the front of the boat and point of intersection along the x-axis.
+     * @param yDifference double The difference between the front of the boat and point of intersection along the y-axis.
+     * @param startMark MutablePoint A point on the real start line.
+     * @return MutablePoint A point on the virtual start line.
+     */
+    private MutablePoint calcVirtualLinePoint(double ratio, double xDifference, double yDifference, MutablePoint startMark) {
+        double startToVirtualX = (1 - ratio) * xDifference;
+        double startToVirtualY = (1 - ratio) * yDifference;
+
+        double virtualLineX = startMark.getXValue() + startToVirtualX;
+        double virtualLineY = startMark.getYValue() + startToVirtualY;
+
+        return new MutablePoint(virtualLineX, virtualLineY);
     }
 
     /**
@@ -233,32 +236,15 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawVirtualLine(Color boatColor, Competitor selectedBoat) {
         List<MutablePoint> virtualLinePoints = calcVirtualLinePoints(selectedBoat);
         if (!virtualLinePoints.isEmpty()) {
-            double x5 = virtualLinePoints.get(0).getXValue();
-            double y5 = virtualLinePoints.get(0).getYValue();
-            double x6 = virtualLinePoints.get(1).getXValue();
-            double y6 = virtualLinePoints.get(1).getYValue();
+            MutablePoint virtualLine1 = virtualLinePoints.get(0);
+            MutablePoint virtualLine2 = virtualLinePoints.get(1);
             virtualLine.setStroke(boatColor);
-            virtualLine.setStartX(x5);
-            virtualLine.setStartY(y5);
-            virtualLine.setEndX(x6);
-            virtualLine.setEndY(y6);
+            virtualLine.setStartX(virtualLine1.getXValue());
+            virtualLine.setStartY(virtualLine1.getYValue());
+            virtualLine.setEndX(virtualLine2.getXValue());
+            virtualLine.setEndY(virtualLine2.getYValue());
         }
     }
-
-        /*
-        // Uncomment this for cool effects
-        Line line = new Line();
-        for (Competitor boat : dataSource.getCompetitorsPosition()) {
-            if (selectedBoatSourceId == boat.getSourceID()) {
-                line.setStroke(boat.getColor());
-            }
-        }
-        line.setStartX(x1);
-        line.setStartY(y1);
-        line.setEndX(x2);
-        line.setEndY(y2);
-        raceViewPane.getChildren().add(line);
-        */
 
 
     /**
@@ -270,7 +256,7 @@ public class RaceViewController implements Initializable, TableObserver {
         long expectedStartTime = dataSource.getExpectedStartTime();
         long messageTime = dataSource.getMessageTime();
         long timeUntilStart = Converter.convertToRelativeTime(expectedStartTime, messageTime) / 1000; // seconds
-        double velocity = selectedBoat.getVelocity();
+        double velocity = selectedBoat.getVelocity(); // metres per seconds
         return velocity * timeUntilStart; // metres
     }
 
@@ -279,7 +265,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param selectedBoat selected boat
      * @return double distance (m)
      */
-    private double calcDistToReal(Competitor selectedBoat) {
+    private double calcDistToStart(Competitor selectedBoat) {
         double boatLat = selectedBoat.getLatitude();
         double boatLon = selectedBoat.getLongitude();
 
@@ -287,18 +273,29 @@ public class RaceViewController implements Initializable, TableObserver {
         double startLat = startLine1.getGPSPoint().getXValue();
         double startLon = startLine1.getGPSPoint().getYValue();
 
-        long r = 6371000;
-        double phiStart = Math.toRadians(startLat);
-        double phiBoat = Math.toRadians(boatLat);
+        return calcDistBetweenGPSPoints(boatLat, boatLon, startLat, startLon);
+    }
 
-        double deltaPhi = Math.toRadians(boatLat - startLat);
-        double deltaLambda = Math.toRadians(boatLon - startLon);
+    /**
+     * Calculates the distance in metres between a pair of coordinates.
+     * @param latitude1 first point's latitude
+     * @param longitude1 first point's longitude
+     * @param latitude2 second point's latitude
+     * @param longitude2 second point's longitude
+     * @return double distance (m)
+     */
+    private double calcDistBetweenGPSPoints(double latitude1, double longitude1, double latitude2, double longitude2) {
+        long earthRadius = 6371000;
+        double phiStart = Math.toRadians(latitude2);
+        double phiBoat = Math.toRadians(latitude1);
+
+        double deltaPhi = Math.toRadians(latitude1 - latitude2);
+        double deltaLambda = Math.toRadians(longitude1 - longitude2);
 
         double a = sin(deltaPhi / 2) * sin(deltaPhi / 2) + cos(phiStart) * cos(phiBoat) * sin(deltaLambda / 2) * sin(deltaLambda / 2);
         double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-        return r * c;
+        return earthRadius * c;
     }
-
 
     /**
      * Draws the course features on the canvas
@@ -630,11 +627,18 @@ public class RaceViewController implements Initializable, TableObserver {
 
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
+                if (selectedBoatSourceId != 0
+                        && selectedBoatSourceId == boat.getSourceID()
+                        && dataSource.getRaceStatus() == PREPARATORY) {
+                    Color boatColor = boat.getColor();
+                    drawVirtualLine(boatColor, boat);
+                } else if (dataSource.getRaceStatus() == STARTED) {
+                    raceViewPane.getChildren().remove(virtualLine);
+                }
             }
             this.drawWake(boat);
             this.drawBoat(boat);
             this.moveAnnotations(boat);
-
         }
 
     }
