@@ -1,6 +1,5 @@
 package models;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
 
 /**
@@ -34,6 +33,10 @@ public interface Competitor {
 
     void setTimeToNextMark(long timeToNextMark);
 
+    long getTimeAtLastMark();
+
+    void setTimeAtLastMark(long timeAtLastMark);
+
     String getAbbreName();
 
     String getLastMarkPassed();
@@ -49,8 +52,5 @@ public interface Competitor {
     DoubleProperty getHeadingProperty();
 
     int getSourceID();
-
-    void setProperties(double velocity, double heading, double latitude, double longitude);
-
 
 }

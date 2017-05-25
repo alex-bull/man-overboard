@@ -14,32 +14,27 @@ public class Gate implements CourseFeature {
     private MutablePoint pixelPoint1;
     private MutablePoint pixelPoint2;
     private MutablePoint GPSPoint1;
-    private MutablePoint GPSPoint2;
 
     private double exitHeading;
     private boolean isFinish;
     private boolean isLine;
     private int index;
     private int rounding;
-    private int sourceID;
-    private int zoneSize;
 
     /**
      * Creates a course gate
      *
      * @param name        String the name of the gate
      * @param GPSPoint1   MutablePoint the GPS location of one end
-     * @param GPSPoint2   MutablePoint the GPS location of the other end
      * @param pixelPoint1 MutablePoint the scaled pixel coordinates of one end.
      * @param pixelPoint2 MutablePoint the scaled pixel coordinates of the other end.
      * @param isFinish    boolean true if the gate is a finishing gate
      * @param isLine      boolean true if the gate needs a line
      */
-    public Gate(String name, MutablePoint GPSPoint1, MutablePoint GPSPoint2, MutablePoint pixelPoint1, MutablePoint pixelPoint2, boolean isFinish, boolean isLine, int index) {
+    public Gate(String name, MutablePoint GPSPoint1, MutablePoint pixelPoint1, MutablePoint pixelPoint2, boolean isFinish, boolean isLine, int index) {
 
         this.name = name;
         this.GPSPoint1 = GPSPoint1;
-        this.GPSPoint2 = GPSPoint2;
         this.pixelPoint1 = pixelPoint1;
         this.pixelPoint2 = pixelPoint2;
         this.isFinish = isFinish;
@@ -47,81 +42,28 @@ public class Gate implements CourseFeature {
         this.index = index;
     }
 
-    /**
-     * Getter for isLine flag
-     *
-     * @return boolean isLine if gate needs line
-     */
     public boolean isLine() {
         return isLine;
     }
 
-    /**
-     * Getter for rounding
-     *
-     * @return String rounding. Represents how the course feature is passed.
-     */
     @Override
     public int getRounding() {
         return this.rounding;
     }
 
-    /**
-     * Setter for rounding
-     *
-     * @param rounding the rounding of the course feature
-     */
     @Override
     public void setRounding(int rounding) {
         this.rounding = rounding;
     }
 
-    /**
-     * Getter for zoneSize
-     *
-     * @return int zoneSize
-     */
-    @Override
-    public int getZoneSize() {
-        return this.zoneSize;
-    }
-
-    /**
-     * Setter for zoneSize
-     *
-     * @param zoneSize the zoneSize of the course feature
-     */
-    @Override
-    public void setZoneSize(String zoneSize) {
-        this.zoneSize = Integer.valueOf(zoneSize);
-    }
-
-    /**
-     * Getter for isFinish flag
-     *
-     * @return boolean isFinish
-     */
-    public boolean isFinish() {
-        return this.isFinish;
-    }
-
-    /**
-     * Getter for the gate name
-     *
-     * @return String the name
-     */
     public String getName() {
         return this.name;
     }
 
-    /**
-     * Getter for index of the gate
-     *
-     * @return int the index
-     */
     public int getIndex() {
         return this.index;
     }
+
 
 
     /**
@@ -172,6 +114,11 @@ public class Gate implements CourseFeature {
         pixelPoint2.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
     }
 
+    /**
+     * Compares gate objects's name, isFinish and loation to see if they are equal.
+     * @param o Object
+     * @return boolean true if the objects are equal
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -179,11 +126,15 @@ public class Gate implements CourseFeature {
 
         Gate gate = (Gate) o;
 
-        if (isFinish != gate.isFinish) return false;
-        if (name != null ? !name.equals(gate.name) : gate.name != null) return false;
-        return (pixelPoint1 != null ? pixelPoint1.equals(gate.pixelPoint1) : gate.pixelPoint1 == null) && (pixelPoint2 != null ? pixelPoint2.equals(gate.pixelPoint2) : gate.pixelPoint2 == null);
+        return isFinish == gate.isFinish && (name != null ? name.equals(gate.name) : gate.name == null) &&
+                (pixelPoint1 != null ? pixelPoint1.equals(gate.pixelPoint1) : gate.pixelPoint1 == null) &&
+                (pixelPoint2 != null ? pixelPoint2.equals(gate.pixelPoint2) : gate.pixelPoint2 == null);
     }
 
+    /**
+     * Generates a hashcode with a built in algorithm from Intellij
+     * @return int a hashcode
+     */
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;

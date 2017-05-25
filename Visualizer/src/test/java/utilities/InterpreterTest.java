@@ -3,6 +3,7 @@ package utilities;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import mockDatafeed.BoatMocker;
 
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static parsers.MessageType.MARK_ROUNDING;
 
 /**
@@ -25,11 +27,13 @@ import static parsers.MessageType.MARK_ROUNDING;
 public class InterpreterTest {
     private Interpreter interpreter;
     private Thread mockThread;
+    private Scene mockScene;
 
 
     @Before
     public void setUp() throws Exception {
         interpreter = new Interpreter();
+        mockScene=mock(Scene.class);
 
         mockThread = new Thread(new Runnable() {
             BoatMocker mock;
@@ -50,7 +54,7 @@ public class InterpreterTest {
         Thread visualiserThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                assertFalse(interpreter.receive("invalidhost", 4));
+                assertFalse(interpreter.receive("invalidhost", 4,mockScene));
             }
         });
         visualiserThread.run();
@@ -65,7 +69,7 @@ public class InterpreterTest {
         Thread visualiserThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                assertFalse(interpreter.receive("localhost", 4));
+                assertFalse(interpreter.receive("localhost", 4,mockScene));
             }
         });
         visualiserThread.run();
@@ -77,13 +81,9 @@ public class InterpreterTest {
         mockThread.start();
         Thread.sleep(200); // give mock time to start before visualiser
 
-        Thread visualiserThread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                //JFXPanel toolkit = new JFXPanel(); // causes JavaFX toolkit including Application Thread to start, doesn't work on CI runner because no display
-                assertTrue(interpreter.receive("localhost", 4941));
-            }
+        Thread visualiserThread = new Thread(() -> {
+            //JFXPanel toolkit = new JFXPanel(); // causes JavaFX toolkit including Application Thread to start, doesn't work on CI runner because no display
+            assertTrue(interpreter.receive("localhost", 4941,mockScene));
         });
         visualiserThread.run();
 

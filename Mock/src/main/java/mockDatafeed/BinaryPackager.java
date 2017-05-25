@@ -16,13 +16,9 @@ import java.util.zip.Checksum;
 
 /**
  * Created by mattgoodson on 24/04/17.
+ * Binary Package
  */
-public class BinaryPackager {
-
-
-    private Calendar calendar;
-    private byte syncByteOne = 0x47;
-    private byte syncByteTwo = -125;
+class BinaryPackager {
 
 
     /**
@@ -35,7 +31,7 @@ public class BinaryPackager {
      * @param boatSpeed Double, the current speed of the boat
      * @return byte[], the binary packet
      */
-    public byte[] packageBoatLocation(Integer sourceId, Double latitude, Double longitude, Double heading, Double boatSpeed, int deviceType) {
+    byte[] packageBoatLocation(Integer sourceId, Double latitude, Double longitude, Double heading, Double boatSpeed, int deviceType) {
 
         byte[] packet = new byte[75];
 
@@ -108,7 +104,7 @@ public class BinaryPackager {
      *                      7-Boat
      * @return a bytearray of packaged xml message
      */
-    public byte[] packageXML(int length, String xmlFileString, int messageType) throws IOException {
+    byte[] packageXML(int length, String xmlFileString, int messageType) throws IOException {
 
         // message header is 19 bytes + 14 bytes of other xml message fields
         byte[] packet = new byte[length + 33];
@@ -149,7 +145,9 @@ public class BinaryPackager {
      */
     private void writeHeader(ByteBuffer buffer, int messageType, int messageLength) {
 
+        byte syncByteOne = 0x47;
         buffer.put(syncByteOne);
+        byte syncByteTwo = -125;
         buffer.put(syncByteTwo);
 
         buffer.put((byte) messageType);
@@ -178,7 +176,7 @@ public class BinaryPackager {
      * @return byte[] the timestamp of 6 bytes
      */
     private byte[] getTimeStamp(ZonedDateTime estimatedStartTime) {
-        this.calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.setTimeInMillis(estimatedStartTime.toInstant().toEpochMilli());
         long time = calendar.getTimeInMillis();
         return this.get48bitTime(time);
@@ -208,7 +206,6 @@ public class BinaryPackager {
      * Packages a race status message, currently only takes race ID, race status and expected start time as input,
      * can add wind direction and others later on. Does not include per boat section of the message
      *
-     * @param raceID            the race id of the race defined in race.xml
      * @param raceStatus        the race status of the race
      *                          0 – Not Active
      *                          1 – Warning (between 3:00 and 1:00 before start)
@@ -224,7 +221,7 @@ public class BinaryPackager {
      * @param expectedStartTime the expected start time
      * @return byte[], the race status message
      */
-    public byte[] raceStatusHeader(int raceID, int raceStatus, ZonedDateTime expectedStartTime) {
+    byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime) {
         byte[] packet = new byte[24];
         short windDirection = -32768;// 0x8000 in signed short
 
@@ -234,7 +231,7 @@ public class BinaryPackager {
 
         packetBuffer.put((byte) 2); //MessageVersionNumber
         packetBuffer.put(getCurrentTimeStamp());//CurrentTime
-        packetBuffer.putInt(raceID);//RaceID
+        packetBuffer.putInt(123546789);//RaceID
         packetBuffer.put((byte) raceStatus); //RaceStatus
         packetBuffer.put(getTimeStamp(expectedStartTime));//ExpectedStartTime
         packetBuffer.putShort(windDirection); //WindDirection
@@ -252,7 +249,7 @@ public class BinaryPackager {
      * @param competitors the list of boats
      * @return byte[] of each boat's section in RaceStatus Message
      */
-    public byte[] packageEachBoat(List<Competitor> competitors) {
+    byte[] packageEachBoat(List<Competitor> competitors) {
         byte[] packet = new byte[20 * competitors.size()];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -277,7 +274,7 @@ public class BinaryPackager {
      * @param eachBoat   the each boat bytearray
      * @return byte[] of the entire RaceStatus packet
      */
-    public byte[] packageRaceStatus(byte[] raceStatus, byte[] eachBoat) {
+    byte[] packageRaceStatus(byte[] raceStatus, byte[] eachBoat) {
         byte[] packet = new byte[19 + raceStatus.length + eachBoat.length];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);

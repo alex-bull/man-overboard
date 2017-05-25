@@ -41,7 +41,7 @@ public class TableController implements Initializable {
         // initialise race table
         positionCol.setCellValueFactory(new PropertyValueFactory<>("position"));
         nameCol.setCellValueFactory(new PropertyValueFactory<>("teamName"));
-        featureCol.setCellValueFactory(new PropertyValueFactory<>("featureName"));
+        featureCol.setCellValueFactory(new PropertyValueFactory<>("feature"));
         speedCol.setCellValueFactory(new PropertyValueFactory<>("speed"));
         raceTable.setItems(events);
 
@@ -52,7 +52,8 @@ public class TableController implements Initializable {
             }
         });
 
-
+    public ObservableList<RaceEvent> getEvents() {
+        return events;
     }
 
     /**
@@ -71,30 +72,29 @@ public class TableController implements Initializable {
      */
     void refresh(DataSource dataSource) {
         this.setTable(dataSource.getCompetitorsPosition());
-
     }
 
     /**
      * Sets the data in the table
      * @param competitors List the competitors in the race
      */
-    public List<Competitor> setTable(List<Competitor> competitors) {
-        List<Competitor> cpy = new ArrayList<>(competitors);
-        cpy.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
+    List<Competitor> setTable(List<Competitor> competitors) {
+        List<Competitor> comps = new ArrayList<>(competitors);
+        comps.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
 
         events.clear();
-        for (int i = 0; i < cpy.size(); i++) {
-            String teamName = cpy.get(i).getTeamName();
-            Double speed = cpy.get(i).getVelocity();
-            String featureName = cpy.get(i).getLastMarkPassed();
-            Integer sourceId = cpy.get(i).getSourceID();
-            RaceEvent raceEvent = new RaceEvent(sourceId, teamName, speed, featureName, i + 1);
+        for (int i = 0; i < comps.size(); i++) {
+            String teamName = comps.get(i).getTeamName();
+            Double speed = comps.get(i).getVelocity();
+            String featureName = comps.get(i).getLastMarkPassed();
+            Integer sourceId = comps.get(i).getSourceID();
+            RaceEvent raceEvent = new RaceEvent(sourceId, teamName, featureName, speed, i + 1);
             events.add(raceEvent);
         }
-        return cpy;
+        return comps;
     }
 
-    public void printTable(){
+    void printTable(){
         for(RaceEvent raceEvent:events){
             System.out.println(raceEvent.getTeamName());
         }

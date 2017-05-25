@@ -1,5 +1,7 @@
 package parsers.markRounding;
 
+import parsers.Converter;
+
 import java.util.Arrays;
 
 import static parsers.Converter.hexByteArrayToInt;
@@ -11,12 +13,17 @@ import static parsers.Converter.hexByteArrayToInt;
 public class MarkRoundingParser {
 
 
+    /**
+     * Parses the mark rounding message
+     * @param body byte[] a byte array to be parsed
+     * @return MarkRoundingData the parsed mark rounding data
+     */
     public MarkRoundingData processMessage(byte[] body) {
         try {
+            long roundingTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
             Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 13, 17));
             Integer markID = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 21));
-
-            return new MarkRoundingData(sourceID, markID);
+            return new MarkRoundingData(sourceID, markID, roundingTime);
         }
         catch (Exception e) {
             return null;

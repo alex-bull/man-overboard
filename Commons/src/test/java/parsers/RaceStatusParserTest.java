@@ -10,9 +10,9 @@ import static org.junit.Assert.assertNull;
 
 /**
  * Created by jar156 on 15/05/17.
+ * Tests for race status parser
  */
 public class RaceStatusParserTest {
-
 
     @Test
     public void ignoresEmptyRacePacket() {
@@ -29,8 +29,6 @@ public class RaceStatusParserTest {
 
     @Test
     public void ignoresRacePacketWithMissingInfo() {
-        byte[] packet = new byte[12];
-
         try {
             RaceStatusParser raceStatusParser = new RaceStatusParser();
             assertNotNull(raceStatusParser);

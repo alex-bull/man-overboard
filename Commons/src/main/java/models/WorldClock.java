@@ -14,26 +14,46 @@ public class WorldClock extends AnimationTimer implements Clock {
     private ClockHandler clockHandler;
     private String offsetUTC;
 
+    /**
+     * Constructs a World Clock
+     * @param handler ClockHandler handler for the clock
+     * @param offsetUTC String offset UTC
+     */
     public WorldClock(ClockHandler handler, String offsetUTC) {
         this.clockHandler = handler;
         this.offsetUTC = offsetUTC;
     }
 
+    /**
+     * Starts the clock at the given time
+     * @param startTime long the start time
+     */
     public void start(long startTime) {
     }
 
-    @Override
+    /**
+     * Starts the clock
+     */
     public void start() {
         super.start();
     }
 
 
+    /**
+     * Sets the clock to the world time
+     * @param now long the current time
+     */
     @Override
     public void handle(long now) {
         String time = calculateWorldTime();
         this.clockHandler.clockTicked(time, this);
     }
 
+    /**
+     * Formats calendar time to hours
+     * @param calendar Calendar
+     * @return String the formatted hour
+     */
     private String formatHours(Calendar calendar) {
         String hours = Integer.toString(calendar.get(Calendar.HOUR));
         if (hours.equals("0")) {
@@ -42,6 +62,11 @@ public class WorldClock extends AnimationTimer implements Clock {
         return hours;
     }
 
+    /**
+     * Formats calendar time to minutes
+     * @param calendar Calendar
+     * @return String the formatted minutes
+     */
     private String formatMinutes(Calendar calendar) {
         String minutes = Integer.toString(calendar.get(Calendar.MINUTE));
         if (minutes.length() < 2) {
@@ -50,6 +75,11 @@ public class WorldClock extends AnimationTimer implements Clock {
         return minutes;
     }
 
+    /**
+     * Formats calendar time to seconds
+     * @param calendar Calendar
+     * @return String the formatted seconds
+     */
     private String formatSeconds(Calendar calendar) {
         String seconds = Integer.toString(calendar.get(Calendar.SECOND));
         if (seconds.length() < 2) {
@@ -58,6 +88,11 @@ public class WorldClock extends AnimationTimer implements Clock {
         return seconds;
     }
 
+    /**
+     * Formats calendar time to AM or PM
+     * @param calendar Calendar
+     * @return String AM or PM
+     */
     private String getAmOrPm(Calendar calendar) {
         if (calendar.get(Calendar.AM_PM) == Calendar.AM) {
             return "AM";
@@ -66,6 +101,10 @@ public class WorldClock extends AnimationTimer implements Clock {
         }
     }
 
+    /**
+     * Calculates the world time
+     * @return String the world time
+     */
     private String calculateWorldTime() {
         if (offsetUTC != null) {
 
@@ -92,6 +131,10 @@ public class WorldClock extends AnimationTimer implements Clock {
         }
     }
 
+    /**
+     * Formats the world time
+     * @return String the formatted world time
+     */
     private String formatWorldTime() {
 
         TimeZone timeZone = TimeZone.getTimeZone("GMT" + offsetUTC);
@@ -102,8 +145,7 @@ public class WorldClock extends AnimationTimer implements Clock {
         String seconds = formatSeconds(calendar);
         String ampm = getAmOrPm(calendar);
 
-        String time = hours + ":" + minutes + ":" + seconds + " " + ampm;
-        return time;
+        return hours + ":" + minutes + ":" + seconds + " " + ampm;
 
     }
 
