@@ -25,6 +25,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import javafx.util.Pair;
 import models.*;
 import utilities.Annotation;
 import utilities.DataSource;
@@ -42,6 +43,8 @@ import static javafx.scene.paint.Color.*;
  */
 public class RaceViewController implements Initializable, TableObserver {
 
+    private final Integer upWindAngle = 43; //Hard coded for now
+    private final Integer downWindAngle = 153; //Hard coded for now
     private final double boatLength = 20;
     private final double startWakeOffset= 3;
     private final double wakeWidthFactor=0.2;
@@ -409,27 +412,10 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawLaylines(Competitor boat) {
 
-        //GET MARK DATA
-        Integer markId = boat.getCurrentLegIndex() + 1;
-        if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
-
-        Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
-        if (markId > features.size()) return; //passed the finish line
-
-        List<Integer> ids = features.get(markId);
-        CourseFeature featureOne = this.dataSource.getCourseFeatureMap().get(ids.get(0));
-        Double markX = featureOne.getPixelCentre().getXValue();
-        Double markY = featureOne.getPixelCentre().getYValue();
-
-        if (ids.size() > 1) { //Get the centre point of gates
-            CourseFeature featureTwo = this.dataSource.getCourseFeatureMap().get(ids.get(1));
-            markX = (featureOne.getPixelCentre().getXValue() + featureTwo.getPixelCentre().getXValue()) / 2;
-            markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
-        }
-
-        //DO MATH
-        Integer upWindAngle = 43; //Hard coded for now
-        Integer downWindAngle = 153; //Hard coded for now
+        Pair<Double, Double> markCentre = this.getNextGateCentre(boat);
+        if (markCentre == null) return;
+        Double markX = markCentre.getKey();
+        Double markY = markCentre.getValue();
 
         Double boatX = boat.getPosition().getXValue();
         Double boatY = boat.getPosition().getYValue();
@@ -459,78 +445,112 @@ public class RaceViewController implements Initializable, TableObserver {
         if (layLineStarboardAngle > 360) layLineStarboardAngle = layLineStarboardAngle - 360;
         if (layLinePortAngle > 360) layLinePortAngle = layLinePortAngle - 360;
 
-        //THE LAY LINES FROM THE MARK
+        //Starboard layline
         Double mx = markX + 2000 * Math.sin(Math.toRadians(layLineStarboardAngle));
         Double my = markY - 2000 * Math.cos(Math.toRadians(layLineStarboardAngle));
         Double mx2 = markX -2000 * Math.sin(Math.toRadians(layLineStarboardAngle));
         Double my2 = markY + 2000 * Math.cos(Math.toRadians(layLineStarboardAngle));
-
+        //Port layline
         Double mx3 = markX + 2000 * Math.sin(Math.toRadians(layLinePortAngle));
         Double my3 = markY - 2000 * Math.cos(Math.toRadians(layLinePortAngle));
         Double mx4 = markX -2000 * Math.sin(Math.toRadians(layLinePortAngle));
         Double my4 = markY + 2000 * Math.cos(Math.toRadians(layLinePortAngle));
 
         //Intersections of lay lines and boat heading
-        Double x = 0.0;
-        Double y = 0.0;
-        Double x2 = 0.0;
-        Double y2 = 0.0;
-        Double xIntersection = 0.0;
-        Double yIntersection = 0.0;
+        Pair<Double, Double> intersectionPoint = new Pair<>(0.0, 0.0);
+        Pair<Double, Double> intersectionOne = new Pair<>(0.0, 0.0);
+        Pair<Double, Double> intersectionTwo = new Pair<>(0.0, 0.0);
 
-        Boolean intersects = Line2D.linesIntersect(boatX, boatY, bx, by, mx2, my2, mx, my);
-        Boolean intersects2 = Line2D.linesIntersect(boatX, boatY, bx, by, mx3, my3, mx4, my4);
+        Boolean intersectsStarboardLayline = Line2D.linesIntersect(boatX, boatY, bx, by, mx2, my2, mx, my);
+        Boolean intersectsPortLayline = Line2D.linesIntersect(boatX, boatY, bx, by, mx3, my3, mx4, my4);
         Boolean draw = false;
 
         raceViewPane.getChildren().removeAll(layLines);
         layLines.clear();
 
         //FIND INTERSECTIONS
-        if (intersects) {
+        if (intersectsStarboardLayline) {
             draw = true;
             //If the line segments intersect then find the intersection point to draw the lines with
-            //first convert to slope intercept y = mx + b
-            Double mBoat = (by - boatY) / (bx - boatX);
-            Double mMark = (my - markY) / (mx - markX);
-            //b = y - mx
-            Double bBoat = boatY - mBoat * boatX;
-            Double bMark = markY - mMark * markX;
-            //the intersection point of the lines
-            x = (bMark - bBoat) / (mBoat - mMark);
-            y = mBoat * x + bBoat;
-            xIntersection = x;
-            yIntersection = y;
+            intersectionOne = this.calculateIntersection(boatX, boatY, bx, by, markX, markY, mx, my);
+            intersectionPoint = intersectionOne;
+//            yIntersection = y;
         }
-        if (intersects2) {
+        if (intersectsPortLayline) {
             draw = true;
-            //first convert to slope intercept y = mx + b
-            Double mBoat = (by - boatY) / (bx - boatX);
-            Double mMark = (my3 - markY) / (mx3 - markX);
-            //b = y - mx
-            Double bBoat = boatY - mBoat * boatX;
-            Double bMark = markY - mMark * markX;
-            //the intersection point of the lines
-            x2 = (bMark - bBoat) / (mBoat - mMark);
-            y2 = mBoat * x2 + bBoat;
-            xIntersection = x2;
-            yIntersection = y2;
+            intersectionTwo = this.calculateIntersection(boatX, boatY, bx, by, markX, markY, mx3, my3);
+            intersectionPoint = intersectionTwo;
         }
-        if (intersects && intersects2) {
+        if (intersectsStarboardLayline && intersectsPortLayline) {
             //FIND THE CLOSEST INTERSECTION
-            Double distance1 = Math.hypot(boatX-x, boatY-y);
-            Double distance2 = Math.hypot(boatX-x2, boatY-y2);
+            Double distance1 = Math.hypot(boatX-intersectionOne.getKey(), boatY-intersectionOne.getValue());
+            Double distance2 = Math.hypot(boatX-intersectionTwo.getKey(), boatY-intersectionTwo.getValue());
             if (distance1 < distance2) {
-                xIntersection = x;
-                yIntersection = y;
+                intersectionPoint = intersectionOne;
             }
         }
-
-        //DRAW THE LAYLINES
+        //DRAW
         if (draw) {
-            this.drawLayLine(boatX, boatY, xIntersection, yIntersection, boat.getColor());
-            this.drawLayLine(markX, markY, xIntersection, yIntersection, boat.getColor());
+            this.drawLayLine(boatX, boatY, intersectionPoint.getKey(), intersectionPoint.getValue(), boat.getColor());
+            this.drawLayLine(markX, markY, intersectionPoint.getKey(), intersectionPoint.getValue(), boat.getColor());
         }
     }
+
+
+
+
+    /**
+     * Gets the centre coords for the next mark a boat will round
+     * @param boat Competitor
+     * @return Pair the coords
+     */
+    private Pair<Double, Double> getNextGateCentre(Competitor boat) {
+
+        Integer markId = boat.getCurrentLegIndex() + 1;
+        if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
+
+        Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
+        if (markId > features.size()) return null; //passed the finish line
+
+        List<Integer> ids = features.get(markId);
+        CourseFeature featureOne = this.dataSource.getCourseFeatureMap().get(ids.get(0));
+        Double markX = featureOne.getPixelCentre().getXValue();
+        Double markY = featureOne.getPixelCentre().getYValue();
+
+        if (ids.size() > 1) { //Get the centre point of gates
+            CourseFeature featureTwo = this.dataSource.getCourseFeatureMap().get(ids.get(1));
+            markX = (featureOne.getPixelCentre().getXValue() + featureTwo.getPixelCentre().getXValue()) / 2;
+            markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
+        }
+        return new Pair<>(markX, markY);
+    }
+
+
+    /**
+     * Calculates the intersection point of two lines. Result is undefined for non intersecting lines
+     * @param x1 Double line one
+     * @param y1 Double line one
+     * @param x2 Double line one
+     * @param y2 Double line one
+     * @param x3 Double line two
+     * @param y3 Double line two
+     * @param x4 Double line two
+     * @param y4 Double line two
+     * @return Pair the intersection point x, y
+     */
+    private Pair<Double, Double> calculateIntersection(Double x1, Double y1, Double x2, Double y2, Double x3, Double y3, Double x4, Double y4) {
+        //first convert to slope intercept y = mx + b
+        Double m1 = (y2 - y1) / (x2 - x1);
+        Double m2 = (y4 - y3) / (x4 - x3);
+        //b = y - mx
+        Double b1 = y1 - m1 * x1;
+        Double b2 = y3 - m2 * x3;
+        //the intersection point of the lines
+        Double x = (b2 - b1) / (m1 - m2);
+        Double y = m1 * x + b1;
+        return new Pair<>(x, y);
+    }
+
 
 
 
