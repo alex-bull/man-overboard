@@ -56,6 +56,14 @@ public class ConverterTest {
         Assert.assertTrue(n == 5);
     }
 
+    @Test
+    public void testConvertRelativeTime(){
+        long testRealTime = 100020000;
+        long testMessageTime = 100000000;
+        Assert.assertEquals(20, Converter.convertToRelativeTime(testRealTime, testMessageTime));
+        Assert.assertEquals(0, Converter.convertToRelativeTime(0, testMessageTime));
+        Assert.assertEquals(0, Converter.convertToRelativeTime(testRealTime, 0));
+    }
 
 
     @Test

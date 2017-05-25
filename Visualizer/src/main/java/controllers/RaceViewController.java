@@ -495,7 +495,7 @@ public class RaceViewController implements Initializable {
         double distanceToEnd = Point2D.distance(boatX, boatY, startLineEndX, startLineEndY);
         long expectedStartTime = Converter.convertToRelativeTime(dataSource.getExpectedStartTime(), dataSource.getMessageTime());
 
-        return raceCalculator.calculateStartSymbol(distanceToStart, distanceToEnd, boat, expectedStartTime);
+        return raceCalculator.calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), expectedStartTime);
     }
 
 

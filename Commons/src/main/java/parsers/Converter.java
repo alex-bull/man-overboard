@@ -1,7 +1,5 @@
 package parsers;
 
-import javafx.scene.paint.Color;
-
 /**
  * Created by psu43 on 13/04/17.
  * Common parser functions
@@ -49,11 +47,11 @@ public class Converter {
 
 
     /**
-     * Convert the real time to relative time
+     * Convert the real time to relative time in seconds
      *
      * @param realTime real time from parser
      * @param messageTime time message was received
-     * @return converted time in milliseconds
+     * @return converted time in seconds
      */
     public static long convertToRelativeTime(long realTime, long messageTime){
         long relativeTime = 0;
