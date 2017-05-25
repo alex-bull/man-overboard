@@ -156,7 +156,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param selectedBoat selected boat
      * @return virtualLinePoints List<MutablePoint>
      */
-    private List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat) {
+    public List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat) {
         List<MutablePoint> virtualLinePoints = new ArrayList<>();
 
         Polygon boatModel = boatModels.get(selectedBoatSourceId);
@@ -196,15 +196,35 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param startMark2 MutablePoint The other end of the start line.
      * @return MutablePoint Point of intersection.
      */
-    private MutablePoint calcStartLineIntersection(Point2D boatFront, Point2D boatBack, MutablePoint startMark1, MutablePoint startMark2) {
-
-        double headingGradient = (boatFront.getY() - boatBack.getY()) / (boatFront.getX() - boatBack.getX());
+    public MutablePoint calcStartLineIntersection(Point2D boatFront, Point2D boatBack, MutablePoint startMark1, MutablePoint startMark2) {
+        double infinity = 1000000;
+        double headingGradient;
+        double xDiffBoat = boatFront.getX() - boatBack.getX();
+        if (xDiffBoat == 0) {
+            headingGradient = infinity;
+        } else {
+            headingGradient = (boatFront.getY() - boatBack.getY()) / xDiffBoat;
+        }
         double headingIntercept = boatFront.getY() - (headingGradient * boatFront.getX());
 
-        double startLineGradient = (startMark1.getYValue() - startMark2.getYValue()) / (startMark1.getXValue() - startMark2.getXValue());
-        double startLineIntercept = startMark1.getYValue() - (startLineGradient) * startMark1.getXValue();
+        double startLineGradient;
+        double xDiffStart = startMark1.getXValue() - startMark2.getXValue();
+        if (xDiffStart == 0) {
+            startLineGradient = infinity;
+        } else {
+            startLineGradient = (startMark1.getYValue() - startMark2.getYValue()) / xDiffStart;
+        }
+        double startLineIntercept = startMark1.getYValue() - (startLineGradient * startMark1.getXValue());
 
-        double intersectionX = (startLineIntercept - headingIntercept) / (headingGradient - startLineGradient);
+        double gradDiff = headingGradient - startLineGradient;
+        System.out.println(headingGradient);
+        System.out.println(startLineGradient);
+        double intersectionX;
+        if (gradDiff == 0) {
+            intersectionX = boatFront.getX();
+        } else {
+            intersectionX = (startLineIntercept - headingIntercept) / gradDiff;
+        }
         double intersectionY = headingGradient * intersectionX + headingIntercept;
 
         return new MutablePoint(intersectionX, intersectionY);
@@ -213,12 +233,12 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Calculates the position of a point on the virtual start line corresponding to a point on the real start line.
      * @param ratio double The ratio of the distance from the boat to virtual and real start lines.
-     * @param xDifference double The difference between the front of the boat and point of intersection along the x-axis.
-     * @param yDifference double The difference between the front of the boat and point of intersection along the y-axis.
+     * @param xDifference double The difference along the x-axis between the front of the boat and point of intersection with the start line.
+     * @param yDifference double The difference along the y-axis between the front of the boat and point of intersection with the start line.
      * @param startMark MutablePoint A point on the real start line.
      * @return MutablePoint A point on the virtual start line.
      */
-    private MutablePoint calcVirtualLinePoint(double ratio, double xDifference, double yDifference, MutablePoint startMark) {
+    public MutablePoint calcVirtualLinePoint(double ratio, double xDifference, double yDifference, MutablePoint startMark) {
         double startToVirtualX = (1 - ratio) * xDifference;
         double startToVirtualY = (1 - ratio) * yDifference;
 
@@ -252,7 +272,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param selectedBoat selected boat
      * @return double distance (m)
      */
-    private double calcDistToVirtual(Competitor selectedBoat) {
+    public double calcDistToVirtual(Competitor selectedBoat) {
         long expectedStartTime = dataSource.getExpectedStartTime();
         long messageTime = dataSource.getMessageTime();
         long timeUntilStart = Converter.convertToRelativeTime(expectedStartTime, messageTime) / 1000; // seconds
@@ -265,7 +285,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param selectedBoat selected boat
      * @return double distance (m)
      */
-    private double calcDistToStart(Competitor selectedBoat) {
+    public double calcDistToStart(Competitor selectedBoat) {
         double boatLat = selectedBoat.getLatitude();
         double boatLon = selectedBoat.getLongitude();
 
@@ -284,7 +304,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param longitude2 second point's longitude
      * @return double distance (m)
      */
-    private double calcDistBetweenGPSPoints(double latitude1, double longitude1, double latitude2, double longitude2) {
+    public double calcDistBetweenGPSPoints(double latitude1, double longitude1, double latitude2, double longitude2) {
         long earthRadius = 6371000;
         double phiStart = Math.toRadians(latitude2);
         double phiBoat = Math.toRadians(latitude1);

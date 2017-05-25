@@ -1,23 +1,10 @@
 package utilities;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.stage.Stage;
 import mockDatafeed.BoatMocker;
-
-import models.Boat;
-import models.Competitor;
 import org.junit.Before;
 import org.junit.Test;
-import parsers.xml.race.CompoundMarkData;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static parsers.MessageType.MARK_ROUNDING;
 
 /**
  * Created by jar156 on 11/05/17.
