@@ -11,7 +11,6 @@ import models.MutablePoint;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
-import parsers.Converter;
 import parsers.XmlSubtype;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
@@ -237,7 +236,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 break;
             case BOAT_LOCATION:
                 BoatDataParser boatDataParser = new BoatDataParser();
-                this.boatData = boatDataParser.processMessage(packet, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                this.boatData = boatDataParser.processMessage(packet);
                 if (boatData != null) {
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties();
@@ -293,7 +292,6 @@ public class Interpreter implements DataSource, PacketHandler {
             this.storedCompetitors.put(boatID, competitor);
             competitorsPosition.add(competitor);
         }
-
 
         //order the list of competitors
         competitorsPosition.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));

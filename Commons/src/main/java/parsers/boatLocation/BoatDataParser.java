@@ -3,8 +3,6 @@ package parsers.boatLocation;
 import models.CourseFeature;
 import models.Mark;
 import models.MutablePoint;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,11 +22,9 @@ public class BoatDataParser {
     /**
      * Process the given data and parse source id, latitude, longitude, heading, speed
      * @param body byte[] a byte array of the boat data message
-     * @param width double the width of the screen
-     * @param height double the height of the screen
      * @return BoatData boat data object
      */
-    public BoatData processMessage(byte[] body,  double width, double height) {
+    public BoatData processMessage(byte[] body) {
         try {
             Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
             int deviceType = hexByteArrayToInt(Arrays.copyOfRange(body, 15, 16));

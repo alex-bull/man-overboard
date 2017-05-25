@@ -38,6 +38,7 @@ import netscape.javascript.JSException;
 import parsers.Converter;
 import utilities.Annotation;
 import utilities.DataSource;
+import utilities.RaceCalculator;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -66,6 +67,7 @@ public class RaceViewController implements Initializable {
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
 
+    private RaceCalculator raceCalculator;
     private WebEngine mapEngine;
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
@@ -92,6 +94,7 @@ public class RaceViewController implements Initializable {
 
         startLine = new Line();
         finishLine = new Line();
+        raceCalculator = new RaceCalculator();
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         final ToggleGroup annotations = new ToggleGroup();
@@ -490,39 +493,12 @@ public class RaceViewController implements Initializable {
 
         double distanceToStart = Point2D.distance(boatX, boatY, startLineStartX, startLineStartY);
         double distanceToEnd = Point2D.distance(boatX, boatY, startLineEndX, startLineEndY);
-
-        return calculateStartSymbol(distanceToStart, distanceToEnd, boat);
-    }
-
-    /**
-     * Calculates the closest mark from a start line to a boat and then calculates the estimated time to the mark and
-     * compares it to expected race start time.
-     * @param distanceToStart double the Distance to the a point on a start line
-     * @param distanceToEnd double the Distance to the a point on a start line
-     * @param boat Competitor a boat in the race
-     * @return String "-" if the boat is going to cross early, "+" if late and "" if within 5 seconds.
-     */
-    private String calculateStartSymbol(double distanceToStart, double distanceToEnd, Competitor boat) {
-        double selectedTime;
-        int timeBound = 5;
-
-        if (distanceToStart < distanceToEnd) {
-            selectedTime = (distanceToStart / boat.getVelocity());
-        } else {
-            selectedTime = (distanceToEnd / boat.getVelocity());
-        }
-
         long expectedStartTime = Converter.convertToRelativeTime(dataSource.getExpectedStartTime(), dataSource.getMessageTime());
 
-        if (selectedTime < expectedStartTime) {
-            return "-";
-        } else if (selectedTime > (expectedStartTime + timeBound)) {
-            return "+";
-        } else {
-            return "";
-        }
-
+        return raceCalculator.calculateStartSymbol(distanceToStart, distanceToEnd, boat, expectedStartTime);
     }
+
+
 
 
     /**
@@ -571,7 +547,6 @@ public class RaceViewController implements Initializable {
      */
     private void updateRace(GraphicsContext gc) {
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
-        //move competitors and draw tracks
         for (Competitor boat : competitors) {
             timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
             if (dataSource.getRaceStatus().equals(PREPARATORY)) {
@@ -586,6 +561,7 @@ public class RaceViewController implements Initializable {
             this.moveAnnotations(boat);
         }
     }
+
     /**
      * Refreshes the contents of the display to match the datasource
      *

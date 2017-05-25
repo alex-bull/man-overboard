@@ -8,23 +8,14 @@ import java.util.Map;
  * Course wind data from the AC35 streaming data interface specification
  */
 public class CourseWindData {
-    private int messageVersionNumber;
-    private int selectedWindID;
     private Map<Integer, WindStatus> windStatuses = new HashMap<>();
 
-    public CourseWindData(int messageVersionNumber, int selectedWindID, Map<Integer, WindStatus> windStatuses) {
-        this.messageVersionNumber = messageVersionNumber;
-        this.selectedWindID = selectedWindID;
+    /**
+     * Constructs course wind data parsed from data source
+     * @param windStatuses Map a map of wind statuses
+     */
+    CourseWindData(Map<Integer, WindStatus> windStatuses) {
         this.windStatuses = windStatuses;
-    }
-
-
-    public int getMessageVersionNumber() {
-        return messageVersionNumber;
-    }
-
-    public int getSelectedWindID() {
-        return selectedWindID;
     }
 
     public Map<Integer, WindStatus> getWindStatuses() {

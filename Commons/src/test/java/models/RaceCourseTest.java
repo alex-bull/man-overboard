@@ -5,14 +5,11 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
-/**
- * Created by psu43 on 27/03/17.
- */
 public class RaceCourseTest {
     @Test
     public void distanceBetweenGPSPoints() throws Exception {
 
-        Course raceCourse = new RaceCourse(new ArrayList<>(), new ArrayList<>(), 1.0, false);
+        Course raceCourse = new RaceCourse(new ArrayList<>(), false);
 
         MutablePoint point1 = new MutablePoint(0.0, 0.0);
         MutablePoint point2 = new MutablePoint(1.0, 2.0);

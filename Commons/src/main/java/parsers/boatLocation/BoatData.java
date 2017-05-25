@@ -15,7 +15,17 @@ public class BoatData {
     private double speed;
     private MutablePoint pixelPoint;
 
-    public BoatData(int sourceID, int deviceType, double latitude, double longitude, double heading, double speed, MutablePoint pixelPoint) {
+    /**
+     * Constructs a boat data read from a data source
+     * @param sourceID int sourceID of the boat
+     * @param deviceType int the device type
+     * @param latitude double latitude
+     * @param longitude double longitude
+     * @param heading double heading
+     * @param speed double speed
+     * @param pixelPoint MutablePoint pixel point
+     */
+    BoatData(int sourceID, int deviceType, double latitude, double longitude, double heading, double speed, MutablePoint pixelPoint) {
         this.sourceID = sourceID;
         this.deviceType = deviceType;
         this.latitude = latitude;
@@ -30,10 +40,6 @@ public class BoatData {
         return deviceType;
     }
 
-    public void setDeviceType(int deviceType) {
-        this.deviceType = deviceType;
-    }
-
     public int getSourceID() {
         return sourceID;
     }
@@ -42,28 +48,8 @@ public class BoatData {
         this.sourceID = sourceID;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
     public double getHeading() {
         return heading;
-    }
-
-    public void setHeading(double heading) {
-        this.heading = heading;
     }
 
     public double getSpeed() {

@@ -4,6 +4,7 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import models.*;
 import org.jdom2.JDOMException;
+import parsers.xml.CourseXMLParser;
 
 import java.io.*;
 import java.net.SocketException;
@@ -69,9 +70,9 @@ public class BoatMocker extends TimerTask {
      */
     public void generateCourse() throws JDOMException, IOException {
         InputStream mockBoatStream= new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/mock_race.xml")));
-        XMLTestCourseLoader cl = new XMLTestCourseLoader(mockBoatStream);
+        CourseXMLParser cl = new CourseXMLParser(mockBoatStream);
         //screen size is not important
-        course = new RaceCourse(cl.parseCourse(1000, 1000), cl.parseCourseBoundary(1000, 1000), cl.getWindDirection(), false);
+        course = new RaceCourse(cl.parseCourse(), false);
         courseFeatures = course.getPoints();
     }
 

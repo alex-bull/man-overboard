@@ -1,4 +1,4 @@
-package parsers;
+package parsers.raceStatus;
 
 /**
  * Created by Pang on 3/05/17.
@@ -6,21 +6,19 @@ package parsers;
  */
 public class BoatStatus {
     private int sourceID;
-    private int boatStatus;
     private int legNumber;
-    private int penaltiesAwarded;
-    private int penaltiesServed;
     private long estimatedTimeAtNextMark;
-    private long estimatedTimeAtFinish;
 
-    public BoatStatus(int sourceID, int boatStatus, int legNumber, int penaltiesAwarded, int penaltiesServed, long estimatedTimeAtNextMark, long estimatedTimeAtFinish) {
+    /**
+     * Boat status
+     * @param sourceID int source id
+     * @param legNumber int leg number
+     * @param estimatedTimeAtNextMark long estimated time at next mark
+     */
+    BoatStatus(int sourceID, int legNumber, long estimatedTimeAtNextMark) {
         this.sourceID = sourceID;
-        this.boatStatus = boatStatus;
         this.legNumber = legNumber;
-        this.penaltiesAwarded = penaltiesAwarded;
-        this.penaltiesServed = penaltiesServed;
         this.estimatedTimeAtNextMark = estimatedTimeAtNextMark;
-        this.estimatedTimeAtFinish = estimatedTimeAtFinish;
     }
 
 
@@ -28,28 +26,13 @@ public class BoatStatus {
         return sourceID;
     }
 
-    public int getBoatStatus() {
-        return boatStatus;
-    }
-
     public int getLegNumber() {
         return legNumber;
-    }
-
-    public int getPenaltiesAwarded() {
-        return penaltiesAwarded;
-    }
-
-    public int getPenaltiesServed() {
-        return penaltiesServed;
     }
 
     public long getEstimatedTimeAtNextMark() {
         return estimatedTimeAtNextMark;
     }
 
-    public long getEstimatedTimeAtFinish() {
-        return estimatedTimeAtFinish;
-    }
 
 }

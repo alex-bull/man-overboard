@@ -14,6 +14,11 @@ import static parsers.Converter.hexByteArrayToLong;
 public class MarkRoundingParser {
 
 
+    /**
+     * Parses the mark rounding message
+     * @param body byte[] a byte array to be parsed
+     * @return MarkRoundingData the parsed mark rounding data
+     */
     public MarkRoundingData processMessage(byte[] body) {
         try {
             long roundingTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
