@@ -24,56 +24,21 @@ public class MutablePoint {
         this.y.setValue(y);
     }
 
-    /**
-     * Getter for the x property
-     *
-     * @return DoubleProperty x
-     */
     public DoubleProperty getX() {
         return this.x;
     }
-
-    /**
-     * Sets the value of the x property
-     *
-     * @param x Double the new value
-     */
     public void setX(Double x) {
         this.x.setValue(x);
     }
-
-    /**
-     * Getter for the x value
-     *
-     * @return Double x value
-     */
     public double getXValue() {
         return this.x.getValue();
     }
-
-    /**
-     * Getter for the y property
-     *
-     * @return DoubleProperty y
-     */
     public DoubleProperty getY() {
         return this.y;
     }
-
-    /**
-     * Sets the value of the y property
-     *
-     * @param y Double the new value
-     */
     public void setY(Double y) {
         this.y.setValue(y);
     }
-
-    /**
-     * Getter for the y value
-     *
-     * @return Double y value
-     */
     public double getYValue() {
         return this.y.getValue();
     }
@@ -92,18 +57,24 @@ public class MutablePoint {
         setY(((getYValue() - minY) * yFactor + paddingY));
     }
 
-
+    /**
+     * Compares mutable point objects's coordinates to see if they are equal.
+     * @param o Object
+     * @return boolean true if the objects are equal
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         MutablePoint point = (MutablePoint) o;
-
-        if (!(x.getValue().equals(point.x.getValue()))) return false;
-        return y.getValue().equals(point.y.getValue());
+        return x.getValue().equals(point.x.getValue()) && y.getValue().equals(point.y.getValue());
     }
 
+
+    /**
+     * Generates a hashcode with a built in algorithm from Intellij
+     * @return int a hashcode
+     */
     @Override
     public int hashCode() {
         int result = x.hashCode();
@@ -122,17 +93,12 @@ public class MutablePoint {
     /**
      * Checks in the current point is close enough to the other point, current EPSILON is 0.0002, longitude needs a higher
      * EPSILON
-     *
      * @param o the other mutable point
      * @return true if this point is close enough to o
      */
     public boolean isWithin(MutablePoint o) {
         double EPSILON = 0.0002;
-        if (Math.abs(getXValue() - o.getXValue()) < EPSILON && Math.abs(getYValue() - o.getYValue()) < EPSILON * 2) {
-            return true;
-        } else {
-            return false;
-        }
+        return Math.abs(getXValue() - o.getXValue()) < EPSILON && Math.abs(getYValue() - o.getYValue()) < EPSILON * 2;
     }
 
 }

@@ -23,7 +23,6 @@ public class BoatXMLParser {
 
     /**
      * Parse the XML string and set competitor and mark properties from given boat data
-     *
      * @param xmlStr XML String of a boat data
      * @throws IOException   IOException
      * @throws JDOMException JDOMException
@@ -39,6 +38,7 @@ public class BoatXMLParser {
 
         //we only care about boat data right now
         for (Element boat : boatConfig.getChild("Boats").getChildren()) {
+
             // only need yacht data
             if (boat.getAttributeValue("Type").equals("Yacht")) {
                 Boat competitor = new Boat();
@@ -46,7 +46,6 @@ public class BoatXMLParser {
                 competitor.setTeamName(boat.getAttributeValue("BoatName"));
                 competitor.setAbbreName(boat.getAttributeValue("ShortName"));
                 competitor.setSourceID(sourceID);
-                competitor.setType("Yacht");
                 boats.put(sourceID, competitor);
             }
             //add to mark boats if type is mark
@@ -55,7 +54,6 @@ public class BoatXMLParser {
                 mark.setTeamName(boat.getAttributeValue("BoatName"));
                 mark.setAbbreName(boat.getAttributeValue("ShortName"));
                 mark.setSourceID(boat.getAttributeValue("SourceID"));
-                mark.setType("Mark");
                 markBoats.add(mark);
             }
         }

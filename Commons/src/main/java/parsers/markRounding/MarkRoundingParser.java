@@ -5,7 +5,6 @@ import parsers.Converter;
 import java.util.Arrays;
 
 import static parsers.Converter.hexByteArrayToInt;
-import static parsers.Converter.hexByteArrayToLong;
 
 /**
  * Created by psu43 on 4/05/17.
@@ -14,6 +13,11 @@ import static parsers.Converter.hexByteArrayToLong;
 public class MarkRoundingParser {
 
 
+    /**
+     * Parses the mark rounding message
+     * @param body byte[] a byte array to be parsed
+     * @return MarkRoundingData the parsed mark rounding data
+     */
     public MarkRoundingData processMessage(byte[] body) {
         try {
             long roundingTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));

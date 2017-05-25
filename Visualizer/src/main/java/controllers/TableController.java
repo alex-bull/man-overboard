@@ -42,7 +42,7 @@ public class TableController implements Initializable {
         // initialise race table
         positionCol.setCellValueFactory(new PropertyValueFactory<>("position"));
         nameCol.setCellValueFactory(new PropertyValueFactory<>("teamName"));
-        featureCol.setCellValueFactory(new PropertyValueFactory<>("featureName"));
+        featureCol.setCellValueFactory(new PropertyValueFactory<>("feature"));
         speedCol.setCellValueFactory(new PropertyValueFactory<>("speed"));
         raceTable.setItems(events);
 
@@ -88,6 +88,7 @@ public class TableController implements Initializable {
             String teamName = comps.get(i).getTeamName();
             Double speed = comps.get(i).getVelocity();
             String featureName = comps.get(i).getLastMarkPassed();
+            RaceEvent raceEvent = new RaceEvent(teamName, featureName, speed, i + 1);
             Integer sourceId = comps.get(i).getSourceID();
             RaceEvent raceEvent = new RaceEvent(sourceId, teamName, speed, featureName, i + 1);
             events.add(raceEvent);

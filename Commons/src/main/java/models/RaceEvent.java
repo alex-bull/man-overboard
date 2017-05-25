@@ -2,24 +2,35 @@ package models;
 
 /**
  * Created by mgo65 on 6/03/17.
- * Represents an event on the race timeline
+ * Used as a row for the race table
  */
 public class RaceEvent{
 
     private Integer boatSourceId;
     private String teamName;
-    private String featureName;
     private Double speed;
     private int position;
+    private String feature;
 
-    public RaceEvent(Integer boatSourceId, String teamName, Double speed, String featureName, int position) {
+    /**
+     * Constructs a RaceEvent
+     * @param teamName String team name of the boat
+     * @param speed Double speed of the boat
+     * @param feature String the course feature the boat has passed
+     * @param position int the position of the boat
+     */
+    public RaceEvent(Integer boatSourceId, String teamName, Double speed, String feature, int position) {
         this.boatSourceId = boatSourceId;
         this.teamName = teamName;
+        this.feature = feature;
         this.speed = speed;
-        this.featureName = featureName;
         this.position = position;
     }
 
+    // Actually used by FXML. DO NOT DELELETE
+    public String getFeature() {
+        return feature;
+    }
 
     public int getPosition() {
         return position;
@@ -29,20 +40,8 @@ public class RaceEvent{
         this.position = position;
     }
 
-    public String getFeatureName() {
-        return featureName;
-    }
-
-    public void setFeatureName(String featureName) {
-        this.featureName = featureName;
-    }
-
     public String getTeamName() {
         return teamName;
-    }
-
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
     }
 
     public Double getSpeed() {
