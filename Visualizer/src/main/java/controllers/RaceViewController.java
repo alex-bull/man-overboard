@@ -406,7 +406,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor
      */
     private void drawLaylines(Competitor boat) {
-
+        //GET MARK DATA
         Integer markId = boat.getCurrentLegIndex() + 1;
         if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
 
@@ -424,10 +424,7 @@ public class RaceViewController implements Initializable, TableObserver {
             markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
         }
 
-
-        Double x = 0.0; //Intersection of layline and boat heading
-        Double y = 0.0;
-
+        //DO MATH
         Integer upAngle = 43;
         Integer downAngle = 153;
         Double boatX = boat.getPosition().getXValue();
@@ -435,148 +432,131 @@ public class RaceViewController implements Initializable, TableObserver {
 
         Double heading = boat.getCurrentHeading();
         Double windAngle = dataSource.getWindDirection();
-        //distance between boat and next mark
-        //Double distanceBoatMark = Math.sqrt(Math.pow(abs((boatX - markX)), 2) + Math.pow(abs((boatY - markY)), 2));
 
         //semi arbitrary point in front of the boat along the heading angle
         Double bx = 2000 * Math.sin(Math.toRadians(heading));
         Double by = 2000 * Math.cos(Math.toRadians(heading));
 
-        //finds angle between the heading and mark from the boat
-        Double angle1 = Math.atan2(markY - boatY, markX - boatX);
-        Double angle2 = Math.atan2((boatY-by) - boatY, (boatX+bx) - boatX);
-        Double a1 = Math.toDegrees(angle1 - angle2);
-
         bx = boatX + bx;
         by = boatY - by;
 
-        if (a1 < 0) {
-            a1 = 360 + a1;
-        }
-
         Double anglediff = abs((heading - windAngle + 180 + 360) % 360 - 180);
-
         Double angle = 0.0;
+        Double angle2 = 0.0;
 
-        //CASE: upwind-right
-        if (anglediff > 90 && a1 > 180) {
+        //CASE: upwind
+        if (anglediff > 90) {
             System.out.println("Up RIGHT");
             angle = windAngle - upAngle;
+            angle2 = windAngle + upAngle;
         }
-        //CASE: upwind-left
-        else if (anglediff > 90 && a1 < 180) {
-            System.out.println("Up LEFT");
-            angle = windAngle + upAngle;
-        }
-        //CASE: downwind-left
-        else if (anglediff < 90 && a1 < 180) {
-            System.out.println("DOwn LEFT");
-            angle = windAngle - downAngle;
-        }
-        //CASE: downwind-right
-        else if (anglediff < 90 && a1 > 180) {
+        //CASE: downwind
+        else if (anglediff < 90) {
             System.out.println("Down RIGHT");
             angle = windAngle + downAngle;
+            angle2 = windAngle - downAngle;
         }
 
-        System.out.println("WIND: " + windAngle);
-        System.out.println("ANGLE SUM: " + angle);
         if (angle > 360) angle = angle - 360;
-        System.out.println("ANGLE: " + angle);
-//        angle = angle + 180;
-//
+
+        //THE LAY LINES FROM THE MARK
         Double mx = markX + 2000 * Math.sin(Math.toRadians(angle));
         Double my = markY - 2000 * Math.cos(Math.toRadians(angle));
         Double mx2 = markX -2000 * Math.sin(Math.toRadians(angle));
         Double my2 = markY + 2000 * Math.cos(Math.toRadians(angle));
-        System.out.println("SIN: " + Math.sin(Math.toRadians(angle)));
-        System.out.println("MX: " + mx);
-        System.out.println("MY: " + my);
-        System.out.println("MX2: " + mx2);
-        System.out.println("MY2: " + my2);
+
+        Double mx3 = markX + 2000 * Math.sin(Math.toRadians(angle2));
+        Double my3 = markY - 2000 * Math.cos(Math.toRadians(angle2));
+        Double mx4 = markX -2000 * Math.sin(Math.toRadians(angle2));
+        Double my4 = markY + 2000 * Math.cos(Math.toRadians(angle2));
+
+        //Intersections of lay lines and boat heading
+        Double x = 0.0;
+        Double y = 0.0;
+        Double x2 = 0.0;
+        Double y2 = 0.0;
+        Double xIntersection = 0.0;
+        Double yIntersection = 0.0;
 
         Boolean intersects = Line2D.linesIntersect(boatX, boatY, bx, by, mx2, my2, mx, my);
+        Boolean intersects2 = Line2D.linesIntersect(boatX, boatY, bx, by, mx3, my3, mx4, my4);
+        Boolean draw = false;
 
         raceViewPane.getChildren().removeAll(layLines);
         layLines.clear();
 
+        //FIND INTERSECTIONS
         if (intersects) {
-
+            draw = true;
             //If the line segments intersect then find the intersection point to draw the lines with
-           // System.out.println("Intersection");
-
             //first convert to slope intercept y = mx + b
             Double mBoat = (by - boatY) / (bx - boatX);
             Double mMark = (my - markY) / (mx - markX);
-
             //b = y - mx
             Double bBoat = boatY - mBoat * boatX;
             Double bMark = markY - mMark * markX;
-
-
             //the intersection point of the lines
             x = (bMark - bBoat) / (mBoat - mMark);
             y = mBoat * x + bBoat;
+            xIntersection = x;
+            yIntersection = y;
+        }
+        if (intersects2) {
+            draw = true;
+            //first convert to slope intercept y = mx + b
+            Double mBoat = (by - boatY) / (bx - boatX);
+            Double mMark = (my3 - markY) / (mx3 - markX);
+            //b = y - mx
+            Double bBoat = boatY - mBoat * boatX;
+            Double bMark = markY - mMark * markX;
+            //the intersection point of the lines
+            x2 = (bMark - bBoat) / (mBoat - mMark);
+            y2 = mBoat * x2 + bBoat;
+            xIntersection = x2;
+            yIntersection = y2;
+        }
+        if (intersects && intersects2) {
+            //FIND THE CLOSEST INTERSECTION
+            Double distance1 = Math.hypot(boatX-x, boatY-y);
+            Double distance2 = Math.hypot(boatX-x2, boatY-y2);
+            if (distance1 < distance2) {
+                xIntersection = x;
+                yIntersection = y;
+            }
+        }
 
+        //DRAW THE LAYLINES
+        if (draw) {
 
+            //boat line
             Polyline line = new Polyline();
             line.getPoints().addAll(
                     boatX, boatY, //top
-                    x, y);
+                    xIntersection, yIntersection);
             line.setFill(boat.getColor());
             line.setStroke(boat.getColor());
             line.setStrokeWidth(1);
             raceViewPane.getChildren().add(line);
             layLines.add(line);
 
+            //mark line
             Polyline line2 = new Polyline();
             line2.getPoints().addAll(
                     markX, markY, //top
-                    x, y);
+                    xIntersection, yIntersection);
             line2.setFill(boat.getColor());
             line2.setStroke(boat.getColor());
             line2.setStrokeWidth(1);
 
-
             raceViewPane.getChildren().add(line2);
-
-
-
             layLines.add(line2);
-
         }
-////        else if {
-//           // System.out.println("No intersection");
-//            Polyline line = new Polyline();
-//            line.getPoints().addAll(
-//                    boatX, boatY, //top
-//                    bx, by);
-//            line.setFill(boat.getColor());
-//            line.setStroke(boat.getColor());
-//            line.setStrokeWidth(1);
-//            raceViewPane.getChildren().add(line);
-//            layLines.add(line);
-//            System.out.println("MX "  + mx);
-//            System.out.println("MY "  + my);
-//            System.out.println("MARX " + markX);
-//            System.out.println("MARKY " + markY);
-//            Polyline line2 = new Polyline();
-//            line2.getPoints().addAll(
-//                    mx, my, //top
-//                    mx2, my2);
-//            line2.setFill(boat.getColor());
-//            line2.setStroke(boat.getColor());
-//            line2.setStrokeWidth(1);
-//
-//
-//            raceViewPane.getChildren().add(line2);
-//
-//
-//
-//            layLines.add(line2);
-////        }
         
     }
+
+
+
+
 
 
     /**
