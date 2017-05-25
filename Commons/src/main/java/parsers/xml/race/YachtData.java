@@ -6,11 +6,13 @@ package parsers.xml.race;
  */
 public class YachtData {
     private int sourceID;
-    private String entry;
 
-    public YachtData(int sourceID, String entry) {
+    /**
+     * Yacht data from the race.XML packet (currently only reading sourceID)
+     * @param sourceID int Source ID of the yacht
+     */
+    YachtData(int sourceID) {
         this.sourceID = sourceID;
-        this.entry = entry;
     }
 
     public int getSourceID() {
@@ -19,14 +21,6 @@ public class YachtData {
 
     public void setSourceID(int sourceID) {
         this.sourceID = sourceID;
-    }
-
-    public String getEntry() {
-        return entry;
-    }
-
-    public void setEntry(String entry) {
-        this.entry = entry;
     }
 
 
