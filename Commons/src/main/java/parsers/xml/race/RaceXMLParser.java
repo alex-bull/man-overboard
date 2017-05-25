@@ -56,19 +56,6 @@ public class RaceXMLParser {
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
         Document root = builder.build(stream);
         Element race = root.getRootElement();
-
-        int raceID = Integer.parseInt(race.getChild("RaceID").getValue());
-        String raceType = race.getChild("RaceType").getValue();
-        String creationTimeDate = race.getChild("CreationTimeDate").getValue();
-        String raceStartTime = race.getChild("RaceStartTime").getAttributeValue("Time");
-        boolean raceStartTimePostponed = Boolean.parseBoolean(race.getChild("RaceStartTime").getAttributeValue("Postpone"));
-
-        raceData.setRaceID(raceID);
-        raceData.setRaceType(raceType);
-        raceData.setCreationTimeDate(creationTimeDate);
-        raceData.setRaceStartTime(raceStartTime);
-        raceData.setRaceStartTimePostpone(raceStartTimePostponed);
-
         Set<Integer> participantIDs = new HashSet<>();
         for (Element yacht : race.getChild("Participants").getChildren()) {
             int sourceID = Integer.parseInt(yacht.getAttributeValue("SourceID"));
@@ -101,7 +88,6 @@ public class RaceXMLParser {
                 MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
                 marks.add(markData);
             }
-            raceData.addCompoundMarkID(compoundMarkID);
             CompoundMarkData compoundMarkData = new CompoundMarkData(compoundMarkID, compoundMarkName, marks);
             course.add(compoundMarkData);
 
@@ -129,21 +115,16 @@ public class RaceXMLParser {
         raceData.setCourse(course);
 
         for (Element corner : race.getChild("CompoundMarkSequence").getChildren()) {
-
-            int cornerSeqID = Integer.parseInt(corner.getAttributeValue("SeqID"));
-            int compoundMarkID = Integer.parseInt(corner.getAttributeValue("CompoundMarkID"));
             String rounding = corner.getAttributeValue("Rounding");
-            int zoneSize = Integer.parseInt(corner.getAttributeValue("ZoneSize"));
-            CornerData cornerData = new CornerData(cornerSeqID, compoundMarkID, rounding, zoneSize);
+            CornerData cornerData = new CornerData(rounding);
 
             raceData.getCompoundMarkSequence().add(cornerData);
 
         }
         for (Element limit : race.getChild("CourseLimit").getChildren()) {
-            int limitSeqID = Integer.parseInt(limit.getAttributeValue("SeqID"));
             double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
             double lon = Double.parseDouble(limit.getAttributeValue("Lon"));
-            LimitData limitData = new LimitData(limitSeqID, lat, lon);
+            LimitData limitData = new LimitData(lat, lon);
             raceData.addCourseLimit(limitData);
 
         }
