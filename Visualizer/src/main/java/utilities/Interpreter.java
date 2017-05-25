@@ -260,14 +260,11 @@ public class Interpreter implements DataSource, PacketHandler {
         int boatID = boatData.getSourceID();
 
         Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
-        competitor.setCurrentHeading(boatData.getHeading());
 
         double x = this.boatData.getPixelPoint().getXValue();
         double y = this.boatData.getPixelPoint().getYValue();
         MutablePoint location = new MutablePoint(x, y);
         location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-        competitor.setPosition(location);
-        competitor.setVelocity(boatData.getSpeed());
 
         // boat colour
         if (competitor.getColor() == null) {
@@ -275,11 +272,15 @@ public class Interpreter implements DataSource, PacketHandler {
             competitor.setColor(colour);
             colourPool.getColours().remove(colour);
         }
-
         //add to competitorsPosition and storedCompetitors if they are new
         if (!storedCompetitors.keySet().contains(boatID)) {
             this.storedCompetitors.put(boatID, competitor);
             competitorsPosition.add(competitor);
+        }else{
+            storedCompetitors.get(boatID).setPosition(location);
+            storedCompetitors.get(boatID).setVelocity(boatData.getSpeed());
+            storedCompetitors.get(boatID).setCurrentHeading(boatData.getHeading());
+
         }
 
         //order the list of competitors
