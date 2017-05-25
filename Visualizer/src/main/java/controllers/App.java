@@ -1,15 +1,10 @@
 package controllers;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import utilities.Interpreter;
 
 public class App extends Application {
@@ -26,7 +21,6 @@ public class App extends Application {
         StarterController starterController = loader.getController();
         starterController.setStage(primaryStage);
 
-
         starterController.setDataSource(new Interpreter());
 //        starterController.setCourseFile(courseFile);
         primaryStage.setMinWidth(530);
@@ -34,13 +28,8 @@ public class App extends Application {
 
         primaryStage.setScene(new Scene(root));
 
-
         //set on close requests
         primaryStage.setOnCloseRequest(event -> System.exit(0));
         primaryStage.show();
-
-
     }
-
-
 }

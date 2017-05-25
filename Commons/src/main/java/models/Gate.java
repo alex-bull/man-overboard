@@ -64,6 +64,10 @@ public class Gate implements CourseFeature {
         return this.index;
     }
 
+    public boolean isFinish(){
+        return this.isFinish();
+    }
+
 
     /**
      * Gets a list of scaled pixel points representing the screen location of the gate

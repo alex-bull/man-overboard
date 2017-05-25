@@ -5,7 +5,6 @@ import parsers.Converter;
 import java.util.Arrays;
 
 import static parsers.Converter.hexByteArrayToInt;
-import static parsers.Converter.hexByteArrayToLong;
 
 /**
  * Created by psu43 on 4/05/17.

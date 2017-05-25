@@ -10,6 +10,7 @@ public interface CourseFeature {
     String getName();
     List<MutablePoint> getPixelLocations();
     double getExitHeading();
+    boolean isFinish();
     void setExitHeading(Double exitHeading);
     int getIndex();
     MutablePoint getGPSPoint();

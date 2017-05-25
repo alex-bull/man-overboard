@@ -386,16 +386,21 @@ public class RaceViewController implements Initializable {
 
         }
 
-        allAnnotationsRadio.setSelected(allSelected);
-        noAnnotationsRadio.setSelected(!noneSelected);
-        someAnnotationsRadio.setSelected(!allSelected && noneSelected);
+        someAnnotationsRadio.setSelected(((allSelected || !noneSelected) && someAnnotationsRadio.isSelected()) ||
+                !allSelected && noneSelected);
+        allAnnotationsRadio.setSelected(allSelected && !someAnnotationsRadio.isSelected());
+        noAnnotationsRadio.setSelected(!noneSelected && !someAnnotationsRadio.isSelected());
 
         // draws FPS counter
         fpsCounter.setVisible(fpsToggle.isSelected());
 
     }
 
+    @FXML
+    private void showPartialAnnotations(){
 
+        someAnnotationsRadio.setSelected(true);
+    }
     /**
      * Draw or move a boat model for a competitor
      *
