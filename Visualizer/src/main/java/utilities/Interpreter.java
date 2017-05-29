@@ -215,13 +215,16 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
-                    for (CompoundMarkData mark : this.compoundMarks) {
-                        if (mark.getID() == markID) {
-                            markRoundingData.setMarkName(mark.getName());
-                        }
+                    System.out.println(markID);
+//                    for (CompoundMarkData mark : this.compoundMarks) {
+//                        if (mark.getID() == markID) {
+//                            markRoundingData.setMarkName(mark.getName());
+//                        }
+//                    }
+                    String markName="";
+                    if(storedFeatures.keySet().contains(markID)) {
+                        markName = storedFeatures.get(markID).getName();
                     }
-
-                    String markName = markRoundingData.getMarkName();
                     long roundingTime = markRoundingData.getRoundingTime();
 
                     storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);

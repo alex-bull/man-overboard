@@ -28,7 +28,7 @@ public class RaceEvent{
         this.position = position;
     }
 
-    // Actually used by FXML. DO NOT DELELETE
+    // Actually used by FXML. DO NOT DELETE
     public String getFeature() {
         return feature;
     }

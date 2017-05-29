@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static utilities.EnvironmentConfig.currentStream;
+import static utilities.EnvironmentConfig.liveStream;
+
 /**
  * Created by msl47 on 21/03/17.
  * The controller for the table
@@ -84,6 +87,7 @@ public class TableController implements Initializable {
         comps.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
 
         events.clear();
+
         for (int i = 0; i < comps.size(); i++) {
             String teamName = comps.get(i).getTeamName();
             Double speed = comps.get(i).getVelocity();
@@ -92,6 +96,7 @@ public class TableController implements Initializable {
             RaceEvent raceEvent = new RaceEvent(sourceId, teamName, featureName, speed, i + 1);
             events.add(raceEvent);
         }
+
         return comps;
     }
 
