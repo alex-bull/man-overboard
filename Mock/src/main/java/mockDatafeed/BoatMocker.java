@@ -8,8 +8,13 @@ import parsers.xml.CourseXMLParser;
 
 import java.io.*;
 import java.net.SocketException;
+import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+
+import static utilities.Utility.fileToString;
 
 /**
  * Created by khe60 on 24/04/17.
@@ -21,16 +26,18 @@ public class BoatMocker extends TimerTask {
     private List<CourseFeature> courseFeatures;
     private int raceStatus;
     private ZonedDateTime expectedStartTime;
+    private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager;
     private DataSender dataSender;
     private MutablePoint prestart;
 
-    private BoatMocker() throws IOException {
+    public BoatMocker() throws IOException {
         binaryPackager = new BinaryPackager();
         dataSender = new DataSender(4941);
         prestart = new MutablePoint(32.296577, -64.854304);
         raceStatus = 3;
-        expectedStartTime = ZonedDateTime.now();
+        creationTime=ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        expectedStartTime = creationTime.plusMinutes(1);
     }
 
     /**
@@ -66,7 +73,7 @@ public class BoatMocker extends TimerTask {
      * finds the current course of the race
      */
     private void generateCourse() throws JDOMException, IOException {
-        InputStream mockBoatStream= new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/mock_race.xml")));
+        InputStream mockBoatStream= new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")));
         CourseXMLParser cl = new CourseXMLParser(mockBoatStream);
         //screen size is not important
         RaceCourse course = new RaceCourse(cl.parseCourse(), false);
@@ -154,12 +161,35 @@ public class BoatMocker extends TimerTask {
 
 
     /**
+     * formats the racexml template
+     * @param xmlTemplate the template for race xml
+     * @return race xml with fields filled
+     */
+    private String formatRaceXML(String xmlTemplate){
+        DateTimeFormatter raceIDFormat=DateTimeFormatter.ofPattern("yyMMdd");
+        String raceID=creationTime.format(raceIDFormat)+"01";
+        String raceXML=String.format(xmlTemplate,raceID,creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        return raceXML;
+    }
+
+    /**
+     * Send a race xml file to client, uses raceTemplate.xml to generate custom race xml messages
+     */
+    private void sendRaceXML() throws IOException {
+        int messageType=6;
+        String raceTemplateString= fileToString("/raceTemplate.xml");
+        String raceXML=formatRaceXML(raceTemplateString);
+        dataSender.sendData(binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
+
+    }
+
+    /**
      * Send a xml file
      */
-    private void sendXml(String xmlPath, int messageType) throws IOException {
-        String mockBoatString= CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
+    private void sendXML(String xmlPath,int messageType) throws IOException {
+        String xmlString= CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
         //        String mockBoatsString = Files.toString(new File(xmlPath), Charsets.UTF_8);
-        dataSender.sendData(binaryPackager.packageXML(mockBoatString.length(), mockBoatString, messageType));
+        dataSender.sendData(binaryPackager.packageXML(xmlString.length(), xmlString, messageType));
 
     }
 
@@ -169,35 +199,15 @@ public class BoatMocker extends TimerTask {
     private void sendAllXML() {
 
         try {
-            sendXml("/mock_boats.xml", 7);
-            sendXml("/mock_regatta.xml", 5);
-            sendXml("/mock_race.xml", 6);
+            sendXML("/mock_boats.xml",7);
+            sendXML("/mock_regatta.xml", 5);
+            sendRaceXML();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    /**
-     * sends different courses for testing
-     */
-    private void sendCourse() {
-        int index = competitors.get(0).getCurrentLegIndex();
-        if (index % 2 == 1) {
-            try {
-                sendXml("/mock_race2.xml", 6);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        if (index % 2 == 0) {
-            try {
-                sendXml("/mock_race.xml", 6);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
 
     /**
@@ -222,7 +232,6 @@ public class BoatMocker extends TimerTask {
             }
             //update direction if they are close enough
             if (b.getPosition().isWithin(courseFeatures.get(b.getCurrentLegIndex() + 1).getGPSPoint())) {
-                sendCourse();
                 b.setCurrentLegIndex(b.getCurrentLegIndex() + 1);
                 b.setCurrentHeading(courseFeatures.get(b.getCurrentLegIndex()).getExitHeading());
             }
