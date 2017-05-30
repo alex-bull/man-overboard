@@ -18,10 +18,8 @@ public class BoatMockerTest {
 
     @Before
     public void setUp() throws Exception {
-
         boatMocker=new BoatMocker();
         mockerClass=boatMocker.getClass();
-
     }
 
     @Test

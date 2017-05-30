@@ -7,6 +7,7 @@ import static utilities.Utility.fileToString;
 
 /**
  * Created by khe60 on 30/05/17.
+ * Tests for Utility methods
  */
 public class UtilityTest {
     @Test
