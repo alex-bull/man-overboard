@@ -9,6 +9,7 @@ public class BoatStatus {
     private int legNumber;
     private long estimatedTimeAtNextMark;
 
+
     /**
      * Boat status
      * @param sourceID int source id
