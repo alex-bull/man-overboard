@@ -31,10 +31,10 @@ public class TimerController implements ClockHandler {
         this.dataSource = dataSource;
         long expectedStartTime = dataSource.getExpectedStartTime();
         long firstMessageTime = dataSource.getMessageTime();
-        long raceTime = Converter.convertToRelativeTime(firstMessageTime, expectedStartTime);
+        long raceTime = Converter.convertToRelativeTime(expectedStartTime, firstMessageTime); // time in seconds since start of race
 
         this.raceClock = new RaceClock(this, 1, 0);
-        long startTime = System.currentTimeMillis() - raceTime;
+        long startTime = System.currentTimeMillis() - (raceTime * 1000); // absolute time that the race started
         raceClock.start(startTime);
 
         String timezone = dataSource.getCourseTimezone();

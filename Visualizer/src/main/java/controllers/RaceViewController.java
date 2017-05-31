@@ -10,7 +10,6 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
 import com.google.common.primitives.Doubles;
-import com.sun.javafx.geom.Point2D;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -251,7 +250,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param startMark2 MutablePoint The other end of the start line.
      * @return MutablePoint Point of intersection.
      */
-    public MutablePoint calcStartLineIntersection(Point2D boatFront, Point2D boatBack, MutablePoint startMark1, MutablePoint startMark2) {
+    public MutablePoint calcStartLineIntersection(javafx.geometry.Point2D boatFront, Point2D boatBack, MutablePoint startMark1, MutablePoint startMark2) {
         double infinity = 1000000;
         double headingGradient;
         double xDiffBoat = boatFront.getX() - boatBack.getX();
@@ -330,7 +329,7 @@ public class RaceViewController implements Initializable, TableObserver {
     public double calcDistToVirtual(Competitor selectedBoat) {
         long expectedStartTime = dataSource.getExpectedStartTime();
         long messageTime = dataSource.getMessageTime();
-        long timeUntilStart = Converter.convertToRelativeTime(expectedStartTime, messageTime) / 1000; // seconds
+        long timeUntilStart = Converter.convertToRelativeTime(expectedStartTime, messageTime) * -1; // seconds, negative because race hasn't started
         double velocity = selectedBoat.getVelocity(); // metres per seconds
         return velocity * timeUntilStart; // metres
     }
@@ -865,11 +864,12 @@ public class RaceViewController implements Initializable, TableObserver {
         float startLineStartX = (float) startLine.getStartX();
         float startLineStartY = (float) startLine.getStartY();
 
-        double distanceToStart = Point2D.distance(boatX, boatY, startLineStartX, startLineStartY);
-        double distanceToEnd = Point2D.distance(boatX, boatY, startLineEndX, startLineEndY);
-        long expectedStartTime = Converter.convertToRelativeTime(dataSource.getExpectedStartTime(), dataSource.getMessageTime());
+        Point2D boatPoint = new Point2D(boatX, boatY);
+        double distanceToStart = boatPoint.distance(startLineStartX, startLineStartY);
+        double distanceToEnd = boatPoint.distance(startLineEndX, startLineEndY);
+        long timeUntilStart = Converter.convertToRelativeTime(dataSource.getExpectedStartTime(), dataSource.getMessageTime()) * -1;
 
-        return raceCalculator.calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), expectedStartTime);
+        return raceCalculator.calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), timeUntilStart);
     }
 
 
@@ -923,7 +923,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void updateRace(GraphicsContext gc) {
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
         for (Competitor boat : competitors) {
-            timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
+            timeFromLastMark = Converter.convertToRelativeTime(boat.getTimeAtLastMark(), dataSource.getMessageTime());
             if (dataSource.getRaceStatus().equals(PREPARATORY)) {
                 startAnnotation = getStartSymbol(boat);
             }

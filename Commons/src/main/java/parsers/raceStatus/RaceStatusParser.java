@@ -33,8 +33,8 @@ public class RaceStatusParser {
             for (int i = 0; i < numBoatsInRace; i++) {
                 Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte, currentByte + 4));
                 Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));
-                long estTimeToNextMark = hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
-                estTimeToNextMark = convertToRelativeTime(estTimeToNextMark, currentTime);
+                long timeAtNextMark = hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
+                long estTimeToNextMark = convertToRelativeTime(timeAtNextMark, currentTime) * -1; // returned time is negative because time at next mark is after current time
                 boatStatuses.put(sourceID, new BoatStatus(sourceID, legNumber, estTimeToNextMark));
                 currentByte += 20;
             }

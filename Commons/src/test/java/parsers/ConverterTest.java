@@ -58,12 +58,33 @@ public class ConverterTest {
     }
 
     @Test
-    public void testConvertRelativeTime(){
+    public void testConvertRelativeTimeReturnsZeroWhenOneOfTheInputsIsZero(){
         long testRealTime = 100020000;
         long testMessageTime = 100000000;
-        Assert.assertEquals(20, Converter.convertToRelativeTime(testRealTime, testMessageTime));
         Assert.assertEquals(0, Converter.convertToRelativeTime(0, testMessageTime));
         Assert.assertEquals(0, Converter.convertToRelativeTime(testRealTime, 0));
+    }
+
+    @Test
+    public void testConvertRelativeTimeReturnsPositiveWhenMessageTimeAfterRealTime(){
+        long testRealTime = 20 * 1000;
+        long testMessageTime = 30 * 1000; // milliseconds
+        Assert.assertTrue(Converter.convertToRelativeTime(testRealTime, testMessageTime) > 0);
+    }
+
+    @Test
+    public void testConvertRelativeTimeReturnsNegativeWhenMessageTimeBeforeRealTime(){
+        long testRealTime = 30 * 1000;
+        long testMessageTime = 20 * 1000; // milliseconds
+        Assert.assertTrue(Converter.convertToRelativeTime(testRealTime, testMessageTime) < 0);
+    }
+
+    @Test
+    public void testConvertRelativeTimeReturnsTheCorrectDifference(){
+        long testRealTime = 100 * 1000;
+        long testMessageTime = 200 * 1000;
+        long difference = 100;
+        Assert.assertEquals(difference, Converter.convertToRelativeTime(testRealTime, testMessageTime));
     }
 
 

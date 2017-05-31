@@ -14,7 +14,7 @@ public class RaceCalculator {
      * @param velocity double the speed of the boat
      * @return String "-" if the boat is going to cross early, "+" if late and "" if within 5 seconds.
      */
-    public String calculateStartSymbol(double distanceToStart, double distanceToEnd, double velocity, long expectedStartTime) {
+    public String calculateStartSymbol(double distanceToStart, double distanceToEnd, double velocity, long timeUntilStart) {
         int timeBound = 5;
         double selectedTime;
 
@@ -24,9 +24,9 @@ public class RaceCalculator {
             selectedTime = (distanceToEnd / velocity);
         }
 
-        if (selectedTime < expectedStartTime) {
+        if (selectedTime < timeUntilStart) {
             return "-";
-        } else if (selectedTime > (expectedStartTime + timeBound)) {
+        } else if (selectedTime > (timeUntilStart + timeBound)) {
             return "+";
         } else {
             return "";

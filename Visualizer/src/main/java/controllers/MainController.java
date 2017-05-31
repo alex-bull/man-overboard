@@ -37,12 +37,12 @@ public class MainController {
 
             @Override
             public void handle(long now) {
-                if(raceViewController.isLoaded()) {
-                raceViewController.refresh(dataSource);
-                tableController.refresh(dataSource);
-                windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
-                sparklinesController.refresh();
-                loadingPane.toBack();
+                if (raceViewController.isLoaded()) {
+                    raceViewController.refresh(dataSource);
+                    tableController.refresh(dataSource);
+                    windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
+                    sparklinesController.refresh();
+                    loadingPane.toBack();
                 }
                 else{
                     loadingPane.toFront();
