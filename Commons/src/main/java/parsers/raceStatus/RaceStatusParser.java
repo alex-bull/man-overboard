@@ -28,6 +28,9 @@ public class RaceStatusParser {
             long expectedStartTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 12, 18));
             Integer numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22, 23));
             HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
+            Integer windDirection = hexByteArrayToInt(Arrays.copyOfRange(body, 18, 20));
+            Integer windSpeed = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 22));
+            Double doubleWindDirection = windDirection * 360.0 / 65536.0;
             int currentByte = 24;
 
             for (int i = 0; i < numBoatsInRace; i++) {
@@ -39,7 +42,8 @@ public class RaceStatusParser {
                 currentByte += 20;
             }
 
-            return new RaceStatusData(currentTime, raceStatusToEnum(raceStatus), expectedStartTime, numBoatsInRace, boatStatuses);
+            return new RaceStatusData(currentTime, raceStatusToEnum(raceStatus), expectedStartTime, doubleWindDirection,
+                    windSpeed, numBoatsInRace, boatStatuses);
 
         }
         catch (Exception e) {
