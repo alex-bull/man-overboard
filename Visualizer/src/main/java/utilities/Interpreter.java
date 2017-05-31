@@ -67,6 +67,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
+    private boolean seenRaceXML = false;
 
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
@@ -215,7 +216,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
-                    System.out.println(markID);
 //                    for (CompoundMarkData mark : this.compoundMarks) {
 //                        if (mark.getID() == markID) {
 //                            markRoundingData.setMarkName(mark.getName());
@@ -338,11 +338,15 @@ public class Interpreter implements DataSource, PacketHandler {
                     break;
 
                 case RACE:
-                    this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
-                    this.courseBoundary = raceXMLParser.getCourseBoundary();
-                    this.compoundMarks = raceData.getCourse();
-                    GPSbounds = raceXMLParser.getGPSBounds();
-                    setScalingFactors();
+                    if(!seenRaceXML) {
+                        this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
+                        this.courseBoundary = raceXMLParser.getCourseBoundary();
+                        this.compoundMarks = raceData.getCourse();
+                        GPSbounds = raceXMLParser.getGPSBounds();
+                        setScalingFactors();
+                        this.seenRaceXML = true;
+                    }
+
                     break;
 
                 case BOAT:

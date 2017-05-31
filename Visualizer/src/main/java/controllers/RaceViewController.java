@@ -199,7 +199,6 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void boatSelected(Integer sourceId) {
         this.selectedBoatSourceId = sourceId;
-        System.out.println(selectedBoatSourceId);
     }
 
 

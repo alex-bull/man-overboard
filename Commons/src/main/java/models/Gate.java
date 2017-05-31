@@ -94,7 +94,6 @@ public class Gate implements CourseFeature {
      * @return MutablePoint
      */
     public MutablePoint getPixelCentre() {
-        System.out.println(pixelPoint1 +" " + pixelPoint2);
         return new MutablePoint((this.pixelPoint1.getXValue() + this.pixelPoint2.getXValue()) / 2,
                 (this.pixelPoint1.getYValue() + this.pixelPoint2.getYValue()) / 2);
     }
