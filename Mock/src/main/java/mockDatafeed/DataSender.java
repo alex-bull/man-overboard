@@ -7,13 +7,12 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by khe60 on 10/04/17.
@@ -23,7 +22,7 @@ class DataSender {
 
     private OutputStream os;
     private Selector selector;
-    private List<SocketChannel> outputChannels;
+    ServerSocketChannel serverSocket;
     /**
      * Constructor for DataSender, creates port at given portnum
      *
@@ -34,14 +33,37 @@ class DataSender {
 //        ServerSocket outputSocket = new ServerSocket(portnum);
 //        Socket socket = outputSocket.accept();
 //        os = socket.getOutputStream();
-        outputChannels=new ArrayList<>();
         selector= Selector.open();
-        ServerSocketChannel outputChannel=ServerSocketChannel.open();
-        outputChannel.configureBlocking(false);
-        outputChannel.socket().bind(new InetSocketAddress("localhost",portnum));
-        outputChannel.register(selector, SelectionKey.OP_ACCEPT);
+        serverSocket=ServerSocketChannel.open();
+        serverSocket.configureBlocking(false);
+        serverSocket.socket().bind(new InetSocketAddress("localhost",portnum));
+        serverSocket.register(selector, SelectionKey.OP_ACCEPT);
     }
 
+
+    /**
+     * The establishment period of the datasender, runs for time milliseconds
+     * @param time the amount of time in milliseconds of the connection establishment period
+     */
+    public void establishConnection(long time) throws IOException {
+        System.out.println("start client connection");
+        long finishTime=System.currentTimeMillis()+time;
+        while(System.currentTimeMillis()<finishTime){
+            selector.select(time);
+            for (Object key : new HashSet<>(selector.selectedKeys())) {
+                SelectionKey selectionKey = (SelectionKey) key;
+                //accept client connection
+                if (selectionKey.isAcceptable()) {
+                    SocketChannel client  = serverSocket.accept();
+                    client.configureBlocking(false);
+                    client.register(selector, SelectionKey.OP_WRITE);
+                    System.out.println(client.getRemoteAddress());
+                }
+                selector.selectedKeys().remove(key);
+            }
+        }
+        System.out.println("finish client connection");
+    }
 
     /**
      * sends the data to the output socket
@@ -49,27 +71,20 @@ class DataSender {
      * @param data byte[] byte array of the data
      */
     public void sendData(byte[] data) throws IOException {
-//        os.write(data);
-        System.out.println(outputChannels.size());
-        if(selector.select()<1){
-            return;
+        ByteBuffer buffer=ByteBuffer.wrap(data);
+        selector.select(1);
+        for (Object key : new HashSet<>(selector.selectedKeys())) {
+            SelectionKey selectionKey = (SelectionKey) key;
+            //accept client connection
+            if (selectionKey.isWritable()) {
+                SocketChannel client  = (SocketChannel) selectionKey.channel();
+                client.write(buffer);
+            }
+            selector.selectedKeys().remove(key);
         }
 
-        else{
-            System.out.println(selector.select());
-            Iterator readySet=selector.selectedKeys().iterator();
-            while(readySet.hasNext()){
-                SelectionKey key=(SelectionKey) readySet.next();
-                if(key.isAcceptable()){
-                    ServerSocketChannel ssChannel = (ServerSocketChannel) key.channel();
-                    SocketChannel sChannel = (SocketChannel) ssChannel.accept();
-                    sChannel.configureBlocking(false);
-//                    sChannel.register(key.selector(), SelectionKey.OP_READ);
-                    outputChannels.add(sChannel);
-                }
-            }
         }
     }
 
 
-}
+

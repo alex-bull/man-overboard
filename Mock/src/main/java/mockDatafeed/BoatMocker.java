@@ -34,6 +34,7 @@ public class BoatMocker extends TimerTask {
     public BoatMocker() throws IOException {
         binaryPackager = new BinaryPackager();
         dataSender = new DataSender(4941);
+        dataSender.establishConnection(5000);
         prestart = new MutablePoint(32.296577, -64.854304);
         raceStatus = 3;
         creationTime=ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
