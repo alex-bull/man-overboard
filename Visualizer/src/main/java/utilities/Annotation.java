@@ -2,6 +2,7 @@ package utilities;
 
 /**
  * Created by khe60 on 12/05/17.
+ *
  */
 public enum Annotation {
     TEAM_NAME,BOAT_SPEED,EST_TIME_TO_NEXT_MARK,TIME_FROM_LAST_MARK;

@@ -4,6 +4,7 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import models.*;
 import org.jdom2.JDOMException;
+import parsers.xml.CourseXMLParser;
 
 import java.io.*;
 import java.net.SocketException;
@@ -18,14 +19,13 @@ public class BoatMocker extends TimerTask {
     private List<Competitor> competitors;
     private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
-    private RaceCourse course;
     private int raceStatus;
     private ZonedDateTime expectedStartTime;
     private BinaryPackager binaryPackager;
     private DataSender dataSender;
     private MutablePoint prestart;
 
-    public BoatMocker() throws IOException {
+    private BoatMocker() throws IOException {
         binaryPackager = new BinaryPackager();
         dataSender = new DataSender(4941);
         prestart = new MutablePoint(32.296577, -64.854304);
@@ -36,29 +36,27 @@ public class BoatMocker extends TimerTask {
     /**
      * initializes the boats
      *
-     * @param args
+     * @param args String[]
      */
     public static void main(String[] args) {
-        BoatMocker me = null;
+        BoatMocker me;
         try {
             me = new BoatMocker();
             //find out the coordinates of the course
             me.generateCourse();
 
             //generate the boats
-            me.generateCompetitors(6);
+            me.generateCompetitors();
             //send all xml data first
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
             Timer raceTimer = new Timer();
             raceTimer.schedule(me, 0, 100);
-        } catch (SocketException e) {
+        } catch (SocketException ignored) {
 
-        } catch (IOException e) {
+        } catch (IOException | JDOMException e) {
             e.printStackTrace();
 
-        } catch (JDOMException e) {
-            e.printStackTrace();
         }
 
 
@@ -67,20 +65,19 @@ public class BoatMocker extends TimerTask {
     /**
      * finds the current course of the race
      */
-    public void generateCourse() throws JDOMException, IOException {
+    private void generateCourse() throws JDOMException, IOException {
         InputStream mockBoatStream= new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/mock_race.xml")));
-        XMLTestCourseLoader cl = new XMLTestCourseLoader(mockBoatStream);
+        CourseXMLParser cl = new CourseXMLParser(mockBoatStream);
         //screen size is not important
-        course = new RaceCourse(cl.parseCourse(1000, 1000), cl.parseCourseBoundary(1000, 1000), cl.getWindDirection(), false);
+        RaceCourse course = new RaceCourse(cl.parseCourse(), false);
         courseFeatures = course.getPoints();
     }
 
     /**
      * generates the competitors list given numBoats
      *
-     * @param numBoats the number of boats to generate
      */
-    public void generateCompetitors(int numBoats) {
+    private void generateCompetitors() {
         competitors = new ArrayList<>();
         //generate all boats
         competitors.add(new Boat("Oracle Team USA", 42, prestart, "USA", 101, 1));
@@ -111,25 +108,24 @@ public class BoatMocker extends TimerTask {
 
         //randomly select competitors
         Collections.shuffle(competitors);
-        competitors = competitors.subList(0, numBoats);
+        competitors = competitors.subList(0, 6);
     }
 
     /**
      * updates the position of all the boats given the boats speed and heading
      *
-     * @param dt the time passed in seconds
      */
-    private void updatePosition(double dt) {
+    private void updatePosition() {
 
         for (Competitor boat : competitors) {
-            boat.updatePosition(dt);
+            boat.updatePosition(0.1);
         }
     }
 
     /**
      * Sends boat info to port, including mark boats
      */
-    public void sendBoatLocation() throws IOException {
+    private void sendBoatLocation() throws IOException {
         //send competitor boats
         for (Competitor boat : competitors) {
             byte[] boatinfo = binaryPackager.packageBoatLocation(boat.getSourceID(), boat.getPosition().getXValue(), boat.getPosition().getYValue(),
@@ -147,11 +143,11 @@ public class BoatMocker extends TimerTask {
     /**
      * Sends Race Status to outputport
      *
-     * @throws IOException
+     * @throws IOException IOException
      */
-    public void sendRaceStatus() throws IOException {
+    private void sendRaceStatus() throws IOException {
         //TODO: make race status message
-        byte[] raceStatusPacket = binaryPackager.raceStatusHeader(123546789, raceStatus, expectedStartTime);
+        byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime);
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         dataSender.sendData(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
     }
@@ -160,7 +156,7 @@ public class BoatMocker extends TimerTask {
     /**
      * Send a xml file
      */
-    public void sendXml(String xmlPath, int messageType) throws IOException {
+    private void sendXml(String xmlPath, int messageType) throws IOException {
         String mockBoatString= CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
         //        String mockBoatsString = Files.toString(new File(xmlPath), Charsets.UTF_8);
         dataSender.sendData(binaryPackager.packageXML(mockBoatString.length(), mockBoatString, messageType));
@@ -170,7 +166,7 @@ public class BoatMocker extends TimerTask {
     /**
      * Sends all xml files
      */
-    public void sendAllXML() {
+    private void sendAllXML() {
 
         try {
             sendXml("/mock_boats.xml", 7);
@@ -203,12 +199,14 @@ public class BoatMocker extends TimerTask {
         }
     }
 
+
     /**
      * updates the boats location
      */
     @Override
     public void run() {
         //check if boats are at the end of the leg
+
 
         for (Competitor b : competitors) {
             //if at the end stop
@@ -222,9 +220,7 @@ public class BoatMocker extends TimerTask {
             if (b.getCurrentLegIndex() == 0) {
                 b.setStatus(1);
             }
-
-
-//            //update direction if they are close enough
+            //update direction if they are close enough
             if (b.getPosition().isWithin(courseFeatures.get(b.getCurrentLegIndex() + 1).getGPSPoint())) {
                 sendCourse();
                 b.setCurrentLegIndex(b.getCurrentLegIndex() + 1);
@@ -232,7 +228,7 @@ public class BoatMocker extends TimerTask {
             }
         }
         //update the position of the boats given the current position, heading and velocity
-        updatePosition(0.1);
+        updatePosition();
         //send the boat info to receiver
 
         try {

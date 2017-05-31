@@ -12,9 +12,10 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Created by khe60 on 27/04/17.
+ * Tests for the boat XML parser
  */
 public class BoatXMLParserTest {
-    BoatXMLParser boatXMLParser;
+    private BoatXMLParser boatXMLParser;
 
     @Before
     public void setUp() throws Exception {

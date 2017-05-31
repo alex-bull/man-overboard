@@ -31,14 +31,20 @@ public class SparklinesController {
     /**
      * Sets the competitors on the sparkline chart
      * @param dataSource DataSource the data to display
+     * @param width double the width of the screen
      */
-    void setCompetitors(DataSource dataSource){
+    void setCompetitors(DataSource dataSource, double width){
+        sparkChart.setMaxWidth(width/4);
         this.dataSource = dataSource;
-        List<Competitor> competitors = dataSource.getCompetitorsPosition();
-        for(Competitor boat: competitors){
+        sparkChart.getYAxis().setAutoRanging(true);
+        List<Competitor> comps = new ArrayList<>(dataSource.getCompetitorsPosition());
+        comps.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
+
+        for(int i = 0; i < comps.size(); i++){
+            Competitor boat = comps.get(i);
             XYChart.Series<String, Double> series = new XYChart.Series<>();
             seriesMap.put(boat.getSourceID(), series);
-            series.getData().add(new XYChart.Data<>("-", (double) -(competitors.size() + 1))); //replace y with team position
+            series.getData().add(new XYChart.Data<>("-", (double) -i - 1)); //replace y with team position
             sparkChart.getData().add(series);
             series.setName(boat.getAbbreName());
 
@@ -52,17 +58,17 @@ public class SparklinesController {
      * Refreshes the spark line with the new received data
      */
     void refresh(){
-        List<Competitor> comps = new ArrayList<>(dataSource.getCompetitorsPosition());
         long expectedStartTime = dataSource.getExpectedStartTime();
         long firstMessageTime = dataSource.getMessageTime();
         long raceTime = firstMessageTime - expectedStartTime;
         long waitTime = 45000;
-        comps.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+        int sparklinePoints = 5;
+        List<Competitor> comps = new ArrayList<>(dataSource.getCompetitorsPosition());
+        comps.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
         for (int i = 0; i < comps.size(); i++) {
             XYChart.Series<String, Double> series = seriesMap.get(comps.get(i).getSourceID());
             int pos = i + 1;
-            // scaling to 7 points on spark line
-            if(series.getData().size() < 7) {
+            if(series.getData().size() < sparklinePoints) {
                 if(raceTime - waitTime > previousTime){
                     series.getData().add(new XYChart.Data<>(Long.toString(raceTime), (double) -pos));
                     if(i == comps.size() - 1) {

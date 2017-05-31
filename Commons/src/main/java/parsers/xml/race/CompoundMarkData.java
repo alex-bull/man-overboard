@@ -11,35 +11,25 @@ public class CompoundMarkData {
     private int ID;
     private String name;
     private List<MarkData> marks = new ArrayList<>();
-    private List<Integer> markIDs = new ArrayList<>();
 
-    public CompoundMarkData(int ID, String name, List<MarkData> marks) {
+    /**
+     * Compound mark data
+     * @param ID int ID
+     * @param name String name
+     * @param marks List marks
+     */
+    CompoundMarkData(int ID, String name, List<MarkData> marks) {
         this.ID = ID;
         this.name = name;
         this.marks = marks;
     }
 
-    public List<MarkData> getMarks() {
+    List<MarkData> getMarks() {
         return marks;
-    }
-
-    public void setMarks(List<MarkData> marks) {
-        this.marks = marks;
-    }
-
-    public List<Integer> getMarkIDs() {
-        for (MarkData mark : marks) {
-            markIDs.add(mark.getSourceID());
-        }
-        return markIDs;
     }
 
     public int getID() {
         return ID;
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
     }
 
     public String getName() {

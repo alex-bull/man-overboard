@@ -2,7 +2,6 @@ package parsers;
 
 import org.junit.Assert;
 import org.junit.Test;
-import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
 
 import java.util.Arrays;
@@ -12,6 +11,7 @@ import static parsers.Converter.hexByteArrayToInt;
 
 /**
  * Created by jar156 on 15/05/17.
+ * Tests for parsing boat data
  */
 public class BoatDataParserTest {
 
@@ -21,7 +21,7 @@ public class BoatDataParserTest {
 
         try {
             BoatDataParser boatDataParser = new BoatDataParser();
-            Assert.assertNull(boatDataParser.processMessage(packet, 100, 100));
+            Assert.assertNull(boatDataParser.processMessage(packet));
         } catch (Exception e) {
             Assert.fail();
         }
@@ -33,7 +33,7 @@ public class BoatDataParserTest {
 
         try {
             BoatDataParser boatDataParser = new BoatDataParser();
-            Assert.assertNull(boatDataParser.processMessage(packet, 100, 100));
+            Assert.assertNull(boatDataParser.processMessage(packet));
         } catch (Exception e) {
             Assert.fail();
         }
@@ -49,7 +49,7 @@ public class BoatDataParserTest {
 
         try {
             BoatDataParser boatDataParser = new BoatDataParser();
-            assertTrue(boatDataParser.processMessage(packet, 100, 100).getSpeed() == (double)expectedSpeedInMms / 1000);
+            assertTrue(boatDataParser.processMessage(packet).getSpeed() == (double)expectedSpeedInMms / 1000);
         } catch (Exception e) {
             Assert.fail();
         }
