@@ -201,6 +201,8 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.messageTime = raceStatusData.getCurrentTime();
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
+                    this.windDirection = raceStatusData.getWindDirection() + 180;
+                    this.windSpeed = raceStatusData.getWindSpeed();
                     for (int id : storedCompetitors.keySet()) {
                         storedCompetitors.get(id).setCurrentLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
                         storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
@@ -213,11 +215,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
-//                    for (CompoundMarkData mark : this.compoundMarks) {
-//                        if (mark.getID() == markID) {
-//                            markRoundingData.setMarkName(mark.getName());
-//                        }
-//                    }
                     String markName="";
                     if(storedFeatures.keySet().contains(markID)) {
                         markName = storedFeatures.get(markID).getName();
@@ -241,18 +238,6 @@ public class Interpreter implements DataSource, PacketHandler {
                     }
                 }
                 break;
-            case COURSE_WIND:
-                CourseWindParser courseWindParser = new CourseWindParser();
-                CourseWindData courseWindData = courseWindParser.processMessage(packet);
-                if(courseWindData != null) {
-                    if(courseWindData.getWindStatuses().containsKey(10)) {
-                        WindStatus officialWindStatus = courseWindData.getWindStatuses().get(10);
-                        this.windDirection = officialWindStatus.getWindDirection();
-                        this.windSpeed = officialWindStatus.getWindSpeed();
-                    }
-                }
-                break;
-
             default:
                 break;
         }
