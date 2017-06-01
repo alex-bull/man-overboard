@@ -24,15 +24,6 @@ public class DataSenderTest {
     @Before
     public void setUp() throws Exception{
         dataSender=new DataSender(4941);
-    }
-
-    /**
-     * test for connection establishment period, the server should connect to as many client in establishment time, then
-     * it should refuse any other connection past that time
-     * @throws Exception
-     */
-    @Test(expected = ConnectException.class)
-    public void establishConnection() throws Exception {
         Thread dataSenderThread = new Thread(() -> {
             try {
                 dataSender.establishConnection(1000);
@@ -42,6 +33,16 @@ public class DataSenderTest {
             }
         });
         dataSenderThread.start();
+    }
+
+    /**
+     * test for connection establishment period, the server should connect to as many client in establishment time, then
+     * it should refuse any other connection past that time
+     * @throws Exception
+     */
+    @Test(expected = ConnectException.class)
+    public void establishConnection() throws Exception {
+
 
         SocketChannel connectableclient = SocketChannel.open(new InetSocketAddress("localhost",4941));
         assertTrue(connectableclient.isConnected());
@@ -58,14 +59,7 @@ public class DataSenderTest {
      */
     @Test
     public void sendData() throws Exception {
-        Thread dataSenderThread = new Thread(() -> {
-            try {
-                dataSender.establishConnection(1000);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        dataSenderThread.start();
+
 
         byte[] data={0,1,2,3,4,5,6,7,8,9};
         List<SocketChannel> clients=new ArrayList<>();
