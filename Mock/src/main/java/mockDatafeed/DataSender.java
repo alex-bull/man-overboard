@@ -71,14 +71,22 @@ class DataSender {
      * @param data byte[] byte array of the data
      */
     public void sendData(byte[] data) throws IOException {
-        ByteBuffer buffer=ByteBuffer.wrap(data);
+
         selector.select(1);
         for (Object key : new HashSet<>(selector.selectedKeys())) {
             SelectionKey selectionKey = (SelectionKey) key;
-            //accept client connection
+            //write to channel if writable
             if (selectionKey.isWritable()) {
+                ByteBuffer buffer=ByteBuffer.wrap(data);
                 SocketChannel client  = (SocketChannel) selectionKey.channel();
-                client.write(buffer);
+                try {
+                    client.write(buffer);
+                }
+                catch (IOException e){
+                    System.out.println(client.getRemoteAddress()+" has disconnected, removing client");
+                    ((SelectionKey) key).cancel();
+                }
+
             }
             selector.selectedKeys().remove(key);
         }
