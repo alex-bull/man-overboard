@@ -1,9 +1,12 @@
 package utilities;
 
-import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.net.Socket;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 import java.util.TimerTask;
 
@@ -17,7 +20,7 @@ import static parsers.Converter.hexByteArrayToInt;
  */
 public class DataReceiver extends TimerTask {
 
-    private DataInputStream dis;
+    private SocketChannel client;
     private PacketHandler handler;
 
     /**
@@ -28,10 +31,13 @@ public class DataReceiver extends TimerTask {
      * @throws IOException IOException
      */
     DataReceiver(String host, int port, PacketHandler handler) throws IOException {
-        Socket receiveSock = new Socket(host, port);
+//        Socket receiveSock = new Socket(host, port);
         this.handler = handler;
-        dis = new DataInputStream(receiveSock.getInputStream());
-        System.out.println("Start connection to server...");
+//        dis = new DataInputStream(receiveSock.getInputStream());
+//        System.out.println("Start connection to server...");
+
+        client = SocketChannel.open(new InetSocketAddress(host,port));
+        client.configureBlocking(false);
     }
 
     /**
@@ -41,21 +47,15 @@ public class DataReceiver extends TimerTask {
      * @throws IOException IOException
      */
     private boolean checkForSyncBytes() throws IOException {
-        byte firstSyncByte = 0x47;
+
         // -125 is equivalent to 0x83 unsigned
-        byte secondSyncByte = -125;
+        byte[] expected = {0x47,-125};
 
-        byte[] b1 = new byte[1];
-        dis.readFully(b1);
-        if (b1[0] == firstSyncByte) {
-            byte[] b2 = new byte[1];
+        byte[] actual = new byte[2];
 
-            dis.readFully(b2);
-            if (b2[0] == secondSyncByte) {
-                return true;
-            }
-        }
-        return false;
+        client.read(ByteBuffer.wrap(actual));
+
+        return Arrays.equals(actual, expected);
     }
 
     /**
@@ -65,7 +65,7 @@ public class DataReceiver extends TimerTask {
      */
     private byte[] getHeader() throws IOException {
         byte[] header = new byte[13];
-        dis.readFully(header);
+        client.read(ByteBuffer.wrap(header));
         return header;
     }
 
@@ -88,13 +88,11 @@ public class DataReceiver extends TimerTask {
             boolean isStartOfPacket = checkForSyncBytes();
 
             if (isStartOfPacket) {
-
                 byte[] header = this.getHeader();
                 int length = this.getMessageLength(header);
                 byte[] message = new byte[length];
-                dis.readFully(message);
+                client.read(ByteBuffer.wrap(message));
                 this.handler.interpretPacket(header, message);
-
             }
         } catch (EOFException e) {
             System.out.println("End of file.");

@@ -62,6 +62,7 @@ class DataSender {
                 selector.selectedKeys().remove(key);
             }
         }
+        serverSocket.close();
         System.out.println("finish client connection");
     }
 

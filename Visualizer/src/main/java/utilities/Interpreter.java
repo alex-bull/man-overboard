@@ -140,7 +140,6 @@ public class Interpreter implements DataSource, PacketHandler {
         try {
             dataReceiver = new DataReceiver(host, port, this);
             primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
         } catch (IOException e) {
             System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
             return false;

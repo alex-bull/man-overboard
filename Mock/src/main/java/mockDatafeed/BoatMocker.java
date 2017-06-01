@@ -34,6 +34,7 @@ public class BoatMocker extends TimerTask {
     public BoatMocker() throws IOException {
         binaryPackager = new BinaryPackager();
         dataSender = new DataSender(4941);
+        //establishes the connection with Model
         dataSender.establishConnection(5000);
         prestart = new MutablePoint(32.296577, -64.854304);
         raceStatus = 3;
@@ -55,6 +56,7 @@ public class BoatMocker extends TimerTask {
 
             //generate the boats
             me.generateCompetitors();
+
             //send all xml data first
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
@@ -208,7 +210,6 @@ public class BoatMocker extends TimerTask {
         }
 
     }
-
 
 
     /**
