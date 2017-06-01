@@ -208,7 +208,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * and if it does calculates the virtual line points and returns them so they can be used for drawing
      * returns empty list if boat is not heading to the start line
      * @param selectedBoat selected boat
-     * @return virtualLinePoints List<MutablePoint>
+     * @return List virtualLinePoints
      */
     public List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat) {
         List<MutablePoint> virtualLinePoints = new ArrayList<>();
