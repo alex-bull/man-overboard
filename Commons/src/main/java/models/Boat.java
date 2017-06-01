@@ -50,6 +50,7 @@ public class Boat implements Competitor {
      * @param startPosition MutablePoint the boat's start position coordinate
      * @param sourceID      sourceID of the boat
      * @param abbreName     String the abbreviated name of the boat
+     * @param status        int status status of the boat
      */
     public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID, int status) {
         this.velocity = velocity;

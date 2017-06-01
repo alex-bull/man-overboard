@@ -34,6 +34,8 @@ public class CourseXMLParser {
     /**
      * Constructor for loading a course with an XML input file
      * @param inputFile File a XML file with course features
+     * @throws IOException IOException
+     * @throws JDOMException JDOMException
      */
     public CourseXMLParser(InputStream inputFile) throws IOException, JDOMException {
         SAXBuilder saxbuilder = new SAXBuilder();

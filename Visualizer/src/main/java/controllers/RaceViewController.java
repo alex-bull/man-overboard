@@ -219,7 +219,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Draws the line for gates
-     *
+     * @param line Line the line to be drawn
      * @param gatesID List of integer of the gates
      */
     private void drawLine(Line line, List<Integer> gatesID) {
@@ -445,7 +445,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.boatModels.put(boat.getSourceID(), boatModel);
             //Boats selected can be selected/unselected by clicking on them
             boatModel.setOnMouseClicked(event -> {
-                if (selectedBoatSourceId != sourceId) {
+                if (!Objects.equals(selectedBoatSourceId, sourceId)) {
                     selectedBoatSourceId = sourceId;
                 } else {
                     selectedBoatSourceId = 0;

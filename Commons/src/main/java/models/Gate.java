@@ -30,6 +30,7 @@ public class Gate implements CourseFeature {
      * @param pixelPoint2 MutablePoint the scaled pixel coordinates of the other end.
      * @param isFinish    boolean true if the gate is a finishing gate
      * @param isLine      boolean true if the gate needs a line
+     * @param index       int the index of the gate
      */
     public Gate(String name, MutablePoint GPSPoint1, MutablePoint pixelPoint1, MutablePoint pixelPoint2, boolean isFinish, boolean isLine, int index) {
 
