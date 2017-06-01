@@ -1,6 +1,7 @@
 package models;
 
 import javafx.animation.AnimationTimer;
+import parsers.Converter;
 
 import static java.lang.Math.abs;
 
@@ -24,27 +25,22 @@ public class RaceClock extends AnimationTimer implements Clock {
 
     }
 
+    @Override
     public void start(long startTimeMillis) {
         this.startTime = startTimeMillis;
         super.start();
     }
 
     @Override
-    public void start() {
-        this.startTime = System.currentTimeMillis();
-        super.start();
-    }
-
-    @Override
     public void handle(long now) {
-        String newTime = this.formatDisplayTime(System.currentTimeMillis() - startTime);
+        String newTime = this.formatDisplayTime(1000 * Converter.convertToRelativeTime(startTime, System.currentTimeMillis()));
         this.clockHandler.clockTicked(newTime, this);
     }
 
     /**
      * Creates a formatted display time string in mm:ss and takes into account the scale factor
      *
-     * @param display long the current duration of the race
+     * @param display long the current duration of the race in milliseconds
      * @return String the time string
      */
     private String formatDisplayTime(long display) {

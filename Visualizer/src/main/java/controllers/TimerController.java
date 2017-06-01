@@ -7,6 +7,7 @@ import models.Clock;
 import models.ClockHandler;
 import models.RaceClock;
 import models.WorldClock;
+import parsers.Converter;
 import parsers.RaceStatusEnum;
 import utilities.DataSource;
 
@@ -30,15 +31,11 @@ public class TimerController implements ClockHandler {
         this.dataSource = dataSource;
         long expectedStartTime = dataSource.getExpectedStartTime();
         long firstMessageTime = dataSource.getMessageTime();
-        if (expectedStartTime != 0 && firstMessageTime != 0) {
-            this.raceClock = new RaceClock(this, 1, 0);
-            long raceTime = firstMessageTime - expectedStartTime;
-            long startTime = System.currentTimeMillis() - raceTime;
-            raceClock.start(startTime);
-        } else {
-            this.raceClock = new RaceClock(this, 1, 27000);
-            raceClock.start();
-        }
+        long raceTime = Converter.convertToRelativeTime(expectedStartTime, firstMessageTime); // time in seconds since start of race
+
+        this.raceClock = new RaceClock(this, 1, 0);
+        long startTime = System.currentTimeMillis() - (raceTime * 1000); // absolute time that the race started
+        raceClock.start(startTime);
 
         String timezone = dataSource.getCourseTimezone();
         this.worldClock = new WorldClock(this, timezone);
