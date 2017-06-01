@@ -29,6 +29,7 @@ import parsers.xml.regatta.RegattaXMLParser;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
 import static parsers.Converter.hexByteArrayToInt;
@@ -140,7 +141,12 @@ public class Interpreter implements DataSource, PacketHandler {
         try {
             dataReceiver = new DataReceiver(host, port, this);
             primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        } catch (IOException e) {
+        }
+        catch (UnresolvedAddressException e){
+            System.out.println("Address is not found");
+            return false;
+        }
+        catch (IOException e) {
             System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
             return false;
         }

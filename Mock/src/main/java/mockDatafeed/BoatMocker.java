@@ -8,7 +8,6 @@ import parsers.xml.CourseXMLParser;
 
 import java.io.*;
 import java.net.SocketException;
-import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -31,7 +30,7 @@ public class BoatMocker extends TimerTask {
     private DataSender dataSender;
     private MutablePoint prestart;
 
-    public BoatMocker() throws IOException {
+    BoatMocker() throws IOException {
         binaryPackager = new BinaryPackager();
         dataSender = new DataSender(4941);
         //establishes the connection with Model
@@ -171,8 +170,7 @@ public class BoatMocker extends TimerTask {
     private String formatRaceXML(String xmlTemplate){
         DateTimeFormatter raceIDFormat=DateTimeFormatter.ofPattern("yyMMdd");
         String raceID=creationTime.format(raceIDFormat)+"01";
-        String raceXML=String.format(xmlTemplate,raceID,creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        return raceXML;
+        return String.format(xmlTemplate,raceID,creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
     }
 
     /**

@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.Arrays;
 import java.util.TimerTask;
 
@@ -30,7 +31,7 @@ public class DataReceiver extends TimerTask {
      * @param handler PacketHandler handler for incoming packets
      * @throws IOException IOException
      */
-    DataReceiver(String host, int port, PacketHandler handler) throws IOException {
+    DataReceiver(String host, int port, PacketHandler handler) throws UnresolvedAddressException, IOException {
 //        Socket receiveSock = new Socket(host, port);
         this.handler = handler;
 //        dis = new DataInputStream(receiveSock.getInputStream());

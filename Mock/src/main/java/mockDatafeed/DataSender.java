@@ -5,8 +5,6 @@ import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -16,27 +14,23 @@ import java.util.*;
 
 /**
  * Created by khe60 on 10/04/17.
- * The DataSender class, currently sends test_data.bin at a rate of 1 byte per second
+ * The DataSender class
  */
 class DataSender {
 
-    private OutputStream os;
     private Selector selector;
-    ServerSocketChannel serverSocket;
+    private ServerSocketChannel serverSocket;
     /**
-     * Constructor for DataSender, creates port at given portnum
+     * Constructor for DataSender, creates port at given port
      *
-     * @param portnum int The port number
+     * @param port int The port number
      * @throws IOException IOException
      */
-    DataSender(int portnum) throws IOException {
-//        ServerSocket outputSocket = new ServerSocket(portnum);
-//        Socket socket = outputSocket.accept();
-//        os = socket.getOutputStream();
+    DataSender(int port) throws IOException {
         selector= Selector.open();
         serverSocket=ServerSocketChannel.open();
         serverSocket.configureBlocking(false);
-        serverSocket.socket().bind(new InetSocketAddress("localhost",portnum));
+        serverSocket.socket().bind(new InetSocketAddress("localhost",port));
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
     }
 
@@ -57,7 +51,7 @@ class DataSender {
                     SocketChannel client  = serverSocket.accept();
                     client.configureBlocking(false);
                     client.register(selector, SelectionKey.OP_WRITE);
-                    System.out.println(client.getRemoteAddress());
+//                    System.out.println(client.getRemoteAddress());
                 }
                 selector.selectedKeys().remove(key);
             }
