@@ -1,15 +1,15 @@
 package controllers;
-
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import utilities.Interpreter;
 
 import java.io.IOException;
 
-public class App extends Application {
+
+public class App extends javafx.application.Application {
     public static void main(String[] args) {
         launch(args);
     }
@@ -27,6 +27,14 @@ public class App extends Application {
         starterController.setStage(primaryStage);
 
         starterController.setDataSource(new Interpreter());
+
+        String imagePath = "file: resources/logosmall.gif";
+        primaryStage.getIcons().add(new Image(imagePath));
+
+        // for mac
+//        java.awt.Image image = Toolkit.getDefaultToolkit().getImage(imagePath);
+//        Application.getApplication().setDockIconImage(image);
+
         primaryStage.setMinWidth(530);
         primaryStage.setMinWidth(548);
         primaryStage.setScene(new Scene(root));

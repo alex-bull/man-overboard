@@ -1,0 +1,217 @@
+.background {
+    -fx-background-color: #e0efef;
+}
+
+.label {
+    -fx-font-size: 11pt;
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-text-fill: black;
+    -fx-opacity: 0.6;
+}
+
+.label-bright {
+    -fx-font-size: 11pt;
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-text-fill: black;
+    -fx-opacity: 1;
+}
+
+.label-header {
+    -fx-font-size: 32pt;
+    -fx-font-family: "Segoe UI Light";
+    -fx-text-fill: black;
+    -fx-opacity: 1;
+}
+
+.table-view {
+    -fx-base: #1d1d1d;
+    -fx-control-inner-background: #1d1d1d;
+    -fx-background-color: #1d1d1d;
+    -fx-table-cell-border-color: transparent;
+    -fx-table-header-border-color: transparent;
+    -fx-padding: 5;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-size: 35;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: transparent;
+    -fx-border-color:
+            transparent
+            transparent
+            derive(-fx-base, 80%)
+            transparent;
+    -fx-border-insets: 0 10 1 0;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 20pt;
+    -fx-font-family: "Segoe UI Light";
+    -fx-text-fill: white;
+    -fx-alignment: center-left;
+    -fx-opacity: 1;
+}
+
+.table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: -fx-focus-color;
+}
+
+.split-pane:horizontal > .split-pane-divider {
+    -fx-border-color: transparent #1d1d1d transparent #1d1d1d;
+    -fx-background-color: transparent, derive(#1d1d1d,20%);
+}
+
+.split-pane {
+    -fx-padding: 1 0 0 0;
+}
+
+.menu-bar {
+    -fx-background-color: derive(#1d1d1d,20%);
+}
+
+.context-menu {
+    -fx-background-color: derive(#1d1d1d,50%);
+}
+
+.menu-bar .label {
+    -fx-font-size: 14pt;
+    -fx-font-family: "Segoe UI Light";
+    -fx-text-fill: white;
+    -fx-opacity: 0.9;
+}
+
+.menu .left-container {
+    -fx-background-color: black;
+}
+
+.text-field {
+    -fx-font-size: 12pt;
+    -fx-font-family: "Segoe UI Semibold";
+}
+
+/*
+ * Metro style Push Button
+ * Author: Pedro Duque Vieira
+ * http://pixelduke.wordpress.com/2012/10/23/jmetro-windows-8-controls-on-java/
+ */
+.button {
+    -fx-padding: 5 22 5 22;
+    /*-fx-border-color: #99EEED;*/
+    /*-fx-border-width: 1;*/
+    /*-fx-border-radius: 4;*/
+    -fx-background-radius: 4;
+    -fx-background-color: #7dcdcd;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 11pt;
+    -fx-text-fill: #395b5b;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+}
+
+.button:hover {
+    -fx-background-color: #c0e8e8;
+    -fx-text-fill: #3FA9F5;
+
+}
+
+.button:pressed, .button:default:hover:pressed {
+    -fx-background-color: white;
+    -fx-text-fill: #1d1d1d;
+    -fx-background-radius: 4;
+
+}
+
+.button:focused {
+    -fx-border-color: white, white;
+    -fx-border-width: 1, 1;
+    -fx-border-style: solid, segments(1, 1);
+    -fx-background-radius: 4;
+    -fx-border-insets: 1 1 1 1, 0;
+}
+
+.button:disabled, .button:default:disabled {
+    -fx-opacity: 0.4;
+    -fx-background-color: #929B9B;
+    -fx-text-fill: white;
+}
+
+.button:default {
+    -fx-background-color: -fx-focus-color;
+    -fx-text-fill: #ffffff;
+}
+
+.button:default:hover {
+    -fx-background-color: derive(-fx-focus-color,30%);
+}
+
+/*logo colours : 0014A8, 3FA9F5, 99EEED*/
+
+
+/*.combo-box .list-cell*/
+/*{*/
+    /*-fx-background: white;*/
+    /*-fx-background-color: transparent;*/
+    /*-fx-text-fill: -fx-text-base-color;*/
+    /*-fx-padding: 3 0 2 7;*/
+    /*-fx-cell-size: 1.66667em;*/
+/*}*/
+
+/*.combo-box-popup .list-view*/
+/*{*/
+    /*-fx-background-color: white, white;*/
+    /*-fx-background-insets: 0, 1;*/
+    /*-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );*/
+/*}*/
+
+/*.combo-box-popup .list-view .list-cell*/
+/*{*/
+    /*-fx-padding: 4 0 4 5;*/
+
+    /*!* No alternate highlighting *!*/
+    /*-fx-background-color: white;*/
+/*}*/
+
+/*.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover*/
+/*{*/
+    /*-fx-background: -fx-accent;*/
+    /*-fx-background-color: -fx-selection-bar;*/
+    /*-fx-text-fill: -fx-selection-bar-text;*/
+/*}*/
+
+/*.combo-box-popup .list-view .list-cell:filled:hover*/
+/*{*/
+    /*-fx-background-color: white;*/
+    /*-fx-text-fill: -fx-text-inner-color;*/
+/*}*/
+
+/*.combo-box-base*/
+/*{*/
+    /*-fx-skin: "com.sun.javafx.scene.control.skin.ComboBoxBaseSkin";*/
+    /*-fx-background-color: white, white, white, white;*/
+    /*-fx-background-radius: 5, 5, 4, 3;*/
+    /*-fx-background-insets: 0 0 -1 0, 0, 1, 2;*/
+    /*-fx-padding: 0;*/
+/*}*/
+
+/*.combo-box-base:hover*/
+/*{*/
+    /*-fx-color: -fx-hover-base;*/
+/*}*/
+
+/*.combo-box-base:showing*/
+/*{*/
+    /*-fx-color: -fx-pressed-base;*/
+/*}*/
+
+/*.combo-box-base:focused {*/
+    /*-fx-background-color: -fx-focus-color, -fx-outer-border, -fx-inner-border, -fx-body-color;*/
+    /*-fx-background-radius: 6.4, 4, 5, 3;*/
+    /*-fx-background-insets: -1.4, 0, 1, 2;*/
+/*}*/
+
+/*.combo-box-base:disabled {*/
+    /*-fx-opacity: .4;*/
+/*}*/
