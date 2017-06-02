@@ -11,20 +11,20 @@ public class MarkData {
     private Double targetLon;
     private int sourceID;
 
-    public MarkData(int seqID, String name, Double targetLat, Double targetLon, int sourceID) {
+    /**
+     * MarkData from the data stream
+     * @param seqID int sequence id of mark
+     * @param name String name of mark
+     * @param targetLat Double target latitude
+     * @param targetLon Double target longitude
+     * @param sourceID int source ID
+     */
+    MarkData(int seqID, String name, Double targetLat, Double targetLon, int sourceID) {
         this.seqID = seqID;
         this.name = name;
         this.targetLat = targetLat;
         this.targetLon = targetLon;
         this.sourceID = sourceID;
-    }
-
-    public int getSeqID() {
-        return seqID;
-    }
-
-    public void setSeqID(int seqID) {
-        this.seqID = seqID;
     }
 
     public String getName() {
@@ -33,22 +33,6 @@ public class MarkData {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Double getTargetLat() {
-        return targetLat;
-    }
-
-    public void setTargetLat(Double targetLat) {
-        this.targetLat = targetLat;
-    }
-
-    public Double getTargetLon() {
-        return targetLon;
-    }
-
-    public void setTargetLon(Double targetLon) {
-        this.targetLon = targetLon;
     }
 
     public int getSourceID() {

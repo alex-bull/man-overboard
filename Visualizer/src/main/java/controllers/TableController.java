@@ -12,9 +12,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import utilities.DataSource;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static utilities.EnvironmentConfig.currentStream;
+import static utilities.EnvironmentConfig.liveStream;
 
 /**
  * Created by msl47 on 21/03/17.
@@ -29,6 +31,7 @@ public class TableController implements Initializable {
     @FXML private TableColumn<RaceEvent, String> nameCol;
     @FXML private TableColumn<RaceEvent, Integer> speedCol;
 
+    private TableObserver observer;
     private ObservableList<RaceEvent> events = FXCollections.observableArrayList();
 
 
@@ -41,10 +44,16 @@ public class TableController implements Initializable {
         // initialise race table
         positionCol.setCellValueFactory(new PropertyValueFactory<>("position"));
         nameCol.setCellValueFactory(new PropertyValueFactory<>("teamName"));
-        featureCol.setCellValueFactory(new PropertyValueFactory<>("featureName"));
+        featureCol.setCellValueFactory(new PropertyValueFactory<>("feature"));
         speedCol.setCellValueFactory(new PropertyValueFactory<>("speed"));
         raceTable.setItems(events);
 
+        raceTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                Integer sourceId = newSelection.getBoatSourceId();
+                this.observer.boatSelected(sourceId);
+            }
+        });
     }
 
     public ObservableList<RaceEvent> getEvents() {
@@ -52,7 +61,17 @@ public class TableController implements Initializable {
     }
 
     /**
+     * Sets the observer
+     * @param observer TableObserver
+     */
+    public void addObserver(TableObserver observer) {
+        this.observer = observer;
+    }
+
+
+    /**
      * Called when the race display updates
+     * Gets table selection and resets the data in the table.
      * @param dataSource DataSource the latest race data
      */
     void refresh(DataSource dataSource) {
@@ -65,16 +84,19 @@ public class TableController implements Initializable {
      */
     List<Competitor> setTable(List<Competitor> competitors) {
         List<Competitor> comps = new ArrayList<>(competitors);
-        comps.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+        comps.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
 
         events.clear();
+
         for (int i = 0; i < comps.size(); i++) {
             String teamName = comps.get(i).getTeamName();
             Double speed = comps.get(i).getVelocity();
             String featureName = comps.get(i).getLastMarkPassed();
-            RaceEvent raceEvent = new RaceEvent(teamName, speed, featureName, i + 1);
+            Integer sourceId = comps.get(i).getSourceID();
+            RaceEvent raceEvent = new RaceEvent(sourceId, teamName, featureName, speed, i + 1);
             events.add(raceEvent);
         }
+
         return comps;
     }
 

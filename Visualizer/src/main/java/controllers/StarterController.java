@@ -32,6 +32,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static utilities.EnvironmentConfig.currentStream;
+
 /**
  * Created by rjc249 on 5/04/17.
  * Controller for the start scene.
@@ -106,9 +108,7 @@ public class StarterController implements Initializable, ClockHandler {
             }
         });
         starterList.setItems(compList);
-
         streamCombo.getItems().addAll(EnvironmentConfig.liveStream, EnvironmentConfig.csseStream, EnvironmentConfig.mockStream);
-
 
 
     }
@@ -121,7 +121,6 @@ public class StarterController implements Initializable, ClockHandler {
      */
     @FXML
     public void confirmStream() {
-
 
         //get the selected stream
         String host = this.streamCombo.getSelectionModel().getSelectedItem();
@@ -136,9 +135,11 @@ public class StarterController implements Initializable, ClockHandler {
         boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
 
         if (streaming) {
+            EnvironmentConfig.currentStream = host;
+
             this.streamCombo.setDisable(true);
             this.confirmButton.setDisable(true);
-
+            currentStream = host;
             this.setFields();
         }
 
@@ -176,16 +177,10 @@ public class StarterController implements Initializable, ClockHandler {
         while (dataSource.getCourseTimezone() == null) {
             System.out.print("");
         }
-
-
-
         this.worldClock = new WorldClock(this, dataSource.getCourseTimezone());
         worldClock.start();
-
         compList.setAll(dataSource.getCompetitorsPosition());
         raceStatus.setText(dataSource.getRaceStatus().toString());
-
-//        System.out.println(dataSource.getRaceStatus());
 
         if (dataSource.getCompetitorsPosition().size() == 0) {
             Stage thisStage = (Stage) countdownButton.getScene().getWindow();
@@ -212,9 +207,6 @@ public class StarterController implements Initializable, ClockHandler {
                         new KeyValue(timeSeconds, 0)));
         timeline.play();
 
-
-
-
         timeline.setOnFinished(new EventHandler<ActionEvent>() {
             //after 5 seconds, load race course view
             @Override
@@ -227,6 +219,7 @@ public class StarterController implements Initializable, ClockHandler {
                     e.printStackTrace();
                 }
 
+                assert root != null;
                 Scene scene = new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
 
                 MainController mainController = loader.getController();
@@ -237,14 +230,7 @@ public class StarterController implements Initializable, ClockHandler {
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinWidth(primaryScreenBounds.getWidth());
-//                primaryStage.setX((primaryScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-//                primaryStage.setY((primaryScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                assert root != null;
-
-
                 primaryStage.setScene(scene);
-
-
             }
         });
     }

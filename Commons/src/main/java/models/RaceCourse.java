@@ -9,51 +9,24 @@ import java.util.List;
 public class RaceCourse implements Course {
 
     private List<CourseFeature> points;
-    private List<MutablePoint> boundaryPoints;
-    private double windDirection;
 
     /**
      * A constructor for the RaceCourse
-     * @param points         List points on the course
-     * @param boundaryPoints List the points that make up the course boundary
-     * @param windDirection  double the direction of the wind
+     * @param points List points on the course
+     * @param useGPS boolean true if using GPS to calculate headings
      */
-    public RaceCourse(List<CourseFeature> points, List<MutablePoint> boundaryPoints, double windDirection, boolean useGPS) {
+    public RaceCourse(List<CourseFeature> points, boolean useGPS) {
         this.points = points;
-        this.boundaryPoints = boundaryPoints;
-        this.windDirection = windDirection;
         this.calculateHeadings(useGPS);
     }
 
-    /**
-     * Get wind direction
-     *
-     * @return double the angle of wind direction
-     */
-    public double getWindDirection() {
-        return windDirection;
-    }
-
-    /**
-     * Getter for the points in the course
-     *
-     * @return List a list of course points
-     */
     public List<CourseFeature> getPoints() {
         return points;
     }
 
     /**
-     * Getter for the boundary points
-     *
-     * @return List the points that make up the boundary
-     */
-    public List<MutablePoint> getBoundaryPoints() {
-        return this.boundaryPoints;
-    }
-
-    /**
      * Calculates exit headings of each course point and sets the course point property, can choose between GPS coordinates or Pixel Coordinates
+     * @param useGPS boolean true if using GPS to calculate
      */
     private void calculateHeadings(boolean useGPS) {
         if (useGPS) {
@@ -108,8 +81,7 @@ public class RaceCourse implements Course {
                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to metres
-        return distance;
+        return R * c * 1000; // convert to metres
     }
 
 

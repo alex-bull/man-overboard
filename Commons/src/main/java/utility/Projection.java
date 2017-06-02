@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Created by ke on 19/05/17.
+ * Projection utility methods
  */
 public class Projection {
     /**
@@ -20,6 +21,7 @@ public class Projection {
         siny=Math.min(Math.max(siny,-0.9999),0.9999);
         ret.add(size*(0.5+lng/360));
         ret.add(size*(0.5-Math.log((1+siny)/(1-siny))/(4*Math.PI)));
+
         return ret;
     }
 }

@@ -30,7 +30,13 @@ public interface Competitor {
 
     int getCurrentLegIndex();
 
-    void setCurrentLegIndex(int legIndex);
+    void setLatitude(double latitude);
+
+    void setLongitude(double longitude);
+
+    double getLatitude();
+
+    double getLongitude();
 
     long getTimeToNextMark();
 
@@ -50,15 +56,8 @@ public interface Competitor {
 
     void setCurrentHeading(double currentHeading);
 
-    int getLegIndex();
-
-    void setLegIndex(int legIndex);
-
-    DoubleProperty getHeadingProperty();
+    void setCurrentLegIndex(int legIndex);
 
     int getSourceID();
-
-    void setProperties(double velocity, double heading, double latitude, double longitude);
-
 
 }

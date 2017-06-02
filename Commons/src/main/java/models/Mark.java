@@ -15,9 +15,7 @@ public class Mark implements CourseFeature {
     private MutablePoint GPSLocation;
     private double exitHeading;
     private boolean isFinish = false;
-    private boolean isLine = false;
     private int index;
-    private int zoneSize;
     private int rounding;
 
     /**
@@ -35,75 +33,28 @@ public class Mark implements CourseFeature {
         this.index = index;
     }
 
-    /**
-     * Always returns false for a mark
-     *
-     * @return boolean false there is no line for a mark
-     */
+
     public boolean isLine() {
         return false;
     }
 
-    /**
-     * Getter for rounding
-     *
-     * @return String rounding. Represents how the course feature is passed.
-     */
     @Override
     public int getRounding() {
         return this.rounding;
     }
 
-    /**
-     * Setter for rounding
-     *
-     * @param rounding
-     */
     @Override
     public void setRounding(int rounding) {
         this.rounding = rounding;
     }
 
-    /**
-     * Getter for zoneSize
-     *
-     * @return int zoneSize
-     */
-    @Override
-    public int getZoneSize() {
-        return this.zoneSize;
-    }
-
-    /**
-     * Setter for zoneSize
-     *
-     * @param zoneSize
-     */
-    @Override
-    public void setZoneSize(String zoneSize) {
-        this.zoneSize = Integer.valueOf(zoneSize);
-    }
-
-    /**
-     * Getter for isFinish flag
-     *
-     * @return boolean isFinish
-     */
-    public boolean isFinish() {
-        return this.isFinish;
-    }
-
-    /**
-     * Getter for the mark name
-     *
-     * @return String the name
-     */
     public String getName() {
         return this.name;
     }
 
+
     /**
-     * Getter for the course pixelLocation
+     * Getter for the a list of pixel locations
      *
      * @return MutablePoint, the coordinates of the mark
      */
@@ -112,6 +63,14 @@ public class Mark implements CourseFeature {
         List<MutablePoint> points = new ArrayList<>();
         points.add(this.pixelLocation);
         return points;
+    }
+
+    /**
+     * Get the centre point in the view frame
+     * @return MutablePoint
+     */
+    public MutablePoint getPixelCentre() {
+        return this.pixelLocation;
     }
 
     /**
@@ -136,7 +95,6 @@ public class Mark implements CourseFeature {
 
     /**
      * Factors point to fit the screen
-     *
      * @param xFactor double the factor to scale by in the x axis
      * @param yFactor double the factor to scale by in the y axis
      * @param minX    double the min x value
@@ -147,18 +105,24 @@ public class Mark implements CourseFeature {
         pixelLocation.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
     }
 
+    /**
+     * Compares mark objects's name, isFinish and location to see if they are equal.
+     * @param o Object
+     * @return boolean true if the objects are equal
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Mark mark = (Mark) o;
-
-        if (isFinish != mark.isFinish) return false;
-        if (name != null ? !name.equals(mark.name) : mark.name != null) return false;
-        return pixelLocation != null ? pixelLocation.equals(mark.pixelLocation) : mark.pixelLocation == null;
+        return isFinish == mark.isFinish && (name != null ? name.equals(mark.name) : mark.name == null) &&
+                (pixelLocation != null ? pixelLocation.equals(mark.pixelLocation) : mark.pixelLocation == null);
     }
 
+    /**
+     * Generates a hashcode with a built in algorithm from Intellij
+     * @return int a hashcode
+     */
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
@@ -167,20 +131,10 @@ public class Mark implements CourseFeature {
         return result;
     }
 
-    /**
-     * Getter for the exitHeading property
-     *
-     * @return Double the heading
-     */
     public double getExitHeading() {
         return this.exitHeading;
     }
 
-    /**
-     * Sets the exitHeading property
-     *
-     * @param exitHeading Double the direction in which competitors exit the mark.
-     */
     public void setExitHeading(Double exitHeading) {
         this.exitHeading = exitHeading;
     }

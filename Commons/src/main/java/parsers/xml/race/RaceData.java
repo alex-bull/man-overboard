@@ -1,9 +1,6 @@
 package parsers.xml.race;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by psu43 on 26/04/17.
@@ -11,11 +8,6 @@ import java.util.Set;
  */
 public class RaceData {
 
-    private int raceID;
-    private String raceType;
-    private String creationTimeDate;
-    private String raceStartTime;
-    private boolean raceStartTimePostpone;
     private List<YachtData> participants = new ArrayList<>();
     private Set<Integer> participantIDs = new HashSet<>();
     private List<MarkData> startMarks = new ArrayList<>();
@@ -25,10 +17,15 @@ public class RaceData {
     private Set<Integer> compoundMarkIDs = new HashSet<>();
     private Set<Integer> markIDs = new HashSet<>();
     private List<LimitData> courseLimit = new ArrayList<>();
+    private Map<Integer, List<Integer>> legIndexToSourceId = new HashMap<>();
 
 
-    public RaceData() {
-    }
+    RaceData() {}
+
+    /**
+     * Gets a list of start marks ID from the startMarks list
+     * @return List list of start marks ids
+     */
     public List<Integer> getStartMarksID(){
         List<Integer> returnList=new ArrayList<>();
         for(MarkData mark:startMarks){
@@ -36,6 +33,11 @@ public class RaceData {
         }
         return returnList;
     }
+
+    /**
+     * From the finish marks list, get the finish marks id
+     * @return List the list of finish mark ids
+     */
     public List<Integer> getFinishMarksID(){
         List<Integer> returnList=new ArrayList<>();
         for(MarkData mark:finishMarks){
@@ -43,19 +45,18 @@ public class RaceData {
         }
         return returnList;
     }
+
+
+
     public List<MarkData> getStartMarks() {
         return this.startMarks;
     }
 
-    public void setStartMarks(List<MarkData> startMarks) {
+    void setStartMarks(List<MarkData> startMarks) {
         this.startMarks = startMarks;
     }
 
-    public List<MarkData> getFinishMarks() {
-        return this.finishMarks;
-    }
-
-    public void setFinishMarks(List<MarkData> finishMarks) {
+    void setFinishMarks(List<MarkData> finishMarks) {
         this.finishMarks = finishMarks;
     }
 
@@ -67,103 +68,46 @@ public class RaceData {
         this.course = course;
     }
 
-    public int getRaceID() {
-        return raceID;
-    }
-
-    public void setRaceID(int raceID) {
-        this.raceID = raceID;
-    }
-
-    public String getRaceType() {
-        return raceType;
-    }
-
-    public void setRaceType(String raceType) {
-        this.raceType = raceType;
-    }
-
-    public String getCreationTimeDate() {
-        return creationTimeDate;
-    }
-
-    public void setCreationTimeDate(String creationTimeDate) {
-        this.creationTimeDate = creationTimeDate;
-    }
-
-    public String getRaceStartTime() {
-        return raceStartTime;
-    }
-
-    public void setRaceStartTime(String raceStartTime) {
-        this.raceStartTime = raceStartTime;
-    }
-
-    public boolean isRaceStartTimePostpone() {
-        return raceStartTimePostpone;
-    }
-
-    public void setRaceStartTimePostpone(boolean raceStartTimePostpone) {
-        this.raceStartTimePostpone = raceStartTimePostpone;
-    }
-
-    public List<YachtData> getParticipants() {
+    List<YachtData> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(List<YachtData> participants) {
-        this.participants = participants;
-    }
-
-    public void setParticipantIDs(Set<Integer> participantIDs) {
+    void setParticipantIDs(Set<Integer> participantIDs) {
         this.participantIDs = participantIDs;
     }
 
-    public List<CornerData> getCompoundMarkSequence() {
+    List<CornerData> getCompoundMarkSequence() {
         return compoundMarkSequence;
     }
 
-    public void setCompoundMarkSequence(List<CornerData> compoundMarkSequence) {
-        this.compoundMarkSequence = compoundMarkSequence;
-    }
-
-    public List<LimitData> getCourseLimit() {
+    List<LimitData> getCourseLimit() {
         return courseLimit;
     }
 
-    public void addCourseLimit(LimitData limitData) {
+    void addCourseLimit(LimitData limitData) {
         this.courseLimit.add(limitData);
-    }
-
-    public void setCourseLimit(List<LimitData> courseLimit) {
-        this.courseLimit = courseLimit;
     }
 
     public Set<Integer> getParticipantIDs() {
         return participantIDs;
     }
 
-    public Set<Integer> getCompoundMarkIDs() {
-        return compoundMarkIDs;
-    }
-
-    public void setCompoundMarkIDs(Set<Integer> compoundMarkIDs) {
-        this.compoundMarkIDs = compoundMarkIDs;
-    }
-
-    public void addCompoundMarkID(Integer id) {
-        this.compoundMarkIDs.add(id);
-    }
-
     public Set<Integer> getMarkIDs() {
         return markIDs;
     }
 
-    public void setMarkIDs(Set<Integer> markIDs) {
-        this.markIDs = markIDs;
+    void addMarkID(Integer markId) {
+        this.markIDs.add(markId);
     }
 
-    public void addMarkID(Integer markId) {
-        this.markIDs.add(markId);
+    public Map<Integer, List<Integer>> getLegIndexToSourceId() {
+        return legIndexToSourceId; }
+
+    public void setLegIndexToSourceId(Map<Integer, List<Integer>> indexToSourceId) {
+        this.legIndexToSourceId = indexToSourceId;
+    }
+
+    public void addCompoundMarkID(Integer markId) {
+        this.compoundMarkIDs.add(markId);
     }
 }

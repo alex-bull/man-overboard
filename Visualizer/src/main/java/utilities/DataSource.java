@@ -5,12 +5,11 @@ import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
 import parsers.RaceStatusEnum;
-import parsers.markRounding.MarkRoundingData;
-import parsers.xml.race.CompoundMarkData;
-import parsers.xml.race.MarkData;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by mgo65 on 11/05/17.
@@ -28,13 +27,12 @@ public interface DataSource {
     long getExpectedStartTime();
     List<Competitor> getCompetitorsPosition();
     double getWindDirection();
-    int getNumBoats();
     double getWindSpeed();
     HashMap<Integer, CourseFeature> getStoredFeatures();
-    double getCentralLongitude();
-    double getCentralLatitude();
+    Map<Integer, Competitor> getStoredCompetitors();
+    Map<Integer, CourseFeature> getCourseFeatureMap();
+    Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures();
     List<Double> getGPSbounds();
-    List<MutablePoint> getcourseGPSBoundary();
     int getMapZoomLevel();
     double getShiftDistance();
 }

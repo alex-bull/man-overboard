@@ -3,8 +3,6 @@ package parsers.boatLocation;
 import models.CourseFeature;
 import models.Mark;
 import models.MutablePoint;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,11 +22,9 @@ public class BoatDataParser {
     /**
      * Process the given data and parse source id, latitude, longitude, heading, speed
      * @param body byte[] a byte array of the boat data message
-     * @param width double the width of the screen
-     * @param height double the height of the screen
      * @return BoatData boat data object
      */
-    public BoatData processMessage(byte[] body,  double width, double height) {
+    public BoatData processMessage(byte[] body) {
         try {
             Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
             int deviceType = hexByteArrayToInt(Arrays.copyOfRange(body, 15, 16));
@@ -39,7 +35,6 @@ public class BoatDataParser {
             int speed = hexByteArrayToInt(Arrays.copyOfRange(body, 38, 40));
             //speed in m/sec
             double convertedSpeed = speed / 1000.0;
-
             List<Double> point = mercatorProjection(latitude, longitude);
             double pointX = point.get(0);
             double pointY = point.get(1);
@@ -48,7 +43,6 @@ public class BoatDataParser {
                 MutablePoint GPS = new MutablePoint(latitude, longitude);
                 this.courseFeature = new Mark(sourceID.toString(), pixelPoint, GPS, 0);
             }
-
             return new BoatData(sourceID, deviceType, latitude, longitude, heading, convertedSpeed, pixelPoint);
         }
         catch (Exception e) {

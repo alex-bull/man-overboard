@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.web.*?>
-<?import java.lang.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.canvas.*?>
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<?import javafx.scene.Group?>
 
 <AnchorPane fx:id="raceView" layoutX="69.0" layoutY="26.0" prefHeight="1080.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
 
@@ -32,7 +29,7 @@
                 <CheckBox fx:id="nameButton" mnemonicParsing="false" text="Team Name" />
                 <CheckBox fx:id="speedButton" layoutY="30.0" mnemonicParsing="false" text="Speed" />
                 <CheckBox fx:id="timeToMarkButton" layoutY="61.0" mnemonicParsing="false" text="Est Time to Next Mark" />
-            <CheckBox fx:id="timeFromMarkButton" layoutY="92.0" mnemonicParsing="false" text="Time from Last Mark" />
+                <CheckBox fx:id="timeFromMarkButton" layoutY="92.0" mnemonicParsing="false" text="Time from Last Mark" />
             </children>
         </Group>
     </children>

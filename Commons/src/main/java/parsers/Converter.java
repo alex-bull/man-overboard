@@ -1,7 +1,5 @@
 package parsers;
 
-import javafx.scene.paint.Color;
-
 /**
  * Created by psu43 on 13/04/17.
  * Common parser functions
@@ -32,7 +30,6 @@ public class Converter {
         return (double) hexByteArrayToInt(hexValues) * 360.0 / 65536.0;
     }
 
-
     /**
      * Convert a byte array of little endian hex values into a long
      *
@@ -47,18 +44,17 @@ public class Converter {
         return value;
     }
 
-
     /**
-     * Convert the real time to relative time
-     *
-     * @param realTime real time from parser
-     * @param messageTime time message was received
-     * @return converted time in milliseconds
+     * Convert the real time to the difference in time in seconds.
+     * If the message time is after (larger than) the real time, the returned time will be positive
+     * @param realTime real time (in milliseconds) from parser
+     * @param messageTime time message was received (in milliseconds)
+     * @return converted time (in seconds)
      */
     public static long convertToRelativeTime(long realTime, long messageTime){
         long relativeTime = 0;
         if (realTime != 0 && messageTime != 0) {
-            relativeTime = realTime - messageTime;
+            relativeTime = (messageTime - realTime)/1000;
         }
         return relativeTime;
     }
@@ -68,7 +64,7 @@ public class Converter {
      * @param status Integer the race status integer
      * @return String the description of the race status
      */
-    public static String raceStatusToString(RaceStatusEnum status) {
+    static String raceStatusToString(RaceStatusEnum status) {
         String statusString;
         switch(status) {
             case NOT_ACTIVE:

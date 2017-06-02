@@ -5,25 +5,17 @@ package parsers.courseWind;
  * Wind status for each Wind ID
  */
 public class WindStatus {
-
-    private int windID;
-    private long time;
-    private int raceID;
     private double windDirection;
     private int windSpeed;
-    private double bestUpwindAngle;
-    private double bestDownwindAngle;
-    private int flags;
 
-    WindStatus(int windID, long time, int raceID, double windDirection, int windSpeed, double bestUpwindAngle, double bestDownwindAngle, int flags) {
-        this.windID = windID;
-        this.time = time;
-        this.raceID = raceID;
+    /**
+     * Wind status
+     * @param windDirection double wind direction
+     * @param windSpeed int wind speed in mm/s
+     */
+    WindStatus(double windDirection, int windSpeed) {
         this.windDirection = windDirection;
         this.windSpeed = windSpeed;
-        this.bestUpwindAngle = bestUpwindAngle;
-        this.bestDownwindAngle = bestDownwindAngle;
-        this.flags = flags;
     }
 
     public int getWindSpeed() {

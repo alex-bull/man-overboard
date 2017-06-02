@@ -11,7 +11,13 @@ public class MarkRoundingData {
     private String markName;
     private long roundingTime;
 
-    public MarkRoundingData(Integer sourceID, Integer markID, long roundingTime) {
+    /**
+     * Mark rounding data
+     * @param sourceID Integer source id of the mark
+     * @param markID Integer mark id
+     * @param roundingTime long the time of the mark rounding
+     */
+    MarkRoundingData(Integer sourceID, Integer markID, long roundingTime) {
         this.sourceID = sourceID;
         this.markID = markID;
         this.roundingTime = roundingTime;

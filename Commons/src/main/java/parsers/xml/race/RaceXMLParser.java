@@ -37,43 +37,43 @@ public class RaceXMLParser {
     private double zoomLevel;
     private double shiftDistance;
 
+    /**
+     * initializer to initialize variables
+     */
+    public RaceXMLParser() {
+        xMercatorCoords = new ArrayList<>();
+        yMercatorCoords = new ArrayList<>();
+        maxLat = -180;
+        maxLng = -180;
+        minLat = 180;
+        minLng = 180;
+    }
+
 
     /**
      * Parse XML race data
+     *
      * @param xmlStr XML String of race data
-     * @param width double the width of the screen
+     * @param width  double the width of the screen
      * @param height height the height of the screen
      * @return RaceData the parsed race data
-     * @throws IOException IOException
+     * @throws IOException   IOException
      * @throws JDOMException JDOMException
      */
     public RaceData parseRaceData(String xmlStr, double width, double height) throws IOException, JDOMException {
         this.width = width;
         this.height = height;
+
         courseGPSBoundary = new ArrayList<>();
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
         Document root = builder.build(stream);
         Element race = root.getRootElement();
-
-        int raceID = Integer.parseInt(race.getChild("RaceID").getValue());
-        String raceType = race.getChild("RaceType").getValue();
-        String creationTimeDate = race.getChild("CreationTimeDate").getValue();
-        String raceStartTime = race.getChild("RaceStartTime").getAttributeValue("Time");
-        boolean raceStartTimePostponed = Boolean.parseBoolean(race.getChild("RaceStartTime").getAttributeValue("Postpone"));
-
-        raceData.setRaceID(raceID);
-        raceData.setRaceType(raceType);
-        raceData.setCreationTimeDate(creationTimeDate);
-        raceData.setRaceStartTime(raceStartTime);
-        raceData.setRaceStartTimePostpone(raceStartTimePostponed);
-
         Set<Integer> participantIDs = new HashSet<>();
         for (Element yacht : race.getChild("Participants").getChildren()) {
             int sourceID = Integer.parseInt(yacht.getAttributeValue("SourceID"));
-            String entry = yacht.getAttributeValue("Entry");
-            YachtData yachtData = new YachtData(sourceID, entry);
+            YachtData yachtData = new YachtData(sourceID);
             participantIDs.add(sourceID);
             raceData.getParticipants().add(yachtData);
         }
@@ -84,11 +84,14 @@ public class RaceXMLParser {
         List<MarkData> finishMarks = new ArrayList<>();
         boolean startLineSet = false;
 
+        Map<Integer, List<Integer>> compoundMarkIdToSourceId = new HashMap<>();
+
         for (Element compoundMark : race.getChild("Course").getChildren()) {
             int size = race.getChild("Course").getChildren().size();
             int compoundMarkID = Integer.parseInt(compoundMark.getAttribute("CompoundMarkID").getValue());
             String compoundMarkName = compoundMark.getAttribute("Name").getValue();
             List<MarkData> marks = new ArrayList<>();
+            List<Integer> sourceIds = new ArrayList<>();
 
             for (Element mark : compoundMark.getChildren()) {
 
@@ -98,15 +101,16 @@ public class RaceXMLParser {
                 double targetLng = Double.parseDouble(mark.getAttributeValue("TargetLng"));
                 int sourceID = Integer.parseInt(mark.getAttributeValue("SourceID"));
                 raceData.addMarkID(sourceID);
+                sourceIds.add(sourceID);
                 MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
                 marks.add(markData);
             }
+            compoundMarkIdToSourceId.put(compoundMarkID, sourceIds);
             raceData.addCompoundMarkID(compoundMarkID);
             CompoundMarkData compoundMarkData = new CompoundMarkData(compoundMarkID, compoundMarkName, marks);
             course.add(compoundMarkData);
 
-            //Start Line
-            if (!startLineSet){
+            if (!startLineSet) {
                 for (CompoundMarkData mark : course) {
                     if (mark.getName().equals(compoundMarkName) && mark.getMarks().size() == 2) {
                         startMarks.addAll(mark.getMarks());
@@ -124,29 +128,36 @@ public class RaceXMLParser {
             }
             raceData.setStartMarks(startMarks);
             raceData.setFinishMarks(finishMarks);
-
         }
         raceData.setCourse(course);
 
+        Map<Integer, List<Integer>> legIndexToSourceId = new HashMap<>();
+
         for (Element corner : race.getChild("CompoundMarkSequence").getChildren()) {
 
+            int size = race.getChild("CompoundMarkSequence").getChildren().size();
             int cornerSeqID = Integer.parseInt(corner.getAttributeValue("SeqID"));
             int compoundMarkID = Integer.parseInt(corner.getAttributeValue("CompoundMarkID"));
             String rounding = corner.getAttributeValue("Rounding");
             int zoneSize = Integer.parseInt(corner.getAttributeValue("ZoneSize"));
-            CornerData cornerData = new CornerData(cornerSeqID, compoundMarkID, rounding, zoneSize);
+
+            legIndexToSourceId.put(cornerSeqID, compoundMarkIdToSourceId.get(compoundMarkID));
+            CornerData cornerData = new CornerData(rounding);
 
             raceData.getCompoundMarkSequence().add(cornerData);
 
+
         }
+        raceData.setLegIndexToSourceId(legIndexToSourceId);
+
         for (Element limit : race.getChild("CourseLimit").getChildren()) {
-            int limitSeqID = Integer.parseInt(limit.getAttributeValue("SeqID"));
             double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
             double lon = Double.parseDouble(limit.getAttributeValue("Lon"));
-            LimitData limitData = new LimitData(limitSeqID, lat, lon);
+            LimitData limitData = new LimitData(lat, lon);
             raceData.addCourseLimit(limitData);
 
         }
+
         parseRace(raceData);
         return raceData;
     }
@@ -178,12 +189,7 @@ public class RaceXMLParser {
      * @param bufferY  canvas buffer height
      */
     private void parseBoundary(RaceData raceData, double bufferX, double bufferY) throws Exception {
-        maxLat = -180;
-        maxLng = -180;
-        minLat = 180;
-        minLng = 180;
-        this.xMercatorCoords = new ArrayList<>();
-        this.yMercatorCoords = new ArrayList<>();
+
         List<MutablePoint> boundary = new ArrayList<>();
         //loop through the parsed boundary points
         for (LimitData limit : raceData.getCourseLimit()) {

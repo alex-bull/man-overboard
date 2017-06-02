@@ -12,9 +12,10 @@ import static parsers.Converter.hexByteArrayToInt;
 
 /**
  * Created by jar156 on 15/05/17.
+ * Tests for parsing the mark rounding data
  */
 public class MarkRoundingParserTest {
-    MarkRoundingParser markRoundingParser;
+    private MarkRoundingParser markRoundingParser;
 
     @Before
     public void setUp() {
@@ -23,8 +24,6 @@ public class MarkRoundingParserTest {
 
     @Test
     public void ignoresEmptyMarkRoundingPacket() {
-        byte[] packet = {};
-
         try {
             Assert.assertNotNull(markRoundingParser);
         } catch (Exception e) {
@@ -34,7 +33,6 @@ public class MarkRoundingParserTest {
 
     @Test
     public void ignoresMarkRoundingPacketWithMissingInfo() {
-        byte[] header = {37,0,0,0};
         byte[] packet = new byte[12];
 
         try {

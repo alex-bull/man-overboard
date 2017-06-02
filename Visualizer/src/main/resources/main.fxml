@@ -33,7 +33,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ProgressIndicator fx:id="indicator" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <ProgressIndicator fx:id="indicator" mouseTransparent="true" GridPane.columnIndex="3" GridPane.rowIndex="3" />
             <Text fx:id="team" strokeType="OUTSIDE" strokeWidth="0.0" text="Zaffre Tides" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <font>
                   <Font name="Gentium Book Basic Bold Italic" size="200.0" />
@@ -51,6 +51,5 @@
             </Text>
          </children>
       </GridPane>
-
     </children>
 </AnchorPane>

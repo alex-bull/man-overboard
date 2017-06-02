@@ -10,6 +10,7 @@ import static parsers.Converter.parseHeading;
 
 /**
  * Created by psu43 on 13/04/17.
+ * Tests for the Converter Class
  */
 public class ConverterTest {
     @Test
@@ -25,11 +26,11 @@ public class ConverterTest {
     @Test
     public void hexByteArrayToLongTest() throws Exception {
         byte[] testByteArray={0x68,83,127,-127,12,12};
-        assertEquals(13247851746152l,hexByteArrayToLong(testByteArray));
+        assertEquals(13247851746152L,hexByteArrayToLong(testByteArray));
 
 
-        byte[] testByteArray2={0x68,-83,-38,0x2E,00,00};
-        assertEquals(786083176l,hexByteArrayToLong(testByteArray2));
+        byte[] testByteArray2={0x68,-83,-38,0x2E, 0, 0};
+        assertEquals(786083176L,hexByteArrayToLong(testByteArray2));
     }
 
     @Test
@@ -56,6 +57,35 @@ public class ConverterTest {
         Assert.assertTrue(n == 5);
     }
 
+    @Test
+    public void testConvertRelativeTimeReturnsZeroWhenOneOfTheInputsIsZero(){
+        long testRealTime = 100020000;
+        long testMessageTime = 100000000;
+        Assert.assertEquals(0, Converter.convertToRelativeTime(0, testMessageTime));
+        Assert.assertEquals(0, Converter.convertToRelativeTime(testRealTime, 0));
+    }
+
+    @Test
+    public void testConvertRelativeTimeReturnsPositiveWhenMessageTimeAfterRealTime(){
+        long testRealTime = 20 * 1000;
+        long testMessageTime = 30 * 1000; // milliseconds
+        Assert.assertTrue(Converter.convertToRelativeTime(testRealTime, testMessageTime) > 0);
+    }
+
+    @Test
+    public void testConvertRelativeTimeReturnsNegativeWhenMessageTimeBeforeRealTime(){
+        long testRealTime = 30 * 1000;
+        long testMessageTime = 20 * 1000; // milliseconds
+        Assert.assertTrue(Converter.convertToRelativeTime(testRealTime, testMessageTime) < 0);
+    }
+
+    @Test
+    public void testConvertRelativeTimeReturnsTheCorrectDifference(){
+        long testRealTime = 100 * 1000;
+        long testMessageTime = 200 * 1000;
+        long difference = 100;
+        Assert.assertEquals(difference, Converter.convertToRelativeTime(testRealTime, testMessageTime));
+    }
 
 
     @Test
