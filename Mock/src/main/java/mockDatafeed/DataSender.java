@@ -1,16 +1,13 @@
 package mockDatafeed;
 
-import com.google.common.collect.Iterables;
-
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.*;
+import java.util.HashSet;
 
 /**
  * Created by khe60 on 10/04/17.
@@ -20,6 +17,7 @@ class DataSender {
 
     private Selector selector;
     private ServerSocketChannel serverSocket;
+
     /**
      * Constructor for DataSender, creates port at given port
      *
@@ -27,28 +25,29 @@ class DataSender {
      * @throws IOException IOException
      */
     DataSender(int port) throws IOException {
-        selector= Selector.open();
-        serverSocket=ServerSocketChannel.open();
+        selector = Selector.open();
+        serverSocket = ServerSocketChannel.open();
         serverSocket.configureBlocking(false);
-        serverSocket.socket().bind(new InetSocketAddress("localhost",port));
+        serverSocket.socket().bind(new InetSocketAddress("localhost", port));
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
     }
 
 
     /**
      * The establishment period of the datasender, runs for time milliseconds
+     *
      * @param time the amount of time in milliseconds of the connection establishment period
      */
-    public void establishConnection(long time) throws IOException {
+    void establishConnection(long time) throws IOException {
         System.out.println("start client connection");
-        long finishTime=System.currentTimeMillis()+time;
-        while(System.currentTimeMillis()<finishTime){
+        long finishTime = System.currentTimeMillis() + time;
+        while (System.currentTimeMillis() < finishTime) {
             selector.select(time);
             for (Object key : new HashSet<>(selector.selectedKeys())) {
                 SelectionKey selectionKey = (SelectionKey) key;
                 //accept client connection
                 if (selectionKey.isAcceptable()) {
-                    SocketChannel client  = serverSocket.accept();
+                    SocketChannel client = serverSocket.accept();
                     client.configureBlocking(false);
                     client.register(selector, SelectionKey.OP_WRITE);
 //                    System.out.println(client.getRemoteAddress());
@@ -65,20 +64,19 @@ class DataSender {
      *
      * @param data byte[] byte array of the data
      */
-    public void sendData(byte[] data) throws IOException {
+    void sendData(byte[] data) throws IOException {
 
         selector.select(1);
         for (Object key : new HashSet<>(selector.selectedKeys())) {
             SelectionKey selectionKey = (SelectionKey) key;
             //write to channel if writable
             if (selectionKey.isWritable()) {
-                ByteBuffer buffer=ByteBuffer.wrap(data);
-                SocketChannel client  = (SocketChannel) selectionKey.channel();
+                ByteBuffer buffer = ByteBuffer.wrap(data);
+                SocketChannel client = (SocketChannel) selectionKey.channel();
                 try {
                     client.write(buffer);
-                }
-                catch (IOException e){
-                    System.out.println(client.getRemoteAddress()+" has disconnected, removing client");
+                } catch (IOException e) {
+                    System.out.println(client.getRemoteAddress() + " has disconnected, removing client");
                     ((SelectionKey) key).cancel();
                 }
 
@@ -86,8 +84,8 @@ class DataSender {
             selector.selectedKeys().remove(key);
         }
 
-        }
     }
+}
 
 
 

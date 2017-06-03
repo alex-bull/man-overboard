@@ -23,7 +23,7 @@ public class BoatMocker extends TimerTask {
     private List<Competitor> competitors;
     private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
-    private int raceStatus;
+    private int raceStatus = 3;
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager;
@@ -31,13 +31,13 @@ public class BoatMocker extends TimerTask {
     private MutablePoint prestart;
 
     BoatMocker() throws IOException {
-        binaryPackager = new BinaryPackager();
+        int connectionTime = 5000;
         dataSender = new DataSender(4941);
+        binaryPackager = new BinaryPackager();
         //establishes the connection with Model
-        dataSender.establishConnection(5000);
+        dataSender.establishConnection(connectionTime);
         prestart = new MutablePoint(32.296577, -64.854304);
-        raceStatus = 3;
-        creationTime=ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
     }
 
@@ -50,13 +50,8 @@ public class BoatMocker extends TimerTask {
         BoatMocker me;
         try {
             me = new BoatMocker();
-            //find out the coordinates of the course
             me.generateCourse();
-
-            //generate the boats
             me.generateCompetitors();
-
-            //send all xml data first
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
             Timer raceTimer = new Timer();
@@ -75,7 +70,7 @@ public class BoatMocker extends TimerTask {
      * finds the current course of the race
      */
     private void generateCourse() throws JDOMException, IOException {
-        InputStream mockBoatStream= new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")));
+        InputStream mockBoatStream = new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")));
         CourseXMLParser cl = new CourseXMLParser(mockBoatStream);
         //screen size is not important
         RaceCourse course = new RaceCourse(cl.parseCourse(), false);
@@ -84,7 +79,6 @@ public class BoatMocker extends TimerTask {
 
     /**
      * generates the competitors list given numBoats
-     *
      */
     private void generateCompetitors() {
         competitors = new ArrayList<>();
@@ -122,7 +116,6 @@ public class BoatMocker extends TimerTask {
 
     /**
      * updates the position of all the boats given the boats speed and heading
-     *
      */
     private void updatePosition() {
 
@@ -164,22 +157,23 @@ public class BoatMocker extends TimerTask {
 
     /**
      * formats the racexml template
+     *
      * @param xmlTemplate the template for race xml
      * @return race xml with fields filled
      */
-    private String formatRaceXML(String xmlTemplate){
-        DateTimeFormatter raceIDFormat=DateTimeFormatter.ofPattern("yyMMdd");
-        String raceID=creationTime.format(raceIDFormat)+"01";
-        return String.format(xmlTemplate,raceID,creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    private String formatRaceXML(String xmlTemplate) {
+        DateTimeFormatter raceIDFormat = DateTimeFormatter.ofPattern("yyMMdd");
+        String raceID = creationTime.format(raceIDFormat) + "01";
+        return String.format(xmlTemplate, raceID, creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
     }
 
     /**
      * Send a race xml file to client, uses raceTemplate.xml to generate custom race xml messages
      */
     private void sendRaceXML() throws IOException {
-        int messageType=6;
-        String raceTemplateString= fileToString("/raceTemplate.xml");
-        String raceXML=formatRaceXML(raceTemplateString);
+        int messageType = 6;
+        String raceTemplateString = fileToString("/raceTemplate.xml");
+        String raceXML = formatRaceXML(raceTemplateString);
         dataSender.sendData(binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
 
     }
@@ -187,8 +181,8 @@ public class BoatMocker extends TimerTask {
     /**
      * Send a xml file
      */
-    private void sendXML(String xmlPath,int messageType) throws IOException {
-        String xmlString= CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
+    private void sendXML(String xmlPath, int messageType) throws IOException {
+        String xmlString = CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
         //        String mockBoatsString = Files.toString(new File(xmlPath), Charsets.UTF_8);
         dataSender.sendData(binaryPackager.packageXML(xmlString.length(), xmlString, messageType));
 
@@ -200,7 +194,7 @@ public class BoatMocker extends TimerTask {
     private void sendAllXML() {
 
         try {
-            sendXML("/mock_boats.xml",7);
+            sendXML("/mock_boats.xml", 7);
             sendXML("/mock_regatta.xml", 5);
             sendRaceXML();
         } catch (IOException e) {
