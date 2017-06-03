@@ -386,11 +386,10 @@ public class Interpreter implements DataSource, PacketHandler {
 
             // can get sequence number if needed
             byte[] xmlLengthBytes = Arrays.copyOfRange(message, 12, 14);
-            int xmlLength = hexByteArrayToInt(xmlLengthBytes);
 
+            int xmlLength = hexByteArrayToInt(xmlLengthBytes);
             int start = 14;
             int end = start + xmlLength;
-
             byte[] xmlBytes = Arrays.copyOfRange(message, start, end);
             String charset = "UTF-8";
             String xmlString = "";
@@ -400,7 +399,6 @@ public class Interpreter implements DataSource, PacketHandler {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-
             return xmlString;
         } catch (Exception e) {
             return null;

@@ -1,13 +1,16 @@
 package utilities;
 
+import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.UnresolvedAddressException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.TimerTask;
 
@@ -21,8 +24,9 @@ import static parsers.Converter.hexByteArrayToInt;
  */
 public class DataReceiver extends TimerTask {
 
-    private SocketChannel client;
+//    private SocketChannel client;
     private PacketHandler handler;
+    private DataInputStream dis;
 
     /**
      * Initializes port to receive binary data from
@@ -32,13 +36,13 @@ public class DataReceiver extends TimerTask {
      * @throws IOException IOException
      */
     DataReceiver(String host, int port, PacketHandler handler) throws UnresolvedAddressException, IOException {
-//        Socket receiveSock = new Socket(host, port);
+        Socket receiveSock = new Socket(host, port);
         this.handler = handler;
-//        dis = new DataInputStream(receiveSock.getInputStream());
-//        System.out.println("Start connection to server...");
+        dis = new DataInputStream(receiveSock.getInputStream());
+        System.out.println("Start connection to server...");
 
-        client = SocketChannel.open(new InetSocketAddress(host,port));
-        client.configureBlocking(false);
+//        client = SocketChannel.open(new InetSocketAddress(host,port));
+//        client.configureBlocking(true);
     }
 
     /**
@@ -54,8 +58,8 @@ public class DataReceiver extends TimerTask {
 
         byte[] actual = new byte[2];
 
-        client.read(ByteBuffer.wrap(actual));
-
+//        client.read(ByteBuffer.wrap(actual));
+        dis.read(actual);
         return Arrays.equals(actual, expected);
     }
 
@@ -65,8 +69,10 @@ public class DataReceiver extends TimerTask {
      * @throws IOException IOException
      */
     private byte[] getHeader() throws IOException {
-        byte[] header = new byte[13];
-        client.read(ByteBuffer.wrap(header));
+//        ByteBuffer header=ByteBuffer.allocate(13);
+//        client.read(header);
+        byte[] header=new byte[13];
+        dis.readFully(header);
         return header;
     }
 
@@ -91,8 +97,12 @@ public class DataReceiver extends TimerTask {
             if (isStartOfPacket) {
                 byte[] header = this.getHeader();
                 int length = this.getMessageLength(header);
-                byte[] message = new byte[length];
-                client.read(ByteBuffer.wrap(message));
+                byte[] message=new byte[length];
+                dis.readFully(message);
+//                ByteBuffer message=ByteBuffer.allocate(length);
+//                client.read(message);
+//                System.out.println(length);
+//                System.out.println(new String(message.array(),Charset.defaultCharset()));
                 this.handler.interpretPacket(header, message);
             }
         } catch (EOFException e) {
