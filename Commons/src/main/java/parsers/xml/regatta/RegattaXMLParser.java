@@ -30,6 +30,8 @@ public class RegattaXMLParser {
     /**
      * Parse the Regatta Data
      * @param xmlStr XML String of regatta data
+     * @throws JDOMException JDOMException
+     * @throws IOException IOException
      */
     public RegattaXMLParser(String xmlStr) throws JDOMException, IOException {
 

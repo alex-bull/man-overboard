@@ -28,18 +28,22 @@ public class RaceStatusParser {
             long expectedStartTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 12, 18));
             Integer numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22, 23));
             HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
+            Integer windDirection = hexByteArrayToInt(Arrays.copyOfRange(body, 18, 20));
+            Integer windSpeed = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 22));
+            Double doubleWindDirection = windDirection * 360.0 / 65536.0;
             int currentByte = 24;
 
             for (int i = 0; i < numBoatsInRace; i++) {
                 Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte, currentByte + 4));
                 Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));
-                long estTimeToNextMark = hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
-                estTimeToNextMark = convertToRelativeTime(estTimeToNextMark, currentTime);
+                long timeAtNextMark = hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
+                long estTimeToNextMark = convertToRelativeTime(timeAtNextMark, currentTime) * -1; // returned time is negative because time at next mark is after current time
                 boatStatuses.put(sourceID, new BoatStatus(sourceID, legNumber, estTimeToNextMark));
                 currentByte += 20;
             }
 
-            return new RaceStatusData(currentTime, raceStatusToEnum(raceStatus), expectedStartTime, numBoatsInRace, boatStatuses);
+            return new RaceStatusData(currentTime, raceStatusToEnum(raceStatus), expectedStartTime, doubleWindDirection,
+                    windSpeed, numBoatsInRace, boatStatuses);
 
         }
         catch (Exception e) {

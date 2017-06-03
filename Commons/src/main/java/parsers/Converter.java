@@ -45,16 +45,16 @@ public class Converter {
     }
 
     /**
-     * Convert the real time to relative time in seconds
-     *
-     * @param realTime real time from parser
-     * @param messageTime time message was received
-     * @return converted time in seconds
+     * Convert the real time to the difference in time in seconds.
+     * If the message time is after (larger than) the real time, the returned time will be positive
+     * @param realTime real time (in milliseconds) from parser
+     * @param messageTime time message was received (in milliseconds)
+     * @return converted time (in seconds)
      */
     public static long convertToRelativeTime(long realTime, long messageTime){
         long relativeTime = 0;
         if (realTime != 0 && messageTime != 0) {
-            relativeTime = (realTime - messageTime)/1000;
+            relativeTime = (messageTime - realTime)/1000;
         }
         return relativeTime;
     }

@@ -13,6 +13,7 @@ public class RaceCourse implements Course {
     /**
      * A constructor for the RaceCourse
      * @param points List points on the course
+     * @param useGPS boolean true if using GPS to calculate headings
      */
     public RaceCourse(List<CourseFeature> points, boolean useGPS) {
         this.points = points;
@@ -25,6 +26,7 @@ public class RaceCourse implements Course {
 
     /**
      * Calculates exit headings of each course point and sets the course point property, can choose between GPS coordinates or Pixel Coordinates
+     * @param useGPS boolean true if using GPS to calculate
      */
     private void calculateHeadings(boolean useGPS) {
         if (useGPS) {

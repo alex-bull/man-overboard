@@ -30,6 +30,7 @@ public class Gate implements CourseFeature {
      * @param pixelPoint2 MutablePoint the scaled pixel coordinates of the other end.
      * @param isFinish    boolean true if the gate is a finishing gate
      * @param isLine      boolean true if the gate needs a line
+     * @param index       int the index of the gate
      */
     public Gate(String name, MutablePoint GPSPoint1, MutablePoint pixelPoint1, MutablePoint pixelPoint2, boolean isFinish, boolean isLine, int index) {
 
@@ -94,7 +95,6 @@ public class Gate implements CourseFeature {
      * @return MutablePoint
      */
     public MutablePoint getPixelCentre() {
-        System.out.println(pixelPoint1 +" " + pixelPoint2);
         return new MutablePoint((this.pixelPoint1.getXValue() + this.pixelPoint2.getXValue()) / 2,
                 (this.pixelPoint1.getYValue() + this.pixelPoint2.getYValue()) / 2);
     }

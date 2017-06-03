@@ -52,6 +52,14 @@ public class BoatData {
         return heading;
     }
 
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
     public double getSpeed() {
         return speed;
     }
