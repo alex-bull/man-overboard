@@ -1,122 +1,12 @@
 .background {
     -fx-background-color: #7dcdcd;
+
 }
 
-/*.label {*/
-    /*-fx-font-size: 11pt;*/
-    /*-fx-font-family: "Segoe UI Semibold";*/
-    /*-fx-text-fill: black;*/
-    /*-fx-opacity: 0.6;*/
-/*}*/
-
-/*.label-bright {*/
-    /*-fx-font-size: 11pt;*/
-    /*-fx-font-family: "Segoe UI Semibold";*/
-    /*-fx-text-fill: black;*/
-    /*-fx-opacity: 1;*/
-/*}*/
-
-/*.label-header {*/
-    /*-fx-font-size: 32pt;*/
-    /*-fx-font-family: "Segoe UI Light";*/
-    /*-fx-text-fill: black;*/
-    /*-fx-opacity: 1;*/
-/*}*/
-
-/*#title{*/
-    /*-fx-font-size: 5em;*/
-    /*-fx-fill: #e0efef;*/
-    /*!*-webkit-fx-font-: "Gentium Book Basic Bold Italic";*!*/
-    /*!*-moz-fx-font-: "Gentium Book Basic Bold Italic";*!*/
-    /*!*-ms-fx-font-: "Gentium Book Basic Bold Italic";*!*/
-    /*!*-o-fx-font-: "Gentium Book Basic Bold Italic";*!*/
-    /*!*fx-font-: "Gentium Book Basic Bold Italic";*!*/
-
-/*}*/
-
-
-/*.table-view {*/
-    /*-fx-base: #1d1d1d;*/
-    /*-fx-control-inner-background: #1d1d1d;*/
-    /*-fx-background-color: #1d1d1d;*/
-    /*-fx-table-cell-border-color: transparent;*/
-    /*-fx-table-header-border-color: transparent;*/
-    /*-fx-padding: 5;*/
-/*}*/
-
-/*.table-view .column-header-background {*/
-    /*-fx-background-color: transparent;*/
-/*}*/
-
-/*.table-view .column-header, .table-view .filler {*/
-    /*-fx-size: 35;*/
-    /*-fx-border-width: 0 0 1 0;*/
-    /*-fx-background-color: transparent;*/
-    /*-fx-border-color:*/
-            /*transparent*/
-            /*transparent*/
-            /*derive(-fx-base, 80%)*/
-            /*transparent;*/
-    /*-fx-border-insets: 0 10 1 0;*/
-/*}*/
-
-/*.table-view .column-header .label {*/
-    /*-fx-font-size: 20pt;*/
-    /*-fx-font-family: "Segoe UI Light";*/
-    /*-fx-text-fill: white;*/
-    /*-fx-alignment: center-left;*/
-    /*-fx-opacity: 1;*/
-/*}*/
-
-/*.table-view:focused .table-row-cell:filled:focused:selected {*/
-    /*-fx-background-color: -fx-focus-color;*/
-/*}*/
-
-/*.split-pane:horizontal > .split-pane-divider {*/
-    /*-fx-border-color: transparent #1d1d1d transparent #1d1d1d;*/
-    /*-fx-background-color: transparent, derive(#1d1d1d,20%);*/
-/*}*/
-
-/*.split-pane {*/
-    /*-fx-padding: 1 0 0 0;*/
-/*}*/
-
-/*.menu-bar {*/
-    /*-fx-background-color: derive(#1d1d1d,20%);*/
-/*}*/
-
-/*.context-menu {*/
-    /*-fx-background-color: derive(#1d1d1d,50%);*/
-/*}*/
-
-/*.menu-bar .label {*/
-    /*-fx-font-size: 14pt;*/
-    /*-fx-font-family: "Segoe UI Light";*/
-    /*-fx-text-fill: white;*/
-    /*-fx-opacity: 0.9;*/
-/*}*/
-
-/*.menu .left-container {*/
-    /*-fx-background-color: black;*/
-/*}*/
-
-/*.text-field {*/
-    /*-fx-font-size: 12pt;*/
-    /*-fx-font-family: "Segoe UI Semibold";*/
-/*}*/
-
-/*
- * Metro style Push Button
- * Author: Pedro Duque Vieira
- * http://pixelduke.wordpress.com/2012/10/23/jmetro-windows-8-controls-on-java/
- */
 .button {
     -fx-padding: 5 22 5 22;
-    /*-fx-border-color: #99EEED;*/
-    /*-fx-border-width: 1;*/
-    /*-fx-border-radius: 4;*/
-    -fx-background-radius: 4;
-    -fx-background-color: #e0efef;
+    -fx-background-color: white;
+    -fx-opacity: 0.8;
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-font-size: 11pt;
     -fx-text-fill: #0014A8;
@@ -131,15 +21,11 @@
 
 .button:pressed, .button:default:hover:pressed {
     -fx-background-color: white;
-    -fx-text-fill: #1d1d1d;
     -fx-background-radius: 4;
 
 }
 
 .button:focused {
-    -fx-border-color: white, white;
-    -fx-border-width: 1, 1;
-    -fx-border-style: solid, segments(1, 1);
     -fx-background-radius: 4;
     -fx-border-insets: 1 1 1 1, 0;
 }
@@ -150,17 +36,8 @@
     -fx-text-fill: white;
 }
 
-.button:default {
-    -fx-background-color: -fx-focus-color;
-    -fx-text-fill: #ffffff;
-}
-
-.button:default:hover {
-    -fx-background-color: derive(-fx-focus-color,30%);
-}
 
 /*logo colours : 0014A8, 3FA9F5, 99EEED*/
-
 
 .combo-box
 {
@@ -168,13 +45,12 @@
     -fx-min-height: 30;
     -fx-background-color: white;
     -fx-opacity: 0.8;
-
-    /*-fx-border-color: #3FA9F5;*/
 }
 
 .combo-box-popup .list-view .list-cell:hover {
     -fx-text-fill: #0014A8;
     -fx-background-color: white;
+    -fx-opacity: 0.8;
 
 }
 
@@ -182,15 +58,10 @@
     -fx-text-fill: #0014A8;
 }
 
-.combo-box-popup .list-view
-{
-    -fx-background-color: -fx-box-border, -fx-control-inner-background;
-    -fx-background-insets: 0, 1;
-    /*-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );*/
-}
 .combo-box-popup .list-view .list-cell
 {
     -fx-background-color: #ececec;
     -fx-text-fill: black;
-    -fx-font-family: Oxygen Light;
+    -fx-opacity: 0.8;
+
 }

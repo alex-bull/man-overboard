@@ -48,7 +48,6 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML private Button confirmButton;
     @FXML private Label raceStatus;
     @FXML private ComboBox<String> streamCombo;
-    @FXML private Label title;
     private Clock worldClock;
     private Stage primaryStage;
     private ObservableList<Competitor> compList;
@@ -143,6 +142,9 @@ public class StarterController implements Initializable, ClockHandler {
             currentStream = host;
             this.setFields();
         }
+        else {
+            System.out.println("Sorry cannot connect right now.");
+        }
 
 
     }
@@ -227,11 +229,10 @@ public class StarterController implements Initializable, ClockHandler {
 
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 primaryStage.setTitle("RaceVision");
-                primaryStage.setWidth(primaryScreenBounds.getWidth());
-                primaryStage.setHeight(primaryScreenBounds.getHeight());
-                primaryStage.setMinHeight(primaryScreenBounds.getHeight());
-                primaryStage.setMinWidth(primaryScreenBounds.getWidth());
+//                primaryStage.setMaxWidth(primaryScreenBounds.getWidth());
+//                primaryStage.setMaxHeight(primaryScreenBounds.getHeight());
                 primaryStage.setScene(scene);
+                primaryStage.setFullScreen(true);
             }
         });
     }
