@@ -35,8 +35,8 @@ public class App extends javafx.application.Application {
 //        java.awt.Image image = Toolkit.getDefaultToolkit().getImage(imagePath);
 //        Application.getApplication().setDockIconImage(image);
 
-        primaryStage.setMinWidth(530);
-        primaryStage.setMinWidth(548);
+//        primaryStage.setMinWidth(600);
+//        primaryStage.setMinHeight(548);
         primaryStage.setScene(new Scene(root));
 
         //set on close requests

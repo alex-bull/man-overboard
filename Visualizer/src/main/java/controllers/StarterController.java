@@ -48,6 +48,7 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML private Button confirmButton;
     @FXML private Label raceStatus;
     @FXML private ComboBox<String> streamCombo;
+    @FXML private Label title;
     private Clock worldClock;
     private Stage primaryStage;
     private ObservableList<Competitor> compList;
