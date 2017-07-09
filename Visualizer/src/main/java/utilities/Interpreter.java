@@ -317,6 +317,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     }
                     break;
                 case RACE:
+                    System.out.println("received Race");
                     if(!seenRaceXML) {
                         this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
                         this.courseBoundary = raceXMLParser.getCourseBoundary();

@@ -927,6 +927,9 @@ public class RaceViewController implements Initializable, TableObserver {
             if (dataSource.getRaceStatus().equals(PREPARATORY)) {
                 startAnnotation = getStartSymbol(boat);
             }
+            else{
+                startAnnotation="";
+            }
 
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
