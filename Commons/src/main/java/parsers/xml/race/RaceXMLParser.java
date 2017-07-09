@@ -36,7 +36,8 @@ public class RaceXMLParser {
     private double minLng;
     private double zoomLevel;
     private double shiftDistance;
-
+    private double xMin;
+    private double yMin;
     /**
      * initializer to initialize variables
      */
@@ -153,8 +154,6 @@ public class RaceXMLParser {
         for (Element limit : race.getChild("CourseLimit").getChildren()) {
             double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
             double lon = Double.parseDouble(limit.getAttributeValue("Lon"));
-            System.out.println(lat);
-            System.out.println(lon);
             LimitData limitData = new LimitData(lat, lon);
             raceData.addCourseLimit(limitData);
 
@@ -250,32 +249,33 @@ public class RaceXMLParser {
                 yMercatorCoords.add(point1Y);
             }
         }
+        if(scaleFactor==0.0) {
+            xMin=Collections.min(xMercatorCoords);
+            yMin=Collections.min(yMercatorCoords);
+            double xDifference = (Collections.max(xMercatorCoords) - xMin);
+            double yDifference = (Collections.max(yMercatorCoords) - yMin);
 
-        double xDifference = (Collections.max(xMercatorCoords) - Collections.min(xMercatorCoords));
-        double yDifference = (Collections.max(yMercatorCoords) - Collections.min(yMercatorCoords));
+            if (xDifference == 0 || yDifference == 0) {
+                throw new Exception("Attempted to divide by zero");
+            }
+            double xFactor = (width - bufferX) / xDifference;
+            double yFactor = (height - bufferY) / yDifference;
 
-        if (xDifference == 0 || yDifference == 0) {
-            throw new Exception("Attempted to divide by zero");
+
+            //make scaling in proportion
+            scaleFactor = Math.min(xFactor, yFactor);
+
+            //set scale factor to the largest power of 2 thats smaller than current value
+            this.zoomLevel = Math.floor(DoubleMath.log2(scaleFactor));
+            scaleFactor = Math.pow(2, zoomLevel);
+
+            //set padding
+            paddingY = (height - bufferY - yDifference * scaleFactor) / 2;
+            paddingX = (width - xDifference * scaleFactor) / 2;
+            //calculate shift distance in pixels
+            shiftDistance = bufferY / 2;
         }
-        double xFactor = (width - bufferX) / xDifference;
-        double yFactor = (height - bufferY) / yDifference;
-
-        //make scaling in proportion
-        scaleFactor = Math.min(xFactor, yFactor);
-
-        //set scale factor to the largest power of 2 thats smaller than current value
-        this.zoomLevel = Math.floor(DoubleMath.log2(scaleFactor));
-        scaleFactor = Math.pow(2, zoomLevel);
-
-
-        //set padding
-        paddingY = (height - bufferY - yDifference * scaleFactor) / 2;
-        paddingX = (width - xDifference * scaleFactor) / 2;
-        //calculate shift distance in pixels
-        shiftDistance = bufferY / 2;
-
-
-        boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, Collections.min(xMercatorCoords), Collections.min(yMercatorCoords), paddingX, paddingY));
+        boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, xMin, yMin, paddingX, paddingY));
         this.courseBoundary = boundary;
 
     }
