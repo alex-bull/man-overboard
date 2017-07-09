@@ -317,14 +317,14 @@ public class Interpreter implements DataSource, PacketHandler {
                     }
                     break;
                 case RACE:
-                    System.out.println("received Race");
+                    System.out.println(xml);
                     if(!seenRaceXML) {
                         this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
                         this.courseBoundary = raceXMLParser.getCourseBoundary();
                         this.compoundMarks = raceData.getCourse();
                         GPSbounds = raceXMLParser.getGPSBounds();
                         setScalingFactors();
-                        this.seenRaceXML = true;
+//                        this.seenRaceXML = true;
                     }
 
                     break;

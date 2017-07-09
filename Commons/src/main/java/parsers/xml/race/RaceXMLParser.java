@@ -27,7 +27,7 @@ public class RaceXMLParser {
     private List<Double> xMercatorCoords;
     private List<Double> yMercatorCoords;
 
-    private List<MutablePoint> courseGPSBoundary;
+
     private double width;
     private double height;
     private double maxLat;
@@ -64,7 +64,7 @@ public class RaceXMLParser {
         this.width = width;
         this.height = height;
 
-        courseGPSBoundary = new ArrayList<>();
+
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
@@ -153,6 +153,8 @@ public class RaceXMLParser {
         for (Element limit : race.getChild("CourseLimit").getChildren()) {
             double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
             double lon = Double.parseDouble(limit.getAttributeValue("Lon"));
+            System.out.println(lat);
+            System.out.println(lon);
             LimitData limitData = new LimitData(lat, lon);
             raceData.addCourseLimit(limitData);
 
@@ -211,7 +213,6 @@ public class RaceXMLParser {
                 maxLng = lon;
             }
 
-
             List<Double> projectedPoint = mercatorProjection(lat, lon);
             double point1X = projectedPoint.get(0);
             double point1Y = projectedPoint.get(1);
@@ -219,7 +220,35 @@ public class RaceXMLParser {
             yMercatorCoords.add(point1Y);
             MutablePoint pixel = new MutablePoint(point1X, point1Y);
             boundary.add(pixel);
-            courseGPSBoundary.add(new MutablePoint(limit.getLat(), limit.getLon()));
+        }
+
+        //add course feature to zoom level calculation
+        for(CompoundMarkData compoundMarkData:raceData.getCourse()) {
+            for (MarkData markData : compoundMarkData.getMarks()) {
+                double lat=markData.getTargetLat();
+                double lon=markData.getTargetLon();
+
+                //find course boundary
+                if (lat < minLat) {
+                    minLat = lat;
+                }
+                if (lon < minLng) {
+                    minLng = lon;
+                }
+
+                if (lat > maxLat) {
+                    maxLat = lat;
+                }
+                if (lon > maxLng) {
+                    maxLng = lon;
+                }
+
+                List<Double> projectedPoint = mercatorProjection(lat, lon);
+                double point1X = projectedPoint.get(0);
+                double point1Y = projectedPoint.get(1);
+                xMercatorCoords.add(point1X);
+                yMercatorCoords.add(point1Y);
+            }
         }
 
         double xDifference = (Collections.max(xMercatorCoords) - Collections.min(xMercatorCoords));
@@ -280,9 +309,6 @@ public class RaceXMLParser {
         return zoomLevel;
     }
 
-    public List<MutablePoint> getCourseGPSBoundary() {
-        return courseGPSBoundary;
-    }
 
     public double getShiftDistance() {
         return shiftDistance;
