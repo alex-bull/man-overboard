@@ -27,6 +27,7 @@ import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
@@ -134,7 +135,7 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param scene the scene of the stage, for size calculations
      * @return boolean, true if the stream succeeds
      */
-    public boolean receive(String host, int port, Scene scene) {
+    public boolean receive(String host, int port, Scene scene) throws NullPointerException{
         DataReceiver dataReceiver;
         Rectangle2D primaryScreenBounds;
         try {
@@ -165,8 +166,9 @@ public class Interpreter implements DataSource, PacketHandler {
             }
 
         } catch (NullPointerException e) {
-            System.out.println("Live stream is down");
+            System.out.println("Live stream is down, restarting");
             return false;
+
         }
         return true;
     }
@@ -215,7 +217,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
-
                     String markName;
 //                    if(storedFeatures.keySet().contains(markID)) {
 //                        markName = storedFeatures.get(markID).getName();
@@ -229,11 +230,11 @@ public class Interpreter implements DataSource, PacketHandler {
                             break;
 
                         case 102:
-                            markName="Race Start Line";
+                            markName="Start Line";
                             break;
 
                         case 103:
-                            markName="Race Finish Line";
+                            markName="Finish Line";
                             break;
                         case 104:
                             markName="Speed test start";

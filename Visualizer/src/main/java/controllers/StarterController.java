@@ -3,6 +3,7 @@ package controllers;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -66,6 +67,17 @@ public class StarterController implements Initializable, ClockHandler {
         this.dataSource = dataSource;
     }
 
+    void autoStart(){
+        confirmButton.fire();
+        countdownButton.fire();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     /**
      * Implementation of ClockHandler interface method
      *
@@ -109,6 +121,7 @@ public class StarterController implements Initializable, ClockHandler {
         });
         starterList.setItems(compList);
         streamCombo.getItems().addAll(EnvironmentConfig.liveStream, EnvironmentConfig.csseStream, EnvironmentConfig.mockStream);
+        streamCombo.setValue(EnvironmentConfig.csseStream);
 
 
     }
@@ -141,6 +154,9 @@ public class StarterController implements Initializable, ClockHandler {
             this.confirmButton.setDisable(true);
             currentStream = host;
             this.setFields();
+        }
+        else{
+            primaryStage.close();
         }
 
 

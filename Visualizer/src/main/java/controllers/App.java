@@ -1,12 +1,14 @@
 package controllers;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import utilities.Interpreter;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 
 public class App extends Application {
@@ -27,13 +29,25 @@ public class App extends Application {
         starterController.setStage(primaryStage);
 
         starterController.setDataSource(new Interpreter());
+
         primaryStage.setMinWidth(530);
         primaryStage.setMinWidth(548);
         primaryStage.setScene(new Scene(root));
-
         //set on close requests
-        primaryStage.setOnCloseRequest(event -> System.exit(0));
+        primaryStage.setOnCloseRequest(event -> {
+            System.out.println("restarting");
+            primaryStage.close();
+                Platform.runLater(() -> {
+                    try {
+                        new App().start(new Stage());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+        });
         primaryStage.show();
+        starterController.autoStart();
 
     }
 

@@ -1,5 +1,8 @@
 package utilities;
 
+import javafx.application.Platform;
+import javafx.stage.Stage;
+
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -19,6 +22,7 @@ public class DataReceiver extends TimerTask {
 
     private DataInputStream dis;
     private PacketHandler handler;
+
 
     /**
      * Initializes port to receive binary data from
@@ -94,13 +98,15 @@ public class DataReceiver extends TimerTask {
                 byte[] message = new byte[length];
                 dis.readFully(message);
                 this.handler.interpretPacket(header, message);
-
             }
-        } catch (EOFException e) {
-            System.out.println("End of file.");
-        } catch (IOException e) {
+        }catch (EOFException e){
+            System.out.println("end of file, restarting");
+            throw new NullPointerException();
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     //    /**

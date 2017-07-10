@@ -457,6 +457,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
             //draw center once only to keep trails drawn properly
             if(!isCenterSet) {
+                System.out.println("center reset");
                 drawBackgroundImage(dataSource.getGPSbounds());
                 isCenterSet=true;
             }
@@ -681,7 +682,6 @@ public class RaceViewController implements Initializable, TableObserver {
         this.raceViewPane.getChildren().add(circle);
         gc.restore();
     }
-
 
 
 
