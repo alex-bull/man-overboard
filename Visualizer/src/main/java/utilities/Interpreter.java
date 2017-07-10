@@ -215,9 +215,39 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
-                    String markName="";
-                    if(storedFeatures.keySet().contains(markID)) {
-                        markName = storedFeatures.get(markID).getName();
+
+                    String markName;
+//                    if(storedFeatures.keySet().contains(markID)) {
+//                        markName = storedFeatures.get(markID).getName();
+//                    }
+                    switch(markID){
+                        case 100:
+                            markName="Entry Limit Line";
+                            break;
+                        case 101:
+                            markName="Entry Line";
+                            break;
+
+                        case 102:
+                            markName="Race Start Line";
+                            break;
+
+                        case 103:
+                            markName="Race Finish Line";
+                            break;
+                        case 104:
+                            markName="Speed test start";
+                            break;
+                        case 105:
+                            markName="Speed test finish";
+                            break;
+                        case 106:
+                            markName="ClearStart";
+                            break;
+                        default:
+                            markName=raceData.getCourse().get(markID-1).getName();
+                            break;
+
                     }
                     long roundingTime = markRoundingData.getRoundingTime();
 

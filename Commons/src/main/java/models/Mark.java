@@ -149,6 +149,7 @@ public class Mark implements CourseFeature {
         return "Mark{" +
                 "name='" + name + '\'' +
                 ", pixelLocation=" + pixelLocation +
+                ", index=" + index +
                 '}';
     }
 }

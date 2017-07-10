@@ -276,6 +276,7 @@ public class RaceXMLParser {
             shiftDistance = bufferY / 2;
         }
         boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, xMin, yMin, paddingX, paddingY));
+
         this.courseBoundary = boundary;
 
     }

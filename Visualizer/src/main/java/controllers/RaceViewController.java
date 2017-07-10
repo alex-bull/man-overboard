@@ -272,8 +272,7 @@ public class RaceViewController implements Initializable, TableObserver {
         double startLineIntercept = startMark1.getYValue() - (startLineGradient * startMark1.getXValue());
 
         double gradDiff = headingGradient - startLineGradient;
-        System.out.println(headingGradient);
-        System.out.println(startLineGradient);
+
         double intersectionX;
         if (gradDiff == 0) {
             intersectionX = boatFront.getX();
