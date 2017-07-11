@@ -2,6 +2,7 @@ package utilities;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -22,6 +23,8 @@ public class DataReceiver extends TimerTask {
 
     private DataInputStream dis;
     private PacketHandler handler;
+    //used to restart the app;
+    private Stage primaryStage;
 
 
     /**
@@ -36,6 +39,7 @@ public class DataReceiver extends TimerTask {
         this.handler = handler;
         dis = new DataInputStream(receiveSock.getInputStream());
         System.out.println("Start connection to server...");
+        this.primaryStage=handler.getPrimaryStage();
     }
 
     /**
@@ -87,10 +91,10 @@ public class DataReceiver extends TimerTask {
     /**
      * Identify the start of a packet, determine the message type and length, then read.
      */
-    public void run() throws NullPointerException{
+    public void run() throws NullPointerException {
+
         try {
             boolean isStartOfPacket = checkForSyncBytes();
-
             if (isStartOfPacket) {
 
                 byte[] header = this.getHeader();
@@ -99,9 +103,19 @@ public class DataReceiver extends TimerTask {
                 dis.readFully(message);
                 this.handler.interpretPacket(header, message);
             }
+
+        throw new EOFException();
         }catch (EOFException e){
+
             System.out.println("end of file, restarting");
-            throw new NullPointerException();
+
+            Platform.runLater(()->{
+                primaryStage.fireEvent(new WindowEvent(primaryStage,WindowEvent.WINDOW_CLOSE_REQUEST));
+                primaryStage.close();
+            });
+
+
+
         }
         catch (IOException e) {
             e.printStackTrace();

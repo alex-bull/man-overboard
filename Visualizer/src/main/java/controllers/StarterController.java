@@ -19,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import models.Clock;
@@ -75,6 +76,7 @@ public class StarterController implements Initializable, ClockHandler {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
 
     }
 
@@ -145,18 +147,16 @@ public class StarterController implements Initializable, ClockHandler {
         this.streamCombo.setDisable(true);
         this.confirmButton.setDisable(true);
         Scene scene=primaryStage.getScene();
-        boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
+        boolean streaming=this.dataSource.receive(host, EnvironmentConfig.port, scene);
+
+
 
         if (streaming) {
             EnvironmentConfig.currentStream = host;
-
             this.streamCombo.setDisable(true);
             this.confirmButton.setDisable(true);
             currentStream = host;
             this.setFields();
-        }
-        else{
-            primaryStage.close();
         }
 
 

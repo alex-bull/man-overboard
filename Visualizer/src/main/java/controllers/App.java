@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import utilities.Interpreter;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 
 public class App extends Application {
@@ -18,6 +17,7 @@ public class App extends Application {
 
     /**
      * Starts the app
+     *
      * @param primaryStage Stage the primary stage
      * @throws IOException when the app cannot load
      */
@@ -27,8 +27,9 @@ public class App extends Application {
         Parent root = loader.load();
         StarterController starterController = loader.getController();
         starterController.setStage(primaryStage);
-
-        starterController.setDataSource(new Interpreter());
+        Interpreter interpreter = new Interpreter();
+        interpreter.setPrimaryStage(primaryStage);
+        starterController.setDataSource(interpreter);
 
         primaryStage.setMinWidth(530);
         primaryStage.setMinWidth(548);
@@ -36,14 +37,13 @@ public class App extends Application {
         //set on close requests
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("restarting");
-            primaryStage.close();
-                Platform.runLater(() -> {
-                    try {
-                        new App().start(new Stage());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+            Platform.runLater(() -> {
+                try {
+                    new App().start(new Stage());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
 
         });
         primaryStage.show();

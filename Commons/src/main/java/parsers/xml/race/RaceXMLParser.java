@@ -298,6 +298,14 @@ public class RaceXMLParser {
         return xMercatorCoords;
     }
 
+    public double getxMin() {
+        return xMin;
+    }
+
+    public double getyMin() {
+        return yMin;
+    }
+
     public List<Double> getyMercatorCoords() {
         return yMercatorCoords;
     }

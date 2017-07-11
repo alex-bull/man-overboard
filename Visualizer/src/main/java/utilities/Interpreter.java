@@ -1,9 +1,11 @@
 package utilities;
 
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import models.ColourPool;
 import models.Competitor;
 import models.CourseFeature;
@@ -41,6 +43,8 @@ import static parsers.MessageType.UNKNOWN;
  */
 public class Interpreter implements DataSource, PacketHandler {
 
+    private Stage primaryStage;
+
     private XmlSubtype xmlSubType;
     private List<Competitor> competitorsPosition;
     private double windDirection;
@@ -73,8 +77,16 @@ public class Interpreter implements DataSource, PacketHandler {
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
         this.raceXMLParser = new RaceXMLParser();
+
     }
 
+    public void setPrimaryStage(Stage primaryStage){
+        this.primaryStage=primaryStage;
+    }
+
+    public Stage getPrimaryStage(){
+        return primaryStage;
+    }
     public List<CourseFeature> getCourseFeatures() {
         return courseFeatures;
     }
@@ -153,7 +165,10 @@ public class Interpreter implements DataSource, PacketHandler {
 
         //start receiving data
         Timer receiverTimer = new Timer();
+
+
         receiverTimer.schedule(dataReceiver, 0, 1);
+
 
         try {
             //wait for data to come in before setting fields
@@ -166,7 +181,7 @@ public class Interpreter implements DataSource, PacketHandler {
             }
 
         } catch (NullPointerException e) {
-            System.out.println("Live stream is down, restarting");
+            System.out.println("Live stream is down");
             return false;
 
         }
@@ -228,11 +243,9 @@ public class Interpreter implements DataSource, PacketHandler {
                         case 101:
                             markName="Entry Line";
                             break;
-
                         case 102:
                             markName="Start Line";
                             break;
-
                         case 103:
                             markName="Finish Line";
                             break;
@@ -246,11 +259,16 @@ public class Interpreter implements DataSource, PacketHandler {
                             markName="ClearStart";
                             break;
                         default:
-                            markName=raceData.getCourse().get(markID-1).getName();
+                            markName=raceData.getCourse().get(markID+1).getName();
                             break;
 
                     }
                     long roundingTime = markRoundingData.getRoundingTime();
+
+//                    System.out.println(markRoundingData.getSourceID());
+//                    System.out.println(markID);
+//                    System.out.println(markName);
+//                    System.out.println("-----------------------------------------");
 
                     storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
                     storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
@@ -423,8 +441,8 @@ public class Interpreter implements DataSource, PacketHandler {
         this.paddingX = raceXMLParser.getPaddingX();
         this.paddingY = raceXMLParser.getPaddingY();
         this.scaleFactor = raceXMLParser.getScaleFactor();
-        this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
-        this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
+        this.minXMercatorCoord = raceXMLParser.getxMin();
+        this.minYMercatorCoord = raceXMLParser.getyMin();
     }
 
     public HashMap<Integer, CourseFeature> getStoredFeatures() {
