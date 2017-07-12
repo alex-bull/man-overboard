@@ -242,6 +242,8 @@ public class StarterController implements Initializable, ClockHandler {
 
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 primaryStage.setTitle("RaceVision");
+                primaryStage.setX(primaryScreenBounds.getMinX());
+                primaryStage.setY(primaryScreenBounds.getMinY());
                 primaryStage.setWidth(primaryScreenBounds.getWidth());
                 primaryStage.setHeight(primaryScreenBounds.getHeight());
                 primaryStage.setMinHeight(primaryScreenBounds.getHeight());
