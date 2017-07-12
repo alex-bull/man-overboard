@@ -104,17 +104,18 @@ public class DataReceiver extends TimerTask {
                 this.handler.interpretPacket(header, message);
             }
 
-        throw new EOFException();
         }catch (EOFException e){
-
-            System.out.println("end of file, restarting");
-
-            Platform.runLater(()->{
-                primaryStage.fireEvent(new WindowEvent(primaryStage,WindowEvent.WINDOW_CLOSE_REQUEST));
-                primaryStage.close();
-            });
-
-
+            try {
+                Runtime.getRuntime().exec("java -jar Visualizer/target/Visualizer-0.0.jar");
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            System.exit(0);
+//            Platform.runLater(()->{
+//                primaryStage.fireEvent(new WindowEvent(primaryStage,WindowEvent.WINDOW_CLOSE_REQUEST));
+//                Platform.exit();
+//
+//            });
 
         }
         catch (IOException e) {

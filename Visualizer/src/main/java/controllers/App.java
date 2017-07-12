@@ -36,16 +36,20 @@ public class App extends Application {
         primaryStage.setScene(new Scene(root));
         //set on close requests
         primaryStage.setOnCloseRequest(event -> {
-            System.out.println("restarting");
-            Platform.runLater(() -> {
-                try {
-                    new App().start(new Stage());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+System.exit(0);
+//            Platform.runLater(() -> {
+//                try {
+//                    primaryStage.close();
+//
+//                    new App().start(new Stage());
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            });
 
         });
+
+
         primaryStage.show();
         starterController.autoStart();
 
