@@ -24,6 +24,7 @@ public class RaceStatusParser {
     public RaceStatusData processMessage(byte[] body) {
         try {
             long currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
+            Integer raceId = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
             Integer raceStatus = hexByteArrayToInt(Arrays.copyOfRange(body, 11, 12));
             long expectedStartTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 12, 18));
             Integer numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22, 23));
@@ -41,6 +42,16 @@ public class RaceStatusParser {
                 boatStatuses.put(sourceID, new BoatStatus(sourceID, legNumber, estTimeToNextMark));
                 currentByte += 20;
             }
+
+            // get current time, race id, race status, expectedstarttime, racecoursewinddirection
+            // race course wind speed, num boats in race.
+
+//            System.out.println("race id : TO DO " + raceId);
+            System.out.println("race status needs checking " + raceStatus);
+            System.out.println("expected start time .. done? does it need to repeat.?" + expectedStartTime);
+//            System.out.println("num boats in race (fixed)" + numBoatsInRace);
+
+
 
             return new RaceStatusData(currentTime, raceStatusToEnum(raceStatus), expectedStartTime, doubleWindDirection,
                     windSpeed, numBoatsInRace, boatStatuses);

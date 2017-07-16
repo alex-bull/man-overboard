@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -20,7 +21,8 @@ import java.util.zip.Checksum;
  */
 class BinaryPackager {
 
-
+    private short windSpeed = 5500;
+    private short windDirection = 0;
     /**
      * Takes boat position data and encapsulates it in a binary packet
      *
@@ -223,9 +225,9 @@ class BinaryPackager {
      */
     byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime) {
         byte[] packet = new byte[24];
-        short windDirection = -32768;// 0x8000 in signed short
-
-
+        // for wind direction North = 0x0000 East = 0x4000 South = 0x8000
+        windDirection = (short) (ThreadLocalRandom.current().nextInt(-30, 30) + windDirection);
+        windSpeed = (short) (ThreadLocalRandom.current().nextInt(-2, 2) + windSpeed);
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -235,7 +237,7 @@ class BinaryPackager {
         packetBuffer.put((byte) raceStatus); //RaceStatus
         packetBuffer.put(getTimeStamp(expectedStartTime));//ExpectedStartTime
         packetBuffer.putShort(windDirection); //WindDirection
-        packetBuffer.putShort((short) 0);//WindSpeed
+        packetBuffer.putShort(windSpeed);//WindSpeed
         packetBuffer.put((byte) 6);//Number of Boats
         packetBuffer.put((byte) 1);//RaceType 1 ->MatchRace
 
