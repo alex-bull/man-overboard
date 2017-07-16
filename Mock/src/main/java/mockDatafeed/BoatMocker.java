@@ -147,6 +147,7 @@ public class BoatMocker extends TimerTask {
      */
     private void sendRaceStatus() throws IOException {
         //TODO: make race status message
+
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime);
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         dataSender.sendData(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
@@ -207,12 +208,13 @@ public class BoatMocker extends TimerTask {
     public void run() {
         //check if boats are at the end of the leg
 
-
+        int finishedBoats = 0;
         for (Competitor b : competitors) {
             //if at the end stop
             if (b.getCurrentLegIndex() == courseFeatures.size() - 1) {
                 b.setVelocity(0);
                 b.setStatus(3);
+                finishedBoats++;
                 continue;
             }
 
@@ -226,6 +228,9 @@ public class BoatMocker extends TimerTask {
                 b.setCurrentLegIndex(b.getCurrentLegIndex() + 1);
                 b.setCurrentHeading(courseFeatures.get(b.getCurrentLegIndex()).getExitHeading());
             }
+        }
+        if(finishedBoats == competitors.size()){
+            raceStatus = 4;
         }
         //update the position of the boats given the current position, heading and velocity
         updatePosition();

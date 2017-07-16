@@ -233,7 +233,7 @@ class BinaryPackager {
 
         packetBuffer.put((byte) 2); //MessageVersionNumber
         packetBuffer.put(getCurrentTimeStamp());//CurrentTime
-        packetBuffer.putInt(123546789);//RaceID
+        packetBuffer.putInt(123546789);//RaceID /TODO:- Figure out what this should be
         packetBuffer.put((byte) raceStatus); //RaceStatus
         packetBuffer.put(getTimeStamp(expectedStartTime));//ExpectedStartTime
         packetBuffer.putShort(windDirection); //WindDirection

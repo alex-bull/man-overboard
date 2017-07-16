@@ -46,10 +46,8 @@ public class RaceStatusParser {
             // get current time, race id, race status, expectedstarttime, racecoursewinddirection
             // race course wind speed, num boats in race.
 
-//            System.out.println("race id : TO DO " + raceId);
-            System.out.println("race status needs checking " + raceStatus);
+            System.out.println("race id : TO DO " + raceId);
             System.out.println("expected start time .. done? does it need to repeat.?" + expectedStartTime);
-//            System.out.println("num boats in race (fixed)" + numBoatsInRace);
 
 
 
