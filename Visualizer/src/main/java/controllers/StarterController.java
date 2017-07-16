@@ -3,7 +3,6 @@ package controllers;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -19,7 +18,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import models.Clock;
@@ -123,7 +121,7 @@ public class StarterController implements Initializable, ClockHandler {
         });
         starterList.setItems(compList);
         streamCombo.getItems().addAll(EnvironmentConfig.liveStream, EnvironmentConfig.csseStream, EnvironmentConfig.mockStream);
-        streamCombo.setValue(EnvironmentConfig.csseStream);
+//        streamCombo.setValue(EnvironmentConfig.csseStream);
 
 
     }
@@ -147,7 +145,7 @@ public class StarterController implements Initializable, ClockHandler {
         this.streamCombo.setDisable(true);
         this.confirmButton.setDisable(true);
         Scene scene=primaryStage.getScene();
-        boolean streaming=this.dataSource.receive(host, EnvironmentConfig.port, scene);
+        boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
 
 
 
@@ -157,6 +155,9 @@ public class StarterController implements Initializable, ClockHandler {
             this.confirmButton.setDisable(true);
             currentStream = host;
             this.setFields();
+        }
+        else {
+            System.out.println("Sorry cannot connect right now.");
         }
 
 
@@ -242,13 +243,10 @@ public class StarterController implements Initializable, ClockHandler {
 
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 primaryStage.setTitle("RaceVision");
-                primaryStage.setX(primaryScreenBounds.getMinX());
-                primaryStage.setY(primaryScreenBounds.getMinY());
-                primaryStage.setWidth(primaryScreenBounds.getWidth());
-                primaryStage.setHeight(primaryScreenBounds.getHeight());
-                primaryStage.setMinHeight(primaryScreenBounds.getHeight());
-                primaryStage.setMinWidth(primaryScreenBounds.getWidth());
+//                primaryStage.setMaxWidth(primaryScreenBounds.getWidth());
+//                primaryStage.setMaxHeight(primaryScreenBounds.getHeight());
                 primaryStage.setScene(scene);
+                primaryStage.setFullScreen(true);
             }
         });
     }
