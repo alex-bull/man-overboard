@@ -249,6 +249,7 @@ public class RaceXMLParser {
                 yMercatorCoords.add(point1Y);
             }
         }
+
         if(scaleFactor==0.0) {
             xMin=Collections.min(xMercatorCoords);
             yMin=Collections.min(yMercatorCoords);

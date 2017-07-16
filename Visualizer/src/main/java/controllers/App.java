@@ -51,7 +51,7 @@ System.exit(0);
 
 
         primaryStage.show();
-        starterController.autoStart();
+//        starterController.autoStart();
 
     }
 
