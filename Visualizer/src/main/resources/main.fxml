@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.image.Image?>
@@ -11,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="668.0" prefWidth="977.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
+<AnchorPane prefHeight="668.0" prefWidth="977.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
     <children>
         <fx:include fx:id="raceView" source="raceView.fxml" />
         <fx:include fx:id="table" source="table.fxml" />
@@ -38,14 +44,6 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-             <ImageView fitHeight="249.0" fitWidth="263.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.rowSpan="2" GridPane.valignment="CENTER">
-                 <image>
-                     <Image url="@logo.png" />
-                 </image>
-                 <GridPane.margin>
-                     <Insets bottom="20.0" top="20.0" />
-                 </GridPane.margin>
-             </ImageView>
             <ProgressIndicator fx:id="indicator" mouseTransparent="true" prefHeight="117.0" prefWidth="140.0" GridPane.columnIndex="3" GridPane.rowIndex="3" GridPane.rowSpan="2" />
             <Text fx:id="team" strokeType="OUTSIDE" strokeWidth="0.0" text="Zaffre Tides'" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <font>
