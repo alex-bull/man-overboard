@@ -106,6 +106,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line virtualLine;
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
+    private boolean isCenterSet=false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -271,8 +272,7 @@ public class RaceViewController implements Initializable, TableObserver {
         double startLineIntercept = startMark1.getYValue() - (startLineGradient * startMark1.getXValue());
 
         double gradDiff = headingGradient - startLineGradient;
-        System.out.println(headingGradient);
-        System.out.println(startLineGradient);
+
         double intersectionX;
         if (gradDiff == 0) {
             intersectionX = boatFront.getX();
@@ -424,6 +424,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawBackgroundImage(List<Double> bounds) {
         try {
+
             mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
             mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
         } catch (JSException e) {
@@ -454,7 +455,13 @@ public class RaceViewController implements Initializable, TableObserver {
             gc.setLineWidth(0.8);
             gc.clearRect(0, 0, 4000, 4000);
 
-            drawBackgroundImage(dataSource.getGPSbounds());
+            //draw center once only to keep trails drawn properly
+            if(!isCenterSet) {
+                System.out.println("center reset");
+                drawBackgroundImage(dataSource.getGPSbounds());
+                isCenterSet=true;
+            }
+
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.setGlobalAlpha(0.4);
             gc.setFill(Color.POWDERBLUE);
@@ -599,9 +606,9 @@ public class RaceViewController implements Initializable, TableObserver {
         if (boatModels.get(sourceId) == null) {
             Polygon boatModel = new Polygon();
             boatModel.getPoints().addAll(
-                    0.0, 0.0, //top
-                    -5.0, 20.0, //left
-                    5.0, 20.0); //right
+                    0.0, -10.0, //top
+                    -5.0, 10.0, //left
+                    5.0, 10.0); //right
             boatModel.setFill(boat.getColor());
             boatModel.setStroke(BLACK);
             boatModel.setStrokeWidth(1);
@@ -631,7 +638,8 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor a competing boat
      */
     private void drawWake(Competitor boat) {
-        double boatLength = 20;
+        //not really the boat length but the offset of the wake from the y axis
+        double boatLength = 10;
         double startWakeOffset = 3;
         double wakeWidthFactor = 0.2;
         if (wakeModels.get(boat.getSourceID()) == null) {
@@ -674,7 +682,6 @@ public class RaceViewController implements Initializable, TableObserver {
         this.raceViewPane.getChildren().add(circle);
         gc.restore();
     }
-
 
 
 
@@ -926,6 +933,9 @@ public class RaceViewController implements Initializable, TableObserver {
             timeFromLastMark = Converter.convertToRelativeTime(boat.getTimeAtLastMark(), dataSource.getMessageTime());
             if (dataSource.getRaceStatus().equals(PREPARATORY)) {
                 startAnnotation = getStartSymbol(boat);
+            }
+            else{
+                startAnnotation="";
             }
 
             if (counter % 70 == 0) {
