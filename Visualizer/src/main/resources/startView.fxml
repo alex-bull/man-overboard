@@ -34,7 +34,7 @@
             <children>
             <ImageView fitHeight="200.0" fitWidth="508.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                <image>
-                  <Image url="@logoWordLong.png" />
+                  <Image url="@smallerifiedLogoWordLong.png" />
                </image>
                <GridPane.margin>
                   <Insets bottom="20.0" top="20.0" />
