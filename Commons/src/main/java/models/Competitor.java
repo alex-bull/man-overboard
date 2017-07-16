@@ -1,5 +1,6 @@
 package models;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
 
 /**
@@ -29,8 +30,6 @@ public interface Competitor {
 
     int getCurrentLegIndex();
 
-    void setCurrentLegIndex(int legIndex);
-
     void setLatitude(double latitude);
 
     void setLongitude(double longitude);
@@ -57,9 +56,8 @@ public interface Competitor {
 
     void setCurrentHeading(double currentHeading);
 
-    int getLegIndex();
+    void setCurrentLegIndex(int legIndex);
 
-    void setLegIndex(int legIndex);
     int getSourceID();
 
 }

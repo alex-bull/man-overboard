@@ -14,8 +14,10 @@ public class RaceData {
     private List<MarkData> finishMarks = new ArrayList<>();
     private List<CompoundMarkData> course = new ArrayList<>();
     private List<CornerData> compoundMarkSequence = new ArrayList<>();
+    private Set<Integer> compoundMarkIDs = new HashSet<>();
     private Set<Integer> markIDs = new HashSet<>();
     private List<LimitData> courseLimit = new ArrayList<>();
+    private Map<Integer, List<Integer>> legIndexToSourceId = new HashMap<>();
 
 
     RaceData() {}
@@ -42,6 +44,12 @@ public class RaceData {
             returnList.add(mark.getSourceID());
         }
         return returnList;
+    }
+
+
+
+    public List<MarkData> getStartMarks() {
+        return this.startMarks;
     }
 
     void setStartMarks(List<MarkData> startMarks) {
@@ -90,5 +98,16 @@ public class RaceData {
 
     void addMarkID(Integer markId) {
         this.markIDs.add(markId);
+    }
+
+    public Map<Integer, List<Integer>> getLegIndexToSourceId() {
+        return legIndexToSourceId; }
+
+    public void setLegIndexToSourceId(Map<Integer, List<Integer>> indexToSourceId) {
+        this.legIndexToSourceId = indexToSourceId;
+    }
+
+    public void addCompoundMarkID(Integer markId) {
+        this.compoundMarkIDs.add(markId);
     }
 }

@@ -119,13 +119,6 @@ public class Boat implements Competitor {
         this.timeAtLastMark = timeAtLastMark;
     }
 
-    public int getLegIndex() {
-        return legIndex;
-    }
-
-    public void setLegIndex(int legIndex) {
-        this.legIndex = legIndex;
-    }
 
     public String getLastMarkPassed() {
         return lastMarkPassed;

@@ -38,7 +38,7 @@ public class SparklinesController {
         this.dataSource = dataSource;
         sparkChart.getYAxis().setAutoRanging(true);
         List<Competitor> comps = new ArrayList<>(dataSource.getCompetitorsPosition());
-        comps.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+        comps.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
 
         for(int i = 0; i < comps.size(); i++){
             Competitor boat = comps.get(i);
@@ -64,7 +64,7 @@ public class SparklinesController {
         long waitTime = 45000;
         int sparklinePoints = 5;
         List<Competitor> comps = new ArrayList<>(dataSource.getCompetitorsPosition());
-        comps.sort((o1, o2) -> (o1.getLegIndex() < o2.getLegIndex()) ? 1 : ((o1.getLegIndex() == o2.getLegIndex()) ? 0 : -1));
+        comps.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
         for (int i = 0; i < comps.size(); i++) {
             XYChart.Series<String, Double> series = seriesMap.get(comps.get(i).getSourceID());
             int pos = i + 1;

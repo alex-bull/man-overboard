@@ -1,7 +1,15 @@
 package controllers;
 
+import javafx.animation.FadeTransition;
+
+import javafx.geometry.Point2D;
+import javafx.scene.Group;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.*;
+import javafx.util.Duration;
 import com.google.common.primitives.Doubles;
-import com.sun.javafx.geom.Point2D;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -18,15 +26,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import javafx.util.Pair;
+import models.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
@@ -38,20 +44,29 @@ import netscape.javascript.JSException;
 import parsers.Converter;
 import utilities.Annotation;
 import utilities.DataSource;
+import utilities.EnvironmentConfig;
 import utilities.RaceCalculator;
 
+import java.awt.geom.Line2D;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
+import static java.lang.Math.*;
 import static javafx.scene.paint.Color.*;
 import static parsers.RaceStatusEnum.PREPARATORY;
+import static parsers.RaceStatusEnum.STARTED;
 
 /**
  * Controller for the race view.
  */
 public class RaceViewController implements Initializable, TableObserver {
 
+    private final Integer upWindAngle = 43; //Hard coded for now
+    private final Integer downWindAngle = 153; //Hard coded for now
+    private final double boatLength = 20;
+    private final double startWakeOffset= 3;
+    private final double wakeWidthFactor=0.2;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
     @FXML private Label fpsCounter;
@@ -79,6 +94,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private List<MutablePoint> courseBoundary = null;
     private List<CourseFeature> courseFeatures = null;
     private Map<String, Shape> markModels = new HashMap<>();
+    private List<Polyline> layLines = new ArrayList<>();
     private DataSource dataSource;
     private long startTimeNano = System.nanoTime();
     private long timeFromLastMark;
@@ -89,7 +105,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line finishLine;
     private Line virtualLine;
     private Integer selectedBoatSourceId = 0;
-
     private boolean isLoaded = false;
 
     @Override
@@ -97,8 +112,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
         startLine = new Line();
         finishLine = new Line();
+        virtualLine = new Line();
         raceCalculator = new RaceCalculator();
-        virtualLine=new Line();
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(virtualLine);
@@ -195,7 +210,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param selectedBoat selected boat
      * @return virtualLinePoints List<MutablePoint>
      */
-    private List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat) {
+    public List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat) {
         List<MutablePoint> virtualLinePoints = new ArrayList<>();
 
         Polygon boatModel = boatModels.get(selectedBoatSourceId);
@@ -235,15 +250,35 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param startMark2 MutablePoint The other end of the start line.
      * @return MutablePoint Point of intersection.
      */
-    private MutablePoint calcStartLineIntersection(Point2D boatFront, Point2D boatBack, MutablePoint startMark1, MutablePoint startMark2) {
-
-        double headingGradient = (boatFront.getY() - boatBack.getY()) / (boatFront.getX() - boatBack.getX());
+    public MutablePoint calcStartLineIntersection(javafx.geometry.Point2D boatFront, Point2D boatBack, MutablePoint startMark1, MutablePoint startMark2) {
+        double infinity = 1000000;
+        double headingGradient;
+        double xDiffBoat = boatFront.getX() - boatBack.getX();
+        if (xDiffBoat == 0) {
+            headingGradient = infinity;
+        } else {
+            headingGradient = (boatFront.getY() - boatBack.getY()) / xDiffBoat;
+        }
         double headingIntercept = boatFront.getY() - (headingGradient * boatFront.getX());
 
-        double startLineGradient = (startMark1.getYValue() - startMark2.getYValue()) / (startMark1.getXValue() - startMark2.getXValue());
-        double startLineIntercept = startMark1.getYValue() - (startLineGradient) * startMark1.getXValue();
+        double startLineGradient;
+        double xDiffStart = startMark1.getXValue() - startMark2.getXValue();
+        if (xDiffStart == 0) {
+            startLineGradient = infinity;
+        } else {
+            startLineGradient = (startMark1.getYValue() - startMark2.getYValue()) / xDiffStart;
+        }
+        double startLineIntercept = startMark1.getYValue() - (startLineGradient * startMark1.getXValue());
 
-        double intersectionX = (startLineIntercept - headingIntercept) / (headingGradient - startLineGradient);
+        double gradDiff = headingGradient - startLineGradient;
+        System.out.println(headingGradient);
+        System.out.println(startLineGradient);
+        double intersectionX;
+        if (gradDiff == 0) {
+            intersectionX = boatFront.getX();
+        } else {
+            intersectionX = (startLineIntercept - headingIntercept) / gradDiff;
+        }
         double intersectionY = headingGradient * intersectionX + headingIntercept;
 
         return new MutablePoint(intersectionX, intersectionY);
@@ -252,12 +287,12 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Calculates the position of a point on the virtual start line corresponding to a point on the real start line.
      * @param ratio double The ratio of the distance from the boat to virtual and real start lines.
-     * @param xDifference double The difference between the front of the boat and point of intersection along the x-axis.
-     * @param yDifference double The difference between the front of the boat and point of intersection along the y-axis.
+     * @param xDifference double The difference along the x-axis between the front of the boat and point of intersection with the start line.
+     * @param yDifference double The difference along the y-axis between the front of the boat and point of intersection with the start line.
      * @param startMark MutablePoint A point on the real start line.
      * @return MutablePoint A point on the virtual start line.
      */
-    private MutablePoint calcVirtualLinePoint(double ratio, double xDifference, double yDifference, MutablePoint startMark) {
+    public MutablePoint calcVirtualLinePoint(double ratio, double xDifference, double yDifference, MutablePoint startMark) {
         double startToVirtualX = (1 - ratio) * xDifference;
         double startToVirtualY = (1 - ratio) * yDifference;
 
@@ -291,10 +326,10 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param selectedBoat selected boat
      * @return double distance (m)
      */
-    private double calcDistToVirtual(Competitor selectedBoat) {
+    public double calcDistToVirtual(Competitor selectedBoat) {
         long expectedStartTime = dataSource.getExpectedStartTime();
         long messageTime = dataSource.getMessageTime();
-        long timeUntilStart = Converter.convertToRelativeTime(expectedStartTime, messageTime) / 1000; // seconds
+        long timeUntilStart = Converter.convertToRelativeTime(expectedStartTime, messageTime) * -1; // seconds, negative because race hasn't started
         double velocity = selectedBoat.getVelocity(); // metres per seconds
         return velocity * timeUntilStart; // metres
     }
@@ -304,7 +339,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param selectedBoat selected boat
      * @return double distance (m)
      */
-    private double calcDistToStart(Competitor selectedBoat) {
+    public double calcDistToStart(Competitor selectedBoat) {
         double boatLat = selectedBoat.getLatitude();
         double boatLon = selectedBoat.getLongitude();
 
@@ -323,7 +358,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param longitude2 second point's longitude
      * @return double distance (m)
      */
-    private double calcDistBetweenGPSPoints(double latitude1, double longitude1, double latitude2, double longitude2) {
+    public double calcDistBetweenGPSPoints(double latitude1, double longitude1, double latitude2, double longitude2) {
         long earthRadius = 6371000;
         double phiStart = Math.toRadians(latitude2);
         double phiBoat = Math.toRadians(latitude1);
@@ -483,7 +518,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Move annotations with competing boat positions
-     *
      * @param boat Competitor of competing boat
      */
     private void moveAnnotations(Competitor boat) {
@@ -531,7 +565,6 @@ public class RaceViewController implements Initializable, TableObserver {
                     break;
 
             }
-
             label.setVisible(checkBox.isSelected());
             label.setLayoutX(xValue + 5);
             label.setLayoutY(yValue + offset);
@@ -575,9 +608,13 @@ public class RaceViewController implements Initializable, TableObserver {
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(boat.getSourceID(), boatModel);
-            //Boats selected can be selected by clicking on them
+            //Boats selected can be selected/unselected by clicking on them
             boatModel.setOnMouseClicked(event -> {
-                selectedBoatSourceId = sourceId;
+                if (selectedBoatSourceId != sourceId) {
+                    selectedBoatSourceId = sourceId;
+                } else {
+                    selectedBoatSourceId = 0;
+                }
             });
         }
         //Translate and rotate the corresponding boat models
@@ -617,10 +654,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
     }
 
-
-
-
-
     /**
      * Draw the next dot of track for the boat on the canvas
      *
@@ -643,6 +676,179 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+
+
+    /**
+     * Calculates and draws laylines on the pane for the given boat
+     * @param boat Competitor the boat to draw the laylines for
+     */
+    private void drawLaylines(Competitor boat) {
+
+        Pair<Double, Double> markCentre = this.getNextGateCentre(boat);
+        if (markCentre == null) return;
+        Double markX = markCentre.getKey();
+        Double markY = markCentre.getValue();
+
+        Double boatX = boat.getPosition().getXValue();
+        Double boatY = boat.getPosition().getYValue();
+        Double heading = boat.getCurrentHeading();
+        Double windAngle = dataSource.getWindDirection();
+
+        //semi arbitrary point in front of the boat along the heading angle
+        Double bx = boatX + (2000 * Math.sin(Math.toRadians(heading)));
+        Double by = boatY - (2000 * Math.cos(Math.toRadians(heading)));
+
+        //Difference between heading and wind angle- used to check if boat is going upwind or downwind
+        Double anglediff = abs((heading - windAngle + 180 + 360) % 360 - 180);
+        Double layLineStarboardAngle = 0.0;
+        Double layLinePortAngle = 0.0;
+
+        //CASE: upwind
+        if (anglediff > 90) {
+            layLineStarboardAngle = windAngle - upWindAngle;
+            layLinePortAngle = windAngle + upWindAngle;
+        }
+        //CASE: downwind
+        else if (anglediff < 90) {
+            layLineStarboardAngle = windAngle + downWindAngle;
+            layLinePortAngle = windAngle - downWindAngle;
+        }
+
+        if (layLineStarboardAngle > 360) layLineStarboardAngle = layLineStarboardAngle - 360;
+        if (layLinePortAngle > 360) layLinePortAngle = layLinePortAngle - 360;
+
+        //Starboard layline
+        Double mx = markX + 2000 * Math.sin(Math.toRadians(layLineStarboardAngle));
+        Double my = markY - 2000 * Math.cos(Math.toRadians(layLineStarboardAngle));
+        Double mx2 = markX -2000 * Math.sin(Math.toRadians(layLineStarboardAngle));
+        Double my2 = markY + 2000 * Math.cos(Math.toRadians(layLineStarboardAngle));
+        //Port layline
+        Double mx3 = markX + 2000 * Math.sin(Math.toRadians(layLinePortAngle));
+        Double my3 = markY - 2000 * Math.cos(Math.toRadians(layLinePortAngle));
+        Double mx4 = markX -2000 * Math.sin(Math.toRadians(layLinePortAngle));
+        Double my4 = markY + 2000 * Math.cos(Math.toRadians(layLinePortAngle));
+
+        //Intersections of lay lines and boat heading
+        Pair<Double, Double> intersectionPoint = new Pair<>(0.0, 0.0);
+        Pair<Double, Double> intersectionOne = new Pair<>(0.0, 0.0);
+        Pair<Double, Double> intersectionTwo = new Pair<>(0.0, 0.0);
+
+        Boolean intersectsStarboardLayline = Line2D.linesIntersect(boatX, boatY, bx, by, mx2, my2, mx, my);
+        Boolean intersectsPortLayline = Line2D.linesIntersect(boatX, boatY, bx, by, mx3, my3, mx4, my4);
+        Boolean draw = false;
+
+        raceViewPane.getChildren().removeAll(layLines);
+        layLines.clear();
+
+        //FIND INTERSECTIONS
+        if (intersectsStarboardLayline) {
+            draw = true;
+            //If the line segments intersect then find the intersection point to draw the lines with
+            intersectionOne = this.calculateIntersection(boatX, boatY, bx, by, markX, markY, mx, my);
+            intersectionPoint = intersectionOne;
+//            yIntersection = y;
+        }
+        if (intersectsPortLayline) {
+            draw = true;
+            intersectionTwo = this.calculateIntersection(boatX, boatY, bx, by, markX, markY, mx3, my3);
+            intersectionPoint = intersectionTwo;
+        }
+        if (intersectsStarboardLayline && intersectsPortLayline) {
+            //FIND THE CLOSEST INTERSECTION
+            Double distance1 = Math.hypot(boatX-intersectionOne.getKey(), boatY-intersectionOne.getValue());
+            Double distance2 = Math.hypot(boatX-intersectionTwo.getKey(), boatY-intersectionTwo.getValue());
+            if (distance1 < distance2) {
+                intersectionPoint = intersectionOne;
+            }
+        }
+        //DRAW
+        if (draw) {
+            this.drawLayLine(boatX, boatY, intersectionPoint.getKey(), intersectionPoint.getValue(), boat.getColor());
+            this.drawLayLine(markX, markY, intersectionPoint.getKey(), intersectionPoint.getValue(), boat.getColor());
+        }
+    }
+
+
+    /**
+     * Gets the centre coords for the next mark a boat will round
+     * @param boat Competitor
+     * @return Pair the coords
+     */
+    private Pair<Double, Double> getNextGateCentre(Competitor boat) {
+
+        Integer markId = boat.getCurrentLegIndex() + 1;
+        if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
+
+        Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
+        if (markId > features.size()) return null; //passed the finish line
+
+        List<Integer> ids = features.get(markId);
+        CourseFeature featureOne = this.dataSource.getCourseFeatureMap().get(ids.get(0));
+        Double markX = featureOne.getPixelCentre().getXValue();
+        Double markY = featureOne.getPixelCentre().getYValue();
+
+        if (ids.size() > 1) { //Get the centre point of gates
+            CourseFeature featureTwo = this.dataSource.getCourseFeatureMap().get(ids.get(1));
+            markX = (featureOne.getPixelCentre().getXValue() + featureTwo.getPixelCentre().getXValue()) / 2;
+            markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
+        }
+        return new Pair<>(markX, markY);
+    }
+
+
+    /**
+     * Calculates the intersection point of two lines. Result is undefined for non intersecting lines
+     * @param x1 Double line one
+     * @param y1 Double line one
+     * @param x2 Double line one
+     * @param y2 Double line one
+     * @param x3 Double line two
+     * @param y3 Double line two
+     * @param x4 Double line two
+     * @param y4 Double line two
+     * @return Pair the intersection point x, y
+     */
+    private Pair<Double, Double> calculateIntersection(Double x1, Double y1, Double x2, Double y2, Double x3, Double y3, Double x4, Double y4) {
+        //first convert to slope intercept y = mx + b
+        Double m1 = (y2 - y1) / (x2 - x1);
+        Double m2 = (y4 - y3) / (x4 - x3);
+        //b = y - mx
+        Double b1 = y1 - m1 * x1;
+        Double b2 = y3 - m2 * x3;
+        //the intersection point of the lines
+        Double x = (b2 - b1) / (m1 - m2);
+        Double y = m1 * x + b1;
+        return new Pair<>(x, y);
+    }
+
+
+
+
+    /**
+     * Draws a layline on the pane
+     * @param x Double, The first x value
+     * @param y Double, The first y value
+     * @param x2 Double, The second x value
+     * @param y2 Double, The second y value
+     * @param colour Color the colour of the line
+     */
+    private void drawLayLine(Double x, Double y, Double x2, Double y2, Color colour) {
+
+        Polyline line = new Polyline();
+        line.getPoints().addAll(
+                x, y, //top
+                x2, y2);
+        line.setFill(colour);
+        line.setStroke(colour);
+        line.setStrokeWidth(1);
+        raceViewPane.getChildren().add(line);
+        layLines.add(line);
+    }
+
+
+
+
+
     /**
      * Calculate the time to the start line from the given boat
      *
@@ -658,11 +864,12 @@ public class RaceViewController implements Initializable, TableObserver {
         float startLineStartX = (float) startLine.getStartX();
         float startLineStartY = (float) startLine.getStartY();
 
-        double distanceToStart = Point2D.distance(boatX, boatY, startLineStartX, startLineStartY);
-        double distanceToEnd = Point2D.distance(boatX, boatY, startLineEndX, startLineEndY);
-        long expectedStartTime = Converter.convertToRelativeTime(dataSource.getExpectedStartTime(), dataSource.getMessageTime());
+        Point2D boatPoint = new Point2D(boatX, boatY);
+        double distanceToStart = boatPoint.distance(startLineStartX, startLineStartY);
+        double distanceToEnd = boatPoint.distance(startLineEndX, startLineEndY);
+        long timeUntilStart = Converter.convertToRelativeTime(dataSource.getExpectedStartTime(), dataSource.getMessageTime()) * -1;
 
-        return raceCalculator.calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), expectedStartTime);
+        return raceCalculator.calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), timeUntilStart);
     }
 
 
@@ -673,6 +880,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void updateFPS() {
         counter++; // increment fps counter
+
         // calculate fps
         long currentTimeNano = System.nanoTime();
         if (currentTimeNano > startTimeNano + 1000000000) {
@@ -715,7 +923,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void updateRace(GraphicsContext gc) {
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
         for (Competitor boat : competitors) {
-            timeFromLastMark = Converter.convertToRelativeTime(dataSource.getMessageTime(), boat.getTimeAtLastMark());
+            timeFromLastMark = Converter.convertToRelativeTime(boat.getTimeAtLastMark(), dataSource.getMessageTime());
             if (dataSource.getRaceStatus().equals(PREPARATORY)) {
                 startAnnotation = getStartSymbol(boat);
             }
@@ -734,6 +942,8 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawWake(boat);
             this.drawBoat(boat);
             this.moveAnnotations(boat);
+            if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
+            if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
         }
     }
 

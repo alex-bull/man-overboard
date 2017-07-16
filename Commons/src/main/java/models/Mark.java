@@ -64,6 +64,30 @@ public class Mark implements CourseFeature {
         points.add(this.pixelLocation);
         return points;
     }
+
+    /**
+     * Get the centre point in the view frame
+     * @return MutablePoint
+     */
+    public MutablePoint getPixelCentre() {
+        return this.pixelLocation;
+    }
+
+    /**
+     * Getter for the centre GPS Location of the marker
+     *
+     * @return MutablePoint the GPS Location
+     */
+    public MutablePoint getGPSCentre() {
+        return this.GPSLocation;
+    }
+
+    /**
+     * Setter for the index of the mark
+     *
+     * @return int index of the mark
+     */
+
     public int getIndex() {
         return this.index;
     }

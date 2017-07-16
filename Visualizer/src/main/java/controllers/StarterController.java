@@ -32,6 +32,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static utilities.EnvironmentConfig.currentStream;
+
 /**
  * Created by rjc249 on 5/04/17.
  * Controller for the start scene.
@@ -133,9 +135,11 @@ public class StarterController implements Initializable, ClockHandler {
         boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
 
         if (streaming) {
+            EnvironmentConfig.currentStream = host;
+
             this.streamCombo.setDisable(true);
             this.confirmButton.setDisable(true);
-
+            currentStream = host;
             this.setFields();
         }
 

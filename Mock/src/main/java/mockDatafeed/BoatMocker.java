@@ -199,12 +199,14 @@ public class BoatMocker extends TimerTask {
         }
     }
 
+
     /**
      * updates the boats location
      */
     @Override
     public void run() {
         //check if boats are at the end of the leg
+
 
         for (Competitor b : competitors) {
             //if at the end stop

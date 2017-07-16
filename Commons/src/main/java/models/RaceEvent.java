@@ -12,6 +12,7 @@ public class RaceEvent{
     private int position;
     private String feature;
 
+
     /**
      * Constructs a RaceEvent
      * @param teamName String team name of the boat
@@ -19,7 +20,7 @@ public class RaceEvent{
      * @param feature String the course feature the boat has passed
      * @param position int the position of the boat
      */
-    public RaceEvent(Integer boatSourceId, String teamName, Double speed, String feature, int position) {
+    public RaceEvent(Integer boatSourceId, String teamName, String feature, Double speed, int position) {
         this.boatSourceId = boatSourceId;
         this.teamName = teamName;
         this.feature = feature;
@@ -27,7 +28,7 @@ public class RaceEvent{
         this.position = position;
     }
 
-    // Actually used by FXML. DO NOT DELELETE
+    // Actually used by FXML. DO NOT DELETE
     public String getFeature() {
         return feature;
     }

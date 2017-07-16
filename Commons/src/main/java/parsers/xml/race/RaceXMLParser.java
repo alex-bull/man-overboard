@@ -84,11 +84,14 @@ public class RaceXMLParser {
         List<MarkData> finishMarks = new ArrayList<>();
         boolean startLineSet = false;
 
+        Map<Integer, List<Integer>> compoundMarkIdToSourceId = new HashMap<>();
+
         for (Element compoundMark : race.getChild("Course").getChildren()) {
             int size = race.getChild("Course").getChildren().size();
             int compoundMarkID = Integer.parseInt(compoundMark.getAttribute("CompoundMarkID").getValue());
             String compoundMarkName = compoundMark.getAttribute("Name").getValue();
             List<MarkData> marks = new ArrayList<>();
+            List<Integer> sourceIds = new ArrayList<>();
 
             for (Element mark : compoundMark.getChildren()) {
 
@@ -98,13 +101,15 @@ public class RaceXMLParser {
                 double targetLng = Double.parseDouble(mark.getAttributeValue("TargetLng"));
                 int sourceID = Integer.parseInt(mark.getAttributeValue("SourceID"));
                 raceData.addMarkID(sourceID);
+                sourceIds.add(sourceID);
                 MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
                 marks.add(markData);
             }
+            compoundMarkIdToSourceId.put(compoundMarkID, sourceIds);
+            raceData.addCompoundMarkID(compoundMarkID);
             CompoundMarkData compoundMarkData = new CompoundMarkData(compoundMarkID, compoundMarkName, marks);
             course.add(compoundMarkData);
 
-            //Start Line
             if (!startLineSet) {
                 for (CompoundMarkData mark : course) {
                     if (mark.getName().equals(compoundMarkName) && mark.getMarks().size() == 2) {
@@ -123,17 +128,28 @@ public class RaceXMLParser {
             }
             raceData.setStartMarks(startMarks);
             raceData.setFinishMarks(finishMarks);
-
         }
         raceData.setCourse(course);
 
+        Map<Integer, List<Integer>> legIndexToSourceId = new HashMap<>();
+
         for (Element corner : race.getChild("CompoundMarkSequence").getChildren()) {
+
+            int size = race.getChild("CompoundMarkSequence").getChildren().size();
+            int cornerSeqID = Integer.parseInt(corner.getAttributeValue("SeqID"));
+            int compoundMarkID = Integer.parseInt(corner.getAttributeValue("CompoundMarkID"));
             String rounding = corner.getAttributeValue("Rounding");
+            int zoneSize = Integer.parseInt(corner.getAttributeValue("ZoneSize"));
+
+            legIndexToSourceId.put(cornerSeqID, compoundMarkIdToSourceId.get(compoundMarkID));
             CornerData cornerData = new CornerData(rounding);
 
             raceData.getCompoundMarkSequence().add(cornerData);
 
+
         }
+        raceData.setLegIndexToSourceId(legIndexToSourceId);
+
         for (Element limit : race.getChild("CourseLimit").getChildren()) {
             double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
             double lon = Double.parseDouble(limit.getAttributeValue("Lon"));
@@ -141,6 +157,7 @@ public class RaceXMLParser {
             raceData.addCourseLimit(limitData);
 
         }
+
         parseRace(raceData);
         return raceData;
     }

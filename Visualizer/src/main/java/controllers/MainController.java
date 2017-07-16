@@ -30,19 +30,19 @@ public class MainController {
     void beginRace(DataSource dataSource, double width, double height) {
         raceViewController.begin(width, height, dataSource);
         timerController.begin(dataSource);
+        tableController.addObserver(raceViewController);
         sparklinesController.setCompetitors(dataSource, width);
 
-        tableController.addObserver(raceViewController);
         AnimationTimer timer = new AnimationTimer() {
 
             @Override
             public void handle(long now) {
-                if(raceViewController.isLoaded()) {
-                raceViewController.refresh(dataSource);
-                tableController.refresh(dataSource);
-                windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
-                sparklinesController.refresh();
-                loadingPane.toBack();
+                if (raceViewController.isLoaded()) {
+                    raceViewController.refresh(dataSource);
+                    tableController.refresh(dataSource);
+                    windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
+                    sparklinesController.refresh();
+                    loadingPane.toBack();
                 }
                 else{
                     loadingPane.toFront();
