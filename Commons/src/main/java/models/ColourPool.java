@@ -28,7 +28,6 @@ public class ColourPool {
         this.colours.add(Color.MAGENTA);
         this.colours.add(Color.ORANGE);
         this.colours.add(Color.MEDIUMPURPLE);
-        this.colours.add(Color.YELLOW);
         this.colours.add(Color.SEAGREEN);
         this.colours.add(Color.ROYALBLUE);
         this.colours.add(Color.LIGHTCORAL);

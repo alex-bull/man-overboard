@@ -612,6 +612,8 @@ public class RaceViewController implements Initializable, TableObserver {
             boatModel.setFill(boat.getColor());
             boatModel.setStroke(BLACK);
             boatModel.setStrokeWidth(1);
+//            boatModel.setStroke(YELLOW);
+//            boatModel.setStrokeWidth(2.5);
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(boat.getSourceID(), boatModel);
