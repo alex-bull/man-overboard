@@ -21,8 +21,6 @@ import java.util.zip.Checksum;
  */
 class BinaryPackager {
 
-    private short windSpeed = 5500;
-    private short windDirection = 0;
     /**
      * Takes boat position data and encapsulates it in a binary packet
      *
@@ -221,13 +219,13 @@ class BinaryPackager {
      *                          9 – Race start time not set
      *                          10 – Prestart (more than 3:00 until start)
      * @param expectedStartTime the expected start time
+     * @param windDirection the wind direction
+     * @param windSpeed the wind speed
      * @return byte[], the race status message
      */
-    byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime) {
+    byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime, short windDirection, short windSpeed) {
         byte[] packet = new byte[24];
-        // for wind direction North = 0x0000 East = 0x4000 South = 0x8000
-        windDirection = (short) (ThreadLocalRandom.current().nextInt(-30, 30) + windDirection);
-        windSpeed = (short) (ThreadLocalRandom.current().nextInt(-2, 2) + windSpeed);
+
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
