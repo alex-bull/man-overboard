@@ -5,6 +5,7 @@ import com.google.common.io.CharStreams;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.xml.CourseXMLParser;
+import utility.Calculator;
 
 import java.io.*;
 import java.net.SocketException;
@@ -32,7 +33,6 @@ public class BoatMocker extends TimerTask {
         prestart = new MutablePoint(32.296577, -64.854304);
         raceStatus = 3;
         expectedStartTime = ZonedDateTime.now();
-        windGenerator = new WindGenerator(3000, 8192);
     }
 
     /**
@@ -46,9 +46,9 @@ public class BoatMocker extends TimerTask {
             me = new BoatMocker();
             //find out the coordinates of the course
             me.generateCourse();
-
-            //generate the boats
             me.generateCompetitors();
+            me.generateWind();
+
             //send all xml data first
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
@@ -62,6 +62,34 @@ public class BoatMocker extends TimerTask {
         }
 
 
+    }
+
+    /**
+     * generates wind speed and direction from leeward and windward gates
+     */
+    private void generateWind() {
+        int windDirection = 8192; // default wind direction
+        List<Competitor> leewardGates = new ArrayList<>();
+        List<Competitor> windwardGates = new ArrayList<>();
+        
+        for(Competitor mark: markBoats) {
+            if(mark.getAbbreName().contains("LG")) {
+                leewardGates.add(mark);
+            }
+            else if(mark.getAbbreName().contains("WG")) {
+                windwardGates.add(mark);
+            }
+        }
+
+        if(leewardGates.size() == 2 && windwardGates.size() == 2) {
+            double leewardX = leewardGates.get(0).getLatitude() - leewardGates.get(1).getLatitude();
+            double leewardY = leewardGates.get(0).getLongitude() - leewardGates.get(1).getLongitude();
+            double windwardX = windwardGates.get(0).getLatitude() - windwardGates.get(1).getLatitude();
+            double windwardY = windwardGates.get(0).getLatitude() - windwardGates.get(1).getLongitude();
+            Calculator calculator = new Calculator();
+            windDirection = (short) calculator.calcDistBetweenGPSPoints(leewardX, leewardY, windwardX, windwardY);
+        }
+        windGenerator = new WindGenerator(3000, windDirection);
     }
 
     /**
