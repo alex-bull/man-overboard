@@ -7,7 +7,14 @@ import javafx.stage.WindowEvent;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
+import java.nio.channels.UnresolvedAddressException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.TimerTask;
 
@@ -21,8 +28,9 @@ import static parsers.Converter.hexByteArrayToInt;
  */
 public class DataReceiver extends TimerTask {
 
-    private DataInputStream dis;
+//    private SocketChannel client;
     private PacketHandler handler;
+    private DataInputStream dis;
     //used to restart the app;
     private Stage primaryStage;
 
@@ -34,7 +42,7 @@ public class DataReceiver extends TimerTask {
      * @param handler PacketHandler handler for incoming packets
      * @throws IOException IOException
      */
-    DataReceiver(String host, int port, PacketHandler handler) throws IOException {
+    DataReceiver(String host, int port, PacketHandler handler) throws UnresolvedAddressException, IOException {
         Socket receiveSock = new Socket(host, port);
         this.handler = handler;
         dis = new DataInputStream(receiveSock.getInputStream());
@@ -49,21 +57,15 @@ public class DataReceiver extends TimerTask {
      * @throws IOException IOException
      */
     private boolean checkForSyncBytes() throws IOException {
-        byte firstSyncByte = 0x47;
+
         // -125 is equivalent to 0x83 unsigned
-        byte secondSyncByte = -125;
+        byte[] expected = {0x47,-125};
 
-        byte[] b1 = new byte[1];
-        dis.readFully(b1);
-        if (b1[0] == firstSyncByte) {
-            byte[] b2 = new byte[1];
+        byte[] actual = new byte[2];
 
-            dis.readFully(b2);
-            if (b2[0] == secondSyncByte) {
-                return true;
-            }
-        }
-        return false;
+//        client.read(ByteBuffer.wrap(actual));
+        dis.read(actual);
+        return Arrays.equals(actual, expected);
     }
 
     /**
@@ -72,7 +74,9 @@ public class DataReceiver extends TimerTask {
      * @throws IOException IOException
      */
     private byte[] getHeader() throws IOException {
-        byte[] header = new byte[13];
+//        ByteBuffer header=ByteBuffer.allocate(13);
+//        client.read(header);
+        byte[] header=new byte[13];
         dis.readFully(header);
         return header;
     }
@@ -96,10 +100,9 @@ public class DataReceiver extends TimerTask {
         try {
             boolean isStartOfPacket = checkForSyncBytes();
             if (isStartOfPacket) {
-
                 byte[] header = this.getHeader();
                 int length = this.getMessageLength(header);
-                byte[] message = new byte[length];
+                byte[] message=new byte[length];
                 dis.readFully(message);
                 this.handler.interpretPacket(header, message);
             }
