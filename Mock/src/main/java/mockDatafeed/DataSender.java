@@ -28,8 +28,10 @@ class DataSender {
         selector = Selector.open();
         serverSocket = ServerSocketChannel.open();
         serverSocket.configureBlocking(false);
-        serverSocket.socket().bind(new InetSocketAddress("localhost", port));
+        serverSocket.socket().bind(new InetSocketAddress("0.0.0.0", port));
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+
+        System.out.println(serverSocket.socket().getInetAddress());
     }
 
 
