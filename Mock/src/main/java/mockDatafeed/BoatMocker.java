@@ -32,7 +32,7 @@ public class BoatMocker extends TimerTask {
         prestart = new MutablePoint(32.296577, -64.854304);
         raceStatus = 3;
         expectedStartTime = ZonedDateTime.now();
-        windGenerator = new WindGenerator();
+        windGenerator = new WindGenerator(3000, 8192);
     }
 
     /**
