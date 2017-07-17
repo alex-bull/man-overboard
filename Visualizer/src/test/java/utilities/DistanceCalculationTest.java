@@ -14,13 +14,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class DistanceCalculationTest {
 
-    private RaceViewController rvc;
+    private RaceCalculator raceCalculator;
     private MutablePoint startPoint;
     private MutablePoint endPoint;
 
     @Before
     public void setUp() {
-        rvc = new RaceViewController();
+        raceCalculator = new RaceCalculator();
         startPoint = new MutablePoint (10.0, 10.0);
         endPoint = new MutablePoint (20.0, 20.0);
     }
@@ -41,7 +41,7 @@ public class DistanceCalculationTest {
 
         double a = sin(deltaPhi / 2) * sin(deltaPhi / 2) + cos(phiStart) * cos(phiBoat) * sin(deltaLambda / 2) * sin(deltaLambda / 2);
         double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-        assertTrue(earthRadius * c == rvc.calcDistBetweenGPSPoints(10.0, 10.0,20.0,20.0));
+        assertTrue(earthRadius * c == raceCalculator.calcDistBetweenGPSPoints(10.0, 10.0,20.0,20.0));
 
     }
 
