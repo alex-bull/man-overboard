@@ -19,7 +19,7 @@ public class Calculator {
     public static double calcAngleBetweenPoints(double x1, double y1, double x2, double y2) {
         double rangeX = x1 - x2;
         double rangeY = y1 - y2;
-        return atan(rangeY/rangeX) + Math.PI;
+        return atan2(rangeY, rangeX) + Math.PI;
     }
 
     /**

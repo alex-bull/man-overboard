@@ -70,7 +70,7 @@ public class BoatMocker extends TimerTask {
      * generates wind speed and direction from leeward and windward gates
      */
     private void generateWind() {
-        int windSpeed = 4000; //default wind speed
+        int windSpeed = 4600; //default wind speed
         int windDirection = 8192; // default wind direction
         List<Competitor> leewardGates = new ArrayList<>();
         List<Competitor> windwardGates = new ArrayList<>();
@@ -287,7 +287,6 @@ public class BoatMocker extends TimerTask {
         if (finished){
             try {
                 sendEOF();
-                System.out.println("finished");
             } catch (IOException e) {
                 e.printStackTrace();
             }
