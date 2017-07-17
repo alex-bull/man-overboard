@@ -31,7 +31,6 @@ class DataSender {
         serverSocket.socket().bind(new InetSocketAddress("0.0.0.0", port));
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
-        System.out.println(serverSocket.socket().getInetAddress());
     }
 
 
@@ -52,7 +51,6 @@ class DataSender {
                     SocketChannel client = serverSocket.accept();
                     client.configureBlocking(false);
                     client.register(selector, SelectionKey.OP_WRITE);
-//                    System.out.println(client.getRemoteAddress());
                 }
                 selector.selectedKeys().remove(key);
             }
@@ -69,12 +67,13 @@ class DataSender {
     void sendData(byte[] data) throws IOException {
 
         selector.select(1);
-        for (Object key : new HashSet<>(selector.selectedKeys())) {
-            SelectionKey selectionKey = (SelectionKey) key;
+
+        for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
+
             //write to channel if writable
-            if (selectionKey.isWritable()) {
+            if (key.isWritable()) {
                 ByteBuffer buffer = ByteBuffer.wrap(data);
-                SocketChannel client = (SocketChannel) selectionKey.channel();
+                SocketChannel client = (SocketChannel) key.channel();
                 try {
                     client.write(buffer);
                 } catch (IOException e) {
