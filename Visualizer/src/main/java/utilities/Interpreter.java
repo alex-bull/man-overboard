@@ -12,6 +12,8 @@ import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
 import parsers.XmlSubtype;
+import parsers.boatAction.BoatAction;
+import parsers.boatAction.BoatActionParser;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
 import parsers.courseWind.CourseWindData;
@@ -44,6 +46,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private List<Competitor> competitorsPosition;
     private double windDirection;
     private BoatData boatData;
+    private BoatAction boatAction;
     private RaceData raceData;
     private String timezone;
     private double windSpeed;
@@ -236,6 +239,13 @@ public class Interpreter implements DataSource, PacketHandler {
                         updateCourseMarks(courseFeature);
 
                     }
+                }
+                break;
+            case BOAT_ACTION:
+                BoatActionParser boatActionParser = new BoatActionParser();
+                this.boatAction = boatActionParser.processMessage(packet);
+                if (boatData != null) {
+
                 }
                 break;
             default:
