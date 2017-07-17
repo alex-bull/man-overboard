@@ -26,16 +26,12 @@ public class BoatMocker extends TimerTask {
     private List<Competitor> competitors;
     private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
-    private int raceStatus = 3;
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager;
     private DataSender dataSender;
     private MutablePoint prestart;
     private WindGenerator windGenerator;
-
-    private BoatMocker() throws IOException {
-        binaryPackager = new BinaryPackager();
 
     BoatMocker() throws IOException {
         int connectionTime = 5000;
@@ -188,9 +184,9 @@ public class BoatMocker extends TimerTask {
      * @throws IOException IOException
      */
     private void sendRaceStatus() throws IOException {
-        //TODO: make race status message
         short windDirection = windGenerator.getWindDirection();
         short windSpeed = windGenerator.getWindSpeed();
+        int raceStatus = 3;
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed);
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         dataSender.sendData(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
