@@ -43,6 +43,22 @@ public class MarkData {
         this.sourceID = sourceID;
     }
 
+    public Double getTargetLat() {
+        return targetLat;
+    }
+
+    public void setTargetLat(Double targetLat) {
+        this.targetLat = targetLat;
+    }
+
+    public Double getTargetLon() {
+        return targetLon;
+    }
+
+    public void setTargetLon(Double targetLon) {
+        this.targetLon = targetLon;
+    }
+
     @Override
     public String toString() {
         return "MarkData{" +

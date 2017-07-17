@@ -7,7 +7,7 @@ import java.net.Socket;
 
 /**
  * Created by khe60 on 10/04/17.
- * The DataSender class, currently sends test_data.bin at a rate of 1 byte per second
+ *
  */
 class DataSender {
 

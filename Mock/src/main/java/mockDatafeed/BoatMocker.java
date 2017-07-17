@@ -209,15 +209,32 @@ public class BoatMocker extends TimerTask {
      */
     @Override
     public void run() {
-        //check if boats are at the end of the leg
 
-        int finishedBoats = 0;
+//        try {
+//            BufferedReader br=new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/test_data.bin")));
+//
+//            String inputLine;
+//            while ((inputLine = br.readLine()) != null) {
+//                dataSender.sendData(inputLine.getBytes());
+//                Thread.sleep(1);
+//                System.out.println(inputLine);
+//            }
+//            br.close();
+//
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        //check if boats are at the end of the leg
+        boolean finished=true;
         for (Competitor b : competitors) {
             //if at the end stop
             if (b.getCurrentLegIndex() == courseFeatures.size() - 1) {
                 b.setVelocity(0);
                 b.setStatus(3);
-                finishedBoats++;
                 continue;
             }
 
@@ -231,14 +248,19 @@ public class BoatMocker extends TimerTask {
                 b.setCurrentLegIndex(b.getCurrentLegIndex() + 1);
                 b.setCurrentHeading(courseFeatures.get(b.getCurrentLegIndex()).getExitHeading());
             }
-        }
-        if(finishedBoats == competitors.size()){
-            raceStatus = 4;
+            finished = finished&&(b.getVelocity()==0);
         }
         //update the position of the boats given the current position, heading and velocity
         updatePosition();
         //send the boat info to receiver
-
+        if (finished){
+            try {
+                sendEOF();
+                System.out.println("finished");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try {
             sendBoatLocation();
             sendRaceStatus();
@@ -247,5 +269,11 @@ public class BoatMocker extends TimerTask {
 
         }
 
+
+    }
+
+    private void sendEOF() throws IOException {
+        String EOFString= CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream("/EOF")));
+        dataSender.sendData(EOFString.getBytes());
     }
 }
