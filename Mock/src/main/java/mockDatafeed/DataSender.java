@@ -78,7 +78,7 @@ class DataSender {
                     client.write(buffer);
                 } catch (IOException e) {
                     System.out.println(client.getRemoteAddress() + " has disconnected, removing client");
-                    ((SelectionKey) key).cancel();
+                    key.cancel();
                 }
 
             }
