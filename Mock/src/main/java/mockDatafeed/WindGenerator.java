@@ -19,8 +19,6 @@ class WindGenerator {
     WindGenerator(int windSpeed, int windDirection) {
         this.windSpeed = (short) windSpeed;
         this.windDirection = (short) windDirection;
-        // North = 0x0000 (0 or -32768) East = 0x4000 (16384) West = -0x4000 (-16384)
-        // North-West = 0x6000 (24576) North-East -0x6000 (-24576) South-West = 0x2000 (8192)
     }
 
     short getWindSpeed() {

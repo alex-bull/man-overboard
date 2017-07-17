@@ -1,7 +1,6 @@
 package utility;
 
 import static java.lang.Math.*;
-import static java.lang.Math.sqrt;
 
 /**
  * Created by psu43 on 17/07/17.
@@ -10,23 +9,28 @@ import static java.lang.Math.sqrt;
 public class Calculator {
 
     /**
-     * Calculates the distance in metres between a pair of coordinates.
-     * @param latitude1 first point's latitude
-     * @param longitude1 first point's longitude
-     * @param latitude2 second point's latitude
-     * @param longitude2 second point's longitude
-     * @return double distance (m)
+     * Calculates the angle between two points
+     * @param x1 point 1's x value
+     * @param y1 point 1's y value
+     * @param x2 point 2's x value
+     * @param y2 point 2's y valie
+     * @return double the angle
      */
-    public double calcDistBetweenGPSPoints(double latitude1, double longitude1, double latitude2, double longitude2) {
-        long earthRadius = 6371000;
-        double phiStart = Math.toRadians(latitude2);
-        double phiBoat = Math.toRadians(latitude1);
-
-        double deltaPhi = Math.toRadians(latitude1 - latitude2);
-        double deltaLambda = Math.toRadians(longitude1 - longitude2);
-
-        double a = sin(deltaPhi / 2) * sin(deltaPhi / 2) + cos(phiStart) * cos(phiBoat) * sin(deltaLambda / 2) * sin(deltaLambda / 2);
-        double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-        return earthRadius * c;
+    public static double calcAngleBetweenPoints(double x1, double y1, double x2, double y2) {
+        double rangeX = x1 - x2;
+        double rangeY = y1 - y2;
+        return atan(rangeY/rangeX) + Math.PI;
     }
+
+    /**
+     * Converts radians to short (range between -32,768 and a maximum value of 32,767)
+     * @param radians double angle in radians
+     * @return short the result of the conversion
+     */
+    public static short convertRadiansToShort(double radians) {
+        double ratio = radians / (2 * Math.PI); // radians is between 0 and 2 PI
+        double result = ratio * 65536 - 32768;
+        return (short) result;
+    }
+
 }

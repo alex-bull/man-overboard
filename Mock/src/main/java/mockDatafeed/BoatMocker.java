@@ -5,12 +5,14 @@ import com.google.common.io.CharStreams;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.xml.CourseXMLParser;
-import utility.Calculator;
 
 import java.io.*;
 import java.net.SocketException;
 import java.time.ZonedDateTime;
 import java.util.*;
+
+import static utility.Calculator.calcAngleBetweenPoints;
+import static utility.Calculator.convertRadiansToShort;
 
 /**
  * Created by khe60 on 24/04/17.
@@ -68,6 +70,7 @@ public class BoatMocker extends TimerTask {
      * generates wind speed and direction from leeward and windward gates
      */
     private void generateWind() {
+        int windSpeed = 4000; //default wind speed
         int windDirection = 8192; // default wind direction
         List<Competitor> leewardGates = new ArrayList<>();
         List<Competitor> windwardGates = new ArrayList<>();
@@ -82,14 +85,14 @@ public class BoatMocker extends TimerTask {
         }
 
         if(leewardGates.size() == 2 && windwardGates.size() == 2) {
-            double leewardX = leewardGates.get(0).getLatitude() - leewardGates.get(1).getLatitude();
-            double leewardY = leewardGates.get(0).getLongitude() - leewardGates.get(1).getLongitude();
-            double windwardX = windwardGates.get(0).getLatitude() - windwardGates.get(1).getLatitude();
-            double windwardY = windwardGates.get(0).getLatitude() - windwardGates.get(1).getLongitude();
-            Calculator calculator = new Calculator();
-            windDirection = (short) calculator.calcDistBetweenGPSPoints(leewardX, leewardY, windwardX, windwardY);
+            double leewardX = (leewardGates.get(0).getPosition().getXValue() + leewardGates.get(1).getPosition().getXValue()) / 2;
+            double leewardY =  (leewardGates.get(0).getPosition().getYValue() + leewardGates.get(1).getPosition().getYValue()) / 2;
+            double windwardX = (windwardGates.get(0).getPosition().getXValue() + windwardGates.get(1).getPosition().getXValue()) / 2;
+            double windwardY = (windwardGates.get(0).getPosition().getYValue() + windwardGates.get(1).getPosition().getYValue()) / 2;
+            double angle = calcAngleBetweenPoints(leewardX, leewardY, windwardX, windwardY);
+            windDirection = convertRadiansToShort(angle);
         }
-        windGenerator = new WindGenerator(3000, windDirection);
+        windGenerator = new WindGenerator(windSpeed, windDirection);
     }
 
     /**
