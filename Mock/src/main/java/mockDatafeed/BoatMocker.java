@@ -149,7 +149,6 @@ public class BoatMocker extends TimerTask {
      */
     private void sendRaceStatus() throws IOException {
         //TODO: make race status message
-        System.out.println("sending race status");
         short windDirection = windGenerator.getWindDirection();
         short windSpeed = windGenerator.getWindSpeed();
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed);

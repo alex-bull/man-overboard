@@ -31,7 +31,6 @@ public class RaceStatusParser {
             HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
             Integer windDirection = hexByteArrayToInt(Arrays.copyOfRange(body, 18, 20));
             Integer windSpeed = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 22));
-            System.out.println(windDirection);
             Double doubleWindDirection = windDirection * 360.0 / 65536.0;
             int currentByte = 24;
 
