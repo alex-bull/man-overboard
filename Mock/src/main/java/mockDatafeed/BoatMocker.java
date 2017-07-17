@@ -50,8 +50,12 @@ public class BoatMocker extends TimerTask {
         BoatMocker me;
         try {
             me = new BoatMocker();
+            //find out the coordinates of the course
             me.generateCourse();
+
+            //generate the boats
             me.generateCompetitors();
+            //send all xml data first
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
             Timer raceTimer = new Timer();
@@ -83,12 +87,12 @@ public class BoatMocker extends TimerTask {
     private void generateCompetitors() {
         competitors = new ArrayList<>();
         //generate all boats
-        competitors.add(new Boat("Oracle Team USA", 42, prestart, "USA", 101, 1));
-        competitors.add(new Boat("Emirates Team New Zealand", 40, prestart, "NZL", 103, 1));
-        competitors.add(new Boat("Ben Ainslie Racing", 36, prestart, "GBR", 106, 1));
-        competitors.add(new Boat("SoftBank Team Japan", 32, prestart, "JPN", 104, 1));
-        competitors.add(new Boat("Team France", 30, prestart, "FRA", 105, 1));
-        competitors.add(new Boat("Artemis Racing", 38, prestart, "SWE", 102, 1));
+        competitors.add(new Boat("Oracle Team USA", 100, prestart, "USA", 101, 1));
+        competitors.add(new Boat("Emirates Team New Zealand", 100, prestart, "NZL", 103, 1));
+        competitors.add(new Boat("Ben Ainslie Racing", 100, prestart, "GBR", 106, 1));
+        competitors.add(new Boat("SoftBank Team Japan", 100, prestart, "JPN", 104, 1));
+        competitors.add(new Boat("Team France", 100, prestart, "FRA", 105, 1));
+        competitors.add(new Boat("Artemis Racing", 100, prestart, "SWE", 102, 1));
 
         //generate mark boats
         markBoats = new ArrayList<>();
@@ -210,8 +214,6 @@ public class BoatMocker extends TimerTask {
     @Override
     public void run() {
         //check if boats are at the end of the leg
-
-
         for (Competitor b : competitors) {
             //if at the end stop
             if (b.getCurrentLegIndex() == courseFeatures.size() - 1) {

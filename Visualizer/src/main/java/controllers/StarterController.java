@@ -66,6 +66,18 @@ public class StarterController implements Initializable, ClockHandler {
         this.dataSource = dataSource;
     }
 
+    void autoStart(){
+        confirmButton.fire();
+        countdownButton.fire();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
     /**
      * Implementation of ClockHandler interface method
      *
@@ -109,6 +121,7 @@ public class StarterController implements Initializable, ClockHandler {
         });
         starterList.setItems(compList);
         streamCombo.getItems().addAll(EnvironmentConfig.liveStream, EnvironmentConfig.csseStream, EnvironmentConfig.mockStream);
+//        streamCombo.setValue(EnvironmentConfig.csseStream);
 
 
     }
@@ -134,13 +147,17 @@ public class StarterController implements Initializable, ClockHandler {
         Scene scene=primaryStage.getScene();
         boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
 
+
+
         if (streaming) {
             EnvironmentConfig.currentStream = host;
-
             this.streamCombo.setDisable(true);
             this.confirmButton.setDisable(true);
             currentStream = host;
             this.setFields();
+        }
+        else {
+            System.out.println("Sorry cannot connect right now.");
         }
 
 
@@ -226,11 +243,10 @@ public class StarterController implements Initializable, ClockHandler {
 
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 primaryStage.setTitle("RaceVision");
-                primaryStage.setWidth(primaryScreenBounds.getWidth());
-                primaryStage.setHeight(primaryScreenBounds.getHeight());
-                primaryStage.setMinHeight(primaryScreenBounds.getHeight());
-                primaryStage.setMinWidth(primaryScreenBounds.getWidth());
+//                primaryStage.setMaxWidth(primaryScreenBounds.getWidth());
+//                primaryStage.setMaxHeight(primaryScreenBounds.getHeight());
                 primaryStage.setScene(scene);
+                primaryStage.setFullScreen(true);
             }
         });
     }

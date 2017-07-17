@@ -1,5 +1,9 @@
 package utilities;
 
+import javafx.application.Platform;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -27,6 +31,9 @@ public class DataReceiver extends TimerTask {
 //    private SocketChannel client;
     private PacketHandler handler;
     private DataInputStream dis;
+    //used to restart the app;
+    private Stage primaryStage;
+
 
     /**
      * Initializes port to receive binary data from
@@ -40,9 +47,7 @@ public class DataReceiver extends TimerTask {
         this.handler = handler;
         dis = new DataInputStream(receiveSock.getInputStream());
         System.out.println("Start connection to server...");
-
-//        client = SocketChannel.open(new InetSocketAddress(host,port));
-//        client.configureBlocking(true);
+        this.primaryStage=handler.getPrimaryStage();
     }
 
     /**
@@ -90,26 +95,36 @@ public class DataReceiver extends TimerTask {
     /**
      * Identify the start of a packet, determine the message type and length, then read.
      */
-    public void run() throws NullPointerException{
+    public void run() throws NullPointerException {
+
         try {
             boolean isStartOfPacket = checkForSyncBytes();
-
             if (isStartOfPacket) {
                 byte[] header = this.getHeader();
                 int length = this.getMessageLength(header);
                 byte[] message=new byte[length];
                 dis.readFully(message);
-//                ByteBuffer message=ByteBuffer.allocate(length);
-//                client.read(message);
-//                System.out.println(length);
-//                System.out.println(new String(message.array(),Charset.defaultCharset()));
                 this.handler.interpretPacket(header, message);
             }
-        } catch (EOFException e) {
-            System.out.println("End of file.");
-        } catch (IOException e) {
+
+        }catch (EOFException e){
+//            try {
+//                Runtime.getRuntime().exec("java -jar Visualizer/target/Visualizer-0.0.jar");
+//            } catch (IOException e1) {
+//                e1.printStackTrace();
+//            }
+            System.exit(0);
+//            Platform.runLater(()->{
+//                primaryStage.fireEvent(new WindowEvent(primaryStage,WindowEvent.WINDOW_CLOSE_REQUEST));
+//                Platform.exit();
+//
+//            });
+
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     //    /**
