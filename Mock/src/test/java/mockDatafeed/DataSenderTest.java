@@ -2,6 +2,7 @@ package mockDatafeed;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -23,7 +24,8 @@ public class DataSenderTest {
 
     @Before
     public void setUp() throws Exception{
-        dataSender=new DataSender(4941);
+
+        dataSender=new DataSender(4941, Mockito.mock(BoatMocker.class));
         Thread dataSenderThread = new Thread(() -> {
             try {
                 dataSender.establishConnection(1000);

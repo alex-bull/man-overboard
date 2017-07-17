@@ -289,5 +289,13 @@ class BinaryPackager {
         return packet;
     }
 
+    static ByteBuffer packageSourceID(int sourceID){
+
+        ByteBuffer packetBuffer=ByteBuffer.allocate(4);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        packetBuffer.putInt(sourceID);
+
+        return packetBuffer;
+    }
 
 }

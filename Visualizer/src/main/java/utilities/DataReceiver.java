@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -31,8 +32,7 @@ public class DataReceiver extends TimerTask {
 //    private SocketChannel client;
     private PacketHandler handler;
     private DataInputStream dis;
-    //used to restart the app;
-    private Stage primaryStage;
+    private int sourceID;
 
 
     /**
@@ -47,8 +47,17 @@ public class DataReceiver extends TimerTask {
         this.handler = handler;
         dis = new DataInputStream(receiveSock.getInputStream());
         System.out.println("Start connection to server...");
-        this.primaryStage=handler.getPrimaryStage();
+
+        //find sourceID
+        byte[] sourceIDByte=new byte[4];
+        ByteBuffer sourceIDBuffer=ByteBuffer.wrap(sourceIDByte);
+        sourceIDBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        dis.readFully(sourceIDByte);
+        System.out.println(sourceIDBuffer.array());
+        this.sourceID=sourceIDBuffer.getInt();
+        System.out.println(sourceID);
     }
+
 
     /**
      * Check for the first and second sync byte

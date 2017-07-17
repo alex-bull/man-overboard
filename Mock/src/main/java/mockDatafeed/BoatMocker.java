@@ -29,10 +29,12 @@ public class BoatMocker extends TimerTask {
     private BinaryPackager binaryPackager;
     private DataSender dataSender;
     private MutablePoint prestart;
+    private int currentSourceID=100;
 
     BoatMocker() throws IOException {
         int connectionTime = 5000;
-        dataSender = new DataSender(4941);
+        competitors = new ArrayList<>();
+        dataSender = new DataSender(4941, this);
         binaryPackager = new BinaryPackager();
         //establishes the connection with Model
         dataSender.establishConnection(connectionTime);
@@ -66,8 +68,6 @@ public class BoatMocker extends TimerTask {
             e.printStackTrace();
 
         }
-
-
     }
 
     /**
@@ -82,17 +82,19 @@ public class BoatMocker extends TimerTask {
     }
 
     /**
-     * generates the competitors list given numBoats
+     * adds a competitor to the list of competitiors
+     * @return the source Id added
+     */
+    public int addCompetitors(){
+        competitors.add(new Boat("Boat "+currentSourceID, 100, prestart, "B"+currentSourceID, currentSourceID, 1));
+        currentSourceID+=1;
+        return currentSourceID-1;
+    }
+
+    /**
+     * generates the competitors list
      */
     private void generateCompetitors() {
-        competitors = new ArrayList<>();
-        //generate all boats
-        competitors.add(new Boat("Oracle Team USA", 100, prestart, "USA", 101, 1));
-        competitors.add(new Boat("Emirates Team New Zealand", 100, prestart, "NZL", 103, 1));
-        competitors.add(new Boat("Ben Ainslie Racing", 100, prestart, "GBR", 106, 1));
-        competitors.add(new Boat("SoftBank Team Japan", 100, prestart, "JPN", 104, 1));
-        competitors.add(new Boat("Team France", 100, prestart, "FRA", 105, 1));
-        competitors.add(new Boat("Artemis Racing", 100, prestart, "SWE", 102, 1));
 
         //generate mark boats
         markBoats = new ArrayList<>();
@@ -113,9 +115,6 @@ public class BoatMocker extends TimerTask {
             b.setCurrentHeading(courseFeatures.get(0).getExitHeading());
         }
 
-        //randomly select competitors
-        Collections.shuffle(competitors);
-        competitors = competitors.subList(0, 6);
     }
 
     /**
@@ -227,6 +226,7 @@ public class BoatMocker extends TimerTask {
                 b.setStatus(1);
             }
             //update direction if they are close enough
+            System.out.println(b);
             if (b.getPosition().isWithin(courseFeatures.get(b.getCurrentLegIndex() + 1).getGPSPoint())) {
                 b.setCurrentLegIndex(b.getCurrentLegIndex() + 1);
                 b.setCurrentHeading(courseFeatures.get(b.getCurrentLegIndex()).getExitHeading());
