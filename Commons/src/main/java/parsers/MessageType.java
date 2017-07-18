@@ -10,7 +10,8 @@ public enum MessageType {
     XML(26),
     BOAT_LOCATION(37),
     MARK_ROUNDING(38),
-    COURSE_WIND(44);
+    COURSE_WIND(44),
+    SOURCE_ID(56);
 
     private final int value;
 

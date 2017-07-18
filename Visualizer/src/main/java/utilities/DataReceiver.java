@@ -48,14 +48,6 @@ public class DataReceiver extends TimerTask {
         dis = new DataInputStream(receiveSock.getInputStream());
         System.out.println("Start connection to server...");
 
-        //find sourceID
-        byte[] sourceIDByte=new byte[4];
-        ByteBuffer sourceIDBuffer=ByteBuffer.wrap(sourceIDByte);
-        sourceIDBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        dis.readFully(sourceIDByte);
-        System.out.println(sourceIDBuffer.array());
-        this.sourceID=sourceIDBuffer.getInt();
-        System.out.println(sourceID);
     }
 
 
@@ -105,7 +97,6 @@ public class DataReceiver extends TimerTask {
      * Identify the start of a packet, determine the message type and length, then read.
      */
     public void run() throws NullPointerException {
-
         try {
             boolean isStartOfPacket = checkForSyncBytes();
             if (isStartOfPacket) {
@@ -114,6 +105,7 @@ public class DataReceiver extends TimerTask {
                 byte[] message=new byte[length];
                 dis.readFully(message);
                 this.handler.interpretPacket(header, message);
+
             }
 
         }catch (EOFException e){

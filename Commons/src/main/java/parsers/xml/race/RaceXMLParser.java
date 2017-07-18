@@ -68,7 +68,7 @@ public class RaceXMLParser {
         this.width = width;
         this.height = height;
 
-
+//        System.out.println(xmlStr);
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));

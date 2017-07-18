@@ -9,12 +9,7 @@
     <RaceStartTime Time="%s" Postpone="false"/>
 
     <Participants>
-        <Yacht SourceID="101"/>
-        <Yacht SourceID="102"/>
-        <Yacht SourceID="103"/>
-        <Yacht SourceID="104"/>
-        <Yacht SourceID="105"/>
-        <Yacht SourceID="106"/>
+        %s
     </Participants>
 
     <Course>

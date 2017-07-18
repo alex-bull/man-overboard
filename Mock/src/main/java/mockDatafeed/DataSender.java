@@ -9,7 +9,6 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.HashSet;
 
-import static mockDatafeed.BinaryPackager.packageSourceID;
 
 /**
  * Created by khe60 on 10/04/17.
@@ -20,6 +19,8 @@ class DataSender {
     private Selector selector;
     private ServerSocketChannel serverSocket;
     private BoatMocker boatMocker;
+    private BinaryPackager binaryPackager;
+
     /**
      * Constructor for DataSender, creates port at given port
      *
@@ -28,6 +29,7 @@ class DataSender {
      */
     DataSender(int port, BoatMocker boatMocker) throws IOException {
         this.boatMocker=boatMocker;
+        binaryPackager=new BinaryPackager();
         selector = Selector.open();
         serverSocket = ServerSocketChannel.open();
         serverSocket.configureBlocking(false);
@@ -54,32 +56,38 @@ class DataSender {
                     client.configureBlocking(false);
                     client.register(selector, SelectionKey.OP_WRITE);
                     //generate and send sourceID to client
-                    int sourceId=boatMocker.addCompetitors();
-                    sendSourceID(key,sourceId);
 
                 }
                 selector.selectedKeys().remove(key);
             }
         }
         serverSocket.close();
+
         System.out.println("finish client connection");
+        sendSourceID();
     }
 
     /**
      * sends the sourceID to the selection key
-     * @param key the selection key required
+     *
      */
-    private void sendSourceID(SelectionKey key, int sourceID){
-        if(key.isWritable()){
-            ByteBuffer packet=packageSourceID(sourceID);
-            SocketChannel client = (SocketChannel) key.channel();
-            try {
-                client.write(packet);
-            } catch (IOException e) {
-                System.out.println("failed to register sourceID "+sourceID);
-                key.cancel();
-            }
+    private void sendSourceID() throws IOException {
 
+        selector.select(1);
+        for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
+            if (key.isWritable()) {
+
+                int sourceID = boatMocker.addCompetitors();
+                byte[] packet = binaryPackager.packageSourceID(sourceID);
+                ByteBuffer buffer=ByteBuffer.wrap(packet);
+                SocketChannel client = (SocketChannel) key.channel();
+                try {
+                    client.write(buffer);
+                } catch (IOException e) {
+                    System.out.println("failed to register sourceID " + sourceID);
+                    key.cancel();
+                }
+            }
         }
     }
 
@@ -89,11 +97,8 @@ class DataSender {
      * @param data byte[] byte array of the data
      */
     void sendData(byte[] data) throws IOException {
-
         selector.select(1);
-
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
-
             //write to channel if writable
             if (key.isWritable()) {
                 ByteBuffer buffer = ByteBuffer.wrap(data);

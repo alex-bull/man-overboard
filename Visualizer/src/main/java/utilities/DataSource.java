@@ -36,4 +36,5 @@ public interface DataSource {
     List<Double> getGPSbounds();
     int getMapZoomLevel();
     double getShiftDistance();
+    int getSourceID();
 }

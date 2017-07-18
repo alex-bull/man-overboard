@@ -32,6 +32,8 @@ import parsers.xml.regatta.RegattaXMLParser;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
@@ -74,7 +76,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
     private boolean seenRaceXML = false;
-
+    private int sourceID;
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
         this.raceXMLParser = new RaceXMLParser();
@@ -283,6 +285,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 BoatDataParser boatDataParser = new BoatDataParser();
                 this.boatData = boatDataParser.processMessage(packet);
                 if (boatData != null) {
+
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties();
                     } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
@@ -292,11 +295,25 @@ public class Interpreter implements DataSource, PacketHandler {
                     }
                 }
                 break;
+            case SOURCE_ID:
+
+                ByteBuffer byteBuffer=ByteBuffer.wrap(packet);
+                byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+                sourceID=byteBuffer.get();
+                break;
+
             default:
                 break;
         }
     }
 
+    /**
+     * returns the sourceID of the clients boat
+     * @return the sourceID of the clients boat
+     */
+    public int getSourceID() {
+        return sourceID;
+    }
 
     /**
      * Updates the boat properties as data is being received.
@@ -318,6 +335,7 @@ public class Interpreter implements DataSource, PacketHandler {
             colourPool.getColours().remove(colour);
         }
         //add to competitorsPosition and storedCompetitors if they are new
+
         if (!storedCompetitors.keySet().contains(boatID)) {
             this.storedCompetitors.put(boatID, competitor);
             competitorsPosition.add(competitor);
