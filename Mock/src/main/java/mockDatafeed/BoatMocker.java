@@ -39,7 +39,7 @@ public class BoatMocker extends TimerTask {
         competitors = new ArrayList<>();
         dataSender = new DataSender(4941, this);
         binaryPackager = new BinaryPackager();
-        //establishes the connection with Model
+        //establishes the connection with Visualizers
         dataSender.establishConnection(connectionTime);
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
