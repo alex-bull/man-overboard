@@ -100,6 +100,7 @@ public class BoatMocker extends TimerTask {
      */
     private void generateCompetitors() {
 
+
         //generate mark boats
         markBoats = new ArrayList<>();
         markBoats.add(new Boat("Start Line 1", 0, new MutablePoint(32.296577, -64.854304), "SL1", 122, 0));
