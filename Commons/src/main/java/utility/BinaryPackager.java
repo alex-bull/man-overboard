@@ -1,7 +1,8 @@
-package mockDatafeed;
+package utility;
 
 
 import models.Competitor;
+import parsers.boatAction.BoatAction;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -18,8 +19,29 @@ import java.util.zip.Checksum;
  * Created by mattgoodson on 24/04/17.
  * Binary Package
  */
-class BinaryPackager {
+public class BinaryPackager {
 
+
+    public byte[] packageBoatAction(Integer action) {
+
+        byte[] packet = new byte[24];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 100;
+        short bodyLength = 1;
+        this.writeHeader(packetBuffer, type, bodyLength);
+
+        packetBuffer.put(action.byteValue());
+
+        Checksum crc32 = new CRC32();
+        crc32.update(packet, 0, packet.length - 4);
+        packetBuffer.putInt((int) crc32.getValue());
+
+        return packet;
+
+
+    }
 
     /**
      * Takes boat position data and encapsulates it in a binary packet
@@ -31,7 +53,7 @@ class BinaryPackager {
      * @param boatSpeed Double, the current speed of the boat
      * @return byte[], the binary packet
      */
-    byte[] packageBoatLocation(Integer sourceId, Double latitude, Double longitude, Double heading, Double boatSpeed, int deviceType) {
+    public byte[] packageBoatLocation(Integer sourceId, Double latitude, Double longitude, Double heading, Double boatSpeed, int deviceType) {
 
         byte[] packet = new byte[75];
 
@@ -104,7 +126,7 @@ class BinaryPackager {
      *                      7-Boat
      * @return a bytearray of packaged xml message
      */
-    byte[] packageXML(int length, String xmlFileString, int messageType) throws IOException {
+    public byte[] packageXML(int length, String xmlFileString, int messageType) throws IOException {
 
         // message header is 19 bytes + 14 bytes of other xml message fields
         byte[] packet = new byte[length + 33];
@@ -154,7 +176,7 @@ class BinaryPackager {
         buffer.put(this.getCurrentTimeStamp());
 
         //message source id
-        buffer.putInt(1); //TODO:- figure out what the message source id is
+        buffer.putInt(1);
         buffer.putShort((short) messageLength);
     }
 
@@ -221,7 +243,7 @@ class BinaryPackager {
      * @param expectedStartTime the expected start time
      * @return byte[], the race status message
      */
-    byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime) {
+    public byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime) {
         byte[] packet = new byte[24];
         short windDirection = -32768;// 0x8000 in signed short
 
@@ -249,7 +271,7 @@ class BinaryPackager {
      * @param competitors the list of boats
      * @return byte[] of each boat's section in RaceStatus Message
      */
-    byte[] packageEachBoat(List<Competitor> competitors) {
+    public byte[] packageEachBoat(List<Competitor> competitors) {
         byte[] packet = new byte[20 * competitors.size()];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -274,7 +296,7 @@ class BinaryPackager {
      * @param eachBoat   the each boat bytearray
      * @return byte[] of the entire RaceStatus packet
      */
-    byte[] packageRaceStatus(byte[] raceStatus, byte[] eachBoat) {
+    public byte[] packageRaceStatus(byte[] raceStatus, byte[] eachBoat) {
         byte[] packet = new byte[19 + raceStatus.length + eachBoat.length];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);

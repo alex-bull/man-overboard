@@ -6,7 +6,10 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import utilities.DataSource;
+import utility.BinaryPackager;
+import utility.DataSender;
 
+import java.io.IOException;
 
 
 /**
@@ -22,22 +25,29 @@ public class MainController {
     @FXML private TimerController timerController;
     @FXML private SparklinesController sparklinesController;
     @FXML private GridPane loadingPane;
-
+    private DataSender dataSender;
+    private BinaryPackager binaryPackager;
 
 
     @FXML public void keyPressed(KeyEvent event) {
 
-        switch (event.getCode()) {
-            case UP:
-                System.out.println("Upp");
-                break;
-            case DOWN:
-                System.out.println("Down");
-                break;
-
-
+        try {
+            switch (event.getCode()) {
+                case UP:
+                    System.out.println("Upp");
+                    this.dataSender.sendData(this.binaryPackager.packageBoatAction(5));
+                    break;
+                case DOWN:
+                    System.out.println("Down");
+                    this.dataSender.sendData(this.binaryPackager.packageBoatAction(6));
+                    break;
+            }
+        }
+        catch (IOException e) {
+            System.out.println("Failed to send boat action message");
         }
     }
+
 
     /**
      * Begins the race loop which updates child controllers at ~60fps
@@ -45,11 +55,13 @@ public class MainController {
      * @param width double the screen width
      * @param height double the screen height
      */
-    void beginRace(DataSource dataSource, double width, double height) {
+    void beginRace(DataSender dataSender, DataSource dataSource, double width, double height) {
         raceViewController.begin(width, height, dataSource);
         timerController.begin(dataSource);
         tableController.addObserver(raceViewController);
         sparklinesController.setCompetitors(dataSource, width);
+        this.dataSender = dataSender;
+        this.binaryPackager = new BinaryPackager();
 
         AnimationTimer timer = new AnimationTimer() {
 
