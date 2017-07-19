@@ -1,6 +1,7 @@
 package utility;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,8 +21,9 @@ public class DataSender {
 
     private Selector selector;
     private ServerSocketChannel serverSocket;
-    private BoatMocker boatMocker;
+    private ConnectionClient connectionClient;
     private BinaryPackager binaryPackager;
+    private OutputStream os;
 
     /**
      * Constructor for DataSender, creates port at given port
@@ -29,8 +31,8 @@ public class DataSender {
      * @param port int The port number
      * @throws IOException IOException
      */
-    public DataSender(int port, BoatMocker boatMocker) throws IOException {
-        this.boatMocker=boatMocker;
+    public DataSender(int port, ConnectionClient connectionClient) throws IOException {
+        this.connectionClient = connectionClient;
         binaryPackager=new BinaryPackager();
         selector = Selector.open();
         serverSocket = ServerSocketChannel.open();
@@ -46,7 +48,7 @@ public class DataSender {
      *
      * @param time the amount of time in milliseconds of the connection establishment period
      */
-    void establishConnection(long time) throws IOException {
+    public void establishConnection(long time) throws IOException {
         System.out.println("start client connection");
         long finishTime = System.currentTimeMillis() + time;
         while (System.currentTimeMillis() < finishTime) {
@@ -79,7 +81,7 @@ public class DataSender {
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             if (key.isWritable()) {
 
-                int sourceID = boatMocker.addCompetitors();
+                int sourceID = connectionClient.addConnection();
                 byte[] packet = binaryPackager.packageSourceID(sourceID);
                 ByteBuffer buffer=ByteBuffer.wrap(packet);
                 SocketChannel client = (SocketChannel) key.channel();
@@ -120,7 +122,7 @@ public class DataSender {
      *
      * @param data byte[] byte array of the data
      */
-    void sendData(byte[] data) throws IOException {
+    public void sendData(byte[] data) throws IOException {
         selector.select(1);
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             //write to channel if writable

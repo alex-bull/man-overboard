@@ -35,11 +35,11 @@ public class MainController {
             switch (event.getCode()) {
                 case UP:
                     System.out.println("Upp");
-                    this.dataSender.sendData(this.binaryPackager.packageBoatAction(5));
+                    this.dataSender.sendDataSingleClient(this.binaryPackager.packageBoatAction(5));
                     break;
                 case DOWN:
                     System.out.println("Down");
-                    this.dataSender.sendData(this.binaryPackager.packageBoatAction(6));
+                    this.dataSender.sendDataSingleClient(this.binaryPackager.packageBoatAction(6));
                     break;
             }
         }

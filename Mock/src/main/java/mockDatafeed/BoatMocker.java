@@ -21,7 +21,7 @@ import static utilities.Utility.fileToString;
  * Created by khe60 on 24/04/17.
  * Boat mocker
  */
-public class BoatMocker extends TimerTask {
+public class BoatMocker extends TimerTask implements ConnectionClient {
     private List<Competitor> competitors;
     private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
@@ -90,11 +90,15 @@ public class BoatMocker extends TimerTask {
      * adds a competitor to the list of competitiors
      * @return the source Id added
      */
-    public int addCompetitors(){
+    private int addCompetitors(){
         Boat newCompetitor=new Boat("Boat "+currentSourceID, random.nextInt(20)+20, prestart, "B"+currentSourceID, currentSourceID, 1);
         competitors.add(newCompetitor);
         currentSourceID+=1;
         return currentSourceID-1;
+    }
+
+    public int addConnection() {
+        return this.addCompetitors();
     }
 
     /**
