@@ -34,5 +34,6 @@ public interface DataSource {
     Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures();
     List<Double> getGPSbounds();
     int getMapZoomLevel();
+    int getSourceId();
     double getShiftDistance();
 }

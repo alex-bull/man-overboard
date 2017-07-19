@@ -125,6 +125,9 @@ public class Interpreter implements DataSource, PacketHandler {
         return this.raceData.getLegIndexToSourceId();
     }
 
+    public int getSourceId() {
+        return 101;
+    }
 
 
     /**
@@ -257,6 +260,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 break;
         }
     }
+
 
 
     /**

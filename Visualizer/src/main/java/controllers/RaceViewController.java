@@ -206,13 +206,13 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     /**
-     * Draws the virtual line of the selected boat with the same color
+     * Draws the virtual line of the player's boat with the same color
      * @param boatColor color of the boat
-     * @param selectedBoat selected boat
+     * @param playerBoat player's boat
      */
-    private void drawVirtualLine(Color boatColor, Competitor selectedBoat) {
+    private void drawVirtualLine(Color boatColor, Competitor playerBoat) {
         raceCalculator.setBoatModels(boatModels);
-        List<MutablePoint> virtualLinePoints = raceCalculator.calcVirtualLinePoints(selectedBoat);
+        List<MutablePoint> virtualLinePoints = raceCalculator.calcVirtualLinePoints(playerBoat);
         if (!virtualLinePoints.isEmpty()) {
             MutablePoint virtualLine1 = virtualLinePoints.get(0);
             MutablePoint virtualLine2 = virtualLinePoints.get(1);
@@ -794,8 +794,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
-                if (selectedBoatSourceId != 0
-                        && selectedBoatSourceId == boat.getSourceID()
+                if (boat.getSourceID() != 0
+                        && boat.getSourceID() == dataSource.getSourceId()
                         && dataSource.getRaceStatus() == PREPARATORY) {
                     Color boatColor = boat.getColor();
                     drawVirtualLine(boatColor, boat);
