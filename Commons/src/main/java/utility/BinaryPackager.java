@@ -243,7 +243,7 @@ public class BinaryPackager {
      * @param expectedStartTime the expected start time
      * @return byte[], the race status message
      */
-    public byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime) {
+    public byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime, int numBoats) {
         byte[] packet = new byte[24];
         short windDirection = -32768;// 0x8000 in signed short
 
@@ -258,7 +258,7 @@ public class BinaryPackager {
         packetBuffer.put(getTimeStamp(expectedStartTime));//ExpectedStartTime
         packetBuffer.putShort(windDirection); //WindDirection
         packetBuffer.putShort((short) 0);//WindSpeed
-        packetBuffer.put((byte) 6);//Number of Boats
+        packetBuffer.put((byte) numBoats);//Number of Boats
         packetBuffer.put((byte) 1);//RaceType 1 ->MatchRace
 
         return packet;
@@ -311,5 +311,21 @@ public class BinaryPackager {
         return packet;
     }
 
+    public byte[] packageSourceID(int sourceID){
+        byte[] packet=new byte[23];
+
+        ByteBuffer packetBuffer=ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        writeHeader(packetBuffer,56,(short)4);
+        packetBuffer.putInt(sourceID);
+
+        //CRC
+        Checksum crc32 = new CRC32();
+        crc32.update(packet, 0, packet.length - 4);
+        packetBuffer.putInt((int) crc32.getValue());
+
+        return packet;
+    }
 
 }

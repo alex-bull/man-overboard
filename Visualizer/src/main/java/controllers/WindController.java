@@ -41,7 +41,7 @@ public class WindController implements Initializable{
      * @param windSpeed double the wind speed in m/s
      */
     void refresh(double angle, double windSpeed) {
-        int minWind = 5;
+        int minWind = 3;
         int maxWind = 7;
         double factor = 40.0;
         Double windFactor = windSpeed * factor;

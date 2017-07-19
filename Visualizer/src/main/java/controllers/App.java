@@ -21,6 +21,7 @@ App extends Application {
 
     /**
      * Starts the app
+     *
      * @param primaryStage Stage the primary stage
      * @throws IOException when the app cannot load
      */
@@ -38,6 +39,9 @@ App extends Application {
 
         String imagePath = "file: resources/logo.png";
         primaryStage.getIcons().add(new Image(imagePath));
+        Interpreter interpreter = new Interpreter();
+        interpreter.setPrimaryStage(primaryStage);
+        starterController.setDataSource(interpreter);
 
         // for mac
 //        java.awt.Image image = Toolkit.getDefaultToolkit().getImage(imagePath);
@@ -47,8 +51,23 @@ App extends Application {
         primaryStage.setFullScreen(true);
 
         //set on close requests
-        primaryStage.setOnCloseRequest(event -> System.exit(0));
+        primaryStage.setOnCloseRequest(event -> {
+System.exit(0);
+//            Platform.runLater(() -> {
+//                try {
+//                    primaryStage.close();
+//
+//                    new App().start(new Stage());
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+
+        });
+
+
         primaryStage.show();
+//        starterController.autoStart();
 
     }
 

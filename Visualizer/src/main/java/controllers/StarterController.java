@@ -67,6 +67,17 @@ public class StarterController implements Initializable, ClockHandler {
         this.dataSource = dataSource;
     }
 
+    void autoStart(){
+        confirmButton.fire();
+        countdownButton.fire();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+    }
 
     /**
      * Implementation of ClockHandler interface method
@@ -136,10 +147,10 @@ public class StarterController implements Initializable, ClockHandler {
         Scene scene=primaryStage.getScene();
         boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
 
-        if (streaming) {
-            System.out.println("STREAMING");
-            EnvironmentConfig.currentStream = host;
 
+
+        if (streaming) {
+            EnvironmentConfig.currentStream = host;
             this.streamCombo.setDisable(true);
             this.confirmButton.setDisable(true);
             currentStream = host;

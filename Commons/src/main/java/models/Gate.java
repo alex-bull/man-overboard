@@ -162,6 +162,16 @@ public class Gate implements CourseFeature {
     }
 
     @Override
+    public String toString() {
+        return "Gate{" +
+                "name='" + name + '\'' +
+                ", pixelPoint1=" + pixelPoint1 +
+                ", pixelPoint2=" + pixelPoint2 +
+                ", index=" + index +
+                '}';
+    }
+
+    @Override
     public MutablePoint getGPSPoint() {
         return GPSPoint1;
     }

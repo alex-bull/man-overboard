@@ -1,9 +1,11 @@
 package utilities;
 
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import models.ColourPool;
 import models.Competitor;
 import models.CourseFeature;
@@ -29,8 +31,12 @@ import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
 import static parsers.Converter.hexByteArrayToInt;
@@ -41,6 +47,8 @@ import static parsers.MessageType.UNKNOWN;
  * Interprets packets
  */
 public class Interpreter implements DataSource, PacketHandler {
+
+    private Stage primaryStage;
 
     private XmlSubtype xmlSubType;
     private List<Competitor> competitorsPosition;
@@ -76,8 +84,16 @@ public class Interpreter implements DataSource, PacketHandler {
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
         this.raceXMLParser = new RaceXMLParser();
+
     }
 
+    public void setPrimaryStage(Stage primaryStage){
+        this.primaryStage=primaryStage;
+    }
+
+    public Stage getPrimaryStage(){
+        return primaryStage;
+    }
     public List<CourseFeature> getCourseFeatures() {
         return courseFeatures;
     }
@@ -138,14 +154,18 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param scene the scene of the stage, for size calculations
      * @return boolean, true if the stream succeeds
      */
-    public boolean receive(String host, int port, Scene scene) {
+    public boolean receive(String host, int port, Scene scene) throws NullPointerException{
         DataReceiver dataReceiver;
         Rectangle2D primaryScreenBounds;
         try {
             dataReceiver = new DataReceiver(host, port, this);
             primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
-        } catch (IOException e) {
+        }
+        catch (UnresolvedAddressException e){
+            System.out.println("Address is not found");
+            return false;
+        }
+        catch (IOException e) {
             System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
             return false;
         }
@@ -156,7 +176,10 @@ public class Interpreter implements DataSource, PacketHandler {
 
         //start receiving data
         Timer receiverTimer = new Timer();
+
+
         receiverTimer.schedule(dataReceiver, 0, 1);
+
 
         try {
             //wait for data to come in before setting fields
@@ -171,6 +194,7 @@ public class Interpreter implements DataSource, PacketHandler {
         } catch (NullPointerException e) {
             System.out.println("Live stream is down");
             return false;
+
         }
         return true;
     }
@@ -219,11 +243,43 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
-                    String markName="";
-                    if(storedFeatures.keySet().contains(markID)) {
-                        markName = storedFeatures.get(markID).getName();
+                    String markName;
+//                    if(storedFeatures.keySet().contains(markID)) {
+//                        markName = storedFeatures.get(markID).getName();
+//                    }
+                    switch(markID){
+                        case 100:
+                            markName="Entry Limit Line";
+                            break;
+                        case 101:
+                            markName="Entry Line";
+                            break;
+                        case 102:
+                            markName="Start Line";
+                            break;
+                        case 103:
+                            markName="Finish Line";
+                            break;
+                        case 104:
+                            markName="Speed test start";
+                            break;
+                        case 105:
+                            markName="Speed test finish";
+                            break;
+                        case 106:
+                            markName="ClearStart";
+                            break;
+                        default:
+                            markName=raceData.getCourse().get(markID+1).getName();
+                            break;
+
                     }
                     long roundingTime = markRoundingData.getRoundingTime();
+
+//                    System.out.println(markRoundingData.getSourceID());
+//                    System.out.println(markID);
+//                    System.out.println(markName);
+//                    System.out.println("-----------------------------------------");
 
                     storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
                     storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
@@ -233,6 +289,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 BoatDataParser boatDataParser = new BoatDataParser();
                 this.boatData = boatDataParser.processMessage(packet);
                 if (boatData != null) {
+
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties();
                     } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
@@ -249,11 +306,25 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 }
                 break;
+            case SOURCE_ID:
+
+                ByteBuffer byteBuffer=ByteBuffer.wrap(packet);
+                byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+                sourceID=byteBuffer.get();
+                break;
+
             default:
                 break;
         }
     }
 
+    /**
+     * returns the sourceID of the clients boat
+     * @return the sourceID of the clients boat
+     */
+    public int getSourceID() {
+        return sourceID;
+    }
 
     /**
      * Updates the boat properties as data is being received.
@@ -275,6 +346,7 @@ public class Interpreter implements DataSource, PacketHandler {
             colourPool.getColours().remove(colour);
         }
         //add to competitorsPosition and storedCompetitors if they are new
+
         if (!storedCompetitors.keySet().contains(boatID)) {
             this.storedCompetitors.put(boatID, competitor);
             competitorsPosition.add(competitor);
@@ -334,7 +406,7 @@ public class Interpreter implements DataSource, PacketHandler {
                         this.compoundMarks = raceData.getCourse();
                         GPSbounds = raceXMLParser.getGPSBounds();
                         setScalingFactors();
-                        this.seenRaceXML = true;
+//                        this.seenRaceXML = true;
                     }
 
                     break;
@@ -373,11 +445,10 @@ public class Interpreter implements DataSource, PacketHandler {
 
             // can get sequence number if needed
             byte[] xmlLengthBytes = Arrays.copyOfRange(message, 12, 14);
-            int xmlLength = hexByteArrayToInt(xmlLengthBytes);
 
+            int xmlLength = hexByteArrayToInt(xmlLengthBytes);
             int start = 14;
             int end = start + xmlLength;
-
             byte[] xmlBytes = Arrays.copyOfRange(message, start, end);
             String charset = "UTF-8";
             String xmlString = "";
@@ -387,7 +458,6 @@ public class Interpreter implements DataSource, PacketHandler {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-
             return xmlString;
         } catch (Exception e) {
             return null;
@@ -403,8 +473,8 @@ public class Interpreter implements DataSource, PacketHandler {
         this.paddingX = raceXMLParser.getPaddingX();
         this.paddingY = raceXMLParser.getPaddingY();
         this.scaleFactor = raceXMLParser.getScaleFactor();
-        this.minXMercatorCoord = Collections.min(raceXMLParser.getxMercatorCoords());
-        this.minYMercatorCoord = Collections.min(raceXMLParser.getyMercatorCoords());
+        this.minXMercatorCoord = raceXMLParser.getxMin();
+        this.minYMercatorCoord = raceXMLParser.getyMin();
     }
 
     public HashMap<Integer, CourseFeature> getStoredFeatures() {

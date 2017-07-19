@@ -1,5 +1,7 @@
 package parsers.xml.race;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
 import com.google.common.math.DoubleMath;
 import models.MutablePoint;
 import org.jdom2.Document;
@@ -10,6 +12,7 @@ import org.jdom2.input.SAXBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 import static utility.Projection.mercatorProjection;
@@ -27,7 +30,7 @@ public class RaceXMLParser {
     private List<Double> xMercatorCoords;
     private List<Double> yMercatorCoords;
 
-    private List<MutablePoint> courseGPSBoundary;
+
     private double width;
     private double height;
     private double maxLat;
@@ -36,7 +39,8 @@ public class RaceXMLParser {
     private double minLng;
     private double zoomLevel;
     private double shiftDistance;
-
+    private double xMin;
+    private double yMin;
     /**
      * initializer to initialize variables
      */
@@ -64,10 +68,11 @@ public class RaceXMLParser {
         this.width = width;
         this.height = height;
 
-        courseGPSBoundary = new ArrayList<>();
+//        System.out.println(xmlStr);
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
+
         Document root = builder.build(stream);
         Element race = root.getRootElement();
         Set<Integer> participantIDs = new HashSet<>();
@@ -211,7 +216,6 @@ public class RaceXMLParser {
                 maxLng = lon;
             }
 
-
             List<Double> projectedPoint = mercatorProjection(lat, lon);
             double point1X = projectedPoint.get(0);
             double point1Y = projectedPoint.get(1);
@@ -219,34 +223,65 @@ public class RaceXMLParser {
             yMercatorCoords.add(point1Y);
             MutablePoint pixel = new MutablePoint(point1X, point1Y);
             boundary.add(pixel);
-            courseGPSBoundary.add(new MutablePoint(limit.getLat(), limit.getLon()));
         }
 
-        double xDifference = (Collections.max(xMercatorCoords) - Collections.min(xMercatorCoords));
-        double yDifference = (Collections.max(yMercatorCoords) - Collections.min(yMercatorCoords));
+        //add course feature to zoom level calculation
+        for(CompoundMarkData compoundMarkData:raceData.getCourse()) {
+            for (MarkData markData : compoundMarkData.getMarks()) {
+                double lat=markData.getTargetLat();
+                double lon=markData.getTargetLon();
 
-        if (xDifference == 0 || yDifference == 0) {
-            throw new Exception("Attempted to divide by zero");
+                //find course boundary
+                if (lat < minLat) {
+                    minLat = lat;
+                }
+                if (lon < minLng) {
+                    minLng = lon;
+                }
+
+                if (lat > maxLat) {
+                    maxLat = lat;
+                }
+                if (lon > maxLng) {
+                    maxLng = lon;
+                }
+
+                List<Double> projectedPoint = mercatorProjection(lat, lon);
+                double point1X = projectedPoint.get(0);
+                double point1Y = projectedPoint.get(1);
+                xMercatorCoords.add(point1X);
+                yMercatorCoords.add(point1Y);
+            }
         }
-        double xFactor = (width - bufferX) / xDifference;
-        double yFactor = (height - bufferY) / yDifference;
 
-        //make scaling in proportion
-        scaleFactor = Math.min(xFactor, yFactor);
+        if(scaleFactor==0.0) {
+            xMin=Collections.min(xMercatorCoords);
+            yMin=Collections.min(yMercatorCoords);
+            double xDifference = (Collections.max(xMercatorCoords) - xMin);
+            double yDifference = (Collections.max(yMercatorCoords) - yMin);
 
-        //set scale factor to the largest power of 2 thats smaller than current value
-        this.zoomLevel = Math.floor(DoubleMath.log2(scaleFactor));
-        scaleFactor = Math.pow(2, zoomLevel);
-
-
-        //set padding
-        paddingY = (height - bufferY - yDifference * scaleFactor) / 2;
-        paddingX = (width - xDifference * scaleFactor) / 2;
-        //calculate shift distance in pixels
-        shiftDistance = bufferY / 2;
+            if (xDifference == 0 || yDifference == 0) {
+                throw new Exception("Attempted to divide by zero");
+            }
+            double xFactor = (width - bufferX) / xDifference;
+            double yFactor = (height - bufferY) / yDifference;
 
 
-        boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, Collections.min(xMercatorCoords), Collections.min(yMercatorCoords), paddingX, paddingY));
+            //make scaling in proportion
+            scaleFactor = Math.min(xFactor, yFactor);
+
+            //set scale factor to the largest power of 2 thats smaller than current value
+            this.zoomLevel = Math.floor(DoubleMath.log2(scaleFactor));
+            scaleFactor = Math.pow(2, zoomLevel);
+
+            //set padding
+            paddingY = (height - bufferY - yDifference * scaleFactor) / 2;
+            paddingX = (width - xDifference * scaleFactor) / 2;
+            //calculate shift distance in pixels
+            shiftDistance = bufferY / 2;
+        }
+        boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, xMin, yMin, paddingX, paddingY));
+
         this.courseBoundary = boundary;
 
     }
@@ -268,6 +303,14 @@ public class RaceXMLParser {
         return xMercatorCoords;
     }
 
+    public double getxMin() {
+        return xMin;
+    }
+
+    public double getyMin() {
+        return yMin;
+    }
+
     public List<Double> getyMercatorCoords() {
         return yMercatorCoords;
     }
@@ -280,9 +323,6 @@ public class RaceXMLParser {
         return zoomLevel;
     }
 
-    public List<MutablePoint> getCourseGPSBoundary() {
-        return courseGPSBoundary;
-    }
 
     public double getShiftDistance() {
         return shiftDistance;
