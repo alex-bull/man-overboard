@@ -66,6 +66,7 @@ public class StarterController implements Initializable, ClockHandler {
         this.dataSource = dataSource;
     }
 
+
     /**
      * Implementation of ClockHandler interface method
      *
@@ -135,6 +136,7 @@ public class StarterController implements Initializable, ClockHandler {
         boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
 
         if (streaming) {
+            System.out.println("STREAMING");
             EnvironmentConfig.currentStream = host;
 
             this.streamCombo.setDisable(true);
@@ -177,8 +179,11 @@ public class StarterController implements Initializable, ClockHandler {
      * Set fields using data from the stream
      */
     private void setFields() {
+
+
         while (dataSource.getCourseTimezone() == null) {
             System.out.print("");
+            System.out.println("NO DATA YET");
         }
         this.worldClock = new WorldClock(this, dataSource.getCourseTimezone());
         worldClock.start();

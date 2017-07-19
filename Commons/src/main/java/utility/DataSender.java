@@ -1,4 +1,4 @@
-package mockDatafeed;
+package utility;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,7 +9,7 @@ import java.net.Socket;
  * Created by khe60 on 10/04/17.
  * The DataSender class, currently sends test_data.bin at a rate of 1 byte per second
  */
-class DataSender {
+public class DataSender {
 
     private OutputStream os;
 
@@ -19,7 +19,7 @@ class DataSender {
      * @param portnum int The port number
      * @throws IOException IOException
      */
-    DataSender(int portnum) throws IOException {
+    public DataSender(int portnum) throws IOException {
         ServerSocket outputSocket = new ServerSocket(portnum);
         Socket socket = outputSocket.accept();
         os = socket.getOutputStream();
@@ -31,7 +31,7 @@ class DataSender {
      *
      * @param data byte[] byte array of the data
      */
-    void sendData(byte[] data) throws IOException {
+    public void sendData(byte[] data) throws IOException {
         os.write(data);
     }
 
