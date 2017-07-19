@@ -43,6 +43,7 @@ public class RaceCalculator {
      * @return List virtualLinePoints
      */
     public List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat) {
+        //TODO: optimize this class
         List<MutablePoint> virtualLinePoints = new ArrayList<>();
         this.boat = selectedBoat;
 
@@ -71,6 +72,9 @@ public class RaceCalculator {
                 virtualLinePoints.add(calcVirtualLinePoint(ratio, xDifference, yDifference, startMark1));
                 virtualLinePoints.add(calcVirtualLinePoint(ratio, xDifference, yDifference, startMark2));
             }
+        }
+        else{
+            return new ArrayList<>();
         }
         return virtualLinePoints;
     }

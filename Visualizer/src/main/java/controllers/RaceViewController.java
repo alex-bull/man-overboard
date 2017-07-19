@@ -207,21 +207,35 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Draws the virtual line of the player's boat with the same color
-     * @param boatColor color of the boat
-     * @param playerBoat player's boat
+
      */
-    private void drawVirtualLine(Color boatColor, Competitor playerBoat) {
-        raceCalculator.setBoatModels(boatModels);
-        List<MutablePoint> virtualLinePoints = raceCalculator.calcVirtualLinePoints(playerBoat);
-        if (!virtualLinePoints.isEmpty()) {
-            MutablePoint virtualLine1 = virtualLinePoints.get(0);
-            MutablePoint virtualLine2 = virtualLinePoints.get(1);
-            virtualLine.setStroke(boatColor);
-            virtualLine.setStartX(virtualLine1.getXValue());
-            virtualLine.setStartY(virtualLine1.getYValue());
-            virtualLine.setEndX(virtualLine2.getXValue());
-            virtualLine.setEndY(virtualLine2.getYValue());
+    private void drawVirtualLine() {
+
+        Competitor boat=dataSource.getStoredCompetitors().get(dataSource.getSourceId());
+        if (boat.getSourceID() == dataSource.getSourceId()
+                && dataSource.getRaceStatus() == PREPARATORY) {
+            Color boatColor = boat.getColor();
+            raceCalculator.setBoatModels(boatModels);
+            List<MutablePoint> virtualLinePoints = raceCalculator.calcVirtualLinePoints(boat);
+            if (!virtualLinePoints.isEmpty()) {
+                virtualLine.setVisible(true);
+                MutablePoint virtualLine1 = virtualLinePoints.get(0);
+                MutablePoint virtualLine2 = virtualLinePoints.get(1);
+                virtualLine.setStroke(boatColor);
+                virtualLine.setStartX(virtualLine1.getXValue());
+                virtualLine.setStartY(virtualLine1.getYValue());
+                virtualLine.setEndX(virtualLine2.getXValue());
+                virtualLine.setEndY(virtualLine2.getYValue());
+            }
+            else{
+                virtualLine.setVisible(false);
+            }
+
+        } else if (dataSource.getRaceStatus() == STARTED) {
+            raceViewPane.getChildren().remove(virtualLine);
         }
+
+
     }
 
 
@@ -794,15 +808,9 @@ public class RaceViewController implements Initializable, TableObserver {
 
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
-                if (boat.getSourceID() != 0
-                        && boat.getSourceID() == dataSource.getSourceId()
-                        && dataSource.getRaceStatus() == PREPARATORY) {
-                    Color boatColor = boat.getColor();
-                    drawVirtualLine(boatColor, boat);
-                } else if (dataSource.getRaceStatus() == STARTED) {
-                    raceViewPane.getChildren().remove(virtualLine);
-                }
+
             }
+            drawVirtualLine();
             this.drawWake(boat);
             this.drawBoat(boat);
             this.moveAnnotations(boat);
