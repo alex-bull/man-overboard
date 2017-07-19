@@ -12,12 +12,12 @@ import static org.junit.Assert.assertTrue;
  * Created by jar156 on 25/05/17.
  */
 public class LineCalculationTest {
-    RaceViewController rvc;
+    RaceCalculator raceCalculator;
     MutablePoint startPoint;
 
     @Before
     public void setRvc() {
-        rvc = new RaceViewController();
+        raceCalculator = new RaceCalculator();
     }
 
     @Before
@@ -30,7 +30,7 @@ public class LineCalculationTest {
         double ratio = 1; // virtual distance same as real distance
         double xDifference = 0; // boat is on start line
         double yDifference = 0;
-        MutablePoint virtualPoint = rvc.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
+        MutablePoint virtualPoint = raceCalculator.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
         assertTrue(virtualPoint.getXValue() == startPoint.getXValue());
         assertTrue(virtualPoint.getYValue() == startPoint.getYValue());
     }
@@ -40,7 +40,7 @@ public class LineCalculationTest {
         double ratio = 1;
         double xDifference = 10;
         double yDifference = 15;
-        MutablePoint virtualPoint = rvc.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
+        MutablePoint virtualPoint = raceCalculator.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
         assertTrue(virtualPoint.getXValue() == startPoint.getXValue());
         assertTrue(virtualPoint.getYValue() == startPoint.getYValue());
     }
@@ -50,7 +50,7 @@ public class LineCalculationTest {
         double ratio = 0.7; // virtual distance closer than real distance
         double xDifference = 0;
         double yDifference = 0;
-        MutablePoint virtualPoint = rvc.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
+        MutablePoint virtualPoint = raceCalculator.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
         assertTrue(virtualPoint.getXValue() == startPoint.getXValue());
         assertTrue(virtualPoint.getYValue() == startPoint.getYValue());
     }
@@ -60,7 +60,7 @@ public class LineCalculationTest {
         double ratio = 0.7;
         double xDifference = -1; // difference is boat position minus intersection so negative means boat on left of start line
         double yDifference = -1;
-        MutablePoint virtualPoint = rvc.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
+        MutablePoint virtualPoint = raceCalculator.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
         assertTrue(virtualPoint.getXValue() < startPoint.getXValue());
         assertTrue(virtualPoint.getYValue() < startPoint.getYValue());
     }
@@ -70,7 +70,7 @@ public class LineCalculationTest {
         double ratio = 1.2; // virtual distance further than real distance
         double xDifference = -1;
         double yDifference = -1;
-        MutablePoint virtualPoint = rvc.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
+        MutablePoint virtualPoint = raceCalculator.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
         assertTrue(virtualPoint.getXValue() > startPoint.getXValue());
         assertTrue(virtualPoint.getYValue() > startPoint.getYValue());
     }
@@ -80,7 +80,7 @@ public class LineCalculationTest {
         double ratio = 0.7;
         double xDifference = 1; // difference is boat position minus intersection so negative means boat on left of start line
         double yDifference = 1;
-        MutablePoint virtualPoint = rvc.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
+        MutablePoint virtualPoint = raceCalculator.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
         assertTrue(virtualPoint.getXValue() > startPoint.getXValue());
         assertTrue(virtualPoint.getYValue() > startPoint.getYValue());
     }
@@ -90,7 +90,7 @@ public class LineCalculationTest {
         double ratio = 1.2; // virtual distance further than real distance
         double xDifference = 1;
         double yDifference = 1;
-        MutablePoint virtualPoint = rvc.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
+        MutablePoint virtualPoint = raceCalculator.calcVirtualLinePoint(ratio, xDifference, yDifference, startPoint);
         assertTrue(virtualPoint.getXValue() < startPoint.getXValue());
         assertTrue(virtualPoint.getYValue() < startPoint.getYValue());
     }
@@ -101,7 +101,7 @@ public class LineCalculationTest {
         Point2D boatBack = new Point2D(15, 20);
         MutablePoint startUpper = new MutablePoint(25.0, 22.0);
         MutablePoint startLower = new MutablePoint(25.0, 18.0);
-        MutablePoint intersection = rvc.calcStartLineIntersection(boatFront, boatBack, startUpper, startLower);
+        MutablePoint intersection = raceCalculator.calcStartLineIntersection(boatFront, boatBack, startUpper, startLower);
         assertTrue(intersection.getYValue() <= startUpper.getYValue());
         assertTrue(intersection.getYValue() >= startLower.getYValue());
     }
