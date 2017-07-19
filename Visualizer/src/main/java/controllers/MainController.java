@@ -3,8 +3,11 @@ package controllers;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import utilities.DataSource;
+
+
 
 /**
  * Created by psu43 on 22/03/17.
@@ -20,6 +23,21 @@ public class MainController {
     @FXML private SparklinesController sparklinesController;
     @FXML private GridPane loadingPane;
 
+
+
+    @FXML public void keyPressed(KeyEvent event) {
+
+        switch (event.getCode()) {
+            case UP:
+                System.out.println("Upp");
+                break;
+            case DOWN:
+                System.out.println("Down");
+                break;
+
+
+        }
+    }
 
     /**
      * Begins the race loop which updates child controllers at ~60fps

@@ -2,8 +2,11 @@ package controllers;
 
 import javafx.animation.FadeTransition;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
@@ -144,6 +147,7 @@ public class RaceViewController implements Initializable, TableObserver {
             }
 
         });
+
     }
 
     /**

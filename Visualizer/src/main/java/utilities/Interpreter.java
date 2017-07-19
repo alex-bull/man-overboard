@@ -71,6 +71,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private int numBoats = 0;
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
     private boolean seenRaceXML = false;
+    private int sourceID;
 
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
