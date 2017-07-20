@@ -60,4 +60,5 @@ public interface Competitor {
 
     int getSourceID();
 
+    void changeHeading(boolean upwind, double angle);
 }

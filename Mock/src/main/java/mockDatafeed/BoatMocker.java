@@ -110,10 +110,16 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                 HeaderParser headerParser = new HeaderParser();
                 HeaderData headerData = headerParser.processMessage(header);
                 int sourceID = headerData.getSourceID();
-                byte action = packet[0];
-                System.out.println(Keys.getKeys(action));
-                System.out.println(sourceID);
-                competitors.get(sourceID).setCurrentHeading(competitors.get(sourceID).getCurrentHeading() + 3);
+                Keys action = Keys.getKeys(packet[0]);
+                switch(action){
+                    case UP:
+                        competitors.get(sourceID).changeHeading(true,windGenerator.getWindDirection());
+                        break;
+                    case DOWN:
+                        competitors.get(sourceID).changeHeading(false,windGenerator.getWindDirection());
+                        break;
+
+                }
                 break;
         }
 

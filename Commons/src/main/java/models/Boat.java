@@ -229,6 +229,33 @@ public class Boat implements Competitor {
 
     }
 
+    /**
+     * function to change boats heading
+     * @param upwind true=upwind
+     *                  false=downwind
+     * @param windAngle the current wind angle
+     */
+    public void changeHeading(boolean upwind, double windAngle){
+        int turnAngle = 3;
+        if((currentHeading.getValue() - windAngle) >= 0) {
+            if(upwind) {
+                currentHeading.setValue(currentHeading.getValue() - turnAngle);
+            }
+            else {
+                currentHeading.setValue(currentHeading.getValue() + turnAngle);
+            }
+        }
+        else {
+            if(upwind) {
+                currentHeading.setValue(currentHeading.getValue() + turnAngle);
+            }
+            else {
+                currentHeading.setValue(currentHeading.getValue() - turnAngle);
+            }
+        }
+        currentHeading.setValue(currentHeading.getValue() % 360);
+    }
+
     @Override
     public String toString() {
         return "Boat{" +
