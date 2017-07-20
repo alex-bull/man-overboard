@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import mockDatafeed.Keys;
 import utilities.DataSource;
 import utility.BinaryPackager;
 
@@ -35,23 +36,23 @@ public class MainController {
         switch (event.getCode()) {
             case UP:
                 System.out.println("Up");
-                this.dataSource.send(this.binaryPackager.packageBoatAction(5));
+                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.UP.getValue()));
                 break;
             case DOWN:
                 System.out.println("Down");
-                this.dataSource.send(this.binaryPackager.packageBoatAction(6));
+                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.DOWN.getValue()));
                 break;
             case SPACE:
                 System.out.println("VMG");
-                this.dataSource.send(this.binaryPackager.packageBoatAction(1));
+                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.VMG.getValue()));
                 break;
             case SHIFT:
                 System.out.println("Sails");
-                this.dataSource.send(this.binaryPackager.packageBoatAction(2));
+                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILS.getValue()));
                 break;
             case ENTER:
                 System.out.println("Tack/Gybe");
-                this.dataSource.send(this.binaryPackager.packageBoatAction(4));
+                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue()));
                 break;
         }
     }

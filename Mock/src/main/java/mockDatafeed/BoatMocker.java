@@ -4,6 +4,9 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import models.*;
 import org.jdom2.JDOMException;
+import parsers.MessageType;
+import parsers.header.HeaderData;
+import parsers.header.HeaderParser;
 import parsers.xml.CourseXMLParser;
 import utilities.PolarTable;
 
@@ -18,6 +21,8 @@ import utility.*;
 
 import static java.lang.Math.abs;
 import static parsers.Converter.hexByteArrayToInt;
+import static parsers.MessageType.BOAT_ACTION;
+import static parsers.MessageType.UNKNOWN;
 import static utility.Calculator.calcAngleBetweenPoints;
 import static utility.Calculator.convertRadiansToShort;
 
@@ -91,9 +96,24 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
     public void interpretPacket(byte[] header, byte[] packet) {
         System.out.println("Interpreting packet");
-        for (int i = 0; i < packet.length; i++) {
-            System.out.println(packet[i]);
+        MessageType messageType = UNKNOWN;
+        for (MessageType messageEnum : MessageType.values()) {
+            if (header[0] == messageEnum.getValue()) {
+                messageType = messageEnum;
+            }
         }
+        switch(messageType) {
+            case BOAT_ACTION:
+                HeaderParser headerParser = new HeaderParser();
+                HeaderData headerData = headerParser.processMessage(header);
+                int sourceID = headerData.getSourceID();
+                byte action = packet[0];
+                System.out.println(Keys.getKeys(action));
+                System.out.println(sourceID);
+
+                break;
+        }
+
     }
 
 
