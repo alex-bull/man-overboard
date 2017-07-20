@@ -22,6 +22,7 @@ public class HeaderData {
         this.messageType = messageType;
         this.sourceID = sourceID;
         this.messageLength = messageLength;
+        System.out.println("Created " + sourceID);
     }
 
 

@@ -109,7 +109,7 @@ public class TCPServer {
     }
 
 
-    /**
+    /**`
      * Check for the first and second sync byte
      *
      * @return Boolean if Sync Byte found
