@@ -1,4 +1,4 @@
-package utilities;
+package utility;
 
 import javafx.stage.Stage;
 
@@ -8,5 +8,4 @@ import javafx.stage.Stage;
  */
 public interface PacketHandler {
     void interpretPacket(byte[] header, byte[] packet);
-    Stage getPrimaryStage();
 }

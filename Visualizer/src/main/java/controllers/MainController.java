@@ -3,8 +3,11 @@ package controllers;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import utilities.DataSource;
+import utility.BinaryPackager;
+
 
 /**
  * Created by psu43 on 22/03/17.
@@ -19,6 +22,39 @@ public class MainController {
     @FXML private TimerController timerController;
     @FXML private SparklinesController sparklinesController;
     @FXML private GridPane loadingPane;
+    private DataSource dataSource;
+    private BinaryPackager binaryPackager;
+
+
+    /**
+     * Handle control key events
+     * @param event KeyEvent
+     */
+    @FXML public void keyPressed(KeyEvent event) {
+
+        switch (event.getCode()) {
+            case UP:
+                System.out.println("Up");
+                this.dataSource.send(this.binaryPackager.packageBoatAction(5));
+                break;
+            case DOWN:
+                System.out.println("Down");
+                this.dataSource.send(this.binaryPackager.packageBoatAction(6));
+                break;
+            case SPACE:
+                System.out.println("VMG");
+                this.dataSource.send(this.binaryPackager.packageBoatAction(1));
+                break;
+            case SHIFT:
+                System.out.println("Sails");
+                this.dataSource.send(this.binaryPackager.packageBoatAction(2));
+                break;
+            case ENTER:
+                System.out.println("Tack/Gybe");
+                this.dataSource.send(this.binaryPackager.packageBoatAction(4));
+                break;
+        }
+    }
 
 
     /**
@@ -28,10 +64,12 @@ public class MainController {
      * @param height double the screen height
      */
     void beginRace(DataSource dataSource, double width, double height) {
+        this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
         timerController.begin(dataSource);
         tableController.addObserver(raceViewController);
         sparklinesController.setCompetitors(dataSource, width);
+        this.binaryPackager = new BinaryPackager();
 
         AnimationTimer timer = new AnimationTimer() {
 
@@ -44,10 +82,9 @@ public class MainController {
                     sparklinesController.refresh();
                     loadingPane.toBack();
                 }
-                else{
+                else {
                     loadingPane.toFront();
                 }
-
             }
         };
 

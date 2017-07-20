@@ -35,14 +35,7 @@ public class InterpreterTest {
         interpreter = new Interpreter();
         mockScene=mock(Scene.class);
 
-        mockThread = new Thread(new Runnable() {
-            BoatMocker mock;
-
-            @Override
-            public void run() {
-                mock.main(null);
-            }
-        });
+        mockThread = new Thread(() -> BoatMocker.main(null));
     }
 
     @Test
@@ -51,12 +44,7 @@ public class InterpreterTest {
         mockThread.start();
         Thread.sleep(200); // give mock time to start before visualiser
 
-        Thread visualiserThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                assertFalse(interpreter.receive("invalidhost", 4,mockScene));
-            }
-        });
+        Thread visualiserThread = new Thread(() -> assertFalse(interpreter.receive("invalidhost", 4,mockScene)));
         visualiserThread.run();
     }
 
@@ -66,12 +54,7 @@ public class InterpreterTest {
         mockThread.start();
         Thread.sleep(200); // give mock time to start before visualiser
 
-        Thread visualiserThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                assertFalse(interpreter.receive("localhost", 4,mockScene));
-            }
-        });
+        Thread visualiserThread = new Thread(() -> assertFalse(interpreter.receive("localhost", 4,mockScene)));
         visualiserThread.run();
     }
 

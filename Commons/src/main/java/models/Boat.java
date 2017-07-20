@@ -36,6 +36,7 @@ public class Boat implements Competitor {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
+
         this.color = color;
         this.abbreName = abbreName;
         legIndex = 0;
@@ -232,7 +233,11 @@ public class Boat implements Competitor {
     public String toString() {
         return "Boat{" +
                 "teamName='" + teamName + '\'' +
+                ", velocity=" + velocity +
+                ", position=" + position +
+                ", color=" + color +
                 ", abbreName='" + abbreName + '\'' +
+                ", currentHeading=" + currentHeading +
                 ", sourceID=" + sourceID +
                 '}';
     }

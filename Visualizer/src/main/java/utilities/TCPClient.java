@@ -1,13 +1,13 @@
 package utilities;
 
-import javafx.application.Platform;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import utility.PacketHandler;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.Arrays;
 import java.util.TimerTask;
 
@@ -16,15 +16,16 @@ import static parsers.Converter.hexByteArrayToInt;
 
 /**
  * Created by khe60 on 10/04/17.
- * The Receiver class, currently receives messages 1 byte at a time
+ * The Client class, currently receives messages 1 byte at a time
  * Can't connect to the test port for some reason (internet enabler)
  */
-public class DataReceiver extends TimerTask {
+public class TCPClient extends TimerTask {
 
-    private DataInputStream dis;
+//    private SocketChannel client;
     private PacketHandler handler;
-    //used to restart the app;
-    private Stage primaryStage;
+    private DataInputStream dis;
+    private DataOutputStream dos;
+    private int sourceID;
 
 
     /**
@@ -34,12 +35,23 @@ public class DataReceiver extends TimerTask {
      * @param handler PacketHandler handler for incoming packets
      * @throws IOException IOException
      */
-    DataReceiver(String host, int port, PacketHandler handler) throws IOException {
+    TCPClient(String host, int port, PacketHandler handler) throws UnresolvedAddressException, IOException {
         Socket receiveSock = new Socket(host, port);
         this.handler = handler;
         dis = new DataInputStream(receiveSock.getInputStream());
+        dos = new DataOutputStream(receiveSock.getOutputStream());
         System.out.println("Start connection to server...");
-        this.primaryStage=handler.getPrimaryStage();
+
+    }
+
+    /**
+     * Write data to the socket
+     * @param data byte[] The data to send
+     * @throws IOException
+     */
+    public void send(byte[] data) throws IOException {
+        System.out.println("Sending message...");
+        dos.write(data);
     }
 
     /**
@@ -49,21 +61,15 @@ public class DataReceiver extends TimerTask {
      * @throws IOException IOException
      */
     private boolean checkForSyncBytes() throws IOException {
-        byte firstSyncByte = 0x47;
+
         // -125 is equivalent to 0x83 unsigned
-        byte secondSyncByte = -125;
+        byte[] expected = {0x47,-125};
 
-        byte[] b1 = new byte[1];
-        dis.readFully(b1);
-        if (b1[0] == firstSyncByte) {
-            byte[] b2 = new byte[1];
+        byte[] actual = new byte[2];
 
-            dis.readFully(b2);
-            if (b2[0] == secondSyncByte) {
-                return true;
-            }
-        }
-        return false;
+//        client.read(ByteBuffer.wrap(actual));
+        dis.read(actual);
+        return Arrays.equals(actual, expected);
     }
 
     /**
@@ -72,7 +78,9 @@ public class DataReceiver extends TimerTask {
      * @throws IOException IOException
      */
     private byte[] getHeader() throws IOException {
-        byte[] header = new byte[13];
+//        ByteBuffer header=ByteBuffer.allocate(13);
+//        client.read(header);
+        byte[] header=new byte[13];
         dis.readFully(header);
         return header;
     }
@@ -92,14 +100,12 @@ public class DataReceiver extends TimerTask {
      * Identify the start of a packet, determine the message type and length, then read.
      */
     public void run() throws NullPointerException {
-
         try {
             boolean isStartOfPacket = checkForSyncBytes();
             if (isStartOfPacket) {
-
                 byte[] header = this.getHeader();
                 int length = this.getMessageLength(header);
-                byte[] message = new byte[length];
+                byte[] message=new byte[length];
                 dis.readFully(message);
                 this.handler.interpretPacket(header, message);
             }
@@ -131,10 +137,10 @@ public class DataReceiver extends TimerTask {
 //     * @throws InterruptedException Interrupted Exception
 //     */
 //    public static void main(String[] args) throws InterruptedException {
-//        DataReceiver dataReceiver = null;
+//        TCPClient dataReceiver = null;
 //        while (dataReceiver == null) {
 //            try {
-//                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
+//                dataReceiver = new TCPClient("livedata.americascup.com", 4941);
 //                Timer timer = new Timer();
 //                timer.schedule(dataReceiver, 0, 100);
 //

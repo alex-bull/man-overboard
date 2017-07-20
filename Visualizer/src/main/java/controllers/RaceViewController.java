@@ -2,8 +2,11 @@ package controllers;
 
 import javafx.animation.FadeTransition;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
@@ -145,6 +148,7 @@ public class RaceViewController implements Initializable, TableObserver {
             }
 
         });
+
     }
 
     /**
@@ -466,6 +470,8 @@ public class RaceViewController implements Initializable, TableObserver {
             boatModel.setFill(boat.getColor());
             boatModel.setStroke(BLACK);
             boatModel.setStrokeWidth(1);
+//            boatModel.setStroke(YELLOW);
+//            boatModel.setStrokeWidth(2.5);
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(boat.getSourceID(), boatModel);

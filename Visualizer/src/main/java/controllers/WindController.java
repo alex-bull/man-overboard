@@ -49,7 +49,7 @@ public class WindController implements Initializable{
 
         arrow.toFront();
         arrow.getTransforms().clear();
-        arrow.getTransforms().add(new Rotate(angle, 0, 25));
+        arrow.getTransforms().add(new Rotate(angle + 180, 0, 25));
         if(windSpeed >= minWind && windSpeed <= maxWind) {
             arrow.getPoints().remove(0,14);
             drawArrow(windFactor, offset);

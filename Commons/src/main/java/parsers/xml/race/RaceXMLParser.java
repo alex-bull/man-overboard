@@ -1,5 +1,7 @@
 package parsers.xml.race;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
 import com.google.common.math.DoubleMath;
 import models.MutablePoint;
 import org.jdom2.Document;
@@ -10,6 +12,7 @@ import org.jdom2.input.SAXBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 import static utility.Projection.mercatorProjection;
@@ -65,10 +68,11 @@ public class RaceXMLParser {
         this.width = width;
         this.height = height;
 
-
+//        System.out.println(xmlStr);
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
+
         Document root = builder.build(stream);
         Element race = root.getRootElement();
         Set<Integer> participantIDs = new HashSet<>();

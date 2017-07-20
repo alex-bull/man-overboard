@@ -28,7 +28,6 @@ import utilities.DataSource;
 import utilities.EnvironmentConfig;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -121,7 +120,6 @@ public class StarterController implements Initializable, ClockHandler {
         });
         starterList.setItems(compList);
         streamCombo.getItems().addAll(EnvironmentConfig.liveStream, EnvironmentConfig.csseStream, EnvironmentConfig.mockStream);
-//        streamCombo.setValue(EnvironmentConfig.csseStream);
 
 
     }
@@ -191,8 +189,11 @@ public class StarterController implements Initializable, ClockHandler {
      * Set fields using data from the stream
      */
     private void setFields() {
+
+
         while (dataSource.getCourseTimezone() == null) {
             System.out.print("");
+            System.out.println("NO DATA YET");
         }
         this.worldClock = new WorldClock(this, dataSource.getCourseTimezone());
         worldClock.start();

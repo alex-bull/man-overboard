@@ -1,20 +1,15 @@
 <?xml version="1.0"?>
 <Race>
-    <RaceID>123546789</RaceID>
+    <RaceID>%s</RaceID>
 
     <RaceType>Match</RaceType>
 
-    <CreationTimeDate>2011-08-06T13:25:00-0000</CreationTimeDate>
+    <CreationTimeDate>%s</CreationTimeDate>
 
-    <RaceStartTime Time="2011-08-06T13:30:00-07:00" Postpone="false"/>
+    <RaceStartTime Time="%s" Postpone="false"/>
 
     <Participants>
-        <Yacht SourceID="101"/>
-        <Yacht SourceID="102"/>
-        <Yacht SourceID="103"/>
-        <Yacht SourceID="104"/>
-        <Yacht SourceID="105"/>
-        <Yacht SourceID="106"/>
+        %s
     </Participants>
 
     <Course>

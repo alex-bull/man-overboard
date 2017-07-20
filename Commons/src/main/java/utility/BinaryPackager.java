@@ -1,4 +1,4 @@
-package mockDatafeed;
+package utility;
 
 
 import models.Competitor;
@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -18,8 +19,34 @@ import java.util.zip.Checksum;
  * Created by mattgoodson on 24/04/17.
  * Binary Package
  */
-class BinaryPackager {
+public class BinaryPackager {
 
+
+    /**
+     * Encapsulate a boat control action in a binary packet
+     * @param action Integer the code for the boat action
+     * @return byte[] the packet
+     */
+    public byte[] packageBoatAction(Integer action) {
+
+        byte[] packet = new byte[24];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 100;
+        short bodyLength = 1;
+        this.writeHeader(packetBuffer, type, bodyLength);
+
+        packetBuffer.put(action.byteValue());
+
+        Checksum crc32 = new CRC32();
+        crc32.update(packet, 0, packet.length - 4);
+        packetBuffer.putInt((int) crc32.getValue());
+
+        return packet;
+
+
+    }
 
     /**
      * Takes boat position data and encapsulates it in a binary packet
@@ -31,7 +58,7 @@ class BinaryPackager {
      * @param boatSpeed Double, the current speed of the boat
      * @return byte[], the binary packet
      */
-    byte[] packageBoatLocation(Integer sourceId, Double latitude, Double longitude, Double heading, Double boatSpeed, int deviceType) {
+    public byte[] packageBoatLocation(Integer sourceId, Double latitude, Double longitude, Double heading, Double boatSpeed, int deviceType) {
 
         byte[] packet = new byte[75];
 
@@ -104,7 +131,7 @@ class BinaryPackager {
      *                      7-Boat
      * @return a bytearray of packaged xml message
      */
-    byte[] packageXML(int length, String xmlFileString, int messageType) throws IOException {
+    public byte[] packageXML(int length, String xmlFileString, int messageType) throws IOException {
 
         // message header is 19 bytes + 14 bytes of other xml message fields
         byte[] packet = new byte[length + 33];
@@ -154,7 +181,7 @@ class BinaryPackager {
         buffer.put(this.getCurrentTimeStamp());
 
         //message source id
-        buffer.putInt(1); //TODO:- figure out what the message source id is
+        buffer.putInt(1);
         buffer.putShort((short) messageLength);
     }
 
@@ -219,23 +246,23 @@ class BinaryPackager {
      *                          9 – Race start time not set
      *                          10 – Prestart (more than 3:00 until start)
      * @param expectedStartTime the expected start time
+     * @param windDirection the wind direction
+     * @param windSpeed the wind speed
      * @return byte[], the race status message
      */
-    byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime) {
+    public byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime, short windDirection, short windSpeed) {
         byte[] packet = new byte[24];
-        short windDirection = -32768;// 0x8000 in signed short
-
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
         packetBuffer.put((byte) 2); //MessageVersionNumber
         packetBuffer.put(getCurrentTimeStamp());//CurrentTime
-        packetBuffer.putInt(123546789);//RaceID
+        packetBuffer.putInt(123546789);//RaceID /TODO:- Figure out what this should be
         packetBuffer.put((byte) raceStatus); //RaceStatus
         packetBuffer.put(getTimeStamp(expectedStartTime));//ExpectedStartTime
         packetBuffer.putShort(windDirection); //WindDirection
-        packetBuffer.putShort((short) 0);//WindSpeed
+        packetBuffer.putShort(windSpeed);//WindSpeed
         packetBuffer.put((byte) 6);//Number of Boats
         packetBuffer.put((byte) 1);//RaceType 1 ->MatchRace
 
@@ -249,7 +276,7 @@ class BinaryPackager {
      * @param competitors the list of boats
      * @return byte[] of each boat's section in RaceStatus Message
      */
-    byte[] packageEachBoat(List<Competitor> competitors) {
+    public byte[] packageEachBoat(List<Competitor> competitors) {
         byte[] packet = new byte[20 * competitors.size()];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -274,7 +301,7 @@ class BinaryPackager {
      * @param eachBoat   the each boat bytearray
      * @return byte[] of the entire RaceStatus packet
      */
-    byte[] packageRaceStatus(byte[] raceStatus, byte[] eachBoat) {
+    public byte[] packageRaceStatus(byte[] raceStatus, byte[] eachBoat) {
         byte[] packet = new byte[19 + raceStatus.length + eachBoat.length];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -289,5 +316,21 @@ class BinaryPackager {
         return packet;
     }
 
+    public byte[] packageSourceID(int sourceID){
+        byte[] packet=new byte[23];
+
+        ByteBuffer packetBuffer=ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        writeHeader(packetBuffer,56,(short)4);
+        packetBuffer.putInt(sourceID);
+
+        //CRC
+        Checksum crc32 = new CRC32();
+        crc32.update(packet, 0, packet.length - 4);
+        packetBuffer.putInt((int) crc32.getValue());
+
+        return packet;
+    }
 
 }

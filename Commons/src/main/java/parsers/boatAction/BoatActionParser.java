@@ -1,31 +1,76 @@
 package parsers.boatAction;
 
+import models.Mark;
+import models.MutablePoint;
+import parsers.boatLocation.BoatData;
+
 import java.util.Arrays;
+import java.util.List;
 
 import static parsers.Converter.hexByteArrayToInt;
+import static parsers.Converter.parseHeading;
+import static utility.Projection.mercatorProjection;
 
 /**
- * Created by msl47 on 19/07/17.
+ * Created by abu59 on 17/07/17.
  */
 public class BoatActionParser {
 
-//TODO: figure out binary message format
+    /**
+     * Process the given data and parse source id, latitude, longitude, heading, speed
+     * @param body byte[] a byte array of the boat data message
+     * @return BoatData boat data object
+     */
+    public BoatAction processMessage(byte[] body) {
+        try {
+            //Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
+            int actionNum = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 1));
+            String action = null;
+            switch (actionNum){
+                case 1:
+                    action = "Autopilot/VMG";
+                    break;
+                case 2:
+                    action = "Sails in";
+                    break;
+                case 3:
+                    action = "Sails out";
+                    break;
+                case 4:
+                    action = "Tack/Gybe";
+                    break;
+                case 5:
+                    action = "Upwind";
+                    break;
+                case 6:
+                    action = "Downwind";
+                    break;
+            }
+            return new BoatAction(action);
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
 
-//    public boatActionData processMessage (byte[] body) {
-//        Message Type: 100 (0x064)
-//        Message Size: 1 byte (always 1)
-//        Boat Action (1 byte):
-//        1 Autopilot/VMG
-//        2 Sails in
-//        3 Sails out
-//        4 Tack/Gybe
-//        5 Upwind
-//        6 Downwind
+    /**
+     * Convert a byte array of little endian hex values into a decimal heading
+     *
+     * @param hexValues byte[] a byte array of (2) hexadecimal bytes in little endian format
+     * @return Double the value of the heading
+     */
+    private Double parseHeading(byte[] hexValues) {
+        return (double) hexByteArrayToInt(hexValues) * 360.0 / 65536.0;
+    }
 
-//        try{
-//            Integer size = hexByteArrayToInt(Arrays.copyOfRange(body, , 11));
-//
-//        }
-//    }
+    /**
+     * Convert a byte array of little endian hex values into a decimal latitude or longitude
+     *
+     * @param hexValues byte[] a byte array of (4) hexadecimal bytes in little endian format
+     * @return Double the value of the coordinate value
+     */
+    private Double parseCoordinate(byte[] hexValues) {
+        return (double) hexByteArrayToInt(hexValues) * 180.0 / 2147483648.0;
+    }
 
 }
