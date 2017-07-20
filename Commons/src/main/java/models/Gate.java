@@ -30,6 +30,7 @@ public class Gate implements CourseFeature {
      * @param pixelPoint2 MutablePoint the scaled pixel coordinates of the other end.
      * @param isFinish    boolean true if the gate is a finishing gate
      * @param isLine      boolean true if the gate needs a line
+     * @param index       int the index of the gate
      */
     public Gate(String name, MutablePoint GPSPoint1, MutablePoint pixelPoint1, MutablePoint pixelPoint2, boolean isFinish, boolean isLine, int index) {
 
@@ -158,6 +159,16 @@ public class Gate implements CourseFeature {
      */
     public void setExitHeading(Double exitHeading) {
         this.exitHeading = exitHeading;
+    }
+
+    @Override
+    public String toString() {
+        return "Gate{" +
+                "name='" + name + '\'' +
+                ", pixelPoint1=" + pixelPoint1 +
+                ", pixelPoint2=" + pixelPoint2 +
+                ", index=" + index +
+                '}';
     }
 
     @Override

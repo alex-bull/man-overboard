@@ -41,7 +41,7 @@ public class WindController implements Initializable{
      * @param windSpeed double the wind speed in m/s
      */
     void refresh(double angle, double windSpeed) {
-        int minWind = 5;
+        int minWind = 3;
         int maxWind = 7;
         double factor = 40.0;
         Double windFactor = windSpeed * factor;
@@ -49,7 +49,7 @@ public class WindController implements Initializable{
 
         arrow.toFront();
         arrow.getTransforms().clear();
-        arrow.getTransforms().add(new Rotate(angle, 0, 25));
+        arrow.getTransforms().add(new Rotate(angle + 180, 0, 25));
         if(windSpeed >= minWind && windSpeed <= maxWind) {
             arrow.getPoints().remove(0,14);
             drawArrow(windFactor, offset);

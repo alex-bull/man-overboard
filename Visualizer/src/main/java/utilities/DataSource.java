@@ -6,6 +6,7 @@ import models.CourseFeature;
 import models.MutablePoint;
 import parsers.RaceStatusEnum;
 
+import java.io.EOFException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,4 +37,6 @@ public interface DataSource {
     int getMapZoomLevel();
     int getSourceId();
     double getShiftDistance();
+    int getSourceID();
+    void send(byte[] data);
 }

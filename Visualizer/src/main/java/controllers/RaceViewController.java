@@ -2,8 +2,11 @@ package controllers;
 
 import javafx.animation.FadeTransition;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
@@ -292,7 +295,6 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawBackgroundImage(List<Double> bounds) {
         try {
-
             mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
             mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
         } catch (JSException e) {
@@ -550,6 +552,7 @@ public class RaceViewController implements Initializable, TableObserver {
         this.raceViewPane.getChildren().add(circle);
         gc.restore();
     }
+
 
 
 

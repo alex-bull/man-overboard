@@ -15,6 +15,7 @@ public class RaceEvent{
 
     /**
      * Constructs a RaceEvent
+     * @param boatSourceId Integer the source id of the boat
      * @param teamName String team name of the boat
      * @param speed Double speed of the boat
      * @param feature String the course feature the boat has passed

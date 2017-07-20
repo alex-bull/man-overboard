@@ -28,7 +28,6 @@ import utilities.DataSource;
 import utilities.EnvironmentConfig;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -64,6 +63,18 @@ public class StarterController implements Initializable, ClockHandler {
 
     void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    void autoStart(){
+        confirmButton.fire();
+        countdownButton.fire();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     /**
@@ -134,13 +145,17 @@ public class StarterController implements Initializable, ClockHandler {
         Scene scene=primaryStage.getScene();
         boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
 
+
+
         if (streaming) {
             EnvironmentConfig.currentStream = host;
-
             this.streamCombo.setDisable(true);
             this.confirmButton.setDisable(true);
             currentStream = host;
             this.setFields();
+        }
+        else {
+            System.out.println("Sorry cannot connect right now.");
         }
 
 
@@ -174,8 +189,11 @@ public class StarterController implements Initializable, ClockHandler {
      * Set fields using data from the stream
      */
     private void setFields() {
+
+
         while (dataSource.getCourseTimezone() == null) {
             System.out.print("");
+            System.out.println("NO DATA YET");
         }
         this.worldClock = new WorldClock(this, dataSource.getCourseTimezone());
         worldClock.start();
@@ -226,11 +244,10 @@ public class StarterController implements Initializable, ClockHandler {
 
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 primaryStage.setTitle("RaceVision");
-                primaryStage.setWidth(primaryScreenBounds.getWidth());
-                primaryStage.setHeight(primaryScreenBounds.getHeight());
-                primaryStage.setMinHeight(primaryScreenBounds.getHeight());
-                primaryStage.setMinWidth(primaryScreenBounds.getWidth());
+//                primaryStage.setMaxWidth(primaryScreenBounds.getWidth());
+//                primaryStage.setMaxHeight(primaryScreenBounds.getHeight());
                 primaryStage.setScene(scene);
+                primaryStage.setFullScreen(true);
             }
         });
     }

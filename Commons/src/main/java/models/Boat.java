@@ -36,6 +36,7 @@ public class Boat implements Competitor {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
+
         this.color = color;
         this.abbreName = abbreName;
         legIndex = 0;
@@ -51,6 +52,7 @@ public class Boat implements Competitor {
      * @param startPosition MutablePoint the boat's start position coordinate
      * @param sourceID      sourceID of the boat
      * @param abbreName     String the abbreviated name of the boat
+     * @param status        int status status of the boat
      */
     public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID, int status) {
         this.velocity = velocity;
@@ -231,7 +233,11 @@ public class Boat implements Competitor {
     public String toString() {
         return "Boat{" +
                 "teamName='" + teamName + '\'' +
+                ", velocity=" + velocity +
+                ", position=" + position +
+                ", color=" + color +
                 ", abbreName='" + abbreName + '\'' +
+                ", currentHeading=" + currentHeading +
                 ", sourceID=" + sourceID +
                 '}';
     }
