@@ -26,10 +26,8 @@ import models.Competitor;
 import models.WorldClock;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
-import utility.DataSender;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -243,19 +241,13 @@ public class StarterController implements Initializable, ClockHandler {
                 Scene scene = new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
 
                 MainController mainController = loader.getController();
-                try {
-                    System.out.println("Here");
-                    mainController.beginRace(new DataSender(4942), dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                    primaryStage.setTitle("RaceVision");
+
+                mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
+                primaryStage.setTitle("RaceVision");
 //                primaryStage.setMaxWidth(primaryScreenBounds.getWidth());
 //                primaryStage.setMaxHeight(primaryScreenBounds.getHeight());
-                    primaryStage.setScene(scene);
-                    primaryStage.setFullScreen(true);
-                }
-                catch (IOException e) {
-                    System.out.println("failed to connect to Mock");
-                    System.exit(1);
-                }
+                primaryStage.setScene(scene);
+                primaryStage.setFullScreen(true);
             }
         });
     }

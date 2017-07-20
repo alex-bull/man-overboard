@@ -1,19 +1,13 @@
 package utilities;
 
 import mockDatafeed.BoatMocker;
-import org.junit.Before;
 import org.junit.Test;
-
-import java.io.DataInputStream;
-import java.util.Timer;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by jar156 on 11/05/17.
  */
-public class DataReceiverTest {
-    DataReceiver dataReceiver;
+public class TCPClientTest {
+    TCPClient TCPClient;
 
     @Test
     public void connectsToMockServer() throws Exception {
@@ -35,7 +29,7 @@ public class DataReceiverTest {
         String host = "localhost";
         int port = 4941;
 
-        dataReceiver = new DataReceiver(host, port, interpreter);
+        TCPClient = new TCPClient(host, port, interpreter);
 
     }
 

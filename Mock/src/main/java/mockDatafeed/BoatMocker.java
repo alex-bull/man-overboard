@@ -29,7 +29,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager;
-    private DataSender dataSender;
+    private TCPServer TCPServer;
     private MutablePoint prestart;
     private int currentSourceID=100;
     private Random random;
@@ -37,12 +37,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     BoatMocker() throws IOException {
         random=new Random();
         prestart = new MutablePoint(32.296577, -64.854304);
-        int connectionTime = 5000;
+        int connectionTime = 10000;
         competitors = new ArrayList<>();
-        dataSender = new DataSender(4941, this);
+        TCPServer = new TCPServer(4941, this);
         binaryPackager = new BinaryPackager();
         //establishes the connection with Model
-        dataSender.establishConnection(connectionTime);
+        TCPServer.establishConnection(connectionTime);
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
@@ -146,13 +146,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         for (Competitor boat : competitors) {
             byte[] boatinfo = binaryPackager.packageBoatLocation(boat.getSourceID(), boat.getPosition().getXValue(), boat.getPosition().getYValue(),
                     boat.getCurrentHeading(), boat.getVelocity() * 1000, 1);
-            dataSender.sendData(boatinfo);
+            TCPServer.sendData(boatinfo);
         }
         //send mark boats
         for (Competitor markBoat : markBoats) {
             byte[] boatinfo = binaryPackager.packageBoatLocation(markBoat.getSourceID(), markBoat.getPosition().getXValue(), markBoat.getPosition().getYValue(),
                     markBoat.getCurrentHeading(), markBoat.getVelocity() * 1000, 3);
-            dataSender.sendData(boatinfo);
+            TCPServer.sendData(boatinfo);
         }
     }
 
@@ -165,7 +165,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         //TODO: make race status message
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime,competitors.size());
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
-        dataSender.sendData(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
+        TCPServer.sendData(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
     }
 
 
@@ -192,7 +192,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         int messageType = 6;
         String raceTemplateString = fileToString("/raceTemplate.xml");
         String raceXML = formatRaceXML(raceTemplateString);
-        dataSender.sendData(binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
+        TCPServer.sendData(binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
 
     }
 
@@ -202,7 +202,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private void sendXML(String xmlPath, int messageType) throws IOException {
         String xmlString = CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
         //        String mockBoatsString = Files.toString(new File(xmlPath), Charsets.UTF_8);
-        dataSender.sendData(binaryPackager.packageXML(xmlString.length(), xmlString, messageType));
+        TCPServer.sendData(binaryPackager.packageXML(xmlString.length(), xmlString, messageType));
 
     }
 
@@ -221,7 +221,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         }
         String xmlString = CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
         String boatXML=String.format(xmlString,stringBuilder.toString());
-        dataSender.sendData(binaryPackager.packageXML(boatXML.length(), boatXML, messageType));
+        TCPServer.sendData(binaryPackager.packageXML(boatXML.length(), boatXML, messageType));
     }
     /**
      * Sends all xml files

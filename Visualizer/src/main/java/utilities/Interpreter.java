@@ -1,6 +1,5 @@
 package utilities;
 
-import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -18,9 +17,6 @@ import parsers.boatAction.BoatAction;
 import parsers.boatAction.BoatActionParser;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
-import parsers.courseWind.CourseWindData;
-import parsers.courseWind.CourseWindParser;
-import parsers.courseWind.WindStatus;
 import parsers.markRounding.MarkRoundingData;
 import parsers.markRounding.MarkRoundingParser;
 import parsers.raceStatus.RaceStatusData;
@@ -31,7 +27,6 @@ import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -80,6 +75,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private List<CompoundMarkData> compoundMarks = new ArrayList<>();
     private boolean seenRaceXML = false;
     private int sourceID;
+    private TCPClient TCPClient;
 
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
@@ -145,6 +141,14 @@ public class Interpreter implements DataSource, PacketHandler {
         return this.raceData.getLegIndexToSourceId();
     }
 
+    public void send(byte[] data) {
+        try {
+            TCPClient.send(data);
+        }
+        catch (IOException e) {
+            System.out.println("Could not send data");
+        }
+    }
 
 
     /**
@@ -155,10 +159,10 @@ public class Interpreter implements DataSource, PacketHandler {
      * @return boolean, true if the stream succeeds
      */
     public boolean receive(String host, int port, Scene scene) throws NullPointerException{
-        DataReceiver dataReceiver;
+
         Rectangle2D primaryScreenBounds;
         try {
-            dataReceiver = new DataReceiver(host, port, this);
+            TCPClient = new TCPClient(host, port, this);
             primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         }
         catch (UnresolvedAddressException e){
@@ -178,7 +182,7 @@ public class Interpreter implements DataSource, PacketHandler {
         Timer receiverTimer = new Timer();
 
 
-        receiverTimer.schedule(dataReceiver, 0, 1);
+        receiverTimer.schedule(TCPClient, 0, 1);
 
 
         try {

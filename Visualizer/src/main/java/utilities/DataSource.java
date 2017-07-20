@@ -37,4 +37,5 @@ public interface DataSource {
     int getMapZoomLevel();
     double getShiftDistance();
     int getSourceID();
+    void send(byte[] data);
 }

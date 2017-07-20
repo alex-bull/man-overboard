@@ -3,12 +3,10 @@ package mockDatafeed;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import utility.DataSender;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
@@ -20,16 +18,16 @@ import static org.junit.Assert.*;
 /**
  * Created by khe60 on 2/06/17.
  */
-public class DataSenderTest {
-    private DataSender dataSender;
+public class TCPServerTest {
+    private TCPServer TCPServer;
 
     @Before
     public void setUp() throws Exception{
 
-        dataSender=new DataSender(4941, Mockito.mock(BoatMocker.class));
+        TCPServer =new TCPServer(4941, Mockito.mock(BoatMocker.class));
         Thread dataSenderThread = new Thread(() -> {
             try {
-                dataSender.establishConnection(1000);
+                TCPServer.establishConnection(1000);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -73,7 +71,7 @@ public class DataSenderTest {
 
         //wait for connections to establish
         Thread.sleep(1000);
-        dataSender.sendData(data);
+        TCPServer.sendData(data);
 
         for(SocketChannel client:clients){
             ByteBuffer readBuffer=ByteBuffer.allocate(10);

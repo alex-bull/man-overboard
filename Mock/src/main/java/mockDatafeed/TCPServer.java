@@ -1,4 +1,7 @@
-package utility;
+package mockDatafeed;
+
+import utility.BinaryPackager;
+import utility.ConnectionClient;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,23 +18,23 @@ import java.util.HashSet;
 
 /**
  * Created by khe60 on 10/04/17.
- * The DataSender class
+ * The TCPServer class
  */
-public class DataSender {
+public class TCPServer {
 
     private Selector selector;
     private ServerSocketChannel serverSocket;
     private ConnectionClient connectionClient;
     private BinaryPackager binaryPackager;
-    private OutputStream os;
+
 
     /**
-     * Constructor for DataSender, creates port at given port
+     * Constructor for TCPServer, creates port at given port
      *
      * @param port int The port number
      * @throws IOException IOException
      */
-    public DataSender(int port, ConnectionClient connectionClient) throws IOException {
+    public TCPServer(int port, ConnectionClient connectionClient) throws IOException {
         this.connectionClient = connectionClient;
         binaryPackager=new BinaryPackager();
         selector = Selector.open();
@@ -41,6 +44,9 @@ public class DataSender {
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
     }
+
+
+
 
 
     /**
@@ -58,7 +64,7 @@ public class DataSender {
                 if (key.isAcceptable()) {
                     SocketChannel client = serverSocket.accept();
                     client.configureBlocking(false);
-                    client.register(selector, SelectionKey.OP_WRITE);
+                    client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE);
                     //generate and send sourceID to client
 
                 }
@@ -70,6 +76,8 @@ public class DataSender {
         System.out.println("finish client connection");
         sendSourceID();
     }
+
+
 
     /**
      * sends the sourceID to the selection key
@@ -95,27 +103,8 @@ public class DataSender {
         }
     }
 
-    /**
-     * Constructor for DataSender, creates port at given portnum
-     *
-     * @param portnum int The port number
-     * @throws IOException IOException
-     */
-    public DataSender(int portnum) throws IOException {
-        ServerSocket outputSocket = new ServerSocket(portnum);
-        Socket socket = outputSocket.accept();
-        os = socket.getOutputStream();
 
-    }
 
-    /**
-     * sends the data to the output socket
-     *
-     * @param data byte[] byte array of the data
-     */
-    public void sendDataSingleClient(byte[] data) throws IOException {
-        os.write(data);
-    }
 
     /**
      * sends the data to the output socket

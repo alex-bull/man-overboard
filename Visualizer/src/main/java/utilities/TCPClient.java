@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -24,14 +25,15 @@ import static parsers.Converter.hexByteArrayToInt;
 
 /**
  * Created by khe60 on 10/04/17.
- * The Receiver class, currently receives messages 1 byte at a time
+ * The Client class, currently receives messages 1 byte at a time
  * Can't connect to the test port for some reason (internet enabler)
  */
-public class DataReceiver extends TimerTask {
+public class TCPClient extends TimerTask {
 
 //    private SocketChannel client;
     private PacketHandler handler;
     private DataInputStream dis;
+    private DataOutputStream dos;
     private int sourceID;
 
 
@@ -42,14 +44,23 @@ public class DataReceiver extends TimerTask {
      * @param handler PacketHandler handler for incoming packets
      * @throws IOException IOException
      */
-    DataReceiver(String host, int port, PacketHandler handler) throws UnresolvedAddressException, IOException {
+    TCPClient(String host, int port, PacketHandler handler) throws UnresolvedAddressException, IOException {
         Socket receiveSock = new Socket(host, port);
         this.handler = handler;
         dis = new DataInputStream(receiveSock.getInputStream());
+        dos = new DataOutputStream(receiveSock.getOutputStream());
         System.out.println("Start connection to server...");
 
     }
 
+    /**
+     * Write data to the socket
+     * @param data byte[] The data to send
+     * @throws IOException
+     */
+    public void send(byte[] data) throws IOException {
+        dos.write(data);
+    }
 
     /**
      * Check for the first and second sync byte
@@ -135,10 +146,10 @@ public class DataReceiver extends TimerTask {
 //     * @throws InterruptedException Interrupted Exception
 //     */
 //    public static void main(String[] args) throws InterruptedException {
-//        DataReceiver dataReceiver = null;
+//        TCPClient dataReceiver = null;
 //        while (dataReceiver == null) {
 //            try {
-//                dataReceiver = new DataReceiver("livedata.americascup.com", 4941);
+//                dataReceiver = new TCPClient("livedata.americascup.com", 4941);
 //                Timer timer = new Timer();
 //                timer.schedule(dataReceiver, 0, 100);
 //
