@@ -5,4 +5,5 @@ package utility;
  */
 public interface ConnectionClient {
     int addConnection();
+    void interpretPacket(byte[] header, byte[] packet);
 }

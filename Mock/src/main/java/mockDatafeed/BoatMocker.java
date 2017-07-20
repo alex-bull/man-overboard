@@ -76,6 +76,19 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     }
 
     /**
+     * Handle control data coming in from clients
+     * @param header
+     * @param packet
+     */
+    public void interpretPacket(byte[] header, byte[] packet) {
+        System.out.println("Interpreting packet");
+        for (int i = 0; i < packet.length; i++) {
+            System.out.println(packet[i]);
+        }
+    }
+
+
+    /**
      * finds the current course of the race
      */
     private void generateCourse() throws JDOMException, IOException {
@@ -244,6 +257,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
     @Override
     public void run() {
+
+
+        try {
+            TCPServer.receive();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //check if boats are at the end of the leg
         for (Competitor b : competitors) {
             //if at the end stop

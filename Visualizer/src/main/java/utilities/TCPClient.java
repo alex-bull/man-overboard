@@ -1,22 +1,13 @@
 package utilities;
 
-import javafx.application.Platform;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import utility.PacketHandler;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.SocketChannel;
 import java.nio.channels.UnresolvedAddressException;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.TimerTask;
 
@@ -59,6 +50,7 @@ public class TCPClient extends TimerTask {
      * @throws IOException
      */
     public void send(byte[] data) throws IOException {
+        System.out.println("Sending message...");
         dos.write(data);
     }
 
@@ -116,7 +108,6 @@ public class TCPClient extends TimerTask {
                 byte[] message=new byte[length];
                 dis.readFully(message);
                 this.handler.interpretPacket(header, message);
-
             }
 
         }catch (EOFException e){

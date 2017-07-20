@@ -13,7 +13,10 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 import java.util.HashSet;
+
+import static parsers.Converter.hexByteArrayToInt;
 
 
 /**
@@ -26,7 +29,6 @@ public class TCPServer {
     private ServerSocketChannel serverSocket;
     private ConnectionClient connectionClient;
     private BinaryPackager binaryPackager;
-
 
     /**
      * Constructor for TCPServer, creates port at given port
@@ -77,6 +79,85 @@ public class TCPServer {
         sendSourceID();
     }
 
+
+    /**
+     * Handle incoming messages from clients
+     */
+    public void receive() throws IOException {
+
+        selector.select(1);
+        for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
+            //accept client connection
+            if (key.isReadable()) {
+
+                SocketChannel client = (SocketChannel) key.channel();
+
+                try {
+                    boolean isStartOfPacket = checkForSyncBytes(client);
+                    if (isStartOfPacket) {
+                        byte[] header = this.getHeader(client);
+                        int length = this.getMessageLength(header);
+                        byte[] message = new byte[length];
+                        ByteBuffer buffer = ByteBuffer.wrap(message);
+                        client.read(buffer);
+                        this.connectionClient.interpretPacket(header, message);
+                    }
+                }
+                catch (Exception e) {
+                    System.out.println("Incoming message aborted");
+                }
+            }
+            selector.selectedKeys().remove(key);
+        }
+    }
+
+
+    /**
+     * Check for the first and second sync byte
+     *
+     * @return Boolean if Sync Byte found
+     * @throws IOException IOException
+     */
+    private boolean checkForSyncBytes(SocketChannel client) throws IOException {
+
+        // -125 is equivalent to 0x83 unsigned
+        byte[] expected = {0x47,-125};
+
+        byte[] actual = new byte[2];
+
+        ByteBuffer buffer = ByteBuffer.wrap(actual);
+
+//        client.read(ByteBuffer.wrap(actual));
+        client.read(buffer);
+        return Arrays.equals(actual, expected);
+    }
+
+
+    /**
+     * Returns the first 13 bytes from a packet
+     * @return byte[] the header byte array
+     * @throws IOException IOException
+     */
+    private byte[] getHeader(SocketChannel client) throws IOException {
+//        ByteBuffer header=ByteBuffer.allocate(13);
+//        client.read(header);
+        byte[] header=new byte[13];
+        ByteBuffer buffer  =ByteBuffer.wrap(header);
+
+        client.read(buffer);
+        return header;
+    }
+
+
+    /**
+     * returns the length field from a 13 byte header
+     * @param header byte[] the header byte array
+     * @return int the message length
+     */
+    private int getMessageLength(byte[] header) {
+        byte[] messageLengthBytes = Arrays.copyOfRange(header, 11, 13);
+        return hexByteArrayToInt(messageLengthBytes);
+    }
 
 
     /**
