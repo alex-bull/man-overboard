@@ -26,16 +26,32 @@ public class MainController {
     private BinaryPackager binaryPackager;
 
 
+    /**
+     * Handle control key events
+     * @param event KeyEvent
+     */
     @FXML public void keyPressed(KeyEvent event) {
 
         switch (event.getCode()) {
             case UP:
-                System.out.println("Upp");
+                System.out.println("Up");
                 this.dataSource.send(this.binaryPackager.packageBoatAction(5));
                 break;
             case DOWN:
                 System.out.println("Down");
                 this.dataSource.send(this.binaryPackager.packageBoatAction(6));
+                break;
+            case SPACE:
+                System.out.println("VMG");
+                this.dataSource.send(this.binaryPackager.packageBoatAction(1));
+                break;
+            case SHIFT:
+                System.out.println("Sails");
+                this.dataSource.send(this.binaryPackager.packageBoatAction(2));
+                break;
+            case ENTER:
+                System.out.println("Tack/Gybe");
+                this.dataSource.send(this.binaryPackager.packageBoatAction(4));
                 break;
         }
     }
@@ -69,7 +85,6 @@ public class MainController {
                 else {
                     loadingPane.toFront();
                 }
-
             }
         };
 
