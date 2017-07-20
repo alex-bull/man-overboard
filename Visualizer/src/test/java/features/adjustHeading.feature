@@ -10,7 +10,7 @@ Feature:  The boat's heading is adjustable by the player
         | 200        |300      |down |197            |
         | 200        |100      |up   |197            |
         | 200        |100      |down |203            |
-        | 300        |300      |up   |303            |
+        | 300        |300      |up   |297            |
         | 200        |20       |down |203            |
 
 
