@@ -11,7 +11,8 @@ import java.io.InputStreamReader;
  */
 public class Utility {
 
-    public static String fileToString(String xmlPath) throws IOException {
-       return CharStreams.toString(new InputStreamReader(Utility.class.getResourceAsStream(xmlPath)));
+    public static String fileToString(String filePath) throws IOException {
+       return CharStreams.toString(new InputStreamReader(Utility.class.getResourceAsStream(filePath)));
     }
+
 }

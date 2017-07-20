@@ -5,6 +5,7 @@ import com.google.common.io.CharStreams;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.xml.CourseXMLParser;
+import utilities.PolarTable;
 
 
 import java.io.*;
@@ -15,7 +16,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import utility.*;
 
+import static java.lang.Math.abs;
+import static parsers.Converter.hexByteArrayToInt;
+import static utility.Calculator.calcAngleBetweenPoints;
+import static utility.Calculator.convertRadiansToShort;
+
 import static utilities.Utility.fileToString;
+import static utility.Calculator.shortToDegrees;
 
 /**
  * Created by khe60 on 24/04/17.
@@ -25,14 +32,15 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private List<Competitor> competitors;
     private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
-    private int raceStatus = 3;
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager;
     private TCPServer TCPServer;
     private MutablePoint prestart;
+    private WindGenerator windGenerator;
     private int currentSourceID=100;
     private Random random;
+    private PolarTable polarTable;
 
     BoatMocker() throws IOException {
         random=new Random();
@@ -41,11 +49,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         competitors = new ArrayList<>();
         TCPServer = new TCPServer(4941, this);
         binaryPackager = new BinaryPackager();
-        //establishes the connection with Model
+        //establishes the connection with Visualizer
         TCPServer.establishConnection(connectionTime);
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
+
     }
 
     /**
@@ -59,9 +68,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             me = new BoatMocker();
             //find out the coordinates of the course
             me.generateCourse();
-
-            //generate the boats
             me.generateCompetitors();
+            me.generateWind();
+
             //send all xml data first
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
@@ -87,6 +96,36 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         }
     }
 
+
+    /**
+     * generates wind speed and direction from leeward and windward gates
+     */
+    private void generateWind() throws IOException {
+        int windSpeed = 4600; //default wind speed
+        int windDirection = 8192; // default wind direction
+        List<Competitor> leewardGates = new ArrayList<>();
+        List<Competitor> windwardGates = new ArrayList<>();
+
+        for(Competitor mark: markBoats) {
+            if(mark.getAbbreName().contains("LG")) {
+                leewardGates.add(mark);
+            }
+            else if(mark.getAbbreName().contains("WG")) {
+                windwardGates.add(mark);
+            }
+        }
+
+        if(leewardGates.size() == 2 && windwardGates.size() == 2) {
+            double leewardX = (leewardGates.get(0).getPosition().getXValue() + leewardGates.get(1).getPosition().getXValue()) / 2;
+            double leewardY =  (leewardGates.get(0).getPosition().getYValue() + leewardGates.get(1).getPosition().getYValue()) / 2;
+            double windwardX = (windwardGates.get(0).getPosition().getXValue() + windwardGates.get(1).getPosition().getXValue()) / 2;
+            double windwardY = (windwardGates.get(0).getPosition().getYValue() + windwardGates.get(1).getPosition().getYValue()) / 2;
+            double angle = calcAngleBetweenPoints(leewardX, leewardY, windwardX, windwardY);
+            windDirection = convertRadiansToShort(angle);
+        }
+        windGenerator = new WindGenerator(windSpeed, windDirection);
+        polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
+    }
 
     /**
      * finds the current course of the race
@@ -118,7 +157,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      * generates the competitors list
      */
     private void generateCompetitors() {
-
+        competitors = new ArrayList<>();
+        //generate all boats
+        competitors.add(new Boat("Oracle Team USA", 42, prestart, "USA", 101, 1));
+        competitors.add(new Boat("Emirates Team New Zealand", 40, prestart, "NZL", 103, 1));
+        competitors.add(new Boat("Ben Ainslie Racing", 36, prestart, "GBR", 106, 1));
+        competitors.add(new Boat("SoftBank Team Japan", 32, prestart, "JPN", 104, 1));
+        competitors.add(new Boat("Team France", 30, prestart, "FRA", 105, 1));
+        competitors.add(new Boat("Artemis Racing", 38, prestart, "SWE", 102, 1));
 
         //generate mark boats
         markBoats = new ArrayList<>();
@@ -139,6 +185,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             b.setCurrentHeading(courseFeatures.get(0).getExitHeading());
         }
 
+        //randomly select competitors
+        Collections.shuffle(competitors);
+        competitors = competitors.subList(0, 6);
     }
 
     /**
@@ -147,6 +196,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private void updatePosition() {
 
         for (Competitor boat : competitors) {
+            short windDirection = windGenerator.getWindDirection();
+            double twa = abs(shortToDegrees(windDirection) - boat.getCurrentHeading());
+            if(twa > 180) {
+                twa = twa - 180;
+            }
+            double speed = polarTable.getSpeed(twa);
+            boat.setVelocity(speed);
             boat.updatePosition(0.1);
         }
     }
@@ -175,8 +231,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      * @throws IOException IOException
      */
     private void sendRaceStatus() throws IOException {
-        //TODO: make race status message
-        byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime,competitors.size());
+        short windDirection = windGenerator.getWindDirection();
+        short windSpeed = windGenerator.getWindSpeed();
+        int raceStatus = 3;
+        byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed);
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         TCPServer.sendData(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
     }
