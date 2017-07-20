@@ -3,9 +3,11 @@ package utility;
 import org.junit.Test;
 
 import static java.lang.Math.atan;
+import static java.lang.Math.toDegrees;
 import static org.junit.Assert.assertEquals;
 import static utility.Calculator.calcAngleBetweenPoints;
 import static utility.Calculator.convertRadiansToShort;
+import static utility.Calculator.shortToDegrees;
 
 /**
  * Created by psu43 on 17/07/17.
@@ -43,6 +45,15 @@ public class CalculatorTest {
         calculatedShort = convertRadiansToShort(-1);
         assertEquals(calculatedShort, 22338);
     }
+
+    @Test
+    public void shortToDegreesTest() {
+        assertEquals(shortToDegrees((short) 0 ), 180, 0.01);
+        assertEquals(shortToDegrees((short) -32768 ), 0, 0.01);
+        assertEquals(shortToDegrees((short)-27552), toDegrees(0.5), 0.01);
+
+    }
+
 
 
 }

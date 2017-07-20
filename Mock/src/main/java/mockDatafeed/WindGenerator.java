@@ -30,6 +30,7 @@ class WindGenerator {
     }
 
 
+
     /**
      * Generates a random value for wind speed.
      * @return short wind speed

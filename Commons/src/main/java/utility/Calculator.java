@@ -33,4 +33,7 @@ public class Calculator {
         return (short) result;
     }
 
+    public static double shortToDegrees(short value) {
+        return toDegrees((value+32768) * 2 * Math.PI / 65536);
+    }
 }

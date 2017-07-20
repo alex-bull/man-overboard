@@ -5,6 +5,7 @@ import com.google.common.io.CharStreams;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.xml.CourseXMLParser;
+import utilities.PolarTable;
 
 import java.io.*;
 import java.net.SocketException;
@@ -13,10 +14,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import static java.lang.Math.abs;
+import static parsers.Converter.hexByteArrayToInt;
 import static utility.Calculator.calcAngleBetweenPoints;
 import static utility.Calculator.convertRadiansToShort;
 
 import static utilities.Utility.fileToString;
+import static utility.Calculator.shortToDegrees;
 
 /**
  * Created by khe60 on 24/04/17.
@@ -34,11 +38,12 @@ public class BoatMocker extends TimerTask {
     private WindGenerator windGenerator;
     private int currentSourceID=100;
     private Random random;
+    private PolarTable polarTable;
 
     BoatMocker() throws IOException {
         random=new Random();
         prestart = new MutablePoint(32.296577, -64.854304);
-        int connectionTime = 5000;
+        int connectionTime = 7000;
         competitors = new ArrayList<>();
         dataSender = new DataSender(4941, this);
         binaryPackager = new BinaryPackager();
@@ -47,6 +52,7 @@ public class BoatMocker extends TimerTask {
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
+
     }
 
     /**
@@ -79,7 +85,7 @@ public class BoatMocker extends TimerTask {
     /**
      * generates wind speed and direction from leeward and windward gates
      */
-    private void generateWind() {
+    private void generateWind() throws IOException {
         int windSpeed = 4600; //default wind speed
         int windDirection = 8192; // default wind direction
         List<Competitor> leewardGates = new ArrayList<>();
@@ -103,6 +109,7 @@ public class BoatMocker extends TimerTask {
             windDirection = convertRadiansToShort(angle);
         }
         windGenerator = new WindGenerator(windSpeed, windDirection);
+        polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
     }
 
     /**
@@ -170,6 +177,13 @@ public class BoatMocker extends TimerTask {
     private void updatePosition() {
 
         for (Competitor boat : competitors) {
+            short windDirection = windGenerator.getWindDirection();
+            double twa = abs(shortToDegrees(windDirection) - boat.getCurrentHeading());
+            if(twa > 180) {
+                twa = twa - 180;
+            }
+            double speed = polarTable.getSpeed(twa);
+            boat.setVelocity(speed);
             boat.updatePosition(0.1);
         }
     }
