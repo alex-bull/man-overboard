@@ -77,8 +77,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
     /**
      * Handle control data coming in from clients
-     * @param header
-     * @param packet
+     * @param header byte[] the packet header
+     * @param packet byte[] the packet body
      */
     public void interpretPacket(byte[] header, byte[] packet) {
         System.out.println("Interpreting packet");

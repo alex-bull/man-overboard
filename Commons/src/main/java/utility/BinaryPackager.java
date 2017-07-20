@@ -2,7 +2,6 @@ package utility;
 
 
 import models.Competitor;
-import parsers.boatAction.BoatAction;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -22,6 +21,11 @@ import java.util.zip.Checksum;
 public class BinaryPackager {
 
 
+    /**
+     * Encapsulate a boat control action in a binary packet
+     * @param action Integer the code for the boat action
+     * @return byte[] the packet
+     */
     public byte[] packageBoatAction(Integer action) {
 
         byte[] packet = new byte[24];

@@ -142,6 +142,11 @@ public class Interpreter implements DataSource, PacketHandler {
         return this.raceData.getLegIndexToSourceId();
     }
 
+
+    /**
+     * Send control data via TCPClient
+     * @param data byte[] the data to send
+     */
     public void send(byte[] data) {
         try {
             TCPClient.send(data);
