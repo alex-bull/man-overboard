@@ -145,7 +145,7 @@ public class StarterController implements Initializable, ClockHandler {
         Scene scene=primaryStage.getScene();
         boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
 
-
+        System.out.println(streaming);
 
         if (streaming) {
             EnvironmentConfig.currentStream = host;

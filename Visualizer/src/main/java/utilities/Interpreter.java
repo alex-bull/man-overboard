@@ -187,15 +187,15 @@ public class Interpreter implements DataSource, PacketHandler {
         //start receiving data
         Timer receiverTimer = new Timer();
 
-
         receiverTimer.schedule(TCPClient, 0, 1);
-
 
         try {
             //wait for data to come in before setting fields
             while (this.numBoats < 1 || storedCompetitors.size() < this.numBoats) {
                 try {
                     Thread.sleep(1000);
+                    System.out.println(numBoats);
+                    System.out.println(storedCompetitors.size());
                 } catch (Exception e) {
                     System.out.println("Thread sleep error");
                 }
