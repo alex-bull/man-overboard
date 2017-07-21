@@ -17,7 +17,9 @@ public class RaceCourse implements Course {
      */
     public RaceCourse(List<CourseFeature> points, boolean useGPS) {
         this.points = points;
-        this.calculateHeadings(useGPS);
+        if (points != null) {
+            this.calculateHeadings(useGPS);
+        }
     }
 
     public List<CourseFeature> getPoints() {

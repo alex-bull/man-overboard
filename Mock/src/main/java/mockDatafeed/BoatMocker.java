@@ -239,13 +239,21 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
     private void handleCourseCollisions(Competitor boat) {
 
-        final double collisionRadius = 0.001;
+        final double collisionRadius = 200; //Large for testing
 
-        //A very simple initial test of course collisions. Very hard to be consistent using lat and lon so
-        //may need to convert to a pixel coordinate or do some complex maths.
+
         //Can bump back a fixed amount or try to simulate a real collision.
         for (Competitor mark: markBoats) {
 
+            Course raceCourse = new RaceCourse(null, true);
+            double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
+
+            if (distance <= collisionRadius) {
+                boat.getPosition().setX(boat.getPosition().getXValue() - 0.001);
+            }
+
+        }
+        /*
             if (abs(boat.getPosition().getXValue() - mark.getPosition().getXValue()) <= collisionRadius) {
 
                 System.out.println("Collision x");
@@ -259,10 +267,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                 System.out.println("Collision y" + mark.getAbbreName());
                 //boat.getPosition().setY(boat.getPosition().getYValue() - 30);
             }
-
-        }
-
+        }*/
     }
+
+
+
+
+
 
 
     /**
