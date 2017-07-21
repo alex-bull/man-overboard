@@ -207,6 +207,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         }
     }
 
+
     /**
      * Sends boat info to port, including mark boats
      */
@@ -224,6 +225,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             TCPServer.sendData(boatinfo);
         }
     }
+
 
     /**
      * Sends Race Status to outputport
