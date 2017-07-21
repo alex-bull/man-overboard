@@ -41,7 +41,6 @@ public class TCPServer {
         serverSocket.configureBlocking(false);
         serverSocket.socket().bind(new InetSocketAddress("0.0.0.0", port));
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-
     }
 
 

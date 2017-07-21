@@ -49,7 +49,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
     BoatMocker() throws IOException {
         random=new Random();
-        prestart = new MutablePoint(32.296577, -64.854304);
+        prestart = new MutablePoint(32.286577, -64.864304);
         int connectionTime = 10000;
         competitors = new HashMap<>();
         TCPServer = new TCPServer(4941, this);
@@ -80,7 +80,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
             Timer raceTimer = new Timer();
-            raceTimer.schedule(me, 0, 100);
+            raceTimer.schedule(me, 0, 30);
         } catch (SocketException ignored) {
 
         } catch (IOException | JDOMException e) {
@@ -225,8 +225,43 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             }
             double speed = polarTable.getSpeed(twa);
             boat.setVelocity(speed);
+
             boat.updatePosition(0.1);
+            handleCourseCollisions(boat);
+
         }
+    }
+
+
+    /**
+     * Calculates if the boat collides with any course features and adjusts the boats position
+     * @param boat Competitor the boat to check collisions for
+     */
+    private void handleCourseCollisions(Competitor boat) {
+
+        final double collisionRadius = 0.001;
+
+        //A very simple initial test of course collisions. Very hard to be consistent using lat and lon so
+        //may need to convert to a pixel coordinate or do some complex maths.
+        //Can bump back a fixed amount or try to simulate a real collision.
+        for (Competitor mark: markBoats) {
+
+            if (abs(boat.getPosition().getXValue() - mark.getPosition().getXValue()) <= collisionRadius) {
+
+                System.out.println("Collision x");
+                System.out.println(boat.getPosition().getXValue() + ", " + boat.getPosition().getYValue());
+                System.out.println(mark.getPosition().getXValue() + ", " + mark.getPosition().getYValue());
+                System.out.println("*********");
+
+                boat.getPosition().setX(boat.getPosition().getXValue() - 0.001);
+            }
+            else if (abs(boat.getPosition().getYValue() - mark.getPosition().getYValue()) <= collisionRadius) {
+                System.out.println("Collision y" + mark.getAbbreName());
+                //boat.getPosition().setY(boat.getPosition().getYValue() - 30);
+            }
+
+        }
+
     }
 
 
@@ -364,10 +399,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                 b.setStatus(1);
             }
             //update direction if they are close enough
-            if (b.getPosition().isWithin(courseFeatures.get(b.getCurrentLegIndex() + 1).getGPSPoint())) {
-                b.setCurrentLegIndex(b.getCurrentLegIndex() + 1);
-                b.setCurrentHeading(courseFeatures.get(b.getCurrentLegIndex()).getExitHeading());
-            }
+          //  if (b.getPosition().isWithin(courseFeatures.get(b.getCurrentLegIndex() + 1).getGPSPoint())) {
+               // b.setCurrentLegIndex(b.getCurrentLegIndex() + 1);
+               // b.setCurrentHeading(courseFeatures.get(b.getCurrentLegIndex()).getExitHeading());
+           // }
         }
         //update the position of the boats given the current position, heading and velocity
         updatePosition();
