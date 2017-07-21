@@ -228,6 +228,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
             boat.updatePosition(0.1);
             handleCourseCollisions(boat);
+            handleBoatCollisions(boat);
 
         }
     }
@@ -241,7 +242,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
         final double collisionRadius = 200; //Large for testing
 
-
         //Can bump back a fixed amount or try to simulate a real collision.
         for (Competitor mark: markBoats) {
 
@@ -251,23 +251,28 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             if (distance <= collisionRadius) {
                 boat.getPosition().setX(boat.getPosition().getXValue() - 0.001);
             }
-
         }
-        /*
-            if (abs(boat.getPosition().getXValue() - mark.getPosition().getXValue()) <= collisionRadius) {
+    }
 
-                System.out.println("Collision x");
-                System.out.println(boat.getPosition().getXValue() + ", " + boat.getPosition().getYValue());
-                System.out.println(mark.getPosition().getXValue() + ", " + mark.getPosition().getYValue());
-                System.out.println("*********");
+    /**
+     * Calculates if the boat collides with any other boat and adjusts the position of both boats accordingly.
+     * @param boat Competitor, the boat to check collisions for
+     */
+    private void handleBoatCollisions(Competitor boat) {
 
+        final double collisionRadius = 200; //Large for testing
+
+        //Can bump back a fixed amount or try to simulate a real collision.
+        for (Competitor comp: competitors.values()) {
+
+            Course raceCourse = new RaceCourse(null, true);
+            double distance = raceCourse.distanceBetweenGPSPoints(comp.getPosition(), boat.getPosition());
+
+            if (distance <= collisionRadius) {
                 boat.getPosition().setX(boat.getPosition().getXValue() - 0.001);
+                comp.getPosition().setX(boat.getPosition().getXValue() + 0.001);
             }
-            else if (abs(boat.getPosition().getYValue() - mark.getPosition().getYValue()) <= collisionRadius) {
-                System.out.println("Collision y" + mark.getAbbreName());
-                //boat.getPosition().setY(boat.getPosition().getYValue() - 30);
-            }
-        }*/
+        }
     }
 
 
