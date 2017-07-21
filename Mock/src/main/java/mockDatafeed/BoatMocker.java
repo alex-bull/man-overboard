@@ -85,16 +85,35 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     }
 
     /**
+     * Sends the boat action data to the Visualiser
+     * @param action action of the boat
+     */
+    private void sendBoatAction(int action) {
+        try{
+            TCPServer.sendData(binaryPackager.packageBoatAction(action));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Handle control data coming in from clients
      * @param header byte[] the packet header
      * @param packet byte[] the packet body
      */
-    public void interpretPacket(byte[] header, byte[] packet) {
+    public void interpretPacket(byte[] header, byte[] packet){
         System.out.println("Interpreting packet");
         for (int i = 0; i < packet.length; i++) {
-            System.out.println(packet[i]);
+            int action = packet[i];
+            if (action == 2) {
+                sendBoatAction(action);
+            }
         }
+
     }
+
+
 
 
     /**
@@ -224,6 +243,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             TCPServer.sendData(boatinfo);
         }
     }
+
+
 
     /**
      * Sends Race Status to outputport

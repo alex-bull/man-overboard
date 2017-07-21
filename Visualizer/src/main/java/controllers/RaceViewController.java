@@ -107,9 +107,11 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line startLine;
     private Line finishLine;
     private Line virtualLine;
+    private Line sailLine;
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
     private boolean isCenterSet=false;
+    private boolean previousSailsOut = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -117,10 +119,12 @@ public class RaceViewController implements Initializable, TableObserver {
         startLine = new Line();
         finishLine = new Line();
         virtualLine = new Line();
+        sailLine = new Line();
         raceCalculator = new RaceCalculator();
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(virtualLine);
+        raceViewPane.getChildren().add(sailLine);
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
         noAnnotationsRadio.setToggleGroup(annotations);
@@ -207,6 +211,29 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void boatSelected(Integer sourceId) {
         this.selectedBoatSourceId = sourceId;
+    }
+
+    /**
+     * Draws the line representing the sail of the boat
+     */
+    //TODO:: MAKE BOAT STOP WHEN SAILS ARE IN
+    public void drawSail() {
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        double windAngle = dataSource.getWindDirection() -180;
+        double boatXval = boat.getPosition().getXValue();
+        double boatYval = boat.getPosition().getYValue();
+        sailLine.setStroke(Color.WHITE);
+        sailLine.setStrokeWidth(3);
+        sailLine.setStartX(boatXval);
+        sailLine.setStartY(boatYval);
+        sailLine.setEndX(boatXval);
+        sailLine.setEndY(boatYval + 20);
+        sailLine.getTransforms().clear();
+        if (boat.hasSailsOut()) {
+            sailLine.getTransforms().add(new Rotate(windAngle+40, boatXval, boatYval));
+        } else {
+            sailLine.getTransforms().add(new Rotate(windAngle, boatXval, boatYval));
+        }
     }
 
     /**
@@ -797,7 +824,6 @@ public class RaceViewController implements Initializable, TableObserver {
             else{
                 startAnnotation="";
             }
-
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
                 if (selectedBoatSourceId != 0
@@ -812,6 +838,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawWake(boat);
             this.drawBoat(boat);
             this.moveAnnotations(boat);
+            drawSail();
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
             if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
         }

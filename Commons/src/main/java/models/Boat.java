@@ -23,6 +23,7 @@ public class Boat implements Competitor {
     private long timeAtLastMark;
     private double latitude;
     private double longitude;
+    private boolean sailsOut;
     /**
      * Creates a boat
      *
@@ -68,6 +69,21 @@ public class Boat implements Competitor {
 
     public Boat() {
 
+    }
+
+    /**
+     * Switches the sail state of the boat between sails in and sails out
+     */
+    public void switchSails() {
+        sailsOut = !sailsOut;
+    }
+
+    /**
+     * Returns the sail state of the boat
+     * @return sailsOut sail state of the boat
+     */
+    public boolean hasSailsOut() {
+        return sailsOut;
     }
 
     @Override

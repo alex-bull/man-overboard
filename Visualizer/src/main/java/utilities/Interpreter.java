@@ -312,8 +312,11 @@ public class Interpreter implements DataSource, PacketHandler {
             case BOAT_ACTION:
                 BoatActionParser boatActionParser = new BoatActionParser();
                 this.boatAction = boatActionParser.processMessage(packet);
-                if (boatData != null) {
-
+                if (boatAction != null) {
+                    if (boatAction.getAction().equals("Sails in")) {
+                        Competitor boat = this.storedCompetitors.get(getSourceID());
+                        boat.switchSails();
+                    }
                 }
                 break;
             case SOURCE_ID:
@@ -333,7 +336,8 @@ public class Interpreter implements DataSource, PacketHandler {
      * @return the sourceID of the clients boat
      */
     public int getSourceID() {
-        return sourceID;
+        return 103;
+        //return sourceID;
     }
 
     /**

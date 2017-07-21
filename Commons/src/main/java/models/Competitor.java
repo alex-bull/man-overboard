@@ -60,4 +60,7 @@ public interface Competitor {
 
     int getSourceID();
 
+    void switchSails();
+
+    boolean hasSailsOut();
 }
