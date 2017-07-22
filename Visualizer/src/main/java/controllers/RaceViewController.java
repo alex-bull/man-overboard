@@ -271,8 +271,6 @@ public class RaceViewController implements Initializable, TableObserver {
         Circle circle = new Circle(x, y, 4.5, ORANGERED);
         this.raceViewPane.getChildren().add(circle);
         this.markModels.put(courseFeature.getName(), circle);
-
-
     }
 
     /**
@@ -469,9 +467,15 @@ public class RaceViewController implements Initializable, TableObserver {
                     5.0, 10.0); //right
             boatModel.setFill(boat.getColor());
             boatModel.setStroke(BLACK);
-            boatModel.setStrokeWidth(1);
-//            boatModel.setStroke(YELLOW);
-//            boatModel.setStrokeWidth(2.5);
+
+            System.out.println(boat.getSourceID());
+            System.out.println("**" + dataSource.getSourceID());
+
+            if(boat.getSourceID() == 0){
+                boatModel.setStroke(YELLOW);
+                boatModel.setStrokeWidth(2.5);
+            }
+
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(boat.getSourceID(), boatModel);
