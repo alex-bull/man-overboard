@@ -471,7 +471,7 @@ public class RaceViewController implements Initializable, TableObserver {
             System.out.println(boat.getSourceID());
             System.out.println("**" + dataSource.getSourceID());
 
-            if(boat.getSourceID() == 0){
+            if(boat.getSourceID() == dataSource.getSourceID()){
                 boatModel.setStroke(YELLOW);
                 boatModel.setStrokeWidth(2.5);
             }
