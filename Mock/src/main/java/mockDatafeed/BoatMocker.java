@@ -161,7 +161,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         //generate all boats
 //        competitors.add(new Boat("Oracle Team USA", 42, new MutablePoint(32.317379, -64.839291), "USA", 100, 1));
         competitors.add(new Boat("Oracle Team USA", 42, prestart, "USA", 100, 1));
-
         competitors.add(new Boat("Emirates Team New Zealand", 40, prestart, "NZL", 103, 1));
         competitors.add(new Boat("Ben Ainslie Racing", 36, prestart, "GBR", 101, 1));
         competitors.add(new Boat("SoftBank Team Japan", 32, prestart, "JPN", 104, 1));
