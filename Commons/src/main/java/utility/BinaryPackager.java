@@ -7,11 +7,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.TimeZone;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -25,9 +21,10 @@ public class BinaryPackager {
     /**
      * Encapsulate a boat control action in a binary packet
      * @param action Integer the code for the boat action
+     * @param sourceId Integer the sourceId of the boat
      * @return byte[] the packet
      */
-    public byte[] packageBoatAction(Integer action) {
+    public byte[] packageBoatAction(Integer action, Integer sourceId) {
 
         byte[] packet = new byte[24];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
@@ -35,7 +32,7 @@ public class BinaryPackager {
 
         byte type = 100;
         short bodyLength = 1;
-        this.writeHeader(packetBuffer, type, bodyLength);
+        this.writeHeader(packetBuffer, type, bodyLength, sourceId);
 
         packetBuffer.put(action.byteValue());
 
@@ -162,6 +159,29 @@ public class BinaryPackager {
 
     }
 
+    /**
+     * writes the header to a given buffer in AC35 streaming format
+     *
+     * @param buffer        The buffer to write to
+     * @param messageType   byte, the type of message
+     * @param messageLength short, the length of the message body
+     * @param sourceId int, the sourceid of a competitor
+     */
+    private void writeHeader(ByteBuffer buffer, int messageType, int messageLength, int sourceId) {
+
+        byte syncByteOne = 0x47;
+        buffer.put(syncByteOne);
+        byte syncByteTwo = -125;
+        buffer.put(syncByteTwo);
+
+        buffer.put((byte) messageType);
+        buffer.put(this.getCurrentTimeStamp());
+
+        //message source id
+        buffer.putInt(sourceId);
+        System.out.println("sOURCE ID IN WRITE HEAD" + sourceId);
+        buffer.putShort((short) messageLength);
+    }
 
     /**
      * writes the header to a given buffer in AC35 streaming format
@@ -250,7 +270,7 @@ public class BinaryPackager {
      * @param windSpeed the wind speed
      * @return byte[], the race status message
      */
-    public byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime, short windDirection, short windSpeed) {
+    public byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime, short windDirection, short windSpeed, int numBoats) {
         byte[] packet = new byte[24];
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
@@ -263,7 +283,7 @@ public class BinaryPackager {
         packetBuffer.put(getTimeStamp(expectedStartTime));//ExpectedStartTime
         packetBuffer.putShort(windDirection); //WindDirection
         packetBuffer.putShort(windSpeed);//WindSpeed
-        packetBuffer.put((byte) 6);//Number of Boats
+        packetBuffer.put((byte) numBoats);//Number of Boats
         packetBuffer.put((byte) 1);//RaceType 1 ->MatchRace
 
         return packet;
@@ -273,15 +293,16 @@ public class BinaryPackager {
     /**
      * package boat's status given a list of competitors
      *
-     * @param competitors the list of boats
+     * @param competitors HashMap the map of boats
      * @return byte[] of each boat's section in RaceStatus Message
      */
-    public byte[] packageEachBoat(List<Competitor> competitors) {
+    public byte[] packageEachBoat(HashMap<Integer, Competitor> competitors) {
         byte[] packet = new byte[20 * competitors.size()];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        for (Competitor competitor : competitors) {
+        for (Integer sourceId : competitors.keySet()) {
+            Competitor competitor = competitors.get(sourceId);
             packetBuffer.putInt(competitor.getSourceID()); //SourceID
             packetBuffer.put((byte) competitor.getStatus());//Boat Status
             packetBuffer.put((byte) competitor.getCurrentLegIndex()); //Leg Number

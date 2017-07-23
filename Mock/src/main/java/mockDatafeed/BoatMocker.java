@@ -4,6 +4,9 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import models.*;
 import org.jdom2.JDOMException;
+import parsers.MessageType;
+import parsers.header.HeaderData;
+import parsers.header.HeaderParser;
 import parsers.xml.CourseXMLParser;
 import utilities.PolarTable;
 
@@ -18,6 +21,8 @@ import utility.*;
 
 import static java.lang.Math.abs;
 import static parsers.Converter.hexByteArrayToInt;
+import static parsers.MessageType.BOAT_ACTION;
+import static parsers.MessageType.UNKNOWN;
 import static utility.Calculator.calcAngleBetweenPoints;
 import static utility.Calculator.convertRadiansToShort;
 
@@ -29,7 +34,7 @@ import static utility.Calculator.shortToDegrees;
  * Boat mocker
  */
 public class BoatMocker extends TimerTask implements ConnectionClient {
-    private List<Competitor> competitors;
+    private HashMap<Integer, Competitor> competitors;
     private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
     private ZonedDateTime expectedStartTime;
@@ -46,7 +51,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         random=new Random();
         prestart = new MutablePoint(32.296577, -64.854304);
         int connectionTime = 10000;
-        competitors = new ArrayList<>();
+        competitors = new HashMap<>();
         TCPServer = new TCPServer(4941, this);
         binaryPackager = new BinaryPackager();
         //establishes the connection with Visualizer
@@ -91,9 +96,33 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
     public void interpretPacket(byte[] header, byte[] packet) {
         System.out.println("Interpreting packet");
-        for (int i = 0; i < packet.length; i++) {
-            System.out.println(packet[i]);
+        MessageType messageType = UNKNOWN;
+        for (MessageType messageEnum : MessageType.values()) {
+            if (header[0] == messageEnum.getValue()) {
+                messageType = messageEnum;
+            }
         }
+
+
+        switch(messageType) {
+            case BOAT_ACTION:
+                System.out.println("boat action header size " + header.length);
+                HeaderParser headerParser = new HeaderParser();
+                HeaderData headerData = headerParser.processMessage(header);
+                int sourceID = headerData.getSourceID();
+                Keys action = Keys.getKeys(packet[0]);
+                switch(action){
+                    case UP:
+                        competitors.get(sourceID).changeHeading(true,windGenerator.getWindDirection());
+                        break;
+                    case DOWN:
+                        competitors.get(sourceID).changeHeading(false,windGenerator.getWindDirection());
+                        break;
+
+                }
+                break;
+        }
+
     }
 
 
@@ -144,7 +173,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
     private int addCompetitors(){
         Boat newCompetitor=new Boat("Boat "+currentSourceID, random.nextInt(20)+20, prestart, "B"+currentSourceID, currentSourceID, 1);
-        competitors.add(newCompetitor);
+        competitors.put(currentSourceID, newCompetitor);
         currentSourceID+=1;
         return currentSourceID-1;
     }
@@ -157,15 +186,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      * generates the competitors list
      */
     private void generateCompetitors() {
-        competitors = new ArrayList<>();
-        //generate all boats
-//        competitors.add(new Boat("Oracle Team USA", 42, new MutablePoint(32.317379, -64.839291), "USA", 100, 1));
-        competitors.add(new Boat("Oracle Team USA", 42, prestart, "USA", 100, 1));
-        competitors.add(new Boat("Emirates Team New Zealand", 40, prestart, "NZL", 103, 1));
-        competitors.add(new Boat("Ben Ainslie Racing", 36, prestart, "GBR", 101, 1));
-        competitors.add(new Boat("SoftBank Team Japan", 32, prestart, "JPN", 104, 1));
-        competitors.add(new Boat("Team France", 30, prestart, "FRA", 105, 1));
-        competitors.add(new Boat("Artemis Racing", 38, prestart, "SWE", 102, 1));
 
         //generate mark boats
         markBoats = new ArrayList<>();
@@ -182,13 +202,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         markBoats.add(new Boat("Finish Line 2", 0, new MutablePoint(32.317257, -64.836260), "FL2", 129, 0));
 
         //set initial heading
-        for (Competitor b : competitors) {
+        System.out.println("SIZE competitors atm " + competitors.size());
+        for (Integer sourceId : competitors.keySet()) {
+            Competitor b = competitors.get(sourceId);
             b.setCurrentHeading(courseFeatures.get(0).getExitHeading());
         }
 
-        //randomly select competitors
-        Collections.shuffle(competitors);
-        competitors = competitors.subList(0, 6);
+
     }
 
     /**
@@ -196,7 +216,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
     private void updatePosition() {
 
-        for (Competitor boat : competitors) {
+        for (Integer sourceId : competitors.keySet()) {
+            Competitor boat = competitors.get(sourceId);
             short windDirection = windGenerator.getWindDirection();
             double twa = abs(shortToDegrees(windDirection) - boat.getCurrentHeading());
             if(twa > 180) {
@@ -213,7 +234,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
     private void sendBoatLocation() throws IOException {
         //send competitor boats
-        for (Competitor boat : competitors) {
+        for (Integer sourceId : competitors.keySet()) {
+            Competitor boat = competitors.get(sourceId);
             byte[] boatinfo = binaryPackager.packageBoatLocation(boat.getSourceID(), boat.getPosition().getXValue(), boat.getPosition().getYValue(),
                     boat.getCurrentHeading(), boat.getVelocity() * 1000, 1);
             TCPServer.sendData(boatinfo);
@@ -235,7 +257,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         short windDirection = windGenerator.getWindDirection();
         short windSpeed = windGenerator.getWindSpeed();
         int raceStatus = 3;
-        byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed);
+        byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed,competitors.size());
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         TCPServer.sendData(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
     }
@@ -250,7 +272,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private String formatRaceXML(String xmlTemplate) {
         DateTimeFormatter raceIDFormat = DateTimeFormatter.ofPattern("yyMMdd");
         StringBuilder participants=new StringBuilder();
-        for(Competitor boat:competitors){
+        for(Integer sourceId:competitors.keySet()){
+            Competitor boat = competitors.get(sourceId);
             participants.append(String.format("<Yacht SourceID=\"%s\"/>",boat.getSourceID()));
         }
         String raceID = creationTime.format(raceIDFormat) + "01";
@@ -288,7 +311,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                 "            <MastTop Z=\"21.496\" Y=\"3.7\" X=\"0\"/>\n" +
                 "            <FlagPosition Z=\"0\" Y=\"6.2\" X=\"0\"/>\n" +
                 "        </Boat>";
-        for(Competitor boat: competitors){
+        for(Integer sourceId: competitors.keySet()){
+            Competitor boat = competitors.get(sourceId);
             stringBuilder.append(String.format(boatTemplate, boat.getSourceID(),boat.getTeamName(),boat.getTeamName()));
         }
         String xmlString = CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
@@ -324,7 +348,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             e.printStackTrace();
         }
         //check if boats are at the end of the leg
-        for (Competitor b : competitors) {
+        for (Integer sourceId : competitors.keySet()) {
+            Competitor b = competitors.get(sourceId);
             //if at the end stop
             if (b.getCurrentLegIndex() == courseFeatures.size() - 1) {
                 b.setVelocity(0);

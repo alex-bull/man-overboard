@@ -23,7 +23,7 @@ public class BoatActionParser {
      */
     public BoatAction processMessage(byte[] body) {
         try {
-            //Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
+//            Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
             int actionNum = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 1));
             String action = null;
             switch (actionNum){

@@ -76,7 +76,10 @@ public class TCPServerTest {
         for(SocketChannel client:clients){
             ByteBuffer readBuffer=ByteBuffer.allocate(10);
             client.read(readBuffer);
-            assertTrue(Arrays.equals(readBuffer.array(), data));
+            for(int i=0;i<readBuffer.array().length;i++){
+                assertEquals(data[i],readBuffer.array()[i]);
+            }
+
         }
 
     }
