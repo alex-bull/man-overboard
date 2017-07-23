@@ -98,7 +98,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     }
 
     /**
-     * Handle control data coming in from clients
+     * Handle data coming in from controllers
      * @param header byte[] the packet header
      * @param packet byte[] the packet body
      */
@@ -108,11 +108,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             int action = packet[i];
             if (action == 2) {
                 sendBoatAction(action);
+                for (Competitor boat : competitors) {
+                    if (boat.getSourceID() == 103) {
+                        boat.switchSails();
+                    }
+                }
             }
         }
-
     }
-
 
 
 
@@ -221,8 +224,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                 twa = twa - 180;
             }
             double speed = polarTable.getSpeed(twa);
-            boat.setVelocity(speed);
-            boat.updatePosition(0.1);
+            if (boat.hasSailsOut()) {
+                boat.setVelocity(speed);
+                boat.updatePosition(0.1);
+            } else {
+                boat.setVelocity(0);
+            }
         }
     }
 
