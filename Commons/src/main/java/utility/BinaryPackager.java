@@ -85,7 +85,7 @@ public class BinaryPackager {
         packetBuffer.putInt(1); //Altitude: TODO:- Figure out what value altitude should be
 
         double head = heading * 65536.0 / 360.0; //heading
-        packetBuffer.putChar((char) head);
+        packetBuffer.putShort((short) head);
 
         packetBuffer.putShort((short) 1); // Pitch - Can probably be ignored
         packetBuffer.putShort((short) 1); // Roll- can also be ignored

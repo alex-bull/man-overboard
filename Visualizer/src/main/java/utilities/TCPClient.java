@@ -68,7 +68,7 @@ public class TCPClient extends TimerTask {
         byte[] actual = new byte[2];
 
 //        client.read(ByteBuffer.wrap(actual));
-        dis.read(actual);
+        dis.readFully(actual);
         return Arrays.equals(actual, expected);
     }
 
@@ -107,6 +107,15 @@ public class TCPClient extends TimerTask {
                 int length = this.getMessageLength(header);
                 byte[] message=new byte[length];
                 dis.readFully(message);
+
+                for(int i=0;i<header.length;i++){
+                    System.out.print(header[i]+" ");
+                }
+
+                for(int i=0;i<message.length;i++){
+                    System.out.print(message[i]+" ");
+                }
+                System.out.println();
                 this.handler.interpretPacket(header, message);
             }
 

@@ -46,7 +46,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private int currentSourceID=100;
     private Random random;
     private PolarTable polarTable;
-
+private boolean flag=true;
     BoatMocker() throws IOException {
         random=new Random();
         prestart = new MutablePoint(32.296577, -64.854304);
@@ -80,7 +80,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
             Timer raceTimer = new Timer();
-            raceTimer.schedule(me, 0, 100);
+            raceTimer.schedule(me, 0, 1);
         } catch (SocketException ignored) {
 
         } catch (IOException | JDOMException e) {
@@ -95,7 +95,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      * @param packet byte[] the packet body
      */
     public void interpretPacket(byte[] header, byte[] packet) {
-        System.out.println("Interpreting packet");
+//        System.out.println("Interpreting packet");
         MessageType messageType = UNKNOWN;
         for (MessageType messageEnum : MessageType.values()) {
             if (header[0] == messageEnum.getValue()) {
@@ -106,17 +106,20 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
         switch(messageType) {
             case BOAT_ACTION:
-                System.out.println("boat action header size " + header.length);
                 HeaderParser headerParser = new HeaderParser();
                 HeaderData headerData = headerParser.processMessage(header);
                 int sourceID = headerData.getSourceID();
                 Keys action = Keys.getKeys(packet[0]);
                 switch(action){
                     case UP:
-                        competitors.get(sourceID).changeHeading(true,windGenerator.getWindDirection());
+//                        System.out.println("up");
+                        competitors.get(sourceID).changeHeading(true,shortToDegrees(windGenerator.getWindDirection()));
+//                        System.out.println(shortToDegrees(windGenerator.getWindDirection()));
+//                        System.out.println(competitors.get(sourceID).getCurrentHeading());
+//                        System.out.println("done");
                         break;
                     case DOWN:
-                        competitors.get(sourceID).changeHeading(false,windGenerator.getWindDirection());
+                        competitors.get(sourceID).changeHeading(false,shortToDegrees(windGenerator.getWindDirection()));
                         break;
 
                 }
@@ -235,16 +238,20 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private void sendBoatLocation() throws IOException {
         //send competitor boats
         for (Integer sourceId : competitors.keySet()) {
+
             Competitor boat = competitors.get(sourceId);
             byte[] boatinfo = binaryPackager.packageBoatLocation(boat.getSourceID(), boat.getPosition().getXValue(), boat.getPosition().getYValue(),
                     boat.getCurrentHeading(), boat.getVelocity() * 1000, 1);
             TCPServer.sendData(boatinfo);
         }
         //send mark boats
-        for (Competitor markBoat : markBoats) {
-            byte[] boatinfo = binaryPackager.packageBoatLocation(markBoat.getSourceID(), markBoat.getPosition().getXValue(), markBoat.getPosition().getYValue(),
-                    markBoat.getCurrentHeading(), markBoat.getVelocity() * 1000, 3);
-            TCPServer.sendData(boatinfo);
+        if(flag) {
+            for (Competitor markBoat : markBoats) {
+                byte[] boatinfo = binaryPackager.packageBoatLocation(markBoat.getSourceID(), markBoat.getPosition().getXValue(), markBoat.getPosition().getYValue(),
+                        markBoat.getCurrentHeading(), markBoat.getVelocity() * 1000, 3);
+                TCPServer.sendData(boatinfo);
+            }
+            flag=false;
         }
     }
 
@@ -368,15 +375,17 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             }
         }
         //update the position of the boats given the current position, heading and velocity
+        System.out.println("1");
         updatePosition();
         //send the boat info to receiver
-
+        System.out.println("2");
         try {
             sendBoatLocation();
+            System.out.println("3");
             sendRaceStatus();
+            System.out.println("4");
         } catch (IOException e) {
             e.printStackTrace();
-
         }
 
     }

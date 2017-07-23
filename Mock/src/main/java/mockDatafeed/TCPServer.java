@@ -82,7 +82,7 @@ public class TCPServer {
      */
     public void receive() throws IOException {
 
-        selector.select(1);
+        selector.select(0);
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             //accept client connection
             if (key.isReadable()) {
@@ -163,7 +163,7 @@ public class TCPServer {
      */
     private void sendSourceID() throws IOException {
 
-        selector.select(1);
+        selector.select(0);
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             if (key.isWritable()) {
 
@@ -190,7 +190,7 @@ public class TCPServer {
      * @param data byte[] byte array of the data
      */
     public void sendData(byte[] data) throws IOException {
-        selector.select(1);
+        selector.select(0);
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             //write to channel if writable
             if (key.isWritable()) {
@@ -198,6 +198,10 @@ public class TCPServer {
                 SocketChannel client = (SocketChannel) key.channel();
                 try {
                     client.write(buffer);
+                    for(int i=0;i<buffer.array().length;i++){
+                        System.out.print(buffer.array()[i]+" ");
+                    }
+                    System.out.println();
                 } catch (IOException e) {
                     System.out.println(client.getRemoteAddress() + " has disconnected, removing client");
                     key.cancel();
