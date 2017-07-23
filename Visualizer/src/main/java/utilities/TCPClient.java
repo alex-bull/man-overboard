@@ -27,6 +27,8 @@ public class TCPClient extends TimerTask {
     private DataOutputStream dos;
     private int sourceID;
 
+    private int packetCount = 0;
+
 
     /**
      * Initializes port to receive binary data from
@@ -50,7 +52,7 @@ public class TCPClient extends TimerTask {
      * @throws IOException
      */
     public void send(byte[] data) throws IOException {
-        System.out.println("Sending message...");
+       // System.out.println("Sending message...");
         dos.write(data);
     }
 
@@ -103,10 +105,14 @@ public class TCPClient extends TimerTask {
         try {
             boolean isStartOfPacket = checkForSyncBytes();
             if (isStartOfPacket) {
+
                 byte[] header = this.getHeader();
                 int length = this.getMessageLength(header);
                 byte[] message=new byte[length];
                 dis.readFully(message);
+                packetCount++;
+
+                System.out.println(packetCount);
                 this.handler.interpretPacket(header, message);
             }
 

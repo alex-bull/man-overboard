@@ -81,7 +81,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
             Timer raceTimer = new Timer();
-            raceTimer.schedule(me, 0, 30);
+            raceTimer.schedule(me, 0, 50);
         } catch (SocketException ignored) {
 
         } catch (IOException | JDOMException e) {
@@ -96,7 +96,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      * @param packet byte[] the packet body
      */
     public void interpretPacket(byte[] header, byte[] packet) {
-        System.out.println("Interpreting packet");
+       // System.out.println("Interpreting packet");
         MessageType messageType = UNKNOWN;
         for (MessageType messageEnum : MessageType.values()) {
             if (header[0] == messageEnum.getValue()) {
@@ -107,7 +107,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
         switch(messageType) {
             case BOAT_ACTION:
-                System.out.println("boat action header size " + header.length);
+               // System.out.println("boat action header size " + header.length);
                 HeaderParser headerParser = new HeaderParser();
                 HeaderData headerData = headerParser.processMessage(header);
                 int sourceID = headerData.getSourceID();
@@ -203,7 +203,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         markBoats.add(new Boat("Finish Line 2", 0, new MutablePoint(32.317257, -64.836260), "FL2", 129, 0));
 
         //set initial heading
-        System.out.println("SIZE competitors atm " + competitors.size());
+       // System.out.println("SIZE competitors atm " + competitors.size());
         for (Integer sourceId : competitors.keySet()) {
             Competitor b = competitors.get(sourceId);
             b.setCurrentHeading(courseFeatures.get(0).getExitHeading());
@@ -220,16 +220,23 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         for (Integer sourceId : competitors.keySet()) {
             Competitor boat = competitors.get(sourceId);
             short windDirection = windGenerator.getWindDirection();
+
+            if (boat.getCurrentHeading() < 0) {
+                boat.setCurrentHeading(boat.getCurrentHeading() + 360);
+            }
             double twa = abs(shortToDegrees(windDirection) - boat.getCurrentHeading());
-            if(twa > 180) {
-                twa = twa - 180;
+            if(twa > 180.0) {
+                twa = twa - 180.0;
             }
             double speed = polarTable.getSpeed(twa);
-            boat.setVelocity(speed);
+            boat.setVelocity(speed * 2);
+            //System.out.println(speed);
 
-
-            if (handleCourseCollisions(boat) || handleBoatCollisions(boat)) return;
+           // if (handleCourseCollisions(boat) || handleBoatCollisions(boat)) return;
+            MutablePoint currentPos = boat.getPosition();
             boat.updatePosition(0.1); //only update the position if the boat does not collide with anything.
+            this.handleCourseCollisions(boat, currentPos);
+
         }
     }
 
@@ -238,9 +245,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      * Calculates if the boat collides with any course features and adjusts the boats position
      * @param boat Competitor the boat to check collisions for
      */
-    private boolean handleCourseCollisions(Competitor boat) {
+    private boolean handleCourseCollisions(Competitor boat, MutablePoint currentPos) {
 
-        final double collisionRadius = 200; //Large for testing
+        final double collisionRadius = 50; //Large for testing
         boolean collided = false;
 
         //Can bump back a fixed amount or try to simulate a real collision.
@@ -249,8 +256,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
+               // System.out.println(distance);
                 collided = true;
-                boat.getPosition().setX(boat.getPosition().getXValue() - 0.001);
+                boat.setPosition(currentPos);
+                boat.setVelocity(0.0);
+                break;
             }
         }
         return collided;
@@ -283,14 +293,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
 
 
-
-
-
+    int count = 0;
 
     /**
      * Sends boat info to port, including mark boats
      */
     private void sendBoatLocation() throws IOException {
+        count ++;
         //send competitor boats
         for (Integer sourceId : competitors.keySet()) {
             Competitor boat = competitors.get(sourceId);
@@ -298,12 +307,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                     boat.getCurrentHeading(), boat.getVelocity() * 1000, 1);
             TCPServer.sendData(boatinfo);
         }
-        //send mark boats
+
+        if (count % 500 == 0) {
+
         for (Competitor markBoat : markBoats) {
             byte[] boatinfo = binaryPackager.packageBoatLocation(markBoat.getSourceID(), markBoat.getPosition().getXValue(), markBoat.getPosition().getYValue(),
                     markBoat.getCurrentHeading(), markBoat.getVelocity() * 1000, 3);
             TCPServer.sendData(boatinfo);
-        }
+        }}
     }
 
 

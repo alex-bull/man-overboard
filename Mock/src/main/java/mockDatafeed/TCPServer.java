@@ -26,6 +26,8 @@ public class TCPServer {
     private ServerSocketChannel serverSocket;
     private ConnectionClient connectionClient;
     private BinaryPackager binaryPackager;
+    private int packetCount = 0;
+
 
     /**
      * Constructor for TCPServer, creates port at given port
@@ -197,6 +199,8 @@ public class TCPServer {
                 SocketChannel client = (SocketChannel) key.channel();
                 try {
                     client.write(buffer);
+                    packetCount++;
+                    System.out.println(packetCount);
                 } catch (IOException e) {
                     System.out.println(client.getRemoteAddress() + " has disconnected, removing client");
                     key.cancel();
