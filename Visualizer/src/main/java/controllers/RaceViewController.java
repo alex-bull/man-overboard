@@ -468,9 +468,6 @@ public class RaceViewController implements Initializable, TableObserver {
             boatModel.setFill(boat.getColor());
             boatModel.setStroke(BLACK);
 
-//            System.out.println(boat.getSourceID());
-//            System.out.println("**" + dataSource.getSourceID());
-
             //highlight clients boat
             if(boat.getSourceID() == dataSource.getSourceID()){
                 boatModel.setStroke(YELLOW);
