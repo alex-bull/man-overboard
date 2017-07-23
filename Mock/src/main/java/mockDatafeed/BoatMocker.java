@@ -230,11 +230,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             }
             double speed = polarTable.getSpeed(twa);
             boat.setVelocity(speed * 2);
-            //System.out.println(speed);
 
-           // if (handleCourseCollisions(boat) || handleBoatCollisions(boat)) return;
             MutablePoint currentPos = boat.getPosition();
-            boat.updatePosition(0.1); //only update the position if the boat does not collide with anything.
+            boat.updatePosition(0.1);
             this.handleCourseCollisions(boat, currentPos);
 
         }
@@ -250,13 +248,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         final double collisionRadius = 50; //Large for testing
         boolean collided = false;
 
-        //Can bump back a fixed amount or try to simulate a real collision.
         for (Competitor mark: markBoats) {
 
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
                // System.out.println(distance);
+
                 collided = true;
                 boat.setPosition(currentPos);
                 boat.setVelocity(0.0);
