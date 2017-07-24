@@ -50,8 +50,9 @@ public class TCPClient extends TimerTask {
      * @throws IOException
      */
     public void send(byte[] data) throws IOException {
-        System.out.println("Sending message...");
+//        System.out.println("Sending message...");
         dos.write(data);
+        dos.flush();
     }
 
     /**
@@ -107,16 +108,8 @@ public class TCPClient extends TimerTask {
                 int length = this.getMessageLength(header);
                 byte[] message=new byte[length];
                 dis.readFully(message);
-
-                for(int i=0;i<header.length;i++){
-                    System.out.print(header[i]+" ");
-                }
-
-                for(int i=0;i<message.length;i++){
-                    System.out.print(message[i]+" ");
-                }
-                System.out.println();
                 this.handler.interpretPacket(header, message);
+
             }
 
         }catch (EOFException e){

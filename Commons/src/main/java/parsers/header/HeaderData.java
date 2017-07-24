@@ -25,6 +25,9 @@ public class HeaderData {
 
     }
 
+    public long getTimeStamp() {
+        return timeStamp;
+    }
 
     public int getSourceID() {
         return sourceID;

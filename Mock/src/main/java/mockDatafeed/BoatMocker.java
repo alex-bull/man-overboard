@@ -20,8 +20,6 @@ import java.util.*;
 import utility.*;
 
 import static java.lang.Math.abs;
-import static parsers.Converter.hexByteArrayToInt;
-import static parsers.MessageType.BOAT_ACTION;
 import static parsers.MessageType.UNKNOWN;
 import static utility.Calculator.calcAngleBetweenPoints;
 import static utility.Calculator.convertRadiansToShort;
@@ -40,25 +38,42 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager;
-    private TCPServer TCPServer;
+    private TCPServer TCPserver;
     private MutablePoint prestart;
     private WindGenerator windGenerator;
     private int currentSourceID=100;
     private Random random;
     private PolarTable polarTable;
 private boolean flag=true;
-    BoatMocker() throws IOException {
+private Timer timer;
+
+
+    BoatMocker() throws IOException, JDOMException {
+        timer =new Timer();
         random=new Random();
         prestart = new MutablePoint(32.296577, -64.854304);
         int connectionTime = 10000;
         competitors = new HashMap<>();
-        TCPServer = new TCPServer(4941, this);
+        TCPserver=new TCPServer(4941,this);
         binaryPackager = new BinaryPackager();
         //establishes the connection with Visualizer
-        TCPServer.establishConnection(connectionTime);
+        TCPserver.establishConnection(connectionTime);
+
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
+
+        timer.schedule(TCPserver,0,1);
+
+        //find out the coordinates of the course
+        generateCourse();
+        generateCompetitors();
+        generateWind();
+
+        //send all xml data first
+        sendAllXML();
+        //start the race, updates boat position at a rate of 60 hz
+        timer.schedule(this,0,16);
 
     }
 
@@ -68,19 +83,9 @@ private boolean flag=true;
      * @param args String[]
      */
     public static void main(String[] args) {
-        BoatMocker me;
-        try {
-            me = new BoatMocker();
-            //find out the coordinates of the course
-            me.generateCourse();
-            me.generateCompetitors();
-            me.generateWind();
 
-            //send all xml data first
-            me.sendAllXML();
-            //start the race, updates boat position at a rate of 10 hz
-            Timer raceTimer = new Timer();
-            raceTimer.schedule(me, 0, 1);
+        try {
+            new BoatMocker();
         } catch (SocketException ignored) {
 
         } catch (IOException | JDOMException e) {
@@ -242,14 +247,17 @@ private boolean flag=true;
             Competitor boat = competitors.get(sourceId);
             byte[] boatinfo = binaryPackager.packageBoatLocation(boat.getSourceID(), boat.getPosition().getXValue(), boat.getPosition().getYValue(),
                     boat.getCurrentHeading(), boat.getVelocity() * 1000, 1);
-            TCPServer.sendData(boatinfo);
+
+            TCPserver.sendData(boatinfo);
+
+
         }
         //send mark boats
         if(flag) {
             for (Competitor markBoat : markBoats) {
                 byte[] boatinfo = binaryPackager.packageBoatLocation(markBoat.getSourceID(), markBoat.getPosition().getXValue(), markBoat.getPosition().getYValue(),
                         markBoat.getCurrentHeading(), markBoat.getVelocity() * 1000, 3);
-                TCPServer.sendData(boatinfo);
+                TCPserver.sendData(boatinfo);
             }
             flag=false;
         }
@@ -266,7 +274,7 @@ private boolean flag=true;
         int raceStatus = 3;
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed,competitors.size());
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
-        TCPServer.sendData(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
+        TCPserver.sendData(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
     }
 
 
@@ -294,7 +302,7 @@ private boolean flag=true;
         int messageType = 6;
         String raceTemplateString = fileToString("/raceTemplate.xml");
         String raceXML = formatRaceXML(raceTemplateString);
-        TCPServer.sendData(binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
+        TCPserver.sendData(binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
 
     }
 
@@ -304,7 +312,7 @@ private boolean flag=true;
     private void sendXML(String xmlPath, int messageType) throws IOException {
         String xmlString = CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
         //        String mockBoatsString = Files.toString(new File(xmlPath), Charsets.UTF_8);
-        TCPServer.sendData(binaryPackager.packageXML(xmlString.length(), xmlString, messageType));
+        TCPserver.sendData(binaryPackager.packageXML(xmlString.length(), xmlString, messageType));
 
     }
 
@@ -324,7 +332,7 @@ private boolean flag=true;
         }
         String xmlString = CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
         String boatXML=String.format(xmlString,stringBuilder.toString());
-        TCPServer.sendData(binaryPackager.packageXML(boatXML.length(), boatXML, messageType));
+        TCPserver.sendData(binaryPackager.packageXML(boatXML.length(), boatXML, messageType));
     }
     /**
      * Sends all xml files
@@ -347,13 +355,6 @@ private boolean flag=true;
      */
     @Override
     public void run() {
-
-
-        try {
-            TCPServer.receive();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         //check if boats are at the end of the leg
         for (Integer sourceId : competitors.keySet()) {
             Competitor b = competitors.get(sourceId);
@@ -375,15 +376,13 @@ private boolean flag=true;
             }
         }
         //update the position of the boats given the current position, heading and velocity
-        System.out.println("1");
+
         updatePosition();
         //send the boat info to receiver
-        System.out.println("2");
+
         try {
             sendBoatLocation();
-            System.out.println("3");
             sendRaceStatus();
-            System.out.println("4");
         } catch (IOException e) {
             e.printStackTrace();
         }
