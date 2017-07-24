@@ -173,6 +173,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      * @return the source Id added
      */
     private int addCompetitors(){
+
+
+        double a = 0.001 * competitors.size();
+        prestart = new MutablePoint(32.286577 + a, -64.864304);
+
         Boat newCompetitor=new Boat("Boat "+currentSourceID, random.nextInt(20)+20, prestart, "B"+currentSourceID, currentSourceID, 1);
         competitors.put(currentSourceID, newCompetitor);
         currentSourceID+=1;
@@ -234,6 +239,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             MutablePoint currentPos = boat.getPosition();
             boat.updatePosition(0.1);
             this.handleCourseCollisions(boat, currentPos);
+            this.handleBoatCollisions(boat);
 
         }
     }
@@ -243,35 +249,31 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      * Calculates if the boat collides with any course features and adjusts the boats position
      * @param boat Competitor the boat to check collisions for
      */
-    private boolean handleCourseCollisions(Competitor boat, MutablePoint currentPos) {
+    private void handleCourseCollisions(Competitor boat, MutablePoint currentPos) {
 
         final double collisionRadius = 50; //Large for testing
-        boolean collided = false;
 
         for (Competitor mark: markBoats) {
 
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
-               // System.out.println(distance);
 
-                collided = true;
                 boat.setPosition(currentPos);
                 boat.setVelocity(0.0);
                 break;
             }
         }
-        return collided;
     }
+
 
     /**
      * Calculates if the boat collides with any other boat and adjusts the position of both boats accordingly.
      * @param boat Competitor, the boat to check collisions for
      */
-    private boolean handleBoatCollisions(Competitor boat) {
+    private void handleBoatCollisions(Competitor boat) {
 
-        final double collisionRadius = 200; //Large for testing
-        boolean collided = false;
+        final double collisionRadius = 35; //Large for testing
 
         //Can bump back a fixed amount or try to simulate a real collision.
         for (Competitor comp: this.competitors.values()) {
@@ -281,12 +283,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             double distance = raceCourse.distanceBetweenGPSPoints(comp.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
-                collided = true;
-                boat.getPosition().setX(boat.getPosition().getXValue() - 0.001);
-                comp.getPosition().setX(boat.getPosition().getXValue() + 0.001);
+                boat.updatePosition(-6);
+                comp.updatePosition(-6);
             }
         }
-        return collided;
     }
 
 

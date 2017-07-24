@@ -200,7 +200,7 @@ public class TCPServer {
                 try {
                     client.write(buffer);
                     packetCount++;
-                    System.out.println(packetCount);
+                   // System.out.println(packetCount);
                 } catch (IOException e) {
                     System.out.println(client.getRemoteAddress() + " has disconnected, removing client");
                     key.cancel();
