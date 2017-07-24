@@ -118,7 +118,7 @@ private Timer timer;
                 Keys action = Keys.getKeys(packet[0]);
                 switch(action){
                     case UP:
-                        competitors.get(sourceID).changeHeading(true,windGenerator.getWindDirection());
+                        competitors.get(sourceID).changeHeading(true,shortToDegrees(windGenerator.getWindDirection()));
                         break;
                     case DOWN:
                         competitors.get(sourceID).changeHeading(false,shortToDegrees(windGenerator.getWindDirection()));
