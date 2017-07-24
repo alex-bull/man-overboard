@@ -74,7 +74,7 @@ public class InterpreterTest {
 
     @Test
     public void ignoresPacketWithUnknownMessageType() {
-        byte unknownMessageType = 100;
+        byte unknownMessageType = 18;
         byte[] header = {unknownMessageType,0,0,0};
         byte[] packet = {0};
 
@@ -100,6 +100,14 @@ public class InterpreterTest {
     @Test
     public void ignoresXMLPacketWithMissingInfo() {
         byte[] header = {26,0,0,0};
+        byte[] packet = {0,0,0,0,0,0,0,0,0,0,0,0};
+
+        interpreter.interpretPacket(header, packet);
+    }
+
+    @Test
+    public void ignoresBoatActionPacketWithMissingInfo() {
+        byte[] header = {100,0,0,0};
         byte[] packet = {0,0,0,0,0,0,0,0,0,0,0,0};
 
         interpreter.interpretPacket(header, packet);

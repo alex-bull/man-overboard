@@ -4,11 +4,13 @@ import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import models.Boat;
 
 /**
  * Created by msl47 on 21/07/17.
  */
 public class SailStateSteps {
+
 
     @Given("^Boat is sailing in$")
     public void boatIsSailingIn() throws Throwable {
@@ -46,4 +48,5 @@ public class SailStateSteps {
         // Write code here that turns the phrase above into concrete actions
         throw new PendingException();
     }
+
 }

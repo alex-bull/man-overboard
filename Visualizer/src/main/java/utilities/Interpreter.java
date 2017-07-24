@@ -312,7 +312,7 @@ public class Interpreter implements DataSource, PacketHandler {
             case BOAT_ACTION:
                 BoatActionParser boatActionParser = new BoatActionParser();
                 this.boatAction = boatActionParser.processMessage(packet);
-                if (boatAction != null) {
+                if (boatAction != null && boatAction.getAction() != null) {
                     if (boatAction.getAction().equals("Sails in")) {
                         Competitor boat = this.storedCompetitors.get(getSourceID());
                         boat.switchSails();

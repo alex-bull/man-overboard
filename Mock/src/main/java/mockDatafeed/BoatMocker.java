@@ -42,7 +42,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private Random random;
     private PolarTable polarTable;
 
-    BoatMocker() throws IOException {
+    public BoatMocker() throws IOException {
         random=new Random();
         prestart = new MutablePoint(32.296577, -64.854304);
         int connectionTime = 10000;
