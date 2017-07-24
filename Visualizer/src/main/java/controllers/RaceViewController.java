@@ -466,20 +466,17 @@ public class RaceViewController implements Initializable, TableObserver {
             boatModel.setFill(boat.getColor());
             boatModel.setStroke(BLACK);
 
-            playerMarker = new Circle(0,0,15);
-            playerMarker.setStrokeWidth(2);
-            playerMarker.setStroke(LIGHTGREEN);
-            playerMarker.setFill(null);
-
-            //highlight clients boat
-//            if(boat.getSourceID() == dataSource.getSourceID()){
-//                boatModel.setStroke(YELLOW);
-//                boatModel.setStrokeWidth(2.5);
-//            }
+            if (boat.getSourceID() == dataSource.getSourceID()) {
+                playerMarker = new Circle(0, 0, 15);
+                playerMarker.setStrokeWidth(2);
+                playerMarker.setStroke(LIGHTGREEN);
+                playerMarker.setFill(null);
+                this.raceViewPane.getChildren().add(playerMarker);
+            }
 
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
-            this.raceViewPane.getChildren().add(playerMarker);
+
 
             this.boatModels.put(boat.getSourceID(), boatModel);
             //Boats selected can be selected/unselected by clicking on them
@@ -498,11 +495,12 @@ public class RaceViewController implements Initializable, TableObserver {
         boatModels.get(sourceId).getTransforms().clear();
         boatModels.get(sourceId).getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
 
-        playerMarker.setLayoutX(boat.getPosition().getXValue());
-        playerMarker.setLayoutY(boat.getPosition().getYValue());
-
-        playerMarker.getTransforms().clear();
-        playerMarker.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
+        if (boat.getSourceID() == dataSource.getSourceID()) {
+            playerMarker.setLayoutX(boat.getPosition().getXValue());
+            playerMarker.setLayoutY(boat.getPosition().getYValue());
+            playerMarker.getTransforms().clear();
+            playerMarker.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
+        }
     }
 
     /**
