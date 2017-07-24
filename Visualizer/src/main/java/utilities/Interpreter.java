@@ -194,8 +194,6 @@ public class Interpreter implements DataSource, PacketHandler {
             while (this.numBoats < 1 || storedCompetitors.size() < this.numBoats) {
                 try {
                     Thread.sleep(1000);
-                    System.out.println(numBoats);
-                    System.out.println(storedCompetitors.size());
                 } catch (Exception e) {
                     System.out.println("Thread sleep error");
                 }
@@ -298,14 +296,13 @@ public class Interpreter implements DataSource, PacketHandler {
             case BOAT_LOCATION:
                 BoatDataParser boatDataParser = new BoatDataParser();
                 this.boatData = boatDataParser.processMessage(packet);
-                if (boatData != null) {
 
+                if (boatData != null) {
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties();
                     } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
                         CourseFeature courseFeature = boatDataParser.getCourseFeature();
                         updateCourseMarks(courseFeature);
-
                     }
                 }
                 break;
