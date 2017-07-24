@@ -191,7 +191,6 @@ public class StarterController implements Initializable, ClockHandler {
 
         while (dataSource.getCourseTimezone() == null) {
             System.out.print("");
-            System.out.println("NO DATA YET");
         }
         this.worldClock = new WorldClock(this, dataSource.getCourseTimezone());
         worldClock.start();

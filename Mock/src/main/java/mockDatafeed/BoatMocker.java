@@ -54,7 +54,7 @@ private Timer timer;
         prestart = new MutablePoint(32.296577, -64.854304);
         int connectionTime = 10000;
         competitors = new HashMap<>();
-        TCPserver=new TCPServer(4941,this);
+        TCPserver = new TCPServer(4941,this);
         binaryPackager = new BinaryPackager();
         //establishes the connection with Visualizer
         TCPserver.establishConnection(connectionTime);
@@ -157,7 +157,11 @@ private Timer timer;
             double leewardY =  (leewardGates.get(0).getPosition().getYValue() + leewardGates.get(1).getPosition().getYValue()) / 2;
             double windwardX = (windwardGates.get(0).getPosition().getXValue() + windwardGates.get(1).getPosition().getXValue()) / 2;
             double windwardY = (windwardGates.get(0).getPosition().getYValue() + windwardGates.get(1).getPosition().getYValue()) / 2;
-            double angle = calcAngleBetweenPoints(leewardX, leewardY, windwardX, windwardY);
+            double angle = calcAngleBetweenPoints(leewardX, leewardY, windwardX, windwardY) + Math.PI;
+
+            if(angle > 2 * Math.PI) {
+                angle = angle - 2 * Math.PI; // wind direction cannot be more than 360
+            }
             windDirection = convertRadiansToShort(angle);
         }
         windGenerator = new WindGenerator(windSpeed, windDirection);
@@ -210,7 +214,6 @@ private Timer timer;
         markBoats.add(new Boat("Finish Line 2", 0, new MutablePoint(32.317257, -64.836260), "FL2", 129, 0));
 
         //set initial heading
-        System.out.println("SIZE competitors atm " + competitors.size());
         for (Integer sourceId : competitors.keySet()) {
             Competitor b = competitors.get(sourceId);
             b.setCurrentHeading(courseFeatures.get(0).getExitHeading());
@@ -229,7 +232,7 @@ private Timer timer;
             short windDirection = windGenerator.getWindDirection();
             double twa = abs(shortToDegrees(windDirection) - boat.getCurrentHeading());
             if(twa > 180) {
-                twa = twa - 180;
+                twa = 180 - (twa - 180); // interpolator only goes up to 180
             }
             double speed = polarTable.getSpeed(twa);
             boat.setVelocity(speed);
