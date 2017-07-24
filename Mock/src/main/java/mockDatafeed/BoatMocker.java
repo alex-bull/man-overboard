@@ -80,7 +80,7 @@ private boolean flag=true;
             me.sendAllXML();
             //start the race, updates boat position at a rate of 10 hz
             Timer raceTimer = new Timer();
-            raceTimer.schedule(me, 0, 1);
+            raceTimer.schedule(me, 0, 10);
         } catch (SocketException ignored) {
 
         } catch (IOException | JDOMException e) {
@@ -222,12 +222,15 @@ private boolean flag=true;
         for (Integer sourceId : competitors.keySet()) {
             Competitor boat = competitors.get(sourceId);
             short windDirection = windGenerator.getWindDirection();
+            if (boat.getCurrentHeading() < 0) {
+                boat.setCurrentHeading(boat.getCurrentHeading() + 360);
+            }
             double twa = abs(shortToDegrees(windDirection) - boat.getCurrentHeading());
             if(twa > 180) {
                 twa = twa - 180;
             }
             double speed = polarTable.getSpeed(twa);
-            boat.setVelocity(speed);
+            boat.setVelocity(5.0);
             boat.updatePosition(0.1);
         }
     }
