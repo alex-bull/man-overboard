@@ -18,7 +18,8 @@ import static utilities.Utility.fileToString;
 public class PolarTable {
 
     private PolynomialSplineFunction speedFunc;
-    private PolynomialSplineFunction twaFunc;
+    private PolynomialSplineFunction upTwaFunc;
+    private PolynomialSplineFunction downTwaFunc;
 
 
     /**
@@ -29,7 +30,7 @@ public class PolarTable {
      */
     public PolarTable(String filepath, double speed) throws IOException {
         this.buildSpeedFunc(filepath, speed);
-        this.buildTWAFunc(filepath);
+        this.buildTWAFuncs(filepath);
     }
 
 
@@ -67,27 +68,28 @@ public class PolarTable {
 
 
     /**
-     * Put file data into interpolator for twa
+     * Put file data into interpolators for up and down twas
      * @param filePath String, the location of the polar file
      * @throws IOException
      */
-    private void buildTWAFunc(String filePath) throws IOException {
+    private void buildTWAFuncs(String filePath) throws IOException {
         String content = fileToString(filePath);
         String rows[] = content.split("\n");
         double[] windVals = new double[rows.length];
-        double[] twaVals = new double [rows.length];
+        double[] upTwaVals = new double[rows.length];
+        double[] downTwaVals = new double[rows.length];
 
         for (int i = 1; i < rows.length; i++) {
             String[] values = rows[i].split("\\s+");
 
-            double windSpeed = Double.parseDouble(values[0]);
-            windVals[i] = windSpeed;
-            double twa = Double.parseDouble(values[3]);
-            twaVals[i] = twa;
+            windVals[i] = Double.parseDouble(values[0]);
+            upTwaVals[i] = Double.parseDouble(values[3]);
+            downTwaVals[i] = Double.parseDouble(values[13]);
         }
 
         SplineInterpolator splineInterpolator = new SplineInterpolator();
-        twaFunc = splineInterpolator.interpolate(windVals, twaVals);
+        upTwaFunc = splineInterpolator.interpolate(windVals, upTwaVals);
+        downTwaFunc = splineInterpolator.interpolate(windVals, downTwaVals);
 
     }
 
@@ -97,9 +99,11 @@ public class PolarTable {
      * @param windSpeed The current wind speed
      * @return double, the twa
      */
-    public double getMinimalTwa(double windSpeed) {
-
-        return twaFunc.value(windSpeed);
+    public double getMinimalTwa(double windSpeed, boolean upwind) {
+        if (upwind) {
+            return upTwaFunc.value(windSpeed);
+        }
+        return downTwaFunc.value(windSpeed);
     }
 
 

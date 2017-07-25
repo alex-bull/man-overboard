@@ -45,12 +45,10 @@ import models.Dot;
 import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.Converter;
-import utilities.Annotation;
-import utilities.DataSource;
-import utilities.EnvironmentConfig;
-import utilities.RaceCalculator;
+import utilities.*;
 
 import java.awt.geom.Line2D;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -65,8 +63,8 @@ import static parsers.RaceStatusEnum.STARTED;
  */
 public class RaceViewController implements Initializable, TableObserver {
 
-    private final Integer upWindAngle = 43; //Hard coded for now
-    private final Integer downWindAngle = 153; //Hard coded for now
+    private Integer upWindAngle = 43; //Hard coded for now
+    private Integer downWindAngle = 153; //Hard coded for now
     private final double boatLength = 20;
     private final double startWakeOffset= 3;
     private final double wakeWidthFactor=0.2;
@@ -105,6 +103,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private RaceCalculator raceCalculator;
     private WebEngine mapEngine;
     private DataSource dataSource;
+    private PolarTable polarTable;
 
     private long startTimeNano = System.nanoTime();
     private long timeFromLastMark;
@@ -554,6 +553,19 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor the boat to draw the laylines for
      */
     private void drawLaylines(Competitor boat) {
+
+        if (this.polarTable == null) {
+            try {
+                polarTable = new PolarTable("/polars/VO70_polar.txt", 12);
+            } catch (IOException e) {
+                System.out.println("Could not find polar file");
+                return;
+            }
+        }
+
+        this.upWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), true);
+        this.downWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), false);
+
 
         Pair<Double, Double> markCentre = this.getNextGateCentre(boat);
         if (markCentre == null) return;

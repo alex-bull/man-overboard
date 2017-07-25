@@ -32,12 +32,19 @@ public class PolarTableTest {
 
     @Test
     public void testGetMinimalTwa() throws Exception {
-        assertEquals(polarTable1.getMinimalTwa(4.0), 70.0, 0.01);
-        assertEquals(polarTable1.getMinimalTwa(6.0), 65.95, 0.01);
-        assertEquals(polarTable1.getMinimalTwa(7.4), 55.17, 0.01);
-        assertEquals(polarTable1.getMinimalTwa(8.0), 51.2, 0.01);
-        assertEquals(polarTable1.getMinimalTwa(12.0), 47.3, 0.01);
-        assertEquals(polarTable1.getMinimalTwa(16.0), 45.0, 0.01);
+        assertEquals(polarTable1.getMinimalTwa(4.0, true), 70.0, 0.01);
+        assertEquals(polarTable1.getMinimalTwa(6.0, true), 65.95, 0.01);
+        assertEquals(polarTable1.getMinimalTwa(7.4, true), 55.17, 0.01);
+        assertEquals(polarTable1.getMinimalTwa(8.0, true), 51.2, 0.01);
+        assertEquals(polarTable1.getMinimalTwa(12.0, true), 47.3, 0.01);
+        assertEquals(polarTable1.getMinimalTwa(16.0, true), 45.0, 0.01);
+
+        assertEquals(polarTable1.getMinimalTwa(4.0, false), 120.6, 0.01);
+        assertEquals(polarTable1.getMinimalTwa(6.0, false), 135.69, 0.01);
+        assertEquals(polarTable1.getMinimalTwa(7.4, false), 134.85, 0.01);
+        assertEquals(polarTable1.getMinimalTwa(8.0, false), 134.2, 0.01);
+        assertEquals(polarTable1.getMinimalTwa(12.0, false), 141.1, 0.01);
+        assertEquals(polarTable1.getMinimalTwa(16.0, false), 142.9, 0.01);
 
 
     }
