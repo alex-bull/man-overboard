@@ -16,6 +16,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -47,6 +48,7 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML private Button confirmButton;
     @FXML private Label raceStatus;
     @FXML private ComboBox<String> streamCombo;
+    @FXML private Button connectionOkButton;
     private Clock worldClock;
     private Stage primaryStage;
     private ObservableList<Competitor> compList;
@@ -119,7 +121,7 @@ public class StarterController implements Initializable, ClockHandler {
             }
         });
         starterList.setItems(compList);
-        streamCombo.getItems().addAll(EnvironmentConfig.liveStream, EnvironmentConfig.csseStream, EnvironmentConfig.mockStream);
+        streamCombo.getItems().addAll(EnvironmentConfig.mockStream);
 
 
     }
@@ -153,11 +155,19 @@ public class StarterController implements Initializable, ClockHandler {
             this.setFields();
         }
         else {
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Connection Failed");
+            alert.setHeaderText(null);
+            alert.setContentText("Sorry, cannot connect to this stream right now.");
+            alert.showAndWait();
+
             System.out.println("Sorry cannot connect right now.");
         }
 
-
     }
+
+
 
     /**
      * Switches from start view to course view. Called when user clicks start button.

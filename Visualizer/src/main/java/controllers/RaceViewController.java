@@ -460,6 +460,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawBoat(Competitor boat) {
         Integer sourceId = boat.getSourceID();
 
+
         if (boatModels.get(sourceId) == null) {
             Polygon boatModel = new Polygon();
             boatModel.getPoints().addAll(
@@ -467,10 +468,16 @@ public class RaceViewController implements Initializable, TableObserver {
                     -5.0, 10.0, //left
                     5.0, 10.0); //right
             boatModel.setFill(boat.getColor());
+
             boatModel.setStroke(BLACK);
             boatModel.setStrokeWidth(1);
-//            boatModel.setStroke(YELLOW);
-//            boatModel.setStrokeWidth(2.5);
+
+
+            if(dataSource.getSourceID() == boat.getSourceID()){
+                boatModel.setStroke(YELLOW);
+                boatModel.setStrokeWidth(2.5);
+            }
+
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(boat.getSourceID(), boatModel);
