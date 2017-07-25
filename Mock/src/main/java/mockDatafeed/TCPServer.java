@@ -75,7 +75,6 @@ public class TCPServer extends TimerTask{
 
         System.out.println("finish client connection");
         sendSourceID();
-        System.out.println("send");
     }
 
 
