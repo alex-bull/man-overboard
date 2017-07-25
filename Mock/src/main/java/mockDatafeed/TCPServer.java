@@ -12,6 +12,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.TimerTask;
 
 import static parsers.Converter.hexByteArrayToInt;
 
@@ -20,7 +21,7 @@ import static parsers.Converter.hexByteArrayToInt;
  * Created by khe60 on 10/04/17.
  * The TCPServer class
  */
-public class TCPServer {
+public class TCPServer extends TimerTask{
 
     private Selector selector;
     private ServerSocketChannel serverSocket;
@@ -80,9 +81,13 @@ public class TCPServer {
     /**
      * Handle incoming messages from clients
      */
-    public void receive() throws IOException {
+    public void run() {
 
-        selector.select(1);
+        try {
+            selector.select(1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             //accept client connection
             if (key.isReadable()) {
@@ -172,7 +177,9 @@ public class TCPServer {
                 ByteBuffer buffer=ByteBuffer.wrap(packet);
                 SocketChannel client = (SocketChannel) key.channel();
                 try {
-                    client.write(buffer);
+                    while(buffer.hasRemaining()) {
+                        client.write(buffer);
+                    }
                 } catch (IOException e) {
                     System.out.println("failed to register sourceID " + sourceID);
                     key.cancel();
@@ -190,6 +197,7 @@ public class TCPServer {
      * @param data byte[] byte array of the data
      */
     public void sendData(byte[] data) throws IOException {
+
         selector.select(1);
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             //write to channel if writable
@@ -197,12 +205,14 @@ public class TCPServer {
                 ByteBuffer buffer = ByteBuffer.wrap(data);
                 SocketChannel client = (SocketChannel) key.channel();
                 try {
-                    client.write(buffer);
+                    while(buffer.hasRemaining()) {
+                        client.write(buffer);
+                    }
+
                 } catch (IOException e) {
                     System.out.println(client.getRemoteAddress() + " has disconnected, removing client");
                     key.cancel();
                 }
-
             }
             selector.selectedKeys().remove(key);
         }
