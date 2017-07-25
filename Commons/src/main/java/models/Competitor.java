@@ -11,7 +11,7 @@ public interface Competitor {
     String getTeamName();
 
     double getVelocity();
-
+    void blownByWind(double windAngle);
     void setVelocity(double velocity);
 
     MutablePoint getPosition();

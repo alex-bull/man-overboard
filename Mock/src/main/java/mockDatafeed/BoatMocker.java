@@ -234,9 +234,11 @@ private Timer timer;
             short windDirection = windGenerator.getWindDirection();
 
             double twa = abs(shortToDegrees(windDirection) - boat.getCurrentHeading());
-            if(twa > 180) {
-                twa = 180 - (twa - 180); // interpolator only goes up to 180
-            }
+
+            twa=(twa%180+180)%180;
+//            if(twa > 180) {
+//                twa = 360-twa; // interpolator only goes up to 180
+//            }
             double speed = polarTable.getSpeed(twa);
             boat.setVelocity(speed);
 
@@ -244,6 +246,7 @@ private Timer timer;
             boat.updatePosition(0.1);
             this.handleCourseCollisions(boat, currentPos);
             this.handleBoatCollisions(boat);
+//            boat.blownByWind(twa);
 
         }
     }
@@ -262,7 +265,7 @@ private Timer timer;
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
-
+//                    boat.updatePosition(-6);
                 boat.setPosition(currentPos);
                 boat.setVelocity(0.0);
                 break;
@@ -418,16 +421,16 @@ private Timer timer;
         for (Integer sourceId : competitors.keySet()) {
             Competitor b = competitors.get(sourceId);
             //if at the end stop
-            if (b.getCurrentLegIndex() == courseFeatures.size() - 1) {
-                b.setVelocity(0);
-                b.setStatus(3);
-                continue;
-            }
+//            if (b.getCurrentLegIndex() == courseFeatures.size() - 1) {
+//                b.setVelocity(0);
+//                b.setStatus(3);
+//                continue;
+//            }
 
             //set status to started
-            if (b.getCurrentLegIndex() == 0) {
-                b.setStatus(1);
-            }
+//            if (b.getCurrentLegIndex() == 0) {
+//                b.setStatus(1);
+//            }
             //update direction if they are close enough
           //  if (b.getPosition().isWithin(courseFeatures.get(b.getCurrentLegIndex() + 1).getGPSPoint())) {
                // b.setCurrentLegIndex(b.getCurrentLegIndex() + 1);

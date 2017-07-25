@@ -1,6 +1,6 @@
 package controllers;
 
-import javafx.animation.FadeTransition;
+import javafx.animation.*;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -518,8 +518,10 @@ public class RaceViewController implements Initializable, TableObserver {
         wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
         wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         wakeModel.toFront();
-
     }
+
+
+
 
     /**
      * Draw the next dot of track for the boat on the canvas
@@ -754,6 +756,7 @@ public class RaceViewController implements Initializable, TableObserver {
             fpsCounter.setText(String.format("FPS: %d", counter));
             counter = 0;
         }
+
     }
 
     /**
@@ -808,12 +811,58 @@ public class RaceViewController implements Initializable, TableObserver {
                     raceViewPane.getChildren().remove(virtualLine);
                 }
             }
+
             this.drawWake(boat);
             this.drawBoat(boat);
             this.moveAnnotations(boat);
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
             if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
         }
+    }
+
+    public void checkCollision(){
+        for(Integer sourceID:boatModels.keySet()){
+            for(Integer sourceID2:boatModels.keySet()){
+                if(sourceID.equals(sourceID2)){
+                    continue;
+                }
+                if(boatModels.get(sourceID).intersects(boatModels.get(sourceID2).getLayoutBounds())){
+                drawCollision(dataSource.getStoredCompetitors().get(sourceID).getPosition().getXValue(),
+                 dataSource.getStoredCompetitors().get(sourceID).getPosition().getYValue());
+                }
+            }
+
+        }
+
+        for(Integer sourceID:boatModels.keySet()){
+            for(String featureName:markModels.keySet()){
+                System.out.println(markModels.get(featureName).getLayoutBounds());
+                if(boatModels.get(sourceID).intersects(markModels.get(featureName).getLayoutBounds())){
+                    drawCollision(dataSource.getStoredCompetitors().get(sourceID).getPosition().getXValue(),
+                            dataSource.getStoredCompetitors().get(sourceID).getPosition().getYValue());
+                }
+            }
+
+        }
+
+    }
+
+    public void drawCollision(double centerX,double centerY){
+        System.out.println("collision");
+        Circle ripple =new Circle(centerX,centerY,1);
+        FadeTransition ft=new FadeTransition(Duration.millis(1000),ripple);
+        ft.setFromValue(1);
+        ft.setToValue(0);
+
+        Timeline rippleAnimation=new Timeline(new KeyFrame(Duration.ZERO,new KeyValue(ripple.radiusProperty(),0)),
+                new KeyFrame(Duration.ZERO,new KeyValue(ripple.opacityProperty(),1)),
+                new KeyFrame(Duration.seconds(1),new KeyValue(ripple.radiusProperty(),20)),
+                new KeyFrame(Duration.seconds(1),new KeyValue(ripple.opacityProperty(),0)));
+        ripple.setStroke(Color.RED);
+        ripple.setFill(Color.RED);
+        raceViewPane.getChildren().add(ripple);
+        ft.play();
+        rippleAnimation.play();
     }
 
     /**
@@ -828,6 +877,8 @@ public class RaceViewController implements Initializable, TableObserver {
         updateFPS();
         updateCourse(gc);
         updateRace(gc);
+        checkCollision();
+
     }
 
     boolean isLoaded() {

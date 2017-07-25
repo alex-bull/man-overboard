@@ -23,6 +23,9 @@ public class Boat implements Competitor {
     private long timeAtLastMark;
     private double latitude;
     private double longitude;
+    //how much the boat if affected by wind, can be parsed in as constructor
+    private double blownFactor=0.01;
+
     /**
      * Creates a boat
      *
@@ -251,6 +254,27 @@ public class Boat implements Competitor {
            downWind = downWind - 360;
        }
        return downWind;
+    }
+
+    public void blownByWind(double windAngle){
+//        dont do anything if boat is not really moving
+        if(getVelocity()<0.2){
+            return;
+        }
+
+        double downWind=getDownWind(windAngle);
+
+        double turnAngle=(getCurrentHeading()-windAngle)*blownFactor;
+
+        if(currentHeading.getValue() >= windAngle && currentHeading.getValue() < downWind) {
+
+            currentHeading.setValue(currentHeading.getValue() + turnAngle);
+        }
+        else{
+            currentHeading.setValue(currentHeading.getValue() - turnAngle);
+        }
+        System.out.println(getCurrentHeading());
+        setCurrentHeading(currentHeading.getValue() % 360);
     }
 
     /**
