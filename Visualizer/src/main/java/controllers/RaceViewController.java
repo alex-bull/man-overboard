@@ -885,7 +885,9 @@ public class RaceViewController implements Initializable, TableObserver {
      * Refreshes the contents of the display to match the datasource
      *
      * @param dataSource DataSource the data to display
+     *
      */
+    int counterRipple = 1;
     void refresh(DataSource dataSource) {
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
         this.dataSource = dataSource;
@@ -894,7 +896,12 @@ public class RaceViewController implements Initializable, TableObserver {
         updateCourse(gc);
         updateRace(gc);
         checkCollision();
-
+        counterRipple++;
+        if(counterRipple % 200 == 0){
+            CollisionRipple rrrrr = new CollisionRipple(1000, 500, 50);
+            this.raceViewPane.getChildren().add(rrrrr);
+            rrrrr.animate();
+        }
     }
 
     boolean isLoaded() {
