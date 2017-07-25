@@ -45,8 +45,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private Random random;
     private PolarTable polarTable;
     private Course raceCourse = new RaceCourse(null, true);
-private boolean flag=true;
-private Timer timer;
+    private boolean flag=true;
+    private Timer timer;
 
 
     BoatMocker() throws IOException, JDOMException {
@@ -242,9 +242,8 @@ private Timer timer;
             double speed = polarTable.getSpeed(twa);
             boat.setVelocity(speed);
 
-            MutablePoint currentPos = boat.getPosition();
             boat.updatePosition(0.1);
-            this.handleCourseCollisions(boat, currentPos);
+            this.handleCourseCollisions(boat);
             this.handleBoatCollisions(boat);
 //            boat.blownByWind(twa);
 
@@ -256,18 +255,16 @@ private Timer timer;
      * Calculates if the boat collides with any course features and adjusts the boats position
      * @param boat Competitor the boat to check collisions for
      */
-    private void handleCourseCollisions(Competitor boat, MutablePoint currentPos) {
+    private void handleCourseCollisions(Competitor boat) {
 
-        final double collisionRadius = 50; //Large for testing
+        final double collisionRadius = 55; //Large for testing
 
         for (Competitor mark: markBoats) {
 
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
-//                    boat.updatePosition(-6);
-                boat.setPosition(currentPos);
-                boat.setVelocity(0.0);
+                boat.updatePosition(-10);
                 break;
             }
         }
@@ -290,8 +287,8 @@ private Timer timer;
             double distance = raceCourse.distanceBetweenGPSPoints(comp.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
-                boat.updatePosition(-6);
-                comp.updatePosition(-6);
+                boat.updatePosition(-10);
+                comp.updatePosition(-10);
             }
         }
     }
