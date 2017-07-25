@@ -70,6 +70,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private final double boatLength = 20;
     private final double startWakeOffset= 3;
     private final double wakeWidthFactor=0.2;
+
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
     @FXML private Label fpsCounter;
@@ -85,8 +86,6 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
 
-    private RaceCalculator raceCalculator;
-    private WebEngine mapEngine;
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
@@ -98,18 +97,22 @@ public class RaceViewController implements Initializable, TableObserver {
     private List<CourseFeature> courseFeatures = null;
     private Map<String, Shape> markModels = new HashMap<>();
     private List<Polyline> layLines = new ArrayList<>();
-    private DataSource dataSource;
-    private long startTimeNano = System.nanoTime();
-    private long timeFromLastMark;
-    private String startAnnotation;
-    private int counter = 0;
     private Label startLabel;
     private Line startLine;
     private Line finishLine;
     private Line virtualLine;
+
+    private RaceCalculator raceCalculator;
+    private WebEngine mapEngine;
+    private DataSource dataSource;
+
+    private long startTimeNano = System.nanoTime();
+    private long timeFromLastMark;
+    private String startAnnotation;
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
     private boolean isCenterSet=false;
+    private int counter = 0;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -580,6 +583,7 @@ public class RaceViewController implements Initializable, TableObserver {
             layLinePortAngle = windAngle - downWindAngle;
         }
 
+        //normalize angles
         if (layLineStarboardAngle > 360) layLineStarboardAngle = layLineStarboardAngle - 360;
         if (layLinePortAngle > 360) layLinePortAngle = layLinePortAngle - 360;
 
