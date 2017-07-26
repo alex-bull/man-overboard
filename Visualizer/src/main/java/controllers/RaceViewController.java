@@ -7,9 +7,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
+import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
 import com.google.common.primitives.Doubles;
@@ -25,7 +23,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
@@ -88,6 +85,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private RaceCalculator raceCalculator;
     private WebEngine mapEngine;
     private Map<Integer, Polygon> boatModels = new HashMap<>();
+    private Shape playerMarker;
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
     private Map<Integer, Label> speedAnnotations = new HashMap<>();
@@ -107,9 +105,11 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line startLine;
     private Line finishLine;
     private Line virtualLine;
+    private Line sailLine;
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
     private boolean isCenterSet=false;
+    private boolean previousSailsOut = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -117,10 +117,12 @@ public class RaceViewController implements Initializable, TableObserver {
         startLine = new Line();
         finishLine = new Line();
         virtualLine = new Line();
+        sailLine = new Line();
         raceCalculator = new RaceCalculator();
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(virtualLine);
+        raceViewPane.getChildren().add(sailLine);
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
         noAnnotationsRadio.setToggleGroup(annotations);
@@ -210,6 +212,30 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     /**
+     * Draws the line representing the sail of the boat
+     */
+
+    private void drawSail() {
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        double windAngle = dataSource.getWindDirection();
+        double boatXval = boat.getPosition().getXValue();
+        double boatYval = boat.getPosition().getYValue();
+        sailLine.setStroke(Color.WHITE);
+        sailLine.setStrokeWidth(2.5);
+        sailLine.setStartX(boatXval);
+        sailLine.setStartY(boatYval);
+        sailLine.setEndX(boatXval);
+        sailLine.setEndY(boatYval + 15);
+        sailLine.getTransforms().clear();
+        if (boat.hasSailsOut()) {
+            sailLine.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatXval, boatYval));
+        } else {
+            sailLine.getTransforms().add(new Rotate(windAngle, boatXval, boatYval));
+        }
+        sailLine.toFront();
+    }
+
+    /**
      * Draws the virtual line of the selected boat with the same color
      * @param boatColor color of the boat
      * @param selectedBoat selected boat
@@ -271,8 +297,6 @@ public class RaceViewController implements Initializable, TableObserver {
         Circle circle = new Circle(x, y, 4.5, ORANGERED);
         this.raceViewPane.getChildren().add(circle);
         this.markModels.put(courseFeature.getName(), circle);
-
-
     }
 
     /**
@@ -470,16 +494,19 @@ public class RaceViewController implements Initializable, TableObserver {
             boatModel.setFill(boat.getColor());
 
             boatModel.setStroke(BLACK);
-            boatModel.setStrokeWidth(1);
 
-
-            if(dataSource.getSourceID() == boat.getSourceID()){
-                boatModel.setStroke(YELLOW);
-                boatModel.setStrokeWidth(2.5);
+            if (boat.getSourceID() == dataSource.getSourceID()) {
+                playerMarker = new Circle(0, 0, 15);
+                playerMarker.setStrokeWidth(1.5);
+                playerMarker.setStroke(Color.WHITE);
+                playerMarker.setFill(Color.rgb(0,0,0,0.2));
+                this.raceViewPane.getChildren().add(playerMarker);
             }
 
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
+
+
             this.boatModels.put(boat.getSourceID(), boatModel);
             //Boats selected can be selected/unselected by clicking on them
             boatModel.setOnMouseClicked(event -> {
@@ -496,6 +523,13 @@ public class RaceViewController implements Initializable, TableObserver {
         boatModels.get(sourceId).toFront();
         boatModels.get(sourceId).getTransforms().clear();
         boatModels.get(sourceId).getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
+
+        if (boat.getSourceID() == dataSource.getSourceID()) {
+            playerMarker.setLayoutX(boat.getPosition().getXValue());
+            playerMarker.setLayoutY(boat.getPosition().getYValue());
+            playerMarker.getTransforms().clear();
+            playerMarker.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
+        }
     }
 
     /**
@@ -746,8 +780,6 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-
-
     /**
      * Updates the FPS counter
      */
@@ -803,7 +835,6 @@ public class RaceViewController implements Initializable, TableObserver {
             else{
                 startAnnotation="";
             }
-
             if (counter % 70 == 0) {
                 drawTrack(boat, gc);
                 if (selectedBoatSourceId != 0
@@ -821,6 +852,7 @@ public class RaceViewController implements Initializable, TableObserver {
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
             if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
         }
+        drawSail();
     }
 
     /**

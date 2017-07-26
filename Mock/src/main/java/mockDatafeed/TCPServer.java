@@ -84,7 +84,7 @@ public class TCPServer extends TimerTask{
     public void run() {
 
         try {
-            selector.select(0);
+            selector.select(1);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -168,7 +168,7 @@ public class TCPServer extends TimerTask{
      */
     private void sendSourceID() throws IOException {
 
-        selector.select(0);
+        selector.select(1);
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             if (key.isWritable()) {
 
@@ -198,7 +198,7 @@ public class TCPServer extends TimerTask{
      */
     public void sendData(byte[] data) throws IOException {
 
-        selector.select(0);
+        selector.select(1);
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             //write to channel if writable
             if (key.isWritable()) {

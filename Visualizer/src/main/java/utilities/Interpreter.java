@@ -40,6 +40,7 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
 import static parsers.Converter.hexByteArrayToInt;
+import static parsers.MessageType.BOAT_ACTION;
 import static parsers.MessageType.UNKNOWN;
 
 /**
@@ -332,8 +333,11 @@ public class Interpreter implements DataSource, PacketHandler {
             case BOAT_ACTION:
                 BoatActionParser boatActionParser = new BoatActionParser();
                 this.boatAction = boatActionParser.processMessage(packet);
-                if (boatData != null) {
-
+                if (boatAction != null) {
+                    if (boatAction.equals(BoatAction.SAILS_IN)) {
+                        Competitor boat = this.storedCompetitors.get(getSourceID());
+                        boat.switchSails();
+                    }
                 }
                 break;
             case SOURCE_ID:
