@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static utilities.EnvironmentConfig.currentStream;
-import static utilities.EnvironmentConfig.liveStream;
 
 /**
  * Created by msl47 on 21/03/17.

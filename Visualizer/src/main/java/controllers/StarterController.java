@@ -26,18 +26,18 @@ import models.Competitor;
 import models.WorldClock;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
+import utilities.StreamDelegate;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static utilities.EnvironmentConfig.currentStream;
 
 /**
  * Created by rjc249 on 5/04/17.
  * Controller for the start scene.
  */
-public class StarterController implements Initializable, ClockHandler {
+public class StarterController implements Initializable, ClockHandler, StreamDelegate {
 
     private DataSource dataSource;
     private final int STARTTIME = 5;
@@ -45,8 +45,8 @@ public class StarterController implements Initializable, ClockHandler {
     @FXML private Label worldClockValue;
     @FXML private Button confirmButton;
     @FXML private Label countDownLabel;
-    @FXML private ComboBox<String> streamCombo;
-    @FXML private Button connectionOkButton;
+    @FXML private TextField hostField;
+    @FXML private ProgressIndicator progressIndicator;
     private Clock worldClock;
     private Stage primaryStage;
     private ObservableList<Competitor> compList;
@@ -86,6 +86,7 @@ public class StarterController implements Initializable, ClockHandler {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        progressIndicator.setVisible(false);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         compList = FXCollections.observableArrayList();
         starterList.setCellFactory(new Callback<ListView<Competitor>, ListCell<Competitor>>() {
@@ -106,51 +107,59 @@ public class StarterController implements Initializable, ClockHandler {
             }
         });
         starterList.setItems(compList);
-        streamCombo.getItems().addAll(EnvironmentConfig.mockStream);
     }
 
 
     /**
      * Called when the user clicks confirm.
      * Begins streaming data from the selected server
-     * Calls setFields when data is received
      */
     @FXML
     public void confirmStream() {
 
         //get the selected stream
-        String host = this.streamCombo.getSelectionModel().getSelectedItem();
+        String host = this.hostField.getText();
         if (host == null || host.equals("")) {
-            System.out.println("No stream selected");
+            System.out.println("Invalid host");
             return;
         }
-
-        this.streamCombo.setDisable(true);
+        progressIndicator.setVisible(true);
+        this.hostField.setDisable(true);
         this.confirmButton.setDisable(true);
+
         Scene scene=primaryStage.getScene();
-        boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
+        this.dataSource.receive(host, EnvironmentConfig.port, scene, this);
 
-        if (streaming) {
-            EnvironmentConfig.currentStream = host;
-            this.streamCombo.setDisable(true);
-            this.confirmButton.setDisable(true);
-            currentStream = host;
-            this.setFields();
-            this.loadRaceView();
-        }
-        else {
+    }
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Connection Failed");
-            alert.setHeaderText(null);
-            alert.setContentText("Sorry, cannot connect to this stream right now.");
-            alert.showAndWait();
-            this.streamCombo.setDisable(false);
-            this.confirmButton.setDisable(false);
+    /**
+     * StreamDelegate method
+     * Alerts the user if the connection failed
+     */
+    public void streamFailed() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Connection Failed");
+        alert.setHeaderText(null);
+        alert.setContentText("Sorry, cannot connect to this stream right now.");
+        alert.showAndWait();
+        this.hostField.setDisable(false);
+        this.confirmButton.setDisable(false);
+        progressIndicator.setVisible(false);
 
-            //System.out.println("Sorry cannot connect right now.");
-        }
+    }
 
+
+    /**
+     * StreamDelegate method
+     * Call set fields
+     * Change to the raceView
+     */
+    public void streamStarted() {
+
+        System.out.println("Streaming data");
+        progressIndicator.setVisible(false);
+        this.setFields();
+        this.loadRaceView();
     }
 
 
@@ -182,6 +191,7 @@ public class StarterController implements Initializable, ClockHandler {
 
     /**
      * Countdown until the race start, updates the countdown time text.
+     * Loads the raceView
      */
     private void loadRaceView() {
 

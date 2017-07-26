@@ -1,5 +1,9 @@
 package utilities;
 
+import controllers.StarterController;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -164,7 +168,7 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param scene the scene of the stage, for size calculations
      * @return boolean, true if the stream succeeds
      */
-    public boolean receive(String host, int port, Scene scene) throws NullPointerException{
+    public void receive(String host, int port, Scene scene, StreamDelegate delegate) throws NullPointerException{
 
         Rectangle2D primaryScreenBounds;
         try {
@@ -173,12 +177,15 @@ public class Interpreter implements DataSource, PacketHandler {
         }
         catch (UnresolvedAddressException e){
             System.out.println("Address is not found");
-            return false;
+            delegate.streamFailed();
+            return;
         }
         catch (IOException e) {
             System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
-            return false;
+            delegate.streamFailed();
+            return;
         }
+
 
         //calculate the effective width and height of the screen
         width = primaryScreenBounds.getWidth() - scene.getX();
@@ -186,26 +193,42 @@ public class Interpreter implements DataSource, PacketHandler {
 
         //start receiving data
         Timer receiverTimer = new Timer();
-
         receiverTimer.schedule(TCPClient, 0, 1);
 
-        try {
-            //wait for data to come in before setting fields
-            while (this.numBoats < 1 || storedCompetitors.size() < this.numBoats) {
+        //Wait for incoming data on a background thread
+        Task task = new Task<Boolean>() {
+            @Override public Boolean call() {
                 try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    System.out.println("Thread sleep error");
+                    //wait for data to come in before setting fields
+                    while (numBoats < 1 || storedCompetitors.size() < numBoats) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                            System.out.println("Thread sleep error");
+                            return false;
+                        }
+                    }
+                } catch (NullPointerException e) {
+                    System.out.println("Live stream is down");
+                    return false;
                 }
+                return true;
             }
+        };
 
-        } catch (NullPointerException e) {
-            System.out.println("Live stream is down");
-            return false;
+        //Handle success or failure on the background thread
+        task.setOnSucceeded(event -> {
+            if (task.getValue().equals(true)) {
+                delegate.streamStarted();
+            } else {
+                delegate.streamFailed();
+            }
+        });
 
-        }
-        return true;
+        new Thread(task).start();
+
     }
+
 
 
     /**

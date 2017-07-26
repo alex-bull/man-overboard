@@ -36,6 +36,29 @@
     -fx-text-fill: white;
 }
 
+.text-field
+{
+    -fx-padding: 5 22 5 22;
+    -fx-background-color: white;
+    -fx-opacity: 0.8;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 11pt;
+    -fx-text-fill: #0014A8;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+}
+
+.list-view
+{
+    -fx-padding: 5 22 5 22;
+    -fx-background-color: white;
+    -fx-background-color: white;
+    -fx-opacity: 0.8;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 11pt;
+    -fx-text-fill: #0014A8;
+}
+
+
 
 /*logo colours : 0014A8, 3FA9F5, 99EEED*/
 

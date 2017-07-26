@@ -29,6 +29,20 @@ public class InterpreterTest {
     private Thread mockThread;
     private Scene mockScene;
 
+    private boolean streamStarted = false;
+    private TestDelegate mockDelegate;
+
+
+    class TestDelegate implements StreamDelegate {
+
+        public void streamFailed() {
+            streamStarted = false;
+        }
+
+        public void streamStarted() {
+            streamStarted = true;
+        }
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -36,6 +50,9 @@ public class InterpreterTest {
         mockScene=mock(Scene.class);
 
         mockThread = new Thread(() -> BoatMocker.main(null));
+        streamStarted = false;
+        mockDelegate = new TestDelegate();
+
     }
 
     @Test
@@ -43,8 +60,9 @@ public class InterpreterTest {
 
         mockThread.start();
         Thread.sleep(200); // give mock time to start before visualiser
+        interpreter.receive("invalidhost", 4,mockScene, mockDelegate);
 
-        Thread visualiserThread = new Thread(() -> assertFalse(interpreter.receive("invalidhost", 4,mockScene)));
+        Thread visualiserThread = new Thread(() -> assertFalse(streamStarted));
         visualiserThread.run();
     }
 
@@ -54,7 +72,8 @@ public class InterpreterTest {
         mockThread.start();
         Thread.sleep(200); // give mock time to start before visualiser
 
-        Thread visualiserThread = new Thread(() -> assertFalse(interpreter.receive("localhost", 4,mockScene)));
+        interpreter.receive("localhost", 4,mockScene, mockDelegate);
+        Thread visualiserThread = new Thread(() -> assertFalse(streamStarted));
         visualiserThread.run();
     }
 
@@ -66,7 +85,8 @@ public class InterpreterTest {
 
         Thread visualiserThread = new Thread(() -> {
             //JFXPanel toolkit = new JFXPanel(); // causes JavaFX toolkit including Application Thread to start, doesn't work on CI runner because no display
-            assertTrue(interpreter.receive("localhost", 4941,mockScene));
+            interpreter.receive("localhost", 4941,mockScene, mockDelegate);
+            assertTrue(streamStarted);
         });
         visualiserThread.run();
 
