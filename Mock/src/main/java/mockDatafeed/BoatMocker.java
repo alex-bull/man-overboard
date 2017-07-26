@@ -20,6 +20,7 @@ import java.util.*;
 import utility.*;
 
 import static java.lang.Math.abs;
+import static mockDatafeed.Keys.SAILS;
 import static parsers.MessageType.UNKNOWN;
 import static utility.Calculator.calcAngleBetweenPoints;
 import static utility.Calculator.convertRadiansToShort;
@@ -47,8 +48,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 private boolean flag=true;
 private Timer timer;
 
-
-    BoatMocker() throws IOException, JDOMException {
+   public BoatMocker() throws IOException , JDOMException {
         timer =new Timer();
         random=new Random();
         prestart = new MutablePoint(32.296577, -64.854304);
@@ -95,12 +95,24 @@ private Timer timer;
     }
 
     /**
-     * Handle control data coming in from clients
+     * Sends the boat action data to the Visualiser
+     * @param action action of the boat
+     */
+    private void sendBoatAction(int action, int sourceId) {
+        try{
+            this.TCPserver.sendData(binaryPackager.packageBoatAction(action, sourceId));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Handle data coming in from controllers
      * @param header byte[] the packet header
      * @param packet byte[] the packet body
      */
     public void interpretPacket(byte[] header, byte[] packet) {
-//        System.out.println("Interpreting packet");
         MessageType messageType = UNKNOWN;
         for (MessageType messageEnum : MessageType.values()) {
             if (header[0] == messageEnum.getValue()) {
@@ -116,21 +128,18 @@ private Timer timer;
                 int sourceID = headerData.getSourceID();
                 Keys action = Keys.getKeys(packet[0]);
                 switch(action){
+                    case SAILS:
+                        sendBoatAction(SAILS.getValue(), sourceID);
+                        competitors.get(sourceID).switchSails();
                     case UP:
-//                        System.out.println("up");
-                        competitors.get(sourceID).changeHeading(true,shortToDegrees(windGenerator.getWindDirection()));
-//                        System.out.println(shortToDegrees(windGenerator.getWindDirection()));
-//                        System.out.println(competitors.get(sourceID).getCurrentHeading());
-//                        System.out.println("done");
+                        competitors.get(sourceID).changeHeading(true, shortToDegrees(windGenerator.getWindDirection()));
                         break;
                     case DOWN:
-                        competitors.get(sourceID).changeHeading(false,shortToDegrees(windGenerator.getWindDirection()));
+                        competitors.get(sourceID).changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
                         break;
-
                 }
                 break;
         }
-
     }
 
 
@@ -180,7 +189,7 @@ private Timer timer;
     }
 
     /**
-     * adds a competitor to the list of competitiors
+     * adds a competitor to the list of competitors
      * @return the source Id added
      */
     private int addCompetitors(){
@@ -188,6 +197,14 @@ private Timer timer;
         competitors.put(currentSourceID, newCompetitor);
         currentSourceID+=1;
         return currentSourceID-1;
+    }
+
+    public List<Competitor> getCompetitors() {
+        List<Competitor> boats = new ArrayList<>();
+        for (Competitor competitor : competitors.values()) {
+            boats.add(competitor);
+        }
+        return boats;
     }
 
     public int addConnection() {
@@ -235,8 +252,12 @@ private Timer timer;
                 twa = 180 - (twa - 180); // interpolator only goes up to 180
             }
             double speed = polarTable.getSpeed(twa);
-            boat.setVelocity(speed);
-            boat.updatePosition(0.1);
+            if (boat.hasSailsOut()) {
+                boat.setVelocity(speed);
+                boat.updatePosition(0.1);
+            } else {
+                boat.setVelocity(0);
+            }
         }
     }
 
@@ -265,6 +286,8 @@ private Timer timer;
             flag=false;
         }
     }
+
+
 
     /**
      * Sends Race Status to outputport
@@ -388,6 +411,7 @@ private Timer timer;
             sendRaceStatus();
         } catch (IOException e) {
             e.printStackTrace();
+
         }
 
     }

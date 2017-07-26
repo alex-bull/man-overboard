@@ -1,12 +1,16 @@
 package mockDatafeed;
 
+import models.Competitor;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import static mockDatafeed.Keys.UP;
 import static org.junit.Assert.*;
+import static parsers.MessageType.BOAT_ACTION;
 import static utilities.Utility.fileToString;
 
 /**
@@ -29,5 +33,36 @@ public class BoatMockerTest {
         sendRaceXML.setAccessible(true);
         String resultString=(String) sendRaceXML.invoke(boatMocker,raceTemplateString);
         System.out.println(resultString);
+    }
+
+    @Test
+    public void headingChangesWhenUpKeyPressed() throws Exception {
+        byte[] header = new byte[15];
+        byte[] packet = new byte[15];
+
+        byte messageType = (byte) BOAT_ACTION.getValue();
+        byte action = (byte) UP.getValue();
+        byte sourceID = 100;
+
+        header[0] = messageType;
+        header[7] = sourceID;
+        packet[0] = action;
+
+        boatMocker.addConnection(); // generate competitors
+
+        double initialHeading = 0;
+        for (Competitor competitor : boatMocker.getCompetitors()) {
+            if (competitor.getSourceID() == sourceID) {
+                initialHeading = competitor.getCurrentHeading();
+            }
+        }
+
+        boatMocker.interpretPacket(header, packet);
+
+        for (Competitor competitor : boatMocker.getCompetitors()) {
+            if (competitor.getSourceID() == sourceID) {
+                assertNotEquals(initialHeading, competitor.getCurrentHeading());
+            }
+        }
     }
 }

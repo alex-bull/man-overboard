@@ -23,6 +23,7 @@ public class Boat implements Competitor {
     private long timeAtLastMark;
     private double latitude;
     private double longitude;
+    private boolean sailsOut = true;
     /**
      * Creates a boat
      *
@@ -68,6 +69,21 @@ public class Boat implements Competitor {
 
     public Boat() {
 
+    }
+
+    /**
+     * Switches the sail state of the boat between sails in and sails out
+     */
+    public void switchSails() {
+        sailsOut = !sailsOut;
+    }
+
+    /**
+     * Returns the sail state of the boat
+     * @return sailsOut sail state of the boat
+     */
+    public boolean hasSailsOut() {
+        return sailsOut;
     }
 
     @Override
@@ -231,6 +247,7 @@ public class Boat implements Competitor {
 
         //turn the new lat and lng back to degrees
         setPosition(new MutablePoint(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI));
+
     }
 
     public void setProperties(double velocity, double heading, double latitude, double longitude) {

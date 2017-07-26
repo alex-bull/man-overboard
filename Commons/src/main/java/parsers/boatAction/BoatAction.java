@@ -19,7 +19,4 @@ public class BoatAction {
 
     public String getAction() { return action; }
 
-
-
-
 }
