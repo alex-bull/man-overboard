@@ -16,7 +16,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -41,12 +40,11 @@ import static utilities.EnvironmentConfig.currentStream;
 public class StarterController implements Initializable, ClockHandler {
 
     private DataSource dataSource;
-    private final int STARTTIME = 0;
+    private final int STARTTIME = 5;
     @FXML private ListView<Competitor> starterList;
     @FXML private Label worldClockValue;
-    @FXML private Button countdownButton;
     @FXML private Button confirmButton;
-    @FXML private Label raceStatus;
+    @FXML private Label countDownLabel;
     @FXML private ComboBox<String> streamCombo;
     @FXML private Button connectionOkButton;
     private Clock worldClock;
@@ -67,17 +65,6 @@ public class StarterController implements Initializable, ClockHandler {
         this.dataSource = dataSource;
     }
 
-    void autoStart(){
-        confirmButton.fire();
-        countdownButton.fire();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-    }
 
     /**
      * Implementation of ClockHandler interface method
@@ -99,10 +86,8 @@ public class StarterController implements Initializable, ClockHandler {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        this.countdownButton.setDisable(true);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         compList = FXCollections.observableArrayList();
-
         starterList.setCellFactory(new Callback<ListView<Competitor>, ListCell<Competitor>>() {
             @Override
             public ListCell<Competitor> call(ListView<Competitor> param) {
@@ -151,10 +136,7 @@ public class StarterController implements Initializable, ClockHandler {
             this.confirmButton.setDisable(true);
             currentStream = host;
             this.setFields();
-            //TODO CHANGE IT SO IT STARTS COUNTDOWN WHEN RACESTATUS ON PREPARATORY??
-            if (raceStatus.getText() == "STARTED") {
-                switchToCourseView();
-            }
+            this.loadRaceView();
         }
         else {
 
@@ -173,29 +155,6 @@ public class StarterController implements Initializable, ClockHandler {
 
 
 
-    /**
-     * Switches from start view to course view. Called when user clicks start button.
-     * Starts countdown if the list of starters is not empty.
-     */
-    @FXML
-    void switchToCourseView() {
-        // check that starter table is not empty
-        if (!starterList.getItems().isEmpty()) {
-            startCountdown();
-            countdownButton.setDisable(true);
-
-        } else {
-            // inform user to press confirm
-            Stage thisStage = (Stage) countdownButton.getScene().getWindow();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Information Dialog");
-            alert.initOwner(thisStage);
-            alert.setHeaderText(null);
-            alert.setContentText("Please make sure there are competitors.");
-            alert.showAndWait();
-        }
-
-    }
 
     /**
      * Set fields using data from the stream
@@ -209,10 +168,9 @@ public class StarterController implements Initializable, ClockHandler {
         this.worldClock = new WorldClock(this, dataSource.getCourseTimezone());
         worldClock.start();
         compList.setAll(dataSource.getCompetitorsPosition());
-        raceStatus.setText(dataSource.getRaceStatus().toString());
 
         if (dataSource.getCompetitorsPosition().size() == 0) {
-            Stage thisStage = (Stage) countdownButton.getScene().getWindow();
+            Stage thisStage = (Stage) confirmButton.getScene().getWindow();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
             alert.initOwner(thisStage);
@@ -220,19 +178,20 @@ public class StarterController implements Initializable, ClockHandler {
             alert.setContentText("Sorry, this data stream hasn't started.");
             alert.showAndWait();
         }
-        this.countdownButton.setDisable(false);
     }
 
     /**
      * Countdown until the race start, updates the countdown time text.
      */
-    private void startCountdown() {
+    private void loadRaceView() {
 
         //count down for 5 seconds
+        countDownLabel.textProperty().bind(timeSeconds.asString());
+
         timeSeconds.set(STARTTIME);
         Timeline timeline = new Timeline();
         timeline.getKeyFrames().add(
-                new KeyFrame(Duration.seconds(STARTTIME + 1),
+                new KeyFrame(Duration.seconds(STARTTIME),
                         new KeyValue(timeSeconds, 0)));
         timeline.play();
 
