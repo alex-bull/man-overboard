@@ -19,7 +19,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import utility.*;
 
-import static java.lang.Math.abs;
+import static java.lang.Math.*;
 import static parsers.MessageType.UNKNOWN;
 import static utility.Calculator.calcAngleBetweenPoints;
 import static utility.Calculator.convertRadiansToShort;
@@ -272,6 +272,35 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         }
     }
 
+
+    /**
+     * function to calculate what happens during collision
+     * @param boat1 one of the boat during collision
+     * @param boat2 the other boat during collision
+     */
+    private void calculateCollisions(Competitor boat1, Competitor boat2){
+        double x1=boat1.getPosition().getXValue();
+        double x2=boat2.getPosition().getXValue();
+        double y1=boat1.getPosition().getYValue();
+        double y2=boat2.getPosition().getYValue();
+        double contactAngle=(atan2((x1-x2),(y1-y2)));
+
+        double v1x=calculateVx(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
+        double v1y=calculateVy(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
+        boat1.addForce(new RepelForce(v1x,v1y));
+
+        double v2x=calculateVx(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
+        double v2y=calculateVy(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
+        boat1.addForce(new RepelForce(v2x,v2y));
+    }
+
+    private double calculateVx(double v2, double angle2, double contactAngle, double v1, double angle1){
+        return v2*cos(angle2-contactAngle)*cos(contactAngle)+v1*sin(angle1-contactAngle)*cos(contactAngle+PI/2);
+    }
+
+    private double calculateVy(double v2, double angle2, double contactAngle, double v1, double angle1){
+        return v2*cos(angle2-contactAngle)*sin(contactAngle)+v1*sin(angle1-contactAngle)*sin(contactAngle+PI/2);
+    }
 
     /**
      * Calculates if the boat collides with any other boat and adjusts the position of both boats accordingly.

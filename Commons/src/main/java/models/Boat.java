@@ -4,6 +4,9 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by mgo65 on 3/03/17.
  * Boat object
@@ -25,6 +28,8 @@ public class Boat implements Competitor {
     private double longitude;
     //how much the boat if affected by wind, can be parsed in as constructor
     private double blownFactor=0.01;
+//    external forces on the boat
+    private List<RepelForce> forces;
 
     /**
      * Creates a boat
@@ -39,12 +44,20 @@ public class Boat implements Competitor {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
-
+        forces =new ArrayList<>();
         this.color = color;
         this.abbreName = abbreName;
         legIndex = 0;
         timeToNextMark = 0;
         timeAtLastMark = 0;
+    }
+
+    public List<RepelForce> getForces() {
+        return forces;
+    }
+
+    public void addForce(RepelForce force){
+        this.forces.add(force);
     }
 
     /**
