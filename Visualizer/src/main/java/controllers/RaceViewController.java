@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.animation.*;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -836,49 +837,30 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+    /**
+     * checks collisions and draws them
+     */
     public void checkCollision(){
-        for(Integer sourceID:boatModels.keySet()){
-            for(Integer sourceID2:boatModels.keySet()){
-                if(sourceID.equals(sourceID2)){
-                    continue;
-                }
-                if(boatModels.get(sourceID).intersects(boatModels.get(sourceID2).getLayoutBounds())){
-                drawCollision(dataSource.getStoredCompetitors().get(sourceID).getPosition().getXValue(),
-                 dataSource.getStoredCompetitors().get(sourceID).getPosition().getYValue());
-                }
-            }
-
-        }
-
-        for(Integer sourceID:boatModels.keySet()){
-            for(String featureName:markModels.keySet()){
-                System.out.println(markModels.get(featureName).getLayoutBounds());
-                if(boatModels.get(sourceID).intersects(markModels.get(featureName).getLayoutBounds())){
-                    drawCollision(dataSource.getStoredCompetitors().get(sourceID).getPosition().getXValue(),
-                            dataSource.getStoredCompetitors().get(sourceID).getPosition().getYValue());
-                }
-            }
-
+        for(int sourceID:new HashSet<>(dataSource.getCollisions())){
+            MutablePoint position=dataSource.getStoredCompetitors().get(sourceID).getPosition();
+            drawCollision(position.getXValue(),position.getYValue());
+            dataSource.removeCollsions(sourceID);
         }
 
     }
 
+    /**
+     * draws collisions at the location passed in
+     * @param centerX the x coordinate of the collision
+     * @param centerY the y coordinate of the collision
+     */
     public void drawCollision(double centerX,double centerY){
-        System.out.println("collision");
-        Circle ripple =new Circle(centerX,centerY,1);
-        FadeTransition ft=new FadeTransition(Duration.millis(1000),ripple);
-        ft.setFromValue(1);
-        ft.setToValue(0);
 
-        Timeline rippleAnimation=new Timeline(new KeyFrame(Duration.ZERO,new KeyValue(ripple.radiusProperty(),0)),
-                new KeyFrame(Duration.ZERO,new KeyValue(ripple.opacityProperty(),1)),
-                new KeyFrame(Duration.seconds(1),new KeyValue(ripple.radiusProperty(),20)),
-                new KeyFrame(Duration.seconds(1),new KeyValue(ripple.opacityProperty(),0)));
-        ripple.setStroke(Color.RED);
-        ripple.setFill(Color.RED);
+        CollisionRipple ripple =new CollisionRipple(centerX,centerY,20);
+
         raceViewPane.getChildren().add(ripple);
-        ft.play();
-        rippleAnimation.play();
+
+        ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
     }
 
     /**
@@ -887,7 +869,6 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param dataSource DataSource the data to display
      *
      */
-    int counterRipple = 1;
     void refresh(DataSource dataSource) {
         GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
         this.dataSource = dataSource;
@@ -896,12 +877,7 @@ public class RaceViewController implements Initializable, TableObserver {
         updateCourse(gc);
         updateRace(gc);
         checkCollision();
-        counterRipple++;
-        if(counterRipple % 200 == 0){
-            CollisionRipple rrrrr = new CollisionRipple(1000, 500, 50);
-            this.raceViewPane.getChildren().add(rrrrr);
-            rrrrr.animate();
-        }
+
     }
 
     boolean isLoaded() {

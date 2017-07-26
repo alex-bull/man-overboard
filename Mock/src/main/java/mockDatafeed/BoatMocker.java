@@ -227,7 +227,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     /**
      * updates the position of all the boats given the boats speed and heading
      */
-    private void updatePosition() {
+    private void updatePosition() throws IOException, InterruptedException {
 
         for (Integer sourceId : competitors.keySet()) {
             Competitor boat = competitors.get(sourceId);
@@ -255,7 +255,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      * Calculates if the boat collides with any course features and adjusts the boats position
      * @param boat Competitor the boat to check collisions for
      */
-    private void handleCourseCollisions(Competitor boat) {
+    private void handleCourseCollisions(Competitor boat) throws IOException, InterruptedException {
 
         final double collisionRadius = 55; //Large for testing
 
@@ -264,6 +264,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
+//                send a collision packet
+                sendYachtEvent(boat.getSourceID(),1);
                 boat.updatePosition(-10);
                 break;
             }
@@ -275,7 +277,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      * Calculates if the boat collides with any other boat and adjusts the position of both boats accordingly.
      * @param boat Competitor, the boat to check collisions for
      */
-    private void handleBoatCollisions(Competitor boat) {
+    private void handleBoatCollisions(Competitor boat) throws IOException, InterruptedException {
 
         final double collisionRadius = 35; //Large for testing
 
@@ -287,6 +289,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             double distance = raceCourse.distanceBetweenGPSPoints(comp.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
+
+//                send a collision packet
+                sendYachtEvent(comp.getSourceID(),1);
+
                 boat.updatePosition(-10);
                 comp.updatePosition(-10);
             }
@@ -294,6 +300,19 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     }
 
 
+    /**
+     * generate and send a yacht event to all the clients
+     * @param sourceID the boat which the event occured on
+     * @param eventID the event happend
+     */
+    private void sendYachtEvent(int sourceID, int eventID) throws IOException, InterruptedException {
+        byte[] eventPacket=binaryPackager.packageYachtEvent(sourceID,eventID);
+        TCPserver.sendData(eventPacket);
+
+        //wait for it to be send
+        Thread.sleep(5);
+
+    }
 
 
     /**
@@ -415,8 +434,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     @Override
     public void run() {
         //check if boats are at the end of the leg
-        for (Integer sourceId : competitors.keySet()) {
-            Competitor b = competitors.get(sourceId);
+//        for (Integer sourceId : competitors.keySet()) {
+//            Competitor b = competitors.get(sourceId);
             //if at the end stop
 //            if (b.getCurrentLegIndex() == courseFeatures.size() - 1) {
 //                b.setVelocity(0);
@@ -433,16 +452,19 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                // b.setCurrentLegIndex(b.getCurrentLegIndex() + 1);
                // b.setCurrentHeading(courseFeatures.get(b.getCurrentLegIndex()).getExitHeading());
            // }
-        }
+//        }
         //update the position of the boats given the current position, heading and velocity
 
-        updatePosition();
+
         //send the boat info to receiver
 
         try {
+            updatePosition();
             sendBoatLocation();
             sendRaceStatus();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
