@@ -44,15 +44,15 @@ public class MainController {
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.DOWN.getValue(), dataSource.getSourceID()));
                     break;
                 case SPACE:
-                    System.out.println("VMG");
+//                    System.out.println("VMG");
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.VMG.getValue(), dataSource.getSourceID()));
                     break;
                 case SHIFT:
-                    System.out.println("Sails");
+//                    System.out.println("Sails");
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILS.getValue(), dataSource.getSourceID()));
                     break;
                 case ENTER:
-                    System.out.println("Tack/Gybe");
+//                    System.out.println("Tack/Gybe");
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
                     break;
             }
