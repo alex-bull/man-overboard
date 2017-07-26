@@ -23,30 +23,8 @@ public class BoatActionParser {
      */
     public BoatAction processMessage(byte[] body) {
         try {
-//            Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
             int actionNum = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 1));
-            String action = null;
-            switch (actionNum){
-                case 1:
-                    action = "Autopilot/VMG";
-                    break;
-                case 2:
-                    action = "Sails in";
-                    break;
-                case 3:
-                    action = "Sails out";
-                    break;
-                case 4:
-                    action = "Tack/Gybe";
-                    break;
-                case 5:
-                    action = "Upwind";
-                    break;
-                case 6:
-                    action = "Downwind";
-                    break;
-            }
-            return new BoatAction(action);
+            return BoatAction.values()[actionNum - 1];
         }
         catch (Exception e) {
             return null;

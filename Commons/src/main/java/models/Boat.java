@@ -31,6 +31,7 @@ public class Boat implements Competitor {
 //    external forces on the boat
     private List<RepelForce> forces;
 
+    private boolean sailsOut = true;
     /**
      * Creates a boat
      *
@@ -84,6 +85,21 @@ public class Boat implements Competitor {
 
     public Boat() {
 
+    }
+
+    /**
+     * Switches the sail state of the boat between sails in and sails out
+     */
+    public void switchSails() {
+        sailsOut = !sailsOut;
+    }
+
+    /**
+     * Returns the sail state of the boat
+     * @return sailsOut sail state of the boat
+     */
+    public boolean hasSailsOut() {
+        return sailsOut;
     }
 
     @Override
