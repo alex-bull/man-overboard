@@ -23,6 +23,7 @@ public class Boat implements Competitor {
     private long timeAtLastMark;
     private double latitude;
     private double longitude;
+    private boolean sailsOut = true;
     /**
      * Creates a boat
      *
@@ -68,6 +69,21 @@ public class Boat implements Competitor {
 
     public Boat() {
 
+    }
+
+    /**
+     * Switches the sail state of the boat between sails in and sails out
+     */
+    public void switchSails() {
+        sailsOut = !sailsOut;
+    }
+
+    /**
+     * Returns the sail state of the boat
+     * @return sailsOut sail state of the boat
+     */
+    public boolean hasSailsOut() {
+        return sailsOut;
     }
 
     @Override
@@ -189,11 +205,22 @@ public class Boat implements Competitor {
     }
 
     public double getCurrentHeading() {
+        // convert negative current heading to positive?
+        if (currentHeading.getValue() < 0) {
+            this.currentHeading.setValue(currentHeading.getValue() + 360);
+        }
+
         return currentHeading.getValue();
     }
 
     public void setCurrentHeading(double currentHeading) {
-        this.currentHeading.setValue(currentHeading);
+        // convert negative current heading to positive?
+        if (currentHeading < 0) {
+            this.currentHeading.setValue(currentHeading + 360);
+        }
+        else{
+            this.currentHeading.setValue(currentHeading);
+        }
     }
 
     public DoubleProperty getHeadingProperty() {
@@ -220,6 +247,7 @@ public class Boat implements Competitor {
 
         //turn the new lat and lng back to degrees
         setPosition(new MutablePoint(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI));
+
     }
 
     public void setProperties(double velocity, double heading, double latitude, double longitude) {
@@ -227,6 +255,52 @@ public class Boat implements Competitor {
         this.currentHeading.setValue(heading);
         this.position = new MutablePoint(latitude, longitude);
 
+    }
+
+    /**
+     * Returns the downwind given wind angle
+     * @param windAngle double wind angle
+     * @return double downWind
+     */
+    private double getDownWind(double windAngle) {
+       double downWind = windAngle + 180;
+       if(downWind > 360) {
+           downWind = downWind - 360;
+       }
+       return downWind;
+    }
+
+    /**
+     * function to change boats heading
+     * @param upwind true=upwind
+     *                  false=downwind
+     * @param windAngle the current wind angle
+     */
+    public void changeHeading(boolean upwind, double windAngle){
+        int turnAngle = 3;
+
+
+        double downWind = getDownWind(windAngle);
+
+        if(currentHeading.getValue() >= windAngle && currentHeading.getValue() <= downWind) {
+            if(upwind) {
+                currentHeading.setValue(currentHeading.getValue() - turnAngle);
+            }
+            else {
+                currentHeading.setValue(currentHeading.getValue() + turnAngle);
+            }
+        }
+        else {
+
+            if(upwind) {
+                currentHeading.setValue(currentHeading.getValue() + turnAngle);
+            }
+            else {
+                currentHeading.setValue(currentHeading.getValue() - turnAngle);
+            }
+        }
+        setCurrentHeading(currentHeading.getValue() % 360);
+//        currentHeading.setValue(currentHeading.getValue() % 360);
     }
 
     @Override
