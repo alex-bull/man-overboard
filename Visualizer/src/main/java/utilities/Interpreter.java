@@ -187,9 +187,7 @@ public class Interpreter implements DataSource, PacketHandler {
         //start receiving data
         Timer receiverTimer = new Timer();
 
-
         receiverTimer.schedule(TCPClient, 0, 1);
-
 
         try {
             //wait for data to come in before setting fields
@@ -298,14 +296,13 @@ public class Interpreter implements DataSource, PacketHandler {
             case BOAT_LOCATION:
                 BoatDataParser boatDataParser = new BoatDataParser();
                 this.boatData = boatDataParser.processMessage(packet);
-                if (boatData != null) {
 
+                if (boatData != null) {
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties();
                     } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
                         CourseFeature courseFeature = boatDataParser.getCourseFeature();
                         updateCourseMarks(courseFeature);
-
                     }
                 }
                 break;
