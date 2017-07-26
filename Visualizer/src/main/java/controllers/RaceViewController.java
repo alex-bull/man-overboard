@@ -650,7 +650,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Pair<Double, Double> getNextGateCentre(Competitor boat) {
 
         Integer markId = boat.getCurrentLegIndex() + 1;
-        if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
+        // if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
 
         Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
         if (markId > features.size()) return null; //passed the finish line

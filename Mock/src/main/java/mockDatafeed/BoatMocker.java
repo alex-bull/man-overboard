@@ -44,8 +44,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private int currentSourceID=100;
     private Random random;
     private PolarTable polarTable;
-private boolean flag=true;
-private Timer timer;
+    private boolean flag=true;
+    private Timer timer;
 
 
     BoatMocker() throws IOException, JDOMException {

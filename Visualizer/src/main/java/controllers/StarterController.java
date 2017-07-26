@@ -122,8 +122,6 @@ public class StarterController implements Initializable, ClockHandler {
         });
         starterList.setItems(compList);
         streamCombo.getItems().addAll(EnvironmentConfig.mockStream);
-
-
     }
 
 
@@ -153,6 +151,10 @@ public class StarterController implements Initializable, ClockHandler {
             this.confirmButton.setDisable(true);
             currentStream = host;
             this.setFields();
+            //TODO CHANGE IT SO IT STARTS COUNTDOWN WHEN RACESTATUS ON PREPARATORY??
+            if (raceStatus.getText() == "STARTED") {
+                switchToCourseView();
+            }
         }
         else {
 
@@ -161,8 +163,10 @@ public class StarterController implements Initializable, ClockHandler {
             alert.setHeaderText(null);
             alert.setContentText("Sorry, cannot connect to this stream right now.");
             alert.showAndWait();
+            this.streamCombo.setDisable(false);
+            this.confirmButton.setDisable(false);
 
-            System.out.println("Sorry cannot connect right now.");
+            //System.out.println("Sorry cannot connect right now.");
         }
 
     }
