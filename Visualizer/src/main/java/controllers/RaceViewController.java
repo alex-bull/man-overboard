@@ -495,8 +495,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
             if (boat.getSourceID() == dataSource.getSourceID()) {
                 playerMarker = new Circle(0, 0, 15);
-                playerMarker.setStrokeWidth(1.5);
-                playerMarker.setStroke(Color.WHITE);
+                playerMarker.setStrokeWidth(2.5);
+                playerMarker.setStroke(Color.rgb(255,255,255,0.5));
                 playerMarker.setFill(Color.rgb(0,0,0,0.2));
                 this.raceViewPane.getChildren().add(playerMarker);
             }
