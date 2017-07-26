@@ -120,7 +120,6 @@ private Timer timer;
             }
         }
 
-
         switch(messageType) {
             case BOAT_ACTION:
                 HeaderParser headerParser = new HeaderParser();
