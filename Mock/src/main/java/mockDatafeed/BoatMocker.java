@@ -132,17 +132,14 @@ private Timer timer;
                         sendBoatAction(SAILS.getValue(), sourceID);
                         competitors.get(sourceID).switchSails();
                     case UP:
-                        competitors.get(sourceID).changeHeading(true,shortToDegrees(windGenerator.getWindDirection()));
-
+                        competitors.get(sourceID).changeHeading(true, shortToDegrees(windGenerator.getWindDirection()));
                         break;
                     case DOWN:
-                        competitors.get(sourceID).changeHeading(false,shortToDegrees(windGenerator.getWindDirection()));
+                        competitors.get(sourceID).changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
                         break;
-
                 }
                 break;
         }
-
     }
 
 
@@ -192,7 +189,7 @@ private Timer timer;
     }
 
     /**
-     * adds a competitor to the list of competitiors
+     * adds a competitor to the list of competitors
      * @return the source Id added
      */
     private int addCompetitors(){
@@ -200,6 +197,14 @@ private Timer timer;
         competitors.put(currentSourceID, newCompetitor);
         currentSourceID+=1;
         return currentSourceID-1;
+    }
+
+    public List<Competitor> getCompetitors() {
+        List<Competitor> boats = new ArrayList<>();
+        for (Competitor competitor : competitors.values()) {
+            boats.add(competitor);
+        }
+        return boats;
     }
 
     public int addConnection() {

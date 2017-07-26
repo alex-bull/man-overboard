@@ -63,5 +63,6 @@ public interface Competitor {
     void switchSails();
 
     boolean hasSailsOut();
+
     void changeHeading(boolean upwind, double angle);
 }
