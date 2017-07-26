@@ -219,7 +219,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     public void drawSail() {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-        double windAngle = dataSource.getWindDirection() -180;
+        double windAngle = dataSource.getWindDirection();
         double boatXval = boat.getPosition().getXValue();
         double boatYval = boat.getPosition().getYValue();
         sailLine.setStroke(Color.WHITE);

@@ -20,6 +20,7 @@ import java.util.*;
 import utility.*;
 
 import static java.lang.Math.abs;
+import static mockDatafeed.Keys.SAILS;
 import static parsers.MessageType.UNKNOWN;
 import static utility.Calculator.calcAngleBetweenPoints;
 import static utility.Calculator.convertRadiansToShort;
@@ -97,9 +98,9 @@ private Timer timer;
      * Sends the boat action data to the Visualiser
      * @param action action of the boat
      */
-    private void sendBoatAction(int action) {
+    private void sendBoatAction(int action, int sourceId) {
         try{
-            TCPServer.sendData(binaryPackager.packageBoatAction(action));
+            this.TCPserver.sendData(binaryPackager.packageBoatAction(action, sourceId));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -112,7 +113,6 @@ private Timer timer;
      * @param packet byte[] the packet body
      */
     public void interpretPacket(byte[] header, byte[] packet) {
-//        System.out.println("Interpreting packet");
         MessageType messageType = UNKNOWN;
         for (MessageType messageEnum : MessageType.values()) {
             if (header[0] == messageEnum.getValue()) {
@@ -128,15 +128,12 @@ private Timer timer;
                 int sourceID = headerData.getSourceID();
                 Keys action = Keys.getKeys(packet[0]);
                 switch(action){
-                    case SHIFT:
-                        sendBoatAction(2);
+                    case SAILS:
+                        sendBoatAction(SAILS.getValue(), sourceID);
                         competitors.get(sourceID).switchSails();
                     case UP:
-//                        System.out.println("up");
                         competitors.get(sourceID).changeHeading(true,shortToDegrees(windGenerator.getWindDirection()));
-//                        System.out.println(shortToDegrees(windGenerator.getWindDirection()));
-//                        System.out.println(competitors.get(sourceID).getCurrentHeading());
-//                        System.out.println("done");
+
                         break;
                     case DOWN:
                         competitors.get(sourceID).changeHeading(false,shortToDegrees(windGenerator.getWindDirection()));

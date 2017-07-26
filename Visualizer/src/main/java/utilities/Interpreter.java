@@ -333,8 +333,7 @@ public class Interpreter implements DataSource, PacketHandler {
      * @return the sourceID of the clients boat
      */
     public int getSourceID() {
-        return 103;
-        //return sourceID;
+        return sourceID;
     }
 
     /**
