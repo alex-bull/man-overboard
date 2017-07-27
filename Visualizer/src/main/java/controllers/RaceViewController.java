@@ -1,16 +1,5 @@
 package controllers;
 
-import javafx.animation.*;
-
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.util.Duration;
 import com.google.common.primitives.Doubles;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
@@ -99,7 +88,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private WebEngine mapEngine;
     private DataSource dataSource;
     private PolarTable polarTable;
-
+    private int counter;
     private long startTimeNano = System.nanoTime();
     private long timeFromLastMark;
     private String startAnnotation;
@@ -595,8 +584,8 @@ public class RaceViewController implements Initializable, TableObserver {
             }
         }
 
-        this.upWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), true);
-        this.downWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), false);
+        Integer upWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), true);
+        Integer downWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), false);
 
 
         Pair<Double, Double> markCentre = this.getNextGateCentre(boat);
@@ -620,13 +609,11 @@ public class RaceViewController implements Initializable, TableObserver {
 
         //CASE: upwind
         if (anglediff > 90) {
-            Integer upWindAngle = 43;
             layLineStarboardAngle = windAngle - upWindAngle;
             layLinePortAngle = windAngle + upWindAngle;
         }
         //CASE: downwind
         else if (anglediff < 90) {
-            Integer downWindAngle = 153;
             layLineStarboardAngle = windAngle + downWindAngle;
             layLinePortAngle = windAngle - downWindAngle;
         }
