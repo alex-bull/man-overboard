@@ -280,6 +280,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawMark(CourseFeature courseFeature) {
         double x = courseFeature.getPixelLocations().get(0).getXValue();
         double y = courseFeature.getPixelLocations().get(0).getYValue();
+        System.out.println(x);
+        System.out.println(y);
         Circle circle = new Circle(x, y, 4.5, ORANGERED);
         this.raceViewPane.getChildren().add(circle);
         this.markModels.put(courseFeature.getName(), circle);
@@ -293,8 +295,9 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawBackgroundImage(List<Double> bounds) {
         try {
 
-            mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
-            mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
+           // mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
+            mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);",-48.305459,-137.7900947 ,-48.305459,-137.7900947 ));
+            //mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
         } catch (JSException e) {
             e.printStackTrace();
         }
@@ -470,6 +473,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawBoat(Competitor boat) {
         Integer sourceId = boat.getSourceID();
 
+
         if (boatModels.get(sourceId) == null) {
             Polygon boatModel = new Polygon();
             boatModel.getPoints().addAll(
@@ -477,6 +481,7 @@ public class RaceViewController implements Initializable, TableObserver {
                     -5.0, 10.0, //left
                     5.0, 10.0); //right
             boatModel.setFill(boat.getColor());
+
             boatModel.setStroke(BLACK);
 
             if (boat.getSourceID() == dataSource.getSourceID()) {
@@ -682,7 +687,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Pair<Double, Double> getNextGateCentre(Competitor boat) {
 
         Integer markId = boat.getCurrentLegIndex() + 1;
-        if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
+        // if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
 
         Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
         if (markId > features.size()) return null; //passed the finish line

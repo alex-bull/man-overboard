@@ -1,5 +1,6 @@
 package utilities;
 
+import javafx.concurrent.Task;
 import utility.PacketHandler;
 
 import java.io.DataInputStream;
@@ -36,13 +37,15 @@ public class TCPClient extends TimerTask {
      * @throws IOException IOException
      */
     TCPClient(String host, int port, PacketHandler handler) throws UnresolvedAddressException, IOException {
-        Socket receiveSock = new Socket(host, port);
+
         this.handler = handler;
+        Socket receiveSock = new Socket(host, port);
         dis = new DataInputStream(receiveSock.getInputStream());
         dos = new DataOutputStream(receiveSock.getOutputStream());
         System.out.println("Start connection to server...");
 
     }
+
 
     /**
      * Write data to the socket
@@ -101,6 +104,8 @@ public class TCPClient extends TimerTask {
      * Identify the start of a packet, determine the message type and length, then read.
      */
     public void run() throws NullPointerException {
+
+
         try {
             boolean isStartOfPacket = checkForSyncBytes();
             if (isStartOfPacket) {

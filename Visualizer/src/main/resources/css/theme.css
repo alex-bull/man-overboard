@@ -9,7 +9,7 @@
     -fx-opacity: 0.8;
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-font-size: 11pt;
-    -fx-text-fill: #0014A8;
+    -fx-text-fill: #444444;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
 }
 
@@ -35,6 +35,28 @@
     -fx-background-color: #929B9B;
     -fx-text-fill: white;
 }
+
+.text-field
+{
+    -fx-padding: 5 22 5 22;
+    -fx-background-color: white;
+    -fx-opacity: 0.8;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 11pt;
+    -fx-text-fill: #444444;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+}
+
+.list-view
+{
+    -fx-padding: 5 22 5 22;
+    -fx-background-color: white;
+    -fx-opacity: 0.8;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 11pt;
+    -fx-text-fill: #0014A8;
+}
+
 
 
 /*logo colours : 0014A8, 3FA9F5, 99EEED*/
@@ -64,4 +86,66 @@
     -fx-text-fill: black;
     -fx-opacity: 0.8;
 
+}
+
+.check-box .box
+{
+    -fx-border-color: white;
+    -fx-border-width: 0;
+    -fx-background-color: white;
+    -fx-opacity: 0.8;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 11pt;
+
+}
+
+.check-box:selected .box {
+
+    -fx-background-color: grey;
+}
+
+.check-box .mark
+{
+    -fx-background-color: white;
+}
+
+.radio-button .radio
+{
+
+    -fx-background-color: white;
+}
+
+.radio-button .dot
+{
+    -fx-mark-color: grey ;
+    -fx-padding: 6px;
+
+}
+
+.radio-button .label
+{
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 11pt;
+}
+
+.progress-indicator
+{
+    -fx-progress-color: #7dcdcd;
+
+}
+
+.table-view .column-header-background{
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header
+{
+    -fx-background-color: transparent;
+
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 10pt;
+}
+
+.table-view .table-column {
+    -fx-alignment: CENTER;
 }
