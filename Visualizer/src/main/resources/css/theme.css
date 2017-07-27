@@ -146,3 +146,6 @@
     -fx-font-size: 10pt;
 }
 
+.table-view .table-column {
+    -fx-alignment: CENTER;
+}

@@ -146,7 +146,6 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
         this.hostField.setDisable(false);
         this.confirmButton.setDisable(false);
 
-
     }
 
 
