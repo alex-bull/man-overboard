@@ -590,7 +590,6 @@ public class RaceViewController implements Initializable, TableObserver {
         Integer upWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), true);
         Integer downWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), false);
 
-
         Pair<Double, Double> markCentre = this.getNextGateCentre(boat);
         if (markCentre == null) return;
         Double markX = markCentre.getKey();
