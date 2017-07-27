@@ -137,6 +137,7 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
      * Alerts the user if the connection failed
      */
     public void streamFailed() {
+        this.progressIndicator.setVisible(false);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Connection Failed");
         alert.setHeaderText(null);
@@ -144,7 +145,7 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
         alert.showAndWait();
         this.hostField.setDisable(false);
         this.confirmButton.setDisable(false);
-        progressIndicator.setVisible(false);
+
 
     }
 
