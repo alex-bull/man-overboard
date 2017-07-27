@@ -172,7 +172,7 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param host  String the host to stream from
      * @param port  Int the port to stream from
      * @param scene the scene of the stage, for size calculations
-     * @return boolean, true if the stream succeeds
+     *
      */
     public void receive(String host, int port, Scene scene, StreamDelegate delegate) throws NullPointerException{
 
