@@ -17,6 +17,8 @@ import parsers.boatAction.BoatAction;
 import parsers.boatAction.BoatActionParser;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
+import parsers.header.HeaderData;
+import parsers.header.HeaderParser;
 import parsers.markRounding.MarkRoundingData;
 import parsers.markRounding.MarkRoundingParser;
 import parsers.raceStatus.RaceStatusData;
@@ -308,11 +310,15 @@ public class Interpreter implements DataSource, PacketHandler {
                 }
                 break;
             case BOAT_ACTION:
+                HeaderParser headerParser = new HeaderParser();
+                HeaderData headerData = headerParser.processMessage(header);
+                int headerDataSourceID = headerData.getSourceID();
+
                 BoatActionParser boatActionParser = new BoatActionParser();
                 this.boatAction = boatActionParser.processMessage(packet);
                 if (boatAction != null) {
-                    if (boatAction.equals(BoatAction.SAILS_IN)) {
-                        Competitor boat = this.storedCompetitors.get(getSourceID());
+                    if (boatAction.equals(BoatAction.SAILS_IN) && headerDataSourceID == this.sourceID) {
+                        Competitor boat = this.storedCompetitors.get(this.sourceID);
                         boat.switchSails();
                     }
                 }
