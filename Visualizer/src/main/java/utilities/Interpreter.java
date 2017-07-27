@@ -1,5 +1,9 @@
 package utilities;
 
+import controllers.StarterController;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -17,6 +21,8 @@ import parsers.boatAction.BoatAction;
 import parsers.boatAction.BoatActionParser;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
+import parsers.header.HeaderData;
+import parsers.header.HeaderParser;
 import parsers.markRounding.MarkRoundingData;
 import parsers.markRounding.MarkRoundingParser;
 import parsers.raceStatus.RaceStatusData;
@@ -26,6 +32,7 @@ import parsers.xml.race.CompoundMarkData;
 import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
+import parsers.yachtEvent.YachtEventParser;
 import utility.PacketHandler;
 
 import java.io.IOException;
@@ -36,6 +43,7 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
 import static parsers.Converter.hexByteArrayToInt;
+import static parsers.MessageType.BOAT_ACTION;
 import static parsers.MessageType.UNKNOWN;
 
 /**
@@ -50,8 +58,9 @@ public class Interpreter implements DataSource, PacketHandler {
     private List<Competitor> competitorsPosition;
     private double windDirection;
     private BoatData boatData;
-    private BoatAction boatAction;
     private RaceData raceData;
+    private Set<Integer> collisions;
+    private BoatAction boatAction;
     private String timezone;
     private double windSpeed;
     private RaceStatusEnum raceStatus;
@@ -80,6 +89,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
+        collisions=new HashSet<>();
         this.raceXMLParser = new RaceXMLParser();
 
     }
@@ -164,7 +174,7 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param scene the scene of the stage, for size calculations
      * @return boolean, true if the stream succeeds
      */
-    public boolean receive(String host, int port, Scene scene) throws NullPointerException{
+    public void receive(String host, int port, Scene scene, StreamDelegate delegate) throws NullPointerException{
 
         Rectangle2D primaryScreenBounds;
         try {
@@ -173,12 +183,15 @@ public class Interpreter implements DataSource, PacketHandler {
         }
         catch (UnresolvedAddressException e){
             System.out.println("Address is not found");
-            return false;
+            delegate.streamFailed();
+            return;
         }
         catch (IOException e) {
             System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
-            return false;
+            delegate.streamFailed();
+            return;
         }
+
 
         //calculate the effective width and height of the screen
         width = primaryScreenBounds.getWidth() - scene.getX();
@@ -186,26 +199,42 @@ public class Interpreter implements DataSource, PacketHandler {
 
         //start receiving data
         Timer receiverTimer = new Timer();
-
         receiverTimer.schedule(TCPClient, 0, 1);
 
-        try {
-            //wait for data to come in before setting fields
-            while (this.numBoats < 1 || storedCompetitors.size() < this.numBoats) {
+        //Wait for incoming data on a background thread
+        Task task = new Task<Boolean>() {
+            @Override public Boolean call() {
                 try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    System.out.println("Thread sleep error");
+                    //wait for data to come in before setting fields
+                    while (numBoats < 1 || storedCompetitors.size() < numBoats) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                            System.out.println("Thread sleep error");
+                            return false;
+                        }
+                    }
+                } catch (NullPointerException e) {
+                    System.out.println("Live stream is down");
+                    return false;
                 }
+                return true;
             }
+        };
 
-        } catch (NullPointerException e) {
-            System.out.println("Live stream is down");
-            return false;
+        //Handle success or failure on the background thread
+        task.setOnSucceeded(event -> {
+            if (task.getValue().equals(true)) {
+                delegate.streamStarted();
+            } else {
+                delegate.streamFailed();
+            }
+        });
 
-        }
-        return true;
+        new Thread(task).start();
+
     }
+
 
 
     /**
@@ -307,10 +336,18 @@ public class Interpreter implements DataSource, PacketHandler {
                 }
                 break;
             case BOAT_ACTION:
+                HeaderParser headerParser = new HeaderParser();
                 BoatActionParser boatActionParser = new BoatActionParser();
-                this.boatAction = boatActionParser.processMessage(packet);
-                if (boatData != null) {
 
+                HeaderData headerData = headerParser.processMessage(header);
+                this.boatAction = boatActionParser.processMessage(packet);
+                if (boatAction != null && headerData != null) {
+                    int headerDataSourceID = headerData.getSourceID();
+
+                    if (boatAction.equals(BoatAction.SAILS_IN) && headerDataSourceID == this.sourceID) {
+                        Competitor boat = this.storedCompetitors.get(this.sourceID);
+                        boat.switchSails();
+                    }
                 }
                 break;
             case SOURCE_ID:
@@ -318,6 +355,17 @@ public class Interpreter implements DataSource, PacketHandler {
                 ByteBuffer byteBuffer=ByteBuffer.wrap(packet);
                 byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
                 sourceID=byteBuffer.get();
+                break;
+            case YACHT_ACTION:
+                YachtEventParser parser=new YachtEventParser(packet);
+                switch (parser.getEventID()){
+                    case 1:
+//                  collision
+                        collisions.add(parser.getSourceID());
+                        break;
+                    default:
+                        break;
+                }
                 break;
 
             default:
@@ -331,6 +379,15 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     public int getSourceID() {
         return sourceID;
+    }
+
+    /**
+     * removes sourceID from collisions list
+     * @param sourceID the sourceID to be removed
+     */
+    @Override
+    public void removeCollsions(int sourceID) {
+        collisions.remove(sourceID);
     }
 
     /**
@@ -482,6 +539,9 @@ public class Interpreter implements DataSource, PacketHandler {
         this.scaleFactor = raceXMLParser.getScaleFactor();
         this.minXMercatorCoord = raceXMLParser.getxMin();
         this.minYMercatorCoord = raceXMLParser.getyMin();
+    }
+    public Set<Integer> getCollisions(){
+        return collisions;
     }
 
     public HashMap<Integer, CourseFeature> getStoredFeatures() {

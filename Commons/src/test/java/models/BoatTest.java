@@ -4,8 +4,7 @@ import javafx.scene.paint.Color;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 /**
  * Test for the Boat Model
@@ -54,4 +53,30 @@ public class BoatTest {
         assertEquals(-64.854897, boat2.getPosition().getYValue(), 0.000001);
     }
 
+    @Test
+    public void sailsOutByDefault() throws Exception {
+        assertTrue(boat.hasSailsOut());
+    }
+
+    @Test
+    public void toggleSails() throws Exception {
+        assertTrue(boat.hasSailsOut());
+        boat.switchSails();
+        assertFalse(boat.hasSailsOut());
+    }
+
+    @Test
+    public void toggleSailsTwice() throws Exception {
+        assertTrue(boat.hasSailsOut());
+        boat.switchSails();
+        assertFalse(boat.hasSailsOut());
+        boat.switchSails();
+        assertTrue(boat.hasSailsOut());
+    }
+
+    @Test
+    public void setVelocity() throws Exception {
+        boat.setVelocity(0);
+        assertTrue(boat.getVelocity() == 0);
+    }
 }

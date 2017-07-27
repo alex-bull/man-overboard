@@ -1,9 +1,11 @@
 package utilities;
 
+
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,17 +17,33 @@ import static utilities.Utility.fileToString;
  */
 public class PolarTable {
 
-    private PolynomialSplineFunction func;
+    private PolynomialSplineFunction speedFunc;
+    private PolynomialSplineFunction upTwaFunc;
+    private PolynomialSplineFunction downTwaFunc;
+
 
     /**
      * constructor to load the table given path to the file
      *
      * @param filepath the path to the polar table
-     * @param speed    double the speed
+     * @param speed double the speed
      */
     public PolarTable(String filepath, double speed) throws IOException {
+        this.buildSpeedFunc(filepath, speed);
+        this.buildTWAFuncs(filepath);
+    }
+
+
+    /**
+     * Put file data into interpolator for speed
+     * @param filePath String, the polar file
+     * @param speed double the windSpeed
+     * @throws IOException
+     */
+    private void buildSpeedFunc(String filePath, double speed) throws IOException {
+
         Map<Double, ArrayContainer> polar = new HashMap<>();
-        String content = fileToString(filepath);
+        String content = fileToString(filePath);
         String[] rows = content.split("\n");
         //ignore first row
         for (int i = 1; i < rows.length; i++) {
@@ -45,7 +63,47 @@ public class PolarTable {
 
         ArrayContainer data = polar.get(speed);
         SplineInterpolator splineInterpolator = new SplineInterpolator();
-        func = splineInterpolator.interpolate(data.getX(), data.getY());
+        speedFunc = splineInterpolator.interpolate(data.getX(), data.getY());
+    }
+
+
+    /**
+     * Put file data into interpolators for up and down twas
+     * @param filePath String, the location of the polar file
+     * @throws IOException
+     */
+    private void buildTWAFuncs(String filePath) throws IOException {
+        String content = fileToString(filePath);
+        String rows[] = content.split("\n");
+        double[] windVals = new double[rows.length];
+        double[] upTwaVals = new double[rows.length];
+        double[] downTwaVals = new double[rows.length];
+
+        for (int i = 1; i < rows.length; i++) {
+            String[] values = rows[i].split("\\s+");
+
+            windVals[i] = Double.parseDouble(values[0]);
+            upTwaVals[i] = Double.parseDouble(values[3]);
+            downTwaVals[i] = Double.parseDouble(values[13]);
+        }
+
+        SplineInterpolator splineInterpolator = new SplineInterpolator();
+        upTwaFunc = splineInterpolator.interpolate(windVals, upTwaVals);
+        downTwaFunc = splineInterpolator.interpolate(windVals, downTwaVals);
+
+    }
+
+
+    /**
+     * Calculates the twa value that corresponds to the lowest boat speed above 0
+     * @param windSpeed The current wind speed
+     * @return double, the twa
+     */
+    public double getMinimalTwa(double windSpeed, boolean upwind) {
+        if (upwind) {
+            return upTwaFunc.value(windSpeed);
+        }
+        return downTwaFunc.value(windSpeed);
     }
 
 
@@ -57,6 +115,6 @@ public class PolarTable {
      */
     public double getSpeed(double twa) {
         //currently uses the neareast neighbour approach to find the speed
-        return func.value(twa);
+        return speedFunc.value(twa);
     }
 }

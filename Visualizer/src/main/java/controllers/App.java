@@ -52,7 +52,7 @@ App extends Application {
 
         //set on close requests
         primaryStage.setOnCloseRequest(event -> {
-System.exit(0);
+            System.exit(0);
 //            Platform.runLater(() -> {
 //                try {
 //                    primaryStage.close();
@@ -64,7 +64,6 @@ System.exit(0);
 //            });
 
         });
-
 
         primaryStage.show();
 //        starterController.autoStart();

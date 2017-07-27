@@ -40,5 +40,12 @@ public class CompoundMarkData {
         this.name = name;
     }
 
-
+    @Override
+    public String toString() {
+        return "CompoundMarkData{" +
+                "ID=" + ID +
+                ", name='" + name + '\'' +
+                ", marks=" + marks +
+                '}';
+    }
 }

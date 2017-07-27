@@ -179,7 +179,7 @@ public class BinaryPackager {
 
         //message source id
         buffer.putInt(sourceId);
-//        System.out.println("sOURCE ID IN WRITE HEAD" + sourceId);
+       // System.out.println("sOURCE ID IN WRITE HEAD" + sourceId);
         buffer.putShort((short) messageLength);
     }
 
@@ -354,4 +354,41 @@ public class BinaryPackager {
         return packet;
     }
 
+    /**
+     * package yacht event
+     * @param sourceID the sourceID of the Boat in the event
+     * @param eventID the event happened
+     *                1-boat collision
+     * @return the packet generated
+     */
+    public byte[] packageYachtEvent(int sourceID, int eventID){
+        byte[] packet=new byte[41];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 29;
+        short bodyLength = 22;
+        this.writeHeader(packetBuffer, type, bodyLength);
+
+        //MessageVersionNumber
+        packetBuffer.put((byte)1);
+        //Time
+        packetBuffer.put(getCurrentTimeStamp());
+//        AckNumber
+        packetBuffer.putShort((short)1);
+//        RaceID
+        packetBuffer.putInt(123456789);
+//      DestinationSourceID
+        packetBuffer.putInt(sourceID);
+//        IncidentID
+        packetBuffer.putInt(0);
+//        EventID
+        packetBuffer.put((byte) eventID);
+
+        //CRC
+        Checksum crc32 = new CRC32();
+        crc32.update(packet, 0, packet.length - 4);
+        packetBuffer.putInt((int) crc32.getValue());
+        return packet;
+    }
 }

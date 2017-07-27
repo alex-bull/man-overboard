@@ -17,7 +17,7 @@ import java.util.Set;
  * Data source
  */
 public interface DataSource {
-    boolean receive(String host, int port, Scene scene);
+    void receive(String host, int port, Scene scene, StreamDelegate delegate);
     List<CourseFeature> getCourseFeatures();
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
@@ -37,5 +37,7 @@ public interface DataSource {
     int getMapZoomLevel();
     double getShiftDistance();
     int getSourceID();
+    Set<Integer> getCollisions();
+    void removeCollsions(int sourceID);
     void send(byte[] data);
 }
