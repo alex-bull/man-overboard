@@ -4,6 +4,9 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by mgo65 on 3/03/17.
  * Boat object
@@ -23,6 +26,11 @@ public class Boat implements Competitor {
     private long timeAtLastMark;
     private double latitude;
     private double longitude;
+    //how much the boat if affected by wind, can be parsed in as constructor
+    private double blownFactor=0.01;
+//    external forces on the boat
+    private List<RepelForce> forces;
+
     private boolean sailsOut = true;
     /**
      * Creates a boat
@@ -37,12 +45,20 @@ public class Boat implements Competitor {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
-
+        forces =new ArrayList<>();
         this.color = color;
         this.abbreName = abbreName;
         legIndex = 0;
         timeToNextMark = 0;
         timeAtLastMark = 0;
+    }
+
+    public List<RepelForce> getForces() {
+        return forces;
+    }
+
+    public void addForce(RepelForce force){
+        this.forces.add(force);
     }
 
     /**
@@ -219,7 +235,7 @@ public class Boat implements Competitor {
             this.currentHeading.setValue(currentHeading + 360);
         }
         else{
-            this.currentHeading.setValue(currentHeading);
+            this.currentHeading.setValue(currentHeading%360);
         }
     }
 
@@ -247,7 +263,6 @@ public class Boat implements Competitor {
 
         //turn the new lat and lng back to degrees
         setPosition(new MutablePoint(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI));
-
     }
 
     public void setProperties(double velocity, double heading, double latitude, double longitude) {
@@ -268,6 +283,27 @@ public class Boat implements Competitor {
            downWind = downWind - 360;
        }
        return downWind;
+    }
+
+    public void blownByWind(double windAngle){
+//        dont do anything if boat is not really moving
+        if(getVelocity()<0.2){
+            return;
+        }
+
+        double downWind=getDownWind(windAngle);
+
+        double turnAngle=(getCurrentHeading()-windAngle)*blownFactor;
+
+        if(currentHeading.getValue() >= windAngle && currentHeading.getValue() < downWind) {
+
+            currentHeading.setValue(currentHeading.getValue() + turnAngle);
+        }
+        else{
+            currentHeading.setValue(currentHeading.getValue() - turnAngle);
+        }
+        System.out.println(getCurrentHeading());
+        setCurrentHeading(currentHeading.getValue() % 360);
     }
 
     /**

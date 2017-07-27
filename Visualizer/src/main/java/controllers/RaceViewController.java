@@ -1,5 +1,16 @@
 package controllers;
 
+import javafx.animation.*;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
+import javafx.util.Duration;
 import com.google.common.primitives.Doubles;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
@@ -34,12 +45,10 @@ import models.Dot;
 import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.Converter;
-import utilities.Annotation;
-import utilities.DataSource;
-import utilities.EnvironmentConfig;
-import utilities.RaceCalculator;
+import utilities.*;
 
 import java.awt.geom.Line2D;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -69,8 +78,6 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
 
-    private RaceCalculator raceCalculator;
-    private WebEngine mapEngine;
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Shape playerMarker;
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
@@ -83,15 +90,19 @@ public class RaceViewController implements Initializable, TableObserver {
     private List<CourseFeature> courseFeatures = null;
     private Map<String, Shape> markModels = new HashMap<>();
     private List<Polyline> layLines = new ArrayList<>();
-    private DataSource dataSource;
-    private long startTimeNano = System.nanoTime();
-    private long timeFromLastMark;
-    private String startAnnotation;
-    private int counter = 0;
     private Label startLabel;
     private Line startLine;
     private Line finishLine;
     private Line virtualLine;
+
+    private RaceCalculator raceCalculator;
+    private WebEngine mapEngine;
+    private DataSource dataSource;
+    private PolarTable polarTable;
+
+    private long startTimeNano = System.nanoTime();
+    private long timeFromLastMark;
+    private String startAnnotation;
     private Line sailLine;
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
@@ -575,6 +586,19 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawLaylines(Competitor boat) {
 
+        if (this.polarTable == null) {
+            try {
+                polarTable = new PolarTable("/polars/VO70_polar.txt", 12);
+            } catch (IOException e) {
+                System.out.println("Could not find polar file");
+                return;
+            }
+        }
+
+        this.upWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), true);
+        this.downWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), false);
+
+
         Pair<Double, Double> markCentre = this.getNextGateCentre(boat);
         if (markCentre == null) return;
         Double markX = markCentre.getKey();
@@ -607,6 +631,7 @@ public class RaceViewController implements Initializable, TableObserver {
             layLinePortAngle = windAngle - downWindAngle;
         }
 
+        //normalize angles
         if (layLineStarboardAngle > 360) layLineStarboardAngle = layLineStarboardAngle - 360;
         if (layLinePortAngle > 360) layLinePortAngle = layLinePortAngle - 360;
 
@@ -842,6 +867,31 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     /**
+     * checks collisions and draws them
+     */
+    public void checkCollision(){
+        for(int sourceID:new HashSet<>(dataSource.getCollisions())){
+            MutablePoint position=dataSource.getStoredCompetitors().get(sourceID).getPosition();
+            drawCollision(position.getXValue(),position.getYValue());
+            dataSource.removeCollsions(sourceID);
+        }
+
+    }
+
+    /**
+     * draws collisions at the location passed in
+     * @param centerX the x coordinate of the collision
+     * @param centerY the y coordinate of the collision
+     */
+    public void drawCollision(double centerX,double centerY){
+        CollisionRipple ripple = new CollisionRipple(centerX, centerY, 20);
+        raceViewPane.getChildren().add(ripple);
+        ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
+
+
+    }
+
+    /**
      * Refreshes the contents of the display to match the datasource
      *
      * @param dataSource DataSource the data to display
@@ -853,6 +903,8 @@ public class RaceViewController implements Initializable, TableObserver {
         updateFPS();
         updateCourse(gc);
         updateRace(gc);
+        checkCollision();
+
     }
 
     boolean isLoaded() {

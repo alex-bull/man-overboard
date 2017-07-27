@@ -50,7 +50,7 @@ public class TCPClient extends TimerTask {
      * @throws IOException
      */
     public void send(byte[] data) throws IOException {
-//        System.out.println("Sending message...");
+       // System.out.println("Sending message...");
         dos.write(data);
         dos.flush();
     }
@@ -104,6 +104,7 @@ public class TCPClient extends TimerTask {
         try {
             boolean isStartOfPacket = checkForSyncBytes();
             if (isStartOfPacket) {
+
                 byte[] header = this.getHeader();
                 int length = this.getMessageLength(header);
                 byte[] message=new byte[length];
