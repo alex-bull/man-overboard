@@ -2,6 +2,7 @@ package models;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.sqrt;
+import static java.lang.Math.toDegrees;
 
 /**
  * Created by khe60 on 26/07/17.
@@ -21,7 +22,7 @@ public class RepelForce {
     }
 
     public double angle(){
-        return atan2(y,x);
+        return toDegrees(atan2(y,x));
     }
 
     /**

@@ -235,7 +235,7 @@ public class Boat implements Competitor {
             this.currentHeading.setValue(currentHeading + 360);
         }
         else{
-            this.currentHeading.setValue(currentHeading);
+            this.currentHeading.setValue(currentHeading%360);
         }
     }
 

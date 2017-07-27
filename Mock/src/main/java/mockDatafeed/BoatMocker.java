@@ -309,18 +309,32 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
         double v1x=calculateVx(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
         double v1y=calculateVy(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
-        boat1.addForce(new RepelForce(v1x,v1y));
+        RepelForce force1=new RepelForce(v1x,v1y);
+        boat1.setCurrentHeading(force1.angle());
+        boat1.setVelocity(boat1.getVelocity()+ force1.getMagnitude()*100);
+
+
 
         double v2x=calculateVx(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
         double v2y=calculateVy(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
-        boat1.addForce(new RepelForce(v2x,v2y));
+        RepelForce force2=new RepelForce(v2x,v2y);
+        boat2.setCurrentHeading(force2.angle());
+        boat2.setVelocity(boat2.getVelocity()+ force2.getMagnitude()*100);
+
     }
 
     private double calculateVx(double v2, double angle2, double contactAngle, double v1, double angle1){
+        angle1=toRadians(angle1);
+        angle2=toRadians(angle2);
+        System.out.println(angle1);
+        System.out.println(angle2);
+        System.out.println(contactAngle);
         return v2*cos(angle2-contactAngle)*cos(contactAngle)+v1*sin(angle1-contactAngle)*cos(contactAngle+PI/2);
     }
 
     private double calculateVy(double v2, double angle2, double contactAngle, double v1, double angle1){
+        angle1=toRadians(angle1);
+        angle2=toRadians(angle2);
         return v2*cos(angle2-contactAngle)*sin(contactAngle)+v1*sin(angle1-contactAngle)*sin(contactAngle+PI/2);
     }
 
@@ -344,6 +358,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 //                send a collision packet
                 sendYachtEvent(comp.getSourceID(),1);
 
+//                calculateCollisions(comp,boat);
                 boat.updatePosition(-10);
                 comp.updatePosition(-10);
             }
@@ -361,7 +376,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         TCPserver.sendData(eventPacket);
 
         //wait for it to be send
-        Thread.sleep(5);
+        Thread.sleep(20);
 
     }
 

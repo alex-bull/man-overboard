@@ -331,7 +331,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 switch (parser.getEventID()){
                     case 1:
 //                  collision
-                        collisions.add(sourceID);
+                        collisions.add(parser.getSourceID());
                         break;
                     default:
                         break;
