@@ -53,6 +53,7 @@ public class BinaryPackager {
      * @param longitude Double, the current longitude of the boat
      * @param heading   Double, the current heading of the boat
      * @param boatSpeed Double, the current speed of the boat
+     * @param deviceType integer, indicate whether its a boat or mark
      * @return byte[], the binary packet
      */
     public byte[] packageBoatLocation(Integer sourceId, Double latitude, Double longitude, Double heading, Double boatSpeed, int deviceType) {
@@ -127,6 +128,7 @@ public class BinaryPackager {
      *                      6-Race
      *                      7-Boat
      * @return a bytearray of packaged xml message
+     * @throws IOException
      */
     public byte[] packageXML(int length, String xmlFileString, int messageType) throws IOException {
 
@@ -268,6 +270,7 @@ public class BinaryPackager {
      * @param expectedStartTime the expected start time
      * @param windDirection the wind direction
      * @param windSpeed the wind speed
+     * @param numBoats the number of boats in the race
      * @return byte[], the race status message
      */
     public byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime, short windDirection, short windSpeed, int numBoats) {

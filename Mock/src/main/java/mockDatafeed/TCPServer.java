@@ -52,6 +52,7 @@ public class TCPServer extends TimerTask{
      * The establishment period of the datasender, runs for time milliseconds
      *
      * @param time the amount of time in milliseconds of the connection establishment period
+     * @throws IOException
      */
     public void establishConnection(long time) throws IOException {
         System.out.println("start client connection");
@@ -194,6 +195,7 @@ public class TCPServer extends TimerTask{
      * sends the data to the output socket
      *
      * @param data byte[] byte array of the data
+     *             @throws IOException
      */
     public void sendData(byte[] data) throws IOException {
 
