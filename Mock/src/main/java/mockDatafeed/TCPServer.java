@@ -12,6 +12,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.TimerTask;
 
 import static parsers.Converter.hexByteArrayToInt;
@@ -59,7 +60,9 @@ public class TCPServer extends TimerTask{
         long finishTime = System.currentTimeMillis() + time;
         while (System.currentTimeMillis() < finishTime) {
             selector.select(time);
-            for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
+            Iterator<SelectionKey> iter=selector.selectedKeys().iterator();
+            while(iter.hasNext()){
+                SelectionKey key=iter.next();
                 //accept client connection
                 if (key.isAcceptable()) {
                     SocketChannel client = serverSocket.accept();
@@ -68,8 +71,19 @@ public class TCPServer extends TimerTask{
                     //generate and send sourceID to client
 
                 }
-                selector.selectedKeys().remove(key);
+                iter.remove();
             }
+//            for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
+//                //accept client connection
+//                if (key.isAcceptable()) {
+//                    SocketChannel client = serverSocket.accept();
+//                    client.configureBlocking(false);
+//                    client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE);
+//                    //generate and send sourceID to client
+//
+//                }
+//                selector.selectedKeys().remove(key);
+//            }
         }
         serverSocket.close();
 
