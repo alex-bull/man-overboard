@@ -12,7 +12,8 @@ public enum MessageType {
     MARK_ROUNDING(38),
     BOAT_ACTION(100),
     COURSE_WIND(44),
-    SOURCE_ID(56);
+    SOURCE_ID(56),
+    YACHT_ACTION(29);
 
     private final int value;
 

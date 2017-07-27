@@ -30,6 +30,7 @@ import parsers.xml.race.CompoundMarkData;
 import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
+import parsers.yachtEvent.YachtEventParser;
 import utility.PacketHandler;
 
 import java.io.IOException;
@@ -55,8 +56,9 @@ public class Interpreter implements DataSource, PacketHandler {
     private List<Competitor> competitorsPosition;
     private double windDirection;
     private BoatData boatData;
-    private BoatAction boatAction;
     private RaceData raceData;
+    private Set<Integer> collisions;
+    private BoatAction boatAction;
     private String timezone;
     private double windSpeed;
     private RaceStatusEnum raceStatus;
@@ -85,6 +87,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
+        collisions=new HashSet<>();
         this.raceXMLParser = new RaceXMLParser();
 
     }
@@ -346,6 +349,17 @@ public class Interpreter implements DataSource, PacketHandler {
                 byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
                 sourceID=byteBuffer.get();
                 break;
+            case YACHT_ACTION:
+                YachtEventParser parser=new YachtEventParser(packet);
+                switch (parser.getEventID()){
+                    case 1:
+//                  collision
+                        collisions.add(parser.getSourceID());
+                        break;
+                    default:
+                        break;
+                }
+                break;
 
             default:
                 break;
@@ -358,6 +372,15 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     public int getSourceID() {
         return sourceID;
+    }
+
+    /**
+     * removes sourceID from collisions list
+     * @param sourceID the sourceID to be removed
+     */
+    @Override
+    public void removeCollsions(int sourceID) {
+        collisions.remove(sourceID);
     }
 
     /**
@@ -509,6 +532,9 @@ public class Interpreter implements DataSource, PacketHandler {
         this.scaleFactor = raceXMLParser.getScaleFactor();
         this.minXMercatorCoord = raceXMLParser.getxMin();
         this.minYMercatorCoord = raceXMLParser.getyMin();
+    }
+    public Set<Integer> getCollisions(){
+        return collisions;
     }
 
     public HashMap<Integer, CourseFeature> getStoredFeatures() {

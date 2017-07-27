@@ -35,11 +35,11 @@ public class MainController {
     @FXML public void keyPressed(KeyEvent event) {
 
             switch (event.getCode()) {
-                case UP:
+                case W:
 //                System.out.println("Up");
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.UP.getValue(), dataSource.getSourceID()));
                     break;
-                case DOWN:
+                case S:
 //                System.out.println("Down");
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.DOWN.getValue(), dataSource.getSourceID()));
                     break;

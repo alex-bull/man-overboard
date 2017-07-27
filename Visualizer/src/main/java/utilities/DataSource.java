@@ -37,5 +37,7 @@ public interface DataSource {
     int getMapZoomLevel();
     double getShiftDistance();
     int getSourceID();
+    Set<Integer> getCollisions();
+    void removeCollsions(int sourceID);
     void send(byte[] data);
 }
