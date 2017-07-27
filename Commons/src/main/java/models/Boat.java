@@ -302,7 +302,6 @@ public class Boat implements Competitor {
         else{
             currentHeading.setValue(currentHeading.getValue() - turnAngle);
         }
-        System.out.println(getCurrentHeading());
         setCurrentHeading(currentHeading.getValue() % 360);
     }
 

@@ -327,9 +327,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private double calculateVx(double v2, double angle2, double contactAngle, double v1, double angle1){
         angle1=toRadians(angle1);
         angle2=toRadians(angle2);
-        System.out.println(angle1);
-        System.out.println(angle2);
-        System.out.println(contactAngle);
         return v2*cos(angle2-contactAngle)*cos(contactAngle)+v1*sin(angle1-contactAngle)*cos(contactAngle+PI/2);
     }
 
@@ -500,28 +497,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
     @Override
     public void run() {
-        //check if boats are at the end of the leg
-//        for (Integer sourceId : competitors.keySet()) {
-//            Competitor b = competitors.get(sourceId);
-            //if at the end stop
-//            if (b.getCurrentLegIndex() == courseFeatures.size() - 1) {
-//                b.setVelocity(0);
-//                b.setStatus(3);
-//                continue;
-//            }
-
-            //set status to started
-//            if (b.getCurrentLegIndex() == 0) {
-//                b.setStatus(1);
-//            }
-            //update direction if they are close enough
-          //  if (b.getPosition().isWithin(courseFeatures.get(b.getCurrentLegIndex() + 1).getGPSPoint())) {
-               // b.setCurrentLegIndex(b.getCurrentLegIndex() + 1);
-               // b.setCurrentHeading(courseFeatures.get(b.getCurrentLegIndex()).getExitHeading());
-           // }
-//        }
-        //update the position of the boats given the current position, heading and velocity
-
 
         //send the boat info to receiver
 

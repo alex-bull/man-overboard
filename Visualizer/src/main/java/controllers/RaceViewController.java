@@ -280,8 +280,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawMark(CourseFeature courseFeature) {
         double x = courseFeature.getPixelLocations().get(0).getXValue();
         double y = courseFeature.getPixelLocations().get(0).getYValue();
-        System.out.println(x);
-        System.out.println(y);
         Circle circle = new Circle(x, y, 4.5, ORANGERED);
         this.raceViewPane.getChildren().add(circle);
         this.markModels.put(courseFeature.getName(), circle);
@@ -602,6 +600,7 @@ public class RaceViewController implements Initializable, TableObserver {
         Double boatY = boat.getPosition().getYValue();
         Double heading = boat.getCurrentHeading();
         Double windAngle = dataSource.getWindDirection();
+        Double windSpeed = dataSource.getWindSpeed();
 
         //semi arbitrary point in front of the boat along the heading angle
         Double bx = boatX + (2000 * Math.sin(Math.toRadians(heading)));

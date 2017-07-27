@@ -313,11 +313,6 @@ public class Interpreter implements DataSource, PacketHandler {
                     }
                     long roundingTime = markRoundingData.getRoundingTime();
 
-//                    System.out.println(markRoundingData.getSourceID());
-//                    System.out.println(markID);
-//                    System.out.println(markName);
-//                    System.out.println("-----------------------------------------");
-
                     storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
                     storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
                 }
