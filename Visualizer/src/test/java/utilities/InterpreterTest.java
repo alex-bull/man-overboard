@@ -108,7 +108,7 @@ public class InterpreterTest {
     @Test
     public void ignoresBoatActionPacketWithMissingInfo() {
         byte[] header = {100,0,0,0};
-        byte[] packet = {0,0,0,0,0,0,0,0,0,0,0,0};
+        byte[] packet = new byte[20];
 
         interpreter.interpretPacket(header, packet);
     }
