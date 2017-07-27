@@ -11,6 +11,17 @@ public class MarkData {
     private Double targetLon;
     private int sourceID;
 
+    @Override
+    public String toString() {
+        return "MarkData{" +
+                "seqID=" + seqID +
+                ", name='" + name + '\'' +
+                ", targetLat=" + targetLat +
+                ", targetLon=" + targetLon +
+                ", sourceID=" + sourceID +
+                '}';
+    }
+
     /**
      * MarkData from the data stream
      * @param seqID int sequence id of mark
@@ -59,14 +70,4 @@ public class MarkData {
         this.targetLon = targetLon;
     }
 
-    @Override
-    public String toString() {
-        return "MarkData{" +
-                "seqID=" + seqID +
-                ", name='" + name + '\'' +
-                ", targetLat=" + targetLat +
-                ", targetLon=" + targetLon +
-                ", sourceID=" + sourceID +
-                '}';
-    }
 }

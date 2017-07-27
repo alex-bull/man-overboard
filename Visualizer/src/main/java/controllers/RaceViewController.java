@@ -296,6 +296,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawMark(CourseFeature courseFeature) {
         double x = courseFeature.getPixelLocations().get(0).getXValue();
         double y = courseFeature.getPixelLocations().get(0).getYValue();
+        System.out.println(x);
+        System.out.println(y);
         Circle circle = new Circle(x, y, 4.5, ORANGERED);
         this.raceViewPane.getChildren().add(circle);
         this.markModels.put(courseFeature.getName(), circle);
@@ -309,8 +311,9 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawBackgroundImage(List<Double> bounds) {
         try {
 
-            mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
-            mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
+           // mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
+            mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);",-48.305459,-137.7900947 ,-48.305459,-137.7900947 ));
+            //mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
         } catch (JSException e) {
             e.printStackTrace();
         }
