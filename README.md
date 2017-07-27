@@ -1,4 +1,3 @@
-
 # Zaffre Tides - RaceVision (GAME X)
  
 RaceVision is a Maven project to represent a boat race (such as the America's Cup).
@@ -23,4 +22,8 @@ Toggles on the LHS of the screen enable the user to view custom annotations.
 ### Multiplayer mode
  - Run more than one App instance
  - Run BoatMocker once (App instances must connect within 10 seconds)
+ 
+### Running Jar
+Navigate to team26 and run the command:
+java -jar Visualizer/target/Visualizer-0.0.jar | java -jar Mock/target/Mock-0.0.jar
  
