@@ -887,12 +887,11 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param centerY the y coordinate of the collision
      */
     public void drawCollision(double centerX,double centerY){
-
-        CollisionRipple ripple =new CollisionRipple(centerX,centerY,20);
-
+        CollisionRipple ripple = new CollisionRipple(centerX, centerY, 20);
         raceViewPane.getChildren().add(ripple);
-
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
+
+
     }
 
     /**
