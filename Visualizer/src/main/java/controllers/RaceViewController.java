@@ -1,21 +1,11 @@
 package controllers;
 
-import javafx.animation.*;
-
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.util.Duration;
 import com.google.common.primitives.Doubles;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -24,19 +14,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
-import javafx.util.Pair;
-import models.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
+import javafx.util.Pair;
 import models.Competitor;
 import models.CourseFeature;
 import models.Dot;
@@ -51,7 +42,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 import static javafx.scene.paint.Color.*;
 import static parsers.RaceStatusEnum.PREPARATORY;
 import static parsers.RaceStatusEnum.STARTED;
@@ -61,11 +52,6 @@ import static parsers.RaceStatusEnum.STARTED;
  */
 public class RaceViewController implements Initializable, TableObserver {
 
-    private Integer upWindAngle = 43; //Hard coded for now
-    private Integer downWindAngle = 153; //Hard coded for now
-    private final double boatLength = 20;
-    private final double startWakeOffset= 3;
-    private final double wakeWidthFactor=0.2;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
     @FXML private Label fpsCounter;
@@ -102,7 +88,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private WebEngine mapEngine;
     private DataSource dataSource;
     private PolarTable polarTable;
-
+    private int counter;
     private long startTimeNano = System.nanoTime();
     private long timeFromLastMark;
     private String startAnnotation;
@@ -110,8 +96,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
     private boolean isCenterSet=false;
-    private int counter = 0;
-    private boolean previousSailsOut = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -605,8 +589,8 @@ public class RaceViewController implements Initializable, TableObserver {
             }
         }
 
-        this.upWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), true);
-        this.downWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), false);
+        Integer upWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), true);
+        Integer downWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), false);
 
 
         Pair<Double, Double> markCentre = this.getNextGateCentre(boat);
