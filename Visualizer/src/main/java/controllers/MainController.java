@@ -27,7 +27,6 @@ public class MainController {
     private BinaryPackager binaryPackager;
 
 
-
     /**
      * Handle control key events
      * @param event KeyEvent
@@ -35,9 +34,13 @@ public class MainController {
     @FXML public void keyPressed(KeyEvent event) {
 
             switch (event.getCode()) {
+                case PAGE_UP:
+                case UP:
                 case W:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.UP.getValue(), dataSource.getSourceID()));
                     break;
+                case PAGE_DOWN:
+                case DOWN:
                 case S:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.DOWN.getValue(), dataSource.getSourceID()));
                     break;
@@ -51,9 +54,6 @@ public class MainController {
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
                     break;
             }
-
-
-
     }
 
 
@@ -66,7 +66,6 @@ public class MainController {
     void beginRace(DataSource dataSource, double width, double height) {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
-        timerController.begin(dataSource);
         tableController.addObserver(raceViewController);
         sparklinesController.setCompetitors(dataSource, width);
         this.binaryPackager = new BinaryPackager();
@@ -75,16 +74,19 @@ public class MainController {
 
             @Override
             public void handle(long now) {
-                if (raceViewController.isLoaded()) {
-                    raceViewController.refresh(dataSource);
-                    tableController.refresh(dataSource);
-                    windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
-                    sparklinesController.refresh();
-                    loadingPane.toBack();
-                }
-                else {
-                    loadingPane.toFront();
-                }
+            if (raceViewController.isLoaded()) {
+                raceViewController.refresh(dataSource);
+                tableController.refresh(dataSource);
+                windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
+                sparklinesController.refresh();
+                loadingPane.toBack();
+            }
+            else {
+                loadingPane.toFront();
+            }
+            if (!raceViewController.isLoaded()) {
+                timerController.begin(dataSource);
+            }
             }
         };
 

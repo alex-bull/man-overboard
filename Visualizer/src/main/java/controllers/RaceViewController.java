@@ -185,7 +185,6 @@ public class RaceViewController implements Initializable, TableObserver {
                 e.printStackTrace();
             }
         }
-
     }
 
     /**
@@ -200,7 +199,6 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Draws the line representing the sail of the boat
      */
-
     private void drawSail() {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         double windAngle = dataSource.getWindDirection();
@@ -339,7 +337,6 @@ public class RaceViewController implements Initializable, TableObserver {
             gc.restore();
 
         }
-
     }
 
 
@@ -580,7 +577,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
         if (this.polarTable == null) {
             try {
-                polarTable = new PolarTable("/polars/VO70_polar.txt", 12);
+                polarTable = new PolarTable("/polars/VO70_polar.txt", 40);
             } catch (IOException e) {
                 System.out.println("Could not find polar file");
                 return;
@@ -731,7 +728,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
 
-
     /**
      * Draws a layline on the pane
      * @param x Double, The first x value
@@ -752,8 +748,6 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().add(line);
         layLines.add(line);
     }
-
-
 
 
 
@@ -873,12 +867,10 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param centerX the x coordinate of the collision
      * @param centerY the y coordinate of the collision
      */
-    public void drawCollision(double centerX,double centerY){
+    private void drawCollision(double centerX,double centerY){
         CollisionRipple ripple = new CollisionRipple(centerX, centerY, 20);
         raceViewPane.getChildren().add(ripple);
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
-
-
     }
 
     /**

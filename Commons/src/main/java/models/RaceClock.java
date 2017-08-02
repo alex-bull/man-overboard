@@ -16,15 +16,16 @@ public class RaceClock extends AnimationTimer implements Clock {
     private int negativeTime;
     private ClockHandler clockHandler;
 
-
     public RaceClock(ClockHandler handler, int scaleFactor, int negativeTime) {
-
         this.clockHandler = handler;
         this.scaleFactor = scaleFactor;
         this.negativeTime = negativeTime;
-
     }
 
+    /**
+     * Starts the clock from the given time
+     * @param startTimeMillis long the start time in milliseconds from 1 January 1970
+     */
     @Override
     public void start(long startTimeMillis) {
         this.startTime = startTimeMillis;
@@ -68,9 +69,6 @@ public class RaceClock extends AnimationTimer implements Clock {
         } else {
             formattedTime += "0" + seconds;
         }
-
         return formattedTime;
     }
-
-
 }

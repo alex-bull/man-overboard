@@ -31,16 +31,16 @@ public class TimerController implements ClockHandler {
         this.dataSource = dataSource;
         long expectedStartTime = dataSource.getExpectedStartTime();
         long firstMessageTime = dataSource.getMessageTime();
-        long raceTime = Converter.convertToRelativeTime(expectedStartTime, firstMessageTime); // time in seconds since start of race
+        long timeSinceRaceStart = Converter.convertToRelativeTime(expectedStartTime, firstMessageTime) * 1000; // time in milliseconds
+        timeSinceRaceStart = 0;
 
         this.raceClock = new RaceClock(this, 1, 0);
-        long startTime = System.currentTimeMillis() - (raceTime * 1000); // absolute time that the race started
+        long startTime = System.currentTimeMillis() - timeSinceRaceStart; // absolute time that the race started
         raceClock.start(startTime);
 
         String timezone = dataSource.getCourseTimezone();
         this.worldClock = new WorldClock(this, timezone);
         worldClock.start();
-
     }
 
     /**
@@ -70,12 +70,10 @@ public class TimerController implements ClockHandler {
                 case RETIRED:
                 case POSTPONED:
                     timerText.setText("Unknown");
-
             }
         }
         if (clock == worldClock) {
             worldClockValue.setText(newTime);
         }
     }
-
 }
