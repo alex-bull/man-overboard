@@ -8,10 +8,12 @@ import org.junit.Test;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import static mockDatafeed.Keys.TACK;
 import static mockDatafeed.Keys.UP;
 import static org.junit.Assert.*;
 import static parsers.MessageType.BOAT_ACTION;
 import static utilities.Utility.fileToString;
+import static utility.Calculator.shortToDegrees;
 
 /**
  * Created by khe60 on 30/05/17.
@@ -65,4 +67,37 @@ public class BoatMockerTest {
             }
         }
     }
+
+    @Test
+    public void headingChangesWhenEnterPressed() throws Exception {
+        byte[] header = new byte[15];
+        byte[] packet = new byte[15];
+
+        byte messageType = (byte) BOAT_ACTION.getValue();
+        byte action = (byte) TACK.getValue();
+        byte sourceID = 100;
+
+        header[0] = messageType;
+        header[7] = sourceID;
+        packet[0] = action;
+
+        boatMocker.addConnection(); // generate competitors
+
+        double expectedHeading = 0;
+        for (Competitor competitor : boatMocker.getCompetitors()) {
+            if (competitor.getSourceID() == sourceID) {
+                double windAngle = boatMocker.getWindDirection();
+                expectedHeading = windAngle - (competitor.getCurrentHeading() - windAngle);
+            }
+        }
+
+        boatMocker.interpretPacket(header, packet);
+
+        for (Competitor competitor : boatMocker.getCompetitors()) {
+            if (competitor.getSourceID() == sourceID) {
+                assertEquals(expectedHeading, competitor.getCurrentHeading(), 1);
+            }
+        }
+    }
+
 }

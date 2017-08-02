@@ -219,6 +219,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         return boats;
     }
 
+    public double getWindDirection() {
+        return shortToDegrees(windGenerator.getWindDirection());
+    }
+
     public int addConnection() {
         return this.addCompetitors();
     }
