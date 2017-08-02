@@ -166,6 +166,14 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
+    /**
+     *
+     * @return the boat which the visualizer controlls
+     */
+    @Override
+    public Competitor getCompetitor() {
+        return storedCompetitors.get(sourceID);
+    }
 
     /**
      * Begins data receiver streaming from port.

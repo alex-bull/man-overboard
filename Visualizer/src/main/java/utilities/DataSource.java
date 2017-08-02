@@ -40,4 +40,5 @@ public interface DataSource {
     Set<Integer> getCollisions();
     void removeCollsions(int sourceID);
     void send(byte[] data);
+    Competitor getCompetitor();
 }

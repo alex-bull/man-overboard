@@ -50,6 +50,16 @@ public class MainController {
                 case ENTER:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
                     break;
+                case Q:
+                    if(raceViewController.isZoom()) {
+                        raceViewController.zoomOut();
+                    }
+                    else{
+                        raceViewController.zoomIn();
+                    }
+                    break;
+
+
             }
 
 

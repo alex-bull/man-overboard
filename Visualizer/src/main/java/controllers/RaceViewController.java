@@ -96,6 +96,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
     private boolean isCenterSet=false;
+    private boolean zoom=false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -288,17 +289,39 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Draw the background as the map and relocate it to the screen bounds
      *
-     * @param bounds List GPS bounds from the data source
      */
-    private void drawBackgroundImage(List<Double> bounds) {
+    private void drawBackgroundImage() {
         try {
-
-           // mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
-            mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);",-48.305459,-137.7900947 ,-48.305459,-137.7900947 ));
+            List<Double> bounds=dataSource.getGPSbounds();
+            mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
+//            mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);",-48.305459,-137.7900947 ,-48.305459,-137.7900947 ));
             //mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
         } catch (JSException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Zooms in on your boat
+     */
+    public void zoomIn(){
+        mapEngine.executeScript(String.format("setZoom(17);"));
+        zoom=true;
+    }
+
+    /**
+     * Zooms out from your boat
+     */
+    public void zoomOut(){
+        mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getMapZoomLevel()));
+        List<Double> bounds=dataSource.getGPSbounds();
+        mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
+
+        zoom=false;
+    }
+
+    public boolean isZoom() {
+        return zoom;
     }
 
     /**
@@ -326,7 +349,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
             //draw center once only to keep trails drawn properly
             if(!isCenterSet) {
-                drawBackgroundImage(dataSource.getGPSbounds());
+                drawBackgroundImage();
                 isCenterSet=true;
             }
 
@@ -811,6 +834,9 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param gc GraphicsContext
      */
     private void updateCourse(GraphicsContext gc) {
+        if(zoom){
+            mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);",dataSource.getCompetitor().getLatitude(),dataSource.getCompetitor().getLongitude()));
+        }
         if (dataSource.getCourseFeatures() != courseFeatures) {
             courseFeatures = dataSource.getCourseFeatures();
             drawCourse();
