@@ -15,6 +15,7 @@ public class Boat implements Competitor {
     private String teamName;
     private double velocity;
     private MutablePoint position;
+    private MutablePoint position17;
     private Color color;
     private String abbreName;
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
@@ -30,6 +31,14 @@ public class Boat implements Competitor {
     private double blownFactor=0.01;
 //    external forces on the boat
     private List<RepelForce> forces;
+
+    public MutablePoint getPosition17() {
+        return position17;
+    }
+
+    public void setPosition17(MutablePoint position17) {
+        this.position17 = position17;
+    }
 
     private boolean sailsOut = true;
     /**

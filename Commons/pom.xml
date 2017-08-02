@@ -42,6 +42,12 @@
             <artifactId>commons-math3</artifactId>
             <version>3.6.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/uk.com.robust-it/cloning -->
+        <dependency>
+            <groupId>uk.com.robust-it</groupId>
+            <artifactId>cloning</artifactId>
+            <version>1.9.5</version>
+        </dependency>
 
         <dependency>
             <groupId>info.cukes</groupId>

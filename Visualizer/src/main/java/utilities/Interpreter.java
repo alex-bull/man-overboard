@@ -1,9 +1,7 @@
 package utilities;
 
-import controllers.StarterController;
+import com.rits.cloning.Cloner;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -43,7 +41,6 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
 import static parsers.Converter.hexByteArrayToInt;
-import static parsers.MessageType.BOAT_ACTION;
 import static parsers.MessageType.UNKNOWN;
 
 /**
@@ -71,6 +68,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
     private List<CourseFeature> courseFeatures = new ArrayList<>();
     private List<MutablePoint> courseBoundary = new ArrayList<>();
+    private List<MutablePoint> courseBoundary17 = new ArrayList<>();
     private double paddingX;
     private double paddingY;
     private double scaleFactor;
@@ -401,10 +399,13 @@ public class Interpreter implements DataSource, PacketHandler {
 
         Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
 
-        double x = this.boatData.getPixelPoint().getXValue();
-        double y = this.boatData.getPixelPoint().getYValue();
+        double x = this.boatData.getMercatorPoint().getXValue();
+        double y = this.boatData.getMercatorPoint().getYValue();
         MutablePoint location = new MutablePoint(x, y);
         location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        Cloner cloner=new Cloner();
+        MutablePoint location17=cloner.deepClone(location);
+        location17.factor(Math.pow(2,17), Math.pow(2,17), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
         // boat colour
         if (competitor.getColor() == null) {
@@ -419,6 +420,7 @@ public class Interpreter implements DataSource, PacketHandler {
             competitorsPosition.add(competitor);
         } else {
             storedCompetitors.get(boatID).setPosition(location);
+            storedCompetitors.get(boatID).setPosition17(location17);
             storedCompetitors.get(boatID).setVelocity(boatData.getSpeed());
             storedCompetitors.get(boatID).setCurrentHeading(boatData.getHeading());
             storedCompetitors.get(boatID).setLatitude(boatData.getLatitude());
@@ -435,8 +437,6 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param courseFeature CourseFeature
      */
     private void updateCourseMarks(CourseFeature courseFeature) {
-        //make scaling in proportion
-        double scaleFactor = raceXMLParser.getScaleFactor();
         List<CourseFeature> points = new ArrayList<>();
 
         courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
@@ -470,6 +470,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     if(!seenRaceXML) {
                         this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
                         this.courseBoundary = raceXMLParser.getCourseBoundary();
+                        this.courseBoundary17=raceXMLParser.getCourseBoundary17();
                         this.compoundMarks = raceData.getCourse();
                         GPSbounds = raceXMLParser.getGPSBounds();
                         setScalingFactors();
@@ -485,6 +486,9 @@ public class Interpreter implements DataSource, PacketHandler {
 
     }
 
+    public List<MutablePoint> getCourseBoundary17() {
+        return courseBoundary17;
+    }
 
     /**
      * Parse binary data into XML
@@ -540,9 +544,15 @@ public class Interpreter implements DataSource, PacketHandler {
         this.paddingX = raceXMLParser.getPaddingX();
         this.paddingY = raceXMLParser.getPaddingY();
         this.scaleFactor = raceXMLParser.getScaleFactor();
+//        this.scaleFactor=Math.pow(2,17);
         this.minXMercatorCoord = raceXMLParser.getxMin();
         this.minYMercatorCoord = raceXMLParser.getyMin();
     }
+
+    public void setScalingFactor(double scaleFactor){
+        this.scaleFactor=scaleFactor;
+    }
+
     public Set<Integer> getCollisions(){
         return collisions;
     }

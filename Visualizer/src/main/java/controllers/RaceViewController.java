@@ -95,7 +95,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line sailLine;
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
-    private boolean isCenterSet=false;
     private boolean zoom=false;
 
     @Override
@@ -305,19 +304,22 @@ public class RaceViewController implements Initializable, TableObserver {
      * Zooms in on your boat
      */
     public void zoomIn(){
-        mapEngine.executeScript(String.format("setZoom(17);"));
         zoom=true;
+        mapEngine.executeScript(String.format("setZoom(17);"));
+        drawBoundary(raceViewCanvas.getGraphicsContext2D());
+
     }
 
     /**
      * Zooms out from your boat
      */
     public void zoomOut(){
+        zoom=false;
         mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getMapZoomLevel()));
         List<Double> bounds=dataSource.getGPSbounds();
         mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
+        drawBoundary(raceViewCanvas.getGraphicsContext2D());
 
-        zoom=false;
     }
 
     public boolean isZoom() {
@@ -331,26 +333,41 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawBoundary(GraphicsContext gc) {
 
+
+            if(isZoom()){
+                courseBoundary=dataSource.getCourseBoundary17();
+            }
+            else {
+                courseBoundary = dataSource.getCourseBoundary();
+            }
+
+
         if (courseBoundary != null) {
+
             gc.save();
             ArrayList<Double> boundaryX = new ArrayList<>();
             ArrayList<Double> boundaryY = new ArrayList<>();
 
             for (MutablePoint point : courseBoundary) {
+
                 boundaryX.add(point.getXValue());
                 boundaryY.add(point.getYValue());
             }
 
             // set zoom level
-            mapEngine.executeScript(String.format("setZoom(%d)", dataSource.getMapZoomLevel()));
+            if(isZoom()){
+                mapEngine.executeScript(String.format("setZoom(17);"));
+            }else{
+                mapEngine.executeScript(String.format("setZoom(%d)", dataSource.getMapZoomLevel()));
+            }
+
             gc.setLineDashes(5);
             gc.setLineWidth(0.8);
             gc.clearRect(0, 0, 4000, 4000);
 
             //draw center once only to keep trails drawn properly
-            if(!isCenterSet) {
+            if(!isZoom()) {
                 drawBackgroundImage();
-                isCenterSet=true;
             }
 
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
@@ -493,7 +510,16 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawBoat(Competitor boat) {
         Integer sourceId = boat.getSourceID();
-
+        double boatPositionX;
+        double boatPositionY;
+        if(isZoom()){
+            boatPositionX=raceViewCanvas.getWidth()/2;
+            boatPositionY=raceViewCanvas.getHeight()/2;
+        }
+        else{
+            boatPositionX=boat.getPosition().getXValue();
+            boatPositionY=boat.getPosition().getYValue();
+        }
 
         if (boatModels.get(sourceId) == null) {
             Polygon boatModel = new Polygon();
@@ -528,15 +554,15 @@ public class RaceViewController implements Initializable, TableObserver {
             });
         }
         //Translate and rotate the corresponding boat models
-        boatModels.get(sourceId).setLayoutX(boat.getPosition().getXValue());
-        boatModels.get(sourceId).setLayoutY(boat.getPosition().getYValue());
+        boatModels.get(sourceId).setLayoutX(boatPositionX);
+        boatModels.get(sourceId).setLayoutY(boatPositionY);
         boatModels.get(sourceId).toFront();
         boatModels.get(sourceId).getTransforms().clear();
         boatModels.get(sourceId).getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
 
         if (boat.getSourceID() == dataSource.getSourceID()) {
-            playerMarker.setLayoutX(boat.getPosition().getXValue());
-            playerMarker.setLayoutY(boat.getPosition().getYValue());
+            playerMarker.setLayoutX(boatPositionX);
+            playerMarker.setLayoutY(boatPositionY);
             playerMarker.getTransforms().clear();
             playerMarker.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         }
@@ -549,6 +575,8 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawWake(Competitor boat) {
         //not really the boat length but the offset of the wake from the y axis
+
+
         double boatLength = 10;
         double startWakeOffset = 3;
         double wakeWidthFactor = 0.2;
@@ -566,7 +594,18 @@ public class RaceViewController implements Initializable, TableObserver {
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
         wakeModel.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + newLength * wakeWidthFactor, newLength + boatLength, -startWakeOffset - newLength * wakeWidthFactor, newLength + boatLength);
-        wakeModel.getTransforms().add(new Translate(boat.getPosition().getXValue(), boat.getPosition().getYValue()));
+        double boatPositionX;
+        double boatPositionY;
+        if(isZoom()){
+            boatPositionX=raceViewCanvas.getWidth()/2;
+            boatPositionY=raceViewCanvas.getHeight()/2;
+        }
+        else{
+            boatPositionX=boat.getPosition().getXValue();
+            boatPositionY=boat.getPosition().getYValue();
+        }
+
+        wakeModel.getTransforms().add(new Translate(boatPositionX, boatPositionY));
         wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         wakeModel.toFront();
 
@@ -836,16 +875,15 @@ public class RaceViewController implements Initializable, TableObserver {
     private void updateCourse(GraphicsContext gc) {
         if(zoom){
             mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);",dataSource.getCompetitor().getLatitude(),dataSource.getCompetitor().getLongitude()));
+
         }
         if (dataSource.getCourseFeatures() != courseFeatures) {
             courseFeatures = dataSource.getCourseFeatures();
             drawCourse();
             drawLine(startLine, dataSource.getStartMarks());
             drawLine(finishLine, dataSource.getFinishMarks());
-            if (dataSource.getCourseBoundary() != courseBoundary) {
-                courseBoundary = dataSource.getCourseBoundary();
+
                 drawBoundary(gc);
-            }
         }
     }
 
