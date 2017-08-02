@@ -36,9 +36,7 @@ public class BinaryPackager {
 
         packetBuffer.put(action.byteValue());
 
-        Checksum crc32 = new CRC32();
-        crc32.update(packet, 0, packet.length - 4);
-        packetBuffer.putInt((int) crc32.getValue());
+        this.writeCRC(packetBuffer);
 
         return packet;
 
@@ -111,9 +109,7 @@ public class BinaryPackager {
 
 
         //CRC
-        Checksum crc32 = new CRC32();
-        crc32.update(packet, 0, packet.length - 4);
-        packetBuffer.putInt((int) crc32.getValue());
+        this.writeCRC(packetBuffer);
         return packet;
 
     }
@@ -153,17 +149,26 @@ public class BinaryPackager {
         packetBuffer.put(xmlFileString.getBytes());
 
         //CRC
-        Checksum crc32 = new CRC32();
-        crc32.update(packet, 0, packet.length - 4);
-        packetBuffer.putInt((int) crc32.getValue());
+        this.writeCRC(packetBuffer);
 
         return packet;
 
     }
 
+
+    private void writeCRC(ByteBuffer buffer) {
+
+        byte[] packet = buffer.array();
+        Checksum crc32 = new CRC32();
+        crc32.update(packet, 0, packet.length - 4);
+        buffer.putInt((int) crc32.getValue());
+
+    }
+
+
     /**
      * writes the header to a given buffer in AC35 streaming format
-     *
+     * Header is 15 bytes
      * @param buffer        The buffer to write to
      * @param messageType   byte, the type of message
      * @param messageLength short, the length of the message body
@@ -186,7 +191,7 @@ public class BinaryPackager {
 
     /**
      * writes the header to a given buffer in AC35 streaming format
-     *
+     * Header is 15 bytes
      * @param buffer        The buffer to write to
      * @param messageType   byte, the type of message
      * @param messageLength short, the length of the message body
@@ -333,9 +338,7 @@ public class BinaryPackager {
         packetBuffer.put(eachBoat);
 
         //CRC
-        Checksum crc32 = new CRC32();
-        crc32.update(packet, 0, packet.length - 4);
-        packetBuffer.putInt((int) crc32.getValue());
+        this.writeCRC(packetBuffer);
         return packet;
     }
 
@@ -354,9 +357,7 @@ public class BinaryPackager {
         packetBuffer.putInt(sourceID);
 
         //CRC
-        Checksum crc32 = new CRC32();
-        crc32.update(packet, 0, packet.length - 4);
-        packetBuffer.putInt((int) crc32.getValue());
+        this.writeCRC(packetBuffer);
 
         return packet;
     }
@@ -393,22 +394,76 @@ public class BinaryPackager {
         packetBuffer.put((byte) eventID);
 
         //CRC
-        Checksum crc32 = new CRC32();
-        crc32.update(packet, 0, packet.length - 4);
-        packetBuffer.putInt((int) crc32.getValue());
+        this.writeCRC(packetBuffer);
         return packet;
     }
+
 
     /**
      * Packages a mark rounding message
      * @param sourceID Integer, The source Id of the boat
      * @param roundingSide Short, The side of the mark rounded: 0=>unknown, 1=>port, 2=>starboard
-     * @param markId Integer, the compoundMarkId of the mark rounded
+     * @param markID Integer, the compoundMarkId of the mark rounded
      * @return byte[] the packet
      */
-    public byte[] packageMarkRounding(Integer sourceID, Short roundingSide, Integer markId) {
-        return new byte[3];
+    public byte[] packageMarkRounding(Integer sourceID, Short roundingSide, Integer markID) {
+
+        byte[] packet = new byte[40];
+        ByteBuffer buffer = ByteBuffer.wrap(packet);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 38;
+        short bodyLength = 21;
+        this.writeHeader(buffer, type, bodyLength);
+
+        //MessageVersionNumber
+        buffer.put((byte)1);
+        //Time
+        buffer.put(getCurrentTimeStamp());
+//        AckNumber
+        buffer.putShort((short)1);
+//        RaceID
+        buffer.putInt(123456789);
+//      SourceID
+        buffer.putInt(sourceID);
+        //boatStatus
+        buffer.put((byte) 1); //racing
+        //rounding side
+        buffer.putShort(roundingSide);
+        //Mark Type
+        buffer.put((byte) 0); //unknown
+        //markID
+        buffer.put(markID.byteValue());
+
+        //CRC
+        this.writeCRC(buffer);
+
+        return packet;
     }
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
