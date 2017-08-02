@@ -292,7 +292,6 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawBackgroundImage(List<Double> bounds) {
         try {
-
            // mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
             mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);",-48.305459,-137.7900947 ,-48.305459,-137.7900947 ));
             //mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));

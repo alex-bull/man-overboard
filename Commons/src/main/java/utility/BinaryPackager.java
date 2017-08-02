@@ -339,6 +339,11 @@ public class BinaryPackager {
         return packet;
     }
 
+    /**
+     * package a source id
+     * @param sourceID
+     * @return
+     */
     public byte[] packageSourceID(int sourceID){
         byte[] packet=new byte[23];
 
@@ -393,4 +398,17 @@ public class BinaryPackager {
         packetBuffer.putInt((int) crc32.getValue());
         return packet;
     }
+
+    /**
+     * Packages a mark rounding message
+     * @param sourceID Integer, The source Id of the boat
+     * @param roundingSide Short, The side of the mark rounded: 0=>unknown, 1=>port, 2=>starboard
+     * @param markId Integer, the compoundMarkId of the mark rounded
+     * @return byte[] the packet
+     */
+    public byte[] packageMarkRounding(Integer sourceID, Short roundingSide, Integer markId) {
+        return new byte[3];
+    }
+
+
 }

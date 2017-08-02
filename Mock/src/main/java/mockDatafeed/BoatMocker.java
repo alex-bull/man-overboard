@@ -458,7 +458,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
     }
 
-
+    /**
+     * sends boat xml
+     * @param xmlPath
+     * @param messageType
+     * @throws IOException
+     */
     private void sendBoatXML(String xmlPath, int messageType) throws IOException {
         StringBuilder stringBuilder=new StringBuilder();
         String boatTemplate="<Boat Type=\"Yacht\" SourceID=\"%s\" ShapeID=\"15\" StoweName=\"USA\" ShortName=\"%s\" ShorterName=\"USA\"\n" +
@@ -476,6 +481,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         String boatXML=String.format(xmlString,stringBuilder.toString());
         TCPserver.sendData(binaryPackager.packageXML(boatXML.length(), boatXML, messageType));
     }
+
+
     /**
      * Sends all xml files
      */
