@@ -139,6 +139,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                     case DOWN:
                         competitors.get(sourceID).changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
                         break;
+                    case TACK:
+                        double windAngle = shortToDegrees(windGenerator.getWindDirection());
+                        Competitor boat = competitors.get(sourceID);
+                        boat.setCurrentHeading(windAngle - (boat.getCurrentHeading() - windAngle));
+                        break;
                 }
                 break;
         }
