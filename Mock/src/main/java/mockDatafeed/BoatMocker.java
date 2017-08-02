@@ -22,12 +22,11 @@ import utility.*;
 import static java.lang.Math.*;
 import static java.lang.Math.abs;
 import static mockDatafeed.Keys.SAILS;
+import static mockDatafeed.Keys.TACK;
 import static parsers.MessageType.UNKNOWN;
-import static utility.Calculator.calcAngleBetweenPoints;
-import static utility.Calculator.convertRadiansToShort;
 
 import static utilities.Utility.fileToString;
-import static utility.Calculator.shortToDegrees;
+import static utility.Calculator.*;
 
 /**
  * Created by khe60 on 24/04/17.
@@ -96,6 +95,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         }
     }
 
+
     /**
      * Sends the boat action data to the Visualiser
      * @param action action of the boat
@@ -140,9 +140,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                         competitors.get(sourceID).changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
                         break;
                     case TACK:
-                        double windAngle = shortToDegrees(windGenerator.getWindDirection());
-                        Competitor boat = competitors.get(sourceID);
-                        boat.setCurrentHeading(windAngle - (boat.getCurrentHeading() - windAngle));
+                        sendBoatAction(TACK.getValue(), sourceID);
+                        double windDirection = shortToDegrees(windGenerator.getWindDirection());
+                        double boatHeading = competitors.get(sourceID).getCurrentHeading();
+                        competitors.get(sourceID).tack(calculateExpectedTack(windDirection, boatHeading));
                         break;
                 }
                 break;

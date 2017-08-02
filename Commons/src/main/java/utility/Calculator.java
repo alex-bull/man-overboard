@@ -33,7 +33,23 @@ public class Calculator {
         return (short) result;
     }
 
+    /**
+     * Converts a short value to degrees
+     * @param value short
+     * @return double degrees
+     */
     public static double shortToDegrees(short value) {
         return toDegrees((value+32768) * 2 * Math.PI / 65536);
     }
+
+    /**
+     * Calculates the expected tack angle
+     * @param windDirection double wind direction in degrees
+     * @param boatHeading double boat heading in degrees
+     * @return double the expected heading of the tack in degrees
+     */
+    public static double calculateExpectedTack(double windDirection, double boatHeading) {
+        return windDirection - (boatHeading - windDirection);
+    }
+
 }
