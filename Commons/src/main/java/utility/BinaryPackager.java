@@ -156,6 +156,10 @@ public class BinaryPackager {
     }
 
 
+    /**
+     * Writes a CRC to the end of a buffer
+     * @param buffer ByteBuffer, the buffer to write to
+     */
     private void writeCRC(ByteBuffer buffer) {
 
         byte[] packet = buffer.array();
@@ -221,6 +225,7 @@ public class BinaryPackager {
         long time = System.currentTimeMillis();
         return this.get48bitTime(time);
     }
+
 
     /**
      * Gets the time stamp from a LocalDateTime
@@ -297,6 +302,7 @@ public class BinaryPackager {
 
     }
 
+
     /**
      * package boat's status given a list of competitors
      *
@@ -322,6 +328,7 @@ public class BinaryPackager {
         return packet;
     }
 
+
     /**
      * combines the race status and each boat into one packet
      *
@@ -341,6 +348,7 @@ public class BinaryPackager {
         this.writeCRC(packetBuffer);
         return packet;
     }
+
 
     /**
      * package a source id
