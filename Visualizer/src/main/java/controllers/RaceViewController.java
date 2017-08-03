@@ -96,6 +96,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
     private boolean zoom=false;
+    private double boatPositionX;
+    private double boatPositionY;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -204,19 +206,18 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawSail() {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         double windAngle = dataSource.getWindDirection();
-        double boatXval = boat.getPosition().getXValue();
-        double boatYval = boat.getPosition().getYValue();
+
         sailLine.setStroke(Color.WHITE);
         sailLine.setStrokeWidth(2.5);
-        sailLine.setStartX(boatXval);
-        sailLine.setStartY(boatYval);
-        sailLine.setEndX(boatXval);
-        sailLine.setEndY(boatYval + 15);
+        sailLine.setStartX(boatPositionX);
+        sailLine.setStartY(boatPositionY);
+        sailLine.setEndX(boatPositionX);
+        sailLine.setEndY(boatPositionY + 15);
         sailLine.getTransforms().clear();
         if (boat.hasSailsOut()) {
-            sailLine.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatXval, boatYval));
+            sailLine.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatPositionX, boatPositionY));
         } else {
-            sailLine.getTransforms().add(new Rotate(windAngle, boatXval, boatYval));
+            sailLine.getTransforms().add(new Rotate(windAngle, boatPositionX, boatPositionY));
         }
         sailLine.toFront();
     }
@@ -439,8 +440,6 @@ public class RaceViewController implements Initializable, TableObserver {
         int sourceID = boat.getSourceID();
 
         int offset = 10;
-        Double xValue = boat.getPosition().getXValue();
-        Double yValue = boat.getPosition().getYValue();
 
         //all selected will be true if all selected
         boolean allSelected = true;
@@ -481,16 +480,16 @@ public class RaceViewController implements Initializable, TableObserver {
 
             }
             label.setVisible(checkBox.isSelected());
-            label.setLayoutX(xValue + 5);
-            label.setLayoutY(yValue + offset);
+            label.setLayoutX(boatPositionX + 5);
+            label.setLayoutY(boatPositionY + offset);
             if (checkBox.isSelected()) {
                 offset += 12;
             }
 
             startLabel = this.timeToStartlineAnnotations.get(sourceID);
             startLabel.setText(startAnnotation);
-            startLabel.setLayoutX(xValue + 5);
-            startLabel.setLayoutY(yValue + offset);
+            startLabel.setLayoutX(boatPositionX + 5);
+            startLabel.setLayoutY(boatPositionY + offset);
 
         }
 
@@ -504,14 +503,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     }
 
-    /**
-     * Draw or move a boat model for a competitor
-     * @param boat Competitor a competing boat
-     */
-    private void drawBoat(Competitor boat) {
-        Integer sourceId = boat.getSourceID();
-        double boatPositionX;
-        double boatPositionY;
+    private void setBoatSpeed(Competitor boat){
         if(isZoom()){
             boatPositionX=raceViewCanvas.getWidth()/2;
             boatPositionY=raceViewCanvas.getHeight()/2;
@@ -520,6 +512,17 @@ public class RaceViewController implements Initializable, TableObserver {
             boatPositionX=boat.getPosition().getXValue();
             boatPositionY=boat.getPosition().getYValue();
         }
+    }
+
+    /**
+     * Draw or move a boat model for a competitor
+     * @param boat Competitor a competing boat
+     */
+    private void drawBoat(Competitor boat) {
+        Integer sourceId = boat.getSourceID();
+
+        setBoatSpeed(boat);
+
 
         if (boatModels.get(sourceId) == null) {
             Polygon boatModel = new Polygon();
@@ -575,8 +578,6 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawWake(Competitor boat) {
         //not really the boat length but the offset of the wake from the y axis
-
-
         double boatLength = 10;
         double startWakeOffset = 3;
         double wakeWidthFactor = 0.2;
@@ -594,20 +595,14 @@ public class RaceViewController implements Initializable, TableObserver {
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
         wakeModel.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + newLength * wakeWidthFactor, newLength + boatLength, -startWakeOffset - newLength * wakeWidthFactor, newLength + boatLength);
-        double boatPositionX;
-        double boatPositionY;
-        if(isZoom()){
-            boatPositionX=raceViewCanvas.getWidth()/2;
-            boatPositionY=raceViewCanvas.getHeight()/2;
-        }
-        else{
-            boatPositionX=boat.getPosition().getXValue();
-            boatPositionY=boat.getPosition().getYValue();
-        }
+
 
         wakeModel.getTransforms().add(new Translate(boatPositionX, boatPositionY));
         wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         wakeModel.toFront();
+
+
+
 
     }
 
@@ -620,7 +615,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawTrack(Competitor boat, GraphicsContext gc) {
         gc.setFill(boat.getColor());
         gc.save();
-        Dot dot = new Dot(boat.getPosition().getXValue(), boat.getPosition().getYValue());
+        Dot dot = new Dot(boatPositionX, boatPositionY);
         Circle circle = new Circle(dot.getX(), dot.getY(), 1.5, boat.getColor());
         //add fade transition
         FadeTransition ft = new FadeTransition(Duration.millis(20000), circle);
@@ -901,7 +896,8 @@ public class RaceViewController implements Initializable, TableObserver {
                 startAnnotation="";
             }
             if (counter % 70 == 0) {
-                drawTrack(boat, gc);
+
+//                drawTrack(boat, gc);
                 if (selectedBoatSourceId != 0
                         && selectedBoatSourceId == boat.getSourceID()
                         && dataSource.getRaceStatus() == PREPARATORY) {
@@ -911,7 +907,10 @@ public class RaceViewController implements Initializable, TableObserver {
                     raceViewPane.getChildren().remove(virtualLine);
                 }
             }
+
             this.drawWake(boat);
+
+
             this.drawBoat(boat);
             this.moveAnnotations(boat);
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
