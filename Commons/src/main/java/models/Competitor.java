@@ -78,4 +78,6 @@ public interface Competitor {
     void disableTack();
 
     boolean isClockwise();
+
+    DoubleProperty getHeadingProperty();
 }

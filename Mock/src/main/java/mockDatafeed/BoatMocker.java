@@ -2,6 +2,10 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
@@ -148,7 +152,20 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                         boolean isClockwise = isTackingClockwise(windDirection, boatHeading);
                         double expectedTackAngle = calculateExpectedTack(windDirection, boatHeading);
                         double tackAngle = abs(expectedTackAngle - boatHeading);
+                        System.out.println("CLockwise? " + isClockwise);
                         boat.tack(tackAngle, isClockwise);
+                        System.out.println("Expected heading " + expectedTackAngle);
+                        System.out.println(getPositiveAngle(expectedTackAngle));
+//                        boat.setCurrentHeading(getPositiveAngle(expectedTackAngle));
+
+                        final Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO,
+                                new KeyValue(boat.getHeadingProperty(), boat.getCurrentHeading())),
+                                new KeyFrame(Duration.millis(1000),
+                                        new KeyValue(boat.getHeadingProperty(), getPositiveAngle(expectedTackAngle))));
+                        timeline.setCycleCount(1);
+//
+                        timeline.play();
+
                         break;
                 }
                 break;
