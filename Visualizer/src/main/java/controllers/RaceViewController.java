@@ -263,6 +263,8 @@ public class RaceViewController implements Initializable, TableObserver {
                 this.raceViewPane.getChildren().remove(mark);
             }
             drawMark(courseFeature);
+
+            mapEngine.executeScript(String.format("drawMarker(%.9f,%.9f);",courseFeature.getGPSPoint().getXValue(),courseFeature.getGPSPoint().getYValue()));
         }
     }
 
@@ -312,7 +314,7 @@ public class RaceViewController implements Initializable, TableObserver {
             List<Double> bounds=dataSource.getGPSbounds();
             mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
 //            mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);",-48.305459,-137.7900947 ,-48.305459,-137.7900947 ));
-            //mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
+            mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
         } catch (JSException e) {
             e.printStackTrace();
         }
@@ -371,7 +373,6 @@ public class RaceViewController implements Initializable, TableObserver {
             ArrayList<Double> boundaryY = new ArrayList<>();
 
             for (MutablePoint point : courseBoundary) {
-
                 boundaryX.add(point.getXValue());
                 boundaryY.add(point.getYValue());
             }
