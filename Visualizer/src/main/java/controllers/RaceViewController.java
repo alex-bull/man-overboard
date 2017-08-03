@@ -678,11 +678,11 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Draw a directional arrow on the canvas to guide the boat in the right direction to the next mark
      *
-     * @param boat Competitor
      * @param gc   GraphicsContext the gc to draw the track on
      */
-    private void drawGuidingArrow(Competitor boat, GraphicsContext gc) {
-
+    private void updateGuidingArrow(GraphicsContext gc) {
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        System.out.println("Leg index: " + boat.getCurrentLegIndex());
     }
 
     /**
@@ -893,7 +893,7 @@ public class RaceViewController implements Initializable, TableObserver {
         updateCourse(gc);
         updateRace(gc);
         checkCollision();
-
+        updateGuidingArrow(gc);
     }
 
     boolean isLoaded() {

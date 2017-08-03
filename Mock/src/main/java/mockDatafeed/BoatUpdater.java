@@ -79,14 +79,16 @@ public class BoatUpdater {
      * @param boat Competitor the boat to check collisions for
      */
     private void handleMarkRounding(Competitor boat) throws IOException, InterruptedException {
-
         final double roundingRadius = 200;
-        int nextId = raceData.getLegIndexToSourceId().get(boat.getCurrentLegIndex() + 1).get(0); //TODO:- check against all ids
+        int nextLegIndex = boat.getCurrentLegIndex() + 1;
+
         for (Competitor markBoat : markBoats) { // TODO map markboats to sourceid
-            if (markBoat.getSourceID() == nextId) {
+            if (raceData.getLegIndexToSourceId().get(nextLegIndex).contains(markBoat.getSourceID())) {
                 double distance = raceCourse.distanceBetweenGPSPoints(markBoat.getPosition(), boat.getPosition());
                 if (distance < roundingRadius) {
                     handler.markRoundingEvent(boat.getSourceID());
+                    boat.setCurrentLegIndex(nextLegIndex);
+                    System.out.println("ROUNDED MARK");
                 }
             }
         }

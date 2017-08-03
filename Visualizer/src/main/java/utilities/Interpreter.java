@@ -281,10 +281,8 @@ public class Interpreter implements DataSource, PacketHandler {
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
                     String markName;
-//                    if(storedFeatures.keySet().contains(markID)) {
-//                        markName = storedFeatures.get(markID).getName();
-//                    }
-                    switch(markID){
+
+                    switch (markID) {
                         case 100:
                             markName="Entry Limit Line";
                             break;
@@ -311,6 +309,7 @@ public class Interpreter implements DataSource, PacketHandler {
                             break;
 
                     }
+                    markRoundingData.setMarkName(markName);
                     long roundingTime = markRoundingData.getRoundingTime();
 
                     storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
@@ -349,20 +348,18 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 ByteBuffer byteBuffer=ByteBuffer.wrap(packet);
                 byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-                sourceID=byteBuffer.get();
+                sourceID = byteBuffer.get();
                 break;
             case YACHT_ACTION:
-                YachtEventParser parser=new YachtEventParser(packet);
+                YachtEventParser parser = new YachtEventParser(packet);
                 switch (parser.getEventID()){
-                    case 1:
-//                  collision
+                    case 1: // collision
                         collisions.add(parser.getSourceID());
                         break;
                     default:
                         break;
                 }
                 break;
-
             default:
                 break;
         }
