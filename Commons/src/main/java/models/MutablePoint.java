@@ -103,4 +103,13 @@ public class MutablePoint {
         return Math.abs(getXValue() - o.getXValue()) < EPSILON && Math.abs(getYValue() - o.getYValue()) < EPSILON * 2;
     }
 
+
+    /**
+     * shifts the point by x,y
+     * @param x the x value to be shifted by
+     * @param y the y value to be shifted by
+     */
+    public MutablePoint shift(double x, double y){
+        return new MutablePoint(getXValue()+x,getYValue()+y);
+    }
 }

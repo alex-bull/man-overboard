@@ -98,6 +98,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private boolean zoom=false;
     private double boatPositionX;
     private double boatPositionY;
+    private MutablePoint currentPosition;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -333,15 +334,19 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param gc GraphicsContext
      */
     private void drawBoundary(GraphicsContext gc) {
-
-
             if(isZoom()){
-                courseBoundary=dataSource.getCourseBoundary17();
+                courseBoundary=new ArrayList<>();
+                for(MutablePoint p: dataSource.getCourseBoundary17()){
+                    courseBoundary.add(p.shift(-currentPosition.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition.getYValue()+raceViewCanvas.getHeight()/2));
+                }
+                System.out.println(courseBoundary);
+
             }
             else {
+                System.out.println(dataSource.getCourseBoundary17());
+                System.out.println(currentPosition);
                 courseBoundary = dataSource.getCourseBoundary();
             }
-
 
         if (courseBoundary != null) {
 
@@ -503,7 +508,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
     }
 
-    private void setBoatSpeed(Competitor boat){
+    private void setBoatLocation(Competitor boat){
+        currentPosition=boat.getPosition17();
         if(isZoom()){
             boatPositionX=raceViewCanvas.getWidth()/2;
             boatPositionY=raceViewCanvas.getHeight()/2;
@@ -521,7 +527,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawBoat(Competitor boat) {
         Integer sourceId = boat.getSourceID();
 
-        setBoatSpeed(boat);
+        setBoatLocation(boat);
 
 
         if (boatModels.get(sourceId) == null) {
@@ -886,6 +892,11 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draws the race. This includes the boat, wakes, track and annotations.
      */
     private void updateRace(GraphicsContext gc) {
+        //needs to redraw if zoomed in
+        if(isZoom()){
+            drawBoundary(gc);
+        }
+
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
         for (Competitor boat : competitors) {
             timeFromLastMark = Converter.convertToRelativeTime(boat.getTimeAtLastMark(), dataSource.getMessageTime());

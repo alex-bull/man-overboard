@@ -402,9 +402,9 @@ public class Interpreter implements DataSource, PacketHandler {
         double x = this.boatData.getMercatorPoint().getXValue();
         double y = this.boatData.getMercatorPoint().getYValue();
         MutablePoint location = new MutablePoint(x, y);
-        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
         Cloner cloner=new Cloner();
         MutablePoint location17=cloner.deepClone(location);
+        location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
         location17.factor(Math.pow(2,17), Math.pow(2,17), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
         // boat colour
