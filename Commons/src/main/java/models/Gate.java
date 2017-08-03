@@ -175,4 +175,9 @@ public class Gate implements CourseFeature {
     public MutablePoint getGPSPoint() {
         return GPSPoint1;
     }
+
+    @Override
+    public CourseFeature shift(double x, double y) {
+        return new Gate(name,GPSPoint1,pixelPoint1.shift(x,y),pixelPoint2.shift(x,y),isFinish,isLine,index);
+    }
 }

@@ -65,9 +65,20 @@ public class Interpreter implements DataSource, PacketHandler {
     private long expectedStartTime;
     private RaceXMLParser raceXMLParser;
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
+    private HashMap<Integer,CourseFeature> storedFeatures17=new HashMap<>();
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
     private List<CourseFeature> courseFeatures = new ArrayList<>();
+    private List<CourseFeature> courseFeatures17 = new ArrayList<>();
     private List<MutablePoint> courseBoundary = new ArrayList<>();
+
+    public List<CourseFeature> getCourseFeatures17() {
+        return courseFeatures17;
+    }
+
+    public HashMap<Integer, CourseFeature> getStoredFeatures17() {
+        return storedFeatures17;
+    }
+
     private List<MutablePoint> courseBoundary17 = new ArrayList<>();
     private double paddingX;
     private double paddingY;
@@ -438,15 +449,22 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     private void updateCourseMarks(CourseFeature courseFeature) {
         List<CourseFeature> points = new ArrayList<>();
+        List<CourseFeature> points17 = new ArrayList<>();
 
+        Cloner cloner=new Cloner();
+        CourseFeature courseFeature17=cloner.deepClone(courseFeature);
         courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        courseFeature17.factor(Math.pow(2,17), Math.pow(2,17), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
         this.storedFeatures.put(boatData.getSourceID(), courseFeature);
+        this.storedFeatures17.put(boatData.getSourceID(), courseFeature17);
 
         for (Integer id : this.storedFeatures.keySet()) {
             points.add(this.storedFeatures.get(id));
+            points17.add(this.storedFeatures17.get(id));
         }
         this.courseFeatures = points;
+        this.courseFeatures17=points17;
     }
 
     /**

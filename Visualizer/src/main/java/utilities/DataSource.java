@@ -41,5 +41,7 @@ public interface DataSource {
     void removeCollsions(int sourceID);
     void send(byte[] data);
     Competitor getCompetitor();
-    public List<MutablePoint> getCourseBoundary17();
+    List<MutablePoint> getCourseBoundary17();
+    List<CourseFeature> getCourseFeatures17();
+    HashMap<Integer, CourseFeature> getStoredFeatures17();
 }

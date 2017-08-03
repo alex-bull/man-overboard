@@ -247,6 +247,14 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draws the course features on the canvas
      */
     private void drawCourse() {
+        if(isZoom()){
+            courseFeatures=new ArrayList<>();
+            for(CourseFeature cf: dataSource.getCourseFeatures17()){
+                courseFeatures.add(cf.shift(-currentPosition.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition.getYValue()+raceViewCanvas.getHeight()/2));
+            }
+        }else{
+            courseFeatures=dataSource.getCourseFeatures();
+        }
 
         // loops through all course features
         for (CourseFeature courseFeature : courseFeatures) {
@@ -264,11 +272,19 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param gatesID List of integer of the gates
      */
     private void drawLine(Line line, List<Integer> gatesID) {
-
-        double x1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
-        double y1 = dataSource.getStoredFeatures().get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
-        double x2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
-        double y2 = dataSource.getStoredFeatures().get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
+        HashMap<Integer,CourseFeature> features=new HashMap<>();
+        if(isZoom()){
+            for(Integer id: dataSource.getStoredFeatures17().keySet()){
+                features.put(id,dataSource.getStoredFeatures17().get(id).shift(-currentPosition.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition.getYValue()+raceViewCanvas.getHeight()/2));
+            }
+        }
+        else{
+            features=dataSource.getStoredFeatures();
+        }
+        double x1 = features.get(gatesID.get(0)).getPixelLocations().get(0).getXValue();
+        double y1 = features.get(gatesID.get(0)).getPixelLocations().get(0).getYValue();
+        double x2 = features.get(gatesID.get(1)).getPixelLocations().get(0).getXValue();
+        double y2 = features.get(gatesID.get(1)).getPixelLocations().get(0).getYValue();
         line.setStartX(x1);
         line.setStartY(y1);
         line.setEndX(x2);
@@ -309,6 +325,7 @@ public class RaceViewController implements Initializable, TableObserver {
         zoom=true;
         mapEngine.executeScript(String.format("setZoom(17);"));
         drawBoundary(raceViewCanvas.getGraphicsContext2D());
+        drawCourse();
 
     }
 
@@ -321,7 +338,9 @@ public class RaceViewController implements Initializable, TableObserver {
         List<Double> bounds=dataSource.getGPSbounds();
         mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
         drawBoundary(raceViewCanvas.getGraphicsContext2D());
-
+        drawLine(startLine, dataSource.getStartMarks());
+        drawLine(finishLine, dataSource.getFinishMarks());
+        drawCourse();
     }
 
     public boolean isZoom() {
@@ -339,12 +358,9 @@ public class RaceViewController implements Initializable, TableObserver {
                 for(MutablePoint p: dataSource.getCourseBoundary17()){
                     courseBoundary.add(p.shift(-currentPosition.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition.getYValue()+raceViewCanvas.getHeight()/2));
                 }
-                System.out.println(courseBoundary);
 
             }
             else {
-                System.out.println(dataSource.getCourseBoundary17());
-                System.out.println(currentPosition);
                 courseBoundary = dataSource.getCourseBoundary();
             }
 
@@ -884,7 +900,7 @@ public class RaceViewController implements Initializable, TableObserver {
             drawLine(startLine, dataSource.getStartMarks());
             drawLine(finishLine, dataSource.getFinishMarks());
 
-                drawBoundary(gc);
+            drawBoundary(gc);
         }
     }
 
@@ -895,6 +911,7 @@ public class RaceViewController implements Initializable, TableObserver {
         //needs to redraw if zoomed in
         if(isZoom()){
             drawBoundary(gc);
+            drawCourse();
         }
 
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
@@ -935,8 +952,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void checkCollision(){
         for(int sourceID:new HashSet<>(dataSource.getCollisions())){
-            MutablePoint position=dataSource.getStoredCompetitors().get(sourceID).getPosition();
-            drawCollision(position.getXValue(),position.getYValue());
+            drawCollision(boatPositionX,boatPositionY);
             dataSource.removeCollsions(sourceID);
         }
 
