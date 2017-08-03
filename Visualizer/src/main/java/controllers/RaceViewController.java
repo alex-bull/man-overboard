@@ -882,19 +882,35 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-    private void tackBoat(){
+    public void tackBoat(){
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
 
         if(boat.tackEnabled()) {
             Polygon boatModel = boatModels.get(boat.getSourceID());
-            double windAngle = dataSource.getWindDirection();
-            double expectedHeading = calculateExpectedTack(windAngle, boat.getCurrentHeading());
 
-            RotateTransition rt = new RotateTransition(Duration.millis(1000), boatModel);
-//            rt.setByAngle(90);
+//            double windAngle = dataSource.getWindDirection();
+//            double expectedHeading = calculateExpectedTack(windAngle, boat.getCurrentHeading());
+            double newHeading = boat.getCurrentHeading() + 45;
+//            boatModel.getTransforms().add(new Rotate(newHeading, 0, 0));
+//            boat.setCurrentHeading(newHeading);
+
+//            System.out.println("new headin " + newHeading );
+//            System.out.println("tack angle " + boat.getTackAngle());
+//            if(newHeading > boat.getTackAngle()) {
+//                boat.disableTack();
+//            }
+            RotateTransition rt = new RotateTransition(Duration.millis(200), boatModel);
+
+            rt.setByAngle(180);
             rt.setCycleCount(1);
-            rt.setToAngle(expectedHeading);
+//            rt.setAutoReverse(true);
+
+            double rotation = boatModel.getRotate();
+            System.out.println("rotation angle is " +rotation);
+//            rt.setToAngle(boat.getTackAngle());
+//            System.out.println("to angle " + boat.getTackAngle());
             rt.play();
+            System.out.println("Heading is now and tack angle " + boat.getCurrentHeading() + boat.getTackAngle());
 
 //            TackAndGybe tack = new TackAndGybe(windAngle, boat.getCurrentHeading(), boatModel);
 //            tack.animate();
@@ -916,7 +932,7 @@ public class RaceViewController implements Initializable, TableObserver {
         updateCourse(gc);
         updateRace(gc);
         checkCollision();
-        tackBoat();
+
 
     }
 

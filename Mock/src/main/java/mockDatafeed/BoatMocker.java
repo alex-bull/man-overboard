@@ -48,6 +48,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private Course raceCourse = new RaceCourse(null, true);
     private boolean flag=true;
     private Timer timer;
+    private double tackAngle;
+    private boolean tackingOn = false;
 
    public BoatMocker() throws IOException , JDOMException {
         timer =new Timer();
@@ -140,10 +142,25 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                         competitors.get(sourceID).changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
                         break;
                     case TACK:
+                        this.tackingOn = true;
                         sendBoatAction(TACK.getValue(), sourceID);
                         double windDirection = shortToDegrees(windGenerator.getWindDirection());
                         double boatHeading = competitors.get(sourceID).getCurrentHeading();
-                        competitors.get(sourceID).tack();
+//                        this.tackAngle = calculateExpectedTack(windDirection, boatHeading);
+                        Competitor boat = competitors.get(sourceID);
+//                        double newHeading = boat.getCurrentHeading() + 10;
+//                        boat.setCurrentHeading(newHeading);
+//                        if (newHeading > this.tackAngle) {
+//                            boat.disableTack();
+//                        }
+//                        else {
+//                            boat.tack(calculateExpectedTack(windDirection, boatHeading));
+//
+//                        }
+
+                        boolean isClockwise = isTackingClockwise(windDirection, boatHeading);
+                        System.out.println("CCCCALC CLOCK? " + isClockwise);
+                        boat.tack(calculateExpectedTack(windDirection, boatHeading), isClockwise);
                         break;
                 }
                 break;
@@ -278,9 +295,41 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
             this.handleCourseCollisions(boat);
             this.handleBoatCollisions(boat);
+//            this.handleTackAndGybe(boat);
 //            boat.blownByWind(twa);
 
         }
+    }
+
+    private void handleTackAndGybe(Competitor boat) {
+
+//        if(time.now() < prev_time && boat.tackEnabled()) {
+        if(boat.tackEnabled()){
+            if(boat.isClockwise()) {
+                boat.setCurrentHeading(boat.getCurrentHeading() - 1);
+                System.out.println("CLOCKWISE current heading " + boat.getCurrentHeading());
+                System.out.println("tack angle " + boat.getTackAngle());
+                System.out.println(boat.getCurrentHeading() > boat.getTackAngle());
+
+                if(boat.getCurrentHeading() > boat.getTackAngle()) {
+                    boat.disableTack();
+                }
+            }
+            else {
+                boat.setCurrentHeading(boat.getCurrentHeading() - 1);
+                System.out.println("antiCLOCKWISE current heading " + boat.getCurrentHeading());
+                System.out.println("tack angle " + boat.getTackAngle());
+                System.out.println(boat.getCurrentHeading() < boat.getTackAngle());
+
+                // if current heading is on tack angle then stop?
+                if(boat.getCurrentHeading() == boat.getTackAngle()) {
+                    boat.disableTack();
+                }
+            }
+        }
+
+//        }
+
     }
 
 
@@ -512,6 +561,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
         try {
             updatePosition();
+            // TO DO : if tacking is on
+            if(tackingOn) {
+                //update
+            }
             sendBoatLocation();
             sendRaceStatus();
         } catch (IOException e) {

@@ -48,6 +48,7 @@ public class MainController {
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILS.getValue(), dataSource.getSourceID()));
                     break;
                 case ENTER:
+                    raceViewController.tackBoat();
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
                     break;
             }
