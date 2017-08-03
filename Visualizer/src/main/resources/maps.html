@@ -346,6 +346,41 @@ shifts the google maps to center at the bound
         return map.getProjection().fromPointToLatLng(worldPoint);
     }
 
+    function polygon_fadein(polygon, seconds, callback){
+        polygon.setOptions({fillOpacity:1.0, strokeOpacity:1.0});
+        var fill = 50/(seconds*999);
+        var stroke = 50/(seconds*999);
+        var fadein = setInterval(function(){
+            if((polygon.get("strokeOpacity") <0.01) &&  (polygon.get("fillOpacity") <0.01)){
+                clearInterval(fadein);
+                if(typeof(callback) == 'function')
+                    callback();
+                return;
+            }
+            polygon.setOptions({
+                'fillOpacity': Math.max(0, polygon.fillOpacity-fill),
+                'strokeOpacity': Math.max(0, polygon.strokeOpacity-stroke)
+            });
+        }, 50);
+    }
+
+    function create_collision(lat,lon){
+        var collisionCircle=new google.maps.Circle({
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 1.0,
+            map: map,
+            center: {lat:lat,lng:lon},
+            radius: 50
+        });
+        polygon_fadein(collisionCircle,1);
+
+    }
+
+
+
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzOciYkpka9RhAVpxko1Z0vm-bdJEjWHw&libraries=places&callback=initMap"
         defer></script>

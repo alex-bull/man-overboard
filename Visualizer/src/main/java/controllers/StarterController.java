@@ -227,7 +227,7 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
 //                primaryStage.setMaxWidth(primaryScreenBounds.getWidth());
 //                primaryStage.setMaxHeight(primaryScreenBounds.getHeight());
                 primaryStage.setScene(scene);
-                primaryStage.setFullScreen(true);
+
             }
         });
     }
