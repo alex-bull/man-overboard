@@ -2,6 +2,8 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
+import com.sun.org.apache.xml.internal.utils.MutableAttrListImpl;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
 import models.*;
@@ -15,6 +17,7 @@ import utilities.PolarTable;
 
 import java.awt.geom.Line2D;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.SocketException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,7 +44,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
     private List<MutablePoint> courseBoundary;
-    private List<MutablePoint> courseScaledBoundary;
+    private List<MutablePoint> courseLineEquations = new ArrayList<>();
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager;
@@ -54,8 +57,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private Course raceCourse = new RaceCourse(null, true);
     private boolean flag=true;
     private Timer timer;
+    private List<ArrayList<Double>> courseBoundaryPoints = new ArrayList<>();
 
-   public BoatMocker() throws IOException , JDOMException {
+    public BoatMocker() throws IOException , JDOMException {
         timer =new Timer();
         random=new Random();
         prestart = new MutablePoint(32.286577, -64.864304);
@@ -194,7 +198,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         RaceCourse course = new RaceCourse(cl.parseCourse(), false);
         courseFeatures = course.getPoints();
         courseBoundary = cl.parseCourseBoundary();
-        courseScaledBoundary = cl.getScaledBoundary();
+        getLineBetweenTwoPoints();
     }
 
     /**
@@ -313,22 +317,51 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                 break;
             }
         }
+        for (MutablePoint equation: courseLineEquations ) {
+            int index = courseLineEquations.indexOf(equation);
+            double y = boat.getPosition().getYValue();
+            double m = equation.getXValue();
+            double x = boat.getPosition().getXValue();
+            double c = equation.getYValue();
+            double distance = y - (m * x + c);
+            System.out.println(abs(distance));
+            if ((abs(distance) < 0.00005) && y < max(courseBoundaryPoints.get(index).get(1), courseBoundaryPoints.get(index).get(3)) &&
+                    y > min(courseBoundaryPoints.get(index).get(1), courseBoundaryPoints.get(index).get(3)) &&
+                    x < max(courseBoundaryPoints.get(index).get(0), courseBoundaryPoints.get(index).get(2)) &&
+                    x > min(courseBoundaryPoints.get(index).get(0), courseBoundaryPoints.get(index).get(2))) {
+                sendYachtEvent(boat.getSourceID(), 1);
+                boat.updatePosition(-10);
+                break;
+            }
+        }
     }
 
     private void getLineBetweenTwoPoints() {
         MutablePoint pt1 = null;
         MutablePoint pt2 = null;
-        for (int i=0; i <courseScaledBoundary.size(); i++) {
-            if (i == courseScaledBoundary.size()-1) {
-                pt1 = courseScaledBoundary.get(i);
-                pt2 = courseScaledBoundary.get(0);
+        for (int i=0; i <courseBoundary.size(); i++) {
+            if (i == courseBoundary.size()-1) {
+                pt1 = courseBoundary.get(i);
+                pt2 = courseBoundary.get(0);
             }
             else {
-                pt1 = courseScaledBoundary.get(i);
-                pt2 = courseScaledBoundary.get(i + 1);
+                pt1 = courseBoundary.get(i);
+                pt2 = courseBoundary.get(i + 1);
             }
+            double x1 = pt1.getXValue();
+            double y1 = pt1.getYValue();
+            double x2 = pt2.getXValue();
+            double y2 = pt2.getYValue();
+            double slope = (y2 - y1)/(x2 - x1);
+            double c = y1 - slope * x1;
+            MutablePoint lineEquation = new MutablePoint(slope, c);
+            courseBoundaryPoints.add(new ArrayList<>());
+            courseBoundaryPoints.get(i).add(x1);
+            courseBoundaryPoints.get(i).add(y1);
+            courseBoundaryPoints.get(i).add(x2);
+            courseBoundaryPoints.get(i).add(y2);
+            courseLineEquations.add(lineEquation);
         }
-
     }
 
 
