@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -32,6 +33,9 @@ public class TCPServerTest {
 
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            catch(ConcurrentModificationException e){
+                return;
             }
         });
         dataSenderThread.start();
