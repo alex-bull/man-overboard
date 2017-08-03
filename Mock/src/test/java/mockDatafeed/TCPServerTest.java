@@ -3,7 +3,6 @@ package mockDatafeed;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import parsers.header.HeaderParser;
 
 import java.io.IOException;
 import java.net.ConnectException;

@@ -54,7 +54,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private XmlSubtype xmlSubType;
     private List<Competitor> competitorsPosition;
     private double windDirection;
-    private BoatData boatData;
+    Cloner cloner=new Cloner();
     private RaceData raceData;
     private Set<Integer> collisions;
     private BoatAction boatAction;
@@ -95,6 +95,9 @@ public class Interpreter implements DataSource, PacketHandler {
     private boolean seenRaceXML = false;
     private int sourceID;
     private TCPClient TCPClient;
+
+    //zoom factor for scaling
+    private double zoomFactor=Math.pow(2,17);
 
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
@@ -177,7 +180,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      *
-     * @return the boat which the visualizer controlls
+     * @return the boat which the visualizer controls
      */
     @Override
     public Competitor getCompetitor() {
@@ -208,7 +211,6 @@ public class Interpreter implements DataSource, PacketHandler {
             delegate.streamFailed();
             return;
         }
-
 
         //calculate the effective width and height of the screen
         width = primaryScreenBounds.getWidth() - scene.getX();
@@ -241,7 +243,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
         //Handle success or failure on the background thread
         task.setOnSucceeded(event -> {
-            if (task.getValue().equals(true)) {
+            if ((boolean) task.getValue()) {
                 delegate.streamStarted();
             } else {
                 delegate.streamFailed();
@@ -336,14 +338,14 @@ public class Interpreter implements DataSource, PacketHandler {
                 break;
             case BOAT_LOCATION:
                 BoatDataParser boatDataParser = new BoatDataParser();
-                this.boatData = boatDataParser.processMessage(packet);
+                BoatData boatData = boatDataParser.processMessage(packet);
 
                 if (boatData != null) {
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
-                        updateBoatProperties();
+                        updateBoatProperties(boatData);
                     } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
                         CourseFeature courseFeature = boatDataParser.getCourseFeature();
-                        updateCourseMarks(courseFeature);
+                        updateCourseMarks(courseFeature, boatData);
                     }
                 }
                 break;
@@ -405,37 +407,37 @@ public class Interpreter implements DataSource, PacketHandler {
     /**
      * Updates the boat properties as data is being received.
      */
-    private void updateBoatProperties() {
+    private void updateBoatProperties(BoatData boatData) {
         int boatID = boatData.getSourceID();
 
-        Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
+        MutablePoint location = cloner.deepClone(boatData.getMercatorPoint());
+        MutablePoint location17=cloner.deepClone(boatData.getMercatorPoint());
 
-        double x = this.boatData.getMercatorPoint().getXValue();
-        double y = this.boatData.getMercatorPoint().getYValue();
-        MutablePoint location = new MutablePoint(x, y);
-        Cloner cloner=new Cloner();
-        MutablePoint location17=cloner.deepClone(location);
         location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-        location17.factor(Math.pow(2,17), Math.pow(2,17), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        location17.factor(zoomFactor, zoomFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
-        // boat colour
-        if (competitor.getColor() == null) {
-            Color colour = this.colourPool.getColours().get(0);
-            competitor.setColor(colour);
-            colourPool.getColours().remove(colour);
-        }
+
         //add to competitorsPosition and storedCompetitors if they are new
-
         if (!storedCompetitors.keySet().contains(boatID)) {
+            Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
+            // boat colour
+            if (competitor.getColor() == null) {
+                Color colour = this.colourPool.getColours().get(0);
+                competitor.setColor(colour);
+                colourPool.getColours().remove(colour);
+            }
             this.storedCompetitors.put(boatID, competitor);
             competitorsPosition.add(competitor);
         } else {
-            storedCompetitors.get(boatID).setPosition(location);
-            storedCompetitors.get(boatID).setPosition17(location17);
-            storedCompetitors.get(boatID).setVelocity(boatData.getSpeed());
-            storedCompetitors.get(boatID).setCurrentHeading(boatData.getHeading());
-            storedCompetitors.get(boatID).setLatitude(boatData.getLatitude());
-            storedCompetitors.get(boatID).setLongitude(boatData.getLongitude());
+            //update its properties
+            Competitor updatingBoat=storedCompetitors.get(boatID);
+
+            updatingBoat.setPosition(location);
+            updatingBoat.setPosition17(location17);
+            updatingBoat.setVelocity(boatData.getSpeed());
+            updatingBoat.setCurrentHeading(boatData.getHeading());
+            updatingBoat.setLatitude(boatData.getLatitude());
+            updatingBoat.setLongitude(boatData.getLongitude());
         }
 
         //order the list of competitors
@@ -447,14 +449,13 @@ public class Interpreter implements DataSource, PacketHandler {
      * Updates the course features/marks
      * @param courseFeature CourseFeature
      */
-    private void updateCourseMarks(CourseFeature courseFeature) {
+    private void updateCourseMarks(CourseFeature courseFeature,BoatData boatData) {
         List<CourseFeature> points = new ArrayList<>();
         List<CourseFeature> points17 = new ArrayList<>();
 
-        Cloner cloner=new Cloner();
         CourseFeature courseFeature17=cloner.deepClone(courseFeature);
         courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-        courseFeature17.factor(Math.pow(2,17), Math.pow(2,17), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        courseFeature17.factor(zoomFactor, zoomFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
         this.storedFeatures.put(boatData.getSourceID(), courseFeature);
         this.storedFeatures17.put(boatData.getSourceID(), courseFeature17);
@@ -562,7 +563,6 @@ public class Interpreter implements DataSource, PacketHandler {
         this.paddingX = raceXMLParser.getPaddingX();
         this.paddingY = raceXMLParser.getPaddingY();
         this.scaleFactor = raceXMLParser.getScaleFactor();
-//        this.scaleFactor=Math.pow(2,17);
         this.minXMercatorCoord = raceXMLParser.getxMin();
         this.minYMercatorCoord = raceXMLParser.getyMin();
     }

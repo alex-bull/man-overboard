@@ -1,6 +1,7 @@
 package controllers;
 
 import com.google.common.primitives.Doubles;
+import com.rits.cloning.Cloner;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -95,10 +96,19 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line sailLine;
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
+
+    //if state of zooming
     private boolean zoom=false;
+
+    //current boat position in screen coordinates
     private double boatPositionX;
     private double boatPositionY;
-    private MutablePoint currentPosition;
+
+    //boat position in screen coordinates with zoom level 17
+    private MutablePoint currentPosition17;
+
+    //Deep cloner
+    private Cloner cloner=new Cloner();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -250,7 +260,7 @@ public class RaceViewController implements Initializable, TableObserver {
         if(isZoom()){
             courseFeatures=new ArrayList<>();
             for(CourseFeature cf: dataSource.getCourseFeatures17()){
-                courseFeatures.add(cf.shift(-currentPosition.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition.getYValue()+raceViewCanvas.getHeight()/2));
+                courseFeatures.add(cf.shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2));
             }
         }else{
             courseFeatures=dataSource.getCourseFeatures();
@@ -264,8 +274,8 @@ public class RaceViewController implements Initializable, TableObserver {
             }
             drawMark(courseFeature);
 
-            mapEngine.executeScript(String.format("drawMarker(%.9f,%.9f);",courseFeature.getGPSPoint().getXValue(),courseFeature.getGPSPoint().getYValue()));
-            System.out.println("hi");
+//            mapEngine.executeScript(String.format("drawMarker(%.9f,%.9f);",courseFeature.getGPSPoint().getXValue(),courseFeature.getGPSPoint().getYValue()));
+//            System.out.println("hi");
         }
     }
 
@@ -278,7 +288,7 @@ public class RaceViewController implements Initializable, TableObserver {
         HashMap<Integer,CourseFeature> features=new HashMap<>();
         if(isZoom()){
             for(Integer id: dataSource.getStoredFeatures17().keySet()){
-                features.put(id,dataSource.getStoredFeatures17().get(id).shift(-currentPosition.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition.getYValue()+raceViewCanvas.getHeight()/2));
+                features.put(id,dataSource.getStoredFeatures17().get(id).shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2));
             }
         }
         else{
@@ -359,7 +369,7 @@ public class RaceViewController implements Initializable, TableObserver {
             if(isZoom()){
                 courseBoundary=new ArrayList<>();
                 for(MutablePoint p: dataSource.getCourseBoundary17()){
-                    courseBoundary.add(p.shift(-currentPosition.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition.getYValue()+raceViewCanvas.getHeight()/2));
+                    courseBoundary.add(p.shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2));
                 }
 
             }
@@ -412,7 +422,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawAnnotations() {
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
-        //move competitors and draw tracks
+        //add labels for each competitor
         for (Competitor boat : competitors) {
             int sourceID = boat.getSourceID();
 
@@ -463,7 +473,6 @@ public class RaceViewController implements Initializable, TableObserver {
         int sourceID = boat.getSourceID();
 
         int offset = 10;
-
         //all selected will be true if all selected
         boolean allSelected = true;
         //none selected will be false if none selected
@@ -526,8 +535,12 @@ public class RaceViewController implements Initializable, TableObserver {
 
     }
 
-    private void setBoatLocation(Competitor boat){
-        currentPosition=boat.getPosition17();
+    /**
+     * sets the current boat position of the current boat controlled by visualizer
+     */
+    private void setBoatLocation(){
+        Competitor boat=dataSource.getCompetitor();
+        currentPosition17 =boat.getPosition17();
         if(isZoom()){
             boatPositionX=raceViewCanvas.getWidth()/2;
             boatPositionY=raceViewCanvas.getHeight()/2;
@@ -539,13 +552,43 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     /**
+     * returns the position of boat relative to the current boat, assume zoomed in
+     * @param boat location of the boat to be calculated
+     * @return the relative position
+     */
+    private MutablePoint getBoatLocation(Competitor boat){
+        MutablePoint relPoint=cloner.deepClone(boat.getPosition17());
+
+        relPoint=relPoint.shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2);
+        System.out.println(currentPosition17);
+        return relPoint;
+    }
+
+    /**
      * Draw or move a boat model for a competitor
      * @param boat Competitor a competing boat
      */
     private void drawBoat(Competitor boat) {
         Integer sourceId = boat.getSourceID();
+        setBoatLocation();
+        double pointX;
+        double pointY;
 
-        setBoatLocation(boat);
+        if(sourceId==dataSource.getSourceID()){
+            pointX=boatPositionX;
+            pointY=boatPositionY;
+        }else{
+            if(isZoom()){
+            MutablePoint point=getBoatLocation(boat);
+            pointX=point.getXValue();
+            pointY=point.getYValue();
+
+            }else{
+                pointX=boat.getPosition().getXValue();
+                pointY=boat.getPosition().getYValue();
+
+            }
+        }
 
 
         if (boatModels.get(sourceId) == null) {
@@ -558,7 +601,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
             boatModel.setStroke(BLACK);
 
-            if (boat.getSourceID() == dataSource.getSourceID()) {
+            if (sourceId== dataSource.getSourceID()) {
                 playerMarker = new Circle(0, 0, 15);
                 playerMarker.setStrokeWidth(2.5);
                 playerMarker.setStroke(Color.rgb(255,255,255,0.5));
@@ -570,7 +613,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.raceViewPane.getChildren().add(boatModel);
 
 
-            this.boatModels.put(boat.getSourceID(), boatModel);
+            this.boatModels.put(sourceId, boatModel);
             //Boats selected can be selected/unselected by clicking on them
             boatModel.setOnMouseClicked(event -> {
                 if (!Objects.equals(selectedBoatSourceId, sourceId)) {
@@ -581,15 +624,15 @@ public class RaceViewController implements Initializable, TableObserver {
             });
         }
         //Translate and rotate the corresponding boat models
-        boatModels.get(sourceId).setLayoutX(boatPositionX);
-        boatModels.get(sourceId).setLayoutY(boatPositionY);
+        boatModels.get(sourceId).setLayoutX(pointX);
+        boatModels.get(sourceId).setLayoutY(pointY);
         boatModels.get(sourceId).toFront();
         boatModels.get(sourceId).getTransforms().clear();
         boatModels.get(sourceId).getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
 
-        if (boat.getSourceID() == dataSource.getSourceID()) {
-            playerMarker.setLayoutX(boatPositionX);
-            playerMarker.setLayoutY(boatPositionY);
+        if (sourceId == dataSource.getSourceID()) {
+            playerMarker.setLayoutX(pointX);
+            playerMarker.setLayoutY(pointY);
             playerMarker.getTransforms().clear();
             playerMarker.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         }
