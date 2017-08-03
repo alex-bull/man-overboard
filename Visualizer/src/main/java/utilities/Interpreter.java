@@ -350,8 +350,8 @@ public class Interpreter implements DataSource, PacketHandler {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         double boatHeading = boat.getCurrentHeading();
                         boolean isClockwise = isTackingClockwise(windDirection, boatHeading);
-
-                        boat.tack(calculateExpectedTack(this.windDirection, boatHeading), isClockwise);
+                        // is this needed?
+//                        boat.tack(calculateExpectedTack(this.windDirection, boatHeading), isClockwise);
 //                        boat.setCurrentHeading(expectedHeading);
                     }
 

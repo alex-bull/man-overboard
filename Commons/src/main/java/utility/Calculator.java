@@ -63,4 +63,19 @@ public class Calculator {
         return !(boatHeading > windDirection && boatHeading < windDirection + 180);
     }
 
+    /**
+     * Converts a given angle to a positive degree between 0 and 360
+     * @return double the positive angle
+     */
+    public static double getPositiveAngle(double angle) {
+        double result = angle;
+        while(result < 0) {
+            result += 360;
+        }
+        while(result > 360) {
+            result -= 360;
+        }
+        return result;
+    }
+
 }

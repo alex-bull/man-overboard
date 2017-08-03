@@ -48,6 +48,8 @@ import static javafx.scene.paint.Color.*;
 import static parsers.RaceStatusEnum.PREPARATORY;
 import static parsers.RaceStatusEnum.STARTED;
 import static utility.Calculator.calculateExpectedTack;
+import static utility.Calculator.getPositiveAngle;
+import static utility.Calculator.isTackingClockwise;
 
 /**
  * Controller for the race view.
@@ -883,39 +885,45 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     public void tackBoat(){
+        // need to check if works with multiple boats
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        double windDirection = getPositiveAngle(dataSource.getWindDirection());
+        double boatHeading = boat.getCurrentHeading();
+        boolean isClockwise = isTackingClockwise(windDirection, boatHeading);
+        double expectedTackAngle = calculateExpectedTack(windDirection, boatHeading);
+        double tackAngle = abs(expectedTackAngle - boatHeading);
+        boat.tack(tackAngle, isClockwise);
 
-        if(boat.tackEnabled()) {
-            Polygon boatModel = boatModels.get(boat.getSourceID());
+        System.out.println(windDirection + "---" + boat.tackEnabled() + "--" + boat.getCurrentHeading());
 
-//            double windAngle = dataSource.getWindDirection();
-//            double expectedHeading = calculateExpectedTack(windAngle, boat.getCurrentHeading());
-            double newHeading = boat.getCurrentHeading() + 45;
-//            boatModel.getTransforms().add(new Rotate(newHeading, 0, 0));
-//            boat.setCurrentHeading(newHeading);
 
-//            System.out.println("new headin " + newHeading );
-//            System.out.println("tack angle " + boat.getTackAngle());
-//            if(newHeading > boat.getTackAngle()) {
-//                boat.disableTack();
-//            }
-            RotateTransition rt = new RotateTransition(Duration.millis(200), boatModel);
+        Polygon boatModel = boatModels.get(boat.getSourceID());
+        RotateTransition rt = new RotateTransition(Duration.millis(200), boatModel);
 
-            rt.setByAngle(180);
-            rt.setCycleCount(1);
-//            rt.setAutoReverse(true);
 
-            double rotation = boatModel.getRotate();
-            System.out.println("rotation angle is " +rotation);
-//            rt.setToAngle(boat.getTackAngle());
-//            System.out.println("to angle " + boat.getTackAngle());
-            rt.play();
-            System.out.println("Heading is now and tack angle " + boat.getCurrentHeading() + boat.getTackAngle());
+        if(boat.isClockwise()) {
+            rt.setByAngle(boat.getTackAngle());
+            System.out.println("CLOCKWISE by " + boat.getTackAngle());
+            System.out.println(boat.getCurrentHeading() > boat.getTackAngle());
 
-//            TackAndGybe tack = new TackAndGybe(windAngle, boat.getCurrentHeading(), boatModel);
-//            tack.animate();
+            if(boat.getCurrentHeading() > boat.getTackAngle()) {
+                boat.disableTack();
+            }
+        }
+        else {
+            rt.setByAngle(-boat.getTackAngle());
+            System.out.println("ANTICLOCKWISE by " + boat.getTackAngle());
+
+            // if current heading is on tack angle then stop?/??
+            if(boat.getCurrentHeading() == boat.getTackAngle()) {
+                boat.disableTack();
+            }
         }
 
+        rt.setCycleCount(1);
+        rt.play();
+
+//        boat.setCurrentHeading(expectedTackAngle);
     }
 
 

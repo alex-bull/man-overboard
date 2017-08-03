@@ -69,7 +69,7 @@ public interface Competitor {
 
     void changeHeading(boolean upwind, double angle);
 
-    void tack(double expectedHeading, boolean isClockwise);
+    void tack(double tackAngle, boolean isClockwise);
 
     double getTackAngle();
 
