@@ -321,7 +321,7 @@ public class RaceViewController implements Initializable, TableObserver {
             // set zoom level
             mapEngine.executeScript(String.format("setZoom(%d)", dataSource.getMapZoomLevel()));
             gc.setLineDashes(5);
-            gc.setLineWidth(0.8);
+            gc.setLineWidth(2);
             gc.clearRect(0, 0, 4000, 4000);
 
             //draw center once only to keep trails drawn properly
@@ -329,7 +329,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 drawBackgroundImage(dataSource.getGPSbounds());
                 isCenterSet=true;
             }
-
+            gc.setStroke(Color.RED);
             gc.strokePolygon(Doubles.toArray(boundaryX), Doubles.toArray(boundaryY), boundaryX.size());
             gc.setGlobalAlpha(0.4);
             gc.setFill(Color.POWDERBLUE);

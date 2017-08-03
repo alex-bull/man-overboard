@@ -2,6 +2,8 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
+import javafx.geometry.Point2D;
+import javafx.scene.shape.Polygon;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
@@ -11,6 +13,7 @@ import parsers.xml.CourseXMLParser;
 import utilities.PolarTable;
 
 
+import java.awt.geom.Line2D;
 import java.io.*;
 import java.net.SocketException;
 import java.time.ZonedDateTime;
@@ -37,6 +40,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private HashMap<Integer, Competitor> competitors;
     private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
+    private List<MutablePoint> courseBoundary;
+    private List<MutablePoint> courseScaledBoundary;
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager;
@@ -188,6 +193,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         //screen size is not important
         RaceCourse course = new RaceCourse(cl.parseCourse(), false);
         courseFeatures = course.getPoints();
+        courseBoundary = cl.parseCourseBoundary();
+        courseScaledBoundary = cl.getScaledBoundary();
     }
 
     /**
@@ -268,6 +275,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
             this.handleCourseCollisions(boat);
             this.handleBoatCollisions(boat);
+            this.handleBoundaryCollisions(boat);
 //            boat.blownByWind(twa);
 
         }
@@ -294,6 +302,35 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             }
         }
     }
+
+    private void handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
+        double collisionRadius = 50;
+        for (MutablePoint point: courseBoundary) {
+            double distance = raceCourse.distanceBetweenGPSPoints(boat.getPosition(), point);
+            if (distance <= collisionRadius) {
+                sendYachtEvent(boat.getSourceID(), 1);
+                boat.updatePosition(-10);
+                break;
+            }
+        }
+    }
+
+    private void getLineBetweenTwoPoints() {
+        MutablePoint pt1 = null;
+        MutablePoint pt2 = null;
+        for (int i=0; i <courseScaledBoundary.size(); i++) {
+            if (i == courseScaledBoundary.size()-1) {
+                pt1 = courseScaledBoundary.get(i);
+                pt2 = courseScaledBoundary.get(0);
+            }
+            else {
+                pt1 = courseScaledBoundary.get(i);
+                pt2 = courseScaledBoundary.get(i + 1);
+            }
+        }
+
+    }
+
 
 
     /**
