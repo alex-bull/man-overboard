@@ -347,8 +347,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
                     if (boatAction.equals(BoatAction.TACK_GYBE) && headerDataSourceID == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
-                        double expectedHeading = calculateExpectedTack(windDirection, boat.getCurrentHeading());
-                        boat.tack(expectedHeading);
+                        boat.tack();
 //                        boat.setCurrentHeading(expectedHeading);
                     }
 

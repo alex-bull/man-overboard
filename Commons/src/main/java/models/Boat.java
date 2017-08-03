@@ -30,9 +30,7 @@ public class Boat implements Competitor {
     private double blownFactor=0.01;
 //    external forces on the boat
     private List<RepelForce> forces;
-    private double tackAngle;
-    private boolean tackClockwise;
-
+    private boolean isRotating = false;
 
     private boolean sailsOut = true;
     /**
@@ -93,10 +91,15 @@ public class Boat implements Competitor {
     /**
      * Updates the tack state of the boat
      */
-    public void tack(double expectedHeading) {
-        this.tackAngle = expectedHeading;
-        this.currentHeading.setValue(expectedHeading);
+    public boolean tackEnabled() {
+        return isRotating;
     }
+
+    /**
+     * Updates the tack state of the boat to true
+     */
+    public void tack(){ isRotating = true; }
+
 
     /**
      * Switches the sail state of the boat between sails in and sails out

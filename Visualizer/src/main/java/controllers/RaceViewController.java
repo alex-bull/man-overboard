@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.common.primitives.Doubles;
 import javafx.animation.FadeTransition;
+import javafx.animation.RotateTransition;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -46,6 +47,7 @@ import static java.lang.Math.abs;
 import static javafx.scene.paint.Color.*;
 import static parsers.RaceStatusEnum.PREPARATORY;
 import static parsers.RaceStatusEnum.STARTED;
+import static utility.Calculator.calculateExpectedTack;
 
 /**
  * Controller for the race view.
@@ -877,9 +879,29 @@ public class RaceViewController implements Initializable, TableObserver {
         CollisionRipple ripple = new CollisionRipple(centerX, centerY, 20);
         raceViewPane.getChildren().add(ripple);
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
+    }
 
+
+    private void tackBoat(){
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+
+        if(boat.tackEnabled()) {
+            Polygon boatModel = boatModels.get(boat.getSourceID());
+            double windAngle = dataSource.getWindDirection();
+            double expectedHeading = calculateExpectedTack(windAngle, boat.getCurrentHeading());
+
+            RotateTransition rt = new RotateTransition(Duration.millis(1000), boatModel);
+//            rt.setByAngle(90);
+            rt.setCycleCount(1);
+            rt.setToAngle(expectedHeading);
+            rt.play();
+
+//            TackAndGybe tack = new TackAndGybe(windAngle, boat.getCurrentHeading(), boatModel);
+//            tack.animate();
+        }
 
     }
+
 
     /**
      * Refreshes the contents of the display to match the datasource
@@ -894,6 +916,7 @@ public class RaceViewController implements Initializable, TableObserver {
         updateCourse(gc);
         updateRace(gc);
         checkCollision();
+        tackBoat();
 
     }
 
