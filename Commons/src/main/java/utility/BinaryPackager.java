@@ -414,7 +414,7 @@ public class BinaryPackager {
      * @param markID Integer, the compoundMarkId of the mark rounded
      * @return byte[] the packet
      */
-    public byte[] packageMarkRounding(Integer sourceID, Short roundingSide, Integer markID) {
+    public byte[] packageMarkRounding(Integer sourceID, byte roundingSide, Integer markID) {
 
         byte[] packet = new byte[40];
         ByteBuffer buffer = ByteBuffer.wrap(packet);
@@ -437,7 +437,7 @@ public class BinaryPackager {
         //boatStatus
         buffer.put((byte) 1); //racing
         //rounding side
-        buffer.putShort(roundingSide);
+        buffer.put(roundingSide);
         //Mark Type
         buffer.put((byte) 0); //unknown
         //markID

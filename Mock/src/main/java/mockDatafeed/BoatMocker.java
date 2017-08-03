@@ -107,7 +107,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     }
 
     public void markRoundingEvent(int sourceId) {
-
+        try {
+            this.TCPserver.sendData(binaryPackager.packageMarkRounding(sourceId, (byte)1, 1));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

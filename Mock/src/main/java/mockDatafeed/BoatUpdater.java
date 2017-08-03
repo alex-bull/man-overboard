@@ -69,9 +69,28 @@ public class BoatUpdater {
             this.handleCourseCollisions(boat);
             this.handleBoatCollisions(boat);
 //            boat.blownByWind(twa);
+            this.handleMarkRounding(boat);
         }
     }
 
+
+    /**
+     * Calculates if the boat collides with any course features and adjusts the boats position
+     * @param boat Competitor the boat to check collisions for
+     */
+    private void handleMarkRounding(Competitor boat) throws IOException, InterruptedException {
+
+        final double roundingRadius = 200;
+        int nextId = raceData.getLegIndexToSourceId().get(boat.getCurrentLegIndex() + 1).get(0); //TODO:- check against all ids
+        for (Competitor markBoat : markBoats) { // TODO map markboats to sourceid
+            if (markBoat.getSourceID() == nextId) {
+                double distance = raceCourse.distanceBetweenGPSPoints(markBoat.getPosition(), boat.getPosition());
+                if (distance < roundingRadius) {
+                    handler.markRoundingEvent(boat.getSourceID());
+                }
+            }
+        }
+    }
 
     /**
      * Calculates if the boat collides with any course features and adjusts the boats position
