@@ -53,20 +53,24 @@ public class RaceXMLParser {
         minLng = 180;
     }
 
+    /** Set width and height of the screen
+     * @param width  double the width of the screen
+     * @param height height the height of the screen
+     */
+    public void setScreenSize(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
 
     /**
      * Parse XML race data
      *
      * @param xmlStr XML String of race data
-     * @param width  double the width of the screen
-     * @param height height the height of the screen
      * @return RaceData the parsed race data
      * @throws IOException   IOException
      * @throws JDOMException JDOMException
      */
-    public RaceData parseRaceData(String xmlStr, double width, double height) throws IOException, JDOMException {
-        this.width = width;
-        this.height = height;
+    public RaceData parseRaceData(String xmlStr) throws IOException, JDOMException {
 
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();

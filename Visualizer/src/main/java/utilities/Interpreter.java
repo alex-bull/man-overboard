@@ -460,7 +460,8 @@ public class Interpreter implements DataSource, PacketHandler {
                     break;
                 case RACE:
                     if(!seenRaceXML) {
-                        this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
+                        raceXMLParser.setScreenSize(width, height);
+                        this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.courseBoundary = raceXMLParser.getCourseBoundary();
                         this.compoundMarks = raceData.getCourse();
                         GPSbounds = raceXMLParser.getGPSBounds();
@@ -521,7 +522,6 @@ public class Interpreter implements DataSource, PacketHandler {
         } catch (Exception e) {
             return null;
         }
-
     }
 
 

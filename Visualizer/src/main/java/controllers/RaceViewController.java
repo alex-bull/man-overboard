@@ -675,6 +675,15 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+    /**
+     * Draw a directional arrow on the canvas to guide the boat in the right direction to the next mark
+     *
+     * @param boat Competitor
+     * @param gc   GraphicsContext the gc to draw the track on
+     */
+    private void drawGuidingArrow(Competitor boat, GraphicsContext gc) {
+
+    }
 
     /**
      * Gets the centre coords for the next mark a boat will round
@@ -702,7 +711,6 @@ public class RaceViewController implements Initializable, TableObserver {
         return new Pair<>(markX, markY);
     }
 
-
     /**
      * Calculates the intersection point of two lines. Result is undefined for non intersecting lines
      * @param x1 Double line one
@@ -728,9 +736,6 @@ public class RaceViewController implements Initializable, TableObserver {
         return new Pair<>(x, y);
     }
 
-
-
-
     /**
      * Draws a layline on the pane
      * @param x Double, The first x value
@@ -751,10 +756,6 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().add(line);
         layLines.add(line);
     }
-
-
-
-
 
     /**
      * Calculate the time to the start line from the given boat
@@ -778,7 +779,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
         return raceCalculator.calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), timeUntilStart);
     }
-
 
     /**
      * Updates the FPS counter
