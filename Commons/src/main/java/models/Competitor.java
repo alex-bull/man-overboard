@@ -68,4 +68,16 @@ public interface Competitor {
     boolean hasSailsOut();
 
     void changeHeading(boolean upwind, double angle);
+
+    void tack(double tackAngle, boolean isClockwise);
+
+    double getTackAngle();
+
+    boolean tackEnabled();
+
+    void disableTack();
+
+    boolean isClockwise();
+
+    DoubleProperty getHeadingProperty();
 }

@@ -7,6 +7,9 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import static utility.Calculator.getPositiveAngle;
+
+
 /**
  * Created by mgo65 on 3/03/17.
  * Boat object
@@ -30,6 +33,11 @@ public class Boat implements Competitor {
     private double blownFactor=0.01;
 //    external forces on the boat
     private List<RepelForce> forces;
+
+    // tack properties
+    private boolean isRotating;
+    private double tackAngle;
+    private boolean isClockwise;
 
     private boolean sailsOut = true;
     /**
@@ -84,6 +92,42 @@ public class Boat implements Competitor {
     }
 
     public Boat() {
+
+    }
+
+    /**
+     * Updates the tack state of the boat
+     */
+    public boolean tackEnabled() {
+        return isRotating;
+    }
+
+
+    /**
+     * Updates the tack state of the boat to false
+     */
+    public void disableTack(){
+        isRotating = false;
+    }
+
+    /**
+     * Sets tacking on the boat
+     * @param tackAngle double the expected tack angle in degrees
+     * @param isClockwise boolean true if the boat is rotating clockwise for the tack
+     */
+    public void tack(double tackAngle, boolean isClockwise) {
+        this.tackAngle = tackAngle;
+        this.isRotating = true;
+        this.isClockwise = isClockwise;
+//        this.setCurrentHeading(tackAngle);
+    }
+
+    public boolean isClockwise() {
+        return isClockwise;
+    }
+
+    public double getTackAngle() {
+        return getPositiveAngle(this.tackAngle);
 
     }
 

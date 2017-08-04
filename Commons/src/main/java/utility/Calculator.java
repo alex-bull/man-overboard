@@ -33,7 +33,49 @@ public class Calculator {
         return (short) result;
     }
 
+    /**
+     * Converts a short value to degrees
+     * @param value short
+     * @return double degrees
+     */
     public static double shortToDegrees(short value) {
         return toDegrees((value+32768) * 2 * Math.PI / 65536);
     }
+
+    /**
+     * Calculates the expected tack angle
+     * @param windDirection double wind direction in degrees
+     * @param boatHeading double boat heading in degrees
+     * @return double the expected heading of the tack in degrees
+     */
+    public static double calculateExpectedTack(double windDirection, double boatHeading) {
+        return windDirection - (boatHeading - windDirection);
+    }
+
+
+    /**
+     * Checks whether the boat is turning clockwise or anticlockwise when tacking/gybing.
+     * @param windDirection double wind direction in degrees
+     * @param boatHeading double the heading of the boat in degrees
+     * @return boolean true if the boat is supposed to turn clockwise
+     */
+    public static boolean isTackingClockwise(double windDirection, double boatHeading) {
+        return !(boatHeading > windDirection && boatHeading < windDirection + 180);
+    }
+
+    /**
+     * Converts a given angle to a positive degree between 0 and 360
+     * @return double the positive angle
+     */
+    public static double getPositiveAngle(double angle) {
+        double result = angle;
+        while(result < 0) {
+            result += 360;
+        }
+        while(result > 360) {
+            result -= 360;
+        }
+        return result;
+    }
+
 }

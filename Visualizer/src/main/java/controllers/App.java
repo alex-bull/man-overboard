@@ -11,6 +11,8 @@ import javafx.stage.StageStyle;
 import utilities.Interpreter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class
@@ -18,6 +20,7 @@ App extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 
     /**
      * Starts the app
