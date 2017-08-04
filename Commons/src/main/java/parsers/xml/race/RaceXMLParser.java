@@ -1,7 +1,5 @@
 package parsers.xml.race;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
 import com.google.common.math.DoubleMath;
 import models.MutablePoint;
 import org.jdom2.Document;
@@ -12,7 +10,6 @@ import org.jdom2.input.SAXBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 
 import static utility.Projection.mercatorProjection;
@@ -53,6 +50,7 @@ public class RaceXMLParser {
         minLng = 180;
     }
 
+
     /** Set width and height of the screen
      * @param width  double the width of the screen
      * @param height height the height of the screen
@@ -61,6 +59,7 @@ public class RaceXMLParser {
         this.width = width;
         this.height = height;
     }
+
 
     /**
      * Parse XML race data
@@ -108,7 +107,7 @@ public class RaceXMLParser {
                 double targetLat = Double.parseDouble(mark.getAttributeValue("TargetLat"));
                 double targetLng = Double.parseDouble(mark.getAttributeValue("TargetLng"));
                 int sourceID = Integer.parseInt(mark.getAttributeValue("SourceID"));
-                raceData.addMarkID(sourceID);
+                raceData.addMarkSourceID(sourceID);
                 sourceIds.add(sourceID);
                 MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
                 marks.add(markData);
@@ -156,7 +155,7 @@ public class RaceXMLParser {
 
 
         }
-        raceData.setLegIndexToSourceId(legIndexToSourceId);
+        raceData.setLegIndexToMarkSourceIds(legIndexToSourceId);
 
         for (Element limit : race.getChild("CourseLimit").getChildren()) {
             double lat = Double.parseDouble(limit.getAttributeValue("Lat"));

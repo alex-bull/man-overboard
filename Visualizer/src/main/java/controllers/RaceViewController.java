@@ -210,8 +210,6 @@ public class RaceViewController implements Initializable, TableObserver {
             }
         }
 
-
-
     }
 
     /**

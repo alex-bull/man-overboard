@@ -31,18 +31,16 @@ public class BoatUpdater {
     private RaceData raceData;
     private Map<Integer, Competitor> competitors;
     private Course raceCourse = new RaceCourse(null, true);
-    private List<Competitor> markBoats;
+    private Map<Integer, Competitor> markBoats;
     private BoatUpdateEventHandler handler;
 
-    public BoatUpdater(Map<Integer, Competitor> competitors, List<Competitor> markBoats, BoatUpdateEventHandler handler) throws IOException, JDOMException {
+    public BoatUpdater(Map<Integer, Competitor> competitors, Map<Integer, Competitor> markBoats, RaceData raceData, BoatUpdateEventHandler handler) throws IOException, JDOMException {
         this.competitors = competitors;
         this.markBoats = markBoats;
         this.handler = handler;
+        this.raceData = raceData;
 
         polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
-
-        String xml = CharStreams.toString(new InputStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")))));
-        raceData = new RaceXMLParser().parseRaceData(xml);
     }
 
 
@@ -60,7 +58,7 @@ public class BoatUpdater {
             }
             double speed = polarTable.getSpeed(twa);
             if (boat.hasSailsOut()) {
-                boat.setVelocity(speed);
+                boat.setVelocity(speed * 3);
                 boat.updatePosition(0.1);
             } else {
                 boat.setVelocity(0);
@@ -82,17 +80,20 @@ public class BoatUpdater {
         final double roundingRadius = 200;
         int nextLegIndex = boat.getCurrentLegIndex() + 1;
 
-        for (Competitor markBoat : markBoats) { // TODO map markboats to sourceid
-            if (raceData.getLegIndexToSourceId().get(nextLegIndex).contains(markBoat.getSourceID())) {
-                double distance = raceCourse.distanceBetweenGPSPoints(markBoat.getPosition(), boat.getPosition());
-                if (distance < roundingRadius) {
-                    handler.markRoundingEvent(boat.getSourceID());
-                    boat.setCurrentLegIndex(nextLegIndex);
-                    System.out.println("ROUNDED MARK");
-                }
+        List<Integer> markIds = raceData.getLegIndexToMarkSourceIds().get(nextLegIndex);
+        if (markIds == null || markIds.size() < 1) return;
+
+        for (Integer markId: markIds) { //COMPARE DISTANCE TO ALL MARKS IN THE COMPOUND MARK (1 for a mark, 2 for a gate)
+            Competitor markBoat = markBoats.get(markId);
+            Double distance = raceCourse.distanceBetweenGPSPoints(markBoat.getPosition(), boat.getPosition());
+            if (distance < roundingRadius) {
+
+                handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
+                boat.setCurrentLegIndex(nextLegIndex);
             }
         }
     }
+
 
     /**
      * Calculates if the boat collides with any course features and adjusts the boats position
@@ -102,7 +103,7 @@ public class BoatUpdater {
 
         final double collisionRadius = 55; //Large for testing
 
-        for (Competitor mark: markBoats) {
+        for (Competitor mark: markBoats.values()) {
 
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 

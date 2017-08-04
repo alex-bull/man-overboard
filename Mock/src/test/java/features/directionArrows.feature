@@ -6,7 +6,7 @@ Feature: An arrow on screen shows the player how to round the next mark
     Then: An arrow on the course shows how to round the next mark
 
 
-  Scenario: The race has not started
+  Scenario: Pre-start
     Given: I am playing the game
     When: I my next gate is the start gate
     Then: There is an arrow showing to go through the start gate

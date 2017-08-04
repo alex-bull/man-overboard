@@ -8,6 +8,8 @@ import parsers.MessageType;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.xml.CourseXMLParser;
+import parsers.xml.race.CompoundMarkData;
+import parsers.xml.race.MarkData;
 import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import utilities.PolarTable;
@@ -37,7 +39,9 @@ import static utility.Calculator.shortToDegrees;
  */
 public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdateEventHandler {
     private HashMap<Integer, Competitor> competitors;
-    private List<Competitor> markBoats;
+    private Map<Integer, Competitor> markBoats;
+    //private List<Competitor> markBoats;
+    private RaceData raceData;
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager;
@@ -56,7 +60,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         timer =new Timer();
         random=new Random();
         prestart = new MutablePoint(32.286577, -64.864304);
-        int connectionTime = 1000;
+        int connectionTime = 2000;
         competitors = new HashMap<>();
         TCPserver = new TCPServer(4941,this);
         binaryPackager = new BinaryPackager();
@@ -74,7 +78,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         generateCompetitors();
         generateWind();
 
-        boatUpdater = new BoatUpdater(competitors, markBoats, this);
+        boatUpdater = new BoatUpdater(competitors, markBoats, raceData, this);
 
         //send all xml data first
         sendAllXML();
@@ -106,9 +110,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
     }
 
-    public void markRoundingEvent(int sourceId) {
+    public void markRoundingEvent(int sourceId, int compoundMarkId) {
         try {
-            this.TCPserver.sendData(binaryPackager.packageMarkRounding(sourceId, (byte)1, 1));
+            this.TCPserver.sendData(binaryPackager.packageMarkRounding(sourceId, (byte)1, compoundMarkId));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -173,7 +177,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         List<Competitor> leewardGates = new ArrayList<>();
         List<Competitor> windwardGates = new ArrayList<>();
 
-        for(Competitor mark: markBoats) {
+        for(Competitor mark: markBoats.values()) {
             if(mark.getAbbreName().contains("LG")) {
                 leewardGates.add(mark);
             }
@@ -226,23 +230,22 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     }
 
     /**
-     * generates the competitors list
+     * generates the competitors list from the XML race file
      */
-    private void generateCompetitors() {
+    private void generateCompetitors() throws IOException, JDOMException {
 
-        //generate mark boats
-        markBoats = new ArrayList<>();
-        markBoats.add(new Boat("Start Line 1", 0, new MutablePoint(32.296577, -64.854304), "SL1", 122, 0));
-        markBoats.add(new Boat("Start Line 2", 0, new MutablePoint(32.293771, -64.855242), "SL2", 123, 0));
-        markBoats.add(new Boat("Mark1", 0, new MutablePoint(32.293039, -64.843983), "M1", 131, 0));
-        markBoats.add(new Boat("Lee Gate 1", 0, new MutablePoint(32.309693, -64.835249), "LG1", 124, 0));
-        markBoats.add(new Boat("Lee Gate 2", 0, new MutablePoint(32.308046, -64.831785), "LG2", 125, 0));
+        String xml = CharStreams.toString(new InputStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")))));
+        raceData = new RaceXMLParser().parseRaceData(xml);
+        markBoats = new HashMap<>();
 
-        markBoats.add(new Boat("Wind Gate 1", 0, new MutablePoint(32.284680, -64.850045), "WG1", 126, 0));
-        markBoats.add(new Boat("Wind Gate 2", 0, new MutablePoint(32.280164, -64.847591), "WG2", 127, 0));
+        List<CompoundMarkData> course = raceData.getCourse();
 
-        markBoats.add(new Boat("Finish Line 1", 0, new MutablePoint(32.317379, -64.839291), "FL1", 128, 0));
-        markBoats.add(new Boat("Finish Line 2", 0, new MutablePoint(32.317257, -64.836260), "FL2", 129, 0));
+        for (CompoundMarkData compoundMark: course) {
+            for (MarkData mark: compoundMark.getMarks()) {
+                MutablePoint location = new MutablePoint(mark.getTargetLat(), mark.getTargetLon());
+                markBoats.put(mark.getSourceID(), new Boat(mark.getName(), 0, location, "", mark.getSourceID(), 0));
+            }
+        }
 
         //set initial heading
         for (Integer sourceId : competitors.keySet()) {
@@ -281,7 +284,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
         //send mark boats
         if(flag) {
-            for (Competitor markBoat : markBoats) {
+            for (Competitor markBoat : markBoats.values()) {
                 byte[] boatinfo = binaryPackager.packageBoatLocation(markBoat.getSourceID(), markBoat.getPosition().getXValue(), markBoat.getPosition().getYValue(),
                         markBoat.getCurrentHeading(), markBoat.getVelocity() * 1000, 3);
                 TCPserver.sendData(boatinfo);

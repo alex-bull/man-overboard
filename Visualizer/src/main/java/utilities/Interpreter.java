@@ -1,9 +1,6 @@
 package utilities;
 
-import controllers.StarterController;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -43,7 +40,6 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
 import static parsers.Converter.hexByteArrayToInt;
-import static parsers.MessageType.BOAT_ACTION;
 import static parsers.MessageType.UNKNOWN;
 
 /**
@@ -149,7 +145,7 @@ public class Interpreter implements DataSource, PacketHandler {
     }
 
     public Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures() {
-        return this.raceData.getLegIndexToSourceId();
+        return this.raceData.getLegIndexToMarkSourceIds();
     }
 
 
@@ -305,7 +301,7 @@ public class Interpreter implements DataSource, PacketHandler {
                             markName="ClearStart";
                             break;
                         default:
-                            markName=raceData.getCourse().get(markID+1).getName();
+                            markName=raceData.getCourse().get(markID).getName();
                             break;
 
                     }
@@ -314,6 +310,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
                     storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
                     storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
+                    System.out.println("Boat " + markRoundingData.getSourceID() + " rounded a mark");
                 }
                 break;
             case BOAT_LOCATION:
@@ -323,7 +320,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 if (boatData != null) {
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties();
-                    } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
+                    } else if (boatData.getDeviceType() == 3 && raceData.getMarkSourceIDs().contains(boatData.getSourceID())) {
                         CourseFeature courseFeature = boatDataParser.getCourseFeature();
                         updateCourseMarks(courseFeature);
                     }
