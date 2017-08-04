@@ -682,7 +682,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void updateGuidingArrow(GraphicsContext gc) {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-        System.out.println("Leg index: " + boat.getCurrentLegIndex());
+        //System.out.println("Leg index: " + boat.getCurrentLegIndex());
     }
 
     /**
