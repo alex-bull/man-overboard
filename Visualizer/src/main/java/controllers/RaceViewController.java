@@ -2,7 +2,6 @@ package controllers;
 
 import com.google.common.primitives.Doubles;
 import javafx.animation.FadeTransition;
-import javafx.animation.RotateTransition;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -47,9 +46,6 @@ import static java.lang.Math.abs;
 import static javafx.scene.paint.Color.*;
 import static parsers.RaceStatusEnum.PREPARATORY;
 import static parsers.RaceStatusEnum.STARTED;
-import static utility.Calculator.calculateExpectedTack;
-import static utility.Calculator.getPositiveAngle;
-import static utility.Calculator.isTackingClockwise;
 
 /**
  * Controller for the race view.
@@ -883,48 +879,6 @@ public class RaceViewController implements Initializable, TableObserver {
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
     }
 
-
-    public void tackBoat(){
-        // need to check if works with multiple boats
-        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-        double windDirection = getPositiveAngle(dataSource.getWindDirection());
-        double boatHeading = boat.getCurrentHeading();
-        boolean isClockwise = isTackingClockwise(windDirection, boatHeading);
-        double expectedTackAngle = calculateExpectedTack(windDirection, boatHeading);
-        double tackAngle = abs(expectedTackAngle - boatHeading);
-        boat.tack(tackAngle, isClockwise);
-
-        System.out.println(windDirection + "---" + boat.tackEnabled() + "--" + boat.getCurrentHeading());
-
-
-        Polygon boatModel = boatModels.get(boat.getSourceID());
-        RotateTransition rt = new RotateTransition(Duration.millis(200), boatModel);
-
-
-        if(boat.isClockwise()) {
-            rt.setByAngle(boat.getTackAngle());
-            System.out.println("CLOCKWISE by " + boat.getTackAngle());
-            System.out.println(boat.getCurrentHeading() > boat.getTackAngle());
-
-            if(boat.getCurrentHeading() > boat.getTackAngle()) {
-                boat.disableTack();
-            }
-        }
-        else {
-            rt.setByAngle(-boat.getTackAngle());
-            System.out.println("ANTICLOCKWISE by " + boat.getTackAngle());
-
-            // if current heading is on tack angle then stop?/??
-            if(boat.getCurrentHeading() == boat.getTackAngle()) {
-                boat.disableTack();
-            }
-        }
-
-        rt.setCycleCount(1);
-        rt.play();
-
-//        boat.setCurrentHeading(expectedTackAngle);
-    }
 
 
     /**

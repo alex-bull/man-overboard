@@ -30,14 +30,11 @@ public class Boat implements Competitor {
     private double latitude;
     private double longitude;
     //how much the boat if affected by wind, can be parsed in as constructor
-    private double blownFactor=0.01;
+    private double blownFactor = 0.01;
 //    external forces on the boat
     private List<RepelForce> forces;
 
     // tack properties
-    private boolean isRotating;
-    private double tackAngle;
-    private boolean isClockwise;
 
     private boolean sailsOut = true;
     /**
@@ -92,42 +89,6 @@ public class Boat implements Competitor {
     }
 
     public Boat() {
-
-    }
-
-    /**
-     * Updates the tack state of the boat
-     */
-    public boolean tackEnabled() {
-        return isRotating;
-    }
-
-
-    /**
-     * Updates the tack state of the boat to false
-     */
-    public void disableTack(){
-        isRotating = false;
-    }
-
-    /**
-     * Sets tacking on the boat
-     * @param tackAngle double the expected tack angle in degrees
-     * @param isClockwise boolean true if the boat is rotating clockwise for the tack
-     */
-    public void tack(double tackAngle, boolean isClockwise) {
-        this.tackAngle = tackAngle;
-        this.isRotating = true;
-        this.isClockwise = isClockwise;
-//        this.setCurrentHeading(tackAngle);
-    }
-
-    public boolean isClockwise() {
-        return isClockwise;
-    }
-
-    public double getTackAngle() {
-        return getPositiveAngle(this.tackAngle);
 
     }
 
@@ -283,10 +244,6 @@ public class Boat implements Competitor {
         }
     }
 
-    public DoubleProperty getHeadingProperty() {
-        return this.currentHeading;
-    }
-
     /**
      * Updates the boats position given the time changed
      *
@@ -309,12 +266,6 @@ public class Boat implements Competitor {
         setPosition(new MutablePoint(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI));
     }
 
-    public void setProperties(double velocity, double heading, double latitude, double longitude) {
-        this.velocity = velocity;
-        this.currentHeading.setValue(heading);
-        this.position = new MutablePoint(latitude, longitude);
-
-    }
 
     /**
      * Returns the downwind given wind angle
