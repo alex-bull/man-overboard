@@ -23,7 +23,7 @@
         </CompoundMark>
 
         <CompoundMark CompoundMarkID="3" Name="Mark2">
-            <Mark SeqID="1" Name="Lee Gate 1" TargetLat="32.309693" TargetLng="-64.835249" SourceID="w"/>
+            <Mark SeqID="1" Name="Lee Gate 1" TargetLat="32.309693" TargetLng="-64.835249" SourceID="124"/>
             <Mark SeqID="2" Name="Lee Gate 2" TargetLat="32.308046" TargetLng="-64.831785" SourceID="125"/>
         </CompoundMark>
 

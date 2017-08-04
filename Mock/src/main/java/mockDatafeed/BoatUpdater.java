@@ -34,15 +34,13 @@ public class BoatUpdater {
     private Map<Integer, Competitor> markBoats;
     private BoatUpdateEventHandler handler;
 
-    public BoatUpdater(Map<Integer, Competitor> competitors, Map<Integer, Competitor> markBoats, BoatUpdateEventHandler handler) throws IOException, JDOMException {
+    public BoatUpdater(Map<Integer, Competitor> competitors, Map<Integer, Competitor> markBoats, RaceData raceData, BoatUpdateEventHandler handler) throws IOException, JDOMException {
         this.competitors = competitors;
         this.markBoats = markBoats;
         this.handler = handler;
+        this.raceData = raceData;
 
         polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
-
-        String xml = CharStreams.toString(new InputStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")))));
-        raceData = new RaceXMLParser().parseRaceData(xml);
     }
 
 
