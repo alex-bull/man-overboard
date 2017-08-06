@@ -178,10 +178,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         List<Competitor> windwardGates = new ArrayList<>();
 
         for(Competitor mark: markBoats.values()) {
-            if(mark.getAbbreName().contains("LG")) {
+            if(mark.getTeamName().contains("Lee")) {
                 leewardGates.add(mark);
             }
-            else if(mark.getAbbreName().contains("WG")) {
+            else if(mark.getTeamName().contains("Wind")) {
                 windwardGates.add(mark);
             }
         }
@@ -246,6 +246,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 markBoats.put(mark.getSourceID(), new Boat(mark.getName(), 0, location, "", mark.getSourceID(), 0));
             }
         }
+
 
         //set initial heading
         for (Integer sourceId : competitors.keySet()) {
