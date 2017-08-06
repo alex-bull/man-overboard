@@ -56,8 +56,8 @@ public class TackGybeSteps {
         this.upWind = !(boat.getCurrentHeading() > windAngle + 90 && boat.getCurrentHeading() < windAngle + 270);
     }
 
-    @Given("^the (\\d+) is between (\\d+) and (\\d+)$")
-    public void theIsBetweenAnd(int heading, int windAngle, int quadrant) throws Throwable {
+    @Given("^the (\\d+) is between (\\d+)$")
+    public void theIsBetween(int heading, int windAngle) throws Throwable {
         // Write code here that turns the phrase above into concrete actions
         if(this.upWind && heading > windAngle){
             this.quadrant = 1;
@@ -89,6 +89,5 @@ public class TackGybeSteps {
         this.upWind = ((boat.getCurrentHeading() > windAngle + 90 && boat.getCurrentHeading() > 0) ||
                 boat.getCurrentHeading() < windAngle + 270 && boat.getCurrentHeading() < 360);
     }
-
 
 }

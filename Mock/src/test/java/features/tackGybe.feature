@@ -15,13 +15,13 @@ Feature:  The boats tack and gybe
     Given the current heading is <CurHeading> degrees
     And the wind direction is <WindDir>
     And the boat is travelling <Upwind/Downwind>
-    And the <CurHeading> is between <WindDir> and <Quadrant>
+    And the <CurHeading> is between <WindDir>
     When the player presses the <Key> key
     Then the boat rotation should be <Anti/Clockwise>
       Examples:
-      | Upwind/Downwind | CurHeading |WindDir  | Quadrant  | Key   | Anti/Clockwise |
-      | upwind          | 80         |45       | 135       |enter  | anticlockwise  |
-      | upwind          | 10         |45       | 315       |enter  | clockwise      |
-      | downwind        | 200        |225      | 135       |enter  | clockwise      |
-      | downwind        | 240        |225      | 315       |enter  | anticlockwise  |
+      | Upwind/Downwind | CurHeading |WindDir  | Key   | Anti/Clockwise |
+      | upwind          | 80         |45       |enter  | anticlockwise  |
+      | upwind          | 10         |45       |enter  | clockwise      |
+      | downwind        | 200        |225      |enter  | clockwise      |
+      | downwind        | 240        |225      |enter  | anticlockwise  |
 
