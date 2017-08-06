@@ -155,13 +155,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                         boat.tack(tackAngle, isClockwise);
                         boat.setCurrentHeading(getPositiveAngle(expectedTackAngle));
 
-//                        final Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO,
-//                                new KeyValue(boat.getHeadingProperty(), boat.getCurrentHeading())),
-//                                new KeyFrame(Duration.millis(1000),
-//                                        new KeyValue(boat.getHeadingProperty(), getPositiveAngle(expectedTackAngle))));
-//                        timeline.setCycleCount(1);
-//
-//                        timeline.play();
+                        final Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO,
+                                new KeyValue(boat.getHeadingProperty(), boat.getCurrentHeading())),
+                                new KeyFrame(Duration.millis(1000),
+                                        new KeyValue(boat.getHeadingProperty(), getPositiveAngle(expectedTackAngle))));
+                        timeline.setCycleCount(1);
+
+                        timeline.play();
 
                         break;
                 }
