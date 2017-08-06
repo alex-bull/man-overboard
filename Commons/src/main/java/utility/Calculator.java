@@ -60,7 +60,8 @@ public class Calculator {
      * @return boolean true if the boat is supposed to turn clockwise
      */
     public static boolean isTackingClockwise(double windDirection, double boatHeading) {
-        return !(boatHeading > windDirection && boatHeading < windDirection + 180);
+            return ((boatHeading > windDirection + 90 && boatHeading < windDirection + 180)
+            || (boatHeading < windDirection && boatHeading > windDirection + 270));
     }
 
     /**

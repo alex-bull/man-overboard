@@ -152,19 +152,16 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                         boolean isClockwise = isTackingClockwise(windDirection, boatHeading);
                         double expectedTackAngle = calculateExpectedTack(windDirection, boatHeading);
                         double tackAngle = abs(expectedTackAngle - boatHeading);
-                        System.out.println("CLockwise? " + isClockwise);
                         boat.tack(tackAngle, isClockwise);
-                        System.out.println("Expected heading " + expectedTackAngle);
-                        System.out.println(getPositiveAngle(expectedTackAngle));
-//                        boat.setCurrentHeading(getPositiveAngle(expectedTackAngle));
+                        boat.setCurrentHeading(getPositiveAngle(expectedTackAngle));
 
-                        final Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO,
-                                new KeyValue(boat.getHeadingProperty(), boat.getCurrentHeading())),
-                                new KeyFrame(Duration.millis(1000),
-                                        new KeyValue(boat.getHeadingProperty(), getPositiveAngle(expectedTackAngle))));
-                        timeline.setCycleCount(1);
+//                        final Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO,
+//                                new KeyValue(boat.getHeadingProperty(), boat.getCurrentHeading())),
+//                                new KeyFrame(Duration.millis(1000),
+//                                        new KeyValue(boat.getHeadingProperty(), getPositiveAngle(expectedTackAngle))));
+//                        timeline.setCycleCount(1);
 //
-                        timeline.play();
+//                        timeline.play();
 
                         break;
                 }

@@ -9,6 +9,7 @@ import mockDatafeed.BoatMocker;
 import models.Boat;
 import models.Competitor;
 
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -17,6 +18,8 @@ import static org.junit.Assert.assertEquals;
 public class AdjustHeadingSteps {
     Competitor boat=new Boat();
     double windAngle;
+
+
 
     @Given("^the current heading is (\\d+) degrees$")
     public void theCurrentHeadingIsDegrees(int heading) throws Throwable {

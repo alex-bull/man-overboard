@@ -119,7 +119,7 @@ public class Boat implements Competitor {
         this.tackAngle = tackAngle;
         this.isRotating = true;
         this.isClockwise = isClockwise;
-//        this.setCurrentHeading(tackAngle);
+        this.setCurrentHeading(tackAngle);
     }
 
     public boolean isClockwise() {

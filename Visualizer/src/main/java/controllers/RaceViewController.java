@@ -898,28 +898,26 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
         Polygon boatModel = boatModels.get(boat.getSourceID());
-        RotateTransition rt = new RotateTransition(Duration.millis(200), boatModel);
+        RotateTransition rt = new RotateTransition(Duration.millis(400), boatModel);
 
 
         if(boat.isClockwise()) {
+            rt.setRate(1);
             rt.setByAngle(boat.getTackAngle());
-            System.out.println("CLOCKWISE by " + boat.getTackAngle());
-            System.out.println(boat.getCurrentHeading() > boat.getTackAngle());
 
-            if(boat.getCurrentHeading() > boat.getTackAngle()) {
-                boat.disableTack();
-            }
+
+//            if(boat.getCurrentHeading() > boat.getTackAngle()) {
+//                boat.disableTack();
+//            }
         }
         else {
-            rt.setByAngle(-boat.getTackAngle());
-            System.out.println("ANTICLOCKWISE by " + boat.getTackAngle());
-
+            rt.setRate(-1);
+            rt.setByAngle(boat.getTackAngle());
             // if current heading is on tack angle then stop?/??
-            if(boat.getCurrentHeading() == boat.getTackAngle()) {
-                boat.disableTack();
-            }
+//            if(boat.getCurrentHeading() == boat.getTackAngle()) {
+//                boat.disableTack();
+//            }
         }
-
         rt.setCycleCount(1);
         rt.play();
 
