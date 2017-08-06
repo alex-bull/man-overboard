@@ -20,6 +20,7 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.*;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -218,12 +219,19 @@ public class RaceViewController implements Initializable, TableObserver {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         double windAngle = dataSource.getWindDirection();
 
+        double width=2.5;
+        double length=15;
+        if(isZoom()){
+            width*=4;
+            length*=4;
+        }
+
         sailLine.setStroke(Color.WHITE);
-        sailLine.setStrokeWidth(2.5);
+        sailLine.setStrokeWidth(width);
         sailLine.setStartX(boatPositionX);
         sailLine.setStartY(boatPositionY);
         sailLine.setEndX(boatPositionX);
-        sailLine.setEndY(boatPositionY + 15);
+        sailLine.setEndY(boatPositionY + length);
         sailLine.getTransforms().clear();
         if (boat.hasSailsOut()) {
             sailLine.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatPositionX, boatPositionY));
@@ -268,10 +276,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
         // loops through all course features
         for (CourseFeature courseFeature : courseFeatures) {
-            Shape mark = this.markModels.get(courseFeature.getName());
-            if (mark != null) {
-                this.raceViewPane.getChildren().remove(mark);
-            }
+
             drawMark(courseFeature);
 
 //            mapEngine.executeScript(String.format("drawMarker(%.9f,%.9f);",courseFeature.getGPSPoint().getXValue(),courseFeature.getGPSPoint().getYValue()));
@@ -311,9 +316,17 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawMark(CourseFeature courseFeature) {
         double x = courseFeature.getPixelLocations().get(0).getXValue();
         double y = courseFeature.getPixelLocations().get(0).getYValue();
-        Circle circle = new Circle(x, y, 4.5, ORANGERED);
-        this.raceViewPane.getChildren().add(circle);
-        this.markModels.put(courseFeature.getName(), circle);
+
+        if(!markModels.containsKey(courseFeature.getName())){
+            Shape mark=new Circle(x,y,4.5,ORANGERED);
+            markModels.put(courseFeature.getName(),mark);
+            raceViewPane.getChildren().add(mark);
+        }
+        else {
+            Circle mark = (Circle) markModels.get(courseFeature.getName());
+            mark.setCenterX(x);
+            mark.setCenterY(y);
+        }
     }
 
     /**
@@ -339,8 +352,32 @@ public class RaceViewController implements Initializable, TableObserver {
         mapEngine.executeScript(String.format("setZoom(17);"));
         drawBoundary(raceViewCanvas.getGraphicsContext2D());
         drawCourse();
+        setScale(4);
+    }
+
+    /**
+     * adds scaling to all shapes in the scene
+     */
+    private void setScale(double scale){
+        for(Polygon model : boatModels.values()) {
+            model.setScaleX(scale);
+            model.setScaleY(scale);
+        }
+        for(Shape model: markModels.values()){
+            model.setScaleX(scale);
+            model.setScaleY(scale);
+        }
+//        for(Shape model: wakeModels.values()){
+//            model.setScaleX(scale);
+//            model.setScaleY(scale);
+//        }
+        playerMarker.setScaleX(scale);
+        playerMarker.setScaleY(scale);
 
     }
+
+
+
 
     /**
      * Zooms out from your boat
@@ -354,6 +391,7 @@ public class RaceViewController implements Initializable, TableObserver {
         drawLine(startLine, dataSource.getStartMarks());
         drawLine(finishLine, dataSource.getFinishMarks());
         drawCourse();
+        setScale(1);
     }
 
     public boolean isZoom() {
@@ -472,9 +510,13 @@ public class RaceViewController implements Initializable, TableObserver {
     private void moveAnnotations(Competitor boat) {
         int sourceID = boat.getSourceID();
 
-        MutablePoint point=setRelativPosition(boat);
+        MutablePoint point= setRelativePosition(boat);
 
-        int offset = 10;
+        int offset = 15;
+        if(isZoom()){
+            offset*=4;
+        }
+
         //all selected will be true if all selected
         boolean allSelected = true;
         //none selected will be false if none selected
@@ -569,7 +611,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat the boat to be calculated
      * @return point of the boat compared to visualizers boat
      */
-    private MutablePoint setRelativPosition(Competitor boat){
+    private MutablePoint setRelativePosition(Competitor boat){
         Integer sourceId = boat.getSourceID();
         double pointX;
         double pointY;
@@ -599,7 +641,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawBoat(Competitor boat) {
         Integer sourceId = boat.getSourceID();
         setBoatLocation();
-        MutablePoint point=setRelativPosition(boat);
+        MutablePoint point= setRelativePosition(boat);
 
 
         if (boatModels.get(sourceId) == null) {
@@ -655,14 +697,25 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor a competing boat
      */
     private void drawWake(Competitor boat) {
-        MutablePoint point=setRelativPosition(boat);
+        MutablePoint point= setRelativePosition(boat);
 
         //not really the boat length but the offset of the wake from the y axis
         double boatLength = 10;
         double startWakeOffset = 3;
         double wakeWidthFactor = 0.2;
+        double wakeLengthFactor=1;
+
+        if(isZoom()){
+            boatLength *= 4;
+            startWakeOffset*= 4;
+            wakeWidthFactor*= 2;
+            wakeLengthFactor*=4;
+
+
+        }
+
         if (wakeModels.get(boat.getSourceID()) == null) {
-            double wakeLength = boat.getVelocity();
+            double wakeLength = boat.getVelocity()*wakeLengthFactor;
             Polygon wake = new Polygon();
             wake.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + wakeLength * wakeWidthFactor, wakeLength + boatLength, -startWakeOffset - wakeLength * wakeWidthFactor, wakeLength + boatLength);
             LinearGradient linearGradient = new LinearGradient(0.0, 0, 0.0, 1, true, CycleMethod.NO_CYCLE, new Stop(0.0f, Color.rgb(0, 0, 255, 0.7)), new Stop(1.0f, TRANSPARENT));
@@ -670,7 +723,7 @@ public class RaceViewController implements Initializable, TableObserver {
             raceViewPane.getChildren().add(wake);
             this.wakeModels.put(boat.getSourceID(), wake);
         }
-        double newLength = boat.getVelocity() * 2;
+        double newLength = boat.getVelocity() * 2*wakeLengthFactor;
         Polygon wakeModel = wakeModels.get(boat.getSourceID());
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
@@ -1010,7 +1063,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void checkCollision(){
         for(int sourceID:new HashSet<>(dataSource.getCollisions())){
-//            drawCollision(boatPositionX,boatPositionY);
+            drawCollision(boatPositionX,boatPositionY);
             Competitor boat=dataSource.getStoredCompetitors().get(sourceID);
             mapEngine.executeScript(String.format("create_collision(%.9f,%.9f)",boat.getLatitude(),boat.getLongitude()));
             dataSource.removeCollsions(sourceID);
@@ -1024,7 +1077,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param centerY the y coordinate of the collision
      */
     public void drawCollision(double centerX,double centerY){
-        CollisionRipple ripple = new CollisionRipple(centerX, centerY, 20);
+        CollisionRipple ripple = new CollisionRipple(centerX, centerY, 100);
         raceViewPane.getChildren().add(ripple);
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
 
