@@ -68,7 +68,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         //establishes the connection with Visualizer
         TCPserver.establishConnection(connectionTime);
 
-
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
 
@@ -84,7 +83,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         sendAllXML();
         //start the race, updates boat position at a rate of 60 hz
         timer.schedule(this,0,16);
-
     }
 
     /**
