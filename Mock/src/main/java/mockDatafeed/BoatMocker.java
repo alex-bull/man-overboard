@@ -57,7 +57,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private Course raceCourse = new RaceCourse(null, true);
     private boolean flag=true;
     private Timer timer;
-    private List<ArrayList<Double>> courseBoundaryPoints = new ArrayList<>();
+    private List<List<MutablePoint>> courseBoundaryPairs = new ArrayList<>();
 
     public BoatMocker() throws IOException , JDOMException {
         timer =new Timer();
@@ -299,13 +299,18 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
-//                send a collision packet
+//              send a collision packet
                 sendYachtEvent(boat.getSourceID(),1);
                 boat.updatePosition(-10);
                 break;
             }
         }
     }
+
+    /**
+     * Calculates if the boat collides with the course boundary, if so then pushes back the boat.
+     * @param boat Competitor the boat to check collisions for
+     */
 
     private void handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
         double collisionRadius = 50;
@@ -319,16 +324,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         }
         for (MutablePoint equation: courseLineEquations ) {
             int index = courseLineEquations.indexOf(equation);
-            double y = boat.getPosition().getYValue();
-            double m = equation.getXValue();
-            double x = boat.getPosition().getXValue();
-            double c = equation.getYValue();
-            double distance = y - (m * x + c);
-            System.out.println(abs(distance));
-            if ((abs(distance) < 0.00005) && y < max(courseBoundaryPoints.get(index).get(1), courseBoundaryPoints.get(index).get(3)) &&
-                    y > min(courseBoundaryPoints.get(index).get(1), courseBoundaryPoints.get(index).get(3)) &&
-                    x < max(courseBoundaryPoints.get(index).get(0), courseBoundaryPoints.get(index).get(2)) &&
-                    x > min(courseBoundaryPoints.get(index).get(0), courseBoundaryPoints.get(index).get(2))) {
+            //distance = y - (mx + c)
+            double distance = boat.getPosition().getYValue() - (equation.getXValue() * boat.getPosition().getXValue() + equation.getYValue());
+            if ((abs(distance) < 0.00005) && isWithinBoundaryLines(boat.getPosition(), index)) {
+                //TODO: Add health reduction here later
                 sendYachtEvent(boat.getSourceID(), 1);
                 boat.updatePosition(-10);
                 break;
@@ -336,9 +335,28 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         }
     }
 
+    /**
+     * Checks whether the boat is between the two boundary edges
+     * @param boatPosition MutablePoint boat's position
+     * @param index int iterator of the list
+     * @return Boolean result
+     */
+    private boolean isWithinBoundaryLines(MutablePoint boatPosition, int index) {
+        double x = boatPosition.getXValue();
+        double y = boatPosition.getYValue();
+        return (y < max(courseBoundaryPairs.get(index).get(0).getYValue(), courseBoundaryPairs.get(index).get(1).getYValue()) &&
+            y > min(courseBoundaryPairs.get(index).get(0).getYValue(), courseBoundaryPairs.get(index).get(1).getYValue()) &&
+            x < max(courseBoundaryPairs.get(index).get(0).getXValue(), courseBoundaryPairs.get(index).get(1).getXValue()) &&
+            x > min(courseBoundaryPairs.get(index).get(0).getXValue(), courseBoundaryPairs.get(index).get(1).getXValue()));
+    }
+
+    /**
+     * Gets a line equation of each boundary edges and store them in courseLineEquations
+     * and also stores the pair of the edges into courseBoundaryPairs.
+     */
     private void getLineBetweenTwoPoints() {
-        MutablePoint pt1 = null;
-        MutablePoint pt2 = null;
+        MutablePoint pt1;
+        MutablePoint pt2;
         for (int i=0; i <courseBoundary.size(); i++) {
             if (i == courseBoundary.size()-1) {
                 pt1 = courseBoundary.get(i);
@@ -355,11 +373,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             double slope = (y2 - y1)/(x2 - x1);
             double c = y1 - slope * x1;
             MutablePoint lineEquation = new MutablePoint(slope, c);
-            courseBoundaryPoints.add(new ArrayList<>());
-            courseBoundaryPoints.get(i).add(x1);
-            courseBoundaryPoints.get(i).add(y1);
-            courseBoundaryPoints.get(i).add(x2);
-            courseBoundaryPoints.get(i).add(y2);
+            List<MutablePoint> pairs = Arrays.asList(pt1, pt2);
+            courseBoundaryPairs.add(pairs);
             courseLineEquations.add(lineEquation);
         }
     }
@@ -510,6 +525,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     /**
      * Send a race xml file to client, uses raceTemplate.xml to generate custom race xml messages
      */
+
     private void sendRaceXML() throws IOException {
         int messageType = 6;
         String raceTemplateString = fileToString("/raceTemplate.xml");

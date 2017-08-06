@@ -29,7 +29,7 @@ public class YachtEventParser {
      */
    public YachtEventParser(byte[] data){
        currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(data, 1, 7));
-        ackNumber = hexByteArrayToInt(Arrays.copyOfRange(data, 7, 9));
+       ackNumber = hexByteArrayToInt(Arrays.copyOfRange(data, 7, 9));
        raceID= hexByteArrayToInt(Arrays.copyOfRange(data, 9, 13));
        sourceID = Converter.hexByteArrayToInt(Arrays.copyOfRange(data, 13, 17));
        incidentID = hexByteArrayToInt(Arrays.copyOfRange(data, 17, 21));
