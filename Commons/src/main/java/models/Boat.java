@@ -7,8 +7,6 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import static utility.Calculator.getPositiveAngle;
-
 
 /**
  * Created by mgo65 on 3/03/17.

@@ -54,17 +54,6 @@ public class Calculator {
 
 
     /**
-     * Checks whether the boat is turning clockwise or anticlockwise when tacking/gybing.
-     * @param windDirection double wind direction in degrees
-     * @param boatHeading double the heading of the boat in degrees
-     * @return boolean true if the boat is supposed to turn clockwise
-     */
-    public static boolean isTackingClockwise(double windDirection, double boatHeading) {
-            return ((boatHeading > windDirection + 90 && boatHeading < windDirection + 180)
-            || (boatHeading < windDirection && boatHeading > windDirection + 270));
-    }
-
-    /**
      * Converts a given angle to a positive degree between 0 and 360
      * @return double the positive angle
      */
