@@ -472,6 +472,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private void moveAnnotations(Competitor boat) {
         int sourceID = boat.getSourceID();
 
+        MutablePoint point=setRelativPosition(boat);
+
         int offset = 10;
         //all selected will be true if all selected
         boolean allSelected = true;
@@ -512,16 +514,16 @@ public class RaceViewController implements Initializable, TableObserver {
 
             }
             label.setVisible(checkBox.isSelected());
-            label.setLayoutX(boatPositionX + 5);
-            label.setLayoutY(boatPositionY + offset);
+            label.setLayoutX(point.getXValue() + 5);
+            label.setLayoutY(point.getYValue()+ offset);
             if (checkBox.isSelected()) {
                 offset += 12;
             }
 
             startLabel = this.timeToStartlineAnnotations.get(sourceID);
             startLabel.setText(startAnnotation);
-            startLabel.setLayoutX(boatPositionX + 5);
-            startLabel.setLayoutY(boatPositionY + offset);
+            startLabel.setLayoutX(point.getXValue() + 5);
+            startLabel.setLayoutY(point.getYValue() + offset);
 
         }
 
@@ -558,10 +560,36 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private MutablePoint getBoatLocation(Competitor boat){
         MutablePoint relPoint=cloner.deepClone(boat.getPosition17());
-
         relPoint=relPoint.shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2);
-        System.out.println(currentPosition17);
         return relPoint;
+    }
+
+    /**
+     * sets the relative position of other boats compared to the visualizers boat
+     * @param boat the boat to be calculated
+     * @return point of the boat compared to visualizers boat
+     */
+    private MutablePoint setRelativPosition(Competitor boat){
+        Integer sourceId = boat.getSourceID();
+        double pointX;
+        double pointY;
+
+        if(sourceId==dataSource.getSourceID()){
+            pointX=boatPositionX;
+            pointY=boatPositionY;
+        }else{
+            if(isZoom()){
+                MutablePoint point=getBoatLocation(boat);
+                pointX=point.getXValue();
+                pointY=point.getYValue();
+
+            }else{
+                pointX=boat.getPosition().getXValue();
+                pointY=boat.getPosition().getYValue();
+
+            }
+        }
+        return new MutablePoint(pointX,pointY);
     }
 
     /**
@@ -571,24 +599,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawBoat(Competitor boat) {
         Integer sourceId = boat.getSourceID();
         setBoatLocation();
-        double pointX;
-        double pointY;
-
-        if(sourceId==dataSource.getSourceID()){
-            pointX=boatPositionX;
-            pointY=boatPositionY;
-        }else{
-            if(isZoom()){
-            MutablePoint point=getBoatLocation(boat);
-            pointX=point.getXValue();
-            pointY=point.getYValue();
-
-            }else{
-                pointX=boat.getPosition().getXValue();
-                pointY=boat.getPosition().getYValue();
-
-            }
-        }
+        MutablePoint point=setRelativPosition(boat);
 
 
         if (boatModels.get(sourceId) == null) {
@@ -624,15 +635,15 @@ public class RaceViewController implements Initializable, TableObserver {
             });
         }
         //Translate and rotate the corresponding boat models
-        boatModels.get(sourceId).setLayoutX(pointX);
-        boatModels.get(sourceId).setLayoutY(pointY);
+        boatModels.get(sourceId).setLayoutX(point.getXValue());
+        boatModels.get(sourceId).setLayoutY(point.getYValue());
         boatModels.get(sourceId).toFront();
         boatModels.get(sourceId).getTransforms().clear();
         boatModels.get(sourceId).getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
 
         if (sourceId == dataSource.getSourceID()) {
-            playerMarker.setLayoutX(pointX);
-            playerMarker.setLayoutY(pointY);
+            playerMarker.setLayoutX(point.getXValue());
+            playerMarker.setLayoutY(point.getYValue());
             playerMarker.getTransforms().clear();
             playerMarker.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         }
@@ -644,6 +655,8 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor a competing boat
      */
     private void drawWake(Competitor boat) {
+        MutablePoint point=setRelativPosition(boat);
+
         //not really the boat length but the offset of the wake from the y axis
         double boatLength = 10;
         double startWakeOffset = 3;
@@ -664,7 +677,7 @@ public class RaceViewController implements Initializable, TableObserver {
         wakeModel.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + newLength * wakeWidthFactor, newLength + boatLength, -startWakeOffset - newLength * wakeWidthFactor, newLength + boatLength);
 
 
-        wakeModel.getTransforms().add(new Translate(boatPositionX, boatPositionY));
+        wakeModel.getTransforms().add(new Translate(point.getXValue(), point.getYValue()));
         wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         wakeModel.toFront();
 
