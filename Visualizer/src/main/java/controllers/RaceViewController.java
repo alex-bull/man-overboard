@@ -219,11 +219,11 @@ public class RaceViewController implements Initializable, TableObserver {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         double windAngle = dataSource.getWindDirection();
 
-        double width=2.5;
+        double width=2;
         double length=15;
         if(isZoom()){
-            width*=4;
-            length*=4;
+            width*=2;
+            length*=2;
         }
 
         sailLine.setStroke(Color.WHITE);
@@ -352,7 +352,7 @@ public class RaceViewController implements Initializable, TableObserver {
         mapEngine.executeScript(String.format("setZoom(17);"));
         drawBoundary(raceViewCanvas.getGraphicsContext2D());
         drawCourse();
-        setScale(4);
+        setScale(2);
     }
 
     /**
@@ -686,8 +686,6 @@ public class RaceViewController implements Initializable, TableObserver {
         if (sourceId == dataSource.getSourceID()) {
             playerMarker.setLayoutX(point.getXValue());
             playerMarker.setLayoutY(point.getYValue());
-            playerMarker.getTransforms().clear();
-            playerMarker.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         }
     }
 
@@ -706,10 +704,10 @@ public class RaceViewController implements Initializable, TableObserver {
         double wakeLengthFactor=1;
 
         if(isZoom()){
-            boatLength *= 4;
-            startWakeOffset*= 4;
-            wakeWidthFactor*= 2;
-            wakeLengthFactor*=4;
+            boatLength *= 2;
+            startWakeOffset*= 2;
+//            wakeWidthFactor*= 1;
+            wakeLengthFactor*=2;
 
 
         }
