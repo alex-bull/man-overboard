@@ -83,6 +83,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line startLine;
     private Line finishLine;
     private Line virtualLine;
+    private Line healthBar;
 
     private RaceCalculator raceCalculator;
     private WebEngine mapEngine;
@@ -104,11 +105,13 @@ public class RaceViewController implements Initializable, TableObserver {
         finishLine = new Line();
         virtualLine = new Line();
         sailLine = new Line();
+        healthBar = new Line();
         raceCalculator = new RaceCalculator();
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(virtualLine);
         raceViewPane.getChildren().add(sailLine);
+        raceViewPane.getChildren().add(healthBar);
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
         noAnnotationsRadio.setToggleGroup(annotations);
@@ -219,6 +222,24 @@ public class RaceViewController implements Initializable, TableObserver {
             sailLine.getTransforms().add(new Rotate(windAngle, boatXval, boatYval));
         }
         sailLine.toFront();
+    }
+
+    /**
+     * Draws the health bar representing the health of the boat
+     */
+
+    private void drawHealthBar() {
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        double boatXval = boat.getPosition().getXValue();
+        double boatYval = boat.getPosition().getYValue();
+        healthBar.setStroke(Color.GREEN); // boat.getHealthColour
+        healthBar.setStrokeWidth(5);
+        healthBar.setStartX(boatXval);
+        healthBar.setStartY(boatYval - 20);
+        healthBar.setEndX(boatXval + 30);
+        healthBar.setEndY(boatYval - 20); // boat.getHealthLength
+//        healthBar.getTransforms().clear();
+        healthBar.toFront();
     }
 
     /**
@@ -381,6 +402,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 startLabel.setTextFill(boat.getColor());
                 this.timeToStartlineAnnotations.put(sourceID, startLabel);
                 this.raceViewPane.getChildren().add(startLabel);
+
 
                 label.setFont(Font.font("Monospaced"));
                 label.setTextFill(boat.getColor());
@@ -853,7 +875,6 @@ public class RaceViewController implements Initializable, TableObserver {
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
             if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
         }
-        drawSail();
     }
 
     /**
@@ -893,6 +914,8 @@ public class RaceViewController implements Initializable, TableObserver {
         updateFPS();
         updateCourse(gc);
         updateRace(gc);
+        drawSail();
+        drawHealthBar();
         checkCollision();
 
 
