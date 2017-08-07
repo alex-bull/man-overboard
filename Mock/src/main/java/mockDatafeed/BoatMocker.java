@@ -12,6 +12,7 @@ import parsers.MessageType;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.xml.CourseXMLParser;
+import utilities.CollisionUtility;
 import utilities.PolarTable;
 
 
@@ -44,7 +45,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
     private List<MutablePoint> courseBoundary;
-    private List<MutablePoint> courseLineEquations = new ArrayList<>();
+
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager;
@@ -57,12 +58,16 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private Course raceCourse = new RaceCourse(null, true);
     private boolean flag=true;
     private Timer timer;
-    private List<List<MutablePoint>> courseBoundaryPairs = new ArrayList<>();
+    private CollisionUtility collisionUtility;
+    private List<MutablePoint> courseLineEquations;
+
 
     public BoatMocker() throws IOException , JDOMException {
         timer =new Timer();
         random=new Random();
-        prestart = new MutablePoint(32.286577, -64.864304);
+        collisionUtility = new CollisionUtility();
+//        prestart = new MutablePoint(32.286577, -64.864304);
+        prestart = new MutablePoint(32.295842, -64.857157);
         int connectionTime = 10000;
         competitors = new HashMap<>();
         TCPserver = new TCPServer(4941,this);
@@ -80,6 +85,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         generateCourse();
         generateCompetitors();
         generateWind();
+        collisionUtility.setCourseInformation();
+        courseLineEquations = collisionUtility.getCourseLineEquations();
 
         //send all xml data first
         sendAllXML();
@@ -198,7 +205,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         RaceCourse course = new RaceCourse(cl.parseCourse(), false);
         courseFeatures = course.getPoints();
         courseBoundary = cl.parseCourseBoundary();
-        getLineBetweenTwoPoints();
+        collisionUtility.setCourseBoundary(courseBoundary);
     }
 
     /**
@@ -209,7 +216,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
 
         double a = 0.001 * competitors.size();
-        prestart = new MutablePoint(32.286577 + a, -64.864304);
+//        prestart = new MutablePoint(32.286577 + a, -64.864304);
+        prestart = new MutablePoint(32.296117 + a, -64.858834);
 
         Boat newCompetitor=new Boat("Boat "+currentSourceID, random.nextInt(20)+20, prestart, "B"+currentSourceID, currentSourceID, 1);
         competitors.put(currentSourceID, newCompetitor);
@@ -326,56 +334,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             int index = courseLineEquations.indexOf(equation);
             //distance = y - (mx + c)
             double distance = boat.getPosition().getYValue() - (equation.getXValue() * boat.getPosition().getXValue() + equation.getYValue());
-            if ((abs(distance) < 0.00005) && isWithinBoundaryLines(boat.getPosition(), index)) {
+            if ((abs(distance) < 0.0001) && collisionUtility.isWithinBoundaryLines(boat.getPosition(), index)) {
                 //TODO: Add health reduction here later
                 sendYachtEvent(boat.getSourceID(), 1);
                 boat.updatePosition(-10);
                 break;
             }
-        }
-    }
-
-    /**
-     * Checks whether the boat is between the two boundary edges
-     * @param boatPosition MutablePoint boat's position
-     * @param index int iterator of the list
-     * @return Boolean result
-     */
-    private boolean isWithinBoundaryLines(MutablePoint boatPosition, int index) {
-        double x = boatPosition.getXValue();
-        double y = boatPosition.getYValue();
-        return (y < max(courseBoundaryPairs.get(index).get(0).getYValue(), courseBoundaryPairs.get(index).get(1).getYValue()) &&
-            y > min(courseBoundaryPairs.get(index).get(0).getYValue(), courseBoundaryPairs.get(index).get(1).getYValue()) &&
-            x < max(courseBoundaryPairs.get(index).get(0).getXValue(), courseBoundaryPairs.get(index).get(1).getXValue()) &&
-            x > min(courseBoundaryPairs.get(index).get(0).getXValue(), courseBoundaryPairs.get(index).get(1).getXValue()));
-    }
-
-    /**
-     * Gets a line equation of each boundary edges and store them in courseLineEquations
-     * and also stores the pair of the edges into courseBoundaryPairs.
-     */
-    private void getLineBetweenTwoPoints() {
-        MutablePoint pt1;
-        MutablePoint pt2;
-        for (int i=0; i <courseBoundary.size(); i++) {
-            if (i == courseBoundary.size()-1) {
-                pt1 = courseBoundary.get(i);
-                pt2 = courseBoundary.get(0);
-            }
-            else {
-                pt1 = courseBoundary.get(i);
-                pt2 = courseBoundary.get(i + 1);
-            }
-            double x1 = pt1.getXValue();
-            double y1 = pt1.getYValue();
-            double x2 = pt2.getXValue();
-            double y2 = pt2.getYValue();
-            double slope = (y2 - y1)/(x2 - x1);
-            double c = y1 - slope * x1;
-            MutablePoint lineEquation = new MutablePoint(slope, c);
-            List<MutablePoint> pairs = Arrays.asList(pt1, pt2);
-            courseBoundaryPairs.add(pairs);
-            courseLineEquations.add(lineEquation);
         }
     }
 
