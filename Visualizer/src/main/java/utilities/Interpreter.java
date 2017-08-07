@@ -1,9 +1,6 @@
 package utilities;
 
-import controllers.StarterController;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -43,8 +40,8 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
 import static parsers.Converter.hexByteArrayToInt;
-import static parsers.MessageType.BOAT_ACTION;
 import static parsers.MessageType.UNKNOWN;
+import static utility.Calculator.calculateExpectedTack;
 
 /**
  * Created by mgo65 on 11/05/17.
@@ -343,6 +340,13 @@ public class Interpreter implements DataSource, PacketHandler {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         boat.switchSails();
                     }
+
+                    if (boatAction.equals(BoatAction.TACK_GYBE) && headerDataSourceID == this.sourceID) {
+                        Competitor boat = this.storedCompetitors.get(this.sourceID);
+                        double boatHeading = boat.getCurrentHeading();
+                        boat.setCurrentHeading(calculateExpectedTack(this.windDirection, boatHeading));
+                    }
+
                 }
                 break;
             case SOURCE_ID:

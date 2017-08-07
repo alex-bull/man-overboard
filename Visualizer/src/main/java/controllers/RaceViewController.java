@@ -878,9 +878,9 @@ public class RaceViewController implements Initializable, TableObserver {
         CollisionRipple ripple = new CollisionRipple(centerX, centerY, 20);
         raceViewPane.getChildren().add(ripple);
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
-
-
     }
+
+
 
     /**
      * Refreshes the contents of the display to match the datasource
@@ -895,6 +895,7 @@ public class RaceViewController implements Initializable, TableObserver {
         updateCourse(gc);
         updateRace(gc);
         checkCollision();
+
 
     }
 

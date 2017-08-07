@@ -155,9 +155,22 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                     case DOWN:
                         competitors.get(sourceID).changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
                         break;
+                    case TACK:
+                        double windAngle = shortToDegrees(windGenerator.getWindDirection());
+                        Competitor boat = competitors.get(sourceID);
+                        boat.setCurrentHeading(windAngle - (boat.getCurrentHeading() - windAngle));
+                        break;
                 }
                 break;
         }
+    }
+
+    /**
+     * Get the wind direction in degrees
+     * @return double - wind direction in degrees
+     */
+    public double getWindDirection() {
+        return shortToDegrees(windGenerator.getWindDirection());
     }
 
 

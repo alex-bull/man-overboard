@@ -27,7 +27,7 @@ public class PolarTable {
      *
      * @param filepath the path to the polar table
      * @param speed double the speed
-     *              @throws IOException
+     * @throws IOException IOException
      */
     public PolarTable(String filepath, double speed) throws IOException {
         this.buildSpeedFunc(filepath, speed);
@@ -39,7 +39,7 @@ public class PolarTable {
      * Put file data into interpolator for speed
      * @param filePath String, the polar file
      * @param speed double the windSpeed
-     * @throws IOException
+     * @throws IOException IOException
      */
     private void buildSpeedFunc(String filePath, double speed) throws IOException {
 
@@ -71,7 +71,7 @@ public class PolarTable {
     /**
      * Put file data into interpolators for up and down twas
      * @param filePath String, the location of the polar file
-     * @throws IOException
+     * @throws IOException IOException
      */
     private void buildTWAFuncs(String filePath) throws IOException {
         String content = fileToString(filePath);
@@ -98,7 +98,7 @@ public class PolarTable {
     /**
      * Calculates the twa value that corresponds to the lowest boat speed above 0
      * @param windSpeed The current wind speed
-     *                  @param upwind whether it is up wind or not
+     * @param upwind whether it is up wind or not
      * @return double, the twa
      */
     public double getMinimalTwa(double windSpeed, boolean upwind) {

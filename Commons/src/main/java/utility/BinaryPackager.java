@@ -128,7 +128,7 @@ public class BinaryPackager {
      *                      6-Race
      *                      7-Boat
      * @return a bytearray of packaged xml message
-     * @throws IOException
+     * @throws IOException IO exception
      */
     public byte[] packageXML(int length, String xmlFileString, int messageType) throws IOException {
 
