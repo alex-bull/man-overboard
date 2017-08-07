@@ -71,6 +71,36 @@ public class BoatUpdater {
         }
     }
 
+    private boolean markIsCorrectSide(Competitor boat, Competitor mark, boolean isPortSide) {
+        // port = 1, starboard = 0
+        double xPosBoat = boat.getPosition().getXValue();
+        double yPosBoat = boat.getPosition().getYValue();
+        double xPosMark = mark.getPosition().getXValue();
+        double yPosMark = mark.getPosition().getYValue();
+
+        double heading = boat.getCurrentHeading();
+        // TODO find an imaginary point the boat is heading towards
+        double xPosPoint = 3;
+        double yPosPoint = 3;
+
+        double result = (xPosPoint - xPosBoat) * (yPosMark - yPosBoat) - (yPosPoint - yPosBoat) * (xPosMark - xPosBoat);
+        // ((b.X - a.X)*(c.Y - a.Y) - (b.Y - a.Y)*(c.X - a.X))
+        // a = boat position, b = point boat is heading towards, c = mark position
+        // is port if > 0
+        // is starboard if < 0
+
+        if (result == 0) {
+            // is heading directly towards mark
+            return false;
+        }
+
+        if (result > 0) {
+            return isPortSide;
+        } else {
+            return !isPortSide;
+        }
+    }
+
 
     /**
      * Calculates if the boat collides with any course features and adjusts the boats position
@@ -88,7 +118,7 @@ public class BoatUpdater {
         for (Integer markId: markIds) { //COMPARE DISTANCE TO ALL MARKS IN THE COMPOUND MARK (1 for a mark, 2 for a gate)
             Competitor markBoat = markBoats.get(markId);
             Double distance = raceCourse.distanceBetweenGPSPoints(markBoat.getPosition(), boat.getPosition());
-            if (distance < roundingRadius) {
+            if (distance < roundingRadius && markIsCorrectSide(boat, markBoat, true)) {
 
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
                 boat.setCurrentLegIndex(nextLegIndex);
