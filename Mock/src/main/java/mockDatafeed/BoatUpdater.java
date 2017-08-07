@@ -83,6 +83,8 @@ public class BoatUpdater {
         List<Integer> markIds = raceData.getLegIndexToMarkSourceIds().get(nextLegIndex);
         if (markIds == null || markIds.size() < 1) return;
 
+        //System.out.println("Rounding direction: " + raceData.getLegIndexToRoundingDirection().get(nextLegIndex));
+
         for (Integer markId: markIds) { //COMPARE DISTANCE TO ALL MARKS IN THE COMPOUND MARK (1 for a mark, 2 for a gate)
             Competitor markBoat = markBoats.get(markId);
             Double distance = raceCourse.distanceBetweenGPSPoints(markBoat.getPosition(), boat.getPosition());

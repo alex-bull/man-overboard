@@ -139,6 +139,7 @@ public class RaceXMLParser {
         raceData.setCourse(course);
 
         Map<Integer, List<Integer>> legIndexToSourceId = new HashMap<>();
+        Map<Integer, String> legIndextoRoundingDirection = new HashMap<>();
 
         for (Element corner : race.getChild("CompoundMarkSequence").getChildren()) {
 
@@ -149,13 +150,14 @@ public class RaceXMLParser {
             int zoneSize = Integer.parseInt(corner.getAttributeValue("ZoneSize"));
 
             legIndexToSourceId.put(cornerSeqID, compoundMarkIdToSourceId.get(compoundMarkID));
+            legIndextoRoundingDirection.put(cornerSeqID, rounding);
+
             CornerData cornerData = new CornerData(rounding);
-
             raceData.getCompoundMarkSequence().add(cornerData);
-
-
         }
+
         raceData.setLegIndexToMarkSourceIds(legIndexToSourceId);
+        raceData.setLegIndexToRoundingDirection(legIndextoRoundingDirection);
 
         for (Element limit : race.getChild("CourseLimit").getChildren()) {
             double lat = Double.parseDouble(limit.getAttributeValue("Lat"));
