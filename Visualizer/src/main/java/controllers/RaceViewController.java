@@ -232,13 +232,17 @@ public class RaceViewController implements Initializable, TableObserver {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         double boatXval = boat.getPosition().getXValue();
         double boatYval = boat.getPosition().getYValue();
-        healthBar.setStroke(Color.GREEN); // boat.getHealthColour
+
         healthBar.setStrokeWidth(5);
         healthBar.setStartX(boatXval);
         healthBar.setStartY(boatYval - 20);
         healthBar.setEndX(boatXval + 30);
         healthBar.setEndY(boatYval - 20); // boat.getHealthLength
-//        healthBar.getTransforms().clear();
+
+        LinearGradient colourGradient = new LinearGradient(healthBar.getStartX(), healthBar.getStartY(),
+                healthBar.getEndX(), healthBar.getEndY(), false, CycleMethod.NO_CYCLE, new Stop(0, Color.RED), new Stop(1, Color.GREEN));
+        healthBar.setStroke(colourGradient);
+
         healthBar.toFront();
     }
 
