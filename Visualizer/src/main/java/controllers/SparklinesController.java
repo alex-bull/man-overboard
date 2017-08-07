@@ -61,7 +61,7 @@ public class SparklinesController {
         long expectedStartTime = dataSource.getExpectedStartTime();
         long firstMessageTime = dataSource.getMessageTime();
         long raceTime = firstMessageTime - expectedStartTime;
-        long waitTime = 45000;
+        long waitTime = 4000;
         int sparklinePoints = 5;
         List<Competitor> comps = new ArrayList<>(dataSource.getCompetitorsPosition());
         comps.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
