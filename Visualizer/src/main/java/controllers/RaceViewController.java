@@ -84,6 +84,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line finishLine;
     private Line virtualLine;
     private Line healthBar;
+    private Line healthBarBackground;
 
     private RaceCalculator raceCalculator;
     private WebEngine mapEngine;
@@ -106,12 +107,14 @@ public class RaceViewController implements Initializable, TableObserver {
         virtualLine = new Line();
         sailLine = new Line();
         healthBar = new Line();
+        healthBarBackground = new Line();
         raceCalculator = new RaceCalculator();
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(virtualLine);
         raceViewPane.getChildren().add(sailLine);
         raceViewPane.getChildren().add(healthBar);
+        raceViewPane.getChildren().add(healthBarBackground);
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
         noAnnotationsRadio.setToggleGroup(annotations);
@@ -233,10 +236,18 @@ public class RaceViewController implements Initializable, TableObserver {
         double boatXval = boat.getPosition().getXValue();
         double boatYval = boat.getPosition().getYValue();
 
+        healthBarBackground.setStrokeWidth(5);
+        healthBarBackground.setStartX(boatXval);
+        healthBarBackground.setStartY(boatYval - 20);
+        healthBarBackground.setEndX(boatXval + 30);
+        healthBarBackground.setEndY(boatYval - 20);
+        healthBarBackground.setStroke(Color.WHITE);
+
         healthBar.setStrokeWidth(5);
         healthBar.setStartX(boatXval);
         healthBar.setStartY(boatYval - 20);
-        healthBar.setEndX(boatXval + 30);
+        //shorter than the original to test. Will need to be the same as the background
+        healthBar.setEndX(boatXval + 20);
         healthBar.setEndY(boatYval - 20); // boat.getHealthLength
 
         LinearGradient colourGradient = new LinearGradient(healthBar.getStartX(), healthBar.getStartY(),
