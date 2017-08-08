@@ -112,18 +112,25 @@ public class RaceViewController implements Initializable, TableObserver {
     //Deep cloner
     private Cloner cloner=new Cloner();
 
+    //graphics context
+    private GraphicsContext gc;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         startLine = new Line();
         finishLine = new Line();
         virtualLine = new Line();
+
+        //draws the sail on the boat
         sailLine = new Line();
+        sailLine.setStroke(Color.WHITE);
 
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(virtualLine);
         raceViewPane.getChildren().add(sailLine);
+
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
         noAnnotationsRadio.setToggleGroup(annotations);
@@ -132,6 +139,7 @@ public class RaceViewController implements Initializable, TableObserver {
         showAllAnnotations();
         fpsToggle.setSelected(true);
 
+        gc=raceViewCanvas.getGraphicsContext2D();
 
         mapEngine = mapView.getEngine();
         mapView.setVisible(true);
@@ -215,30 +223,26 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draws the line representing the sail of the boat
      */
 
-    private void drawSail() {
+    private void drawSail( double width, double length) {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         double windAngle = dataSource.getWindDirection();
 
-        double width=2;
-        double length=15;
-        if(isZoom()){
-            width*=2;
-            length*=2;
-        }
-
-        sailLine.setStroke(Color.WHITE);
         sailLine.setStrokeWidth(width);
         sailLine.setStartX(boatPositionX);
         sailLine.setStartY(boatPositionY);
         sailLine.setEndX(boatPositionX);
         sailLine.setEndY(boatPositionY + length);
         sailLine.getTransforms().clear();
+
+
         if (boat.hasSailsOut()) {
             sailLine.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatPositionX, boatPositionY));
         } else {
             sailLine.getTransforms().add(new Rotate(windAngle, boatPositionX, boatPositionY));
         }
+
         sailLine.toFront();
+
     }
 
     /**
@@ -248,11 +252,12 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawVirtualLine(Color boatColor, Competitor selectedBoat) {
 
+        //get things we need
         MutablePoint startMark1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0)).getPixelLocations().get(0);
         MutablePoint startMark2 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(1)).getPixelLocations().get(0);
         CourseFeature startLine1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0));
         long expectedStartTime = dataSource.getExpectedStartTime();
-            long messageTime = dataSource.getMessageTime();
+        long messageTime = dataSource.getMessageTime();
 
         List<MutablePoint> virtualLinePoints = calcVirtualLinePoints(selectedBoat, boatModels.get(selectedBoat.getSourceID()),startMark1,startMark2,startLine1,expectedStartTime,messageTime);
         if (!virtualLinePoints.isEmpty()) {
@@ -270,24 +275,15 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Draws the course features on the canvas
      */
-    private void drawCourse() {
-        if(isZoom()){
-            courseFeatures=new ArrayList<>();
-            for(CourseFeature cf: dataSource.getCourseFeatures17()){
-                courseFeatures.add(cf.shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2));
-            }
-        }else{
-            courseFeatures=dataSource.getCourseFeatures();
-        }
+    private void drawCourse(List<CourseFeature> courseFeatures) {
 
         // loops through all course features
         for (CourseFeature courseFeature : courseFeatures) {
-
             drawMark(courseFeature);
-
-//            mapEngine.executeScript(String.format("drawMarker(%.9f,%.9f);",courseFeature.getGPSPoint().getXValue(),courseFeature.getGPSPoint().getYValue()));
-//            System.out.println("hi");
         }
+
+        drawLine(startLine, dataSource.getStartMarks());
+        drawLine(finishLine, dataSource.getFinishMarks());
     }
 
     /**
@@ -356,8 +352,7 @@ public class RaceViewController implements Initializable, TableObserver {
     public void zoomIn(){
         zoom=true;
         mapEngine.executeScript(String.format("setZoom(17);"));
-        drawBoundary(raceViewCanvas.getGraphicsContext2D());
-        drawCourse();
+        updateRace();
         setScale(2);
     }
 
@@ -393,10 +388,7 @@ public class RaceViewController implements Initializable, TableObserver {
         mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getMapZoomLevel()));
         List<Double> bounds=dataSource.getGPSbounds();
         mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
-        drawBoundary(raceViewCanvas.getGraphicsContext2D());
-        drawLine(startLine, dataSource.getStartMarks());
-        drawLine(finishLine, dataSource.getFinishMarks());
-        drawCourse();
+        updateRace();
         setScale(1);
     }
 
@@ -406,10 +398,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Draw boundary
-     *
-     * @param gc GraphicsContext
      */
-    private void drawBoundary(GraphicsContext gc) {
+    private void drawBoundary() {
             if(isZoom()){
                 courseBoundary=new ArrayList<>();
                 for(MutablePoint p: dataSource.getCourseBoundary17()){
@@ -747,9 +737,8 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draw the next dot of track for the boat on the canvas
      *
      * @param boat Competitor
-     * @param gc   GraphicsContext the gc to draw the track on
      */
-    private void drawTrack(Competitor boat, GraphicsContext gc) {
+    private void drawTrack(Competitor boat) {
         gc.setFill(boat.getColor());
         gc.save();
         Dot dot = new Dot(boatPositionX, boatPositionY);
@@ -1002,32 +991,39 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Check if course need to be redrawn and draws the course features and the course boundary
-     * @param gc GraphicsContext
      */
-    private void updateCourse(GraphicsContext gc) {
-        if(zoom){
+    private void updateCourse() {
+
+        List<CourseFeature> courseFeatures;
+        if(isZoom()){
             mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);",dataSource.getCompetitor().getLatitude(),dataSource.getCompetitor().getLongitude()));
-
+            courseFeatures=new ArrayList<>();
+            for(CourseFeature cf: dataSource.getCourseFeatures17()){
+                courseFeatures.add(cf.shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2));
+            }
+        }else{
+            courseFeatures=dataSource.getCourseFeatures();
         }
-        if (dataSource.getCourseFeatures() != courseFeatures) {
-            courseFeatures = dataSource.getCourseFeatures();
-            drawCourse();
-            drawLine(startLine, dataSource.getStartMarks());
-            drawLine(finishLine, dataSource.getFinishMarks());
 
-            drawBoundary(gc);
-        }
+        drawCourse(courseFeatures);
+        drawBoundary();
+
     }
 
     /**
      * Draws the race. This includes the boat, wakes, track and annotations.
      */
-    private void updateRace(GraphicsContext gc) {
+    private void updateRace() {
         //needs to redraw if zoomed in
+        double width=2;
+        double length=15;
+
         if(isZoom()){
-            drawBoundary(gc);
-            drawCourse();
+            width*=2;
+            length*=2;
         }
+
+        updateCourse();
 
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
         for (Competitor boat : competitors) {
@@ -1048,6 +1044,7 @@ public class RaceViewController implements Initializable, TableObserver {
                     drawVirtualLine(boatColor, boat);
                 } else if (dataSource.getRaceStatus() == STARTED) {
                     raceViewPane.getChildren().remove(virtualLine);
+                    virtualLine=null;
                 }
             }
 
@@ -1059,7 +1056,8 @@ public class RaceViewController implements Initializable, TableObserver {
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
             if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
         }
-        drawSail();
+
+        drawSail(width, length);
     }
 
     /**
@@ -1094,12 +1092,12 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param dataSource DataSource the data to display
      */
     void refresh(DataSource dataSource) {
-        GraphicsContext gc = raceViewCanvas.getGraphicsContext2D();
+
         this.dataSource = dataSource;
         updateRaceStatus();
         updateFPS();
-        updateCourse(gc);
-        updateRace(gc);
+
+        updateRace();
         checkCollision();
 
     }
