@@ -48,6 +48,8 @@ import static java.lang.Math.abs;
 import static javafx.scene.paint.Color.*;
 import static parsers.RaceStatusEnum.PREPARATORY;
 import static parsers.RaceStatusEnum.STARTED;
+import static utilities.RaceCalculator.calcVirtualLinePoints;
+import static utilities.RaceCalculator.calculateStartSymbol;
 
 /**
  * Controller for the race view.
@@ -86,7 +88,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line finishLine;
     private Line virtualLine;
 
-    private RaceCalculator raceCalculator;
     private WebEngine mapEngine;
     private DataSource dataSource;
     private PolarTable polarTable;
@@ -118,7 +119,7 @@ public class RaceViewController implements Initializable, TableObserver {
         finishLine = new Line();
         virtualLine = new Line();
         sailLine = new Line();
-        raceCalculator = new RaceCalculator();
+
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(virtualLine);
@@ -190,7 +191,6 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.setPrefWidth(width);
 
         this.dataSource = dataSource;
-        raceCalculator.setDataSource(dataSource);
         drawAnnotations();
         while (dataSource.getCompetitorsPosition() == null) {
             try {
@@ -247,8 +247,14 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param selectedBoat selected boat
      */
     private void drawVirtualLine(Color boatColor, Competitor selectedBoat) {
-        raceCalculator.setBoatModels(boatModels);
-        List<MutablePoint> virtualLinePoints = raceCalculator.calcVirtualLinePoints(selectedBoat);
+
+        MutablePoint startMark1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0)).getPixelLocations().get(0);
+        MutablePoint startMark2 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(1)).getPixelLocations().get(0);
+        CourseFeature startLine1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0));
+        long expectedStartTime = dataSource.getExpectedStartTime();
+            long messageTime = dataSource.getMessageTime();
+
+        List<MutablePoint> virtualLinePoints = calcVirtualLinePoints(selectedBoat, boatModels.get(selectedBoat.getSourceID()),startMark1,startMark2,startLine1,expectedStartTime,messageTime);
         if (!virtualLinePoints.isEmpty()) {
             MutablePoint virtualLine1 = virtualLinePoints.get(0);
             MutablePoint virtualLine2 = virtualLinePoints.get(1);
@@ -514,7 +520,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
         int offset = 15;
         if(isZoom()){
-            offset*=4;
+            offset*=2;
         }
 
         //all selected will be true if all selected
@@ -965,7 +971,7 @@ public class RaceViewController implements Initializable, TableObserver {
         double distanceToEnd = boatPoint.distance(startLineEndX, startLineEndY);
         long timeUntilStart = Converter.convertToRelativeTime(dataSource.getExpectedStartTime(), dataSource.getMessageTime()) * -1;
 
-        return raceCalculator.calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), timeUntilStart);
+        return calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), timeUntilStart);
     }
 
 

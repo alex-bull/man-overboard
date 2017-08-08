@@ -23,18 +23,6 @@ import static java.lang.Math.sqrt;
 public class RaceCalculator {
 
 
-    private DataSource dataSource;
-    private Competitor boat;
-    private Map<Integer, Polygon> boatModels = new HashMap<>();
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public void setBoatModels(Map boatModels) {
-        this.boatModels = boatModels;
-    }
-
     /**
      * Calculates whether boat is heading to the start line
      * and if it does calculates the virtual line points and returns them so they can be used for drawing
@@ -42,16 +30,16 @@ public class RaceCalculator {
      * @param selectedBoat selected boat
      * @return List virtualLinePoints
      */
-    public List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat) {
+    public static List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat,Polygon boatModel, MutablePoint startMark1, MutablePoint startMark2, CourseFeature startLine1, long expectedStartTime,long messageTime) {
         List<MutablePoint> virtualLinePoints = new ArrayList<>();
-        this.boat = selectedBoat;
 
-        Polygon boatModel = boatModels.get(boat.getSourceID());
+//
+//        Polygon boatModel = boatModels.get(boat.getSourceID());
         Point2D boatFront = boatModel.localToParent(0, 0);
         Point2D boatBack = boatModel.localToParent(0, -2000);
 
-        MutablePoint startMark1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0)).getPixelLocations().get(0);
-        MutablePoint startMark2 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(1)).getPixelLocations().get(0);
+//        MutablePoint startMark1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0)).getPixelLocations().get(0);
+//        MutablePoint startMark2 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(1)).getPixelLocations().get(0);
 
         Line2D startLine = new Line2D.Double(startMark1.getXValue(), startMark1.getYValue(), startMark2.getXValue(), startMark2.getYValue());
         Line2D headingLine = new Line2D.Double(boatFront.getX(), boatFront.getY(), boatBack.getX(), boatBack.getY());
@@ -62,8 +50,15 @@ public class RaceCalculator {
             double xDifference = boatFront.getX() - intersection.getXValue();
             double yDifference = boatFront.getY() - intersection.getYValue();
 
-            double distanceToStartLine = calcDistToStart(selectedBoat);
-            double distanceToVirtualLine = calcDistToVirtual(selectedBoat);
+
+//            CourseFeature startLine1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0));
+            double distanceToStartLine = calcDistToStart(selectedBoat,startLine1);
+
+//            long expectedStartTime = dataSource.getExpectedStartTime();
+//            long messageTime = dataSource.getMessageTime();
+            long timeUntilStart = Converter.convertToRelativeTime(expectedStartTime, messageTime) * -1; // seconds, negative because race hasn't started
+
+            double distanceToVirtualLine = calcDistToVirtual(selectedBoat,timeUntilStart);
 
             if (distanceToStartLine != 0) {
                 double ratio = distanceToVirtualLine / distanceToStartLine;
@@ -83,12 +78,12 @@ public class RaceCalculator {
      * @param startMark2 MutablePoint The other end of the start line.
      * @return MutablePoint Point of intersection.
      */
-    public MutablePoint calcStartLineIntersection(javafx.geometry.Point2D boatFront, Point2D boatBack, MutablePoint startMark1, MutablePoint startMark2) {
-        double infinity = 1000000;
+    public static MutablePoint calcStartLineIntersection(Point2D boatFront, Point2D boatBack, MutablePoint startMark1, MutablePoint startMark2) {
+
         double headingGradient;
         double xDiffBoat = boatFront.getX() - boatBack.getX();
         if (xDiffBoat == 0) {
-            headingGradient = infinity;
+            headingGradient = Double.POSITIVE_INFINITY;
         } else {
             headingGradient = (boatFront.getY() - boatBack.getY()) / xDiffBoat;
         }
@@ -97,7 +92,7 @@ public class RaceCalculator {
         double startLineGradient;
         double xDiffStart = startMark1.getXValue() - startMark2.getXValue();
         if (xDiffStart == 0) {
-            startLineGradient = infinity;
+            startLineGradient = Double.POSITIVE_INFINITY;
         } else {
             startLineGradient = (startMark1.getYValue() - startMark2.getYValue()) / xDiffStart;
         }
@@ -124,7 +119,7 @@ public class RaceCalculator {
      * @param startMark MutablePoint A point on the real start line.
      * @return MutablePoint A point on the virtual start line.
      */
-    public MutablePoint calcVirtualLinePoint(double ratio, double xDifference, double yDifference, MutablePoint startMark) {
+    public  static MutablePoint calcVirtualLinePoint(double ratio, double xDifference, double yDifference, MutablePoint startMark) {
         double startToVirtualX = (1 - ratio) * xDifference;
         double startToVirtualY = (1 - ratio) * yDifference;
 
@@ -142,7 +137,7 @@ public class RaceCalculator {
      * @param timeUntilStart long the time until start
      * @return String "-" if the boat is going to cross early, "+" if late and "" if within 5 seconds.
      */
-    public String calculateStartSymbol(double distanceToStart, double distanceToEnd, double velocity, long timeUntilStart) {
+    public  static String calculateStartSymbol(double distanceToStart, double distanceToEnd, double velocity, long timeUntilStart) {
         int timeBound = 5;
         double selectedTime;
 
@@ -166,12 +161,8 @@ public class RaceCalculator {
      * @param selectedBoat selected boat
      * @return double distance (m)
      */
-    public double calcDistToVirtual(Competitor selectedBoat) {
-        long expectedStartTime = dataSource.getExpectedStartTime();
-        long messageTime = dataSource.getMessageTime();
-        long timeUntilStart = Converter.convertToRelativeTime(expectedStartTime, messageTime) * -1; // seconds, negative because race hasn't started
-        double velocity = selectedBoat.getVelocity(); // metres per seconds
-        return velocity * timeUntilStart; // metres
+    public static double calcDistToVirtual(Competitor selectedBoat, long timeUntilStart) {
+        return selectedBoat.getVelocity() * timeUntilStart; // metres
     }
 
     /**
@@ -179,11 +170,10 @@ public class RaceCalculator {
      * @param selectedBoat selected boat
      * @return double distance (m)
      */
-    public double calcDistToStart(Competitor selectedBoat) {
+    public static double calcDistToStart(Competitor selectedBoat, CourseFeature startLine1) {
         double boatLat = selectedBoat.getLatitude();
         double boatLon = selectedBoat.getLongitude();
 
-        CourseFeature startLine1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0));
         double startLat = startLine1.getGPSPoint().getXValue();
         double startLon = startLine1.getGPSPoint().getYValue();
 
@@ -198,7 +188,7 @@ public class RaceCalculator {
      * @param longitude2 second point's longitude
      * @return double distance (m)
      */
-    public double calcDistBetweenGPSPoints(double latitude1, double longitude1, double latitude2, double longitude2) {
+    public  static double calcDistBetweenGPSPoints(double latitude1, double longitude1, double latitude2, double longitude2) {
         long earthRadius = 6371000;
         double phiStart = Math.toRadians(latitude2);
         double phiBoat = Math.toRadians(latitude1);
