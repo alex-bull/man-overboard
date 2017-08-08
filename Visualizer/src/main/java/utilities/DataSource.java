@@ -18,7 +18,6 @@ import java.util.Set;
  */
 public interface DataSource {
     void receive(String host, int port, Scene scene, StreamDelegate delegate);
-    List<CourseFeature> getCourseFeatures();
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
     List<Integer> getStartMarks();
@@ -42,6 +41,5 @@ public interface DataSource {
     void send(byte[] data);
     Competitor getCompetitor();
     List<MutablePoint> getCourseBoundary17();
-    List<CourseFeature> getCourseFeatures17();
     HashMap<Integer, CourseFeature> getStoredFeatures17();
 }

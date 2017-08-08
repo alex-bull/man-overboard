@@ -68,12 +68,10 @@ public class Interpreter implements DataSource, PacketHandler {
     private HashMap<Integer,CourseFeature> storedFeatures17=new HashMap<>();
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
     private List<CourseFeature> courseFeatures = new ArrayList<>();
-    private List<CourseFeature> courseFeatures17 = new ArrayList<>();
+
     private List<MutablePoint> courseBoundary = new ArrayList<>();
 
-    public List<CourseFeature> getCourseFeatures17() {
-        return courseFeatures17;
-    }
+
 
     public HashMap<Integer, CourseFeature> getStoredFeatures17() {
         return storedFeatures17;
@@ -450,22 +448,20 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param courseFeature CourseFeature
      */
     private void updateCourseMarks(CourseFeature courseFeature,BoatData boatData) {
-        List<CourseFeature> points = new ArrayList<>();
-        List<CourseFeature> points17 = new ArrayList<>();
-
         CourseFeature courseFeature17=cloner.deepClone(courseFeature);
         courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
         courseFeature17.factor(zoomFactor, zoomFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
-        this.storedFeatures.put(boatData.getSourceID(), courseFeature);
-        this.storedFeatures17.put(boatData.getSourceID(), courseFeature17);
-
-        for (Integer id : this.storedFeatures.keySet()) {
-            points.add(this.storedFeatures.get(id));
-            points17.add(this.storedFeatures17.get(id));
+        if(!storedFeatures.containsKey(boatData.getSourceID())) {
+            this.storedFeatures.put(boatData.getSourceID(), courseFeature);
+            this.storedFeatures17.put(boatData.getSourceID(), courseFeature17);
         }
-        this.courseFeatures = points;
-        this.courseFeatures17=points17;
+//        for (Integer id : this.storedFeatures.keySet()) {
+//            points.add(this.storedFeatures.get(id));
+//            points17.add(this.storedFeatures17.get(id));
+//        }
+//        this.courseFeatures = points;
+
     }
 
     /**
