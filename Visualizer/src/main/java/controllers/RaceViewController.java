@@ -3,6 +3,7 @@ package controllers;
 import com.google.common.primitives.Doubles;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
@@ -13,6 +14,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -67,6 +71,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Text status;
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
+    @FXML private ImageView controlLayoutView;
+    @FXML private Image controlImage;
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Shape playerMarker;
@@ -137,6 +143,8 @@ public class RaceViewController implements Initializable, TableObserver {
             }
 
         });
+        controlLayoutView = new ImageView();
+        controlImage = new Image("control.png");
 
     }
 
@@ -880,6 +888,9 @@ public class RaceViewController implements Initializable, TableObserver {
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
     }
 
+    public void openControlLayout(ActionEvent actionEvent) {
+        controlLayoutView.setImage(controlImage);
+    }
 
 
     /**
@@ -901,5 +912,10 @@ public class RaceViewController implements Initializable, TableObserver {
 
     boolean isLoaded() {
         return isLoaded;
+    }
+
+
+    public void closeView(MouseEvent mouseEvent) {
+        controlLayoutView.setVisible(false);
     }
 }
