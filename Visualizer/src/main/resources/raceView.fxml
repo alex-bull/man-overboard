@@ -23,8 +23,8 @@
         <CheckBox fx:id="fpsToggle" layoutX="10.0" layoutY="391.0" mnemonicParsing="false" text="Show FPS" />
         <Text layoutX="12.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Annotations" />
       <WebView fx:id="mapView" prefHeight="200.0" prefWidth="200.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <ImageView fx:id="controlLayoutView" fitHeight="768.0" fitWidth="1024.0" layoutX="1500.0" layoutY="1225.0" onMouseClicked="#closeView" pickOnBounds="true" preserveRatio="true" />
-      <Button layoutX="17.0" layoutY="433.0" mnemonicParsing="false" onAction="#openControlLayout" text="Show Controls" />
+      <ImageView fx:id="controlLayoutView" fitHeight="768.0" fitWidth="1024.0" layoutX="1500.0" layoutY="1225.0" pickOnBounds="true" preserveRatio="true" />
+      <Button layoutX="17.0" layoutY="433.0" mnemonicParsing="false" onAction="#toggleControlLayout" text="Show Controls" />
         <Group fx:id="annotationGroup" layoutX="10.0" layoutY="252.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="252.0">
             <children>
                 <CheckBox fx:id="nameButton" mnemonicParsing="false" selected="true" text="Team Name" />

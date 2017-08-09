@@ -889,11 +889,16 @@ public class RaceViewController implements Initializable, TableObserver {
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
     }
 
-    public void openControlLayout(ActionEvent actionEvent) {
+    /**
+     * Toggles a window that shows a control layout of the game
+     * @param actionEvent
+     */
+    public void toggleControlLayout(ActionEvent actionEvent) {
         //TODO: NEED TO CENTER CONTROL LAYOUT
         if (!raceViewPane.getChildren().contains(controlLayoutView)) {
             raceViewPane.getChildren().add(controlLayoutView);
         }
+
         else {
             raceViewPane.getChildren().remove(controlLayoutView);
         }
@@ -923,8 +928,4 @@ public class RaceViewController implements Initializable, TableObserver {
         return isLoaded;
     }
 
-
-    public void closeView(MouseEvent mouseEvent) {
-        controlLayoutView.setVisible(false);
-    }
 }
