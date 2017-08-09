@@ -2,16 +2,23 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
+import com.sun.org.apache.xml.internal.utils.MutableAttrListImpl;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+import javafx.geometry.Point2D;
+import javafx.scene.shape.Polygon;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.xml.CourseXMLParser;
+import utilities.CollisionUtility;
 import utilities.PolarTable;
 
 
+import java.awt.geom.Line2D;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.SocketException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -37,6 +44,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private HashMap<Integer, Competitor> competitors;
     private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
+    private List<MutablePoint> courseBoundary;
+
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager;
@@ -49,11 +58,16 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private Course raceCourse = new RaceCourse(null, true);
     private boolean flag=true;
     private Timer timer;
+    private CollisionUtility collisionUtility;
+    private List<MutablePoint> courseLineEquations;
 
-   public BoatMocker() throws IOException , JDOMException {
+
+    public BoatMocker() throws IOException , JDOMException {
         timer =new Timer();
         random=new Random();
-        prestart = new MutablePoint(32.286577, -64.864304);
+        collisionUtility = new CollisionUtility();
+//        prestart = new MutablePoint(32.286577, -64.864304);
+        prestart = new MutablePoint(32.295842, -64.857157);
         int connectionTime = 10000;
         competitors = new HashMap<>();
         TCPserver = new TCPServer(4941,this);
@@ -71,6 +85,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         generateCourse();
         generateCompetitors();
         generateWind();
+        collisionUtility.setCourseInformation();
+        courseLineEquations = collisionUtility.getCourseLineEquations();
 
         //send all xml data first
         sendAllXML();
@@ -201,6 +217,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         //screen size is not important
         RaceCourse course = new RaceCourse(cl.parseCourse(), false);
         courseFeatures = course.getPoints();
+        courseBoundary = cl.parseCourseBoundary();
+        collisionUtility.setCourseBoundary(courseBoundary);
     }
 
     /**
@@ -211,7 +229,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
 
         double a = 0.001 * competitors.size();
-        prestart = new MutablePoint(32.286577 + a, -64.864304);
+//        prestart = new MutablePoint(32.286577 + a, -64.864304);
+        prestart = new MutablePoint(32.296117 + a, -64.858834);
 
         Boat newCompetitor=new Boat("Boat "+currentSourceID, random.nextInt(20)+20, prestart, "B"+currentSourceID, currentSourceID, 1);
         competitors.put(currentSourceID, newCompetitor);
@@ -281,6 +300,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
             this.handleCourseCollisions(boat);
             this.handleBoatCollisions(boat);
+            this.handleBoundaryCollisions(boat);
 //            boat.blownByWind(twa);
 
         }
@@ -300,13 +320,42 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
-//                send a collision packet
+//              send a collision packet
                 sendYachtEvent(boat.getSourceID(),1);
                 boat.updatePosition(-10);
                 break;
             }
         }
     }
+
+    /**
+     * Calculates if the boat collides with the course boundary, if so then pushes back the boat.
+     * @param boat Competitor the boat to check collisions for
+     */
+
+    private void handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
+        double collisionRadius = 50;
+        for (MutablePoint point: courseBoundary) {
+            double distance = raceCourse.distanceBetweenGPSPoints(boat.getPosition(), point);
+            if (distance <= collisionRadius) {
+                sendYachtEvent(boat.getSourceID(), 1);
+                boat.updatePosition(-10);
+                break;
+            }
+        }
+        for (MutablePoint equation: courseLineEquations ) {
+            int index = courseLineEquations.indexOf(equation);
+            //distance = y - (mx + c)
+            double distance = boat.getPosition().getYValue() - (equation.getXValue() * boat.getPosition().getXValue() + equation.getYValue());
+            if ((abs(distance) < 0.0001) && collisionUtility.isWithinBoundaryLines(boat.getPosition(), index)) {
+                //TODO: Add health reduction here later
+                sendYachtEvent(boat.getSourceID(), 1);
+                boat.updatePosition(-10);
+                break;
+            }
+        }
+    }
+
 
 
     /**
@@ -453,6 +502,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     /**
      * Send a race xml file to client, uses raceTemplate.xml to generate custom race xml messages
      */
+
     private void sendRaceXML() throws IOException {
         int messageType = 6;
         String raceTemplateString = fileToString("/raceTemplate.xml");

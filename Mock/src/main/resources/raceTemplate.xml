@@ -52,16 +52,22 @@
     </CompoundMarkSequence>
 
     <CourseLimit>
+        <!--<Limit SeqID="3" Lat="32.3028767" Lon="-64.8209667"/>-->
+        <!--<Limit SeqID="5" Lat="32.2768286" Lon="-64.8519516"/>-->
+        <!--<Limit SeqID="6" Lat="32.2918489" Lon="-64.8545266"/>-->
+        <!--<Limit SeqID="7" Lat="32.2935902" Lon="-64.8600197"/>-->
+        <!--<Limit SeqID="8" Lat="32.299467" Lon="-64.8581314"/>-->
+        <!--<Limit SeqID="10" Lat="32.3122319" Lon="-64.8378754"/>-->
         <Limit SeqID="1" Lat="32.3177476" Lon="-64.8403001"/>
         <Limit SeqID="2" Lat="32.3174575" Lon="-64.8328543"/>
-        <Limit SeqID="3" Lat="32.3028767" Lon="-64.8209667"/>
-        <Limit SeqID="4" Lat="32.2776994" Lon="-64.8418236"/>
-        <Limit SeqID="5" Lat="32.2768286" Lon="-64.8519516"/>
-        <Limit SeqID="6" Lat="32.2918489" Lon="-64.8545266"/>
-        <Limit SeqID="7" Lat="32.2935902" Lon="-64.8600197"/>
-        <Limit SeqID="8" Lat="32.299467" Lon="-64.8581314"/>
+        <Limit SeqID="3" Lat="32.306688" Lon="-64.822947"/>
+        <Limit SeqID="4" Lat="32.273239" Lon="-64.840714"/>
+        <Limit SeqID="5" Lat="32.272513" Lon="-64.852816"/>
+        <Limit SeqID="6" Lat="32.288516" Lon="-64.856161"/>
+        <Limit SeqID="7" Lat="32.291799" Lon="-64.867632"/>
+        <Limit SeqID="8" Lat="32.303291" Lon="-64.863019"/>
         <Limit SeqID="9" Lat="32.2982336" Lon="-64.8480892"/>
-        <Limit SeqID="10" Lat="32.3122319" Lon="-64.8378754"/>
+        <Limit SeqID="10" Lat="32.312055" Lon="-64.839817"/>
     </CourseLimit>
 
 </Race>
