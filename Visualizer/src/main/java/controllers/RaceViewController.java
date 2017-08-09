@@ -145,6 +145,7 @@ public class RaceViewController implements Initializable, TableObserver {
         });
         controlLayoutView = new ImageView();
         controlImage = new Image("control.png");
+        controlLayoutView.setImage(controlImage);
 
     }
 
@@ -889,7 +890,15 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     public void openControlLayout(ActionEvent actionEvent) {
-        controlLayoutView.setImage(controlImage);
+        //TODO: NEED TO CENTER CONTROL LAYOUT
+        if (!raceViewPane.getChildren().contains(controlLayoutView)) {
+            raceViewPane.getChildren().add(controlLayoutView);
+        }
+        else {
+            raceViewPane.getChildren().remove(controlLayoutView);
+        }
+
+
     }
 
 
