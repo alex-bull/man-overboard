@@ -1,7 +1,9 @@
 package utilities;
 
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.util.converter.PercentageStringConverter;
 import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
@@ -211,5 +213,30 @@ public class RaceCalculator {
         return earthRadius * c;
     }
 
+    /**
+     * Returns the colour of the health scale of the given boat
+     * @param boat Competitor a boat
+     * @return Color the colour of the health bar
+     */
+    public Color calculateHealthColour(Competitor boat) {
+        double healthLevel = boat.getHealthLevel();
+        double maxHealth = boat.getMaxHealth();
+        double percentage = healthLevel/maxHealth;
+        if(percentage > 0.7) {
+            return Color.GREEN;
+        }
+        else if(percentage > 0.6) {
+            return Color.GREENYELLOW;
+        }
+        else if(percentage > 0.5) {
+            return Color.YELLOW;
+        }
+        else if(percentage > 0.4) {
+            return Color.ORANGE;
+        }
+        else {
+            return Color.RED;
+        }
+    }
 
 }

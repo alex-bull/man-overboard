@@ -32,6 +32,7 @@ public class Boat implements Competitor {
 //    external forces on the boat
     private List<RepelForce> forces;
     private double healthLevel = 30;
+    private double maxHealth = 30;
 
     // tack properties
 
@@ -89,6 +90,11 @@ public class Boat implements Competitor {
 
     public Boat() {
 
+    }
+
+
+    public double getMaxHealth() {
+        return maxHealth;
     }
 
     public double getHealthLevel() {

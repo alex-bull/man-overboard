@@ -44,6 +44,7 @@ import java.net.URL;
 import java.util.*;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.max;
 import static javafx.scene.paint.Color.*;
 import static parsers.RaceStatusEnum.PREPARATORY;
 import static parsers.RaceStatusEnum.STARTED;
@@ -229,14 +230,14 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor the boat in the race
      */
     private void drawHealthBar(Competitor boat) {
+        double boatXval = boat.getPosition().getXValue();
+        double boatYval = boat.getPosition().getYValue();
+        double strokeWidth = 5;
+        double offset = 20;
+        double maxBarLength = boat.getMaxHealth(); // was 30
+        double sourceId = boat.getSourceID();
         if(boat.getHealthLevel() > 0) {
-            double boatXval = boat.getPosition().getXValue();
-            double boatYval = boat.getPosition().getYValue();
-            double strokeWidth = 5;
-            double offset = 20;
-            double maxBarLength = 30;
-            double sourceId = boat.getSourceID();
-
+            Color healthColour = raceCalculator.calculateHealthColour(boat);
             if (healthBars.get(sourceId) == null) {
 
                 Line healthBarBackground = new Line();
@@ -261,7 +262,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 //        LinearGradient colourGradient = new LinearGradient(healthBar.getStartX(), healthBar.getStartY(),
 //                healthBar.getEndX(), healthBar.getEndY(), false, CycleMethod.NO_CYCLE, new Stop(0, Color.RED), new Stop(1, Color.GREEN));
 
-                healthBar.setStroke(Color.GREEN);
+                healthBar.setStroke(healthColour);
                 healthBar.toFront();
                 raceViewPane.getChildren().add(healthBar);
                 this.healthBars.put(sourceId, healthBar);
@@ -286,7 +287,7 @@ public class RaceViewController implements Initializable, TableObserver {
             //        LinearGradient colourGradient = new LinearGradient(healthBar.getStartX(), healthBar.getStartY(),
 //                healthBar.getEndX(), healthBar.getEndY(), false, CycleMethod.NO_CYCLE, new Stop(0, Color.RED), new Stop(1, Color.GREEN));
 
-            healthBar.setStroke(Color.GREEN);
+            healthBar.setStroke(healthColour);
             healthBar.toFront();
 
 
@@ -295,12 +296,35 @@ public class RaceViewController implements Initializable, TableObserver {
             // rip boat
 //            boat.setLatitude(boat.getPosition().getXValue());
 //        dataSource.getStoredCompetitors().remove(boat.getSourceID());
+
+            Line healthBarBackground = healthBarBackgrounds.get(sourceId);
+            healthBarBackground.setStrokeWidth(strokeWidth);
+            healthBarBackground.setStartX(boatXval);
+            healthBarBackground.setStartY(boatYval - offset);
+            healthBarBackground.setEndX(boatXval + maxBarLength);
+            healthBarBackground.setEndY(boatYval - offset);
+            healthBarBackground.setStroke(Color.WHITE);
+
+
+            Line healthBar = healthBars.get(sourceId);
+            healthBar.setStrokeWidth(strokeWidth);
+            healthBar.setStartX(boatXval);
+            healthBar.setStartY(boatYval - offset);
+            healthBar.setEndX(boatXval + maxBarLength);
+            healthBar.setEndY(boatYval - offset); // boat.getHealthLength
+            //        LinearGradient colourGradient = new LinearGradient(healthBar.getStartX(), healthBar.getStartY(),
+//                healthBar.getEndX(), healthBar.getEndY(), false, CycleMethod.NO_CYCLE, new Stop(0, Color.RED), new Stop(1, Color.GREEN));
+
+            healthBar.setStroke(Color.BLACK);
+            healthBar.toFront();
+
             System.out.println("Game over");
         }
 
 
 
     }
+
 
     /**
      * Draws the virtual line of the selected boat with the same color

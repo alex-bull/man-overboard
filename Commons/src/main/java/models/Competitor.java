@@ -73,4 +73,6 @@ public interface Competitor {
 
     void decreaseHealth();
 
+    double getMaxHealth();
+
 }
