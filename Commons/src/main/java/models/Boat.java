@@ -31,6 +31,7 @@ public class Boat implements Competitor {
     private double blownFactor = 0.01;
 //    external forces on the boat
     private List<RepelForce> forces;
+    private double healthLevel = 30;
 
     // tack properties
 
@@ -88,6 +89,17 @@ public class Boat implements Competitor {
 
     public Boat() {
 
+    }
+
+    public double getHealthLevel() {
+        return healthLevel;
+    }
+
+    /**
+     * Decreases the boat health when they collide
+     */
+    public void decreaseHealth() {
+        this.healthLevel = healthLevel - 5;
     }
 
     /**

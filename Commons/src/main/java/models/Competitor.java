@@ -69,4 +69,8 @@ public interface Competitor {
 
     void changeHeading(boolean upwind, double angle);
 
+    double getHealthLevel();
+
+    void decreaseHealth();
+
 }
