@@ -80,8 +80,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
     private Map<Integer, Label> timeFromMarkAnnotations = new HashMap<>();
     private Map<Integer, Label> timeToStartlineAnnotations = new HashMap<>();
-
     private Map<String, Shape> markModels = new HashMap<>();
+    private Group track=new Group();
     private List<Polyline> layLines = new ArrayList<>();
     private Label startLabel;
     private Line startLine;
@@ -197,6 +197,7 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
         raceViewPane.setPrefWidth(width);
+        raceViewPane.getChildren().add(track);
 
         this.dataSource = dataSource;
         drawAnnotations();
@@ -371,6 +372,7 @@ public class RaceViewController implements Initializable, TableObserver {
         mapEngine.executeScript("setZoom(17);");
         updateRace();
         setScale(2);
+        track.setVisible(!isZoom());
     }
 
 
@@ -384,6 +386,7 @@ public class RaceViewController implements Initializable, TableObserver {
         drawBackgroundImage();
         updateRace();
         setScale(1);
+        track.setVisible(!isZoom());
     }
 
     public boolean isZoom() {
@@ -688,18 +691,20 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor
      */
     private void drawTrack(Competitor boat) {
-        gc.setFill(boat.getColor());
-        gc.save();
-        Dot dot = new Dot(boatPositionX, boatPositionY);
-        Circle circle = new Circle(dot.getX(), dot.getY(), 1.5, boat.getColor());
+
+        MutablePoint point=boat.getPosition();
+        Circle circle = new Circle(point.getXValue(), point.getYValue(), 1.5, boat.getColor());
         //add fade transition
         FadeTransition ft = new FadeTransition(Duration.millis(20000), circle);
         ft.setFromValue(1);
         ft.setToValue(0.15);
-//        ft.setOnFinished(event -> raceViewPane.getChildren().remove(circle));
+        ft.setOnFinished(event -> {
+            track.getChildren().remove(circle);
+        });
         ft.play();
-        this.raceViewPane.getChildren().add(circle);
-        gc.restore();
+        track.getChildren().add(circle);
+
+
     }
 
 
@@ -999,7 +1004,7 @@ public class RaceViewController implements Initializable, TableObserver {
             }
             if (counter % 70 == 0) {
 
-//                drawTrack(boat, gc);
+                drawTrack(boat);
                 if (selectedBoatSourceId != 0
                         && selectedBoatSourceId == boat.getSourceID()
                         && dataSource.getRaceStatus() == PREPARATORY) {
