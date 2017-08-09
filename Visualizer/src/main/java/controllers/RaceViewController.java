@@ -156,7 +156,6 @@ public class RaceViewController implements Initializable, TableObserver {
                 // new page has loaded, process:
                 isLoaded = true;
                 drawBackgroundImage();
-
             }
         });
 
@@ -209,6 +208,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 e.printStackTrace();
             }
         }
+
 
     }
 
@@ -282,6 +282,7 @@ public class RaceViewController implements Initializable, TableObserver {
         // loops through all course features
         for (CourseFeature courseFeature : courseFeatures.values()) {
             drawMark(courseFeature);
+//            mapEngine.executeScript(String.format("drawMarker(%.9f,%.9f);",courseFeature.getGPSPoint().getXValue(),courseFeature.getGPSPoint().getYValue()));
         }
 
         MutablePoint startLine1=courseFeatures.get(dataSource.getStartMarks().get(0)).getPixelLocations().get(0);
@@ -290,6 +291,7 @@ public class RaceViewController implements Initializable, TableObserver {
         MutablePoint finishLine2=courseFeatures.get(dataSource.getFinishMarks().get(1)).getPixelLocations().get(0);
         drawLine(startLine, startLine1,startLine2);
         drawLine(finishLine,finishLine1,finishLine2);
+
     }
 
     /**
@@ -336,9 +338,11 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawBackgroundImage() {
         try {
+            mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getMapZoomLevel()));
             List<Double> bounds=dataSource.getGPSbounds();
             mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
             mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
+
         } catch (JSException e) {
             e.printStackTrace();
         }
@@ -382,7 +386,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void zoomOut(){
         zoom=false;
-        mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getMapZoomLevel()));
+
         drawBackgroundImage();
         updateRace();
         setScale(1);
@@ -1055,11 +1059,9 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Refreshes the contents of the display to match the datasource
      *
-     * @param dataSource DataSource the data to display
      */
-    void refresh(DataSource dataSource) {
+    void refresh() {
 
-        this.dataSource = dataSource;
         updateRaceStatus();
         updateFPS();
         setBoatLocation();

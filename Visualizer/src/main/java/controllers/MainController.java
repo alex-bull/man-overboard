@@ -86,7 +86,7 @@ public class MainController {
             @Override
             public void handle(long now) {
                 if (raceViewController.isLoaded()) {
-                    raceViewController.refresh(dataSource);
+                    raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
                     sparklinesController.refresh();
