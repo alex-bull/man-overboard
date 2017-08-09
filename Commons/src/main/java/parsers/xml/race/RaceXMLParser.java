@@ -3,6 +3,7 @@ package parsers.xml.race;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.google.common.math.DoubleMath;
+import com.rits.cloning.Cloner;
 import models.MutablePoint;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -15,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
+import static com.google.common.collect.ImmutableList.copyOf;
 import static utility.Projection.mercatorProjection;
 
 /**
@@ -24,6 +26,8 @@ import static utility.Projection.mercatorProjection;
 public class RaceXMLParser {
 
     private List<MutablePoint> courseBoundary;
+    private List<MutablePoint> courseBoundary17;
+
     private double scaleFactor;
     private double paddingX;
     private double paddingY;
@@ -171,6 +175,10 @@ public class RaceXMLParser {
         return courseBoundary;
     }
 
+    public List<MutablePoint> getCourseBoundary17() {
+        return courseBoundary17;
+    }
+
     /**
      * Set buffers and call course parsers
      * buffers are calculated by the size of widgets surrounding the course
@@ -279,10 +287,15 @@ public class RaceXMLParser {
             //calculate shift distance in pixels
             shiftDistance = bufferY / 2;
         }
+        Cloner clone=new Cloner();
+        List<MutablePoint> boundary17=clone.deepClone(boundary);
+
+
         boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, xMin, yMin, paddingX, paddingY));
+        boundary17.forEach(p -> p.factor(Math.pow(2,17), Math.pow(2,17), xMin, yMin, paddingX, paddingY));
 
+        this.courseBoundary17=boundary17;
         this.courseBoundary = boundary;
-
     }
 
 

@@ -16,6 +16,7 @@ public class Boat implements Competitor {
     private String teamName;
     private double velocity;
     private MutablePoint position;
+    private MutablePoint position17;
     private Color color;
     private String abbreName;
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
@@ -34,7 +35,13 @@ public class Boat implements Competitor {
     private double healthLevel = 30;
     private double maxHealth = 30;
 
-    // tack properties
+    public MutablePoint getPosition17() {
+        return position17;
+    }
+
+    public void setPosition17(MutablePoint position17) {
+        this.position17 = position17;
+    }
 
     private boolean sailsOut = true;
     /**
@@ -259,6 +266,7 @@ public class Boat implements Competitor {
             this.currentHeading.setValue(currentHeading%360);
         }
     }
+
 
     /**
      * Updates the boats position given the time changed

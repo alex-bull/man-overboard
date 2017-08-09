@@ -16,7 +16,8 @@ public interface Competitor {
     double getVelocity();
     void blownByWind(double windAngle);
     void setVelocity(double velocity);
-
+    MutablePoint getPosition17();
+    void setPosition17(MutablePoint position17);
     MutablePoint getPosition();
 
     void setPosition(MutablePoint position);
