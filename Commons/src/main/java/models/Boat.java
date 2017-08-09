@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by mgo65 on 3/03/17.
  * Boat object
@@ -28,7 +29,7 @@ public class Boat implements Competitor {
     private double latitude;
     private double longitude;
     //how much the boat if affected by wind, can be parsed in as constructor
-    private double blownFactor=0.01;
+    private double blownFactor = 0.01;
 //    external forces on the boat
     private List<RepelForce> forces;
 
@@ -248,9 +249,6 @@ public class Boat implements Competitor {
         }
     }
 
-    public DoubleProperty getHeadingProperty() {
-        return this.currentHeading;
-    }
 
     /**
      * Updates the boats position given the time changed
@@ -274,12 +272,6 @@ public class Boat implements Competitor {
         setPosition(new MutablePoint(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI));
     }
 
-    public void setProperties(double velocity, double heading, double latitude, double longitude) {
-        this.velocity = velocity;
-        this.currentHeading.setValue(heading);
-        this.position = new MutablePoint(latitude, longitude);
-
-    }
 
     /**
      * Returns the downwind given wind angle

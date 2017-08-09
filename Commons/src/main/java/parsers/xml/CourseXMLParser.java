@@ -30,6 +30,8 @@ public class CourseXMLParser {
     private Double bufferX;
     private Double bufferY;
     private ArrayList<CourseFeature> points = new ArrayList<>();
+    private List<MutablePoint> boundary = new ArrayList<>();
+    private List<MutablePoint> scaledBoundary = new ArrayList<>();
 
     /**
      * Constructor for loading a course with an XML input file
@@ -42,6 +44,9 @@ public class CourseXMLParser {
         document = saxbuilder.build(inputFile);
     }
 
+    public List<MutablePoint> getScaledBoundary() {
+        return scaledBoundary;
+    }
 
     /**
      * Creates a list of course features read from an xml file
@@ -110,22 +115,21 @@ public class CourseXMLParser {
                 MutablePoint GPS = new MutablePoint(lat1, lon1);
                 Mark mark1 = new Mark(name, pixel, GPS, index);
                 points.add(mark1);
-
-
-            } else if (type.equals("CompoundMarkSequence")) {        //Additional information for course features
-                List<Element> corners = feature.getChildren();
-                for (Element corner : corners) {
-                    for (CourseFeature courseFeature : points) {
-                        if (corner.getAttributeValue("CompoundMarkID").equals(
-                                String.valueOf(courseFeature.getIndex()))) {
-                            String rounding = corner.getAttributeValue("Rounding");
-                            courseFeature.setRounding(Integer.parseInt(rounding));
-
-                        }
-                    }
-
-                }
             }
+//            } else if (type.equals("CompoundMarkSequence")) {        //Additional information for course features
+//                List<Element> corners = feature.getChildren();
+//                for (Element corner : corners) {
+//                    for (CourseFeature courseFeature : points) {
+//                        if (corner.getAttributeValue("CompoundMarkID").equals(
+//                                String.valueOf(courseFeature.getIndex()))) {
+//                            String rounding = corner.getAttributeValue("Rounding");
+//                            courseFeature.setRounding(Integer.parseInt(rounding));
+//
+//                        }
+//                    }
+//
+//                }
+//            }
             else { //invalid course file
                 throw new JDOMException();
             }
@@ -143,7 +147,40 @@ public class CourseXMLParser {
                 Collections.min(yMercatorCoords), bufferX / 2, bufferY / 2));
 
         return points;
-
     }
 
+    public List<MutablePoint> parseCourseBoundary() throws JDOMException, IOException {
+        double width = 1000;
+        double height = 1000;
+        //buffers are defined as the total buffer size, i.e. total for both sides
+        bufferX = Math.max(150, width * 0.6);
+        bufferY = Math.max(10, height * 0.1);
+
+        Element raceCourse = document.getRootElement();
+        List<Element> features = raceCourse.getChild("CourseLimit").getChildren();
+
+        for (Element feature : features) {
+            double lat = Double.parseDouble(feature.getAttribute("Lat").getValue());
+            double lon = Double.parseDouble(feature.getAttribute("Lon").getValue());
+
+            xMercatorCoords.add(lat);
+            yMercatorCoords.add(lon);
+
+            boundary.add(new MutablePoint(lat, lon));
+            scaledBoundary.add(new MutablePoint(lat, lon));
+        }
+
+        // scale to canvas size
+        double xFactor = ((double) 1000 - bufferX) / (Collections.max(xMercatorCoords) - Collections.min(xMercatorCoords));
+        double yFactor = ((double) 1000 - bufferY) / (Collections.max(yMercatorCoords) - Collections.min(yMercatorCoords));
+
+        //make scaling in proportion
+        scaleFactor = Math.min(xFactor, yFactor);
+
+        //scale points to fit screen
+        scaledBoundary.forEach(p -> p.factor(scaleFactor, scaleFactor, Collections.min(xMercatorCoords),
+                Collections.min(yMercatorCoords), bufferX / 2, bufferY / 2));
+
+        return boundary;
+    }
 }

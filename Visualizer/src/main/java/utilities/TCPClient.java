@@ -50,10 +50,9 @@ public class TCPClient extends TimerTask {
     /**
      * Write data to the socket
      * @param data byte[] The data to send
-     * @throws IOException
+     * @throws IOException IOException
      */
     public void send(byte[] data) throws IOException {
-       // System.out.println("Sending message...");
         dos.write(data);
         dos.flush();
     }
@@ -65,13 +64,10 @@ public class TCPClient extends TimerTask {
      * @throws IOException IOException
      */
     private boolean checkForSyncBytes() throws IOException {
-
         // -125 is equivalent to 0x83 unsigned
         byte[] expected = {0x47,-125};
-
         byte[] actual = new byte[2];
 
-//        client.read(ByteBuffer.wrap(actual));
         dis.readFully(actual);
         return Arrays.equals(actual, expected);
     }
@@ -82,8 +78,6 @@ public class TCPClient extends TimerTask {
      * @throws IOException IOException
      */
     private byte[] getHeader() throws IOException {
-//        ByteBuffer header=ByteBuffer.allocate(13);
-//        client.read(header);
         byte[] header=new byte[13];
         dis.readFully(header);
         return header;
@@ -105,7 +99,6 @@ public class TCPClient extends TimerTask {
      */
     public void run() throws NullPointerException {
 
-
         try {
             boolean isStartOfPacket = checkForSyncBytes();
             if (isStartOfPacket) {
@@ -119,18 +112,7 @@ public class TCPClient extends TimerTask {
             }
 
         }catch (EOFException e){
-//            try {
-//                Runtime.getRuntime().exec("java -jar Visualizer/target/Visualizer-0.0.jar");
-//            } catch (IOException e1) {
-//                e1.printStackTrace();
-//            }
             System.exit(0);
-//            Platform.runLater(()->{
-//                primaryStage.fireEvent(new WindowEvent(primaryStage,WindowEvent.WINDOW_CLOSE_REQUEST));
-//                Platform.exit();
-//
-//            });
-
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -138,25 +120,7 @@ public class TCPClient extends TimerTask {
 
     }
 
-    //    /**
-//     * Creates a new data receiver and runs at the period of 100ms
-//     *
-//     * @param args String[]
-//     * @throws InterruptedException Interrupted Exception
-//     */
-//    public static void main(String[] args) throws InterruptedException {
-//        TCPClient dataReceiver = null;
-//        while (dataReceiver == null) {
-//            try {
-//                dataReceiver = new TCPClient("livedata.americascup.com", 4941);
-//                Timer timer = new Timer();
-//                timer.schedule(dataReceiver, 0, 100);
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+
 
 
 }

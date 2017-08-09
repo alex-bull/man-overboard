@@ -38,6 +38,7 @@ import netscape.javascript.JSException;
 import parsers.Converter;
 import utilities.*;
 
+
 import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -1052,9 +1053,9 @@ public class RaceViewController implements Initializable, TableObserver {
         CollisionRipple ripple = new CollisionRipple(centerX, centerY, 100);
         raceViewPane.getChildren().add(ripple);
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
-
-
     }
+
+
 
     /**
      * Refreshes the contents of the display to match the datasource
@@ -1067,6 +1068,7 @@ public class RaceViewController implements Initializable, TableObserver {
         setBoatLocation();
         updateRace();
         checkCollision();
+
 
     }
 
