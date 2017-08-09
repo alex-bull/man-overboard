@@ -67,7 +67,6 @@ public class Interpreter implements DataSource, PacketHandler {
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
     private HashMap<Integer,CourseFeature> storedFeatures17=new HashMap<>();
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
-    private List<CourseFeature> courseFeatures = new ArrayList<>();
 
     private List<MutablePoint> courseBoundary = new ArrayList<>();
 
@@ -89,7 +88,6 @@ public class Interpreter implements DataSource, PacketHandler {
     private double height;
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
-    private List<CompoundMarkData> compoundMarks = new ArrayList<>();
     private boolean seenRaceXML = false;
     private int sourceID;
     private TCPClient TCPClient;
@@ -108,12 +106,6 @@ public class Interpreter implements DataSource, PacketHandler {
         this.primaryStage=primaryStage;
     }
 
-    public Stage getPrimaryStage(){
-        return primaryStage;
-    }
-    public List<CourseFeature> getCourseFeatures() {
-        return courseFeatures;
-    }
     public Map<Integer, CourseFeature> getCourseFeatureMap() {return this.storedFeatures;}
 
     public List<MutablePoint> getCourseBoundary() {
@@ -429,7 +421,6 @@ public class Interpreter implements DataSource, PacketHandler {
         } else {
             //update its properties
             Competitor updatingBoat=storedCompetitors.get(boatID);
-
             updatingBoat.setPosition(location);
             updatingBoat.setPosition17(location17);
             updatingBoat.setVelocity(boatData.getSpeed());
@@ -456,11 +447,6 @@ public class Interpreter implements DataSource, PacketHandler {
             this.storedFeatures.put(boatData.getSourceID(), courseFeature);
             this.storedFeatures17.put(boatData.getSourceID(), courseFeature17);
         }
-//        for (Integer id : this.storedFeatures.keySet()) {
-//            points.add(this.storedFeatures.get(id));
-//            points17.add(this.storedFeatures17.get(id));
-//        }
-//        this.courseFeatures = points;
 
     }
 
@@ -486,7 +472,7 @@ public class Interpreter implements DataSource, PacketHandler {
                         this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
                         this.courseBoundary = raceXMLParser.getCourseBoundary();
                         this.courseBoundary17=raceXMLParser.getCourseBoundary17();
-                        this.compoundMarks = raceData.getCourse();
+
                         GPSbounds = raceXMLParser.getGPSBounds();
                         setScalingFactors();
 //                        this.seenRaceXML = true;

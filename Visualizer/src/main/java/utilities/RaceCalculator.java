@@ -83,7 +83,10 @@ public class RaceCalculator {
         double headingGradient;
         double xDiffBoat = boatFront.getX() - boatBack.getX();
         if (xDiffBoat == 0) {
-            headingGradient = Double.POSITIVE_INFINITY;
+
+//           TODO: make this work properly with Double.MAX_VALUE or POSITIVE_INFINITY
+//            headingGradient = Double.MAX_VALUE;
+            headingGradient = 1000000;
         } else {
             headingGradient = (boatFront.getY() - boatBack.getY()) / xDiffBoat;
         }
@@ -92,7 +95,8 @@ public class RaceCalculator {
         double startLineGradient;
         double xDiffStart = startMark1.getXValue() - startMark2.getXValue();
         if (xDiffStart == 0) {
-            startLineGradient = Double.POSITIVE_INFINITY;
+//            startLineGradient = Double.MAX_VALUE;
+            startLineGradient = 10000000;
         } else {
             startLineGradient = (startMark1.getYValue() - startMark2.getYValue()) / xDiffStart;
         }
@@ -107,6 +111,7 @@ public class RaceCalculator {
             intersectionX = (startLineIntercept - headingIntercept) / gradDiff;
         }
         double intersectionY = headingGradient * intersectionX + headingIntercept;
+
 
         return new MutablePoint(intersectionX, intersectionY);
     }

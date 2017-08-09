@@ -155,10 +155,9 @@ public class RaceViewController implements Initializable, TableObserver {
             if (newState == Worker.State.SUCCEEDED) {
                 // new page has loaded, process:
                 isLoaded = true;
-
+                drawBackgroundImage();
 
             }
-
         });
 
     }
@@ -201,7 +200,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
         this.dataSource = dataSource;
         drawAnnotations();
-        drawBackgroundImage();
+
         while (dataSource.getCompetitorsPosition() == null) {
             try {
                 Thread.sleep(1000);
@@ -569,9 +568,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @return the relative position
      */
     private MutablePoint getBoatLocation(Competitor boat){
-        MutablePoint relPoint=cloner.deepClone(boat.getPosition17());
-        relPoint=relPoint.shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2);
-        return relPoint;
+        return boat.getPosition17().shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2);
     }
 
     /**
@@ -608,9 +605,8 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawBoat(Competitor boat) {
         Integer sourceId = boat.getSourceID();
-        setBoatLocation();
-        MutablePoint point= setRelativePosition(boat);
 
+        MutablePoint point = setRelativePosition(boat);
 
         if (boatModels.get(sourceId) == null) {
             Polygon boatModel = new Polygon();
@@ -658,29 +654,14 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     /**
-     * Draw boat competitor
+     * Draw boat's wake
      *
      * @param boat Competitor a competing boat
      */
-    private void drawWake(Competitor boat) {
+    private void drawWake(Competitor boat, double boatLength,double startWakeOffset, double wakeWidthFactor, double wakeLengthFactor) {
         MutablePoint point= setRelativePosition(boat);
 
-        //not really the boat length but the offset of the wake from the y axis
-        double boatLength = 10;
-        double startWakeOffset = 3;
-        double wakeWidthFactor = 0.2;
-        double wakeLengthFactor=1;
-
-        if(isZoom()){
-            boatLength *= 2;
-            startWakeOffset*= 2;
-//            wakeWidthFactor*= 1;
-            wakeLengthFactor*=2;
-
-
-        }
-
-        if (wakeModels.get(boat.getSourceID()) == null) {
+        if (!wakeModels.containsKey(boat.getSourceID())) {
             double wakeLength = boat.getVelocity()*wakeLengthFactor;
             Polygon wake = new Polygon();
             wake.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + wakeLength * wakeWidthFactor, wakeLength + boatLength, -startWakeOffset - wakeLength * wakeWidthFactor, wakeLength + boatLength);
@@ -694,13 +675,9 @@ public class RaceViewController implements Initializable, TableObserver {
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
         wakeModel.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + newLength * wakeWidthFactor, newLength + boatLength, -startWakeOffset - newLength * wakeWidthFactor, newLength + boatLength);
-
-
         wakeModel.getTransforms().add(new Translate(point.getXValue(), point.getYValue()));
         wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
         wakeModel.toFront();
-
-
 
 
     }
@@ -745,10 +722,10 @@ public class RaceViewController implements Initializable, TableObserver {
         Integer upWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), true);
         Integer downWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), false);
 
-        Pair<Double, Double> markCentre = this.getNextGateCentre(boat);
+        MutablePoint markCentre = this.getNextGateCentre(boat);
         if (markCentre == null) return;
-        Double markX = markCentre.getKey();
-        Double markY = markCentre.getValue();
+        Double markX = markCentre.getXValue();
+        Double markY = markCentre.getYValue();
 
         Double boatX = boat.getPosition().getXValue();
         Double boatY = boat.getPosition().getYValue();
@@ -792,9 +769,9 @@ public class RaceViewController implements Initializable, TableObserver {
         Double my4 = markY + 2000 * Math.cos(Math.toRadians(layLinePortAngle));
 
         //Intersections of lay lines and boat heading
-        Pair<Double, Double> intersectionPoint = new Pair<>(0.0, 0.0);
-        Pair<Double, Double> intersectionOne = new Pair<>(0.0, 0.0);
-        Pair<Double, Double> intersectionTwo = new Pair<>(0.0, 0.0);
+        MutablePoint intersectionPoint = new MutablePoint(0.0, 0.0);
+        MutablePoint intersectionOne = new MutablePoint(0.0, 0.0);
+        MutablePoint intersectionTwo = new MutablePoint(0.0, 0.0);
 
         Boolean intersectsStarboardLayline = Line2D.linesIntersect(boatX, boatY, bx, by, mx2, my2, mx, my);
         Boolean intersectsPortLayline = Line2D.linesIntersect(boatX, boatY, bx, by, mx3, my3, mx4, my4);
@@ -818,16 +795,16 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         if (intersectsStarboardLayline && intersectsPortLayline) {
             //FIND THE CLOSEST INTERSECTION
-            Double distance1 = Math.hypot(boatX-intersectionOne.getKey(), boatY-intersectionOne.getValue());
-            Double distance2 = Math.hypot(boatX-intersectionTwo.getKey(), boatY-intersectionTwo.getValue());
+            Double distance1 = Math.hypot(boatX-intersectionOne.getXValue(), boatY-intersectionOne.getYValue());
+            Double distance2 = Math.hypot(boatX-intersectionTwo.getXValue(), boatY-intersectionTwo.getYValue());
             if (distance1 < distance2) {
                 intersectionPoint = intersectionOne;
             }
         }
         //DRAW
         if (draw) {
-            this.drawLayLine(boatX, boatY, intersectionPoint.getKey(), intersectionPoint.getValue(), boat.getColor());
-            this.drawLayLine(markX, markY, intersectionPoint.getKey(), intersectionPoint.getValue(), boat.getColor());
+            this.drawLayLine(boatX, boatY, intersectionPoint.getXValue(), intersectionPoint.getYValue(), boat.getColor());
+            this.drawLayLine(markX, markY, intersectionPoint.getXValue(), intersectionPoint.getYValue(), boat.getColor());
         }
     }
 
@@ -837,7 +814,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor
      * @return Pair the coords
      */
-    private Pair<Double, Double> getNextGateCentre(Competitor boat) {
+    private MutablePoint getNextGateCentre(Competitor boat) {
 
         Integer markId = boat.getCurrentLegIndex() + 1;
         // if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
@@ -855,7 +832,7 @@ public class RaceViewController implements Initializable, TableObserver {
             markX = (featureOne.getPixelCentre().getXValue() + featureTwo.getPixelCentre().getXValue()) / 2;
             markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
         }
-        return new Pair<>(markX, markY);
+        return new MutablePoint(markX, markY);
     }
 
 
@@ -871,7 +848,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param y4 Double line two
      * @return Pair the intersection point x, y
      */
-    private Pair<Double, Double> calculateIntersection(Double x1, Double y1, Double x2, Double y2, Double x3, Double y3, Double x4, Double y4) {
+    private MutablePoint calculateIntersection(Double x1, Double y1, Double x2, Double y2, Double x3, Double y3, Double x4, Double y4) {
         //first convert to slope intercept y = mx + b
         Double m1 = (y2 - y1) / (x2 - x1);
         Double m2 = (y4 - y3) / (x4 - x3);
@@ -881,7 +858,7 @@ public class RaceViewController implements Initializable, TableObserver {
         //the intersection point of the lines
         Double x = (b2 - b1) / (m1 - m2);
         Double y = m1 * x + b1;
-        return new Pair<>(x, y);
+        return new MutablePoint(x, y);
     }
 
 
@@ -993,12 +970,21 @@ public class RaceViewController implements Initializable, TableObserver {
         //needs to redraw if zoomed in
         double width=2;
         double length=15;
+        //not really the boat length but the offset of the wake from the y axis
+        double boatLength = 10;
+        double startWakeOffset = 3;
+        double wakeWidthFactor = 0.2;
+        double wakeLengthFactor=1;
 
         if(isZoom()){
             width*=2;
             length*=2;
-
+            boatLength *= 2;
+            startWakeOffset*= 2;
+//            wakeWidthFactor*= 1;
+            wakeLengthFactor*=2;
         }
+
 
         updateCourse();
 
@@ -1025,7 +1011,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 }
             }
 
-            this.drawWake(boat);
+            this.drawWake(boat,boatLength,startWakeOffset,wakeWidthFactor,wakeLengthFactor);
             this.drawBoat(boat);
             this.moveAnnotations(boat);
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
@@ -1071,7 +1057,7 @@ public class RaceViewController implements Initializable, TableObserver {
         this.dataSource = dataSource;
         updateRaceStatus();
         updateFPS();
-
+        setBoatLocation();
         updateRace();
         checkCollision();
 
