@@ -34,16 +34,7 @@
     var marker;
     var marker2;
 
-    /*
-    sets the zoom level of map
-    */
-    function setZoom(zoom) {
-        map.setZoom(zoom);
-    }
 
-    function setCenter(lat,lng){
-        map.setCenter({lat: lat, lng: lng});
-    }
 
     /*call back function to initialize the map
     */
@@ -290,9 +281,9 @@
         })
     }
 
-/*
-shifts the google maps to center at the bound
-*/
+    /*
+    shifts the google maps to center at the bound
+    */
     function relocate(minLat, minLng, maxLat, maxLng) {
         if (map != null) {
             var bounds = new google.maps.LatLngBounds();
@@ -302,6 +293,17 @@ shifts the google maps to center at the bound
             map.setCenter(bounds.getCenter());
         }
 
+    }
+
+    /*
+     sets the zoom level of map
+     */
+    function setZoom(zoom) {
+        map.setZoom(zoom);
+    }
+
+    function setCenter(lat,lng){
+        map.setCenter({lat: lat, lng: lng});
     }
 
     /*
