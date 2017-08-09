@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.scene.layout.AnchorPane;
 import models.Competitor;
 import models.RaceEvent;
 import javafx.collections.FXCollections;
@@ -23,6 +24,7 @@ import java.util.ResourceBundle;
 
 public class TableController implements Initializable {
 
+    @FXML private AnchorPane table;
     @FXML private TableView<RaceEvent> raceTable;
     @FXML private TableColumn<RaceEvent, Integer> positionCol;
     @FXML private TableColumn<RaceEvent, String> featureCol;
@@ -31,6 +33,7 @@ public class TableController implements Initializable {
 
     private TableObserver observer;
     private ObservableList<RaceEvent> events = FXCollections.observableArrayList();
+    private Boolean visible = true;
 
 
     /**
@@ -103,6 +106,20 @@ public class TableController implements Initializable {
             System.out.println(raceEvent.getTeamName());
         }
         System.out.println();
+    }
+
+    public void makeInvisible(){
+        table.setVisible(false);
+        visible = false;
+    }
+
+    public void makeVisible() {
+        table.setVisible(true);
+        visible = true;
+    }
+
+    public Boolean isVisible() {
+        return visible;
     }
 
 }

@@ -58,8 +58,16 @@ public class MainController {
                         raceViewController.zoomIn();
                     }
                     break;
-
-
+                case BACK_QUOTE:
+                    if (raceViewController.isZoom() && tableController.isVisible()){
+                        tableController.makeInvisible();
+                        sparklinesController.makeInvisible();
+                    }
+                    else if (raceViewController.isZoom()) {
+                        tableController.makeVisible();
+                        sparklinesController.makeVisible();
+                    }
+                    break;
             }
 
 
