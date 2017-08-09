@@ -213,7 +213,7 @@ public class RaceCalculator {
      * @param boat Competitor a boat
      * @return Color the colour of the health bar
      */
-    public Color calculateHealthColour(Competitor boat) {
+    public static Color calculateHealthColour(Competitor boat) {
         double healthLevel = boat.getHealthLevel();
         double maxHealth = boat.getMaxHealth();
         double percentage = healthLevel/maxHealth;
