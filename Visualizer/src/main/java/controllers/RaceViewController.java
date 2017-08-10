@@ -48,6 +48,7 @@ import java.util.*;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.getExponent;
+import static java.lang.Math.*;
 import static javafx.scene.paint.Color.*;
 import static parsers.RaceStatusEnum.PREPARATORY;
 import static parsers.RaceStatusEnum.STARTED;
@@ -92,6 +93,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line startLine;
     private Line finishLine;
     private Line virtualLine;
+    private Polygon guideArrow;
 
     private WebEngine mapEngine;
     private DataSource dataSource;
@@ -144,6 +146,7 @@ public class RaceViewController implements Initializable, TableObserver {
         showAllAnnotations();
         fpsToggle.setSelected(true);
 
+        initialiseGuideArrow();
         gc=raceViewCanvas.getGraphicsContext2D();
 
         mapEngine = mapView.getEngine();
@@ -164,6 +167,28 @@ public class RaceViewController implements Initializable, TableObserver {
             }
         });
 
+    }
+
+    /**
+     * Initialise arrow to guide the user where to go to round the next mark
+     */
+    private void initialiseGuideArrow() {
+        guideArrow = new Polygon();
+        double arrowLength = -60; // default arrow points vertically in the -y direction
+        double arrowHeadLength = -20;
+        double offsetFromOrigin = -1 * (arrowLength + arrowHeadLength) + 30;
+
+        guideArrow.getPoints().addAll(
+                -5., offsetFromOrigin, //tail left
+                5., offsetFromOrigin, //tail right
+                5., arrowLength + offsetFromOrigin,
+                15., arrowLength + offsetFromOrigin,
+                0., arrowLength + arrowHeadLength + offsetFromOrigin, // tip
+                -15., arrowLength + offsetFromOrigin,
+                -5.,arrowLength + offsetFromOrigin);
+        guideArrow.setFill(Color.POWDERBLUE.brighter());
+        this.raceViewPane.getChildren().add(guideArrow);
+        guideArrow.toBack();
     }
 
     /**
@@ -840,6 +865,7 @@ public class RaceViewController implements Initializable, TableObserver {
         Integer downWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), false);
 
         MutablePoint markCentre = this.getNextGateCentre(boat);
+        Pair<Double, Double> markCentre = this.getGateCentre(boat.getCurrentLegIndex() + 1);
         if (markCentre == null) return;
         Double markX = markCentre.getXValue();
         Double markY = markCentre.getYValue();
@@ -926,20 +952,22 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+
     /**
-     * Gets the centre coords for the next mark a boat will round
-     * @param boat Competitor
-     * @return Pair the coords
+     * Gets the centre coordinates for a mark or gate
+     * @param markIndex index of the mark (based on the order they are rounded)
+     * @return Pair (x,y) coordinates
      */
+    private Pair<Double, Double> getGateCentre(Integer markIndex) {
     private MutablePoint getNextGateCentre(Competitor boat) {
 
         Integer markId = boat.getCurrentLegIndex() + 1;
         // if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
 
         Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
-        if (markId > features.size()) return null; //passed the finish line
+        if (markIndex > features.size()) return null; //passed the finish line
 
-        List<Integer> ids = features.get(markId);
+        List<Integer> ids = features.get(markIndex);
         CourseFeature featureOne = this.dataSource.getCourseFeatureMap().get(ids.get(0));
         Double markX = featureOne.getPixelCentre().getXValue();
         Double markY = featureOne.getPixelCentre().getYValue();
@@ -951,7 +979,6 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         return new MutablePoint(markX, markY);
     }
-
 
     /**
      * Calculates the intersection point of two lines. Result is undefined for non intersecting lines
@@ -978,9 +1005,6 @@ public class RaceViewController implements Initializable, TableObserver {
         return new MutablePoint(x, y);
     }
 
-
-
-
     /**
      * Draws a layline on the pane
      * @param x Double, The first x value
@@ -1003,7 +1027,49 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+    /**
+     * Draw a directional arrow on the canvas to guide the boat in the right direction to the next mark
+     *
+     * @param gc   GraphicsContext the gc to draw the track on
+     */
+    private void updateGuidingArrow(GraphicsContext gc) {
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        int currentIndex = boat.getCurrentLegIndex();
 
+        if (currentIndex > 5) { // TODO temporary fix for end of race
+            return;
+        }
+
+        Pair<Double, Double> nextMarkLocation = getGateCentre(currentIndex + 1);
+
+        double angle;
+        if (currentIndex == 0) {
+            // boat has not yet rounded first mark
+            angle = 90;
+        } else {
+            Pair<Double, Double> prevMarkLocation = getGateCentre(currentIndex);
+            Double xDist = prevMarkLocation.getKey() - nextMarkLocation.getKey();
+            Double yDist = prevMarkLocation.getValue() - nextMarkLocation.getValue();
+
+            double arctan = atan(yDist/xDist);
+            if (arctan < 0) {
+                arctan += 2 * 3.14;
+            }
+            angle = toDegrees(arctan);
+
+            if (xDist < 0) {
+                angle += 90;
+            } else {
+                angle += 270;
+            }
+        }
+
+        guideArrow.setLayoutX(nextMarkLocation.getKey());
+        guideArrow.setLayoutY(nextMarkLocation.getValue());
+
+        guideArrow.getTransforms().clear();
+        guideArrow.getTransforms().add(new Rotate(angle, 0, 0));
+    }
 
 
     /**
@@ -1028,7 +1094,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
         return calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), timeUntilStart);
     }
-
 
     /**
      * Updates the FPS counter
@@ -1180,6 +1245,7 @@ public class RaceViewController implements Initializable, TableObserver {
         checkCollision();
 
 
+        updateGuidingArrow(gc);
     }
 
     boolean isLoaded() {

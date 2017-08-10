@@ -152,7 +152,7 @@ public class Interpreter implements DataSource, PacketHandler {
     }
 
     public Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures() {
-        return this.raceData.getLegIndexToSourceId();
+        return this.raceData.getLegIndexToMarkSourceIds();
     }
 
 
@@ -291,10 +291,8 @@ public class Interpreter implements DataSource, PacketHandler {
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
                     String markName;
-//                    if(storedFeatures.keySet().contains(markID)) {
-//                        markName = storedFeatures.get(markID).getName();
-//                    }
-                    switch(markID){
+
+                    switch (markID) {
                         case 100:
                             markName="Entry Limit Line";
                             break;
@@ -317,14 +315,16 @@ public class Interpreter implements DataSource, PacketHandler {
                             markName="ClearStart";
                             break;
                         default:
-                            markName=raceData.getCourse().get(markID+1).getName();
+                            markName=raceData.getCourse().get(markID).getName();
                             break;
 
                     }
+                    markRoundingData.setMarkName(markName);
                     long roundingTime = markRoundingData.getRoundingTime();
 
                     storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
                     storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
+                    System.out.println("Boat " + markRoundingData.getSourceID() + " rounded a mark");
                 }
                 break;
             case BOAT_LOCATION:
@@ -335,6 +335,8 @@ public class Interpreter implements DataSource, PacketHandler {
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties(boatData);
                     } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
+                        updateBoatProperties();
+                    } else if (boatData.getDeviceType() == 3 && raceData.getMarkSourceIDs().contains(boatData.getSourceID())) {
                         CourseFeature courseFeature = boatDataParser.getCourseFeature();
                         updateCourseMarks(courseFeature, boatData);
                     }
@@ -366,20 +368,18 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 ByteBuffer byteBuffer=ByteBuffer.wrap(packet);
                 byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-                sourceID=byteBuffer.get();
+                sourceID = byteBuffer.get();
                 break;
             case YACHT_ACTION:
-                YachtEventParser parser=new YachtEventParser(packet);
+                YachtEventParser parser = new YachtEventParser(packet);
                 switch (parser.getEventID()){
-                    case 1:
-//                  collision
+                    case 1: // collision
                         collisions.add(parser.getSourceID());
                         break;
                     default:
                         break;
                 }
                 break;
-
             default:
                 break;
         }
@@ -477,7 +477,8 @@ public class Interpreter implements DataSource, PacketHandler {
                     break;
                 case RACE:
                     if(!seenRaceXML) {
-                        this.raceData = raceXMLParser.parseRaceData(xml.trim(), width, height);
+                        raceXMLParser.setScreenSize(width, height);
+                        this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.courseBoundary = raceXMLParser.getCourseBoundary();
                         this.courseBoundary17=raceXMLParser.getCourseBoundary17();
 
@@ -542,7 +543,6 @@ public class Interpreter implements DataSource, PacketHandler {
         } catch (Exception e) {
             return null;
         }
-
     }
 
 

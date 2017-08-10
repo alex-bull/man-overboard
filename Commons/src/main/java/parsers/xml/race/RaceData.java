@@ -15,9 +15,10 @@ public class RaceData {
     private List<CompoundMarkData> course = new ArrayList<>();
     private List<CornerData> compoundMarkSequence = new ArrayList<>();
     private Set<Integer> compoundMarkIDs = new HashSet<>();
-    private Set<Integer> markIDs = new HashSet<>();
+    private Set<Integer> markSourceIDs = new HashSet<>();
     private List<LimitData> courseLimit = new ArrayList<>();
-    private Map<Integer, List<Integer>> legIndexToSourceId = new HashMap<>();
+    private Map<Integer, List<Integer>> legIndexToMarkSourceIds = new HashMap<>();
+    private Map<Integer, String> legIndexToRoundingDirection = new HashMap<>();
 
 
     RaceData() {}
@@ -48,9 +49,6 @@ public class RaceData {
 
 
 
-    public List<MarkData> getStartMarks() {
-        return this.startMarks;
-    }
 
     void setStartMarks(List<MarkData> startMarks) {
         this.startMarks = startMarks;
@@ -92,22 +90,31 @@ public class RaceData {
         return participantIDs;
     }
 
-    public Set<Integer> getMarkIDs() {
-        return markIDs;
+    public Set<Integer> getMarkSourceIDs() {
+        return markSourceIDs;
     }
 
-    void addMarkID(Integer markId) {
-        this.markIDs.add(markId);
+    void addMarkSourceID(Integer markSourceId) {
+        this.markSourceIDs.add(markSourceId);
     }
 
-    public Map<Integer, List<Integer>> getLegIndexToSourceId() {
-        return legIndexToSourceId; }
+    public Map<Integer, List<Integer>> getLegIndexToMarkSourceIds() {
+        return legIndexToMarkSourceIds; }
 
-    public void setLegIndexToSourceId(Map<Integer, List<Integer>> indexToSourceId) {
-        this.legIndexToSourceId = indexToSourceId;
+    public void setLegIndexToMarkSourceIds(Map<Integer, List<Integer>> indexToSourceId) {
+        this.legIndexToMarkSourceIds = indexToSourceId;
     }
 
     public void addCompoundMarkID(Integer markId) {
         this.compoundMarkIDs.add(markId);
+    }
+
+
+    public void setLegIndexToRoundingDirection(Map<Integer, String> legIndexToRoundingDirection) {
+        this.legIndexToRoundingDirection = legIndexToRoundingDirection;
+    }
+
+    public Map<Integer, String> getLegIndexToRoundingDirection() {
+        return legIndexToRoundingDirection;
     }
 }

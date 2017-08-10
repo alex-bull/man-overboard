@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
 public class StarterController implements Initializable, ClockHandler, StreamDelegate {
 
     private DataSource dataSource;
-    private final int STARTTIME = 5;
+    private final int STARTTIME = 1;
     @FXML private ListView<Competitor> starterList;
     @FXML private Label worldClockValue;
     @FXML private Button confirmButton;
