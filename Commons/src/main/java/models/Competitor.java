@@ -68,4 +68,13 @@ public interface Competitor {
     boolean hasSailsOut();
 
     void changeHeading(boolean upwind, double angle);
+
+
+    void startRounding();
+
+    void finishedRounding();
+
+    boolean isRounding();
+
+
 }

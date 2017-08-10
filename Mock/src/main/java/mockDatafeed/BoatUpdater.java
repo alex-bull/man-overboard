@@ -8,12 +8,14 @@ import org.jdom2.JDOMException;
 import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import utilities.PolarTable;
+import utility.Calculator;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import static java.lang.Math.*;
 import static java.lang.Math.PI;
@@ -77,70 +79,102 @@ public class BoatUpdater {
      */
     private void handleMarkRounding(Competitor boat) throws IOException, InterruptedException {
 
-        final double roundingRadius = 200;
-
-
         int nextLegIndex = boat.getCurrentLegIndex() + 1;
 
         List<Integer> markIds = raceData.getLegIndexToMarkSourceIds().get(nextLegIndex);
-        if (markIds == null || markIds.size() < 1) return;
+        if (markIds == null || markIds.size() < 1) return; //race is done
 
-        //System.out.println("Rounding direction: " + raceData.getLegIndexToRoundingDirection().get(nextLegIndex));
+        if (markIds.size() == 2) { //Gate
 
-        //String roundingSide = raceData.getLegIndexToRoundingDirection().get(nextLegIndex);
-
-//        for (Integer markId: markIds) { //COMPARE DISTANCE TO ALL MARKS IN THE COMPOUND MARK (1 for a mark, 2 for a gate)
-//            Competitor markBoat = markBoats.get(markId);
-//            Double distance = raceCourse.distanceBetweenGPSPoints(markBoat.getPosition(), boat.getPosition());
-//            if (distance < roundingRadius && markIsCorrectSide(boat, markBoat, true)) {
-//
-//                System.out.println("Rounding");
-//                //handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
-//               // boat.setCurrentLegIndex(nextLegIndex);
-//            }
-//        }
-
-
-        //Double distance = raceCourse.distanceBetweenGPSPoints(markBoat.getPosition(), boat.getPosition());
-
-        if (markIds.size() == 2) {
-            //GATE
             Competitor mark1 = markBoats.get(markIds.get(0));
-            MutablePoint pos1 = markBoats.get(markIds.get(0)).getPosition();
-            MutablePoint pos2 = markBoats.get(markIds.get(1)).getPosition();
-
-            //line between marks
-            Line l1 = new Line(pos1.getXValue(), pos1.getYValue(), pos2.getXValue(), pos2.getYValue());
 
             if (mark1.getTeamName().toLowerCase().contains("start") || mark1.getTeamName().toLowerCase().contains("finish")) {
-                //Start or finish line
-
-                if (didCrossLine(boat, l1)) {
-                    System.out.println("Crossed line");
-                    handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
-                    boat.setCurrentLegIndex(nextLegIndex);
-                }
+                lineRounding(boat, markIds);
+            } else {
+                gateRounding(boat, markIds);
             }
-            else {
-               //Gate - using distance based for now
-                Double distance = raceCourse.distanceBetweenGPSPoints(pos1, boat.getPosition());
-                if (distance < roundingRadius) {
-                    handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
-                    boat.setCurrentLegIndex(nextLegIndex);
-                }
-            }
-        }
-        else {
+        } else {
             //MARK - using distance based for now
-            MutablePoint pos1 = markBoats.get(markIds.get(0)).getPosition();
-            Double distance = raceCourse.distanceBetweenGPSPoints(pos1, boat.getPosition());
-            if (distance < roundingRadius) {
-                handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
-                boat.setCurrentLegIndex(nextLegIndex);
-            }
-
+            markRounding(boat, markIds.get(0));
         }
     }
+
+
+    /**
+     * Check for rounding of a mark
+     * @param boat Competitor the boat to check
+     * @param markId Integer the id of the mark
+     */
+    private void markRounding(Competitor boat, Integer markId) {
+
+        int nextLegIndex = boat.getCurrentLegIndex() + 1;
+        final double roundingRadius = 200;
+        MutablePoint pos1 = markBoats.get(markId).getPosition();
+        Double distance = raceCourse.distanceBetweenGPSPoints(pos1, boat.getPosition());
+        if (distance < roundingRadius) {
+            handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
+            boat.setCurrentLegIndex(nextLegIndex);
+        }
+    }
+
+
+    /**
+     * Check for rounding of a gate -does not include finish or start line
+     * @param boat Competitor the boat to check
+     * @param markIds List the marks of the gate
+     */
+    private void gateRounding(Competitor boat, List<Integer> markIds) {
+
+        MutablePoint pos1 = markBoats.get(markIds.get(0)).getPosition();
+        MutablePoint pos2 = markBoats.get(markIds.get(1)).getPosition();
+
+        if (boat.isRounding()) { //has already passed between the marks
+            //Take lines out from either side of the gate
+            Vector2D vec = new Vector2D(pos1.getXValue(), pos1. getYValue(), pos2.getXValue(), pos2.getYValue());
+            vec.normalise();
+            Line l2 = new Line(pos1.getXValue(), pos1. getYValue(), vec.getX() * -200, vec.getY() * -200);
+
+            Vector2D vec2 = new Vector2D(pos2.getXValue(), pos2. getYValue(), pos1.getXValue(), pos1.getYValue());
+            vec2.normalise();
+            Line l3 = new Line(pos2.getXValue(), pos2. getYValue(), vec2.getX() * -200, vec2.getY() * -200);
+
+            if (didCrossLine(boat, l2) || didCrossLine(boat, l3)) {
+                boat.finishedRounding();
+                handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
+            }
+        } else {
+            //Check if the boat crosses the line between the marks
+
+            Line l1 = new Line(pos1.getXValue(), pos1.getYValue(), pos2.getXValue(), pos2.getYValue());
+            if (didCrossLine(boat, l1)) {
+                System.out.println("Crossed line 1");
+                boat.startRounding();
+            }
+        }
+    }
+
+
+    /**
+     * Check for boat crossing a start or finish line
+     * @param boat Competitor the boat to check
+     * @param markIds List the marks of the line
+     */
+    private void lineRounding(Competitor boat, List<Integer> markIds) {
+
+        int nextLegIndex = boat.getCurrentLegIndex() + 1;
+        MutablePoint pos1 = markBoats.get(markIds.get(0)).getPosition();
+        MutablePoint pos2 = markBoats.get(markIds.get(1)).getPosition();
+
+        //line between marks
+        Line l1 = new Line(pos1.getXValue(), pos1.getYValue(), pos2.getXValue(), pos2.getYValue());
+
+        if (didCrossLine(boat, l1)) {
+            System.out.println("Crossed line");
+            handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
+            boat.setCurrentLegIndex(nextLegIndex);
+        }
+    }
+
 
     /**
      * Checks if a boat is within a threshold distance of a line
@@ -151,102 +185,9 @@ public class BoatUpdater {
     private boolean didCrossLine(Competitor boat, Line line) {
 
         final double lineCrossThreshold = 0.0002;
-        double dist = pointDistance(boat.getPosition().getXValue(), boat.getPosition().getYValue(), line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
-
-        if (dist < lineCrossThreshold) {
-            return true;
-        }
-        return false;
+        double dist = Calculator.pointDistance(boat.getPosition().getXValue(), boat.getPosition().getYValue(), line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
+        return dist < lineCrossThreshold;
     }
-
-
-    /**
-     * Calculates the distance between a point and a line segment
-     * @param x Point x
-     * @param y Point y
-     * @param x1 lineStartx
-     * @param y1 lineStarty
-     * @param x2 lineEndx
-     * @param y2 lineEndy
-     * @return double, the shortest distance
-     */
-    private double pointDistance(double x, double y, double x1, double y1, double x2, double y2) {
-
-        double A = x - x1;
-        double B = y - y1;
-        double C = x2 - x1;
-        double D = y2 - y1;
-
-        double dot = A * C + B * D;
-        double len_sq = C * C + D * D;
-        double param = -1;
-        if (len_sq != 0) //in case of 0 length line
-            param = dot / len_sq;
-
-        double xx, yy;
-
-        if (param < 0) {
-            xx = x1;
-            yy = y1;
-        }
-        else if (param > 1) {
-            xx = x2;
-            yy = y2;
-        }
-        else {
-            xx = x1 + param * C;
-            yy = y1 + param * D;
-        }
-
-        double dx = x - xx;
-        double dy = y - yy;
-        return (double) Math.sqrt(dx * dx + dy * dy);
-    }
-
-
-
-
-
-    /**
-     * Checks if the boat is on the correct side of the mark for rounding the mark
-     * @param boat
-     * @param mark
-     * @param portRounding
-     * @return
-     */
-    private boolean markIsCorrectSide(Competitor boat, Competitor mark, boolean portRounding) {
-        // port = 1, starboard = 0
-        double xPosBoat = boat.getPosition().getXValue();
-        double yPosBoat = boat.getPosition().getYValue();
-        double xPosMark = mark.getPosition().getXValue();
-        double yPosMark = mark.getPosition().getYValue();
-
-        double heading = boat.getCurrentHeading();
-
-        //arbitrary point in front of boat
-        double xPosPoint = xPosBoat + (2000 * Math.sin(Math.toRadians(heading)));
-        double yPosPoint = yPosBoat - (2000 * Math.cos(Math.toRadians(heading)));
-
-        double result = (xPosPoint - xPosBoat) * (yPosMark - yPosBoat) - (yPosPoint - yPosBoat) * (xPosMark - xPosBoat);
-        // ((b.X - a.X)*(c.Y - a.Y) - (b.Y - a.Y)*(c.X - a.X))
-        // a = boat position, b = point boat is heading towards, c = mark position
-        // is port if > 0
-        // is starboard if < 0
-
-        if (result == 0) {
-            // is heading directly towards mark
-            return false;
-        }
-
-        if (result > 0) {
-            System.out.println("port rounding : Mark is on the left");
-            return !portRounding;
-        } else {
-            System.out.println("Starboard Rounding : Mark is on the right");
-            return portRounding;
-        }
-    }
-
 
 
 

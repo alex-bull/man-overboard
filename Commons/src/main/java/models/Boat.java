@@ -26,6 +26,7 @@ public class Boat implements Competitor {
     private long timeAtLastMark;
     private double latitude;
     private double longitude;
+    private boolean inRounding = false;
     //how much the boat if affected by wind, can be parsed in as constructor
     private double blownFactor=0.01;
 //    external forces on the boat
@@ -242,6 +243,21 @@ public class Boat implements Competitor {
     public DoubleProperty getHeadingProperty() {
         return this.currentHeading;
     }
+
+
+    public void startRounding() {
+        this.inRounding = true;
+    }
+
+    public void finishedRounding() {
+        this.inRounding = false;
+        this.legIndex += 1;
+    }
+
+    public boolean isRounding() {
+        return this.inRounding;
+    }
+
 
     /**
      * Updates the boats position given the time changed
