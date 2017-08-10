@@ -108,6 +108,7 @@ public class MutablePoint {
      * shifts the point by x,y
      * @param x the x value to be shifted by
      * @param y the y value to be shifted by
+     * @return MutablePoint the shifted point
      */
     public MutablePoint shift(double x, double y){
         return new MutablePoint(getXValue()+x,getYValue()+y);

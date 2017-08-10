@@ -352,8 +352,8 @@ public class BinaryPackager {
 
     /**
      * package a source id
-     * @param sourceID
-     * @return
+     * @param sourceID sourceId
+     * @return byte[] a byte array
      */
     public byte[] packageSourceID(int sourceID){
         byte[] packet=new byte[23];
@@ -410,7 +410,7 @@ public class BinaryPackager {
     /**
      * Packages a mark rounding message
      * @param sourceID Integer, The source Id of the boat
-     * @param roundingSide Short, The side of the mark rounded: 0=>unknown, 1=>port, 2=>starboard
+     * @param roundingSide Short, The side of the mark rounded: 0 is unknown, 1 is port, 2 is starboard
      * @param markID Integer, the compoundMarkId of the mark rounded
      * @return byte[] the packet
      */
