@@ -6,7 +6,7 @@ import static java.lang.Math.*;
  * Created by khe60 on 26/07/17.
  * Class for a force vector
  */
-public class Force {
+public class Force implements Vector{
     private double x;
     private double y;
     private double magnitude;
@@ -78,11 +78,11 @@ public class Force {
     }
 
 
-    public double getX() {
+    public double getXValue() {
         return x;
     }
 
-    public double getY() {
+    public double getYValue() {
         return y;
     }
 
@@ -92,5 +92,15 @@ public class Force {
 
     public double getDirection() {
         return direction;
+    }
+
+    @Override
+    public String toString() {
+        return "Force{" +
+                "x=" + x +
+                ", y=" + y +
+                ", magnitude=" + magnitude +
+                ", direction=" + direction +
+                '}';
     }
 }

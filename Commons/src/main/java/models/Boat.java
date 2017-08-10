@@ -117,6 +117,11 @@ public class Boat implements Competitor {
     }
 
     @Override
+    public Force getBoatSpeed() {
+        return boatSpeed;
+    }
+
+    @Override
     public int getStatus() {
         return status;
     }
