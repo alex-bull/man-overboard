@@ -1,6 +1,5 @@
 package controllers;
 
-import com.google.common.primitives.Doubles;
 import com.rits.cloning.Cloner;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
@@ -29,10 +28,8 @@ import javafx.scene.transform.Translate;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
-import javafx.util.Pair;
 import models.Competitor;
 import models.CourseFeature;
-import models.Dot;
 import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.Converter;
@@ -240,6 +237,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
         if (boat.hasSailsOut()) {
             sailLine.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatPositionX, boatPositionY));
+
         } else {
             sailLine.getTransforms().add(new Rotate(windAngle, boatPositionX, boatPositionY));
         }

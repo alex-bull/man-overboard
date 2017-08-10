@@ -14,12 +14,12 @@ import java.util.List;
  */
 public class Boat implements Competitor {
     private String teamName;
-    private double velocity;
+//    private double velocity;
     private MutablePoint position;
     private MutablePoint position17;
     private Color color;
     private String abbreName;
-    private DoubleProperty currentHeading = new SimpleDoubleProperty();
+//    private DoubleProperty currentHeading = new SimpleDoubleProperty();
     private int sourceID;
     private int status;
     private String lastMarkPassed;
@@ -31,7 +31,7 @@ public class Boat implements Competitor {
     //how much the boat if affected by wind, can be parsed in as constructor
     private double blownFactor = 0.01;
 //    external forces on the boat
-    private List<RepelForce> forces;
+    private Force boatSpeed;
 
     public MutablePoint getPosition17() {
         return position17;
@@ -52,10 +52,10 @@ public class Boat implements Competitor {
      * @param abbreName     String the abbreviated name of the boat
      */
     public Boat(String teamName, int velocity, MutablePoint startPosition, Color color, String abbreName) {
-        this.velocity = velocity;
+        this.boatSpeed=new Force(velocity,0,false);
         this.teamName = teamName;
         this.position = startPosition;
-        forces =new ArrayList<>();
+
         this.color = color;
         this.abbreName = abbreName;
         legIndex = 0;
@@ -63,13 +63,6 @@ public class Boat implements Competitor {
         timeAtLastMark = 0;
     }
 
-    public List<RepelForce> getForces() {
-        return forces;
-    }
-
-    public void addForce(RepelForce force){
-        this.forces.add(force);
-    }
 
     /**
      * Creates a boat, for mock class only
@@ -82,7 +75,7 @@ public class Boat implements Competitor {
      * @param status        int status status of the boat
      */
     public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID, int status) {
-        this.velocity = velocity;
+        this.boatSpeed=new Force(velocity,0,false);
         this.teamName = teamName;
         this.position = startPosition;
         this.abbreName = abbreName;
@@ -94,7 +87,7 @@ public class Boat implements Competitor {
     }
 
     public Boat() {
-
+        this.boatSpeed=new Force(0,0,false);
     }
 
     /**
@@ -197,11 +190,11 @@ public class Boat implements Competitor {
     }
 
     public double getVelocity() {
-        return this.velocity;
+        return boatSpeed.getMagnitude();
     }
 
     public void setVelocity(double velocity) {
-        this.velocity = velocity;
+        boatSpeed.setMagnitude(velocity);
     }
 
     public MutablePoint getPosition() {
@@ -231,21 +224,16 @@ public class Boat implements Competitor {
     }
 
     public double getCurrentHeading() {
-        // convert negative current heading to positive?
-        if (currentHeading.getValue() < 0) {
-            this.currentHeading.setValue(currentHeading.getValue() + 360);
-        }
-
-        return currentHeading.getValue();
+        return boatSpeed.getDirection();
     }
 
     public void setCurrentHeading(double currentHeading) {
         // convert negative current heading to positive?
         if (currentHeading < 0) {
-            this.currentHeading.setValue(currentHeading + 360);
+            boatSpeed.setDirection(currentHeading + 360);
         }
         else{
-            this.currentHeading.setValue(currentHeading%360);
+            boatSpeed.setDirection(currentHeading%360);
         }
     }
 
@@ -257,10 +245,10 @@ public class Boat implements Competitor {
      */
     public void updatePosition(double elapsedTime) {
         int earthRadius = 6371;
-        double distance = velocity * elapsedTime / 1000; // in km
+        double distance = boatSpeed.getMagnitude() * elapsedTime / 1000; // in km
         double lat1 = position.getXValue() * Math.PI / 180; // in radians
         double lng1 = position.getYValue() * Math.PI / 180;
-        double bearing = currentHeading.getValue() * Math.PI / 180;
+        double bearing = boatSpeed.getDirection() * Math.PI / 180;
 
         //calculate new positions
         double lat2 = Math.asin(Math.sin(lat1) * Math.cos(distance / earthRadius) +
@@ -286,26 +274,6 @@ public class Boat implements Competitor {
        return downWind;
     }
 
-    public void blownByWind(double windAngle){
-//        dont do anything if boat is not really moving
-        if(getVelocity()<0.2){
-            return;
-        }
-
-        double downWind=getDownWind(windAngle);
-
-        double turnAngle=(getCurrentHeading()-windAngle)*blownFactor;
-
-        if(currentHeading.getValue() >= windAngle && currentHeading.getValue() < downWind) {
-
-            currentHeading.setValue(currentHeading.getValue() + turnAngle);
-        }
-        else{
-            currentHeading.setValue(currentHeading.getValue() - turnAngle);
-        }
-        setCurrentHeading(currentHeading.getValue() % 360);
-    }
-
     /**
      * function to change boats heading
      * @param upwind true=upwind
@@ -317,25 +285,27 @@ public class Boat implements Competitor {
 
 
         double downWind = getDownWind(windAngle);
-
-        if(currentHeading.getValue() >= windAngle && currentHeading.getValue() <= downWind) {
+        double currentHeading=boatSpeed.getDirection();
+        if(currentHeading>= windAngle && currentHeading <= downWind) {
             if(upwind) {
-                currentHeading.setValue(currentHeading.getValue() - turnAngle);
+                boatSpeed.setDirection(currentHeading - turnAngle);
             }
             else {
-                currentHeading.setValue(currentHeading.getValue() + turnAngle);
+                boatSpeed.setDirection(currentHeading + turnAngle);
             }
         }
         else {
 
             if(upwind) {
-                currentHeading.setValue(currentHeading.getValue() + turnAngle);
+                boatSpeed.setDirection(currentHeading + turnAngle);
             }
             else {
-                currentHeading.setValue(currentHeading.getValue() - turnAngle);
+                boatSpeed.setDirection(currentHeading - turnAngle);
             }
         }
-        setCurrentHeading(currentHeading.getValue() % 360);
+//        setCurrentHeading(currentHeading % 360);
+//        System.out.println(currentHeading);
+//        System.out.println(boatSpeed.getDirection());
 //        currentHeading.setValue(currentHeading.getValue() % 360);
     }
 
@@ -343,12 +313,21 @@ public class Boat implements Competitor {
     public String toString() {
         return "Boat{" +
                 "teamName='" + teamName + '\'' +
-                ", velocity=" + velocity +
                 ", position=" + position +
+                ", position17=" + position17 +
                 ", color=" + color +
                 ", abbreName='" + abbreName + '\'' +
-                ", currentHeading=" + currentHeading +
                 ", sourceID=" + sourceID +
+                ", status=" + status +
+                ", lastMarkPassed='" + lastMarkPassed + '\'' +
+                ", legIndex=" + legIndex +
+                ", timeToNextMark=" + timeToNextMark +
+                ", timeAtLastMark=" + timeAtLastMark +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", blownFactor=" + blownFactor +
+                ", boatSpeed=" + boatSpeed +
+                ", sailsOut=" + sailsOut +
                 '}';
     }
 }

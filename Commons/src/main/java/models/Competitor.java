@@ -1,6 +1,5 @@
 package models;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
 
 import java.util.List;
@@ -11,10 +10,9 @@ import java.util.List;
  */
 public interface Competitor {
     String getTeamName();
-    List<RepelForce> getForces();
-    void addForce(RepelForce force);
+
     double getVelocity();
-    void blownByWind(double windAngle);
+
     void setVelocity(double velocity);
     MutablePoint getPosition17();
     void setPosition17(MutablePoint position17);

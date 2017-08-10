@@ -2,10 +2,6 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
-import com.sun.org.apache.xml.internal.utils.MutableAttrListImpl;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import javafx.geometry.Point2D;
-import javafx.scene.shape.Polygon;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
@@ -16,9 +12,7 @@ import utilities.CollisionUtility;
 import utilities.PolarTable;
 
 
-import java.awt.geom.Line2D;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.SocketException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -358,33 +352,33 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
 
 
-    /**
-     * function to calculate what happens during collision
-     * @param boat1 one of the boat during collision
-     * @param boat2 the other boat during collision
-     */
-    private void calculateCollisions(Competitor boat1, Competitor boat2){
-        double x1=boat1.getPosition().getXValue();
-        double x2=boat2.getPosition().getXValue();
-        double y1=boat1.getPosition().getYValue();
-        double y2=boat2.getPosition().getYValue();
-        double contactAngle=(atan2((x1-x2),(y1-y2)));
-
-        double v1x=calculateVx(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
-        double v1y=calculateVy(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
-        RepelForce force1=new RepelForce(v1x,v1y);
-        boat1.setCurrentHeading(force1.angle());
-        boat1.setVelocity(boat1.getVelocity()+ force1.getMagnitude()*100);
-
-
-
-        double v2x=calculateVx(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
-        double v2y=calculateVy(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
-        RepelForce force2=new RepelForce(v2x,v2y);
-        boat2.setCurrentHeading(force2.angle());
-        boat2.setVelocity(boat2.getVelocity()+ force2.getMagnitude()*100);
-
-    }
+//    /**
+//     * function to calculate what happens during collision
+//     * @param boat1 one of the boat during collision
+//     * @param boat2 the other boat during collision
+//     */
+//    private void calculateCollisions(Competitor boat1, Competitor boat2){
+//        double x1=boat1.getPosition().getXValue();
+//        double x2=boat2.getPosition().getXValue();
+//        double y1=boat1.getPosition().getYValue();
+//        double y2=boat2.getPosition().getYValue();
+//        double contactAngle=(atan2((x1-x2),(y1-y2)));
+//
+//        double v1x=calculateVx(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
+//        double v1y=calculateVy(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
+//        Force force1=new Force(v1x,v1y,true);
+//        boat1.setCurrentHeading(force1.angle());
+//        boat1.setVelocity(boat1.getVelocity()+ force1.getMagnitude()*100);
+//
+//
+//
+//        double v2x=calculateVx(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
+//        double v2y=calculateVy(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
+//        Force force2=new Force(v2x,v2y,true);
+//        boat2.setCurrentHeading(force2.angle());
+//        boat2.setVelocity(boat2.getVelocity()+ force2.getMagnitude()*100);
+//
+//    }
 
     private double calculateVx(double v2, double angle2, double contactAngle, double v1, double angle1){
         angle1=toRadians(angle1);
