@@ -284,6 +284,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
         double strokeWidth = 5;
         double offset = 20;
+        double tombstoneSize = 35;
         double maxBarLength = boat.getMaxHealth(); // was 30
         double sourceId = boat.getSourceID();
         double healthLevel = boat.getHealthLevel();
@@ -371,12 +372,15 @@ public class RaceViewController implements Initializable, TableObserver {
             healthBar.toFront();
 
             if(boat.getStatus() != DSQ) {
+                if(isZoom()){
+                    tombstoneSize *= 2;
+                }
                 Image tombstone = new Image("/tombstone.png");
                 gameOver.setImage(tombstone);
                 gameOver.setX(boatPositionX);
                 gameOver.setY(boatPositionY);
-                gameOver.setFitHeight(25);
-                gameOver.setFitHeight(25);
+                gameOver.setFitHeight(tombstoneSize);
+                gameOver.setFitHeight(tombstoneSize);
                 gameOver.setPreserveRatio(true);
             }else boat.setStatus(DSQ);
 
@@ -1249,8 +1253,6 @@ public class RaceViewController implements Initializable, TableObserver {
         setBoatLocation();
         updateRace();
         checkCollision();
-
-
         updateGuidingArrow(gc);
     }
 
