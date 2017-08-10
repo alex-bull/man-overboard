@@ -1,21 +1,15 @@
 package mockDatafeed;
 
-import com.google.common.io.ByteStreams;
-import com.google.common.io.CharStreams;
 import javafx.scene.shape.Line;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.xml.race.RaceData;
-import parsers.xml.race.RaceXMLParser;
 import utilities.PolarTable;
 import utility.Calculator;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import static java.lang.Math.*;
 import static java.lang.Math.PI;
@@ -68,7 +62,7 @@ public class BoatUpdater {
             this.handleCourseCollisions(boat);
             this.handleBoatCollisions(boat);
 //            boat.blownByWind(twa);
-            this.handleMarkRounding(boat);
+            this.handleRounding(boat);
         }
     }
 
@@ -77,7 +71,7 @@ public class BoatUpdater {
      * Calculates if the boat rounds the next course feature and adjusts the boats leg index and sends a rounding packet
      * @param boat Competitor the boat to check roundings for
      */
-    private void handleMarkRounding(Competitor boat) throws IOException, InterruptedException {
+    private void handleRounding(Competitor boat) throws IOException, InterruptedException {
 
         int nextLegIndex = boat.getCurrentLegIndex() + 1;
 
@@ -90,12 +84,14 @@ public class BoatUpdater {
 
             if (mark1.getTeamName().toLowerCase().contains("start") || mark1.getTeamName().toLowerCase().contains("finish")) {
                 lineRounding(boat, markIds);
+            } else if (nextLegIndex == 5) { //TODO:- A bit of a hack. The last time through the lee gate it is treated as a lines
+                lineRounding(boat, markIds);
             } else {
                 gateRounding(boat, markIds);
             }
         } else {
-            //MARK - using distance based for now
-            markRounding(boat, markIds.get(0));
+            //MARK
+            markRounding(boat);
         }
     }
 
@@ -103,17 +99,36 @@ public class BoatUpdater {
     /**
      * Check for rounding of a mark
      * @param boat Competitor the boat to check
-     * @param markId Integer the id of the mark
      */
-    private void markRounding(Competitor boat, Integer markId) {
+    private void markRounding(Competitor boat) {
 
-        int nextLegIndex = boat.getCurrentLegIndex() + 1;
-        final double roundingRadius = 200;
-        MutablePoint pos1 = markBoats.get(markId).getPosition();
-        Double distance = raceCourse.distanceBetweenGPSPoints(pos1, boat.getPosition());
-        if (distance < roundingRadius) {
-            handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
-            boat.setCurrentLegIndex(nextLegIndex);
+        int targetLegIndex = boat.getCurrentLegIndex() + 1;
+        int nextLegIndex = boat.getCurrentLegIndex() + 2;
+        int previousIndex = boat.getCurrentLegIndex();
+
+        MutablePoint targetPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(targetLegIndex).get(0)).getPosition();
+        MutablePoint nextPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(nextLegIndex).get(0)).getPosition();
+        MutablePoint prevPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(previousIndex).get(0)).getPosition();
+
+        if (boat.isRounding()) {
+            //have crossed first line - Check for crossing line to the side of mark
+            Vector2D vec = new Vector2D(targetPos.getXValue(), targetPos. getYValue(), prevPos.getXValue(), prevPos.getYValue());
+            vec.normalise();
+            Line l2 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec.getX() * -200, vec.getY() * -200);
+
+            if (didCrossLine(boat, l2)) {
+                boat.finishedRounding();
+                handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
+            }
+        } else {
+            //Check for rounding a line down from the mark
+            Vector2D vec = new Vector2D(targetPos.getXValue(), targetPos. getYValue(), nextPos.getXValue(), nextPos.getYValue());
+            vec.normalise();
+            Line l1 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec.getX() * -200, vec.getY() * -200);
+            if (didCrossLine(boat, l1)) {
+                System.out.println("Crossed line 1");
+                boat.startRounding();
+            }
         }
     }
 
@@ -144,7 +159,6 @@ public class BoatUpdater {
             }
         } else {
             //Check if the boat crosses the line between the marks
-
             Line l1 = new Line(pos1.getXValue(), pos1.getYValue(), pos2.getXValue(), pos2.getYValue());
             if (didCrossLine(boat, l1)) {
                 System.out.println("Crossed line 1");
