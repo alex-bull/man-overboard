@@ -53,6 +53,10 @@ public class MainController {
                 case Q:
                     if(raceViewController.isZoom()) {
                         raceViewController.zoomOut();
+                        if (!tableController.isVisible()) {
+                            tableController.makeVisible();
+                            sparklinesController.makeVisible();
+                        }
                     }
                     else{
                         raceViewController.zoomIn();
