@@ -103,4 +103,12 @@ public class Force implements Vector{
                 ", direction=" + direction +
                 '}';
     }
+
+    /**
+     * reduces itself by a certain amount
+     * @param amount the amount left
+     */
+    public void reduce(double amount){
+        setMagnitude(getMagnitude()*amount);
+    }
 }

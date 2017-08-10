@@ -288,11 +288,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             double speed = polarTable.getSpeed(twa);
             if (boat.hasSailsOut()) {
                 boat.setVelocity(speed);
-                boat.updatePosition(0.1);
-            } else {
-                boat.setVelocity(0);
-            }
 
+            } else {
+                boat.getBoatSpeed().reduce(0.99);
+
+            }
+            boat.updatePosition(0.1);
             this.handleCourseCollisions(boat);
             this.handleBoatCollisions(boat);
             this.handleBoundaryCollisions(boat);
@@ -364,8 +365,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         Force v1=boat1.getBoatSpeed();
         Force v2=boat2.getBoatSpeed();
 
-        boat1.setBoatSpeed(calculateFinalVelocity(v1,v2,p1,p2));
-        boat2.setBoatSpeed(calculateFinalVelocity(v2,v1,p2,p1));
+        Force v1f=calculateFinalVelocity(v1,v2,p1,p2);
+        Force v2f=calculateFinalVelocity(v2,v1,p2,p1);
+        boat1.setCurrentHeading(v1f.getDirection());
+        boat2.setCurrentHeading(v2f.getDirection());
+
+        //momentum
+        boat1.addForce((Force) multiply(2,v1f));
+        boat2.addForce((Force) multiply(2,v2f));
 
 
     }

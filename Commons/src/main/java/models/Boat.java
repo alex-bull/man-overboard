@@ -13,6 +13,9 @@ import java.util.List;
  * Boat object
  */
 public class Boat implements Competitor {
+
+    final int earthRadius = 6371;
+
     private String teamName;
 //    private double velocity;
     private MutablePoint position;
@@ -35,6 +38,9 @@ public class Boat implements Competitor {
 
     //collision size
     private double collisionRadius=50;
+
+    //external forces
+    private List<Force> externalForces=new ArrayList<>();
 
     public MutablePoint getPosition17() {
         return position17;
@@ -260,11 +266,33 @@ public class Boat implements Competitor {
      * @param elapsedTime the time elapsed in seconds
      */
     public void updatePosition(double elapsedTime) {
-        int earthRadius = 6371;
-        double distance = boatSpeed.getMagnitude() * elapsedTime / 1000; // in km
-        double lat1 = position.getXValue() * Math.PI / 180; // in radians
-        double lng1 = position.getYValue() * Math.PI / 180;
-        double bearing = boatSpeed.getDirection() * Math.PI / 180;
+        //moves the boat by its wind
+        MutablePoint p=moveBoat(boatSpeed,getPosition(),elapsedTime);
+
+        //calculate all external forces on it
+        for(Force force:new ArrayList<>(externalForces)){
+            p=moveBoat(force,p,elapsedTime);
+            //reduce the external force
+            force.reduce(0.5);
+            if(force.getMagnitude()<0.1){
+                externalForces.remove(force);
+            }
+        }
+        setPosition(p);
+        System.out.println(externalForces.size());
+    }
+
+    /**
+     * moves the boat from the current position by the force
+     * @param force the force which the boat is affected by
+     * @param point the point at the start
+     * @param elapsedTime the time period of this movement
+     */
+    private MutablePoint moveBoat(Force force,MutablePoint point, double elapsedTime){
+        double distance = force.getMagnitude() * elapsedTime / 1000; // in km
+        double lat1 = point.getXValue() * Math.PI / 180; // in radians
+        double lng1 = point.getYValue() * Math.PI / 180;
+        double bearing = force.getDirection() * Math.PI / 180;
 
         //calculate new positions
         double lat2 = Math.asin(Math.sin(lat1) * Math.cos(distance / earthRadius) +
@@ -273,9 +301,19 @@ public class Boat implements Competitor {
                 Math.cos(distance / earthRadius) - Math.sin(lat1) * Math.sin(lat2));
 
         //turn the new lat and lng back to degrees
-        setPosition(new MutablePoint(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI));
+        return new MutablePoint(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI);
     }
 
+    public void addForce(Force externalForce){
+        externalForces.add(externalForce);
+    }
+    public void removeForce(Force externalForce){
+        externalForces.remove(externalForce);
+    }
+
+    public List<Force> getExternalForces() {
+        return externalForces;
+    }
 
     /**
      * Returns the downwind given wind angle

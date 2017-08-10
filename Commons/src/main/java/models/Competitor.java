@@ -19,7 +19,10 @@ public interface Competitor {
     MutablePoint getPosition();
     void setBoatSpeed(Force boatSpeed);
     Force getBoatSpeed();
+     void addForce(Force externalForce);
+     void removeForce(Force externalForce);
 
+     List<Force> getExternalForces();
     void setPosition(MutablePoint position);
 
     void updatePosition(double dt);
