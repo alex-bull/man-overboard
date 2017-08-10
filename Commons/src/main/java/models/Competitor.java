@@ -12,7 +12,7 @@ public interface Competitor {
     String getTeamName();
 
     double getVelocity();
-
+    double getCollisionRadius();
     void setVelocity(double velocity);
     MutablePoint getPosition17();
     void setPosition17(MutablePoint position17);

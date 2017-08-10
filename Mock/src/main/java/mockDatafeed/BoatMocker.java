@@ -307,9 +307,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
     private void handleCourseCollisions(Competitor boat) throws IOException, InterruptedException {
 
-        final double collisionRadius = 55; //Large for testing
-
         for (Competitor mark: markBoats) {
+            double collisionRadius=mark.getCollisionRadius()+boat.getCollisionRadius();
 
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 
@@ -328,7 +327,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
 
     private void handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
-        double collisionRadius = 50;
+        double collisionRadius = boat.getCollisionRadius();
         for (MutablePoint point: courseBoundary) {
             double distance = raceCourse.distanceBetweenGPSPoints(boat.getPosition(), point);
             if (distance <= collisionRadius) {
@@ -398,10 +397,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
     private void handleBoatCollisions(Competitor boat) throws IOException, InterruptedException {
 
-        final double collisionRadius = 35; //Large for testing
+
 
         //Can bump back a fixed amount or try to simulate a real collision.
         for (Competitor comp: this.competitors.values()) {
+            double collisionRadius=comp.getCollisionRadius()+boat.getCollisionRadius();
 
             if (comp.getSourceID() == boat.getSourceID()) continue; //cant collide with self
 

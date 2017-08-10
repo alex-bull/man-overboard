@@ -33,6 +33,9 @@ public class Boat implements Competitor {
 //    external forces on the boat
     private Force boatSpeed;
 
+    //collision size
+    private double collisionRadius=50;
+
     public MutablePoint getPosition17() {
         return position17;
     }
@@ -103,6 +106,10 @@ public class Boat implements Competitor {
      */
     public boolean hasSailsOut() {
         return sailsOut;
+    }
+
+    public double getCollisionRadius() {
+        return collisionRadius;
     }
 
     @Override

@@ -4,7 +4,7 @@ import static java.lang.Math.*;
 
 /**
  * Created by khe60 on 26/07/17.
- * Class to simulate real collision
+ * Class for a force vector
  */
 public class Force {
     private double x;
@@ -38,6 +38,11 @@ public class Force {
         }
     }
 
+    /**
+     * makes direction range from 0 to 360
+     * @param direction the direction to be modified
+     * @return the modified direction ranging from 0 to 360
+     */
     private double capDirection(double direction){
         double retDirection=direction;
         //make direction always positive
