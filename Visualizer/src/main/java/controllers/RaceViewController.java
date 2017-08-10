@@ -14,6 +14,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -92,6 +94,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line startLine;
     private Line finishLine;
     private Line virtualLine;
+    private ImageView gameOver;
 
     private WebEngine mapEngine;
     private DataSource dataSource;
@@ -123,6 +126,7 @@ public class RaceViewController implements Initializable, TableObserver {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        gameOver = new ImageView();
         startLine = new Line();
         finishLine = new Line();
         virtualLine = new Line();
@@ -135,6 +139,7 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(virtualLine);
         raceViewPane.getChildren().add(sailLine);
+        raceViewPane.getChildren().add(gameOver);
 
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
@@ -230,8 +235,8 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draws the line representing the sail of the boat
      */
 
-    private void drawSail( double width, double length) {
-        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+    private void drawSail( double width, double length, Competitor boat) {
+//        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         double windAngle = dataSource.getWindDirection();
 
         sailLine.setStrokeWidth(width);
@@ -346,10 +351,18 @@ public class RaceViewController implements Initializable, TableObserver {
             healthBar.setStroke(Color.BLACK);
             healthBar.toFront();
 
+            if(boat.getStatus() != 6) {
+                Image tombstone = new Image("/tombstone.png");
+                gameOver.setImage(tombstone);
+                gameOver.setX(boatPositionX);
+                gameOver.setY(boatPositionY);
+                gameOver.setFitHeight(25);
+                gameOver.setFitHeight(25);
+                gameOver.setPreserveRatio(true);
+            }else boat.setStatus(6);
+
             System.out.println("Game over");
         }
-
-
 
     }
 
@@ -724,6 +737,7 @@ public class RaceViewController implements Initializable, TableObserver {
         MutablePoint point = setRelativePosition(boat);
 
         if (boatModels.get(sourceId) == null) {
+
             Polygon boatModel = new Polygon();
             boatModel.getPoints().addAll(
                     0.0, -10.0, //top
@@ -755,6 +769,8 @@ public class RaceViewController implements Initializable, TableObserver {
                 }
             });
         }
+
+
         //Translate and rotate the corresponding boat models
         boatModels.get(sourceId).setLayoutX(point.getXValue());
         boatModels.get(sourceId).setLayoutY(point.getYValue());
@@ -766,6 +782,7 @@ public class RaceViewController implements Initializable, TableObserver {
             playerMarker.setLayoutX(point.getXValue());
             playerMarker.setLayoutY(point.getYValue());
         }
+
     }
 
     /**
@@ -785,7 +802,8 @@ public class RaceViewController implements Initializable, TableObserver {
             raceViewPane.getChildren().add(wake);
             this.wakeModels.put(boat.getSourceID(), wake);
         }
-        double newLength = boat.getVelocity() * 2*wakeLengthFactor;
+
+        double newLength = boat.getVelocity() * 2 * wakeLengthFactor;
         Polygon wakeModel = wakeModels.get(boat.getSourceID());
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
@@ -1128,15 +1146,18 @@ public class RaceViewController implements Initializable, TableObserver {
                 }
             }
 
-            this.drawWake(boat,boatLength,startWakeOffset,wakeWidthFactor,wakeLengthFactor);
+            this.drawWake(boat, boatLength, startWakeOffset, wakeWidthFactor, wakeLengthFactor);
             this.drawBoat(boat);
             this.drawHealthBar(boat);
             this.moveAnnotations(boat);
+            this.drawSail(width, length, boat);
+
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
             if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
+
         }
 
-        drawSail(width, length);
+
     }
 
     /**
