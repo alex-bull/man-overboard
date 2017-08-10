@@ -167,7 +167,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void initialiseGuideArrow() {
         guideArrow = new Polygon();
-        double arrowLength = -60; // default arrow points vertically in the -y direction
+        double arrowLength = -60; // default arrow points vertically in the -y direction (upwards)
         double arrowHeadLength = -20;
         double offsetFromOrigin = -1 * (arrowLength + arrowHeadLength) + 30;
 
@@ -1030,14 +1030,25 @@ public class RaceViewController implements Initializable, TableObserver {
 
         Pair<Double, Double> nextMarkLocation = getGateCentre(currentIndex + 1);
 
+        double xOffset = 0, yOffset = 0;
+
         double angle;
         if (currentIndex == 0) {
             // boat has not yet rounded first mark
             angle = 90;
         } else {
-            Pair<Double, Double> prevMarkLocation = getGateCentre(currentIndex);
-            Double xDist = prevMarkLocation.getKey() - nextMarkLocation.getKey();
-            Double yDist = prevMarkLocation.getValue() - nextMarkLocation.getValue();
+            Double xDist;
+            Double yDist;
+            if (isZoom()) {
+                // arrow points from boat to next mark
+                xDist = boat.getPosition().getXValue() - nextMarkLocation.getKey();
+                yDist = boat.getPosition().getYValue() - nextMarkLocation.getValue();
+            } else {
+                // arrow points from previous mark to next mark
+                Pair<Double, Double> prevMarkLocation = getGateCentre(currentIndex);
+                xDist = prevMarkLocation.getKey() - nextMarkLocation.getKey();
+                yDist = prevMarkLocation.getValue() - nextMarkLocation.getValue();
+            }
 
             double arctan = atan(yDist/xDist);
             if (arctan < 0) {
@@ -1050,12 +1061,22 @@ public class RaceViewController implements Initializable, TableObserver {
             } else {
                 angle += 270;
             }
+
+            xOffset = 150*cos(toRadians(angle-90));
+            yOffset = 150*sin(toRadians(angle-90));
         }
 
-        guideArrow.setLayoutX(nextMarkLocation.getKey());
-        guideArrow.setLayoutY(nextMarkLocation.getValue());
-
         guideArrow.getTransforms().clear();
+
+        if (isZoom()) {
+            guideArrow.setLayoutX(boatPositionX + xOffset);
+            guideArrow.setLayoutY(boatPositionY + yOffset);
+
+        } else {
+            guideArrow.setLayoutX(nextMarkLocation.getKey());
+            guideArrow.setLayoutY(nextMarkLocation.getValue());
+        }
+
         guideArrow.getTransforms().add(new Rotate(angle, 0, 0));
     }
 
