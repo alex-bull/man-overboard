@@ -17,6 +17,7 @@ public interface Competitor {
     MutablePoint getPosition17();
     void setPosition17(MutablePoint position17);
     MutablePoint getPosition();
+    void setBoatSpeed(Force boatSpeed);
 
     void setPosition(MutablePoint position);
 

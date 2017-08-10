@@ -29,6 +29,7 @@ import static utility.Calculator.convertRadiansToShort;
 
 import static utilities.Utility.fileToString;
 import static utility.Calculator.shortToDegrees;
+import static utility.Projection.mercatorProjection;
 
 /**
  * Created by khe60 on 24/04/17.
@@ -351,33 +352,35 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
 
 
-//    /**
-//     * function to calculate what happens during collision
-//     * @param boat1 one of the boat during collision
-//     * @param boat2 the other boat during collision
-//     */
-//    private void calculateCollisions(Competitor boat1, Competitor boat2){
-//        double x1=boat1.getPosition().getXValue();
-//        double x2=boat2.getPosition().getXValue();
-//        double y1=boat1.getPosition().getYValue();
-//        double y2=boat2.getPosition().getYValue();
-//        double contactAngle=(atan2((x1-x2),(y1-y2)));
-//
-//        double v1x=calculateVx(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
-//        double v1y=calculateVy(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
-//        Force force1=new Force(v1x,v1y,true);
-//        boat1.setCurrentHeading(force1.angle());
-//        boat1.setVelocity(boat1.getVelocity()+ force1.getMagnitude()*100);
-//
-//
-//
-//        double v2x=calculateVx(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
-//        double v2y=calculateVy(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
-//        Force force2=new Force(v2x,v2y,true);
-//        boat2.setCurrentHeading(force2.angle());
-//        boat2.setVelocity(boat2.getVelocity()+ force2.getMagnitude()*100);
-//
-//    }
+    /**
+     * function to calculate what happens during collision
+     * @param boat1 one of the boat during collision
+     * @param boat2 the other boat during collision
+     */
+    private void calculateCollisions(Competitor boat1, Competitor boat2){
+
+        MutablePoint p1=mercatorProjection(boat1.getPosition().getXValue(),boat1.getPosition().getYValue());
+        MutablePoint p2=mercatorProjection(boat2.getPosition().getXValue(),boat2.getPosition().getYValue());
+
+        double contactAngle=new Force(p1.getYValue()-p2.getYValue(),p1.getXValue()-p2.getXValue(),true).getDirection();
+        System.out.println(p1.getXValue()-p2.getXValue());
+        System.out.println(p1.getYValue()-p2.getYValue());
+        System.out.println(contactAngle);
+
+
+        double v1x=calculateVx(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
+        double v1y=calculateVy(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
+        Force force1=new Force(v1y,v1x,true);
+        boat1.setBoatSpeed(force1);
+
+
+
+        double v2x=calculateVx(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
+        double v2y=calculateVy(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
+        Force force2=new Force(v2y,v2x,true);
+        boat2.setBoatSpeed(force2);
+
+    }
 
     private double calculateVx(double v2, double angle2, double contactAngle, double v1, double angle1){
         angle1=toRadians(angle1);
@@ -397,8 +400,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
     private void handleBoatCollisions(Competitor boat) throws IOException, InterruptedException {
 
-
-
         //Can bump back a fixed amount or try to simulate a real collision.
         for (Competitor comp: this.competitors.values()) {
             double collisionRadius=comp.getCollisionRadius()+boat.getCollisionRadius();
@@ -412,9 +413,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 //                send a collision packet
                 sendYachtEvent(comp.getSourceID(),1);
 
-//                calculateCollisions(comp,boat);
-                boat.updatePosition(-10);
-                comp.updatePosition(-10);
+                calculateCollisions(comp,boat);
+//                boat.updatePosition(-10);
+//                comp.updatePosition(-10);
             }
         }
     }

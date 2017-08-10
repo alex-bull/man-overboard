@@ -112,6 +112,10 @@ public class Boat implements Competitor {
         return collisionRadius;
     }
 
+    public void setBoatSpeed(Force boatSpeed) {
+        this.boatSpeed = boatSpeed;
+    }
+
     @Override
     public int getStatus() {
         return status;
