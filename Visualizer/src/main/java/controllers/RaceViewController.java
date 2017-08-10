@@ -254,8 +254,8 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draws the line representing the sail of the boat
      */
 
-    private void drawSail( double width, double length, Competitor boat) {
-//        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+    private void drawSail( double width, double length) {
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         double windAngle = dataSource.getWindDirection();
 
         sailLine.setStrokeWidth(width);
@@ -1204,12 +1204,12 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawBoat(boat);
             this.drawHealthBar(boat);
             this.moveAnnotations(boat);
-            this.drawSail(width, length, boat);
 
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
             if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
 
         }
+        this.drawSail(width, length);
 
 
     }
@@ -1223,7 +1223,7 @@ public class RaceViewController implements Initializable, TableObserver {
             Competitor boat=dataSource.getStoredCompetitors().get(sourceID);
             mapEngine.executeScript(String.format("create_collision(%.9f,%.9f)",boat.getLatitude(),boat.getLongitude()));
             dataSource.removeCollsions(sourceID);
-
+            System.out.println("boat collided " +  boat.getSourceID());
             boat.decreaseHealth(5);
         }
 
