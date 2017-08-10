@@ -47,6 +47,7 @@ import java.util.*;
 
 import static java.lang.Math.*;
 import static javafx.scene.paint.Color.*;
+import static parsers.BoatStatusEnum.DSQ;
 import static parsers.RaceStatusEnum.PREPARATORY;
 import static parsers.RaceStatusEnum.STARTED;
 import static utilities.RaceCalculator.*;
@@ -369,7 +370,7 @@ public class RaceViewController implements Initializable, TableObserver {
             healthBar.setStroke(Color.BLACK);
             healthBar.toFront();
 
-            if(boat.getStatus() != 6) {
+            if(boat.getStatus() != DSQ) {
                 Image tombstone = new Image("/tombstone.png");
                 gameOver.setImage(tombstone);
                 gameOver.setX(boatPositionX);
@@ -377,7 +378,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 gameOver.setFitHeight(25);
                 gameOver.setFitHeight(25);
                 gameOver.setPreserveRatio(true);
-            }else boat.setStatus(6);
+            }else boat.setStatus(DSQ);
 
             System.out.println("Game over");
         }

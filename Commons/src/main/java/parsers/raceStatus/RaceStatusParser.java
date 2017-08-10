@@ -1,5 +1,6 @@
 package parsers.raceStatus;
 
+import parsers.BoatStatusEnum;
 import parsers.Converter;
 import parsers.RaceStatusEnum;
 
@@ -36,10 +37,11 @@ public class RaceStatusParser {
 
             for (int i = 0; i < numBoatsInRace; i++) {
                 Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte, currentByte + 4));
+                Integer boatStatus = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 4, currentByte + 5));
                 Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));
                 long timeAtNextMark = hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
                 long estTimeToNextMark = convertToRelativeTime(timeAtNextMark, currentTime) * -1; // returned time is negative because time at next mark is after current time
-                boatStatuses.put(sourceID, new BoatStatus(sourceID, legNumber, estTimeToNextMark));
+                boatStatuses.put(sourceID, new BoatStatus(sourceID, boatStatusToEnum(boatStatus), legNumber, estTimeToNextMark));
                 currentByte += 20;
             }
 
@@ -61,6 +63,16 @@ public class RaceStatusParser {
     private RaceStatusEnum raceStatusToEnum(Integer status) {
         return RaceStatusEnum.values()[status];
     }
+
+    /**
+     * Converts boat status to enum.
+     * @param status Integer the boat status
+     * @return enum version of boat status
+     */
+    private BoatStatusEnum boatStatusToEnum(Integer status) {
+        return BoatStatusEnum.values()[status];
+    }
+
 
 
 }

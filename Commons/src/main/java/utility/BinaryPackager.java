@@ -2,6 +2,7 @@ package utility;
 
 
 import models.Competitor;
+import parsers.BoatStatusEnum;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -317,7 +318,7 @@ public class BinaryPackager {
         for (Integer sourceId : competitors.keySet()) {
             Competitor competitor = competitors.get(sourceId);
             packetBuffer.putInt(competitor.getSourceID()); //SourceID
-            packetBuffer.put((byte) competitor.getStatus());//Boat Status
+            packetBuffer.put((byte) BoatStatusEnum.boatStatusToInt(competitor.getStatus()));//Boat Status
             packetBuffer.put((byte) competitor.getCurrentLegIndex()); //Leg Number
             packetBuffer.put((byte) 0);//penalties awarded, not important so far
             packetBuffer.put((byte) 0);//penalties served, not important so far

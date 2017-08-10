@@ -8,6 +8,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
 import models.*;
 import org.jdom2.JDOMException;
+import parsers.BoatStatusEnum;
 import parsers.MessageType;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
@@ -33,6 +34,8 @@ import utility.*;
 import static java.lang.Math.*;
 import static java.lang.Math.abs;
 import static mockDatafeed.Keys.SAILS;
+import static parsers.BoatStatusEnum.PRESTART;
+import static parsers.BoatStatusEnum.UNDEFINED;
 import static parsers.MessageType.UNKNOWN;
 import static utility.Calculator.calcAngleBetweenPoints;
 import static utility.Calculator.convertRadiansToShort;
@@ -255,7 +258,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 //        prestart = new MutablePoint(32.286577 + a, -64.864304);
         prestart = new MutablePoint(32.296117 + a, -64.858834);
 
-        Boat newCompetitor=new Boat("Boat "+currentSourceID, random.nextInt(20)+20, prestart, "B"+currentSourceID, currentSourceID, 1);
+        Boat newCompetitor=new Boat("Boat "+currentSourceID, random.nextInt(20)+20, prestart, "B"+currentSourceID, currentSourceID, PRESTART);
         competitors.put(currentSourceID, newCompetitor);
         currentSourceID+=1;
         return currentSourceID-1;
@@ -287,7 +290,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         for (CompoundMarkData compoundMark: course) {
             for (MarkData mark: compoundMark.getMarks()) {
                 MutablePoint location = new MutablePoint(mark.getTargetLat(), mark.getTargetLon());
-                markBoats.put(mark.getSourceID(), new Boat(mark.getName(), 0, location, "", mark.getSourceID(), 0));
+                markBoats.put(mark.getSourceID(), new Boat(mark.getName(), 0, location, "", mark.getSourceID(), UNDEFINED));
             }
         }
 
@@ -347,7 +350,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
 
     /**
-     * Sends Race Status to outputport
+     * Sends Race Status to output port
      *
      * @throws IOException IOException
      */
