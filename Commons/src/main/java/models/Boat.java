@@ -28,6 +28,7 @@ public class Boat implements Competitor {
     private long timeAtLastMark;
     private double latitude;
     private double longitude;
+    private boolean inRounding = false;
     //how much the boat if affected by wind, can be parsed in as constructor
     private double blownFactor = 0.01;
 //    external forces on the boat
@@ -266,13 +267,28 @@ public class Boat implements Competitor {
     }
 
     public void setCurrentHeading(double currentHeading) {
-        // convert negative current heading to positive?
         if (currentHeading < 0) {
+            // convert negative current heading to positive
             this.currentHeading.setValue(currentHeading + 360);
+        } else {
+            // keep heading under 360 degrees
+            this.currentHeading.setValue(currentHeading % 360);
         }
-        else{
-            this.currentHeading.setValue(currentHeading%360);
-        }
+    }
+
+
+
+    public void startRounding() {
+        this.inRounding = true;
+    }
+
+    public void finishedRounding() {
+        this.inRounding = false;
+        this.legIndex += 1;
+    }
+
+    public boolean isRounding() {
+        return this.inRounding;
     }
 
 
@@ -340,21 +356,17 @@ public class Boat implements Competitor {
      */
     public void changeHeading(boolean upwind, double windAngle){
         int turnAngle = 3;
-
-
         double downWind = getDownWind(windAngle);
 
-        if(currentHeading.getValue() >= windAngle && currentHeading.getValue() <= downWind) {
-            if(upwind) {
+        if (currentHeading.getValue() >= windAngle && currentHeading.getValue() <= downWind) {
+            if (upwind) {
                 currentHeading.setValue(currentHeading.getValue() - turnAngle);
             }
             else {
                 currentHeading.setValue(currentHeading.getValue() + turnAngle);
             }
-        }
-        else {
-
-            if(upwind) {
+        } else {
+            if (upwind) {
                 currentHeading.setValue(currentHeading.getValue() + turnAngle);
             }
             else {
@@ -362,7 +374,6 @@ public class Boat implements Competitor {
             }
         }
         setCurrentHeading(currentHeading.getValue() % 360);
-//        currentHeading.setValue(currentHeading.getValue() % 360);
     }
 
     @Override

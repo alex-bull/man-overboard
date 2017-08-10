@@ -80,4 +80,13 @@ public interface Competitor {
 
     void setHealthLevel(double health);
 
+
+
+    void startRounding();
+
+    void finishedRounding();
+
+    boolean isRounding();
+
+
 }
