@@ -99,6 +99,13 @@ public class Boat implements Competitor {
 
     }
 
+    public void setMaxHealth(double health){
+        this.maxHealth = health;
+    }
+
+    public void setHealthLevel(double health){
+        this.healthLevel = health;
+    }
 
     public double getMaxHealth() {
         return maxHealth;
@@ -110,9 +117,10 @@ public class Boat implements Competitor {
 
     /**
      * Decreases the boat health when they collide
+     * @param damageThreshold double the amount of damage the boat takes
      */
-    public void decreaseHealth() {
-        this.healthLevel = healthLevel - 5;
+    public void decreaseHealth(double damageThreshold) {
+        this.healthLevel = healthLevel - damageThreshold;
     }
 
     /**

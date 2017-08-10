@@ -1149,7 +1149,7 @@ public class RaceViewController implements Initializable, TableObserver {
             mapEngine.executeScript(String.format("create_collision(%.9f,%.9f)",boat.getLatitude(),boat.getLongitude()));
             dataSource.removeCollsions(sourceID);
 
-            boat.decreaseHealth();
+            boat.decreaseHealth(5);
         }
 
     }

@@ -1,14 +1,10 @@
 package steps;
 
-import controllers.App;
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import mockDatafeed.BoatMocker;
 import models.Boat;
 import models.Competitor;
-
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,8 +12,8 @@ import static org.junit.Assert.assertEquals;
  * Created by khe60 on 21/07/17.
  */
 public class AdjustHeadingSteps {
-    Competitor boat=new Boat();
-    double windAngle;
+    private Competitor boat=new Boat();
+    private double windAngle;
 
 
 
