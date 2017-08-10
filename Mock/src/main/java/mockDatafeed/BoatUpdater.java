@@ -7,6 +7,7 @@ import models.*;
 import org.jdom2.JDOMException;
 import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
+import utilities.CollisionUtility;
 import utilities.PolarTable;
 
 import java.io.ByteArrayInputStream;
@@ -31,16 +32,61 @@ public class BoatUpdater {
     private Course raceCourse = new RaceCourse(null, true);
     private Map<Integer, Competitor> markBoats;
     private BoatUpdateEventHandler handler;
+    private List<MutablePoint> courseBoundary;
+    private List<MutablePoint> courseLineEquations;
+    private CollisionUtility collisionUtility;
 
-
-    BoatUpdater(Map<Integer, Competitor> competitors, Map<Integer, Competitor> markBoats, RaceData raceData, BoatUpdateEventHandler handler) throws IOException, JDOMException {
+    /**
+     * Boat updater constructor
+     * @param competitors Map a hashmap of competitors in the race
+     * @param markBoats Map course features
+     * @param raceData RaceData race data
+     * @param handler BoatUpdateEventHandler boat mocker
+     * @param courseBoundary List a list of course boundary points
+     * @param courseLineEquations CourseLineEquations course line equations
+     * @throws IOException
+     * @throws JDOMException
+     */
+    BoatUpdater(Map<Integer, Competitor> competitors, Map<Integer, Competitor> markBoats, RaceData raceData,
+                BoatUpdateEventHandler handler, List<MutablePoint> courseBoundary, List<MutablePoint> courseLineEquations, CollisionUtility collisionUtility) throws IOException, JDOMException {
         this.competitors = competitors;
         this.markBoats = markBoats;
         this.handler = handler;
         this.raceData = raceData;
+        this.courseBoundary = courseBoundary;
+        this.courseLineEquations = courseLineEquations;
+        this.collisionUtility = collisionUtility;
 
         polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
     }
+
+    /**
+     * Calculates if the boat collides with the course boundary, if so then pushes back the boat.
+     * @param boat Competitor the boat to check collisions for
+     */
+
+    private void handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
+        double collisionRadius = 50;
+        for (MutablePoint point: courseBoundary) {
+            double distance = raceCourse.distanceBetweenGPSPoints(boat.getPosition(), point);
+            if (distance <= collisionRadius) {
+                handler.yachtEvent(boat.getSourceID(), 1);
+                boat.updatePosition(-10);
+                break;
+            }
+        }
+        for (MutablePoint equation: courseLineEquations ) {
+            int index = courseLineEquations.indexOf(equation);
+            //distance = y - (mx + c)
+            double distance = boat.getPosition().getYValue() - (equation.getXValue() * boat.getPosition().getXValue() + equation.getYValue());
+            if ((abs(distance) < 0.0001) && collisionUtility.isWithinBoundaryLines(boat.getPosition(), index)) {
+                handler.yachtEvent(boat.getSourceID(), 1);
+                boat.updatePosition(-10);
+                break;
+            }
+        }
+    }
+
 
 
     /**
@@ -57,7 +103,7 @@ public class BoatUpdater {
             }
             double speed = polarTable.getSpeed(twa);
             if (boat.hasSailsOut()) {
-                boat.setVelocity(speed * 3);
+                boat.setVelocity(speed);
                 boat.updatePosition(0.1);
             } else {
                 boat.setVelocity(0);
@@ -65,6 +111,8 @@ public class BoatUpdater {
 
             this.handleCourseCollisions(boat);
             this.handleBoatCollisions(boat);
+            this.handleBoundaryCollisions(boat);
+
 //            boat.blownByWind(twa);
             this.handleMarkRounding(boat);
         }
@@ -208,49 +256,6 @@ public class BoatUpdater {
 
 
     /**
-     * Checks if the boat is on the correct side of the mark for rounding the mark
-     * @param boat
-     * @param mark
-     * @param portRounding
-     * @return
-     */
-    private boolean markIsCorrectSide(Competitor boat, Competitor mark, boolean portRounding) {
-        // port = 1, starboard = 0
-        double xPosBoat = boat.getPosition().getXValue();
-        double yPosBoat = boat.getPosition().getYValue();
-        double xPosMark = mark.getPosition().getXValue();
-        double yPosMark = mark.getPosition().getYValue();
-
-        double heading = boat.getCurrentHeading();
-
-        //arbitrary point in front of boat
-        double xPosPoint = xPosBoat + (2000 * Math.sin(Math.toRadians(heading)));
-        double yPosPoint = yPosBoat - (2000 * Math.cos(Math.toRadians(heading)));
-
-        double result = (xPosPoint - xPosBoat) * (yPosMark - yPosBoat) - (yPosPoint - yPosBoat) * (xPosMark - xPosBoat);
-        // ((b.X - a.X)*(c.Y - a.Y) - (b.Y - a.Y)*(c.X - a.X))
-        // a = boat position, b = point boat is heading towards, c = mark position
-        // is port if > 0
-        // is starboard if < 0
-
-        if (result == 0) {
-            // is heading directly towards mark
-            return false;
-        }
-
-        if (result > 0) {
-            System.out.println("port rounding : Mark is on the left");
-            return !portRounding;
-        } else {
-            System.out.println("Starboard Rounding : Mark is on the right");
-            return portRounding;
-        }
-    }
-
-
-
-
-    /**
      * Calculates if the boat collides with any course features and adjusts the boats position
      * @param boat Competitor the boat to check collisions for
      */
@@ -258,8 +263,8 @@ public class BoatUpdater {
 
         final double collisionRadius = 55; //Large for testing
 
-        for (Competitor mark: markBoats.values()) {
-
+        for (Integer id: markBoats.keySet()) {
+            Competitor mark = markBoats.get(id);
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {

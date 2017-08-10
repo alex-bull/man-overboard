@@ -1,7 +1,5 @@
 package controllers;
 
-import com.google.common.primitives.Doubles;
-import com.rits.cloning.Cloner;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -20,7 +18,6 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.*;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -32,12 +29,13 @@ import javafx.util.Duration;
 import javafx.util.Pair;
 import models.Competitor;
 import models.CourseFeature;
-import models.Dot;
 import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.Converter;
-import utilities.*;
-
+import utilities.Annotation;
+import utilities.CollisionRipple;
+import utilities.DataSource;
+import utilities.PolarTable;
 
 import java.awt.geom.Line2D;
 import java.io.IOException;
@@ -45,16 +43,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.getExponent;
 import static java.lang.Math.*;
 import static javafx.scene.paint.Color.*;
 import static parsers.RaceStatusEnum.PREPARATORY;
 import static parsers.RaceStatusEnum.STARTED;
-import static utilities.RaceCalculator.calcVirtualLinePoints;
-import static utilities.RaceCalculator.calculateHealthColour;
-import static utilities.RaceCalculator.calculateStartSymbol;
+import static utilities.RaceCalculator.*;
 
 /**
  * Controller for the race view.
@@ -117,7 +110,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private MutablePoint currentPosition17;
 
     //Deep cloner
-    private Cloner cloner=new Cloner();
+//    private Cloner cloner=new Cloner();
 
     //graphics context
     private GraphicsContext gc;
@@ -864,11 +857,10 @@ public class RaceViewController implements Initializable, TableObserver {
         Integer upWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), true);
         Integer downWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), false);
 
-        MutablePoint markCentre = this.getNextGateCentre(boat);
         Pair<Double, Double> markCentre = this.getGateCentre(boat.getCurrentLegIndex() + 1);
         if (markCentre == null) return;
-        Double markX = markCentre.getXValue();
-        Double markY = markCentre.getYValue();
+        Double markX = markCentre.getKey();
+        Double markY = markCentre.getValue();
 
         Double boatX = boat.getPosition().getXValue();
         Double boatY = boat.getPosition().getYValue();
@@ -952,17 +944,12 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-
     /**
      * Gets the centre coordinates for a mark or gate
      * @param markIndex index of the mark (based on the order they are rounded)
      * @return Pair (x,y) coordinates
      */
     private Pair<Double, Double> getGateCentre(Integer markIndex) {
-    private MutablePoint getNextGateCentre(Competitor boat) {
-
-        Integer markId = boat.getCurrentLegIndex() + 1;
-        // if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
 
         Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
         if (markIndex > features.size()) return null; //passed the finish line
@@ -977,8 +964,9 @@ public class RaceViewController implements Initializable, TableObserver {
             markX = (featureOne.getPixelCentre().getXValue() + featureTwo.getPixelCentre().getXValue()) / 2;
             markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
         }
-        return new MutablePoint(markX, markY);
+        return new Pair<>(markX, markY);
     }
+
 
     /**
      * Calculates the intersection point of two lines. Result is undefined for non intersecting lines

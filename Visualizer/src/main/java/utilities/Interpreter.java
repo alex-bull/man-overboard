@@ -1,6 +1,5 @@
 package utilities;
 
-import com.rits.cloning.Cloner;
 import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -32,6 +31,7 @@ import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
 import utility.PacketHandler;
+import com.rits.cloning.Cloner;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -334,8 +334,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 if (boatData != null) {
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties(boatData);
-                    } else if (boatData.getDeviceType() == 3 && raceData.getMarkIDs().contains(boatData.getSourceID())) {
-                        updateBoatProperties();
                     } else if (boatData.getDeviceType() == 3 && raceData.getMarkSourceIDs().contains(boatData.getSourceID())) {
                         CourseFeature courseFeature = boatDataParser.getCourseFeature();
                         updateCourseMarks(courseFeature, boatData);
@@ -478,6 +476,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 case RACE:
                     if(!seenRaceXML) {
                         raceXMLParser.setScreenSize(width, height);
+//                        this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.courseBoundary = raceXMLParser.getCourseBoundary();
                         this.courseBoundary17=raceXMLParser.getCourseBoundary17();

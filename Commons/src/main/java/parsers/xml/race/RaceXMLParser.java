@@ -292,7 +292,7 @@ public class RaceXMLParser {
             //calculate shift distance in pixels
             shiftDistance = bufferY / 2;
         }
-        Cloner clone=new Cloner();
+        Cloner clone = new Cloner();
         List<MutablePoint> boundary17=clone.deepClone(boundary);
 
 

@@ -63,10 +63,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private boolean flag=true;
     private Timer timer;
     private BoatUpdater boatUpdater;
+    private Course raceCourse = new RaceCourse(null, true);
 
     private CollisionUtility collisionUtility;
     private List<MutablePoint> courseLineEquations;
-
+    private PolarTable polarTable;
 
     public BoatMocker() throws IOException , JDOMException {
         timer =new Timer();
@@ -88,12 +89,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         timer.schedule(TCPserver,0,1);
 
         //find out the coordinates of the course
+        generateCourse();
         generateCompetitors();
         generateWind();
         collisionUtility.setCourseInformation();
         courseLineEquations = collisionUtility.getCourseLineEquations();
 
-        boatUpdater = new BoatUpdater(competitors, markBoats, raceData, this);
+        boatUpdater = new BoatUpdater(competitors, markBoats, raceData, this, courseBoundary, courseLineEquations, collisionUtility);
 
         //send all xml data first
         sendAllXML();
@@ -297,152 +299,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
     }
 
-    /**
-     * updates the position of all the boats given the boats speed and heading
-     */
-    private void updatePosition() throws IOException, InterruptedException {
-
-        for (Integer sourceId : competitors.keySet()) {
-            Competitor boat = competitors.get(sourceId);
-            short windDirection = windGenerator.getWindDirection();
-            double twa = abs(shortToDegrees(windDirection) - boat.getCurrentHeading());
-            if(twa > 180) {
-                twa = 180 - (twa - 180); // interpolator only goes up to 180
-            }
-            double speed = polarTable.getSpeed(twa);
-            if (boat.hasSailsOut()) {
-                boat.setVelocity(speed);
-                boat.updatePosition(0.1);
-            } else {
-                boat.setVelocity(0);
-            }
-
-            this.handleCourseCollisions(boat);
-            this.handleBoatCollisions(boat);
-            this.handleBoundaryCollisions(boat);
-//            boat.blownByWind(twa);
-
-        }
-    }
-
-
-    /**
-     * Calculates if the boat collides with any course features and adjusts the boats position
-     * @param boat Competitor the boat to check collisions for
-     */
-    private void handleCourseCollisions(Competitor boat) throws IOException, InterruptedException {
-
-        final double collisionRadius = 55; //Large for testing
-
-        for (Competitor mark: markBoats) {
-
-            double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
-
-            if (distance <= collisionRadius) {
-//              send a collision packet
-                sendYachtEvent(boat.getSourceID(),1);
-                boat.updatePosition(-10);
-                break;
-            }
-        }
-    }
-
-    /**
-     * Calculates if the boat collides with the course boundary, if so then pushes back the boat.
-     * @param boat Competitor the boat to check collisions for
-     */
-
-    private void handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
-        double collisionRadius = 50;
-        for (MutablePoint point: courseBoundary) {
-            double distance = raceCourse.distanceBetweenGPSPoints(boat.getPosition(), point);
-            if (distance <= collisionRadius) {
-                sendYachtEvent(boat.getSourceID(), 1);
-                boat.updatePosition(-10);
-                break;
-            }
-        }
-        for (MutablePoint equation: courseLineEquations ) {
-            int index = courseLineEquations.indexOf(equation);
-            //distance = y - (mx + c)
-            double distance = boat.getPosition().getYValue() - (equation.getXValue() * boat.getPosition().getXValue() + equation.getYValue());
-            if ((abs(distance) < 0.0001) && collisionUtility.isWithinBoundaryLines(boat.getPosition(), index)) {
-                //TODO: Add health reduction here later
-                sendYachtEvent(boat.getSourceID(), 1);
-                boat.updatePosition(-10);
-                break;
-            }
-        }
-    }
 
 
 
-    /**
-     * function to calculate what happens during collision
-     * @param boat1 one of the boat during collision
-     * @param boat2 the other boat during collision
-     */
-    private void calculateCollisions(Competitor boat1, Competitor boat2){
-        double x1=boat1.getPosition().getXValue();
-        double x2=boat2.getPosition().getXValue();
-        double y1=boat1.getPosition().getYValue();
-        double y2=boat2.getPosition().getYValue();
-        double contactAngle=(atan2((x1-x2),(y1-y2)));
-
-        double v1x=calculateVx(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
-        double v1y=calculateVy(boat2.getVelocity(),boat2.getCurrentHeading(),contactAngle,boat1.getVelocity(),boat1.getCurrentHeading());
-        RepelForce force1=new RepelForce(v1x,v1y);
-        boat1.setCurrentHeading(force1.angle());
-        boat1.setVelocity(boat1.getVelocity()+ force1.getMagnitude()*100);
 
 
-
-        double v2x=calculateVx(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
-        double v2y=calculateVy(boat1.getVelocity(),boat1.getCurrentHeading(),contactAngle,boat2.getVelocity(),boat2.getCurrentHeading());
-        RepelForce force2=new RepelForce(v2x,v2y);
-        boat2.setCurrentHeading(force2.angle());
-        boat2.setVelocity(boat2.getVelocity()+ force2.getMagnitude()*100);
-
-    }
-
-    private double calculateVx(double v2, double angle2, double contactAngle, double v1, double angle1){
-        angle1=toRadians(angle1);
-        angle2=toRadians(angle2);
-        return v2*cos(angle2-contactAngle)*cos(contactAngle)+v1*sin(angle1-contactAngle)*cos(contactAngle+PI/2);
-    }
-
-    private double calculateVy(double v2, double angle2, double contactAngle, double v1, double angle1){
-        angle1=toRadians(angle1);
-        angle2=toRadians(angle2);
-        return v2*cos(angle2-contactAngle)*sin(contactAngle)+v1*sin(angle1-contactAngle)*sin(contactAngle+PI/2);
-    }
-
-    /**
-     * Calculates if the boat collides with any other boat and adjusts the position of both boats accordingly.
-     * @param boat Competitor, the boat to check collisions for
-     */
-    private void handleBoatCollisions(Competitor boat) throws IOException, InterruptedException {
-
-        final double collisionRadius = 35; //Large for testing
-
-        //Can bump back a fixed amount or try to simulate a real collision.
-        for (Competitor comp: this.competitors.values()) {
-
-            if (comp.getSourceID() == boat.getSourceID()) continue; //cant collide with self
-
-            double distance = raceCourse.distanceBetweenGPSPoints(comp.getPosition(), boat.getPosition());
-
-            if (distance <= collisionRadius) {
-
-//                send a collision packet
-                sendYachtEvent(comp.getSourceID(),1);
-
-//                calculateCollisions(comp,boat);
-                boat.updatePosition(-10);
-                comp.updatePosition(-10);
-            }
-        }
-    }
 
 
     /**
