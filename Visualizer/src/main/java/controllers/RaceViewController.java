@@ -1024,16 +1024,16 @@ public class RaceViewController implements Initializable, TableObserver {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         int currentIndex = boat.getCurrentLegIndex();
 
-        if (currentIndex > 5) { // TODO temporary fix for end of race
+        Pair<Double, Double> nextMarkLocation = getGateCentre(currentIndex + 1);
+        if (nextMarkLocation == null) {
+            // end of race
             return;
         }
 
-        Pair<Double, Double> nextMarkLocation = getGateCentre(currentIndex + 1);
-
         double xOffset = 0, yOffset = 0;
-
         double angle;
-        if (currentIndex == 0) {
+
+        if (currentIndex == 0 && !isZoom()) {
             // boat has not yet rounded first mark
             angle = 90;
         } else {
@@ -1052,7 +1052,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
             double arctan = atan(yDist/xDist);
             if (arctan < 0) {
-                arctan += 2 * 3.14;
+                arctan += 2 * Math.PI;
             }
             angle = toDegrees(arctan);
 
@@ -1062,21 +1062,25 @@ public class RaceViewController implements Initializable, TableObserver {
                 angle += 270;
             }
 
-            xOffset = 150*cos(toRadians(angle-90));
-            yOffset = 150*sin(toRadians(angle-90));
+            xOffset = 150 * cos(toRadians(angle - 90));
+            yOffset = 150 * sin(toRadians(angle - 90));
         }
 
-        guideArrow.getTransforms().clear();
-
+        double x, y;
         if (isZoom()) {
-            guideArrow.setLayoutX(boatPositionX + xOffset);
-            guideArrow.setLayoutY(boatPositionY + yOffset);
-
+            x = boatPositionX + xOffset;
+            y = boatPositionY + yOffset;
         } else {
-            guideArrow.setLayoutX(nextMarkLocation.getKey());
-            guideArrow.setLayoutY(nextMarkLocation.getValue());
+            x = nextMarkLocation.getKey();
+            y = nextMarkLocation.getValue();
         }
+        applyTransformsToArrow(angle, x, y);
+    }
 
+    private void applyTransformsToArrow(double angle, double x, double y) {
+        guideArrow.getTransforms().clear();
+        guideArrow.setLayoutX(x);
+        guideArrow.setLayoutY(y);
         guideArrow.getTransforms().add(new Rotate(angle, 0, 0));
     }
 
