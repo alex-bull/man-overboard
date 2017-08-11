@@ -3,6 +3,7 @@ package models;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
+import parsers.BoatStatusEnum;
 import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class Boat implements Competitor {
     private String abbreName;
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
     private int sourceID;
-    private int status;
+    private BoatStatusEnum status;
     private String lastMarkPassed;
     private int legIndex;
     private long timeToNextMark;
@@ -31,8 +32,6 @@ public class Boat implements Competitor {
     private double latitude;
     private double longitude;
     private boolean isRounding = false;
-
-
 
     private Line roundingLine1;
     private Line roundingLine2;
@@ -89,9 +88,9 @@ public class Boat implements Competitor {
      * @param startPosition MutablePoint the boat's start position coordinate
      * @param sourceID      sourceID of the boat
      * @param abbreName     String the abbreviated name of the boat
-     * @param status        int status status of the boat
+     * @param status        BoatStatusEnum status of the boat
      */
-    public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID, int status) {
+    public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID, BoatStatusEnum status) {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
@@ -164,12 +163,12 @@ public class Boat implements Competitor {
     }
 
     @Override
-    public int getStatus() {
+    public BoatStatusEnum getStatus() {
         return status;
     }
 
     @Override
-    public void setStatus(int status) {
+    public void setStatus(BoatStatusEnum status) {
         this.status = status;
     }
 

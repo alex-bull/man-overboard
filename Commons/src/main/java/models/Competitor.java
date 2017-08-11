@@ -3,6 +3,7 @@ package models;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import parsers.BoatStatusEnum;
 
 import java.util.List;
 
@@ -25,9 +26,9 @@ public interface Competitor {
 
     void updatePosition(double dt);
 
-    int getStatus();
+    BoatStatusEnum getStatus();
 
-    void setStatus(int status);
+    void setStatus(BoatStatusEnum status);
 
     Color getColor();
 
