@@ -55,6 +55,7 @@ public class BoatUpdater {
         this.collisionUtility = collisionUtility;
 
         polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
+        this.buildRoundingLines();
     }
 
     /**
@@ -100,7 +101,7 @@ public class BoatUpdater {
             }
             double speed = polarTable.getSpeed(twa);
             if (boat.hasSailsOut()) {
-                boat.setVelocity(speed);
+                boat.setVelocity(speed * 3);
                 boat.updatePosition(0.1);
             } else {
                 boat.setVelocity(0);
@@ -133,7 +134,7 @@ public class BoatUpdater {
 
             if (mark1.getTeamName().toLowerCase().contains("start") || mark1.getTeamName().toLowerCase().contains("finish")) {
                 lineRounding(boat, markIds);
-            } else if (nextLegIndex == 5) { //TODO:- A bit of a hack. The last time through the lee gate it is treated as a lines
+            } else if (nextLegIndex == 5) { //TODO:- A bit of a hack. The last time through the lee gate it is treated as a line
                 lineRounding(boat, markIds);
             } else {
                 gateRounding(boat, markIds);
@@ -152,29 +153,17 @@ public class BoatUpdater {
     private void markRounding(Competitor boat) {
 
         int targetLegIndex = boat.getCurrentLegIndex() + 1;
-        int nextLegIndex = boat.getCurrentLegIndex() + 2;
-        int previousIndex = boat.getCurrentLegIndex();
-
-        MutablePoint targetPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(targetLegIndex).get(0)).getPosition();
-        MutablePoint nextPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(nextLegIndex).get(0)).getPosition();
-        MutablePoint prevPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(previousIndex).get(0)).getPosition();
+        Competitor mark = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(targetLegIndex).get(0));
 
         if (boat.isRounding()) {
             //have crossed first line - Check for crossing line to the side of mark
-            Vector2D vec = new Vector2D(targetPos.getXValue(), targetPos. getYValue(), prevPos.getXValue(), prevPos.getYValue());
-            vec.normalise();
-            Line l2 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec.getX() * -200, vec.getY() * -200);
-
-            if (didCrossLine(boat, l2)) {
+            if (didCrossLine(boat, mark.getRoundingLine2())) {
                 boat.finishedRounding();
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
             }
         } else {
             //Check for rounding a line down from the mark
-            Vector2D vec = new Vector2D(targetPos.getXValue(), targetPos. getYValue(), nextPos.getXValue(), nextPos.getYValue());
-            vec.normalise();
-            Line l1 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec.getX() * -200, vec.getY() * -200);
-            if (didCrossLine(boat, l1)) {
+            if (didCrossLine(boat, mark.getRoundingLine1())) {
                 System.out.println("Crossed line 1");
                 boat.startRounding();
             }
@@ -189,27 +178,18 @@ public class BoatUpdater {
      */
     private void gateRounding(Competitor boat, List<Integer> markIds) {
 
-        MutablePoint pos1 = markBoats.get(markIds.get(0)).getPosition();
-        MutablePoint pos2 = markBoats.get(markIds.get(1)).getPosition();
+        Competitor mark1 = markBoats.get(markIds.get(0));
+        Competitor mark2 = markBoats.get(markIds.get(1));
 
         if (boat.isRounding()) { //has already passed between the marks
-            //Take lines out from either side of the gate
-            Vector2D vec = new Vector2D(pos1.getXValue(), pos1. getYValue(), pos2.getXValue(), pos2.getYValue());
-            vec.normalise();
-            Line l2 = new Line(pos1.getXValue(), pos1. getYValue(), vec.getX() * -200, vec.getY() * -200);
 
-            Vector2D vec2 = new Vector2D(pos2.getXValue(), pos2. getYValue(), pos1.getXValue(), pos1.getYValue());
-            vec2.normalise();
-            Line l3 = new Line(pos2.getXValue(), pos2. getYValue(), vec2.getX() * -200, vec2.getY() * -200);
-
-            if (didCrossLine(boat, l2) || didCrossLine(boat, l3)) {
+            if (didCrossLine(boat, mark1.getRoundingLine2()) || didCrossLine(boat, mark2.getRoundingLine2())) {
                 boat.finishedRounding();
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
             }
         } else {
-            //Check if the boat crosses the line between the marks
-            Line l1 = new Line(pos1.getXValue(), pos1.getYValue(), pos2.getXValue(), pos2.getYValue());
-            if (didCrossLine(boat, l1)) {
+
+            if (didCrossLine(boat, mark1.getRoundingLine1())) {
                 System.out.println("Crossed line 1");
                 boat.startRounding();
             }
@@ -225,13 +205,9 @@ public class BoatUpdater {
     private void lineRounding(Competitor boat, List<Integer> markIds) {
 
         int nextLegIndex = boat.getCurrentLegIndex() + 1;
-        MutablePoint pos1 = markBoats.get(markIds.get(0)).getPosition();
-        MutablePoint pos2 = markBoats.get(markIds.get(1)).getPosition();
+        Competitor mark = markBoats.get(markIds.get(0));
 
-        //line between marks
-        Line l1 = new Line(pos1.getXValue(), pos1.getYValue(), pos2.getXValue(), pos2.getYValue());
-
-        if (didCrossLine(boat, l1)) {
+        if (didCrossLine(boat, mark.getRoundingLine1())) {
             System.out.println("Crossed line");
             handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
             boat.setCurrentLegIndex(nextLegIndex);
@@ -254,52 +230,68 @@ public class BoatUpdater {
 
 
 
-
-
     /**
-     * Calculates the distance between a point and a line segment
-     * @param x Point x
-     * @param y Point y
-     * @param x1 lineStartx
-     * @param y1 lineStarty
-     * @param x2 lineEndx
-     * @param y2 lineEndy
-     * @return double, the shortest distance
+     * Calculates the rounding lines of each mark and stores them in the mark.
+     * These lines are used to determine whether or not a boat has rounded a mark
      */
-    private double pointDistance(double x, double y, double x1, double y1, double x2, double y2) {
+    private void buildRoundingLines() {
 
-        double A = x - x1;
-        double B = y - y1;
-        double C = x2 - x1;
-        double D = y2 - y1;
+        int index = 0;
+        List<Integer> markIds = raceData.getLegIndexToMarkSourceIds().get(index + 1);
 
-        double dot = A * C + B * D;
-        double len_sq = C * C + D * D;
-        double param = -1;
-        if (len_sq != 0) //in case of 0 length line
-            param = dot / len_sq;
+        while (markIds != null && markIds.size() > 0) {
 
-        double xx, yy;
+            if (markIds.size() == 2) { //GATE
 
-        if (param < 0) {
-            xx = x1;
-            yy = y1;
+                Competitor mark1 = markBoats.get(markIds.get(0));
+                Competitor mark2 = markBoats.get(markIds.get(1));
+
+                MutablePoint pos1 = markBoats.get(markIds.get(0)).getPosition();
+                MutablePoint pos2 = markBoats.get(markIds.get(1)).getPosition();
+
+                Line l1 = new Line(pos1.getXValue(), pos1.getYValue(), pos2.getXValue(), pos2.getYValue());
+
+                Vector2D vec = new Vector2D(pos1.getXValue(), pos1. getYValue(), pos2.getXValue(), pos2.getYValue());
+                vec.normalise();
+                Line l2 = new Line(pos1.getXValue(), pos1. getYValue(), vec.getX() * -200, vec.getY() * -200);
+
+                Vector2D vec2 = new Vector2D(pos2.getXValue(), pos2. getYValue(), pos1.getXValue(), pos1.getYValue());
+                vec2.normalise();
+                Line l3 = new Line(pos2.getXValue(), pos2. getYValue(), vec2.getX() * -200, vec2.getY() * -200);
+
+                mark1.setRoundingLine1(l1);
+                mark1.setRoundingLine2(l2);
+                mark2.setRoundingLine1(l1);
+                mark2.setRoundingLine2(l3);
+
+            } else { //MARK
+
+                int targetLegIndex = index + 1;
+                int nextLegIndex = index + 2;
+                int previousIndex = index;
+
+                Competitor mark = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(targetLegIndex).get(0));
+
+                MutablePoint targetPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(targetLegIndex).get(0)).getPosition();
+                MutablePoint nextPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(nextLegIndex).get(0)).getPosition();
+                MutablePoint prevPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(previousIndex).get(0)).getPosition();
+
+                Vector2D vec = new Vector2D(targetPos.getXValue(), targetPos.getYValue(), nextPos.getXValue(), nextPos.getYValue());
+                vec.normalise();
+                Line l1 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec.getX() * -200, vec.getY() * -200);
+
+                Vector2D vec2 = new Vector2D(targetPos.getXValue(), targetPos. getYValue(), prevPos.getXValue(), prevPos.getYValue());
+                vec.normalise();
+                Line l2 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec2.getX() * -200, vec2.getY() * -200);
+
+                mark.setRoundingLine1(l1);
+                mark.setRoundingLine2(l2);
+            }
+
+            index += 1;
+            markIds = raceData.getLegIndexToMarkSourceIds().get(index + 1);
         }
-        else if (param > 1) {
-            xx = x2;
-            yy = y2;
-        }
-        else {
-            xx = x1 + param * C;
-            yy = y1 + param * D;
-        }
-
-        double dx = x - xx;
-        double dy = y - yy;
-        return (double) Math.sqrt(dx * dx + dy * dy);
     }
-
-
 
 
 

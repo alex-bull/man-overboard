@@ -72,6 +72,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
 
+    static final Color backgroundColor = Color.POWDERBLUE;
+
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Shape playerMarker;
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
@@ -104,7 +106,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private boolean isLoaded = false;
 
     //if state of zooming
-    private boolean zoom=false;
+    private boolean zoom = false;
 
     //current boat position in screen coordinates
     private double boatPositionX;
@@ -173,7 +175,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void initialiseGuideArrow() {
         guideArrow = new Polygon();
-        double arrowLength = -60; // default arrow points vertically in the -y direction
+        double arrowLength = -60; // default arrow points vertically in the -y direction (upwards)
         double arrowHeadLength = -20;
         double offsetFromOrigin = -1 * (arrowLength + arrowHeadLength) + 30;
 
@@ -185,7 +187,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 0., arrowLength + arrowHeadLength + offsetFromOrigin, // tip
                 -15., arrowLength + offsetFromOrigin,
                 -5.,arrowLength + offsetFromOrigin);
-        guideArrow.setFill(Color.POWDERBLUE.brighter());
+        guideArrow.setFill(backgroundColor.brighter());
         this.raceViewPane.getChildren().add(guideArrow);
         guideArrow.toBack();
     }
@@ -567,7 +569,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
             gc.strokePolygon(boundaryX, boundaryY, boundaryX.length);
             gc.setGlobalAlpha(0.4);
-            gc.setFill(Color.POWDERBLUE);
+            gc.setFill(backgroundColor);
             //shade inside the boundary
             gc.fillPolygon(boundaryX,boundaryY, boundaryX.length);
             gc.setGlobalAlpha(1.0);
@@ -1049,24 +1051,36 @@ public class RaceViewController implements Initializable, TableObserver {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         int currentIndex = boat.getCurrentLegIndex();
 
-        if (currentIndex > 5) { // TODO temporary fix for end of race
+        Pair<Double, Double> nextMarkLocation = getGateCentre(currentIndex + 1);
+        if (nextMarkLocation == null) {
+            // end of race
+            this.raceViewPane.getChildren().remove(guideArrow);
             return;
         }
 
-        Pair<Double, Double> nextMarkLocation = getGateCentre(currentIndex + 1);
-
+        double xOffset = 0, yOffset = 0;
         double angle;
-        if (currentIndex == 0) {
+
+        if (currentIndex == 0 && !isZoom()) {
             // boat has not yet rounded first mark
             angle = 90;
         } else {
-            Pair<Double, Double> prevMarkLocation = getGateCentre(currentIndex);
-            Double xDist = prevMarkLocation.getKey() - nextMarkLocation.getKey();
-            Double yDist = prevMarkLocation.getValue() - nextMarkLocation.getValue();
+            Double xDist;
+            Double yDist;
+            if (isZoom()) {
+                // arrow points from boat to next mark
+                xDist = boat.getPosition().getXValue() - nextMarkLocation.getKey();
+                yDist = boat.getPosition().getYValue() - nextMarkLocation.getValue();
+            } else {
+                // arrow points from previous mark to next mark
+                Pair<Double, Double> prevMarkLocation = getGateCentre(currentIndex);
+                xDist = prevMarkLocation.getKey() - nextMarkLocation.getKey();
+                yDist = prevMarkLocation.getValue() - nextMarkLocation.getValue();
+            }
 
             double arctan = atan(yDist/xDist);
             if (arctan < 0) {
-                arctan += 2 * 3.14;
+                arctan += 2 * Math.PI;
             }
             angle = toDegrees(arctan);
 
@@ -1075,12 +1089,33 @@ public class RaceViewController implements Initializable, TableObserver {
             } else {
                 angle += 270;
             }
+
+            xOffset = 150 * cos(toRadians(angle - 90));
+            yOffset = 150 * sin(toRadians(angle - 90));
         }
 
-        guideArrow.setLayoutX(nextMarkLocation.getKey());
-        guideArrow.setLayoutY(nextMarkLocation.getValue());
+        double x, y;
+        if (isZoom()) {
+            x = boatPositionX + xOffset;
+            y = boatPositionY + yOffset;
+        } else {
+            x = nextMarkLocation.getKey();
+            y = nextMarkLocation.getValue();
+        }
+        applyTransformsToArrow(angle, x, y);
+    }
 
+    /**
+     * Apply translation and rotation transforms to the guiding arrow
+     *
+     * @param angle double the angle by which to rotate the arrow, from north
+     * @param x double the x coordinate for the arrow's origin
+     * @param y double the y coordinate for the arrow's origin
+     */
+    private void applyTransformsToArrow(double angle, double x, double y) {
         guideArrow.getTransforms().clear();
+        guideArrow.setLayoutX(x);
+        guideArrow.setLayoutY(y);
         guideArrow.getTransforms().add(new Rotate(angle, 0, 0));
     }
 
