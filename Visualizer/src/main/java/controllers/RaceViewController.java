@@ -291,11 +291,14 @@ public class RaceViewController implements Initializable, TableObserver {
         double maxBarLength = boat.getMaxHealth(); // was 30
         double sourceId = boat.getSourceID();
         double healthLevel = boat.getHealthLevel();
+
         if(this.zoom) {
             offset = offset * 2;
-            strokeWidth = strokeWidth * 2;
-            healthLevel = healthLevel * 2;
-            maxBarLength = maxBarLength * 2;
+            strokeWidth *= 2;
+            healthLevel *= 2;
+            maxBarLength *= 2;
+            boatX = getBoatLocation(boat).getXValue();
+            boatY = getBoatLocation(boat).getYValue();
         }
         if(boat.getHealthLevel() > 0) {
             Color healthColour = calculateHealthColour(boat);
