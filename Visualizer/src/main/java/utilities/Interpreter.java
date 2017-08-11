@@ -68,6 +68,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
     private HashMap<Integer,CourseFeature> storedFeatures17=new HashMap<>();
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
+    private List<Competitor> finisherList = new ArrayList<>();
 
     private List<MutablePoint> courseBoundary = new ArrayList<>();
 
@@ -304,6 +305,9 @@ public class Interpreter implements DataSource, PacketHandler {
                             break;
                         case 103:
                             markName="Finish Line";
+                            if (!finisherList.contains(storedCompetitors.get(markRoundingData.getSourceID()))){
+                                finisherList.add(storedCompetitors.get(markRoundingData.getSourceID()));
+                            }
                             break;
                         case 104:
                             markName="Speed test start";
@@ -325,6 +329,14 @@ public class Interpreter implements DataSource, PacketHandler {
                     storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
                     storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
                     System.out.println("Boat " + markRoundingData.getSourceID() + " rounded a mark");
+
+
+
+                    if (finisherList.size() == storedCompetitors.size()) {
+                        System.out.println("All boats finished");
+                    }
+
+
                 }
                 break;
             case BOAT_LOCATION:
