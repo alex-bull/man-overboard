@@ -3,6 +3,7 @@ package models;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  * Boat object
  */
 public class Boat implements Competitor {
+
     private String teamName;
     private double velocity;
     private MutablePoint position;
@@ -28,7 +30,12 @@ public class Boat implements Competitor {
     private long timeAtLastMark;
     private double latitude;
     private double longitude;
-    private boolean inRounding = false;
+    private boolean isRounding = false;
+
+
+
+    private Line roundingLine1;
+    private Line roundingLine2;
     //how much the boat if affected by wind, can be parsed in as constructor
     private double blownFactor = 0.01;
 //    external forces on the boat
@@ -98,6 +105,23 @@ public class Boat implements Competitor {
 
     public Boat() {
 
+    }
+
+
+    public Line getRoundingLine1() {
+        return roundingLine1;
+    }
+
+    public void setRoundingLine1(Line roundingLine1) {
+        this.roundingLine1 = roundingLine1;
+    }
+
+    public Line getRoundingLine2() {
+        return roundingLine2;
+    }
+
+    public void setRoundingLine2(Line roundingLine2) {
+        this.roundingLine2 = roundingLine2;
     }
 
     public void setMaxHealth(double health){
@@ -279,16 +303,16 @@ public class Boat implements Competitor {
 
 
     public void startRounding() {
-        this.inRounding = true;
+        this.isRounding = true;
     }
 
     public void finishedRounding() {
-        this.inRounding = false;
+        this.isRounding = false;
         this.legIndex += 1;
     }
 
     public boolean isRounding() {
-        return this.inRounding;
+        return this.isRounding;
     }
 
 
