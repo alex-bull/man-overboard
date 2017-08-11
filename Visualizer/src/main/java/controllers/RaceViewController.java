@@ -303,6 +303,7 @@ public class RaceViewController implements Initializable, TableObserver {
             maxBarLength *= 2;
             boatX = getBoatLocation(boat).getXValue();
             boatY = getBoatLocation(boat).getYValue();
+            System.out.println(boat.getHealthLevel());
         }
         if(boat.getHealthLevel() > 0) {
             Color healthColour = calculateHealthColour(boat);
@@ -352,8 +353,6 @@ public class RaceViewController implements Initializable, TableObserver {
             healthBar.setStartY(boatY - offset);
             healthBar.setEndX(boatX + healthLevel);
             healthBar.setEndY(boatY - offset);
-            //        LinearGradient colourGradient = new LinearGradient(healthBar.getStartX(), healthBar.getStartY(),
-//                healthBar.getEndX(), healthBar.getEndY(), false, CycleMethod.NO_CYCLE, new Stop(0, Color.RED), new Stop(1, Color.GREEN));
 
             healthBar.setStroke(healthColour);
             healthBar.toFront();
@@ -362,7 +361,6 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         else {
             // rip boat
-            System.out.println(boat.getStatus());
             if(boat.getStatus() != DSQ) {
                 if(isZoom()){
                     tombstoneSize *= 2;
@@ -376,7 +374,8 @@ public class RaceViewController implements Initializable, TableObserver {
                 gameOver.setPreserveRatio(true);
                 BinaryPackager binaryPackager = new BinaryPackager();
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
-                this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILS.getValue(), boat.getSourceID()));
+                boat.setStatus(DSQ);
+
             }
 
         }

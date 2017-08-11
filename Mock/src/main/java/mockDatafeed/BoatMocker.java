@@ -27,6 +27,7 @@ import java.util.*;
 import utility.*;
 
 import static java.lang.Math.abs;
+import static mockDatafeed.Keys.RIP;
 import static mockDatafeed.Keys.SAILS;
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.BoatStatusEnum.PRESTART;
@@ -177,9 +178,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                         competitors.get(sourceID).changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
                         break;
                     case RIP:
-                        sendBoatAction(SAILS.getValue(), sourceID);
                         competitors.get(sourceID).setStatus(DSQ);
                         competitors.get(sourceID).setVelocity(0);
+                        sendBoatAction(RIP.getValue(), sourceID);
+                        competitors.get(sourceID).switchSails();
                         break;
                     case TACK:
                         double windAngle = shortToDegrees(windGenerator.getWindDirection());
