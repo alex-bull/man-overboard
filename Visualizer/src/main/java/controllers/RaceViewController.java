@@ -29,6 +29,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import javafx.util.Pair;
+import mockDatafeed.Keys;
 import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
@@ -38,6 +39,7 @@ import utilities.Annotation;
 import utilities.CollisionRipple;
 import utilities.DataSource;
 import utilities.PolarTable;
+import utility.BinaryPackager;
 
 import java.awt.geom.Line2D;
 import java.io.IOException;
@@ -360,25 +362,7 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         else {
             // rip boat
-        /////// CODE BELOW JUST CHANGES THE HEALTH BAR TO BLACK .... CAN DELETE LATER //////
-            Line healthBarBackground = healthBarBackgrounds.get(sourceId);
-            healthBarBackground.setStrokeWidth(strokeWidth);
-            healthBarBackground.setStartX(boatX);
-            healthBarBackground.setStartY(boatY - offset);
-            healthBarBackground.setEndX(boatX + maxBarLength);
-            healthBarBackground.setEndY(boatY - offset);
-            healthBarBackground.setStroke(Color.WHITE);
-
-
-            Line healthBar = healthBars.get(sourceId);
-            healthBar.setStrokeWidth(strokeWidth);
-            healthBar.setStartX(boatX);
-            healthBar.setStartY(boatY - offset);
-            healthBar.setEndX(boatX + maxBarLength);
-            healthBar.setEndY(boatY - offset);
-            healthBar.setStroke(Color.BLACK);
-            healthBar.toFront();
-
+            System.out.println(boat.getStatus());
             if(boat.getStatus() != DSQ) {
                 if(isZoom()){
                     tombstoneSize *= 2;
@@ -390,9 +374,11 @@ public class RaceViewController implements Initializable, TableObserver {
                 gameOver.setFitHeight(tombstoneSize);
                 gameOver.setFitHeight(tombstoneSize);
                 gameOver.setPreserveRatio(true);
-            }else boat.setStatus(DSQ);
+                BinaryPackager binaryPackager = new BinaryPackager();
+                this.dataSource.send(binaryPackager.packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
+                this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILS.getValue(), boat.getSourceID()));
+            }
 
-            System.out.println("Game over");
         }
 
     }
