@@ -2,10 +2,7 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
-import com.sun.org.apache.xml.internal.utils.MutableAttrListImpl;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import javafx.geometry.Point2D;
-import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Line;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
@@ -20,9 +17,7 @@ import parsers.xml.race.RaceXMLParser;
 import utilities.PolarTable;
 
 
-import java.awt.geom.Line2D;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.SocketException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,7 +25,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import utility.*;
 
-import static java.lang.Math.*;
 import static java.lang.Math.abs;
 import static mockDatafeed.Keys.SAILS;
 import static parsers.MessageType.UNKNOWN;
@@ -90,7 +84,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         //find out the coordinates of the course
         generateCourse();
-        generateCompetitors();
+        generateMarkCompetitors();
         generateWind();
         collisionUtility.setCourseInformation();
         courseLineEquations = collisionUtility.getCourseLineEquations();
@@ -256,6 +250,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         prestart = new MutablePoint(32.296117 + a, -64.858834);
 
         Boat newCompetitor=new Boat("Boat "+currentSourceID, random.nextInt(20)+20, prestart, "B"+currentSourceID, currentSourceID, 1);
+        newCompetitor.setCurrentHeading(0);
         competitors.put(currentSourceID, newCompetitor);
         currentSourceID+=1;
         return currentSourceID-1;
@@ -276,7 +271,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     /**
      * generates the competitors list from the XML race file
      */
-    private void generateCompetitors() throws IOException, JDOMException {
+    private void generateMarkCompetitors() throws IOException, JDOMException {
 
         String xml = CharStreams.toString(new InputStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")))));
         raceData = new RaceXMLParser().parseRaceData(xml);
@@ -285,17 +280,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         List<CompoundMarkData> course = raceData.getCourse();
 
         for (CompoundMarkData compoundMark: course) {
-            for (MarkData mark: compoundMark.getMarks()) {
+            for (MarkData mark : compoundMark.getMarks()) {
                 MutablePoint location = new MutablePoint(mark.getTargetLat(), mark.getTargetLon());
                 markBoats.put(mark.getSourceID(), new Boat(mark.getName(), 0, location, "", mark.getSourceID(), 0));
             }
-        }
-
-
-        //set initial heading
-        for (Integer sourceId : competitors.keySet()) {
-            Competitor b = competitors.get(sourceId);
-            b.setCurrentHeading(0);
         }
     }
 
