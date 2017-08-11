@@ -141,10 +141,14 @@ public class Boat implements Competitor {
 
     /**
      * Decreases the boat health when they collide
-     * @param damageThreshold double the amount of damage the boat takes
+     * @param damage double the amount of damage the boat takes
      */
-    public void decreaseHealth(double damageThreshold) {
-        this.healthLevel = healthLevel - damageThreshold;
+    public void updateHealth(double damage) {
+        double resultHealth = healthLevel + damage;
+
+        if(resultHealth > maxHealth) {
+           this.healthLevel = maxHealth;
+        } else this.healthLevel = resultHealth;
     }
 
     /**

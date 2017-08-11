@@ -29,7 +29,7 @@ public class HealthBarSteps {
 
     @When("^the player is in a collision of damage (\\d+)$")
     public void the_player_is_in_a_collision_of_damage(int damage) throws Throwable {
-        boat.decreaseHealth(damage);
+        boat.updateHealth(damage);
     }
 
     @Then("^the boat's health should be (\\d+)$")

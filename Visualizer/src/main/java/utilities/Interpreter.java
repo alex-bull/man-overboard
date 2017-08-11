@@ -25,7 +25,6 @@ import parsers.markRounding.MarkRoundingParser;
 import parsers.raceStatus.RaceStatusData;
 import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.boat.BoatXMLParser;
-import parsers.xml.race.CompoundMarkData;
 import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
@@ -288,7 +287,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 break;
             case MARK_ROUNDING:
                 MarkRoundingData markRoundingData = new MarkRoundingParser().processMessage(packet);
-
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
                     String markName;
@@ -323,9 +321,12 @@ public class Interpreter implements DataSource, PacketHandler {
                     markRoundingData.setMarkName(markName);
                     long roundingTime = markRoundingData.getRoundingTime();
 
-                    storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
-                    storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
+                    Competitor markRoundingBoat = storedCompetitors.get(markRoundingData.getSourceID());
+                    markRoundingBoat.setLastMarkPassed(markName);
+                    markRoundingBoat.setTimeAtLastMark(roundingTime);
                     System.out.println("Boat " + markRoundingData.getSourceID() + " rounded a mark");
+                    markRoundingBoat.updateHealth(5);
+
                 }
                 break;
             case BOAT_LOCATION:

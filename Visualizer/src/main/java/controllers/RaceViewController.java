@@ -1051,6 +1051,7 @@ public class RaceViewController implements Initializable, TableObserver {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         int currentIndex = boat.getCurrentLegIndex();
 
+
         Pair<Double, Double> nextMarkLocation = getGateCentre(currentIndex + 1);
         if (nextMarkLocation == null) {
             // end of race
@@ -1263,7 +1264,7 @@ public class RaceViewController implements Initializable, TableObserver {
             drawCollision(boat.getPosition().getXValue(), boat.getPosition().getYValue());
             mapEngine.executeScript(String.format("create_collision(%.9f,%.9f)",boat.getLatitude(),boat.getLongitude()));
             dataSource.removeCollsions(sourceID);
-            boat.decreaseHealth(5);
+            boat.updateHealth(-5);
         }
 
     }

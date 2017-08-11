@@ -74,7 +74,7 @@ public interface Competitor {
 
     double getHealthLevel();
 
-    void decreaseHealth(double damageThreshold);
+    void updateHealth(double damageThreshold);
 
     double getMaxHealth();
 
