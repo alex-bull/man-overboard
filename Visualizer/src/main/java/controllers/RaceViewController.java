@@ -1221,11 +1221,10 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void checkCollision(){
         for(int sourceID:new HashSet<>(dataSource.getCollisions())){
-            drawCollision(boatPositionX,boatPositionY);
-            Competitor boat=dataSource.getStoredCompetitors().get(sourceID);
+            Competitor boat = dataSource.getStoredCompetitors().get(sourceID);
+            drawCollision(boat.getPosition().getXValue(), boat.getPosition().getYValue());
             mapEngine.executeScript(String.format("create_collision(%.9f,%.9f)",boat.getLatitude(),boat.getLongitude()));
             dataSource.removeCollsions(sourceID);
-            System.out.println("boat collided " +  boat.getSourceID());
             boat.decreaseHealth(5);
         }
 
