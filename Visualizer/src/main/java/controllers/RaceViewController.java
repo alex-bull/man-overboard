@@ -282,6 +282,9 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawHealthBar(Competitor boat) {
 
+        double boatX = boat.getPosition().getXValue();
+        double boatY = boat.getPosition().getYValue();
+
         double strokeWidth = 5;
         double offset = 20;
         double tombstoneSize = 35;
@@ -301,10 +304,10 @@ public class RaceViewController implements Initializable, TableObserver {
                 Line healthBarBackground = new Line();
 
                 healthBarBackground.setStrokeWidth(strokeWidth);
-                healthBarBackground.setStartX(boatPositionX);
-                healthBarBackground.setStartY(boatPositionY - offset);
-                healthBarBackground.setEndX(boatPositionX+ maxBarLength);
-                healthBarBackground.setEndY(boatPositionY - offset);
+                healthBarBackground.setStartX(boatX);
+                healthBarBackground.setStartY(boatY - offset);
+                healthBarBackground.setEndX(boatX+ maxBarLength);
+                healthBarBackground.setEndY(boatY - offset);
                 healthBarBackground.setStroke(Color.WHITE);
 
                 raceViewPane.getChildren().add(healthBarBackground);
@@ -313,10 +316,10 @@ public class RaceViewController implements Initializable, TableObserver {
                 Line healthBar = new Line();
 
                 healthBar.setStrokeWidth(strokeWidth);
-                healthBar.setStartX(boatPositionX);
-                healthBar.setStartY(boatPositionY - offset);
-                healthBar.setEndX(boatPositionX + boat.getHealthLevel());
-                healthBar.setEndY(boatPositionY - offset); // boat.getHealthLength
+                healthBar.setStartX(boatX);
+                healthBar.setStartY(boatY - offset);
+                healthBar.setEndX(boatX + boat.getHealthLevel());
+                healthBar.setEndY(boatY - offset); // boat.getHealthLength
                 //        LinearGradient colourGradient = new LinearGradient(healthBar.getStartX(), healthBar.getStartY(),
 //                healthBar.getEndX(), healthBar.getEndY(), false, CycleMethod.NO_CYCLE, new Stop(0, Color.RED), new Stop(1, Color.GREEN));
 
@@ -328,20 +331,20 @@ public class RaceViewController implements Initializable, TableObserver {
 
             Line healthBarBackground = healthBarBackgrounds.get(sourceId);
             healthBarBackground.setStrokeWidth(strokeWidth);
-            healthBarBackground.setStartX(boatPositionX);
-            healthBarBackground.setStartY(boatPositionY - offset);
-            healthBarBackground.setEndX(boatPositionX + maxBarLength);
-            healthBarBackground.setEndY(boatPositionY - offset);
+            healthBarBackground.setStartX(boatX);
+            healthBarBackground.setStartY(boatY - offset);
+            healthBarBackground.setEndX(boatX + maxBarLength);
+            healthBarBackground.setEndY(boatY - offset);
             healthBarBackground.setStroke(Color.WHITE);
 
 
 //            double newLength = boat.getVelocity() * 2;
             Line healthBar = healthBars.get(sourceId);
             healthBar.setStrokeWidth(strokeWidth);
-            healthBar.setStartX(boatPositionX);
-            healthBar.setStartY(boatPositionY - offset);
-            healthBar.setEndX(boatPositionX + healthLevel);
-            healthBar.setEndY(boatPositionY - offset);
+            healthBar.setStartX(boatX);
+            healthBar.setStartY(boatY - offset);
+            healthBar.setEndX(boatX + healthLevel);
+            healthBar.setEndY(boatY - offset);
             //        LinearGradient colourGradient = new LinearGradient(healthBar.getStartX(), healthBar.getStartY(),
 //                healthBar.getEndX(), healthBar.getEndY(), false, CycleMethod.NO_CYCLE, new Stop(0, Color.RED), new Stop(1, Color.GREEN));
 
@@ -355,19 +358,19 @@ public class RaceViewController implements Initializable, TableObserver {
         /////// CODE BELOW JUST CHANGES THE HEALTH BAR TO BLACK .... CAN DELETE LATER //////
             Line healthBarBackground = healthBarBackgrounds.get(sourceId);
             healthBarBackground.setStrokeWidth(strokeWidth);
-            healthBarBackground.setStartX(boatPositionX);
-            healthBarBackground.setStartY(boatPositionY - offset);
-            healthBarBackground.setEndX(boatPositionX + maxBarLength);
-            healthBarBackground.setEndY(boatPositionY - offset);
+            healthBarBackground.setStartX(boatX);
+            healthBarBackground.setStartY(boatY - offset);
+            healthBarBackground.setEndX(boatX + maxBarLength);
+            healthBarBackground.setEndY(boatY - offset);
             healthBarBackground.setStroke(Color.WHITE);
 
 
             Line healthBar = healthBars.get(sourceId);
             healthBar.setStrokeWidth(strokeWidth);
-            healthBar.setStartX(boatPositionX);
-            healthBar.setStartY(boatPositionY - offset);
-            healthBar.setEndX(boatPositionX + maxBarLength);
-            healthBar.setEndY(boatPositionY - offset);
+            healthBar.setStartX(boatX);
+            healthBar.setStartY(boatY - offset);
+            healthBar.setEndX(boatX + maxBarLength);
+            healthBar.setEndY(boatY - offset);
             healthBar.setStroke(Color.BLACK);
             healthBar.toFront();
 
@@ -377,8 +380,8 @@ public class RaceViewController implements Initializable, TableObserver {
                 }
                 Image tombstone = new Image("/tombstone.png");
                 gameOver.setImage(tombstone);
-                gameOver.setX(boatPositionX);
-                gameOver.setY(boatPositionY);
+                gameOver.setX(boatX);
+                gameOver.setY(boatY);
                 gameOver.setFitHeight(tombstoneSize);
                 gameOver.setFitHeight(tombstoneSize);
                 gameOver.setPreserveRatio(true);
@@ -1210,7 +1213,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
         }
         this.drawSail(width, length);
-
 
     }
 
