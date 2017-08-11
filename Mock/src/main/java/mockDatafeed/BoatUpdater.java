@@ -100,7 +100,7 @@ public class BoatUpdater {
             }
             double speed = polarTable.getSpeed(twa);
             if (boat.hasSailsOut()) {
-                boat.setVelocity(speed);
+                boat.setVelocity(speed * 3);
                 boat.updatePosition(0.1);
             } else {
                 boat.setVelocity(0);

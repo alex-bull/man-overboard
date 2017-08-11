@@ -69,6 +69,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
 
+    static final Color backgroundColor = Color.POWDERBLUE;
+
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Shape playerMarker;
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
@@ -100,7 +102,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private boolean isLoaded = false;
 
     //if state of zooming
-    private boolean zoom=false;
+    private boolean zoom = false;
 
     //current boat position in screen coordinates
     private double boatPositionX;
@@ -179,7 +181,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 0., arrowLength + arrowHeadLength + offsetFromOrigin, // tip
                 -15., arrowLength + offsetFromOrigin,
                 -5.,arrowLength + offsetFromOrigin);
-        guideArrow.setFill(Color.POWDERBLUE.brighter());
+        guideArrow.setFill(backgroundColor.brighter());
         this.raceViewPane.getChildren().add(guideArrow);
         guideArrow.toBack();
     }
@@ -543,7 +545,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
             gc.strokePolygon(boundaryX, boundaryY, boundaryX.length);
             gc.setGlobalAlpha(0.4);
-            gc.setFill(Color.POWDERBLUE);
+            gc.setFill(backgroundColor);
             //shade inside the boundary
             gc.fillPolygon(boundaryX,boundaryY, boundaryX.length);
             gc.setGlobalAlpha(1.0);
@@ -1027,6 +1029,7 @@ public class RaceViewController implements Initializable, TableObserver {
         Pair<Double, Double> nextMarkLocation = getGateCentre(currentIndex + 1);
         if (nextMarkLocation == null) {
             // end of race
+            this.raceViewPane.getChildren().remove(guideArrow);
             return;
         }
 
@@ -1077,6 +1080,13 @@ public class RaceViewController implements Initializable, TableObserver {
         applyTransformsToArrow(angle, x, y);
     }
 
+    /**
+     * Apply translation and rotation transforms to the guiding arrow
+     *
+     * @param angle double the angle by which to rotate the arrow, from north
+     * @param x double the x coordinate for the arrow's origin
+     * @param y double the y coordinate for the arrow's origin
+     */
     private void applyTransformsToArrow(double angle, double x, double y) {
         guideArrow.getTransforms().clear();
         guideArrow.setLayoutX(x);
