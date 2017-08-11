@@ -149,6 +149,12 @@ public class Mark implements CourseFeature {
         return "Mark{" +
                 "name='" + name + '\'' +
                 ", pixelLocation=" + pixelLocation +
+                ", index=" + index +
                 '}';
+    }
+
+    @Override
+    public CourseFeature shift(double x, double y) {
+        return new Mark(name,pixelLocation.shift(x,y),GPSLocation,index);
     }
 }

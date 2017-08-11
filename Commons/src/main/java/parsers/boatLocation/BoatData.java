@@ -13,7 +13,7 @@ public class BoatData {
     private double longitude;
     private double heading;
     private double speed;
-    private MutablePoint pixelPoint;
+    private MutablePoint mercatorPoint;
 
     /**
      * Constructs a boat data read from a data source
@@ -23,16 +23,16 @@ public class BoatData {
      * @param longitude double longitude
      * @param heading double heading
      * @param speed double speed
-     * @param pixelPoint MutablePoint pixel point
+     * @param mercatorPoint MutablePoint pixel point
      */
-    BoatData(int sourceID, int deviceType, double latitude, double longitude, double heading, double speed, MutablePoint pixelPoint) {
+    BoatData(int sourceID, int deviceType, double latitude, double longitude, double heading, double speed, MutablePoint mercatorPoint) {
         this.sourceID = sourceID;
         this.deviceType = deviceType;
         this.latitude = latitude;
         this.longitude = longitude;
         this.heading = heading;
         this.speed = speed;
-        this.pixelPoint = pixelPoint;
+        this.mercatorPoint = mercatorPoint;
     }
 
 
@@ -79,7 +79,7 @@ public class BoatData {
                 '}';
     }
 
-    public MutablePoint getPixelPoint() {
-        return pixelPoint;
+    public MutablePoint getMercatorPoint() {
+        return mercatorPoint;
     }
 }

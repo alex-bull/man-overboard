@@ -26,28 +26,27 @@ import models.Competitor;
 import models.WorldClock;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
+import utilities.StreamDelegate;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static utilities.EnvironmentConfig.currentStream;
 
 /**
  * Created by rjc249 on 5/04/17.
  * Controller for the start scene.
  */
-public class StarterController implements Initializable, ClockHandler {
+public class StarterController implements Initializable, ClockHandler, StreamDelegate {
 
     private DataSource dataSource;
-    private final int STARTTIME = 0;
+    private final int STARTTIME = 5;
     @FXML private ListView<Competitor> starterList;
     @FXML private Label worldClockValue;
-    @FXML private Button countdownButton;
     @FXML private Button confirmButton;
-    @FXML private Label raceStatus;
-    @FXML private ComboBox<String> streamCombo;
+    @FXML private Label countDownLabel;
+    @FXML private TextField hostField;
+    @FXML private ProgressIndicator progressIndicator;
     private Clock worldClock;
     private Stage primaryStage;
     private ObservableList<Competitor> compList;
@@ -65,6 +64,7 @@ public class StarterController implements Initializable, ClockHandler {
     void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
 
     /**
      * Implementation of ClockHandler interface method
@@ -86,10 +86,9 @@ public class StarterController implements Initializable, ClockHandler {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        this.countdownButton.setDisable(true);
+        progressIndicator.setVisible(false);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         compList = FXCollections.observableArrayList();
-
         starterList.setCellFactory(new Callback<ListView<Competitor>, ListCell<Competitor>>() {
             @Override
             public ListCell<Competitor> call(ListView<Competitor> param) {
@@ -108,82 +107,79 @@ public class StarterController implements Initializable, ClockHandler {
             }
         });
         starterList.setItems(compList);
-        streamCombo.getItems().addAll(EnvironmentConfig.liveStream, EnvironmentConfig.csseStream, EnvironmentConfig.mockStream);
-
-
     }
 
 
     /**
      * Called when the user clicks confirm.
      * Begins streaming data from the selected server
-     * Calls setFields when data is received
      */
     @FXML
     public void confirmStream() {
 
         //get the selected stream
-        String host = this.streamCombo.getSelectionModel().getSelectedItem();
+        String host = this.hostField.getText();
         if (host == null || host.equals("")) {
-            System.out.println("No stream selected");
+            System.out.println("Invalid host");
             return;
         }
-
-        this.streamCombo.setDisable(true);
+        progressIndicator.setVisible(true);
+        this.hostField.setDisable(true);
         this.confirmButton.setDisable(true);
+
         Scene scene=primaryStage.getScene();
-        boolean streaming = this.dataSource.receive(host, EnvironmentConfig.port, scene);
-
-        if (streaming) {
-            EnvironmentConfig.currentStream = host;
-
-            this.streamCombo.setDisable(true);
-            this.confirmButton.setDisable(true);
-            currentStream = host;
-            this.setFields();
-        }
-
+        this.dataSource.receive(host, EnvironmentConfig.port, scene, this);
 
     }
 
     /**
-     * Switches from start view to course view. Called when user clicks start button.
-     * Starts countdown if the list of starters is not empty.
+     * StreamDelegate method
+     * Alerts the user if the connection failed
      */
-    @FXML
-    void switchToCourseView() {
-        // check that starter table is not empty
-        if (!starterList.getItems().isEmpty()) {
-            startCountdown();
-            countdownButton.setDisable(true);
-
-        } else {
-            // inform user to press confirm
-            Stage thisStage = (Stage) countdownButton.getScene().getWindow();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Information Dialog");
-            alert.initOwner(thisStage);
-            alert.setHeaderText(null);
-            alert.setContentText("Please make sure there are competitors.");
-            alert.showAndWait();
-        }
+    public void streamFailed() {
+        this.progressIndicator.setVisible(false);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Connection Failed");
+        alert.setHeaderText(null);
+        alert.setContentText("Sorry, cannot connect to this stream right now.");
+        alert.showAndWait();
+        this.hostField.setDisable(false);
+        this.confirmButton.setDisable(false);
 
     }
+
+
+    /**
+     * StreamDelegate method
+     * Call set fields
+     * Change to the raceView
+     */
+    public void streamStarted() {
+
+        System.out.println("Streaming data");
+        progressIndicator.setVisible(false);
+        this.setFields();
+        this.loadRaceView();
+    }
+
+
+
 
     /**
      * Set fields using data from the stream
      */
     private void setFields() {
+
+
         while (dataSource.getCourseTimezone() == null) {
             System.out.print("");
         }
         this.worldClock = new WorldClock(this, dataSource.getCourseTimezone());
         worldClock.start();
         compList.setAll(dataSource.getCompetitorsPosition());
-        raceStatus.setText(dataSource.getRaceStatus().toString());
 
         if (dataSource.getCompetitorsPosition().size() == 0) {
-            Stage thisStage = (Stage) countdownButton.getScene().getWindow();
+            Stage thisStage = (Stage) confirmButton.getScene().getWindow();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
             alert.initOwner(thisStage);
@@ -191,19 +187,21 @@ public class StarterController implements Initializable, ClockHandler {
             alert.setContentText("Sorry, this data stream hasn't started.");
             alert.showAndWait();
         }
-        this.countdownButton.setDisable(false);
     }
 
     /**
      * Countdown until the race start, updates the countdown time text.
+     * Loads the raceView
      */
-    private void startCountdown() {
+    private void loadRaceView() {
 
         //count down for 5 seconds
+        countDownLabel.textProperty().bind(timeSeconds.asString());
+
         timeSeconds.set(STARTTIME);
         Timeline timeline = new Timeline();
         timeline.getKeyFrames().add(
-                new KeyFrame(Duration.seconds(STARTTIME + 1),
+                new KeyFrame(Duration.seconds(STARTTIME),
                         new KeyValue(timeSeconds, 0)));
         timeline.play();
 
@@ -226,11 +224,10 @@ public class StarterController implements Initializable, ClockHandler {
 
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 primaryStage.setTitle("RaceVision");
-                primaryStage.setWidth(primaryScreenBounds.getWidth());
-                primaryStage.setHeight(primaryScreenBounds.getHeight());
-                primaryStage.setMinHeight(primaryScreenBounds.getHeight());
-                primaryStage.setMinWidth(primaryScreenBounds.getWidth());
+//                primaryStage.setMaxWidth(primaryScreenBounds.getWidth());
+//                primaryStage.setMaxHeight(primaryScreenBounds.getHeight());
                 primaryStage.setScene(scene);
+
             }
         });
     }

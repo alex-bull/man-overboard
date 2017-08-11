@@ -4,6 +4,10 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 /**
  * Created by mgo65 on 3/03/17.
  * Boat object
@@ -12,6 +16,7 @@ public class Boat implements Competitor {
     private String teamName;
     private double velocity;
     private MutablePoint position;
+    private MutablePoint position17;
     private Color color;
     private String abbreName;
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
@@ -23,6 +28,20 @@ public class Boat implements Competitor {
     private long timeAtLastMark;
     private double latitude;
     private double longitude;
+    //how much the boat if affected by wind, can be parsed in as constructor
+    private double blownFactor = 0.01;
+//    external forces on the boat
+    private List<RepelForce> forces;
+
+    public MutablePoint getPosition17() {
+        return position17;
+    }
+
+    public void setPosition17(MutablePoint position17) {
+        this.position17 = position17;
+    }
+
+    private boolean sailsOut = true;
     /**
      * Creates a boat
      *
@@ -36,11 +55,20 @@ public class Boat implements Competitor {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
+        forces =new ArrayList<>();
         this.color = color;
         this.abbreName = abbreName;
         legIndex = 0;
         timeToNextMark = 0;
         timeAtLastMark = 0;
+    }
+
+    public List<RepelForce> getForces() {
+        return forces;
+    }
+
+    public void addForce(RepelForce force){
+        this.forces.add(force);
     }
 
     /**
@@ -67,6 +95,21 @@ public class Boat implements Competitor {
 
     public Boat() {
 
+    }
+
+    /**
+     * Switches the sail state of the boat between sails in and sails out
+     */
+    public void switchSails() {
+        sailsOut = !sailsOut;
+    }
+
+    /**
+     * Returns the sail state of the boat
+     * @return sailsOut sail state of the boat
+     */
+    public boolean hasSailsOut() {
+        return sailsOut;
     }
 
     @Override
@@ -188,16 +231,24 @@ public class Boat implements Competitor {
     }
 
     public double getCurrentHeading() {
+        // convert negative current heading to positive?
+        if (currentHeading.getValue() < 0) {
+            this.currentHeading.setValue(currentHeading.getValue() + 360);
+        }
+
         return currentHeading.getValue();
     }
 
     public void setCurrentHeading(double currentHeading) {
-        this.currentHeading.setValue(currentHeading);
+        // convert negative current heading to positive?
+        if (currentHeading < 0) {
+            this.currentHeading.setValue(currentHeading + 360);
+        }
+        else{
+            this.currentHeading.setValue(currentHeading%360);
+        }
     }
 
-    public DoubleProperty getHeadingProperty() {
-        return this.currentHeading;
-    }
 
     /**
      * Updates the boats position given the time changed
@@ -221,18 +272,82 @@ public class Boat implements Competitor {
         setPosition(new MutablePoint(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI));
     }
 
-    public void setProperties(double velocity, double heading, double latitude, double longitude) {
-        this.velocity = velocity;
-        this.currentHeading.setValue(heading);
-        this.position = new MutablePoint(latitude, longitude);
 
+    /**
+     * Returns the downwind given wind angle
+     * @param windAngle double wind angle
+     * @return double downWind
+     */
+    private double getDownWind(double windAngle) {
+       double downWind = windAngle + 180;
+       if(downWind > 360) {
+           downWind = downWind - 360;
+       }
+       return downWind;
+    }
+
+    public void blownByWind(double windAngle){
+//        dont do anything if boat is not really moving
+        if(getVelocity()<0.2){
+            return;
+        }
+
+        double downWind=getDownWind(windAngle);
+
+        double turnAngle=(getCurrentHeading()-windAngle)*blownFactor;
+
+        if(currentHeading.getValue() >= windAngle && currentHeading.getValue() < downWind) {
+
+            currentHeading.setValue(currentHeading.getValue() + turnAngle);
+        }
+        else{
+            currentHeading.setValue(currentHeading.getValue() - turnAngle);
+        }
+        setCurrentHeading(currentHeading.getValue() % 360);
+    }
+
+    /**
+     * function to change boats heading
+     * @param upwind true=upwind
+     *                  false=downwind
+     * @param windAngle the current wind angle
+     */
+    public void changeHeading(boolean upwind, double windAngle){
+        int turnAngle = 3;
+
+
+        double downWind = getDownWind(windAngle);
+
+        if(currentHeading.getValue() >= windAngle && currentHeading.getValue() <= downWind) {
+            if(upwind) {
+                currentHeading.setValue(currentHeading.getValue() - turnAngle);
+            }
+            else {
+                currentHeading.setValue(currentHeading.getValue() + turnAngle);
+            }
+        }
+        else {
+
+            if(upwind) {
+                currentHeading.setValue(currentHeading.getValue() + turnAngle);
+            }
+            else {
+                currentHeading.setValue(currentHeading.getValue() - turnAngle);
+            }
+        }
+        setCurrentHeading(currentHeading.getValue() % 360);
+//        currentHeading.setValue(currentHeading.getValue() % 360);
     }
 
     @Override
     public String toString() {
         return "Boat{" +
                 "teamName='" + teamName + '\'' +
+                ", velocity=" + velocity +
+                ", position=" + position +
+                ", color=" + color +
                 ", abbreName='" + abbreName + '\'' +
+                ", currentHeading=" + currentHeading +
                 ", sourceID=" + sourceID +
                 '}';
     }

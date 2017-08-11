@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import models.Competitor;
 import utilities.DataSource;
@@ -22,11 +23,13 @@ import java.util.List;
 
 public class SparklinesController {
 
+    @FXML private AnchorPane sparklines;
     @FXML private LineChart<String, Double> sparkChart;
 
     private Map<Integer, XYChart.Series<String, Double>> seriesMap = new HashMap<>();
     private DataSource dataSource;
     private long previousTime = 0;
+    private Boolean visible=true;
 
     /**
      * Sets the competitors on the sparkline chart
@@ -106,5 +109,14 @@ public class SparklinesController {
 
     }
 
+    public void makeInvisible() {
+        sparklines.setVisible(false);
+        visible = false;
+    }
+
+    public void makeVisible() {
+        sparklines.setVisible(true);
+        visible = true;
+    }
 
 }

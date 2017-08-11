@@ -6,6 +6,7 @@ import models.CourseFeature;
 import models.MutablePoint;
 import parsers.RaceStatusEnum;
 
+import java.io.EOFException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,7 @@ import java.util.Set;
  * Data source
  */
 public interface DataSource {
-    boolean receive(String host, int port, Scene scene);
-    List<CourseFeature> getCourseFeatures();
+    void receive(String host, int port, Scene scene, StreamDelegate delegate);
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
     List<Integer> getStartMarks();
@@ -35,4 +35,11 @@ public interface DataSource {
     List<Double> getGPSbounds();
     int getMapZoomLevel();
     double getShiftDistance();
+    int getSourceID();
+    Set<Integer> getCollisions();
+    void removeCollsions(int sourceID);
+    void send(byte[] data);
+    Competitor getCompetitor();
+    List<MutablePoint> getCourseBoundary17();
+    HashMap<Integer, CourseFeature> getStoredFeatures17();
 }

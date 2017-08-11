@@ -32,6 +32,7 @@ public class BoatStatus {
 
     public long getEstimatedTimeAtNextMark() {
         return estimatedTimeAtNextMark;
+
     }
 
 

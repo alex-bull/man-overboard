@@ -1,13 +1,29 @@
-# SENG302 Project Template
+# Zaffre Tides - RaceVision (GAME X)
+ 
+RaceVision is a Maven project to represent a boat race (such as the America's Cup).
+It visualises incoming data from a server’s data stream and constantly updates until the stream finishes sending.
 
-Basic Maven project with required Maven reporting setup and basic GitLab CI.
+Gitlab CI server: https://eng-git.canterbury.ac.nz/seng302-2017/team-26.git
 
-It is a requirement that your product should be completely built to a deliverable form using the Maven package goal.
 
-Remember to set up your GitLab CI server (refer to the student guide for instructions).
+### Operation
+To start the race, you need to type in the host address (default is localhost). 
+Then press confirm and the race will start after the countdown.
 
-# Basic Project Structure
- - `src/` Your application source
+Toggles on the LHS of the screen enable the user to view custom annotations.
+
+### Project Structure
+ - `Visualizer/src/main/java/` Application source
+ - `Visualizer/src/main/resources/` fxml, css and image resources
+ - `Commons/src/main/java/` Models, parsers and utilities
+ - `Mock/src/main/java` Mock Data 
  - `doc/` User and design documentation
- - `doc/examples/` Demo example files for use with your application
+ 
+### Multiplayer mode
+ - Run more than one App instance
+ - Run BoatMocker once (App instances must connect within 10 seconds)
+ 
+### Running Jar
+Navigate to team26 and run the command:
+java -jar Visualizer/target/Visualizer-0.0.jar | java -jar Mock/target/Mock-0.0.jar
  

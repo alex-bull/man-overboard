@@ -24,6 +24,7 @@ public class RaceStatusParser {
     public RaceStatusData processMessage(byte[] body) {
         try {
             long currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
+            Integer raceId = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
             Integer raceStatus = hexByteArrayToInt(Arrays.copyOfRange(body, 11, 12));
             long expectedStartTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 12, 18));
             Integer numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22, 23));
