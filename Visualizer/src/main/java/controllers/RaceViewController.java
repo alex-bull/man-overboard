@@ -303,7 +303,6 @@ public class RaceViewController implements Initializable, TableObserver {
             maxBarLength *= 2;
             boatX = getBoatLocation(boat).getXValue();
             boatY = getBoatLocation(boat).getYValue();
-            System.out.println(boat.getHealthLevel());
         }
         if(boat.getHealthLevel() > 0) {
             Color healthColour = calculateHealthColour(boat);
@@ -361,22 +360,25 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         else {
             // rip boat
+            if(isZoom()){
+                tombstoneSize *= 2;
+            }
             if(boat.getStatus() != DSQ) {
-                if(isZoom()){
-                    tombstoneSize *= 2;
-                }
                 Image tombstone = new Image("/tombstone.png");
                 gameOver.setImage(tombstone);
-                gameOver.setX(boatX);
-                gameOver.setY(boatY);
-                gameOver.setFitHeight(tombstoneSize);
-                gameOver.setFitHeight(tombstoneSize);
                 gameOver.setPreserveRatio(true);
                 BinaryPackager binaryPackager = new BinaryPackager();
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
                 boat.setStatus(DSQ);
-
             }
+            gameOver.setX(boatX);
+            gameOver.setY(boatY);
+            gameOver.setFitHeight(tombstoneSize);
+            gameOver.setFitHeight(tombstoneSize);
+
+            sailLine.setVisible(false);
+            healthBars.get(sourceId).setVisible(false);
+            healthBarBackgrounds.get(sourceId).setVisible(false);
 
         }
 
@@ -1231,7 +1233,6 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawBoat(boat);
             this.drawHealthBar(boat);
             this.moveAnnotations(boat);
-
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
             if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
 
@@ -1239,6 +1240,7 @@ public class RaceViewController implements Initializable, TableObserver {
         this.drawSail(width, length);
 
     }
+
 
     /**
      * checks collisions and draws them
