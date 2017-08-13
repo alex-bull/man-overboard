@@ -1,5 +1,6 @@
 package controllers;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -80,6 +81,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Shape playerMarker;
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
     private Map<Double, Line> healthBars = new HashMap<>();
+    private Map<Integer, ImageView> ripImages = new HashMap<>();
     private Map<Double, Line> healthBarBackgrounds = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
     private Map<Integer, Label> speedAnnotations = new HashMap<>();
@@ -93,7 +95,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line startLine;
     private Line finishLine;
     private Line virtualLine;
-    private ImageView gameOver;
     private Polygon guideArrow;
 
     private WebEngine mapEngine;
@@ -126,7 +127,6 @@ public class RaceViewController implements Initializable, TableObserver {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        gameOver = new ImageView();
         startLine = new Line();
         finishLine = new Line();
         virtualLine = new Line();
@@ -139,7 +139,6 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(virtualLine);
         raceViewPane.getChildren().add(sailLine);
-        raceViewPane.getChildren().add(gameOver);
 
         final ToggleGroup annotations = new ToggleGroup();
         allAnnotationsRadio.setToggleGroup(annotations);
@@ -359,26 +358,43 @@ public class RaceViewController implements Initializable, TableObserver {
 
         }
         else {
+            ImageView ripImage = ripImages.get((int) sourceId);
+            System.out.println("boat died");
             // rip boat
-            if(isZoom()){
-                tombstoneSize *= 2;
-            }
+
             if(boat.getStatus() != DSQ) {
-                Image tombstone = new Image("/tombstone.png");
-                gameOver.setImage(tombstone);
-                gameOver.setPreserveRatio(true);
+                System.out.println("ripImage set");
+                ripImage.setVisible(true);
                 BinaryPackager binaryPackager = new BinaryPackager();
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
                 boat.setStatus(DSQ);
-            }
-            gameOver.setX(boatX);
-            gameOver.setY(boatY);
-            gameOver.setFitHeight(tombstoneSize);
-            gameOver.setFitHeight(tombstoneSize);
 
-            sailLine.setVisible(false);
-            healthBars.get(sourceId).setVisible(false);
-            healthBarBackgrounds.get(sourceId).setVisible(false);
+                sailLine.setVisible(false);
+                healthBars.get(sourceId).setVisible(false);
+                healthBarBackgrounds.get(sourceId).setVisible(false);
+                boatModels.get((int) sourceId).setVisible(false);
+
+//            boatModels.get((int)sourceId).setFill(Color.WHITE);
+                playerMarker.setVisible(false);
+                this.nameAnnotations.get((int) sourceId).setText("--");
+                this.speedAnnotations.get((int) sourceId).setText("--");
+                this.timeFromMarkAnnotations.get((int) sourceId).setText("--");
+                this.timeToMarkAnnotations.get((int) sourceId).setText("--");
+
+                this.raceViewPane.getChildren().remove(guideArrow);
+            }
+            if(isZoom()){
+                tombstoneSize *= 2;
+            }
+            ripImage.setX(boatX);
+            ripImage.setY(boatY);
+            ripImage.setFitHeight(tombstoneSize);
+            ripImage.setFitHeight(tombstoneSize);
+
+
+
+
+
 
         }
 
@@ -775,6 +791,13 @@ public class RaceViewController implements Initializable, TableObserver {
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
 
+            ImageView ripImage = new ImageView();
+            Image tombstone = new Image("/tombstone.png");
+            ripImage.setImage(tombstone);
+            ripImage.setPreserveRatio(true);
+            ripImage.setVisible(false);
+            this.ripImages.put(sourceId, ripImage);
+            raceViewPane.getChildren().add(ripImage);
 
             this.boatModels.put(sourceId, boatModel);
             //Boats selected can be selected/unselected by clicking on them
