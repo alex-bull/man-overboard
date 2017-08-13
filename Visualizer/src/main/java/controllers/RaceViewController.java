@@ -16,7 +16,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -39,7 +39,6 @@ import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.Converter;
 import utilities.*;
-
 
 import java.awt.geom.Line2D;
 import java.io.IOException;
@@ -71,8 +70,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Text status;
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
-    @FXML private ImageView controlLayoutView;
-    @FXML private Image controlImage;
+    @FXML private ImageView controlsView;
+    @FXML private HBox controlsBox;
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Shape playerMarker;
@@ -106,7 +105,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         startLine = new Line();
         finishLine = new Line();
         virtualLine = new Line();
@@ -123,7 +121,6 @@ public class RaceViewController implements Initializable, TableObserver {
         allAnnotationsRadio.setSelected(true);
         showAllAnnotations();
         fpsToggle.setSelected(true);
-
 
         mapEngine = mapView.getEngine();
         mapView.setVisible(true);
@@ -143,10 +140,10 @@ public class RaceViewController implements Initializable, TableObserver {
             }
 
         });
-        controlLayoutView = new ImageView();
-        controlImage = new Image("control.png");
-        controlLayoutView.setImage(controlImage);
 
+        controlsView = new ImageView();
+        Image image = new Image("controls.png");
+        controlsView.setImage(image);
     }
 
     /**
@@ -184,6 +181,8 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
         raceViewPane.setPrefWidth(width);
+        controlsBox.setPrefHeight(height);
+        controlsBox.setPrefWidth(width);
 
         this.dataSource = dataSource;
         raceCalculator.setDataSource(dataSource);
@@ -203,6 +202,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * Updates the selected boat property
      * @param sourceId Integer the sourceId of the selected boat
      */
+
     public void boatSelected(Integer sourceId) {
         this.selectedBoatSourceId = sourceId;
     }
@@ -890,20 +890,19 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     /**
-     * Toggles a window that shows a control layout of the game
+     * Toggles a control layout of the game
      * @param actionEvent
      */
-    public void toggleControlLayout(ActionEvent actionEvent) {
+    public void toggleControls(ActionEvent actionEvent) {
         //TODO: NEED TO CENTER CONTROL LAYOUT
-        if (!raceViewPane.getChildren().contains(controlLayoutView)) {
-            raceViewPane.getChildren().add(controlLayoutView);
+        if (!raceViewPane.getChildren().contains(controlsBox)){
+            controlsBox.getChildren().add(controlsView);
+            raceViewPane.getChildren().add(controlsBox);
         }
-
         else {
-            raceViewPane.getChildren().remove(controlLayoutView);
+            controlsBox.getChildren().remove(controlsView);
+            raceViewPane.getChildren().remove(controlsBox);
         }
-
-
     }
 
 
