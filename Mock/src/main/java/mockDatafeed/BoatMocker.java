@@ -228,7 +228,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             windDirection = convertRadiansToShort(angle);
         }
         windGenerator = new WindGenerator(windSpeed, windDirection);
-        polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
+        polarTable = new PolarTable("/polars/VO70_polar.txt", 30.0);
     }
 
     /**
