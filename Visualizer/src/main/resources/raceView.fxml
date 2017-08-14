@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.web.*?>
 <?import javafx.scene.*?>
@@ -33,6 +34,34 @@
         <RadioButton fx:id="allAnnotationsRadio" layoutX="10.0" layoutY="220.0" mnemonicParsing="false" onAction="#showAllAnnotations" selected="true" text="All" />
         <RadioButton fx:id="noAnnotationsRadio" layoutX="136.0" layoutY="220.0" mnemonicParsing="false" onAction="#clearAnnotations" text="None" />
         <RadioButton fx:id="someAnnotationsRadio" layoutX="64.0" layoutY="220.0" mnemonicParsing="false" text="Partial" />
+      <GridPane fx:id="finisherListPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="479.0" prefWidth="358.0" style="-fx-background-color: Lightblue;" AnchorPane.bottomAnchor="3021.0" AnchorPane.leftAnchor="700.0" AnchorPane.topAnchor="500.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="393.0" minHeight="10.0" prefHeight="376.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="103.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label alignment="CENTER" prefHeight="51.0" prefWidth="357.0" text="Race Complete" GridPane.valignment="TOP">
+               <font>
+                  <Font size="38.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets top="40.0" />
+               </GridPane.margin>
+            </Label>
+            <ListView fx:id="finisherListView" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="218.0" prefWidth="262.0" style="-fx-background-color: #deeff5;" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM" />
+            <Label alignment="CENTER" prefHeight="51.0" prefWidth="357.0" text="Standings:" GridPane.valignment="TOP">
+               <font>
+                  <Font size="15.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets top="110.0" />
+               </GridPane.margin>
+            </Label>
+         </children>
+      </GridPane>
     </children>
 
 
