@@ -326,22 +326,6 @@ public class Interpreter implements DataSource, PacketHandler {
                     storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
                     storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
                     System.out.println("Boat " + markRoundingData.getSourceID() + " rounded a mark");
-
-//                    System.out.println(finisherList.size());
-//                    System.out.println(storedCompetitors.size());
-//                    System.out.println(markName);
-
-                    if(Objects.equals(markName, "Start Line")){
-                        if (!finisherList.contains(storedCompetitors.get(markRoundingData.getSourceID()))){
-                            finisherList.add(storedCompetitors.get(markRoundingData.getSourceID()));
-                        }
-                    }
-
-                    if (finisherList.size() == storedCompetitors.size()) {
-                        System.out.println("All boats finished");
-                    }
-
-
                 }
                 break;
             case BOAT_LOCATION:

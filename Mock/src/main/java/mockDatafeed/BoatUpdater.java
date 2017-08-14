@@ -10,8 +10,10 @@ import utilities.PolarTable;
 import utility.Calculator;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.lang.Math.*;
 import static java.lang.Math.PI;
@@ -32,6 +34,7 @@ public class BoatUpdater {
     private List<MutablePoint> courseBoundary;
     private List<MutablePoint> courseLineEquations;
     private CollisionUtility collisionUtility;
+    private List<Competitor> finisherList = new ArrayList<>();
 
     /**
      * Boat updater constructor
@@ -236,6 +239,25 @@ public class BoatUpdater {
             handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
             boat.setCurrentLegIndex(nextLegIndex);
         }
+
+        if(boat.getCurrentLegIndex() == 1){
+            if (!finisherList.contains(boat)){
+                finisherList.add(boat);
+            }
+        }
+
+        checkAllFinished();
+    }
+
+
+    /**
+     * Checks if all boats have finished the racing and sends the finishers
+     * list to the client if they have
+     */
+    private void checkAllFinished(){
+        if(finisherList.size() == competitors.size()){
+            System.out.println("All boats finished");
+        }
     }
 
 
@@ -251,9 +273,6 @@ public class BoatUpdater {
         double dist = Calculator.pointDistance(boat.getPosition().getXValue(), boat.getPosition().getYValue(), line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
         return dist < lineCrossThreshold;
     }
-
-
-
 
 
     /**
