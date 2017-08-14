@@ -22,7 +22,7 @@ public class Boat implements Competitor {
     private MutablePoint position17;
     private Color color;
     private String abbreName;
-//    private DoubleProperty currentHeading = new SimpleDoubleProperty();
+    private DoubleProperty currentHeading = new SimpleDoubleProperty();
     private int sourceID;
     private int status;
     private String lastMarkPassed;
@@ -35,6 +35,7 @@ public class Boat implements Competitor {
     private double blownFactor = 0.01;
 //    external forces on the boat
     private Force boatSpeed;
+
 
     //collision size
     private double collisionRadius=50;
@@ -246,16 +247,18 @@ public class Boat implements Competitor {
     }
 
     public double getCurrentHeading() {
-        return boatSpeed.getDirection();
+        return currentHeading.getValue();
     }
 
     public void setCurrentHeading(double currentHeading) {
         // convert negative current heading to positive?
         if (currentHeading < 0) {
-            boatSpeed.setDirection(currentHeading + 360);
+            this.currentHeading.set(currentHeading+360);
+//            boatSpeed.setDirection(currentHeading + 360);
         }
         else{
-            boatSpeed.setDirection(currentHeading%360);
+            this.currentHeading.set(currentHeading%360);
+//            boatSpeed.setDirection(currentHeading%360);
         }
     }
 
@@ -266,7 +269,7 @@ public class Boat implements Competitor {
      * @param elapsedTime the time elapsed in seconds
      */
     public void updatePosition(double elapsedTime) {
-        //moves the boat by its wind
+        //moves the boat by its speed
         MutablePoint p=moveBoat(boatSpeed,getPosition(),elapsedTime);
 
         //calculate all external forces on it
@@ -279,7 +282,7 @@ public class Boat implements Competitor {
             }
         }
         setPosition(p);
-        System.out.println(externalForces.size());
+//        System.out.println(p);
     }
 
     /**
@@ -337,24 +340,23 @@ public class Boat implements Competitor {
     public void changeHeading(boolean upwind, double windAngle){
         int turnAngle = 3;
 
-
         double downWind = getDownWind(windAngle);
-        double currentHeading=boatSpeed.getDirection();
+        double currentHeading=getCurrentHeading();
         if(currentHeading>= windAngle && currentHeading <= downWind) {
             if(upwind) {
-                boatSpeed.setDirection(currentHeading - turnAngle);
+                setCurrentHeading(currentHeading - turnAngle);
             }
             else {
-                boatSpeed.setDirection(currentHeading + turnAngle);
+                setCurrentHeading(currentHeading + turnAngle);
             }
         }
         else {
 
             if(upwind) {
-                boatSpeed.setDirection(currentHeading + turnAngle);
+                setCurrentHeading(currentHeading + turnAngle);
             }
             else {
-                boatSpeed.setDirection(currentHeading - turnAngle);
+                setCurrentHeading(currentHeading - turnAngle);
             }
         }
 //        setCurrentHeading(currentHeading % 360);

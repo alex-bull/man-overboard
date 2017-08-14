@@ -271,6 +271,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         }
 
 
+
     }
 
     /**
@@ -287,11 +288,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             }
             double speed = polarTable.getSpeed(twa);
             if (boat.hasSailsOut()) {
-                boat.setVelocity(speed);
+                boat.getBoatSpeed().setMagnitude(speed);
+                boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
+//                System.out.println(boat.getBoatSpeed());
 
             } else {
                 boat.getBoatSpeed().reduce(0.99);
-
             }
             boat.updatePosition(0.1);
             this.handleCourseCollisions(boat);
@@ -363,17 +365,25 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         MutablePoint p2=mercatorProjection(boat2.getPosition().getXValue(),boat2.getPosition().getYValue());
 
         Force v1=boat1.getBoatSpeed();
+        v1.round();
         Force v2=boat2.getBoatSpeed();
-
+        v2.round();
         Force v1f=calculateFinalVelocity(v1,v2,p1,p2);
         Force v2f=calculateFinalVelocity(v2,v1,p2,p1);
-        boat1.setCurrentHeading(v1f.getDirection());
-        boat2.setCurrentHeading(v2f.getDirection());
+//        boat1.setCurrentHeading(v1f.getDirection());
+//        boat2.setCurrentHeading(v2f.getDirection());
 
+//        boat1.updatePosition(-10);
+//        boat2.updatePosition(-10);
         //momentum
-        boat1.addForce((Force) multiply(2,v1f));
-        boat2.addForce((Force) multiply(2,v2f));
-
+//        System.out.println("v1"+v1);
+//        System.out.println("v2"+v2);
+//        System.out.println("p1"+p1);
+//        System.out.println("p2"+p2);
+//        System.out.println("v1f"+v1f);
+//        System.out.println("v2f"+v2f);
+        boat1.addForce((Force) multiply(1,v1f));
+        boat2.addForce((Force) multiply(1,v2f));
 
     }
 

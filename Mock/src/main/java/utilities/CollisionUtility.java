@@ -90,9 +90,7 @@ public class CollisionUtility {
         Vector dp=subtract(x1,x2);
         Vector dv=subtract(v1,v2);
 
-        Force vf=(Force) subtract(v1,multiply(dot(dv,dp)/(dp.getMagnitude()*dp.getMagnitude()),dp));
-
-        return vf;
+        return (Force) subtract(v1,multiply(dot(dv,dp)/(dp.getMagnitude()*dp.getMagnitude()),dp));
 
     }
 }

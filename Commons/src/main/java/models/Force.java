@@ -67,14 +67,14 @@ public class Force implements Vector{
 
     public void setMagnitude(double magnitude) {
         this.magnitude = magnitude;
-        this.x=magnitude*sin(toRadians(y));
-        this.y=magnitude*cos(toRadians(y));
+        this.x=magnitude*sin(toRadians(direction));
+        this.y=magnitude*cos(toRadians(direction));
     }
 
     public void setDirection(double direction) {
         this.direction = capDirection(direction);
-        this.x=magnitude*sin(toRadians(y));
-        this.y=magnitude*cos(toRadians(y));
+        this.x=magnitude*sin(toRadians(this.direction));
+        this.y=magnitude*cos(toRadians(this.direction));
     }
 
 
@@ -110,5 +110,15 @@ public class Force implements Vector{
      */
     public void reduce(double amount){
         setMagnitude(getMagnitude()*amount);
+    }
+
+    /**
+     * rounds the force down to 0 if its small
+     */
+    public void round(){
+        if(getMagnitude()<0.01){
+            setX(0);
+            setY(0);
+        }
     }
 }

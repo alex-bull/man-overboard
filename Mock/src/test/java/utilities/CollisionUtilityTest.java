@@ -29,9 +29,27 @@ public class CollisionUtilityTest {
         x1=new MutablePoint(1.0,0.0);
         x2=new MutablePoint(0.0,0.0);
 
-
         assertEquals(10, calculateFinalVelocity(v1,v2,x1,x2).getXValue(),0.0000001);
         assertEquals(-10, calculateFinalVelocity(v2,v1,x2,x1).getXValue(),0.0000001);
+
+        v1=new Force(-10,0,true);
+        v2= new Force(-5, 0,true);
+        x1=new MutablePoint(1.0,0.0);
+        x2=new MutablePoint(0.0,0.0);
+
+        assertEquals(-5, calculateFinalVelocity(v1,v2,x1,x2).getXValue(),0.0000001);
+        assertEquals(0, calculateFinalVelocity(v1,v2,x1,x2).getYValue(),0.0000001);
+        assertEquals(-10, calculateFinalVelocity(v2,v1,x2,x1).getXValue(),0.0000001);
+
+        v1=new Force(0,0,true);
+        v2= new Force(1.539, 9.348,true);
+        x1=new MutablePoint(0.0007,-0.0002);
+        x2=new MutablePoint(0.0,0.0);
+
+        assertEquals(-5, calculateFinalVelocity(v1,v2,x1,x2).getXValue(),0.0000001);
+        assertEquals(0, calculateFinalVelocity(v1,v2,x1,x2).getYValue(),0.0000001);
+        assertEquals(-10, calculateFinalVelocity(v2,v1,x2,x1).getXValue(),0.0000001);
+
 
     }
 
