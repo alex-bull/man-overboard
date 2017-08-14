@@ -4,16 +4,15 @@ import javafx.scene.shape.Line;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.xml.race.RaceData;
-import parsers.xml.race.RaceXMLParser;
 import utilities.CollisionUtility;
 import utilities.PolarTable;
+import utility.BinaryPackager;
 import utility.Calculator;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static java.lang.Math.*;
 import static java.lang.Math.PI;
@@ -35,6 +34,7 @@ public class BoatUpdater {
     private List<MutablePoint> courseLineEquations;
     private CollisionUtility collisionUtility;
     private List<Competitor> finisherList = new ArrayList<>();
+    private BinaryPackager binaryPackager;
 
     /**
      * Boat updater constructor
@@ -246,18 +246,19 @@ public class BoatUpdater {
             }
         }
 
-        checkAllFinished();
     }
 
 
     /**
-     * Checks if all boats have finished the racing and sends the finishers
-     * list to the client if they have
+     * Checks if all boats have finished the racing
+     * @return true if all boats have finished racing
      */
-    private void checkAllFinished(){
+    boolean checkAllFinished(){
         if(finisherList.size() == competitors.size()){
             System.out.println("All boats finished");
+            return true;
         }
+        return false;
     }
 
 

@@ -59,6 +59,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private WindGenerator windGenerator;
     private int currentSourceID=100;
     private Random random;
+    private int raceStatus;
 
     private boolean flag=true;
     private Timer timer;
@@ -354,7 +355,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private void sendRaceStatus() throws IOException {
         short windDirection = windGenerator.getWindDirection();
         short windSpeed = windGenerator.getWindSpeed();
-        int raceStatus = 3;
+        if(boatUpdater.checkAllFinished()){
+            raceStatus = 4;
+        } else {
+            raceStatus = 3;
+        }
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed,competitors.size());
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         TCPserver.sendData(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));

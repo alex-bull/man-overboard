@@ -283,6 +283,8 @@ public class Interpreter implements DataSource, PacketHandler {
                         storedCompetitors.get(id).setCurrentLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
                         storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                     }
+
+
                 }
 
                 break;
