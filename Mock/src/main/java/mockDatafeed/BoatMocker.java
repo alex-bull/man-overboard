@@ -117,6 +117,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
     }
 
+    /**
+     * Send packet for yacht event
+     * @param sourceId source id of the boat
+     * @param eventId event id
+     */
     public void yachtEvent(int sourceId, int eventId) {
         try {
             sendYachtEvent(sourceId, eventId);
@@ -125,6 +130,25 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
     }
 
+    /**
+     * Send packet for health event
+     * @param sourceId source id of the boat
+     * @param health health of the boat
+     */
+    public void healthEvent(int sourceId, int health) {
+        try {
+            this.TCPserver.sendData(binaryPackager.packageHealthEvent(sourceId,  health));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Send packet for mark rounding
+     * @param sourceId source id of the boat
+     * @param compoundMarkId id of the mark
+     */
     public void markRoundingEvent(int sourceId, int compoundMarkId) {
         try {
             this.TCPserver.sendData(binaryPackager.packageMarkRounding(sourceId, (byte)1, compoundMarkId));
@@ -297,11 +321,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             }
         }
     }
-
-
-
-
-
 
 
 

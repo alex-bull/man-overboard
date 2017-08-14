@@ -6,4 +6,6 @@ package mockDatafeed;
 public interface BoatUpdateEventHandler {
     void yachtEvent(int sourceId, int eventId);
     void markRoundingEvent(int sourceId, int compoundMarkId);
+    void healthEvent(int sourceId, int health);
+
 }

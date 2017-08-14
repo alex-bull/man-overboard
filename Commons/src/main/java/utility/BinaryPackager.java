@@ -451,6 +451,32 @@ public class BinaryPackager {
     }
 
 
+
+    /**
+     * package health event
+     * @param sourceID the sourceID of the Boat in the event
+     * @param health the health
+     * @return the packet generated
+     */
+    public byte[] packageHealthEvent(int sourceID, int health){
+        byte[] packet=new byte[40];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 97;
+        short bodyLength = 8;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.putInt(sourceID);
+        packetBuffer.putInt(health);
+
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+
+
+
 }
 
 

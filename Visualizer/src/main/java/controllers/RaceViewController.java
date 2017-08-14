@@ -293,7 +293,7 @@ public class RaceViewController implements Initializable, TableObserver {
         double tombstoneSize = 35;
         double maxBarLength = boat.getMaxHealth(); // was 30
         double sourceId = boat.getSourceID();
-        double healthLevel = boat.getHealthLevel();
+        int healthLevel = boat.getHealthLevel();
 
         if(this.zoom) {
             offset = offset * 2;
@@ -1274,7 +1274,6 @@ public class RaceViewController implements Initializable, TableObserver {
             drawCollision(boat.getPosition().getXValue(), boat.getPosition().getYValue());
             mapEngine.executeScript(String.format("create_collision(%.9f,%.9f)",boat.getLatitude(),boat.getLongitude()));
             dataSource.removeCollsions(sourceID);
-            boat.updateHealth(-5);
         }
 
     }

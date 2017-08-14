@@ -13,7 +13,8 @@ public enum MessageType {
     BOAT_ACTION(100),
     COURSE_WIND(44),
     SOURCE_ID(56),
-    YACHT_ACTION(29);
+    YACHT_ACTION(29),
+    BOAT_HEALTH(97);
 
     private final int value;
 

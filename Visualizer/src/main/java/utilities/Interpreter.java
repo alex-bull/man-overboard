@@ -16,6 +16,7 @@ import parsers.RaceStatusEnum;
 import parsers.XmlSubtype;
 import parsers.boatAction.BoatAction;
 import parsers.boatAction.BoatActionParser;
+import parsers.boatHealth.HealthEventParser;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
 import parsers.header.HeaderData;
@@ -325,7 +326,6 @@ public class Interpreter implements DataSource, PacketHandler {
                     markRoundingBoat.setLastMarkPassed(markName);
                     markRoundingBoat.setTimeAtLastMark(roundingTime);
                     System.out.println("Boat " + markRoundingData.getSourceID() + " rounded a mark");
-                    markRoundingBoat.updateHealth(5);
 
                 }
                 break;
@@ -380,6 +380,12 @@ public class Interpreter implements DataSource, PacketHandler {
                         break;
                 }
                 break;
+            case BOAT_HEALTH:
+                HealthEventParser healthEventParser = new HealthEventParser(packet);
+                Competitor boat = this.storedCompetitors.get(healthEventParser.getSourceId());
+                boat.setHealthLevel(healthEventParser.getHealth());
+                System.out.println("read health");
+
             default:
                 break;
         }

@@ -72,15 +72,15 @@ public interface Competitor {
 
     void changeHeading(boolean upwind, double angle);
 
-    double getHealthLevel();
+    int getHealthLevel();
 
-    void updateHealth(double damageThreshold);
+    void updateHealth(int damageThreshold);
 
-    double getMaxHealth();
+    int getMaxHealth();
 
-    void setMaxHealth(double health);
+    void setMaxHealth(int health);
 
-    void setHealthLevel(double health);
+    void setHealthLevel(int health);
 
 
 

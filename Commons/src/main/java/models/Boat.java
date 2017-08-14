@@ -39,8 +39,8 @@ public class Boat implements Competitor {
     private double blownFactor = 0.01;
 //    external forces on the boat
     private List<RepelForce> forces;
-    private double healthLevel = 30;
-    private double maxHealth = 30;
+    private int healthLevel = 30;
+    private int maxHealth = 30;
 
     public MutablePoint getPosition17() {
         return position17;
@@ -123,28 +123,28 @@ public class Boat implements Competitor {
         this.roundingLine2 = roundingLine2;
     }
 
-    public void setMaxHealth(double health){
+    public void setMaxHealth(int health){
         this.maxHealth = health;
     }
 
-    public void setHealthLevel(double health){
+    public void setHealthLevel(int health){
         this.healthLevel = health;
     }
 
-    public double getMaxHealth() {
+    public int getMaxHealth() {
         return maxHealth;
     }
 
-    public double getHealthLevel() {
+    public int getHealthLevel() {
         return healthLevel;
     }
 
     /**
      * Decreases the boat health when they collide
-     * @param damage double the amount of damage the boat takes
+     * @param damage int the amount of damage the boat takes
      */
-    public void updateHealth(double damage) {
-        double resultHealth = healthLevel + damage;
+    public void updateHealth(int damage) {
+        int resultHealth = healthLevel + damage;
 
         if(resultHealth > maxHealth) {
            this.healthLevel = maxHealth;

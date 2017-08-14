@@ -61,15 +61,18 @@ public class BoatUpdater {
     /**
      * Calculates if the boat collides with the course boundary, if so then pushes back the boat.
      * @param boat Competitor the boat to check collisions for
+     * @return boolean if the boat has collided
      */
 
-    private void handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
+    private boolean handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
         double collisionRadius = 50;
+        boolean collision = false;
         for (MutablePoint point: courseBoundary) {
             double distance = raceCourse.distanceBetweenGPSPoints(boat.getPosition(), point);
             if (distance <= collisionRadius) {
                 handler.yachtEvent(boat.getSourceID(), 1);
                 boat.updatePosition(-10);
+                collision = true;
                 break;
             }
         }
@@ -80,9 +83,11 @@ public class BoatUpdater {
             if ((abs(distance) < 0.0001) && collisionUtility.isWithinBoundaryLines(boat.getPosition(), index)) {
                 handler.yachtEvent(boat.getSourceID(), 1);
                 boat.updatePosition(-10);
+                collision = true;
                 break;
             }
         }
+        return collision;
     }
 
 
@@ -107,9 +112,15 @@ public class BoatUpdater {
                 boat.setVelocity(0);
             }
 
-            this.handleCourseCollisions(boat);
-            this.handleBoatCollisions(boat);
-            this.handleBoundaryCollisions(boat);
+            boolean courseCollision = this.handleCourseCollisions(boat);
+            boolean boatCollision = this.handleBoatCollisions(boat);
+            boolean boundaryCollision =this.handleBoundaryCollisions(boat);
+
+            if(courseCollision || boatCollision || boundaryCollision) {
+                boat.updateHealth(-5);
+                handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
+
+            }
 
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
@@ -160,6 +171,9 @@ public class BoatUpdater {
             if (didCrossLine(boat, mark.getRoundingLine2())) {
                 boat.finishedRounding();
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
+                boat.updateHealth(5);
+                handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
+
             }
         } else {
             //Check for rounding a line down from the mark
@@ -180,12 +194,14 @@ public class BoatUpdater {
 
         Competitor mark1 = markBoats.get(markIds.get(0));
         Competitor mark2 = markBoats.get(markIds.get(1));
-
         if (boat.isRounding()) { //has already passed between the marks
 
             if (didCrossLine(boat, mark1.getRoundingLine2()) || didCrossLine(boat, mark2.getRoundingLine2())) {
                 boat.finishedRounding();
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
+                boat.updateHealth(5);
+                handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
+
             }
         } else {
 
@@ -298,8 +314,9 @@ public class BoatUpdater {
     /**
      * Calculates if the boat collides with any course features and adjusts the boats position
      * @param boat Competitor the boat to check collisions for
+     * @return boolean true if the boat has collided
      */
-    private void handleCourseCollisions(Competitor boat) throws IOException, InterruptedException {
+    private boolean handleCourseCollisions(Competitor boat) throws IOException, InterruptedException {
 
         final double collisionRadius = 55; //Large for testing
 
@@ -311,9 +328,10 @@ public class BoatUpdater {
 //                send a collision packet
                 handler.yachtEvent(boat.getSourceID(),1);
                 boat.updatePosition(-10);
-                break;
+                return true;
             }
         }
+        return false;
     }
 
 
@@ -360,11 +378,12 @@ public class BoatUpdater {
     /**
      * Calculates if the boat collides with any other boat and adjusts the position of both boats accordingly.
      * @param boat Competitor, the boat to check collisions for
+     * @return boolean true if the boat has collided
      */
-    private void handleBoatCollisions(Competitor boat) throws IOException, InterruptedException {
+    private boolean handleBoatCollisions(Competitor boat) throws IOException, InterruptedException {
 
         final double collisionRadius = 35; //Large for testing
-
+        boolean collided = false;
         //Can bump back a fixed amount or try to simulate a real collision.
         for (Competitor comp: this.competitors.values()) {
 
@@ -376,11 +395,12 @@ public class BoatUpdater {
 
 //                send a collision packet
                 handler.yachtEvent(comp.getSourceID(),1);
-
+                collided = true;
 //                calculateCollisions(comp,boat);
                 boat.updatePosition(-10);
                 comp.updatePosition(-10);
             }
         }
+        return collided;
     }
 }
