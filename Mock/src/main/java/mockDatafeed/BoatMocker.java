@@ -373,8 +373,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 //        boat1.setCurrentHeading(v1f.getDirection());
 //        boat2.setCurrentHeading(v2f.getDirection());
 
-//        boat1.updatePosition(-10);
-//        boat2.updatePosition(-10);
+        boat1.updatePosition(-10);
+        boat2.updatePosition(-10);
         //momentum
 //        System.out.println("v1"+v1);
 //        System.out.println("v2"+v2);
@@ -382,8 +382,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 //        System.out.println("p2"+p2);
 //        System.out.println("v1f"+v1f);
 //        System.out.println("v2f"+v2f);
-        boat1.addForce((Force) multiply(1,v1f));
-        boat2.addForce((Force) multiply(1,v2f));
+        boat1.addForce((Force) multiply(5,v1f));
+        boat2.addForce((Force) multiply(5,v2f));
 
     }
 

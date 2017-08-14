@@ -276,7 +276,7 @@ public class Boat implements Competitor {
         for(Force force:new ArrayList<>(externalForces)){
             p=moveBoat(force,p,elapsedTime);
             //reduce the external force
-            force.reduce(0.5);
+            force.reduce(0.95);
             if(force.getMagnitude()<0.1){
                 externalForces.remove(force);
             }
