@@ -241,7 +241,6 @@ public class RaceViewController implements Initializable, TableObserver {
             }
         }
 
-
     }
 
     /**
@@ -358,25 +357,20 @@ public class RaceViewController implements Initializable, TableObserver {
             // rip boat
 
             if(boat.getStatus() != DSQ) {
-                System.out.println("enter DSQ loop");
+                System.out.println("enter DSQ loop for boat: " + boat.getSourceID());
+                boat.setStatus(DSQ);
                 ripImage.setVisible(true);
                 BinaryPackager binaryPackager = new BinaryPackager();
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
-                boat.setStatus(DSQ);
 
                 sailLine.setVisible(false);
                 healthBars.get(sourceId).setVisible(false);
                 healthBarBackgrounds.get(sourceId).setVisible(false);
                 boatModels.get((int) sourceId).setVisible(false);
                 playerMarker.setVisible(false);
-
-                this.nameAnnotations.get((int) sourceId).setText("--");
-                this.speedAnnotations.get((int) sourceId).setText("--");
-                this.timeFromMarkAnnotations.get((int) sourceId).setText("--");
-                this.timeToMarkAnnotations.get((int) sourceId).setText("--");
-
                 this.raceViewPane.getChildren().remove(guideArrow);
             }
+
             if(isZoom()){
                 tombstoneSize *= 2;
             }
@@ -673,7 +667,13 @@ public class RaceViewController implements Initializable, TableObserver {
                     }
                     break;
 
+
             }
+
+            if(boat.getStatus() == DSQ) {
+                label.setText("");
+            }
+
             label.setVisible(checkBox.isSelected());
             label.setLayoutX(point.getXValue() + 5);
             label.setLayoutY(point.getYValue()+ offset);
@@ -1246,6 +1246,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawBoat(boat);
             this.drawHealthBar(boat);
             this.moveAnnotations(boat);
+
             if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
             if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
 
