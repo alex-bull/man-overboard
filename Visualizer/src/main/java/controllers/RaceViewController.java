@@ -289,7 +289,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
         double strokeWidth = 5;
         double offset = 20;
-        double tombstoneSize = 35;
+        double tombstoneSize = 30;
         double maxBarLength = boat.getMaxHealth(); // was 30
         double sourceId = boat.getSourceID();
         int healthLevel = boat.getHealthLevel();
@@ -366,12 +366,13 @@ public class RaceViewController implements Initializable, TableObserver {
                 if(dataSource.getSourceID() == boat.getSourceID()){
                     sailLine.setVisible(false);
                     playerMarker.setVisible(false);
+                    this.raceViewPane.getChildren().remove(guideArrow);
+
                 }
 
                 healthBars.get(sourceId).setVisible(false);
                 healthBarBackgrounds.get(sourceId).setVisible(false);
                 boatModels.get((int) sourceId).setVisible(false);
-                this.raceViewPane.getChildren().remove(guideArrow);
             }
 
             if(isZoom()){
@@ -785,7 +786,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.raceViewPane.getChildren().add(boatModel);
 
             ImageView ripImage = new ImageView();
-            Image tombstone = new Image("/tombstone.png");
+            Image tombstone = new Image("/cross.png");
             ripImage.setImage(tombstone);
             ripImage.setPreserveRatio(true);
             ripImage.setVisible(false);
