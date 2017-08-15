@@ -27,6 +27,7 @@ import static mockDatafeed.Keys.SAILS;
 import static parsers.MessageType.UNKNOWN;
 
 import static utilities.CollisionUtility.calculateFinalVelocity;
+import static utilities.CollisionUtility.isPointInPolygon;
 import static utilities.Utility.fileToString;
 import static utility.Calculator.*;
 import static utility.Projection.mercatorProjection;
@@ -36,6 +37,7 @@ import static utility.Projection.mercatorProjection;
  * Boat mocker
  */
 public class BoatMocker extends TimerTask implements ConnectionClient {
+
     private HashMap<Integer, Competitor> competitors;
     private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
@@ -85,8 +87,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         generateCourse();
         generateCompetitors();
         generateWind();
-        collisionUtility.setCourseInformation();
-        courseLineEquations = collisionUtility.getCourseLineEquations();
+//        collisionUtility.setCourseInformation();
+//        courseLineEquations = collisionUtility.getCourseLineEquations();
 
         //send all xml data first
         sendAllXML();
@@ -94,6 +96,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         timer.schedule(this,0,16);
 
     }
+
 
     /**
      * initializes the boats
@@ -112,6 +115,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         }
     }
 
+
     /**
      * Sends the boat action data to the Visualiser
      * @param action action of the boat
@@ -124,6 +128,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Handle data coming in from controllers
@@ -164,6 +169,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
                 break;
         }
     }
+
 
     /**
      * Get the wind direction in degrees
@@ -218,7 +224,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         RaceCourse course = new RaceCourse(cl.parseCourse(), false);
         courseFeatures = course.getPoints();
         courseBoundary = cl.parseCourseBoundary();
-        collisionUtility.setCourseBoundary(courseBoundary);
+//        collisionUtility.setCourseBoundary(courseBoundary);
     }
 
     /**
@@ -336,25 +342,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
      */
 
     private void handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
-        double collisionRadius = boat.getCollisionRadius();
-        for (MutablePoint point: courseBoundary) {
-            double distance = raceCourse.distanceBetweenGPSPoints(boat.getPosition(), point);
-            if (distance <= collisionRadius) {
-                sendYachtEvent(boat.getSourceID(), 1);
-                boat.updatePosition(-10);
-                break;
-            }
-        }
-        for (MutablePoint equation: courseLineEquations ) {
-            int index = courseLineEquations.indexOf(equation);
-            //distance = y - (mx + c)
-            double distance = boat.getPosition().getYValue() - (equation.getXValue() * boat.getPosition().getXValue() + equation.getYValue());
-            if ((abs(distance) < 0.0001) && collisionUtility.isWithinBoundaryLines(boat.getPosition(), index)) {
-                //TODO: Add health reduction here later
-                sendYachtEvent(boat.getSourceID(), 1);
-                boat.updatePosition(-10);
-                break;
-            }
+
+        if(!isPointInPolygon(boat.getPosition(),courseBoundary)){
+            boat.updatePosition(-10);
         }
     }
 
@@ -375,34 +365,17 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         v2.round();
         Force v1f=calculateFinalVelocity(v1,v2,p1,p2);
         Force v2f=calculateFinalVelocity(v2,v1,p2,p1);
-//        boat1.setCurrentHeading(v1f.getDirection());
-//        boat2.setCurrentHeading(v2f.getDirection());
 
         boat1.updatePosition(-10);
         boat2.updatePosition(-10);
         //momentum
-//        System.out.println("v1"+v1);
-//        System.out.println("v2"+v2);
-//        System.out.println("p1"+p1);
-//        System.out.println("p2"+p2);
-//        System.out.println("v1f"+v1f);
-//        System.out.println("v2f"+v2f);
+
         boat1.addForce((Force) multiply(5,v1f));
         boat2.addForce((Force) multiply(5,v2f));
 
     }
 
-//    private double calculateVx(double v2, double angle2, double contactAngle, double v1, double angle1){
-//        angle1=toRadians(angle1);
-//        angle2=toRadians(angle2);
-//        return v2*cos(angle2-contactAngle)*cos(contactAngle)+v1*sin(angle1-contactAngle)*cos(contactAngle+PI/2);
-//    }
-//
-//    private double calculateVy(double v2, double angle2, double contactAngle, double v1, double angle1){
-//        angle1=toRadians(angle1);
-//        angle2=toRadians(angle2);
-//        return v2*cos(angle2-contactAngle)*sin(contactAngle)+v1*sin(angle1-contactAngle)*sin(contactAngle+PI/2);
-//    }
+
 
     /**
      * Calculates if the boat collides with any other boat and adjusts the position of both boats accordingly.
