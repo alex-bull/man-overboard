@@ -58,6 +58,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
 
 
     public BoatMocker() throws IOException , JDOMException {
+
         timer =new Timer();
         random=new Random();
         collisionUtility = new CollisionUtility();
@@ -66,9 +67,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
         int connectionTime = 10000;
         competitors = new HashMap<>();
         TCPserver = new TCPServer(4941,this);
+
         binaryPackager = new BinaryPackager();
+
+
         //establishes the connection with Visualizer
         TCPserver.establishConnection(connectionTime);
+
 
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
@@ -414,9 +419,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
             double distance = raceCourse.distanceBetweenGPSPoints(comp.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
-
 //                send a collision packet
                 sendYachtEvent(comp.getSourceID(),1);
+                sendYachtEvent(boat.getSourceID(),1);
 
                 calculateCollisions(comp,boat);
 //                boat.updatePosition(-10);

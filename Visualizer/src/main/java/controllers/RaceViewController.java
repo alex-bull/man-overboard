@@ -1034,7 +1034,9 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void checkCollision(){
         for(int sourceID:new HashSet<>(dataSource.getCollisions())){
-//            drawCollision(boatPositionX,boatPositionY);
+            MutablePoint point=setRelativePosition(dataSource.getStoredCompetitors().get(sourceID));
+
+            drawCollision(point.getXValue(),point.getYValue());
 //            Competitor boat=dataSource.getStoredCompetitors().get(sourceID);
 //            mapEngine.executeScript(String.format("create_collision(%.9f,%.9f)",boat.getLatitude(),boat.getLongitude()));
             dataSource.removeCollsions(sourceID);
@@ -1048,7 +1050,11 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param centerY the y coordinate of the collision
      */
     public void drawCollision(double centerX,double centerY){
-        CollisionRipple ripple = new CollisionRipple(centerX, centerY, 100);
+        int radius=20;
+        if(isZoom()){
+            radius*=2;
+        }
+        CollisionRipple ripple = new CollisionRipple(centerX, centerY,radius );
         raceViewPane.getChildren().add(ripple);
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
     }
