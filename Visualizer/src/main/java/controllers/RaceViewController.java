@@ -326,9 +326,6 @@ public class RaceViewController implements Initializable, TableObserver {
                 healthBar.setStartY(boatY - offset);
                 healthBar.setEndX(boatX + boat.getHealthLevel());
                 healthBar.setEndY(boatY - offset); // boat.getHealthLength
-                //        LinearGradient colourGradient = new LinearGradient(healthBar.getStartX(), healthBar.getStartY(),
-//                healthBar.getEndX(), healthBar.getEndY(), false, CycleMethod.NO_CYCLE, new Stop(0, Color.RED), new Stop(1, Color.GREEN));
-
                 healthBar.setStroke(healthColour);
                 healthBar.toFront();
                 raceViewPane.getChildren().add(healthBar);
@@ -344,7 +341,6 @@ public class RaceViewController implements Initializable, TableObserver {
             healthBarBackground.setStroke(Color.WHITE);
 
 
-//            double newLength = boat.getVelocity() * 2;
             Line healthBar = healthBars.get(sourceId);
             healthBar.setStrokeWidth(strokeWidth);
             healthBar.setStartX(boatX);
@@ -359,11 +355,10 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         else {
             ImageView ripImage = ripImages.get((int) sourceId);
-            System.out.println("boat died");
             // rip boat
 
             if(boat.getStatus() != DSQ) {
-                System.out.println("ripImage set");
+                System.out.println("enter DSQ loop");
                 ripImage.setVisible(true);
                 BinaryPackager binaryPackager = new BinaryPackager();
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
@@ -373,9 +368,8 @@ public class RaceViewController implements Initializable, TableObserver {
                 healthBars.get(sourceId).setVisible(false);
                 healthBarBackgrounds.get(sourceId).setVisible(false);
                 boatModels.get((int) sourceId).setVisible(false);
-
-//            boatModels.get((int)sourceId).setFill(Color.WHITE);
                 playerMarker.setVisible(false);
+
                 this.nameAnnotations.get((int) sourceId).setText("--");
                 this.speedAnnotations.get((int) sourceId).setText("--");
                 this.timeFromMarkAnnotations.get((int) sourceId).setText("--");
@@ -390,10 +384,6 @@ public class RaceViewController implements Initializable, TableObserver {
             ripImage.setY(boatY);
             ripImage.setFitHeight(tombstoneSize);
             ripImage.setFitHeight(tombstoneSize);
-
-
-
-
 
 
         }

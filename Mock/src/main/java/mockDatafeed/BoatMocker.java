@@ -203,9 +203,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                         break;
                     case RIP:
                         competitors.get(sourceID).setStatus(DSQ);
-                        competitors.get(sourceID).setVelocity(0);
                         sendBoatAction(RIP.getValue(), sourceID);
-                        competitors.get(sourceID).switchSails();
                         break;
                     case TACK:
                         double windAngle = shortToDegrees(windGenerator.getWindDirection());

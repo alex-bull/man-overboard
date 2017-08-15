@@ -16,6 +16,7 @@ import java.util.Map;
 import static java.lang.Math.*;
 import static java.lang.Math.PI;
 import static java.lang.Math.sin;
+import static parsers.BoatStatusEnum.DSQ;
 import static utility.Calculator.shortToDegrees;
 
 /**
@@ -94,6 +95,9 @@ public class BoatUpdater {
 
     /**
      * updates the position of all the boats given the boats speed and heading
+     * @param windGenerator WindGenerator
+     * @throws IOException IOException
+     * @throws InterruptedException InterruptedException
      */
     void updatePosition(WindGenerator windGenerator) throws IOException, InterruptedException {
 
@@ -105,12 +109,14 @@ public class BoatUpdater {
                 twa = 180 - (twa - 180); // interpolator only goes up to 180
             }
             double speed = polarTable.getSpeed(twa);
-            if (boat.hasSailsOut()) {
-                boat.setVelocity(speed * 3);
-                boat.updatePosition(0.1);
-            } else {
-                boat.setVelocity(0);
-            }
+            if(boat.getStatus() != DSQ) {
+                if (boat.hasSailsOut()) {
+                    boat.setVelocity(speed * 3);
+                    boat.updatePosition(0.1);
+                } else {
+                    boat.setVelocity(0);
+                }
+            } else boat.setVelocity(0);
 
             boolean courseCollision = this.handleCourseCollisions(boat);
             boolean boatCollision = this.handleBoatCollisions(boat);
@@ -119,7 +125,6 @@ public class BoatUpdater {
             if(courseCollision || boatCollision || boundaryCollision) {
                 boat.updateHealth(-5);
                 handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
-
             }
 
 //            boat.blownByWind(twa);

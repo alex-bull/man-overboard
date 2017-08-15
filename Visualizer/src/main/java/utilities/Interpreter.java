@@ -11,6 +11,7 @@ import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
 import org.jdom2.JDOMException;
+import parsers.BoatStatusEnum;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
 import parsers.XmlSubtype;
@@ -40,6 +41,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
+import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
 import static utility.Calculator.calculateExpectedTack;
@@ -362,6 +364,11 @@ public class Interpreter implements DataSource, PacketHandler {
                         boat.setCurrentHeading(calculateExpectedTack(this.windDirection, boatHeading));
                     }
 
+                    if(boatAction.equals(BoatAction.RIP) && headerDataSourceID == this.sourceID){
+                        Competitor boat = this.storedCompetitors.get(this.sourceID);
+                        boat.setStatus(DSQ);
+                    }
+
                 }
                 break;
             case SOURCE_ID:
@@ -384,7 +391,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 HealthEventParser healthEventParser = new HealthEventParser(packet);
                 Competitor boat = this.storedCompetitors.get(healthEventParser.getSourceId());
                 boat.setHealthLevel(healthEventParser.getHealth());
-                System.out.println("read health");
 
             default:
                 break;

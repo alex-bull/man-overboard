@@ -10,6 +10,7 @@ public enum BoatAction {
     TACK_GYBE(4),
     UPWIND(5),
     DOWNWIND(6),
+    RIP(0),
     NULL(7);
 
     private final int value;
