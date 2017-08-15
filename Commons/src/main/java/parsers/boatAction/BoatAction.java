@@ -22,6 +22,11 @@ public enum BoatAction {
         return value;
     }
 
+    /**
+     * Returns the corresponding boat action enum given an id
+     * @param id the boat action number
+     * @return BoatAction the boat action
+     */
     public static BoatAction getBoatAction(int id) {
 
         BoatAction action = null;

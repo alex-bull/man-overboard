@@ -290,7 +290,7 @@ public class RaceViewController implements Initializable, TableObserver {
         double strokeWidth = 5;
         double offset = 20;
         double tombstoneSize = 30;
-        double maxBarLength = boat.getMaxHealth(); // was 30
+        double maxBarLength = boat.getMaxHealth();
         double sourceId = boat.getSourceID();
         int healthLevel = boat.getHealthLevel();
 
@@ -299,6 +299,7 @@ public class RaceViewController implements Initializable, TableObserver {
             strokeWidth *= 2;
             healthLevel *= 2;
             maxBarLength *= 2;
+            tombstoneSize *= 2;
             boatX = getBoatLocation(boat).getXValue();
             boatY = getBoatLocation(boat).getYValue();
         }
@@ -307,26 +308,10 @@ public class RaceViewController implements Initializable, TableObserver {
             if (healthBars.get(sourceId) == null) {
 
                 Line healthBarBackground = new Line();
-
-                healthBarBackground.setStrokeWidth(strokeWidth);
-                healthBarBackground.setStartX(boatX);
-                healthBarBackground.setStartY(boatY - offset);
-                healthBarBackground.setEndX(boatX+ maxBarLength);
-                healthBarBackground.setEndY(boatY - offset);
-                healthBarBackground.setStroke(Color.WHITE);
-
                 raceViewPane.getChildren().add(healthBarBackground);
                 this.healthBarBackgrounds.put(sourceId, healthBarBackground);
 
                 Line healthBar = new Line();
-
-                healthBar.setStrokeWidth(strokeWidth);
-                healthBar.setStartX(boatX);
-                healthBar.setStartY(boatY - offset);
-                healthBar.setEndX(boatX + boat.getHealthLevel());
-                healthBar.setEndY(boatY - offset); // boat.getHealthLength
-                healthBar.setStroke(healthColour);
-                healthBar.toFront();
                 raceViewPane.getChildren().add(healthBar);
                 this.healthBars.put(sourceId, healthBar);
             }
@@ -338,7 +323,6 @@ public class RaceViewController implements Initializable, TableObserver {
             healthBarBackground.setEndX(boatX + maxBarLength);
             healthBarBackground.setEndY(boatY - offset);
             healthBarBackground.setStroke(Color.WHITE);
-
 
             Line healthBar = healthBars.get(sourceId);
             healthBar.setStrokeWidth(strokeWidth);
@@ -354,7 +338,6 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         else {
             ImageView ripImage = ripImages.get((int) sourceId);
-            // rip boat
 
             if(boat.getStatus() != DSQ) {
                 boat.setStatus(DSQ);
@@ -362,12 +345,10 @@ public class RaceViewController implements Initializable, TableObserver {
                 BinaryPackager binaryPackager = new BinaryPackager();
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
 
-
                 if(dataSource.getSourceID() == boat.getSourceID()){
                     sailLine.setVisible(false);
                     playerMarker.setVisible(false);
                     this.raceViewPane.getChildren().remove(guideArrow);
-
                 }
 
                 healthBars.get(sourceId).setVisible(false);
@@ -375,17 +356,12 @@ public class RaceViewController implements Initializable, TableObserver {
                 boatModels.get((int) sourceId).setVisible(false);
             }
 
-            if(isZoom()){
-                tombstoneSize *= 2;
-            }
             ripImage.setX(boatX);
             ripImage.setY(boatY);
             ripImage.setFitHeight(tombstoneSize);
             ripImage.setFitHeight(tombstoneSize);
 
-
         }
-
     }
 
 
