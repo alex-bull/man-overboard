@@ -1,12 +1,10 @@
 package controllers;
 
+import Animations.CollisionRipple;
+import Animations.RandomShake;
 import com.rits.cloning.Cloner;
 import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.concurrent.Worker;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
@@ -32,7 +30,6 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import models.Competitor;
 import models.CourseFeature;
@@ -76,6 +73,7 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Text status;
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
+    @FXML private Pane raceParentPane;
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Shape playerMarker;
@@ -1063,54 +1061,12 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         CollisionRipple ripple = new CollisionRipple(centerX, centerY,radius );
         raceViewPane.getChildren().add(ripple);
+        new RandomShake(raceParentPane).animate();
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
-        shakeStage();
+
     }
 
 
-    boolean x = true;
-    boolean y = true;
-
-    @FXML private Pane racePanePane;
-
-
-    public void shakeStage() {
-        Pane primaryStage = racePanePane;
-        Timeline timelineX = new Timeline(new KeyFrame(Duration.seconds(0.1), t -> {
-            int val = new Random().nextInt(10);
-            if (x) {
-                primaryStage.setLayoutX(val);
-            } else {
-                primaryStage.setLayoutX(val);
-            }
-            x = !x;
-        }));
-
-        timelineX.setCycleCount(4);
-        timelineX.setAutoReverse(false);
-        timelineX.play();
-
-
-        Timeline timelineY = new Timeline(new KeyFrame(Duration.seconds(0.1), new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                int val = new Random().nextInt(10);
-                if (y) {
-                    primaryStage.setLayoutY(val);
-                } else {
-                    primaryStage.setLayoutY(val);
-                }
-                y = !y;
-            }
-        }));
-
-        timelineY.setCycleCount(4);
-        timelineY.setAutoReverse(false);
-        timelineY.play();
-
-        primaryStage.setLayoutX(0.0);
-        primaryStage.setLayoutY(0.0);
-    }
 
     /**
      * Refreshes the contents of the display to match the datasource
