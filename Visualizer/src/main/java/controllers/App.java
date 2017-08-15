@@ -17,6 +17,12 @@ App extends Application {
     }
 
 
+    private static Stage pStage;
+
+    public static Stage getPrimaryStage() {
+        return pStage;
+    }
+
     /**
      * Starts the app
      *
