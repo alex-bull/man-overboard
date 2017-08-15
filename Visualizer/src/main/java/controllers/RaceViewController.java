@@ -357,17 +357,20 @@ public class RaceViewController implements Initializable, TableObserver {
             // rip boat
 
             if(boat.getStatus() != DSQ) {
-                System.out.println("enter DSQ loop for boat: " + boat.getSourceID());
                 boat.setStatus(DSQ);
                 ripImage.setVisible(true);
                 BinaryPackager binaryPackager = new BinaryPackager();
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
 
-                sailLine.setVisible(false);
+
+                if(dataSource.getSourceID() == boat.getSourceID()){
+                    sailLine.setVisible(false);
+                    playerMarker.setVisible(false);
+                }
+
                 healthBars.get(sourceId).setVisible(false);
                 healthBarBackgrounds.get(sourceId).setVisible(false);
                 boatModels.get((int) sourceId).setVisible(false);
-                playerMarker.setVisible(false);
                 this.raceViewPane.getChildren().remove(guideArrow);
             }
 
