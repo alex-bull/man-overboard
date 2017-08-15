@@ -363,6 +363,11 @@ public class Interpreter implements DataSource, PacketHandler {
                         double boatHeading = boat.getCurrentHeading();
                         boat.setCurrentHeading(calculateExpectedTack(this.windDirection, boatHeading));
                     }
+                    if (boatAction.equals(BoatAction.RIP) && headerDataSourceID == this.sourceID) {
+                        Competitor boat = this.storedCompetitors.get(this.sourceID);
+                        boat.setStatus(DSQ);
+                    }
+
 
                 }
 
