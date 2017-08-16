@@ -894,7 +894,6 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param actionEvent
      */
     public void toggleControls(ActionEvent actionEvent) {
-        //TODO: NEED TO CENTER CONTROL LAYOUT
         if (!raceViewPane.getChildren().contains(controlsBox)){
             controlsBox.getChildren().add(controlsView);
             raceViewPane.getChildren().add(controlsBox);
