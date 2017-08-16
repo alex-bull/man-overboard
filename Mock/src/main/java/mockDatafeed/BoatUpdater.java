@@ -66,7 +66,7 @@ public class BoatUpdater {
      */
 
     private boolean handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
-        double collisionRadius = 50;
+        double collisionRadius = 100;
         boolean collision = false;
         for (MutablePoint point: courseBoundary) {
             double distance = raceCourse.distanceBetweenGPSPoints(boat.getPosition(), point);
@@ -81,7 +81,7 @@ public class BoatUpdater {
             int index = courseLineEquations.indexOf(equation);
             //distance = y - (mx + c)
             double distance = boat.getPosition().getYValue() - (equation.getXValue() * boat.getPosition().getXValue() + equation.getYValue());
-            if ((abs(distance) < 0.0001) && collisionUtility.isWithinBoundaryLines(boat.getPosition(), index)) {
+            if ((abs(distance) < 0.001) && collisionUtility.isWithinBoundaryLines(boat.getPosition(), index)) {
                 handler.yachtEvent(boat.getSourceID(), 1);
                 boat.updatePosition(-10);
                 collision = true;
@@ -111,7 +111,7 @@ public class BoatUpdater {
             double speed = polarTable.getSpeed(twa);
             if(boat.getStatus() != DSQ) {
                 if (boat.hasSailsOut()) {
-                    boat.setVelocity(speed * 3);
+                    boat.setVelocity(speed * 8);
                     boat.updatePosition(0.1);
                 } else {
                     boat.setVelocity(0);
@@ -323,7 +323,7 @@ public class BoatUpdater {
      */
     private boolean handleCourseCollisions(Competitor boat) throws IOException, InterruptedException {
 
-        final double collisionRadius = 55; //Large for testing
+        final double collisionRadius = 100; //Large for testing
 
         for (Integer id: markBoats.keySet()) {
             Competitor mark = markBoats.get(id);
