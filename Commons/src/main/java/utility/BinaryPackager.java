@@ -2,6 +2,7 @@ package utility;
 
 
 import models.Competitor;
+import parsers.BoatStatusEnum;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -317,7 +318,7 @@ public class BinaryPackager {
         for (Integer sourceId : competitors.keySet()) {
             Competitor competitor = competitors.get(sourceId);
             packetBuffer.putInt(competitor.getSourceID()); //SourceID
-            packetBuffer.put((byte) competitor.getStatus());//Boat Status
+            packetBuffer.put((byte) BoatStatusEnum.boatStatusToInt(competitor.getStatus()));//Boat Status
             packetBuffer.put((byte) competitor.getCurrentLegIndex()); //Leg Number
             packetBuffer.put((byte) 0);//penalties awarded, not important so far
             packetBuffer.put((byte) 0);//penalties served, not important so far
@@ -352,8 +353,8 @@ public class BinaryPackager {
 
     /**
      * package a source id
-     * @param sourceID
-     * @return
+     * @param sourceID sourceId
+     * @return byte[] a byte array
      */
     public byte[] packageSourceID(int sourceID){
         byte[] packet=new byte[23];
@@ -410,7 +411,7 @@ public class BinaryPackager {
     /**
      * Packages a mark rounding message
      * @param sourceID Integer, The source Id of the boat
-     * @param roundingSide Short, The side of the mark rounded: 0=>unknown, 1=>port, 2=>starboard
+     * @param roundingSide Short, The side of the mark rounded: 0 is unknown, 1 is port, 2 is starboard
      * @param markID Integer, the compoundMarkId of the mark rounded
      * @return byte[] the packet
      */
@@ -448,6 +449,32 @@ public class BinaryPackager {
 
         return packet;
     }
+
+
+
+    /**
+     * package health event
+     * @param sourceID the sourceID of the Boat in the event
+     * @param health the health
+     * @return the packet generated
+     */
+    public byte[] packageHealthEvent(int sourceID, int health){
+        byte[] packet=new byte[40];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 97;
+        short bodyLength = 8;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.putInt(sourceID);
+        packetBuffer.putInt(health);
+
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+
 
 
 }

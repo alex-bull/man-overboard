@@ -25,10 +25,16 @@ import static java.lang.Math.sqrt;
 public class RaceCalculator {
 
 
+
     /**
      * Calculates whether boat is heading to the start line
      * and if it does calculates the virtual line points and returns them so they can be used for drawing
      * returns empty list if boat is not heading to the start line
+     * @param boatModel boat model
+     * @param startMark1 start mark 1
+     * @param startMark2 start mark 2
+     * @param startLine1 start line 1
+     * @param expectedStartTime expected start time
      * @param selectedBoat selected boat
      * @return List virtualLinePoints
      */
@@ -166,6 +172,7 @@ public class RaceCalculator {
     /**
      * Calculates the distance in metres from the selected boat to its virtual start line.
      * @param selectedBoat selected boat
+     * @param timeUntilStart time until start
      * @return double distance (m)
      */
     public static double calcDistToVirtual(Competitor selectedBoat, long timeUntilStart) {
@@ -175,6 +182,7 @@ public class RaceCalculator {
     /**
      * Calculates the distance in metres from the selected boat to the race start line.
      * @param selectedBoat selected boat
+     * @param startLine1 start line
      * @return double distance (m)
      */
     public static double calcDistToStart(Competitor selectedBoat, CourseFeature startLine1) {

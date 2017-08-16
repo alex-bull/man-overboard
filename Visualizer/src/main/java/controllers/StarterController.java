@@ -223,7 +223,7 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
                 MainController mainController = loader.getController();
 
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                primaryStage.setTitle("RaceVision");
+                primaryStage.setTitle("Man Overboard");
 //                primaryStage.setMaxWidth(primaryScreenBounds.getWidth());
 //                primaryStage.setMaxHeight(primaryScreenBounds.getHeight());
                 primaryStage.setScene(scene);

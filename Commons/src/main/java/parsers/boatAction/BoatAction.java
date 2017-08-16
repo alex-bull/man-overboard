@@ -2,15 +2,17 @@ package parsers.boatAction;
 
 /**
  * Created by abu59 on 17/07/17.
+ * Boat Action
  */
 public enum BoatAction {
+
     VMG(1),
     SAILS_IN(2),
     SAILS_OUT(3),
     TACK_GYBE(4),
     UPWIND(5),
     DOWNWIND(6),
-    NULL(7);
+    RIP(0);
 
     private final int value;
 
@@ -18,5 +20,42 @@ public enum BoatAction {
 
     public int getValue() {
         return value;
+    }
+
+    /**
+     * Returns the corresponding boat action enum given an id
+     * @param id the boat action number
+     * @return BoatAction the boat action
+     */
+    public static BoatAction getBoatAction(int id) {
+
+        BoatAction action = null;
+
+        switch (id) {
+            case 0:
+                action = RIP;
+                break;
+            case 1:
+                action = VMG;
+                break;
+            case 2:
+                action = SAILS_IN;
+                break;
+            case 3:
+                action = SAILS_OUT;
+                break;
+            case 4:
+                action = TACK_GYBE;
+                break;
+            case 5:
+                action = UPWIND;
+                break;
+            case 6:
+                action = DOWNWIND;
+                break;
+            default:
+                break;
+        }
+        return action;
     }
 }

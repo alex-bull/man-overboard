@@ -2,6 +2,8 @@ package models;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import parsers.BoatStatusEnum;
 
 import java.util.List;
 
@@ -24,9 +26,9 @@ public interface Competitor {
 
     void updatePosition(double dt);
 
-    int getStatus();
+    BoatStatusEnum getStatus();
 
-    void setStatus(int status);
+    void setStatus(BoatStatusEnum status);
 
     Color getColor();
 
@@ -70,15 +72,15 @@ public interface Competitor {
 
     void changeHeading(boolean upwind, double angle);
 
-    double getHealthLevel();
+    int getHealthLevel();
 
-    void decreaseHealth(double damageThreshold);
+    void updateHealth(int damage);
 
-    double getMaxHealth();
+    int getMaxHealth();
 
-    void setMaxHealth(double health);
+    void setMaxHealth(int health);
 
-    void setHealthLevel(double health);
+    void setHealthLevel(int health);
 
 
 
@@ -87,6 +89,14 @@ public interface Competitor {
     void finishedRounding();
 
     boolean isRounding();
+
+    Line getRoundingLine1();
+
+    void setRoundingLine1(Line roundingLine1);
+
+    Line getRoundingLine2();
+
+    void setRoundingLine2(Line roundingLine2);
 
 
 }

@@ -11,11 +11,13 @@ import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
 import org.jdom2.JDOMException;
+import parsers.BoatStatusEnum;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
 import parsers.XmlSubtype;
 import parsers.boatAction.BoatAction;
 import parsers.boatAction.BoatActionParser;
+import parsers.boatHealth.HealthEventParser;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
 import parsers.header.HeaderData;
@@ -25,7 +27,6 @@ import parsers.markRounding.MarkRoundingParser;
 import parsers.raceStatus.RaceStatusData;
 import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.boat.BoatXMLParser;
-import parsers.xml.race.CompoundMarkData;
 import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
@@ -40,6 +41,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
+import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
 import static utility.Calculator.calculateExpectedTack;
@@ -281,6 +283,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.windSpeed = raceStatusData.getWindSpeed();
                     for (int id : storedCompetitors.keySet()) {
                         storedCompetitors.get(id).setCurrentLegIndex(raceStatusData.getBoatStatuses().get(id).getLegNumber());
+                        storedCompetitors.get(id).setStatus(raceStatusData.getBoatStatuses().get(id).getBoatStatus());
                         storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                     }
 
@@ -290,7 +293,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 break;
             case MARK_ROUNDING:
                 MarkRoundingData markRoundingData = new MarkRoundingParser().processMessage(packet);
-
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
                     String markName;
@@ -325,9 +327,11 @@ public class Interpreter implements DataSource, PacketHandler {
                     markRoundingData.setMarkName(markName);
                     long roundingTime = markRoundingData.getRoundingTime();
 
-                    storedCompetitors.get(markRoundingData.getSourceID()).setLastMarkPassed(markName);
-                    storedCompetitors.get(markRoundingData.getSourceID()).setTimeAtLastMark(roundingTime);
+                    Competitor markRoundingBoat = storedCompetitors.get(markRoundingData.getSourceID());
+                    markRoundingBoat.setLastMarkPassed(markName);
+                    markRoundingBoat.setTimeAtLastMark(roundingTime);
                     System.out.println("Boat " + markRoundingData.getSourceID() + " rounded a mark");
+
                 }
                 break;
             case BOAT_LOCATION:
@@ -362,11 +366,17 @@ public class Interpreter implements DataSource, PacketHandler {
                         double boatHeading = boat.getCurrentHeading();
                         boat.setCurrentHeading(calculateExpectedTack(this.windDirection, boatHeading));
                     }
+                    if (boatAction.equals(BoatAction.RIP) && headerDataSourceID == this.sourceID) {
+                        Competitor boat = this.storedCompetitors.get(this.sourceID);
+                        boat.setStatus(DSQ);
+                    }
+
 
                 }
+
+
                 break;
             case SOURCE_ID:
-
                 ByteBuffer byteBuffer=ByteBuffer.wrap(packet);
                 byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
                 sourceID = byteBuffer.get();
@@ -381,6 +391,11 @@ public class Interpreter implements DataSource, PacketHandler {
                         break;
                 }
                 break;
+            case BOAT_HEALTH:
+                HealthEventParser healthEventParser = new HealthEventParser(packet);
+                Competitor boat = this.storedCompetitors.get(healthEventParser.getSourceId());
+                boat.setHealthLevel(healthEventParser.getHealth());
+
             default:
                 break;
         }

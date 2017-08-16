@@ -3,6 +3,8 @@ package models;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
+import parsers.BoatStatusEnum;
+import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
  * Boat object
  */
 public class Boat implements Competitor {
+
     private String teamName;
     private double velocity;
     private MutablePoint position;
@@ -21,20 +24,23 @@ public class Boat implements Competitor {
     private String abbreName;
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
     private int sourceID;
-    private int status;
+    private BoatStatusEnum status;
     private String lastMarkPassed;
     private int legIndex;
     private long timeToNextMark;
     private long timeAtLastMark;
     private double latitude;
     private double longitude;
-    private boolean inRounding = false;
+    private boolean isRounding = false;
+
+    private Line roundingLine1;
+    private Line roundingLine2;
     //how much the boat if affected by wind, can be parsed in as constructor
     private double blownFactor = 0.01;
 //    external forces on the boat
     private List<RepelForce> forces;
-    private double healthLevel = 30;
-    private double maxHealth = 30;
+    private int healthLevel = 30;
+    private int maxHealth = 30;
 
     public MutablePoint getPosition17() {
         return position17;
@@ -82,9 +88,9 @@ public class Boat implements Competitor {
      * @param startPosition MutablePoint the boat's start position coordinate
      * @param sourceID      sourceID of the boat
      * @param abbreName     String the abbreviated name of the boat
-     * @param status        int status status of the boat
+     * @param status        BoatStatusEnum status of the boat
      */
-    public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID, int status) {
+    public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID, BoatStatusEnum status) {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
@@ -100,28 +106,49 @@ public class Boat implements Competitor {
 
     }
 
-    public void setMaxHealth(double health){
+
+    public Line getRoundingLine1() {
+        return roundingLine1;
+    }
+
+    public void setRoundingLine1(Line roundingLine1) {
+        this.roundingLine1 = roundingLine1;
+    }
+
+    public Line getRoundingLine2() {
+        return roundingLine2;
+    }
+
+    public void setRoundingLine2(Line roundingLine2) {
+        this.roundingLine2 = roundingLine2;
+    }
+
+    public void setMaxHealth(int health){
         this.maxHealth = health;
     }
 
-    public void setHealthLevel(double health){
+    public void setHealthLevel(int health){
         this.healthLevel = health;
     }
 
-    public double getMaxHealth() {
+    public int getMaxHealth() {
         return maxHealth;
     }
 
-    public double getHealthLevel() {
+    public int getHealthLevel() {
         return healthLevel;
     }
 
     /**
      * Decreases the boat health when they collide
-     * @param damageThreshold double the amount of damage the boat takes
+     * @param damage int the amount of damage the boat takes
      */
-    public void decreaseHealth(double damageThreshold) {
-        this.healthLevel = healthLevel - damageThreshold;
+    public void updateHealth(int damage) {
+        int resultHealth = healthLevel + damage;
+
+        if(resultHealth > maxHealth) {
+           this.healthLevel = maxHealth;
+        } else this.healthLevel = resultHealth;
     }
 
     /**
@@ -140,12 +167,12 @@ public class Boat implements Competitor {
     }
 
     @Override
-    public int getStatus() {
+    public BoatStatusEnum getStatus() {
         return status;
     }
 
     @Override
-    public void setStatus(int status) {
+    public void setStatus(BoatStatusEnum status) {
         this.status = status;
     }
 
@@ -279,16 +306,16 @@ public class Boat implements Competitor {
 
 
     public void startRounding() {
-        this.inRounding = true;
+        this.isRounding = true;
     }
 
     public void finishedRounding() {
-        this.inRounding = false;
+        this.isRounding = false;
         this.legIndex += 1;
     }
 
     public boolean isRounding() {
-        return this.inRounding;
+        return this.isRounding;
     }
 
 
