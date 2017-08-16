@@ -253,7 +253,6 @@ public class BoatUpdater {
      */
     boolean checkAllFinished(){
         if(finisherList.size() == competitors.size()){
-            System.out.println("All boats finished");
             return true;
         }
         return false;

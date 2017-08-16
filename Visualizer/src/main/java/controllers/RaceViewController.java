@@ -2,6 +2,7 @@ package controllers;
 
 import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.animation.FadeTransition;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,12 +10,10 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -36,10 +35,8 @@ import models.CourseFeature;
 import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.Converter;
-import utilities.Annotation;
-import utilities.CollisionRipple;
-import utilities.DataSource;
-import utilities.PolarTable;
+import parsers.RaceStatusEnum;
+import utilities.*;
 import utility.BinaryPackager;
 
 import java.awt.geom.Line2D;
@@ -49,6 +46,8 @@ import java.net.URL;
 import java.util.*;
 
 import static java.lang.Math.*;
+import static javafx.collections.FXCollections.observableArrayList;
+import static javafx.collections.FXCollections.observableList;
 import static javafx.scene.paint.Color.*;
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.RaceStatusEnum.PREPARATORY;
@@ -74,6 +73,20 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Text status;
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
+    @FXML
+    private GridPane finisherListPane;
+    @FXML
+    private ListView finisherListView;
+
+    public GridPane getFinisherListPane() {
+        return finisherListPane;
+    }
+
+    public ListView getFinisherListView() {
+        return finisherListView;
+    }
+
+
 
     static final Color backgroundColor = Color.POWDERBLUE;
 
@@ -147,6 +160,8 @@ public class RaceViewController implements Initializable, TableObserver {
         allAnnotationsRadio.setSelected(true);
         showAllAnnotations();
         fpsToggle.setSelected(true);
+
+        finisherListPane.setVisible(false);
 
         initialiseGuideArrow();
         gc=raceViewCanvas.getGraphicsContext2D();
@@ -484,6 +499,15 @@ public class RaceViewController implements Initializable, TableObserver {
 
     }
 
+    public void checkRaceFinished(){
+        if (dataSource.getRaceStatus().equals(RaceStatusEnum.FINISHED)) {
+            System.out.println("BB B B B B B B");
+            ObservableList<Competitor> observableFinisherList =  observableArrayList(dataSource.getCompetitorsPosition());
+            finisherListView.setItems(observableFinisherList);
+            finisherListView.refresh();
+            finisherListPane.setVisible(true);
+        }
+    }
 
 
     /**
@@ -852,6 +876,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawLaylines(Competitor boat) {
 
+
         if (this.polarTable == null) {
             try {
                 polarTable = new PolarTable("/polars/VO70_polar.txt", 12);
@@ -1147,6 +1172,8 @@ public class RaceViewController implements Initializable, TableObserver {
         if (!statusString.equals(status.getText())) {
             status.setText("Race status: " + dataSource.getRaceStatus());
         }
+        System.out.println("H HH H  HH H  HHH H H");
+        checkRaceFinished();
     }
 
     /**
