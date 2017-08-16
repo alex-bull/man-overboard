@@ -358,6 +358,8 @@ public class Interpreter implements DataSource, PacketHandler {
                         boat.switchSails();
                     }
 
+                    
+
                     if (boatAction.equals(BoatAction.TACK_GYBE) && headerDataSourceID == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         double boatHeading = boat.getCurrentHeading();

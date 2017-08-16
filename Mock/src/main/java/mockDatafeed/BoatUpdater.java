@@ -183,7 +183,6 @@ public class BoatUpdater {
         } else {
             //Check for rounding a line down from the mark
             if (didCrossLine(boat, mark.getRoundingLine1())) {
-                System.out.println("Crossed line 1");
                 boat.startRounding();
             }
         }
@@ -211,7 +210,6 @@ public class BoatUpdater {
         } else {
 
             if (didCrossLine(boat, mark1.getRoundingLine1())) {
-                System.out.println("Crossed line 1");
                 boat.startRounding();
             }
         }
@@ -229,7 +227,6 @@ public class BoatUpdater {
         Competitor mark = markBoats.get(markIds.get(0));
 
         if (didCrossLine(boat, mark.getRoundingLine1())) {
-            System.out.println("Crossed line");
             handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
             boat.setCurrentLegIndex(nextLegIndex);
         }
