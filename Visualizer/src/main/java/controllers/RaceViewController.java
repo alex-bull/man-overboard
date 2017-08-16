@@ -86,7 +86,8 @@ public class RaceViewController implements Initializable, TableObserver {
         return finisherListView;
     }
 
-
+    private ObservableList<String> observableFinisherList = observableArrayList();
+    private Boolean finisherListDisplayed = false;
 
     static final Color backgroundColor = Color.POWDERBLUE;
 
@@ -499,13 +500,20 @@ public class RaceViewController implements Initializable, TableObserver {
 
     }
 
+
     public void checkRaceFinished(){
-        if (dataSource.getRaceStatus().equals(RaceStatusEnum.FINISHED)) {
-            System.out.println("BB B B B B B B");
-            ObservableList<Competitor> observableFinisherList =  observableArrayList(dataSource.getCompetitorsPosition());
+        if (dataSource.getRaceStatus().equals(RaceStatusEnum.FINISHED) && !finisherListDisplayed) {
+            for (Competitor aCompetitor : dataSource.getCompetitorsPosition()){
+                if (aCompetitor.getStatus() == DSQ) {
+                    observableFinisherList.add("DSQ " + aCompetitor.getTeamName());
+                } else {
+                    observableFinisherList.add((dataSource.getCompetitorsPosition().indexOf(aCompetitor) + 1 ) + ". " + aCompetitor.getTeamName());
+                }
+            }
             finisherListView.setItems(observableFinisherList);
             finisherListView.refresh();
             finisherListPane.setVisible(true);
+            finisherListDisplayed = true;
         }
     }
 
@@ -1172,7 +1180,6 @@ public class RaceViewController implements Initializable, TableObserver {
         if (!statusString.equals(status.getText())) {
             status.setText("Race status: " + dataSource.getRaceStatus());
         }
-        System.out.println("H HH H  HH H  HHH H H");
         checkRaceFinished();
     }
 

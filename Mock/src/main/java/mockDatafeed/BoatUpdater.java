@@ -238,7 +238,7 @@ public class BoatUpdater {
             boat.setCurrentLegIndex(nextLegIndex);
         }
 
-        if(boat.getCurrentLegIndex() == 1){
+        if(boat.getCurrentLegIndex() == 6){
             if (!finisherList.contains(boat)){
                 finisherList.add(boat);
             }
