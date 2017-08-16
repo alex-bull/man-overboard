@@ -177,8 +177,8 @@ public class BoatUpdater {
             if (didCrossLine(boat, mark.getRoundingLine2())) {
                 boat.finishedRounding();
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
+
                 boat.updateHealth(5);
-                boat.setCurrentLegIndex(boat.getCurrentLegIndex() + 1);
                 handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
 
             }
@@ -207,7 +207,7 @@ public class BoatUpdater {
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
                 boat.updateHealth(5);
                 handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
-                boat.setCurrentLegIndex(boat.getCurrentLegIndex() + 1);
+
 
             }
         } else {
@@ -230,8 +230,10 @@ public class BoatUpdater {
         Competitor mark = markBoats.get(markIds.get(0));
 
         if (didCrossLine(boat, mark.getRoundingLine1())) {
-            handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
             boat.setCurrentLegIndex(nextLegIndex);
+
+            handler.markRoundingEvent(boat.getSourceID(), nextLegIndex);
+
         }
     }
 
