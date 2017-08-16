@@ -369,6 +369,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     if (boatAction.equals(BoatAction.RIP) && headerDataSourceID == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         boat.setStatus(DSQ);
+
                     }
 
 
