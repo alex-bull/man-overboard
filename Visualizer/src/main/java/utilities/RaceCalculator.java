@@ -242,4 +242,25 @@ public class RaceCalculator {
         }
     }
 
+    /**
+     * Calculates the angle between marks
+     * @param xDist Double the distance between marks in the x direction
+     * @param yDist Double the distance between marks in the y direction
+     * @return double the angle
+     */
+    public static double calculateAngleBetweenMarks(Double xDist, Double yDist) {
+        double arctan = atan(yDist/xDist);
+        if (arctan < 0) {
+            arctan += 2 * Math.PI;
+        }
+        double angle = toDegrees(arctan);
+
+        if (xDist < 0) {
+            angle += 90;
+        } else {
+            angle += 270;
+        }
+        return angle;
+    }
+
 }

@@ -418,9 +418,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     /**
      * sends boat xml
-     * @param xmlPath
-     * @param messageType
-     * @throws IOException
+     * @param xmlPath xmlPath
+     * @param messageType message type
+     * @throws IOException IO exception
      */
     private void sendBoatXML(String xmlPath, int messageType) throws IOException {
         StringBuilder stringBuilder=new StringBuilder();
@@ -469,9 +469,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             boatUpdater.updatePosition(windGenerator);
             sendBoatLocation();
             sendRaceStatus();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

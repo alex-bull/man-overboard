@@ -21,6 +21,7 @@ import static utility.Calculator.shortToDegrees;
 
 /**
  * Created by jar156 on 3/08/17.
+ * Boat Updater
  */
 public class BoatUpdater {
 
@@ -42,8 +43,8 @@ public class BoatUpdater {
      * @param handler BoatUpdateEventHandler boat mocker
      * @param courseBoundary List a list of course boundary points
      * @param courseLineEquations CourseLineEquations course line equations
-     * @throws IOException
-     * @throws JDOMException
+     * @throws IOException IOException
+     * @throws JDOMException JDOMException
      */
     BoatUpdater(Map<Integer, Competitor> competitors, Map<Integer, Competitor> markBoats, RaceData raceData,
                 BoatUpdateEventHandler handler, List<MutablePoint> courseBoundary, List<MutablePoint> courseLineEquations, CollisionUtility collisionUtility) throws IOException, JDOMException {
@@ -177,6 +178,7 @@ public class BoatUpdater {
                 boat.finishedRounding();
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
                 boat.updateHealth(5);
+                boat.setCurrentLegIndex(boat.getCurrentLegIndex() + 1);
                 handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
 
             }
@@ -205,6 +207,7 @@ public class BoatUpdater {
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
                 boat.updateHealth(5);
                 handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
+                boat.setCurrentLegIndex(boat.getCurrentLegIndex() + 1);
 
             }
         } else {
@@ -258,60 +261,68 @@ public class BoatUpdater {
         List<Integer> markIds = raceData.getLegIndexToMarkSourceIds().get(index + 1);
 
         while (markIds != null && markIds.size() > 0) {
-
-            if (markIds.size() == 2) { //GATE
-
-                Competitor mark1 = markBoats.get(markIds.get(0));
-                Competitor mark2 = markBoats.get(markIds.get(1));
-
-                MutablePoint pos1 = markBoats.get(markIds.get(0)).getPosition();
-                MutablePoint pos2 = markBoats.get(markIds.get(1)).getPosition();
-
-                Line l1 = new Line(pos1.getXValue(), pos1.getYValue(), pos2.getXValue(), pos2.getYValue());
-
-                Vector2D vec = new Vector2D(pos1.getXValue(), pos1. getYValue(), pos2.getXValue(), pos2.getYValue());
-                vec.normalise();
-                Line l2 = new Line(pos1.getXValue(), pos1. getYValue(), vec.getX() * -200, vec.getY() * -200);
-
-                Vector2D vec2 = new Vector2D(pos2.getXValue(), pos2. getYValue(), pos1.getXValue(), pos1.getYValue());
-                vec2.normalise();
-                Line l3 = new Line(pos2.getXValue(), pos2. getYValue(), vec2.getX() * -200, vec2.getY() * -200);
-
-                mark1.setRoundingLine1(l1);
-                mark1.setRoundingLine2(l2);
-                mark2.setRoundingLine1(l1);
-                mark2.setRoundingLine2(l3);
-
-            } else { //MARK
-
-                int targetLegIndex = index + 1;
-                int nextLegIndex = index + 2;
-                int previousIndex = index;
-
-                Competitor mark = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(targetLegIndex).get(0));
-
-                MutablePoint targetPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(targetLegIndex).get(0)).getPosition();
-                MutablePoint nextPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(nextLegIndex).get(0)).getPosition();
-                MutablePoint prevPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(previousIndex).get(0)).getPosition();
-
-                Vector2D vec = new Vector2D(targetPos.getXValue(), targetPos.getYValue(), nextPos.getXValue(), nextPos.getYValue());
-                vec.normalise();
-                Line l1 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec.getX() * -200, vec.getY() * -200);
-
-                Vector2D vec2 = new Vector2D(targetPos.getXValue(), targetPos. getYValue(), prevPos.getXValue(), prevPos.getYValue());
-                vec.normalise();
-                Line l2 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec2.getX() * -200, vec2.getY() * -200);
-
-                mark.setRoundingLine1(l1);
-                mark.setRoundingLine2(l2);
+            if (markIds.size() == 2) {
+                buildGateLines(markIds);
+            } else {
+                buildMarkLines(index);
             }
-
             index += 1;
             markIds = raceData.getLegIndexToMarkSourceIds().get(index + 1);
         }
     }
 
+    /**
+     * Build invisible mark lines to determine whether a boat has rounded a mark
+     * @param index int index
+     */
+    private void buildMarkLines(int index) {
+        int targetLegIndex = index + 1;
+        int nextLegIndex = index + 2;
 
+        Competitor mark = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(targetLegIndex).get(0));
+
+        MutablePoint targetPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(targetLegIndex).get(0)).getPosition();
+        MutablePoint nextPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(nextLegIndex).get(0)).getPosition();
+        MutablePoint prevPos = markBoats.get(raceData.getLegIndexToMarkSourceIds().get(index).get(0)).getPosition();
+
+        Vector2D vec = new Vector2D(targetPos.getXValue(), targetPos.getYValue(), nextPos.getXValue(), nextPos.getYValue());
+        vec.normalise();
+        Line l1 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec.getX() * -200, vec.getY() * -200);
+
+        Vector2D vec2 = new Vector2D(targetPos.getXValue(), targetPos. getYValue(), prevPos.getXValue(), prevPos.getYValue());
+        vec.normalise();
+        Line l2 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec2.getX() * -200, vec2.getY() * -200);
+
+        mark.setRoundingLine1(l1);
+        mark.setRoundingLine2(l2);
+    }
+
+    /**
+     * Build invisible gate lines to determine whether a boat has passed a gate
+     * @param markIds List a list of mark ids
+     */
+    private void buildGateLines(List<Integer> markIds ) {
+        Competitor mark1 = markBoats.get(markIds.get(0));
+        Competitor mark2 = markBoats.get(markIds.get(1));
+
+        MutablePoint pos1 = mark1.getPosition();
+        MutablePoint pos2 = mark2.getPosition();
+
+        Line l1 = new Line(pos1.getXValue(), pos1.getYValue(), pos2.getXValue(), pos2.getYValue());
+
+        Vector2D vec = new Vector2D(pos1.getXValue(), pos1. getYValue(), pos2.getXValue(), pos2.getYValue());
+        vec.normalise();
+        Line l2 = new Line(pos1.getXValue(), pos1. getYValue(), vec.getX() * -200, vec.getY() * -200);
+
+        Vector2D vec2 = new Vector2D(pos2.getXValue(), pos2. getYValue(), pos1.getXValue(), pos1.getYValue());
+        vec2.normalise();
+        Line l3 = new Line(pos2.getXValue(), pos2. getYValue(), vec2.getX() * -200, vec2.getY() * -200);
+
+        mark1.setRoundingLine1(l1);
+        mark1.setRoundingLine2(l2);
+        mark2.setRoundingLine1(l1);
+        mark2.setRoundingLine2(l3);
+    }
 
     /**
      * Calculates if the boat collides with any course features and adjusts the boats position

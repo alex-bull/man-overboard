@@ -325,6 +325,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     long roundingTime = markRoundingData.getRoundingTime();
 
                     Competitor markRoundingBoat = storedCompetitors.get(markRoundingData.getSourceID());
+                    System.out.println("mark name is " + markName);
                     markRoundingBoat.setLastMarkPassed(markName);
                     markRoundingBoat.setTimeAtLastMark(roundingTime);
                     System.out.println("Boat " + markRoundingData.getSourceID() + " rounded a mark");
@@ -358,8 +359,6 @@ public class Interpreter implements DataSource, PacketHandler {
                         boat.switchSails();
                     }
 
-                    
-
                     if (boatAction.equals(BoatAction.TACK_GYBE) && headerDataSourceID == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         double boatHeading = boat.getCurrentHeading();
@@ -369,7 +368,6 @@ public class Interpreter implements DataSource, PacketHandler {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         boat.setStatus(DSQ);
                     }
-
 
                 }
 

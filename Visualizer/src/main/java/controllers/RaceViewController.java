@@ -1,6 +1,5 @@
 package controllers;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -1025,22 +1024,19 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Draw a directional arrow on the canvas to guide the boat in the right direction to the next mark
      *
-     * @param gc   GraphicsContext the gc to draw the track on
      */
-    private void updateGuidingArrow(GraphicsContext gc) {
+    private void updateGuidingArrow() {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         int currentIndex = boat.getCurrentLegIndex();
-
-
+        double xOffset = 0, yOffset = 0;
+        double angle;
         Pair<Double, Double> nextMarkLocation = getGateCentre(currentIndex + 1);
+
         if (nextMarkLocation == null) {
             // end of race
             this.raceViewPane.getChildren().remove(guideArrow);
             return;
         }
-
-        double xOffset = 0, yOffset = 0;
-        double angle;
 
         if (currentIndex == 0 && !isZoom()) {
             // boat has not yet rounded first mark
@@ -1055,22 +1051,12 @@ public class RaceViewController implements Initializable, TableObserver {
             } else {
                 // arrow points from previous mark to next mark
                 Pair<Double, Double> prevMarkLocation = getGateCentre(currentIndex);
+                assert prevMarkLocation != null;
                 xDist = prevMarkLocation.getKey() - nextMarkLocation.getKey();
                 yDist = prevMarkLocation.getValue() - nextMarkLocation.getValue();
             }
 
-            double arctan = atan(yDist/xDist);
-            if (arctan < 0) {
-                arctan += 2 * Math.PI;
-            }
-            angle = toDegrees(arctan);
-
-            if (xDist < 0) {
-                angle += 90;
-            } else {
-                angle += 270;
-            }
-
+            angle = calculateAngleBetweenMarks(xDist, yDist);
             xOffset = 150 * cos(toRadians(angle - 90));
             yOffset = 150 * sin(toRadians(angle - 90));
         }
@@ -1273,7 +1259,7 @@ public class RaceViewController implements Initializable, TableObserver {
         setBoatLocation();
         updateRace();
         checkCollision();
-        updateGuidingArrow(gc);
+        updateGuidingArrow();
     }
 
     boolean isLoaded() {
