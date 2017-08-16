@@ -344,6 +344,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient {
     private void handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
 
         if(!isPointInPolygon(boat.getPosition(),courseBoundary)){
+            sendYachtEvent(boat.getSourceID(), 1);
             boat.updatePosition(-10);
         }
     }

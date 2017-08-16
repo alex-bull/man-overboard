@@ -29,8 +29,8 @@ public class RandomShake {
      */
     public void animate() {
 
-        Timeline timelineX = new Timeline(new KeyFrame(Duration.seconds(0.1), t -> {
-            int val = new Random().nextInt(20);
+        Timeline timelineX = new Timeline(new KeyFrame(Duration.seconds(0.05), t -> {
+            int val = new Random().nextInt(20)-10;
             if (x) {
                 node.setLayoutX(val);
             } else {
@@ -39,13 +39,13 @@ public class RandomShake {
             x = !x;
         }));
 
-        timelineX.setCycleCount(4);
+        timelineX.setCycleCount(8);
         timelineX.setAutoReverse(false);
         timelineX.setOnFinished(event -> node.setLayoutX(0.0));
 
 
-        Timeline timelineY = new Timeline(new KeyFrame(Duration.seconds(0.1), t -> {
-            int val = new Random().nextInt(20);
+        Timeline timelineY = new Timeline(new KeyFrame(Duration.seconds(0.05), t -> {
+            int val = new Random().nextInt(20)-10;
             if (y) {
                 node.setLayoutY(val);
             } else {
@@ -54,7 +54,7 @@ public class RandomShake {
             y = !y;
         }));
 
-        timelineY.setCycleCount(4);
+        timelineY.setCycleCount(8);
         timelineY.setAutoReverse(false);
         timelineY.setOnFinished(event -> node.setLayoutY(0.0));
 

@@ -1040,11 +1040,14 @@ public class RaceViewController implements Initializable, TableObserver {
     public void checkCollision(){
         for(int sourceID:new HashSet<>(dataSource.getCollisions())){
             MutablePoint point=setRelativePosition(dataSource.getStoredCompetitors().get(sourceID));
-
-            drawCollision(point.getXValue(),point.getYValue());
+            if (sourceID == dataSource.getSourceID()) {
+                new RandomShake(raceParentPane).animate();
+            }
+            drawCollision(point.getXValue(), point.getYValue());
+            dataSource.removeCollsions(sourceID);
 //            Competitor boat=dataSource.getStoredCompetitors().get(sourceID);
 //            mapEngine.executeScript(String.format("create_collision(%.9f,%.9f)",boat.getLatitude(),boat.getLongitude()));
-            dataSource.removeCollsions(sourceID);
+
         }
 
     }
@@ -1061,7 +1064,7 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         CollisionRipple ripple = new CollisionRipple(centerX, centerY,radius );
         raceViewPane.getChildren().add(ripple);
-        new RandomShake(raceParentPane).animate();
+
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
 
     }
