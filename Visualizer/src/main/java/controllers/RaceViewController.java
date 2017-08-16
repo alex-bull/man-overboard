@@ -1225,8 +1225,8 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawHealthBar(boat);
             this.moveAnnotations(boat);
 
-            if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
-            if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
+//            if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
+//            if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
 
         }
         this.drawSail(width, length);
