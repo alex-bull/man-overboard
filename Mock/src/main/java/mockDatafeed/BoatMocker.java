@@ -280,7 +280,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         double a = 0.001 * competitors.size();
 //        prestart = new MutablePoint(32.286577 + a, -64.864304);
-        prestart = new MutablePoint(32.296117 + a, -64.858834);
+        prestart = new MutablePoint(32.351589 + a, -64.796776);
 
         Boat newCompetitor=new Boat("Boat "+currentSourceID, random.nextInt(20)+20, prestart, "B"+currentSourceID, currentSourceID, PRESTART);
         newCompetitor.setCurrentHeading(0);
