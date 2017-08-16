@@ -20,7 +20,6 @@ import javafx.util.Duration;
 public class CollisionRipple extends Circle{
 
     Timeline animation;
-    FadeTransition ft;
     public CollisionRipple(double centerX, double centerY,int radius){
         super(centerX, centerY, 0, null);
         setStrokeWidth(3);
@@ -33,24 +32,6 @@ public class CollisionRipple extends Circle{
         );
 
     }
-
-    public CollisionRipple(double centerX, double centerY,double velocity){
-        super(centerX, centerY, 0, null);
-        setStrokeWidth(1);
-        setStroke(Color.AQUA);
-        setFill(Color.ALICEBLUE);
-        animation=new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(radiusProperty(), 0)),
-                new KeyFrame(Duration.ZERO, new KeyValue(opacityProperty(), 1)),
-                new KeyFrame(Duration.seconds(2), new KeyValue(radiusProperty(), velocity)),
-                new KeyFrame(Duration.seconds(2), new KeyValue(opacityProperty(), 0))
-        );
-        ft=new FadeTransition(Duration.millis(velocity*1000),this);
-        ft.setFromValue(1);
-        ft.setToValue(0);
-    }
-
-
 
 
     public Timeline animate(){
