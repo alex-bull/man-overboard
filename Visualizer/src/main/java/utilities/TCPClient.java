@@ -30,7 +30,7 @@ public class TCPClient extends TimerTask {
 
 
     /**
-     * Initializes port to receive binary data from
+     * Initializes port to connect binary data from
      * @param host String host of the server
      * @param port int number of port of the server
      * @param handler PacketHandler handler for incoming packets

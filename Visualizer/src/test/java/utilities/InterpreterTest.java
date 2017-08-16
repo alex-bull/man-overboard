@@ -1,25 +1,14 @@
 package utilities;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 import mockDatafeed.BoatMocker;
 
-import models.Boat;
-import models.Competitor;
 import org.junit.Before;
 import org.junit.Test;
-import parsers.xml.race.CompoundMarkData;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static parsers.MessageType.MARK_ROUNDING;
 
 /**
  * Created by jar156 on 11/05/17.
@@ -60,7 +49,7 @@ public class InterpreterTest {
 
         mockThread.start();
         Thread.sleep(200); // give mock time to start before visualiser
-        interpreter.receive("invalidhost", 4,mockScene, mockDelegate);
+        interpreter.connect("invalidhost", 4,mockScene, mockDelegate);
 
         Thread visualiserThread = new Thread(() -> assertFalse(streamStarted));
         visualiserThread.run();
@@ -72,7 +61,7 @@ public class InterpreterTest {
         mockThread.start();
         Thread.sleep(200); // give mock time to start before visualiser
 
-        interpreter.receive("localhost", 4,mockScene, mockDelegate);
+        interpreter.connect("localhost", 4,mockScene, mockDelegate);
         Thread visualiserThread = new Thread(() -> assertFalse(streamStarted));
         visualiserThread.run();
     }
@@ -85,7 +74,7 @@ public class InterpreterTest {
 
         Thread visualiserThread = new Thread(() -> {
             //JFXPanel toolkit = new JFXPanel(); // causes JavaFX toolkit including Application Thread to start, doesn't work on CI runner because no display
-            interpreter.receive("localhost", 4941,mockScene, mockDelegate);
+            interpreter.connect("localhost", 4941,mockScene, mockDelegate);
             assertTrue(streamStarted);
         });
         visualiserThread.run();

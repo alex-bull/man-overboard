@@ -475,6 +475,44 @@ public class BinaryPackager {
     }
 
 
+    /**
+     * package a registration request message
+     * @param type byte the registration type
+     * @return the packet
+     */
+    public byte[] packageRegistrationRequest(byte type) {
+        byte[] packet = new byte[20];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        this.writeHeader(packetBuffer, 101, 1);
+        packetBuffer.put(type);
+        this.writeCRC(packetBuffer);
+        return packet;
+
+    }
+
+
+    /**
+     * package a registration request message
+     * @param sourceID the boat sourceID
+     * @param status byte the registration type
+     * @return the packet
+     */
+    public byte[] packageRegistrationResponse(int sourceID, byte status) {
+        byte[] packet = new byte[24];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        this.writeHeader(packetBuffer, 101, 1);
+        packetBuffer.putInt(sourceID);
+        packetBuffer.put(status);
+        this.writeCRC(packetBuffer);
+        return packet;
+
+    }
+
+
 
 
 }

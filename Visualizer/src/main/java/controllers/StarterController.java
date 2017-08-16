@@ -27,6 +27,7 @@ import models.WorldClock;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
 import utilities.StreamDelegate;
+import utility.BinaryPackager;
 
 import java.io.IOException;
 import java.net.URL;
@@ -128,7 +129,8 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
         this.confirmButton.setDisable(true);
 
         Scene scene=primaryStage.getScene();
-        this.dataSource.receive(host, EnvironmentConfig.port, scene, this);
+        this.dataSource.connect(host, EnvironmentConfig.port, scene, this);
+
 
     }
 
@@ -141,7 +143,7 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Connection Failed");
         alert.setHeaderText(null);
-        alert.setContentText("Sorry, cannot connect to this stream right now.");
+        alert.setContentText("Sorry, cannot connect to the server right now.");
         alert.showAndWait();
         this.hostField.setDisable(false);
         this.confirmButton.setDisable(false);
@@ -151,15 +153,25 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
 
     /**
      * StreamDelegate method
-     * Call set fields
+     * Request join game
      * Change to the raceView
      */
     public void streamStarted() {
 
-        System.out.println("Streaming data");
+        System.out.println("Stream connected");
+        this.dataSource.send(new BinaryPackager().packageRegistrationRequest((byte)1));
         progressIndicator.setVisible(false);
         this.setFields();
         this.loadRaceView();
+    }
+
+
+    public void joinedGame() {
+        this.setFields();
+    }
+
+    public void lobbyUpdated() {
+        this.setFields();
     }
 
 

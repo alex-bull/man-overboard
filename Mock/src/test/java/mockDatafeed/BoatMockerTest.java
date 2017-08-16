@@ -1,11 +1,9 @@
 package mockDatafeed;
 
 import models.Competitor;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 
 import static mockDatafeed.Keys.TACK;
@@ -49,7 +47,7 @@ public class BoatMockerTest {
         header[7] = sourceID;
         packet[0] = action;
 
-        boatMocker.addConnection(); // generate competitors
+        boatMocker.addCompetitor(); // generate competitors
 
         double initialHeading = 0;
         for (Competitor competitor : boatMocker.getCompetitors()) {
@@ -81,7 +79,7 @@ public class BoatMockerTest {
         header[7] = sourceID;
         packet[0] = action;
 
-        boatMocker.addConnection(); // generate competitors
+        boatMocker.addCompetitor(); // generate competitors
 
         double expectedHeading = 0;
         for (Competitor competitor : boatMocker.getCompetitors()) {

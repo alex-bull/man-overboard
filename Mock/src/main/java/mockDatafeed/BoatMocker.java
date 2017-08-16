@@ -44,9 +44,9 @@ import static utility.Calculator.shortToDegrees;
  * Boat mocker
  */
 public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdateEventHandler {
+
     private HashMap<Integer, Competitor> competitors;
     private Map<Integer, Competitor> markBoats;
-    //private List<Competitor> markBoats;
     private List<CourseFeature> courseFeatures;
     private List<MutablePoint> courseBoundary;
     private RaceData raceData;
@@ -62,11 +62,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private boolean flag=true;
     private Timer timer;
     private BoatUpdater boatUpdater;
-    private Course raceCourse = new RaceCourse(null, true);
+
 
     private CollisionUtility collisionUtility;
     private List<MutablePoint> courseLineEquations;
-    private PolarTable polarTable;
 
     public BoatMocker() throws IOException , JDOMException {
         timer =new Timer();
@@ -74,13 +73,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         collisionUtility = new CollisionUtility();
 //        prestart = new MutablePoint(32.286577, -64.864304);
         prestart = new MutablePoint(32.295842, -64.857157);
-        int connectionTime = 10000;
+        //int connectionTime = 10000;
         competitors = new HashMap<>();
         TCPserver = new TCPServer(4941,this);
         binaryPackager = new BinaryPackager();
 
         //establishes the connection with Visualizer
-        TCPserver.establishConnection(connectionTime);
+       // TCPserver.establishConnection(connectionTime);
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
@@ -117,66 +116,15 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
     }
 
-    /**
-     * Send packet for yacht event
-     * @param sourceId source id of the boat
-     * @param eventId event id
-     */
-    public void yachtEvent(int sourceId, int eventId) {
-        try {
-            sendYachtEvent(sourceId, eventId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    /**
-     * Send packet for health event
-     * @param sourceId source id of the boat
-     * @param health health of the boat
-     */
-    public void healthEvent(int sourceId, int health) {
-        try {
-            this.TCPserver.sendData(binaryPackager.packageHealthEvent(sourceId,  health));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    /**
-     * Send packet for mark rounding
-     * @param sourceId source id of the boat
-     * @param compoundMarkId id of the mark
-     */
-    public void markRoundingEvent(int sourceId, int compoundMarkId) {
-        try {
-            this.TCPserver.sendData(binaryPackager.packageMarkRounding(sourceId, (byte)1, compoundMarkId));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Sends the boat action data to the Visualiser
-     * @param action action of the boat
-     */
-    private void sendBoatAction(int action, int sourceId) {
-        try{
-            this.TCPserver.sendData(binaryPackager.packageBoatAction(action, sourceId));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Handle data coming in from controllers
      * @param header byte[] the packet header
      * @param packet byte[] the packet body
      */
-    public void interpretPacket(byte[] header, byte[] packet) {
+    public int interpretPacket(byte[] header, byte[] packet) {
         MessageType messageType = UNKNOWN;
         for (MessageType messageEnum : MessageType.values()) {
             if (header[0] == messageEnum.getValue()) {
@@ -212,7 +160,16 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                         break;
                 }
                 break;
+            case REGISTRATION_REQUEST:
+                System.out.println("Registration request");
+                try {
+                    int sourceId = this.addCompetitor();
+                    TCPserver.sendData(binaryPackager.packageRegistrationResponse(sourceId, (byte) 1));
+                } catch (IOException e) {
+                    System.out.println("Failed to send connection response");
+                }
         }
+        return 0;
     }
 
     /**
@@ -255,8 +212,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             windDirection = convertRadiansToShort(angle);
         }
         windGenerator = new WindGenerator(windSpeed, windDirection);
-        polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
+        PolarTable polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
     }
+
 
     /**
      * finds the current course of the race
@@ -271,11 +229,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         collisionUtility.setCourseBoundary(courseBoundary);
     }
 
+
     /**
      * adds a competitor to the list of competitors
      * @return the source Id added
      */
-    private int addCompetitors(){
+    public int addCompetitor(){
 
 
         double a = 0.001 * competitors.size();
@@ -289,6 +248,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         return currentSourceID-1;
     }
 
+
     public List<Competitor> getCompetitors() {
         List<Competitor> boats = new ArrayList<>();
         for (Competitor competitor : competitors.values()) {
@@ -297,9 +257,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         return boats;
     }
 
-    public int addConnection() {
-        return this.addCompetitors();
-    }
 
     /**
      * generates the competitors list from the XML race file
@@ -320,6 +277,64 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
     }
 
+
+
+    /**
+     * Send packet for yacht event
+     * @param sourceId source id of the boat
+     * @param eventId event id
+     */
+    public void yachtEvent(int sourceId, int eventId) {
+        try {
+            sendYachtEvent(sourceId, eventId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Send packet for health event
+     * @param sourceId source id of the boat
+     * @param health health of the boat
+     */
+    public void healthEvent(int sourceId, int health) {
+        try {
+            this.TCPserver.sendData(binaryPackager.packageHealthEvent(sourceId,  health));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Send packet for mark rounding
+     * @param sourceId source id of the boat
+     * @param compoundMarkId id of the mark
+     */
+    public void markRoundingEvent(int sourceId, int compoundMarkId) {
+        try {
+            this.TCPserver.sendData(binaryPackager.packageMarkRounding(sourceId, (byte)1, compoundMarkId));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Sends the boat action data to the Visualiser
+     * @param action action of the boat
+     */
+    private void sendBoatAction(int action, int sourceId) {
+        try{
+            this.TCPserver.sendData(binaryPackager.packageBoatAction(action, sourceId));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     /**

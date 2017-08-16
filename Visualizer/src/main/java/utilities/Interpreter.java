@@ -158,6 +158,18 @@ public class Interpreter implements DataSource, PacketHandler {
     }
 
 
+
+
+    /**
+     *
+     * @return the boat which the visualizer controls
+     */
+    @Override
+    public Competitor getCompetitor() {
+        return storedCompetitors.get(sourceID);
+    }
+
+
     /**
      * Send control data via TCPClient
      * @param data byte[] the data to send
@@ -171,14 +183,6 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
-    /**
-     *
-     * @return the boat which the visualizer controls
-     */
-    @Override
-    public Competitor getCompetitor() {
-        return storedCompetitors.get(sourceID);
-    }
 
     /**
      * Begins data receiver streaming from port.
@@ -187,7 +191,7 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param scene the scene of the stage, for size calculations
      *
      */
-    public void receive(String host, int port, Scene scene, StreamDelegate delegate) throws NullPointerException{
+    public void connect(String host, int port, Scene scene, StreamDelegate delegate) throws NullPointerException{
 
         Rectangle2D primaryScreenBounds;
         try {
@@ -209,41 +213,42 @@ public class Interpreter implements DataSource, PacketHandler {
         width = primaryScreenBounds.getWidth() - scene.getX();
         height = primaryScreenBounds.getHeight() - scene.getY();
 
-        //start receiving data
+        // Initialize the connection to the server
         Timer receiverTimer = new Timer();
         receiverTimer.schedule(TCPClient, 0, 1);
+        delegate.streamStarted();
 
         //Wait for incoming data on a background thread
-        Task task = new Task<Boolean>() {
-            @Override public Boolean call() {
-                try {
-                    //wait for data to come in before setting fields
-                    while (numBoats < 1 || storedCompetitors.size() < numBoats) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (Exception e) {
-                            System.out.println("Thread sleep error");
-                            return false;
-                        }
-                    }
-                } catch (NullPointerException e) {
-                    System.out.println("Live stream is down");
-                    return false;
-                }
-                return true;
-            }
-        };
-
-        //Handle success or failure on the background thread
-        task.setOnSucceeded(event -> {
-            if ((boolean) task.getValue()) {
-                delegate.streamStarted();
-            } else {
-                delegate.streamFailed();
-            }
-        });
-
-        new Thread(task).start();
+//        Task task = new Task<Boolean>() {
+//            @Override public Boolean call() {
+//                try {
+//                    //wait for data to come in before setting fields
+//                    while (numBoats < 1 || storedCompetitors.size() < numBoats) {
+//                        try {
+//                            Thread.sleep(1000);
+//                        } catch (Exception e) {
+//                            System.out.println("Thread sleep error");
+//                            return false;
+//                        }
+//                    }
+//                } catch (NullPointerException e) {
+//                    System.out.println("Live stream is down");
+//                    return false;
+//                }
+//                return true;
+//            }
+//        };
+//
+//        //Handle success or failure on the background thread
+//        task.setOnSucceeded(event -> {
+//            if ((boolean) task.getValue()) {
+//                delegate.streamStarted();
+//            } else {
+//                delegate.streamFailed();
+//            }
+//        });
+//
+//        new Thread(task).start();
 
     }
 
@@ -264,6 +269,10 @@ public class Interpreter implements DataSource, PacketHandler {
         }
 
         switch (messageType) {
+            case REGISTRATION_RESPONSE:
+                System.out.println("Registration response");
+                //delegate.connected
+                break;
             case XML:
                 try {
                     readXMLMessage(packet);
