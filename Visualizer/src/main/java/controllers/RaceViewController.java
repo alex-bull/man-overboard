@@ -290,10 +290,10 @@ public class RaceViewController implements Initializable, TableObserver {
         double strokeWidth = 5;
         double offset = 20;
         double tombstoneSize = 30;
-        double maxBarLength = boat.getMaxHealth();
+        double maxBarLength = 30;
         double sourceId = boat.getSourceID();
         int healthLevel = boat.getHealthLevel();
-
+        double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength);
         if(this.zoom) {
             offset = offset * 2;
             strokeWidth *= 2;
@@ -303,7 +303,7 @@ public class RaceViewController implements Initializable, TableObserver {
             boatX = getBoatLocation(boat).getXValue();
             boatY = getBoatLocation(boat).getYValue();
         }
-        if(boat.getHealthLevel() > 0) {
+        if(healthLevel > 0) {
             Color healthColour = calculateHealthColour(boat);
             if (healthBars.get(sourceId) == null) {
 
@@ -328,7 +328,7 @@ public class RaceViewController implements Initializable, TableObserver {
             healthBar.setStrokeWidth(strokeWidth);
             healthBar.setStartX(boatX);
             healthBar.setStartY(boatY - offset);
-            healthBar.setEndX(boatX + healthLevel);
+            healthBar.setEndX(boatX + healthSize);
             healthBar.setEndY(boatY - offset);
 
             healthBar.setStroke(healthColour);

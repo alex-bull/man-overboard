@@ -158,7 +158,7 @@ public class BinaryPackager {
 
 
     /**
-     * Writes a CRC to the end of a buffer
+     * Writes a CRC to the end of a buffer - 4 bytes
      * @param buffer ByteBuffer, the buffer to write to
      */
     private void writeCRC(ByteBuffer buffer) {
@@ -459,7 +459,7 @@ public class BinaryPackager {
      * @return the packet generated
      */
     public byte[] packageHealthEvent(int sourceID, int health){
-        byte[] packet=new byte[40];
+        byte[] packet=new byte[27]; // 19 +8
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -468,6 +468,31 @@ public class BinaryPackager {
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.putInt(sourceID);
         packetBuffer.putInt(health);
+
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+
+    /**
+     * package boat state event
+     * @param sourceID Integer the sourceID of the Boat in the event
+     * @param sailState Integer the sail state. 0x00 luffing, 0x01 sails up
+     * @param health Integer the health as a percentage integer 0 to 100
+     * @return the packet generated
+     */
+    public byte[] packageBoatStateEvent(Integer sourceID, Integer sailState, Integer health){
+        byte[] packet=new byte[25]; // 19 + 6
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 103;
+        short bodyLength = 6;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.putInt(sourceID);
+        packetBuffer.put(sailState.byteValue());
+        packetBuffer.put(health.byteValue());
 
         //CRC
         this.writeCRC(packetBuffer);

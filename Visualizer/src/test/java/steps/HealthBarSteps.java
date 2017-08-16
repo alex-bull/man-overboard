@@ -4,6 +4,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import models.Boat;
 import models.Competitor;
 
@@ -29,8 +30,10 @@ public class HealthBarSteps {
 
     @When("^the player is in a collision of damage (\\d+)$")
     public void the_player_is_in_a_collision_of_damage(int damage) throws Throwable {
-        boat.updateHealth(damage);
+        boat.updateHealth(-damage);
     }
+
+
 
     @Then("^the boat's health should be (\\d+)$")
     public void the_boat_s_health_should_be(int resultHealth) throws Throwable {

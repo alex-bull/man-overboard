@@ -123,8 +123,8 @@ public class BoatUpdater {
             boolean boundaryCollision =this.handleBoundaryCollisions(boat);
 
             if(courseCollision || boatCollision || boundaryCollision) {
-                boat.updateHealth(-5);
-                handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
+                boat.updateHealth(-15);
+                handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
             }
 
 //            boat.blownByWind(twa);
@@ -176,8 +176,8 @@ public class BoatUpdater {
             if (didCrossLine(boat, mark.getRoundingLine2())) {
                 boat.finishedRounding();
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
-                boat.updateHealth(5);
-                handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
+                boat.updateHealth(15);
+                handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
 
             }
         } else {
@@ -204,8 +204,8 @@ public class BoatUpdater {
             if (didCrossLine(boat, mark1.getRoundingLine2()) || didCrossLine(boat, mark2.getRoundingLine2())) {
                 boat.finishedRounding();
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
-                boat.updateHealth(5);
-                handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
+                boat.updateHealth(15);
+                handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
 
             }
         } else {

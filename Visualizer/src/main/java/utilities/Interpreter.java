@@ -389,10 +389,6 @@ public class Interpreter implements DataSource, PacketHandler {
                         break;
                 }
                 break;
-            case BOAT_HEALTH:
-                HealthEventParser healthEventParser = new HealthEventParser(packet);
-                Competitor boat = this.storedCompetitors.get(healthEventParser.getSourceId());
-                boat.setHealthLevel(healthEventParser.getHealth());
             case BOAT_STATE:
                 BoatStateParser boatStateParser = new BoatStateParser(packet);
                 Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());

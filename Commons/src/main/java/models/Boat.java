@@ -39,8 +39,8 @@ public class Boat implements Competitor {
     private double blownFactor = 0.01;
 //    external forces on the boat
     private List<RepelForce> forces;
-    private int healthLevel = 30;
-    private int maxHealth = 30;
+    private int healthLevel = 100;
+    private int maxHealth = 100;
 
     public MutablePoint getPosition17() {
         return position17;
