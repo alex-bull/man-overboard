@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Worker;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
@@ -14,6 +15,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -32,9 +34,12 @@ import javafx.util.Pair;
 import mockDatafeed.Keys;
 import models.Competitor;
 import models.CourseFeature;
+import models.Dot;
 import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.Converter;
+import utilities.*;
+
 import utilities.Annotation;
 import utilities.CollisionRipple;
 import utilities.DataSource;
@@ -73,6 +78,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Text status;
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
+    @FXML private ImageView controlsView;
+    @FXML private HBox controlsBox;
 
     static final Color backgroundColor = Color.POWDERBLUE;
 
@@ -96,6 +103,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line virtualLine;
     private Polygon guideArrow;
 
+    private RaceCalculator raceCalculator;
     private WebEngine mapEngine;
     private DataSource dataSource;
     private PolarTable polarTable;
@@ -179,6 +187,9 @@ public class RaceViewController implements Initializable, TableObserver {
         double arrowHeadLength = -20;
         double offsetFromOrigin = -1 * (arrowLength + arrowHeadLength) + 30;
 
+        controlsView = new ImageView();
+        Image image = new Image("controls.png");
+        controlsView.setImage(image);
         guideArrow.getPoints().addAll(
                 -5., offsetFromOrigin, //tail left
                 5., offsetFromOrigin, //tail right
@@ -227,6 +238,8 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
         raceViewPane.setPrefWidth(width);
+        controlsBox.setPrefHeight(height);
+        controlsBox.setPrefWidth(width);
         raceViewPane.getChildren().add(track);
 
         this.dataSource = dataSource;
@@ -582,7 +595,6 @@ public class RaceViewController implements Initializable, TableObserver {
                 startLabel.setTextFill(boat.getColor());
                 this.timeToStartlineAnnotations.put(sourceID, startLabel);
                 this.raceViewPane.getChildren().add(startLabel);
-
 
                 label.setFont(Font.font("Monospaced"));
                 label.setTextFill(boat.getColor());
@@ -1246,6 +1258,20 @@ public class RaceViewController implements Initializable, TableObserver {
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
     }
 
+    /**
+     * Toggles a control layout of the game
+     * @param actionEvent
+     */
+    public void toggleControls(ActionEvent actionEvent) {
+        if (!raceViewPane.getChildren().contains(controlsBox)){
+            controlsBox.getChildren().add(controlsView);
+            raceViewPane.getChildren().add(controlsBox);
+        }
+        else {
+            controlsBox.getChildren().remove(controlsView);
+            raceViewPane.getChildren().remove(controlsBox);
+        }
+    }
 
 
     /**
@@ -1265,4 +1291,5 @@ public class RaceViewController implements Initializable, TableObserver {
     boolean isLoaded() {
         return isLoaded;
     }
+
 }
