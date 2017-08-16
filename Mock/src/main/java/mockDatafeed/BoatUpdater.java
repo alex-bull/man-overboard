@@ -35,7 +35,7 @@ public class BoatUpdater {
     private List<MutablePoint> courseBoundary;
     private List<MutablePoint> courseLineEquations;
     private CollisionUtility collisionUtility;
-    private List<Competitor> finisherList = new ArrayList<>();
+    List<Competitor> finisherList = new ArrayList<>();
     private BinaryPackager binaryPackager;
 
     /**

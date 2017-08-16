@@ -205,6 +205,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                     case RIP:
                         competitors.get(sourceID).setStatus(DSQ);
                         sendBoatAction(RIP.getValue(), sourceID);
+                        if (!boatUpdater.finisherList.contains(competitors.get(sourceID))){
+                            boatUpdater.finisherList.add(competitors.get(sourceID));
+                        }
                         break;
                     case TACK:
                         double windAngle = shortToDegrees(windGenerator.getWindDirection());
