@@ -14,7 +14,8 @@ public enum MessageType {
     COURSE_WIND(44),
     SOURCE_ID(56),
     YACHT_ACTION(29),
-    BOAT_HEALTH(97);
+    BOAT_HEALTH(97),
+    BOAT_STATE(103);
 
     private final int value;
 

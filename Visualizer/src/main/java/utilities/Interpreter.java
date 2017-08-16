@@ -20,6 +20,7 @@ import parsers.boatAction.BoatActionParser;
 import parsers.boatHealth.HealthEventParser;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
+import parsers.boatState.BoatStateParser;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.markRounding.MarkRoundingData;
@@ -392,6 +393,11 @@ public class Interpreter implements DataSource, PacketHandler {
                 HealthEventParser healthEventParser = new HealthEventParser(packet);
                 Competitor boat = this.storedCompetitors.get(healthEventParser.getSourceId());
                 boat.setHealthLevel(healthEventParser.getHealth());
+            case BOAT_STATE:
+                BoatStateParser boatStateParser = new BoatStateParser(packet);
+                Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());
+                stateBoat.setHealthLevel(boatStateParser.getHealth());
+                // also can do something with sail state here if needed
 
             default:
                 break;
