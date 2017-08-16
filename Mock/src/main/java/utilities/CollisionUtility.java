@@ -21,9 +21,9 @@ public class CollisionUtility {
 
     /**
      * checks if the point is inside the polygon
-     * @param point MutablePoint point
-     * @param polygon List<MutablePoint> counter clockwise
-     * @return boolean true if the point is inside the polygon
+     * @param point point
+     * @param polygon counter clockwise
+     * @return true if the point is inside the polygon
      */
     public static boolean isPointInPolygon(MutablePoint point, List<MutablePoint> polygon) {
         int j = polygon.size() - 1;

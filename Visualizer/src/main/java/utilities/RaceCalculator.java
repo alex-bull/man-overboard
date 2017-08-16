@@ -24,11 +24,15 @@ public class RaceCalculator {
 
 
     /**
-     * Calculates whether boat is heading to the start line
-     * and if it does calculates the virtual line points and returns them so they can be used for drawing
-     * returns empty list if boat is not heading to the start line
-     * @param selectedBoat selected boat
-     * @return List virtualLinePoints
+     * Calculate virtual line points
+     * @param selectedBoat player's boat
+     * @param boatModel player's boat model
+     * @param startMark1 one end of start line
+     * @param startMark2 the other end of start line
+     * @param startLine1 start line
+     * @param expectedStartTime expected start time
+     * @param messageTime message time
+     * @return list of virtual line points
      */
     public static List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat,Polygon boatModel, MutablePoint startMark1, MutablePoint startMark2, CourseFeature startLine1, long expectedStartTime,long messageTime) {
         List<MutablePoint> virtualLinePoints = new ArrayList<>();
@@ -162,18 +166,20 @@ public class RaceCalculator {
     }
 
     /**
-     * Calculates the distance in metres from the selected boat to its virtual start line.
+     * Calculates distance between the player's boat and the virtual line
      * @param selectedBoat selected boat
-     * @return double distance (m)
+     * @param timeUntilStart time until start
+     * @return
      */
     public static double calcDistToVirtual(Competitor selectedBoat, long timeUntilStart) {
         return selectedBoat.getVelocity() * timeUntilStart; // metres
     }
 
     /**
-     * Calculates the distance in metres from the selected boat to the race start line.
+     * Calculates distance between the player's boat and the start line
      * @param selectedBoat selected boat
-     * @return double distance (m)
+     * @param startLine1 start line
+     * @return
      */
     public static double calcDistToStart(Competitor selectedBoat, CourseFeature startLine1) {
         double boatLat = selectedBoat.getLatitude();
