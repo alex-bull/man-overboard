@@ -31,6 +31,8 @@ App extends Application {
         Scene rootScene = new Scene(root);
         primaryStage.setScene(rootScene);
 
+
+
         StarterController starterController = loader.getController();
         starterController.setStage(primaryStage);
         starterController.setDataSource(new Interpreter());
@@ -45,8 +47,8 @@ App extends Application {
 //        java.awt.Image image = Toolkit.getDefaultToolkit().getImage(imagePath);
 //        Application.getApplication().setDockIconImage(image);
 
-        primaryStage.setMaximized(true);
-        primaryStage.setFullScreen(true);
+//        primaryStage.setMaximized(true);
+//        primaryStage.setFullScreen(true);
 
         //set on close requests
         primaryStage.setOnCloseRequest(event -> {

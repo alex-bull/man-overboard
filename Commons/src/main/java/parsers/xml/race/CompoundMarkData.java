@@ -24,7 +24,7 @@ public class CompoundMarkData {
         this.marks = marks;
     }
 
-    List<MarkData> getMarks() {
+    public List<MarkData> getMarks() {
         return marks;
     }
 

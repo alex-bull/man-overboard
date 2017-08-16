@@ -3,6 +3,8 @@ package models;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
+import parsers.BoatStatusEnum;
+import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,26 +15,40 @@ import java.util.List;
  * Boat object
  */
 public class Boat implements Competitor {
+
     private String teamName;
     private double velocity;
     private MutablePoint position;
+    private MutablePoint position17;
     private Color color;
     private String abbreName;
     private DoubleProperty currentHeading = new SimpleDoubleProperty();
     private int sourceID;
-    private int status;
+    private BoatStatusEnum status;
     private String lastMarkPassed;
     private int legIndex;
     private long timeToNextMark;
     private long timeAtLastMark;
     private double latitude;
     private double longitude;
+    private boolean isRounding = false;
+
+    private Line roundingLine1;
+    private Line roundingLine2;
     //how much the boat if affected by wind, can be parsed in as constructor
     private double blownFactor = 0.01;
 //    external forces on the boat
     private List<RepelForce> forces;
+    private int healthLevel = 30;
+    private int maxHealth = 30;
 
-    // tack properties
+    public MutablePoint getPosition17() {
+        return position17;
+    }
+
+    public void setPosition17(MutablePoint position17) {
+        this.position17 = position17;
+    }
 
     private boolean sailsOut = true;
     /**
@@ -72,9 +88,9 @@ public class Boat implements Competitor {
      * @param startPosition MutablePoint the boat's start position coordinate
      * @param sourceID      sourceID of the boat
      * @param abbreName     String the abbreviated name of the boat
-     * @param status        int status status of the boat
+     * @param status        BoatStatusEnum status of the boat
      */
-    public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID, int status) {
+    public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID, BoatStatusEnum status) {
         this.velocity = velocity;
         this.teamName = teamName;
         this.position = startPosition;
@@ -88,6 +104,51 @@ public class Boat implements Competitor {
 
     public Boat() {
 
+    }
+
+
+    public Line getRoundingLine1() {
+        return roundingLine1;
+    }
+
+    public void setRoundingLine1(Line roundingLine1) {
+        this.roundingLine1 = roundingLine1;
+    }
+
+    public Line getRoundingLine2() {
+        return roundingLine2;
+    }
+
+    public void setRoundingLine2(Line roundingLine2) {
+        this.roundingLine2 = roundingLine2;
+    }
+
+    public void setMaxHealth(int health){
+        this.maxHealth = health;
+    }
+
+    public void setHealthLevel(int health){
+        this.healthLevel = health;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getHealthLevel() {
+        return healthLevel;
+    }
+
+    /**
+     * Decreases the boat health when they collide
+     * @param damage int the amount of damage the boat takes
+     */
+    public void updateHealth(int damage) {
+        int resultHealth = healthLevel + damage;
+
+        if(resultHealth > maxHealth) {
+           this.healthLevel = maxHealth;
+        } else this.healthLevel = resultHealth;
     }
 
     /**
@@ -106,12 +167,12 @@ public class Boat implements Competitor {
     }
 
     @Override
-    public int getStatus() {
+    public BoatStatusEnum getStatus() {
         return status;
     }
 
     @Override
-    public void setStatus(int status) {
+    public void setStatus(BoatStatusEnum status) {
         this.status = status;
     }
 
@@ -233,14 +294,30 @@ public class Boat implements Competitor {
     }
 
     public void setCurrentHeading(double currentHeading) {
-        // convert negative current heading to positive?
         if (currentHeading < 0) {
+            // convert negative current heading to positive
             this.currentHeading.setValue(currentHeading + 360);
-        }
-        else{
-            this.currentHeading.setValue(currentHeading%360);
+        } else {
+            // keep heading under 360 degrees
+            this.currentHeading.setValue(currentHeading % 360);
         }
     }
+
+
+
+    public void startRounding() {
+        this.isRounding = true;
+    }
+
+    public void finishedRounding() {
+        this.isRounding = false;
+        this.legIndex += 1;
+    }
+
+    public boolean isRounding() {
+        return this.isRounding;
+    }
+
 
     /**
      * Updates the boats position given the time changed
@@ -306,21 +383,17 @@ public class Boat implements Competitor {
      */
     public void changeHeading(boolean upwind, double windAngle){
         int turnAngle = 3;
-
-
         double downWind = getDownWind(windAngle);
 
-        if(currentHeading.getValue() >= windAngle && currentHeading.getValue() <= downWind) {
-            if(upwind) {
+        if (currentHeading.getValue() >= windAngle && currentHeading.getValue() <= downWind) {
+            if (upwind) {
                 currentHeading.setValue(currentHeading.getValue() - turnAngle);
             }
             else {
                 currentHeading.setValue(currentHeading.getValue() + turnAngle);
             }
-        }
-        else {
-
-            if(upwind) {
+        } else {
+            if (upwind) {
                 currentHeading.setValue(currentHeading.getValue() + turnAngle);
             }
             else {
@@ -328,7 +401,6 @@ public class Boat implements Competitor {
             }
         }
         setCurrentHeading(currentHeading.getValue() % 360);
-//        currentHeading.setValue(currentHeading.getValue() % 360);
     }
 
     @Override

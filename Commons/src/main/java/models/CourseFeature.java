@@ -17,6 +17,7 @@ public interface CourseFeature {
     int getRounding();
     void setRounding(int rounding);
     boolean isLine();
+    CourseFeature shift(double x, double y);
 
     MutablePoint getPixelCentre();
 }

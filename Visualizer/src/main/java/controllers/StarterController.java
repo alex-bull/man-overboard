@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
 public class StarterController implements Initializable, ClockHandler, StreamDelegate {
 
     private DataSource dataSource;
-    private final int STARTTIME = 5;
+    private final int STARTTIME = 1;
     @FXML private ListView<Competitor> starterList;
     @FXML private Label worldClockValue;
     @FXML private Button confirmButton;
@@ -223,11 +223,11 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
                 MainController mainController = loader.getController();
 
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                primaryStage.setTitle("RaceVision");
+                primaryStage.setTitle("Man Overboard");
 //                primaryStage.setMaxWidth(primaryScreenBounds.getWidth());
 //                primaryStage.setMaxHeight(primaryScreenBounds.getHeight());
                 primaryStage.setScene(scene);
-                primaryStage.setFullScreen(true);
+
             }
         });
     }

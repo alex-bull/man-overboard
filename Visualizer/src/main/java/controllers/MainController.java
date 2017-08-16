@@ -6,6 +6,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
+import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utility.BinaryPackager;
 
@@ -50,6 +51,28 @@ public class MainController {
                 case ENTER:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
                     break;
+                case Q:
+                    if(raceViewController.isZoom()) {
+                        raceViewController.zoomOut();
+                        if (!tableController.isVisible()) {
+                            tableController.makeVisible();
+                            sparklinesController.makeVisible();
+                        }
+                    }
+                    else{
+                        raceViewController.zoomIn();
+                    }
+                    break;
+                case BACK_QUOTE:
+                    if (raceViewController.isZoom() && tableController.isVisible()){
+                        tableController.makeInvisible();
+                        sparklinesController.makeInvisible();
+                    }
+                    else if (raceViewController.isZoom()) {
+                        tableController.makeVisible();
+                        sparklinesController.makeVisible();
+                    }
+                    break;
             }
 
 
@@ -76,7 +99,7 @@ public class MainController {
             @Override
             public void handle(long now) {
                 if (raceViewController.isLoaded()) {
-                    raceViewController.refresh(dataSource);
+                    raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
                     sparklinesController.refresh();
