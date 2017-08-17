@@ -1,6 +1,5 @@
 package models;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import parsers.BoatStatusEnum;
@@ -13,15 +12,19 @@ import java.util.List;
  */
 public interface Competitor {
     String getTeamName();
-    List<RepelForce> getForces();
-    void addForce(RepelForce force);
+
     double getVelocity();
-    void blownByWind(double windAngle);
+    double getCollisionRadius();
     void setVelocity(double velocity);
     MutablePoint getPosition17();
     void setPosition17(MutablePoint position17);
     MutablePoint getPosition();
+    void setBoatSpeed(Force boatSpeed);
+    Force getBoatSpeed();
+     void addForce(Force externalForce);
+     void removeForce(Force externalForce);
 
+     List<Force> getExternalForces();
     void setPosition(MutablePoint position);
 
     void updatePosition(double dt);

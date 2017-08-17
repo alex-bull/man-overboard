@@ -1,6 +1,7 @@
 package utility;
 
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import models.Competitor;
 import parsers.BoatStatusEnum;
 
@@ -429,11 +430,11 @@ public class BinaryPackager {
         buffer.put((byte)1);
         //Time
         buffer.put(getCurrentTimeStamp());
-//        AckNumber
+        //AckNumber
         buffer.putShort((short)1);
-//        RaceID
+        //RaceID
         buffer.putInt(123456789);
-//      SourceID
+        //SourceID
         buffer.putInt(sourceID);
         //boatStatus
         buffer.put((byte) 1); //racing

@@ -291,7 +291,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 MarkRoundingData markRoundingData = new MarkRoundingParser().processMessage(packet);
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
-                    String markName;
+                    String markName = "Start Line";
 
                     switch (markID) {
                         case 100:
@@ -316,7 +316,7 @@ public class Interpreter implements DataSource, PacketHandler {
                             markName="ClearStart";
                             break;
                         default:
-                            markName=raceData.getCourse().get(markID).getName();
+                            markName=raceData.getCourse().get(markID - 1).getName();
                             break;
 
                     }
@@ -365,7 +365,6 @@ public class Interpreter implements DataSource, PacketHandler {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         boat.setStatus(DSQ);
                     }
-
 
                 }
 

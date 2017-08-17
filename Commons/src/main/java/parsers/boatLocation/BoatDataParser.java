@@ -36,10 +36,7 @@ public class BoatDataParser {
             int speed = hexByteArrayToInt(Arrays.copyOfRange(body, 38, 40));
             //speed in m/sec
             double convertedSpeed = speed / 1000.0;
-            List<Double> point = mercatorProjection(latitude, longitude);
-            double pointX = point.get(0);
-            double pointY = point.get(1);
-            MutablePoint mercatorPoint = new MutablePoint(pointX, pointY);
+            MutablePoint mercatorPoint = mercatorProjection(latitude, longitude);
             if (deviceType == 3) {
                 MutablePoint GPS = new MutablePoint(latitude, longitude);
                 this.courseFeature = new Mark(sourceID.toString(), mercatorPoint, GPS, 0);
