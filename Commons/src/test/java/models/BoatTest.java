@@ -49,8 +49,8 @@ public class BoatTest {
         Boat boat2 = new Boat("Test", 1000, new MutablePoint(32.29700, -64.861), Color.BEIGE, "T");
         boat2.setCurrentHeading(35);
         boat2.updatePosition(1);
-        assertEquals(32.304366, boat2.getPosition().getXValue(), 0.000001);
-        assertEquals(-64.854897, boat2.getPosition().getYValue(), 0.000001);
+        assertEquals(32.305993, boat2.getPosition().getXValue(), 0.000001);
+        assertEquals(-64.861000, boat2.getPosition().getYValue(), 0.000001);
     }
 
     @Test

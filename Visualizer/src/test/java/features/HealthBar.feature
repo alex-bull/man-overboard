@@ -7,16 +7,16 @@ Feature:  The boat's health bar decreases when the boat collides
     And the colour of the health bar should be <Colour>
     Examples:
       | MaxHealth | CurrHealth | Damage     |ResultHealth | Colour       |
-      | 30        |30          |-5          |25           | GREEN        |
+      | 30        |30          |5          |25           | GREEN        |
       | 30        |22          |0           |22           | GREEN        |
-      | 100       |80          |-9          |71           | GREEN        |
-      | 100       |80          |-10         |70           | GREENYELLOW  |
-      | 100       |80          |-11         |69           | GREENYELLOW  |
-      | 20        |15          |-1          |14           | GREENYELLOW  |
-      | 100       |60          |-5          |55           | YELLOW       |
-      | 100       |80          |-21         |59           | YELLOW       |
-      | 100       |60          |-9          |51           | YELLOW       |
-      | 100       |80          |-31         |49           | ORANGE       |
-      | 100       |60          |-19         |41           | ORANGE       |
-      | 100       |90          |-51         |39           | RED          |
-      | 30        |30          |-30         |0            | RED          |
+      | 100       |80          |9          |71           | GREEN        |
+      | 100       |80          |10         |70           | GREENYELLOW  |
+      | 100       |80          |11         |69           | GREENYELLOW  |
+      | 20        |15          |1          |14           | GREENYELLOW  |
+      | 100       |60          |5          |55           | YELLOW       |
+      | 100       |80          |21         |59           | YELLOW       |
+      | 100       |60          |9          |51           | YELLOW       |
+      | 100       |80          |31         |49           | ORANGE       |
+      | 100       |60          |19         |41           | ORANGE       |
+      | 100       |90          |51         |39           | RED          |
+      | 30        |30          |30         |0            | RED          |

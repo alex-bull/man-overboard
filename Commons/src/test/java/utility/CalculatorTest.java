@@ -1,5 +1,6 @@
 package utility;
 
+import models.MutablePoint;
 import org.junit.Test;
 
 import static java.lang.Math.atan;

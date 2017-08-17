@@ -1,29 +1,26 @@
-package parsers.boatHealth;
-
-
-import parsers.Converter;
+package parsers.boatState;
 
 import java.util.Arrays;
 
 import static parsers.Converter.hexByteArrayToInt;
 
 /**
- * Created by psu43 on 14/08/17.
+ * Created by psu43 on 16/08/17.
+ * Boat state parser
  */
-public class HealthEventParser {
+public class BoatStateParser {
     private Integer sourceId;
     private Integer health;
 
 
     /**
-     * Process the given data and get SourceID and health
+     * Process the given boat state data
      * @param body the data received
      */
-    public HealthEventParser(byte[] body){
+    public BoatStateParser(byte[] body){
         sourceId = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 4));
-        health = hexByteArrayToInt(Arrays.copyOfRange(body, 4, 8));
+        health = hexByteArrayToInt(Arrays.copyOfRange(body, 4, 5));
     }
-
 
     public Integer getSourceId() {
         return sourceId;

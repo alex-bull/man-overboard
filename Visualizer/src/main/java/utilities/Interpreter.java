@@ -17,15 +17,14 @@ import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
 import org.jdom2.JDOMException;
-import parsers.BoatStatusEnum;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
 import parsers.XmlSubtype;
 import parsers.boatAction.BoatAction;
 import parsers.boatAction.BoatActionParser;
-import parsers.boatHealth.HealthEventParser;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
+import parsers.boatState.BoatStateParser;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.markRounding.MarkRoundingData;
@@ -302,7 +301,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 MarkRoundingData markRoundingData = new MarkRoundingParser().processMessage(packet);
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
-                    String markName;
+                    String markName = "Start Line";
 
                     switch (markID) {
                         case 100:
@@ -327,7 +326,7 @@ public class Interpreter implements DataSource, PacketHandler {
                             markName="ClearStart";
                             break;
                         default:
-                            markName=raceData.getCourse().get(markID).getName();
+                            markName=raceData.getCourse().get(markID - 1).getName();
                             break;
 
                     }
@@ -337,7 +336,6 @@ public class Interpreter implements DataSource, PacketHandler {
                     Competitor markRoundingBoat = storedCompetitors.get(markRoundingData.getSourceID());
                     markRoundingBoat.setLastMarkPassed(markName);
                     markRoundingBoat.setTimeAtLastMark(roundingTime);
-                    System.out.println("Boat " + markRoundingData.getSourceID() + " rounded a mark");
 
                 }
                 break;
@@ -376,9 +374,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     if (boatAction.equals(BoatAction.RIP) && headerDataSourceID == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         boat.setStatus(DSQ);
-
                     }
-
 
                 }
 
@@ -399,11 +395,11 @@ public class Interpreter implements DataSource, PacketHandler {
                         break;
                 }
                 break;
-            case BOAT_HEALTH:
-                HealthEventParser healthEventParser = new HealthEventParser(packet);
-                Competitor boat = this.storedCompetitors.get(healthEventParser.getSourceId());
-                boat.setHealthLevel(healthEventParser.getHealth());
-                System.out.println(getCompetitorsPosition().get(0));
+            case BOAT_STATE:
+                BoatStateParser boatStateParser = new BoatStateParser(packet);
+                Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());
+                System.out.println("received health as " +boatStateParser.getHealth());
+                stateBoat.setHealthLevel(boatStateParser.getHealth());
 
             default:
                 break;
