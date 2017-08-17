@@ -288,7 +288,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private int addCompetitors() {
 
 
-        double a = 0.001 * competitors.size();
+        double a = 0.005 * competitors.size();
 //        prestart = new MutablePoint(32.286577 + a, -64.864304);
         prestart = new MutablePoint(32.41011 + a, -64.88937);
 
