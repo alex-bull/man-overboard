@@ -7,6 +7,7 @@ import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -508,7 +509,7 @@ public class RaceViewController implements Initializable, TableObserver {
         if (dataSource.getRaceStatus().equals(RaceStatusEnum.FINISHED) && !finisherListDisplayed) {
             for (Competitor aCompetitor : dataSource.getCompetitorsPosition()){
                 if (aCompetitor.getStatus() == DSQ) {
-                    observableFinisherList.add("DSQ " + aCompetitor.getTeamName());
+                    observableFinisherList.add("RIP " + aCompetitor.getTeamName());
                 } else {
                     observableFinisherList.add((dataSource.getCompetitorsPosition().indexOf(aCompetitor) + 1 ) + ". " + aCompetitor.getTeamName());
                 }
@@ -517,6 +518,16 @@ public class RaceViewController implements Initializable, TableObserver {
             finisherListView.refresh();
             finisherListPane.setVisible(true);
             finisherListDisplayed = true;
+
+            double width = raceViewPane.getWidth();
+            double height = raceViewPane.getHeight();
+
+            finisherListPane.setLayoutX(width/2 - finisherListPane.getWidth()/2);
+            finisherListPane.setLayoutY(height/2 - finisherListPane.getHeight()/2);
+
+
+
+
         }
     }
 
