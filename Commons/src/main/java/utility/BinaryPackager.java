@@ -1,6 +1,7 @@
 package utility;
 
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import models.Competitor;
 import parsers.BoatStatusEnum;
 
@@ -158,7 +159,7 @@ public class BinaryPackager {
 
 
     /**
-     * Writes a CRC to the end of a buffer
+     * Writes a CRC to the end of a buffer - 4 bytes
      * @param buffer ByteBuffer, the buffer to write to
      */
     private void writeCRC(ByteBuffer buffer) {
@@ -429,11 +430,11 @@ public class BinaryPackager {
         buffer.put((byte)1);
         //Time
         buffer.put(getCurrentTimeStamp());
-//        AckNumber
+        //AckNumber
         buffer.putShort((short)1);
-//        RaceID
+        //RaceID
         buffer.putInt(123456789);
-//      SourceID
+        //SourceID
         buffer.putInt(sourceID);
         //boatStatus
         buffer.put((byte) 1); //racing
@@ -452,22 +453,24 @@ public class BinaryPackager {
 
 
 
+
+
     /**
-     * package health event
-     * @param sourceID the sourceID of the Boat in the event
-     * @param health the health
+     * package boat state event
+     * @param sourceID Integer the sourceID of the Boat in the event
+     * @param health Integer the health as a percentage integer 0 to 100
      * @return the packet generated
      */
-    public byte[] packageHealthEvent(int sourceID, int health){
-        byte[] packet=new byte[40];
+    public byte[] packageBoatStateEvent(Integer sourceID, Integer health){
+        byte[] packet=new byte[24]; // 19 + 5
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        byte type = 97;
-        short bodyLength = 8;
+        byte type = 103;
+        short bodyLength = 5;
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.putInt(sourceID);
-        packetBuffer.putInt(health);
+        packetBuffer.put(health.byteValue());
 
         //CRC
         this.writeCRC(packetBuffer);

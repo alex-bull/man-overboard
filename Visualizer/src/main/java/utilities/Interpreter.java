@@ -1,8 +1,14 @@
 package utilities;
 
+import controllers.RaceViewController;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -11,15 +17,14 @@ import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
 import org.jdom2.JDOMException;
-import parsers.BoatStatusEnum;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
 import parsers.XmlSubtype;
 import parsers.boatAction.BoatAction;
 import parsers.boatAction.BoatActionParser;
-import parsers.boatHealth.HealthEventParser;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
+import parsers.boatState.BoatStateParser;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.markRounding.MarkRoundingData;
@@ -41,7 +46,10 @@ import java.nio.ByteOrder;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
+import static javafx.collections.FXCollections.observableArrayList;
+import static javafx.collections.FXCollections.observableList;
 import static parsers.BoatStatusEnum.DSQ;
+import static parsers.BoatStatusEnum.FINISHED;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
 import static utility.Calculator.calculateExpectedTack;
@@ -72,6 +80,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
 
     private List<MutablePoint> courseBoundary = new ArrayList<>();
+
 
 
 
@@ -292,7 +301,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 MarkRoundingData markRoundingData = new MarkRoundingParser().processMessage(packet);
                 if (markRoundingData != null) {
                     int markID = markRoundingData.getMarkID();
-                    String markName;
+                    String markName = "Start Line";
 
                     switch (markID) {
                         case 100:
@@ -317,7 +326,7 @@ public class Interpreter implements DataSource, PacketHandler {
                             markName="ClearStart";
                             break;
                         default:
-                            markName=raceData.getCourse().get(markID).getName();
+                            markName=raceData.getCourse().get(markID - 1).getName();
                             break;
 
                     }
@@ -327,7 +336,6 @@ public class Interpreter implements DataSource, PacketHandler {
                     Competitor markRoundingBoat = storedCompetitors.get(markRoundingData.getSourceID());
                     markRoundingBoat.setLastMarkPassed(markName);
                     markRoundingBoat.setTimeAtLastMark(roundingTime);
-                    System.out.println("Boat " + markRoundingData.getSourceID() + " rounded a mark");
 
                 }
                 break;
@@ -368,7 +376,6 @@ public class Interpreter implements DataSource, PacketHandler {
                         boat.setStatus(DSQ);
                     }
 
-
                 }
 
 
@@ -388,10 +395,11 @@ public class Interpreter implements DataSource, PacketHandler {
                         break;
                 }
                 break;
-            case BOAT_HEALTH:
-                HealthEventParser healthEventParser = new HealthEventParser(packet);
-                Competitor boat = this.storedCompetitors.get(healthEventParser.getSourceId());
-                boat.setHealthLevel(healthEventParser.getHealth());
+            case BOAT_STATE:
+                BoatStateParser boatStateParser = new BoatStateParser(packet);
+                Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());
+                System.out.println("received health as " +boatStateParser.getHealth());
+                stateBoat.setHealthLevel(boatStateParser.getHealth());
 
             default:
                 break;

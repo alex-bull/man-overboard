@@ -79,23 +79,18 @@ public class CourseXMLParser {
                 double lon1 = Double.parseDouble(markOne.getAttribute("TargetLng").getValue());
                 double lon2 = Double.parseDouble(markTwo.getAttribute("TargetLng").getValue());
                 int index = Integer.parseInt(feature.getAttributeValue("CompoundMarkID"));
-                List<Double> point1 = mercatorProjection(lat1, lon1);
-                List<Double> point2 = mercatorProjection(lat2, lon2);
-                double point1X = point1.get(0);
-                double point1Y = point1.get(1);
-                double point2X = point2.get(0);
-                double point2Y = point2.get(1);
+                MutablePoint point1 = mercatorProjection(lat1, lon1);
+                MutablePoint point2 = mercatorProjection(lat2, lon2);
 
-                xMercatorCoords.add(point1X);
-                xMercatorCoords.add(point2X);
-                yMercatorCoords.add(point1Y);
-                yMercatorCoords.add(point2Y);
 
-                MutablePoint pixel1 = new MutablePoint(point1X, point1Y);
-                MutablePoint pixel2 = new MutablePoint(point2X, point2Y);
+                xMercatorCoords.add(point1.getXValue());
+                xMercatorCoords.add(point2.getXValue());
+                yMercatorCoords.add(point1.getYValue());
+                yMercatorCoords.add(point2.getYValue());
+
                 MutablePoint GPS1 = new MutablePoint(lat1, lon1);
 
-                Gate gate = new Gate(name, GPS1, pixel1, pixel2, isFinish, true, index);
+                Gate gate = new Gate(name, GPS1, point1,point2, isFinish, true, index);
                 points.add(gate);
             } else if (type.equals("CompoundMark") && feature.getChildren().size() == 1) { //Its a mark
 
@@ -104,16 +99,15 @@ public class CourseXMLParser {
                 double lat1 = Double.parseDouble(mark.getAttribute("TargetLat").getValue());
                 double lon1 = Double.parseDouble(mark.getAttribute("TargetLng").getValue());
                 int index = Integer.parseInt(feature.getAttributeValue("CompoundMarkID"));
-                List<Double> point1 = mercatorProjection(lat1, lon1);
-                double point1X = point1.get(0);
-                double point1Y = point1.get(1);
-                xMercatorCoords.add(point1X);
-                yMercatorCoords.add(point1Y);
+                MutablePoint point1 = mercatorProjection(lat1, lon1);
+
+                xMercatorCoords.add(point1.getXValue());
+                yMercatorCoords.add(point1.getYValue());
 
 
-                MutablePoint pixel = new MutablePoint(point1X, point1Y);
+
                 MutablePoint GPS = new MutablePoint(lat1, lon1);
-                Mark mark1 = new Mark(name, pixel, GPS, index);
+                Mark mark1 = new Mark(name, point1, GPS, index);
                 points.add(mark1);
             }
 //            } else if (type.equals("CompoundMarkSequence")) {        //Additional information for course features

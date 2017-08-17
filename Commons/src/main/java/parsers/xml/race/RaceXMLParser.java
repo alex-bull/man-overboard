@@ -228,13 +228,12 @@ public class RaceXMLParser {
                 maxLng = lon;
             }
 
-            List<Double> projectedPoint = mercatorProjection(lat, lon);
-            double point1X = projectedPoint.get(0);
-            double point1Y = projectedPoint.get(1);
-            xMercatorCoords.add(point1X);
-            yMercatorCoords.add(point1Y);
-            MutablePoint pixel = new MutablePoint(point1X, point1Y);
-            boundary.add(pixel);
+           MutablePoint projectedPoint = mercatorProjection(lat, lon);
+
+            xMercatorCoords.add(projectedPoint.getXValue());
+            yMercatorCoords.add(projectedPoint.getYValue());
+
+            boundary.add(projectedPoint);
         }
 
         //add course feature to zoom level calculation
@@ -258,11 +257,10 @@ public class RaceXMLParser {
                     maxLng = lon;
                 }
 
-                List<Double> projectedPoint = mercatorProjection(lat, lon);
-                double point1X = projectedPoint.get(0);
-                double point1Y = projectedPoint.get(1);
-                xMercatorCoords.add(point1X);
-                yMercatorCoords.add(point1Y);
+                MutablePoint projectedPoint = mercatorProjection(lat, lon);
+
+                xMercatorCoords.add(projectedPoint.getXValue());
+                yMercatorCoords.add(projectedPoint.getYValue());
             }
         }
 
