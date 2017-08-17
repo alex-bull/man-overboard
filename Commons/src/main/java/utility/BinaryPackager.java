@@ -478,20 +478,18 @@ public class BinaryPackager {
     /**
      * package boat state event
      * @param sourceID Integer the sourceID of the Boat in the event
-     * @param sailState Integer the sail state. 0x00 luffing, 0x01 sails up
      * @param health Integer the health as a percentage integer 0 to 100
      * @return the packet generated
      */
-    public byte[] packageBoatStateEvent(Integer sourceID, Integer sailState, Integer health){
-        byte[] packet=new byte[25]; // 19 + 6
+    public byte[] packageBoatStateEvent(Integer sourceID, Integer health){
+        byte[] packet=new byte[24]; // 19 + 5
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
         byte type = 103;
-        short bodyLength = 6;
+        short bodyLength = 5;
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.putInt(sourceID);
-        packetBuffer.put(sailState.byteValue());
         packetBuffer.put(health.byteValue());
 
         //CRC

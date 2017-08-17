@@ -59,37 +59,7 @@ public class BoatUpdater {
         this.buildRoundingLines();
     }
 
-    /**
-     * Calculates if the boat collides with the course boundary, if so then pushes back the boat.
-     * @param boat Competitor the boat to check collisions for
-     * @return boolean if the boat has collided
-     */
 
-    private boolean handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
-        double collisionRadius = 50;
-        boolean collision = false;
-        for (MutablePoint point: courseBoundary) {
-            double distance = raceCourse.distanceBetweenGPSPoints(boat.getPosition(), point);
-            if (distance <= collisionRadius) {
-                handler.yachtEvent(boat.getSourceID(), 1);
-                boat.updatePosition(-10);
-                collision = true;
-                break;
-            }
-        }
-        for (MutablePoint equation: courseLineEquations ) {
-            int index = courseLineEquations.indexOf(equation);
-            //distance = y - (mx + c)
-            double distance = boat.getPosition().getYValue() - (equation.getXValue() * boat.getPosition().getXValue() + equation.getYValue());
-            if ((abs(distance) < 0.0001) && collisionUtility.isWithinBoundaryLines(boat.getPosition(), index)) {
-                handler.yachtEvent(boat.getSourceID(), 1);
-                boat.updatePosition(-10);
-                collision = true;
-                break;
-            }
-        }
-        return collision;
-    }
 
 
 
@@ -232,6 +202,9 @@ public class BoatUpdater {
             System.out.println("Crossed line");
             handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
             boat.setCurrentLegIndex(nextLegIndex);
+            boat.updateHealth(15);
+            handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
+
         }
     }
 
@@ -314,6 +287,38 @@ public class BoatUpdater {
         }
     }
 
+
+    /**
+     * Calculates if the boat collides with the course boundary, if so then pushes back the boat.
+     * @param boat Competitor the boat to check collisions for
+     * @return boolean if the boat has collided
+     */
+
+    private boolean handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
+        double collisionRadius = 50;
+        boolean collision = false;
+        for (MutablePoint point: courseBoundary) {
+            double distance = raceCourse.distanceBetweenGPSPoints(boat.getPosition(), point);
+            if (distance <= collisionRadius) {
+                handler.yachtEvent(boat.getSourceID(), 1);
+                boat.updatePosition(-10);
+                collision = true;
+                break;
+            }
+        }
+        for (MutablePoint equation: courseLineEquations ) {
+            int index = courseLineEquations.indexOf(equation);
+            //distance = y - (mx + c)
+            double distance = boat.getPosition().getYValue() - (equation.getXValue() * boat.getPosition().getXValue() + equation.getYValue());
+            if ((abs(distance) < 0.0001) && collisionUtility.isWithinBoundaryLines(boat.getPosition(), index)) {
+                handler.yachtEvent(boat.getSourceID(), 1);
+                boat.updatePosition(-10);
+                collision = true;
+                break;
+            }
+        }
+        return collision;
+    }
 
 
     /**

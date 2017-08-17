@@ -139,11 +139,16 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     public void boatStateEvent(Integer sourceId, Integer health) {
         try {
-            if (health < 0) {
+
+            Competitor boat = competitors.get(sourceId);
+            if (health >= boat.getMaxHealth()) {
+                health = boat.getMaxHealth();
+            }
+            else if (health < 0) {
                 health = 0; // make sure that negative health is not sent
             }
 
-            this.TCPserver.sendData(binaryPackager.packageBoatStateEvent(sourceId,  2, health));
+            this.TCPserver.sendData(binaryPackager.packageBoatStateEvent(sourceId, health));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -285,9 +290,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private int addCompetitors(){
 
-
         double a = 0.001 * competitors.size();
-//        prestart = new MutablePoint(32.286577 + a, -64.864304);
         prestart = new MutablePoint(32.296117 + a, -64.858834);
 
         Boat newCompetitor=new Boat("Boat "+currentSourceID, random.nextInt(20)+20, prestart, "B"+currentSourceID, currentSourceID, PRESTART);

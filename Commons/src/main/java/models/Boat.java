@@ -140,11 +140,11 @@ public class Boat implements Competitor {
     }
 
     /**
-     * Decreases the boat health when they collide
-     * @param damage int the amount of damage the boat takes
+     * updates the boat health when they collide or round
+     * @param delta int the amount the boat health changes by
      */
-    public void updateHealth(int damage) {
-        int resultHealth = healthLevel + damage;
+    public void updateHealth(int delta) {
+        int resultHealth = healthLevel + delta;
 
         if(resultHealth > maxHealth) {
            this.healthLevel = maxHealth;

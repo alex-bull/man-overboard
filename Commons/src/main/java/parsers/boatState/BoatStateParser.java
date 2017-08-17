@@ -10,7 +10,6 @@ import static parsers.Converter.hexByteArrayToInt;
  */
 public class BoatStateParser {
     private Integer sourceId;
-    private Integer sailState;
     private Integer health;
 
 
@@ -20,13 +19,7 @@ public class BoatStateParser {
      */
     public BoatStateParser(byte[] body){
         sourceId = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 4));
-        sailState = hexByteArrayToInt(Arrays.copyOfRange(body, 4, 5));
-        health = hexByteArrayToInt(Arrays.copyOfRange(body, 5, 6));
-    }
-
-
-    public Integer getSailState() {
-        return sailState;
+        health = hexByteArrayToInt(Arrays.copyOfRange(body, 4, 5));
     }
 
     public Integer getSourceId() {

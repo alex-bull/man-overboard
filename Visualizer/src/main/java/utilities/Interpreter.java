@@ -11,13 +11,11 @@ import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
 import org.jdom2.JDOMException;
-import parsers.BoatStatusEnum;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
 import parsers.XmlSubtype;
 import parsers.boatAction.BoatAction;
 import parsers.boatAction.BoatActionParser;
-import parsers.boatHealth.HealthEventParser;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
 import parsers.boatState.BoatStateParser;
@@ -328,7 +326,6 @@ public class Interpreter implements DataSource, PacketHandler {
                     Competitor markRoundingBoat = storedCompetitors.get(markRoundingData.getSourceID());
                     markRoundingBoat.setLastMarkPassed(markName);
                     markRoundingBoat.setTimeAtLastMark(roundingTime);
-                    System.out.println("Boat " + markRoundingData.getSourceID() + " rounded a mark");
 
                 }
                 break;
@@ -393,7 +390,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 BoatStateParser boatStateParser = new BoatStateParser(packet);
                 Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());
                 stateBoat.setHealthLevel(boatStateParser.getHealth());
-                // also can do something with sail state here if needed
 
             default:
                 break;
