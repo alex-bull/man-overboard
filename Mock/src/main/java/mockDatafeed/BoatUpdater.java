@@ -19,6 +19,7 @@ import static java.lang.Math.*;
 import static java.lang.Math.PI;
 import static java.lang.Math.sin;
 import static parsers.BoatStatusEnum.DSQ;
+import static parsers.BoatStatusEnum.FINISHED;
 import static utility.Calculator.shortToDegrees;
 
 /**
@@ -113,7 +114,7 @@ public class BoatUpdater {
                 twa = 180 - (twa - 180); // interpolator only goes up to 180
             }
             double speed = polarTable.getSpeed(twa);
-            if(boat.getStatus() != DSQ) {
+            if(boat.getStatus() != DSQ || boat.getStatus() != FINISHED) {
                 if (boat.hasSailsOut()) {
                     boat.setVelocity(speed * 3);
                     boat.updatePosition(0.1);
@@ -240,6 +241,7 @@ public class BoatUpdater {
 
         if(boat.getCurrentLegIndex() == 6){
             if (!finisherList.contains(boat)){
+                boat.switchSails();
                 finisherList.add(boat);
             }
         }

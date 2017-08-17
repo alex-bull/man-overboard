@@ -22,18 +22,18 @@
     <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="103.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Label alignment="CENTER" prefHeight="51.0" prefWidth="357.0" text="Race Complete" GridPane.valignment="TOP">
+      <Label alignment="CENTER" prefHeight="51.0" prefWidth="357.0" text="Race Complete" textFill="#e0efef" GridPane.valignment="TOP">
          <font>
-            <Font size="38.0" />
+            <Font name="Gentium Book Basic Bold Italic" size="38.0" />
          </font>
          <GridPane.margin>
             <Insets top="40.0" />
          </GridPane.margin>
       </Label>
       <ListView fx:id="finisherListView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="218.0" prefWidth="262.0" style="-fx-background-color: #deeff5;" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM" />
-      <Label alignment="CENTER" prefHeight="51.0" prefWidth="357.0" text="Standings:" GridPane.valignment="TOP">
+      <Label alignment="CENTER" prefHeight="51.0" prefWidth="357.0" text="Standings:" textFill="#e0efef" GridPane.valignment="TOP">
          <font>
-            <Font size="15.0" />
+            <Font name="System Bold Italic" size="15.0" />
          </font>
          <GridPane.margin>
             <Insets top="110.0" />

@@ -501,6 +501,9 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+    /**
+     * Check to see if the race is finished
+     */
     public void checkRaceFinished(){
         if (dataSource.getRaceStatus().equals(RaceStatusEnum.FINISHED) && !finisherListDisplayed) {
             for (Competitor aCompetitor : dataSource.getCompetitorsPosition()){
