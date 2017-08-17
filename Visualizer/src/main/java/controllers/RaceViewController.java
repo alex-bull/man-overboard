@@ -341,6 +341,7 @@ public class RaceViewController implements Initializable, TableObserver {
             tombstoneSize *= 2;
             boatX = getBoatLocation(boat).getXValue();
             boatY = getBoatLocation(boat).getYValue();
+            healthSize*=2;
         }
         if(healthLevel > 0) {
             Color healthColour = calculateHealthColour(boat);
