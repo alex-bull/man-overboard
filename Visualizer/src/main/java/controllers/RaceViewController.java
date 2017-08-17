@@ -526,7 +526,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     /**
-     * Check to see if the race is finished
+     * Check to see if the race is finished and display finisher list if it is
      */
     public void checkRaceFinished(){
         if (dataSource.getRaceStatus().equals(RaceStatusEnum.FINISHED) && !finisherListDisplayed) {
@@ -544,13 +544,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
             double width = raceViewPane.getWidth();
             double height = raceViewPane.getHeight();
-
             finisherListPane.setLayoutX(width/2 - finisherListPane.getWidth()/2);
             finisherListPane.setLayoutY(height/2 - finisherListPane.getHeight()/2);
-
-
-
-
         }
     }
 

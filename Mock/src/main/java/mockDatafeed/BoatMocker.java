@@ -139,7 +139,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             else if (health < 0) {
                 health = 0; // make sure that negative health is not sent
             }
-            System.out.println("boat health sending " + health);
+            // System.out.println("boat health sending " + health);
             this.TCPserver.sendData(binaryPackager.packageBoatStateEvent(sourceId, health));
         } catch (IOException e) {
             e.printStackTrace();

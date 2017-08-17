@@ -103,7 +103,6 @@ public class BoatUpdater {
 
             if(courseCollision || boundaryCollision) {
                 boat.updateHealth(-15);
-                System.out.println("Boundaring collision");
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
             }
 
@@ -186,7 +185,6 @@ public class BoatUpdater {
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
                 boat.updateHealth(15);
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
-
 
             }
         } else {
