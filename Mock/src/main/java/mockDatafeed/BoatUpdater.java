@@ -96,8 +96,9 @@ public class BoatUpdater {
             boolean boundaryCollision =this.handleBoundaryCollisions(boat);
 
             if(courseCollision || boundaryCollision) {
-                boat.updateHealth(-5);
-                handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
+                boat.updateHealth(-15);
+                System.out.println("Boundaring collision");
+                handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
             }
 
 //            boat.blownByWind(twa);
@@ -150,8 +151,8 @@ public class BoatUpdater {
                 boat.finishedRounding();
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
 
-                boat.updateHealth(5);
-                handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
+                boat.updateHealth(15);
+                handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
 
             }
         } else {
@@ -177,8 +178,8 @@ public class BoatUpdater {
             if (didCrossLine(boat, mark1.getRoundingLine2()) || didCrossLine(boat, mark2.getRoundingLine2())) {
                 boat.finishedRounding();
                 handler.markRoundingEvent(boat.getSourceID(), boat.getCurrentLegIndex());
-                boat.updateHealth(5);
-                handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
+                boat.updateHealth(15);
+                handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
 
 
             }
@@ -203,8 +204,10 @@ public class BoatUpdater {
 
         if (didCrossLine(boat, mark.getRoundingLine1())) {
             boat.setCurrentLegIndex(nextLegIndex);
-
             handler.markRoundingEvent(boat.getSourceID(), nextLegIndex);
+
+            boat.updateHealth(15);
+            handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
 
         }
     }
@@ -416,10 +419,9 @@ public class BoatUpdater {
                 handler.yachtEvent(comp.getSourceID(),1);
                 handler.yachtEvent(boat.getSourceID(),1);
 
-                comp.updateHealth(-5);
-                handler.healthEvent(comp.getSourceID(), comp.getHealthLevel());
-                boat.updateHealth(-5);
-                handler.healthEvent(boat.getSourceID(), boat.getHealthLevel());
+                comp.updateHealth(-15);
+                System.out.println("boat collided");
+                handler.boatStateEvent(comp.getSourceID(), comp.getHealthLevel());
 
                 calculateCollisions(comp,boat);
                 return true;

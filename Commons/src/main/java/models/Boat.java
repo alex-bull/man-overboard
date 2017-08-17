@@ -40,8 +40,6 @@ public class Boat implements Competitor {
     private Line roundingLine2;
     //how much the boat if affected by wind, can be parsed in as constructor
     private double blownFactor = 0.01;
-//    external forces on the boat
-    private List<RepelForce> forces;
     private int healthLevel = 100;
     private int maxHealth = 100;
     private Force boatSpeed;
@@ -53,8 +51,7 @@ public class Boat implements Competitor {
     //external forces
     private List<Force> externalForces=new ArrayList<>();
 
-    private int healthLevel = 30;
-    private int maxHealth = 30;
+
 
     public MutablePoint getPosition17() {
         return position17;
