@@ -6,6 +6,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
+import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utility.BinaryPackager;
 
@@ -53,6 +54,10 @@ public class MainController {
                 case Q:
                     if(raceViewController.isZoom()) {
                         raceViewController.zoomOut();
+                        if (!tableController.isVisible()) {
+                            tableController.makeVisible();
+                            sparklinesController.makeVisible();
+                        }
                     }
                     else{
                         raceViewController.zoomIn();

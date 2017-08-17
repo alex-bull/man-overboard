@@ -48,7 +48,7 @@
                   <Font name="Gentium Book Basic Bold Italic" size="200.0" />
                </font>
             </Text>
-            <Text fx:id="product" strokeType="OUTSIDE" strokeWidth="0.0" text="RaceVision" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+            <Text fx:id="product" strokeType="OUTSIDE" strokeWidth="0.0" text="Man Overboard" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                <font>
                   <Font name="Gentium Book Basic Bold Italic" size="13.0" />
                </font>
