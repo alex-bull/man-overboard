@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.canvas.*?>
@@ -10,7 +11,6 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
-
 
 <Pane fx:id="raceParentPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
    <children>
@@ -42,9 +42,9 @@
               <RadioButton fx:id="noAnnotationsRadio" layoutX="136.0" layoutY="220.0" mnemonicParsing="false" onAction="#clearAnnotations" text="None" />
               <RadioButton fx:id="someAnnotationsRadio" layoutX="64.0" layoutY="220.0" mnemonicParsing="false" text="Partial" />
               <Button layoutX="17.0" layoutY="433.0" mnemonicParsing="false" onAction="#toggleControls" text="Show Controls" />
-              <GridPane fx:id="finisherListPane" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="479.0" prefWidth="358.0" style="-fx-background-color: ;">
+              <GridPane fx:id="finisherListPane" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="479.0" prefWidth="358.0">
                   <children>
-                      <Pane opacity="0.6" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: Black;" GridPane.rowSpan="2147483647">
+                      <Pane opacity="0.6" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" GridPane.rowSpan="2147483647">
                           <effect>
                               <GaussianBlur radius="4.75" />
                           </effect>

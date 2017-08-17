@@ -398,7 +398,6 @@ public class Interpreter implements DataSource, PacketHandler {
             case BOAT_STATE:
                 BoatStateParser boatStateParser = new BoatStateParser(packet);
                 Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());
-                System.out.println("received health as " +boatStateParser.getHealth());
                 stateBoat.setHealthLevel(boatStateParser.getHealth());
 
             default:
