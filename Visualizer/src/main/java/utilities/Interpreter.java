@@ -35,6 +35,7 @@ import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
 import utility.PacketHandler;
 import com.rits.cloning.Cloner;
+import utility.Projection;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -413,9 +414,9 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     public void addCrewLocation(List<CrewLocation> locations){
         for(CrewLocation crewLocation:locations){
-            MutablePoint location = cloner.deepClone(crewLocation.getPosition());
+            MutablePoint location = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            MutablePoint location17=cloner.deepClone(crewLocation.getPosition());
+            MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
             location17.factor(zoomFactor, zoomFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             crewLocations.add(new CrewLocation(crewLocation.getNumCrew(),location,location17));
         }

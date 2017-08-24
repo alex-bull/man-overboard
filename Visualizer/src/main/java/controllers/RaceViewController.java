@@ -39,6 +39,7 @@ import javafx.util.Duration;
 import mockDatafeed.Keys;
 import models.Competitor;
 import models.CourseFeature;
+import models.CrewLocation;
 import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.Converter;
@@ -94,6 +95,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private GridPane finisherListPane;
     @FXML
     private ListView finisherListView;
+
+    private List<Shape> fallenCrews=new ArrayList<>();
 
     public GridPane getFinisherListPane() {
         return finisherListPane;
@@ -1410,7 +1413,14 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     public void drawFallenCrew(){
-
+        raceViewPane.getChildren().removeAll(fallenCrews);
+        fallenCrews.removeAll(fallenCrews);
+        for(CrewLocation crewLocation:dataSource.getCrewLocations()){
+//            System.out.println(crewLocation);
+            Circle crew=new Circle(crewLocation.getPosition().getXValue(),crewLocation.getPosition().getYValue(),crewLocation.getNumCrew(),Color.WHITE);
+            fallenCrews.add(crew);
+        }
+        raceViewPane.getChildren().addAll(fallenCrews);
     }
 
     /**
