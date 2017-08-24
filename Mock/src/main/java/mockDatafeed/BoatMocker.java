@@ -342,7 +342,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         TCPserver.sendData(eventPacket);
 
         //wait for it to be send
-        Thread.sleep(20);
+//        Thread.sleep(20);
     }
 
 
@@ -469,6 +469,17 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * packages and sends fallen crew event
+     * @param locations data for the event
+     * @throws IOException if send fails
+     */
+    public void fallenCrewEvent(List<CrewLocation> locations) throws IOException {
+
+        byte[] eventPacket = binaryPackager.packageFallenCrewEvent(locations);
+        TCPserver.sendData(eventPacket);
     }
 
 

@@ -4,25 +4,20 @@ import javafx.scene.shape.Line;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.xml.race.RaceData;
-import parsers.xml.race.RaceXMLParser;
-import utilities.CollisionUtility;
 import utilities.PolarTable;
-import utility.BinaryPackager;
 import utility.Calculator;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
-import static java.lang.Math.*;
-import static java.lang.Math.PI;
-import static java.lang.Math.sin;
+import static java.lang.Math.abs;
 import static parsers.BoatStatusEnum.DSQ;
 import static utilities.CollisionUtility.calculateFinalVelocity;
 import static utilities.CollisionUtility.isPointInPolygon;
-import static utility.Calculator.multiply;
-import static utility.Calculator.shortToDegrees;
+import static utility.Calculator.*;
 import static utility.Projection.mercatorProjection;
 
 /**
@@ -38,21 +33,20 @@ public class BoatUpdater {
     private Map<Integer, Competitor> markBoats;
     private BoatUpdateEventHandler handler;
     private List<MutablePoint> courseBoundary;
-    private List<MutablePoint> courseLineEquations;
-    private CollisionUtility collisionUtility;
     List<Competitor> finisherList = new ArrayList<>();
-    private BinaryPackager binaryPackager;
     private WindGenerator windGenerator;
+    private List<CrewLocation> crewMembers;
 
 
     /**
      * Boat updater constructor
-     * @param competitors Map a hashmap of competitors in the race
-     * @param markBoats Map course features
-     * @param raceData RaceData race data
-     * @param handler BoatUpdateEventHandler boat mocker
+     *
+     * @param competitors    Map a hashmap of competitors in the race
+     * @param markBoats      Map course features
+     * @param raceData       RaceData race data
+     * @param handler        BoatUpdateEventHandler boat mocker
      * @param courseBoundary List a list of course boundary points
-     * @throws IOException IOException
+     * @throws IOException   IOException
      * @throws JDOMException JDOMException
      */
     BoatUpdater(Map<Integer, Competitor> competitors, Map<Integer, Competitor> markBoats, RaceData raceData,
@@ -62,7 +56,7 @@ public class BoatUpdater {
         this.handler = handler;
         this.raceData = raceData;
         this.courseBoundary = courseBoundary;
-        this.windGenerator=windGenerator;
+        this.windGenerator = windGenerator;
 
         polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
         this.buildRoundingLines();
@@ -71,8 +65,8 @@ public class BoatUpdater {
 
     /**
      * updates the position of all the boats given the boats speed and heading
-
-     * @throws IOException IOException
+     *
+     * @throws IOException          IOException
      * @throws InterruptedException InterruptedException
      */
     void updatePosition() throws IOException, InterruptedException {
@@ -81,27 +75,28 @@ public class BoatUpdater {
             Competitor boat = competitors.get(sourceId);
             short windDirection = windGenerator.getWindDirection();
             double twa = abs(shortToDegrees(windDirection) - boat.getCurrentHeading());
-            if(twa > 180) {
+            if (twa > 180) {
                 twa = 180 - (twa - 180); // interpolator only goes up to 180
             }
             double speed = polarTable.getSpeed(twa);
-            if(boat.getStatus() != DSQ) {
+            if (boat.getStatus() != DSQ) {
                 if (boat.hasSailsOut()) {
                     boat.getBoatSpeed().setMagnitude(speed * 4);
                     boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
                 } else {
                     boat.getBoatSpeed().reduce(0.99);
                 }
-            } else {boat.getBoatSpeed().reduce(0.99);
+            } else {
+                boat.getBoatSpeed().reduce(0.99);
             }
 
             boat.updatePosition(0.1);
 
             boolean courseCollision = this.handleCourseCollisions(boat);
             handleBoatCollisions(boat);
-            boolean boundaryCollision =this.handleBoundaryCollisions(boat);
+            boolean boundaryCollision = this.handleBoundaryCollisions(boat);
 
-            if(courseCollision || boundaryCollision) {
+            if (courseCollision || boundaryCollision) {
                 boat.updateHealth(-15);
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
             }
@@ -114,6 +109,7 @@ public class BoatUpdater {
 
     /**
      * Calculates if the boat rounds the next course feature and adjusts the boats leg index and sends a rounding packet
+     *
      * @param boat Competitor the boat to check roundings for
      */
     private void handleRounding(Competitor boat) throws IOException, InterruptedException {
@@ -143,6 +139,7 @@ public class BoatUpdater {
 
     /**
      * Check for rounding of a mark
+     *
      * @param boat Competitor the boat to check
      */
     private void markRounding(Competitor boat) {
@@ -171,7 +168,8 @@ public class BoatUpdater {
 
     /**
      * Check for rounding of a gate -does not include finish or start line
-     * @param boat Competitor the boat to check
+     *
+     * @param boat    Competitor the boat to check
      * @param markIds List the marks of the gate
      */
     private void gateRounding(Competitor boat, List<Integer> markIds) {
@@ -198,7 +196,8 @@ public class BoatUpdater {
 
     /**
      * Check for boat crossing a start or finish line
-     * @param boat Competitor the boat to check
+     *
+     * @param boat    Competitor the boat to check
      * @param markIds List the marks of the line
      */
     private void lineRounding(Competitor boat, List<Integer> markIds) {
@@ -215,8 +214,8 @@ public class BoatUpdater {
 
         }
 
-        if(boat.getCurrentLegIndex() == 6){
-            if (!finisherList.contains(boat)){
+        if (boat.getCurrentLegIndex() == 6) {
+            if (!finisherList.contains(boat)) {
                 boat.switchSails();
                 finisherList.add(boat);
             }
@@ -227,10 +226,11 @@ public class BoatUpdater {
 
     /**
      * Checks if all boats have finished the racing
+     *
      * @return true if all boats have finished racing
      */
-    boolean checkAllFinished(){
-        if(finisherList.size() == competitors.size()){
+    boolean checkAllFinished() {
+        if (finisherList.size() == competitors.size()) {
             return true;
         }
         return false;
@@ -239,6 +239,7 @@ public class BoatUpdater {
 
     /**
      * Checks if a boat is within a threshold distance of a line
+     *
      * @param boat Competitor the boat
      * @param line Line the line segment
      * @return boolean, true if in range
@@ -249,7 +250,6 @@ public class BoatUpdater {
         double dist = Calculator.pointDistance(boat.getPosition().getXValue(), boat.getPosition().getYValue(), line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
         return dist < lineCrossThreshold;
     }
-
 
 
     /**
@@ -274,6 +274,7 @@ public class BoatUpdater {
 
     /**
      * Build invisible mark lines to determine whether a boat has rounded a mark
+     *
      * @param index int index
      */
     private void buildMarkLines(int index) {
@@ -288,11 +289,11 @@ public class BoatUpdater {
 
         Vector2D vec = new Vector2D(targetPos.getXValue(), targetPos.getYValue(), nextPos.getXValue(), nextPos.getYValue());
         vec.normalise();
-        Line l1 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec.getX() * -200, vec.getY() * -200);
+        Line l1 = new Line(targetPos.getXValue(), targetPos.getYValue(), vec.getX() * -200, vec.getY() * -200);
 
-        Vector2D vec2 = new Vector2D(targetPos.getXValue(), targetPos. getYValue(), prevPos.getXValue(), prevPos.getYValue());
+        Vector2D vec2 = new Vector2D(targetPos.getXValue(), targetPos.getYValue(), prevPos.getXValue(), prevPos.getYValue());
         vec.normalise();
-        Line l2 = new Line(targetPos.getXValue(), targetPos. getYValue(), vec2.getX() * -200, vec2.getY() * -200);
+        Line l2 = new Line(targetPos.getXValue(), targetPos.getYValue(), vec2.getX() * -200, vec2.getY() * -200);
 
         mark.setRoundingLine1(l1);
         mark.setRoundingLine2(l2);
@@ -300,9 +301,10 @@ public class BoatUpdater {
 
     /**
      * Build invisible gate lines to determine whether a boat has passed a gate
+     *
      * @param markIds List a list of mark ids
      */
-    private void buildGateLines(List<Integer> markIds ) {
+    private void buildGateLines(List<Integer> markIds) {
         Competitor mark1 = markBoats.get(markIds.get(0));
         Competitor mark2 = markBoats.get(markIds.get(1));
 
@@ -311,13 +313,13 @@ public class BoatUpdater {
 
         Line l1 = new Line(pos1.getXValue(), pos1.getYValue(), pos2.getXValue(), pos2.getYValue());
 
-        Vector2D vec = new Vector2D(pos1.getXValue(), pos1. getYValue(), pos2.getXValue(), pos2.getYValue());
+        Vector2D vec = new Vector2D(pos1.getXValue(), pos1.getYValue(), pos2.getXValue(), pos2.getYValue());
         vec.normalise();
-        Line l2 = new Line(pos1.getXValue(), pos1. getYValue(), vec.getX() * -200, vec.getY() * -200);
+        Line l2 = new Line(pos1.getXValue(), pos1.getYValue(), vec.getX() * -200, vec.getY() * -200);
 
-        Vector2D vec2 = new Vector2D(pos2.getXValue(), pos2. getYValue(), pos1.getXValue(), pos1.getYValue());
+        Vector2D vec2 = new Vector2D(pos2.getXValue(), pos2.getYValue(), pos1.getXValue(), pos1.getYValue());
         vec2.normalise();
-        Line l3 = new Line(pos2.getXValue(), pos2. getYValue(), vec2.getX() * -200, vec2.getY() * -200);
+        Line l3 = new Line(pos2.getXValue(), pos2.getYValue(), vec2.getX() * -200, vec2.getY() * -200);
 
         mark1.setRoundingLine1(l1);
         mark1.setRoundingLine2(l2);
@@ -326,23 +328,23 @@ public class BoatUpdater {
     }
 
 
-
     /**
      * Calculates if the boat collides with any course features and adjusts the boats position
-     * @param boat Competitor the boat to check collisions for
+     *
+     * @param boat Competitor the boat to check collisions for0
      */
     private boolean handleCourseCollisions(Competitor boat) throws IOException, InterruptedException {
 
-        for (Competitor mark: markBoats.values()) {
-            double collisionRadius=mark.getCollisionRadius()+boat.getCollisionRadius();
+        for (Competitor mark : markBoats.values()) {
+            double collisionRadius = mark.getCollisionRadius() + boat.getCollisionRadius();
 
             double distance = raceCourse.distanceBetweenGPSPoints(mark.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
 //              send a collision packet
-                handler.yachtEvent(boat.getSourceID(),1);
+                handler.yachtEvent(boat.getSourceID(), 1);
                 boat.updatePosition(-10);
-
+                collisionHandler(boat, boat.getVelocity(),10);
                 return true;
             }
         }
@@ -351,12 +353,13 @@ public class BoatUpdater {
 
     /**
      * Calculates if the boat collides with the course boundary, if so then pushes back the boat.
+     *
      * @param boat Competitor the boat to check collisions for
      */
 
     private boolean handleBoundaryCollisions(Competitor boat) throws IOException, InterruptedException {
 
-        if(!isPointInPolygon(boat.getPosition(),courseBoundary)){
+        if (!isPointInPolygon(boat.getPosition(), courseBoundary)) {
             handler.yachtEvent(boat.getSourceID(), 1);
             boat.updatePosition(-10);
             return true;
@@ -367,58 +370,82 @@ public class BoatUpdater {
 
     /**
      * function to calculate what happens during collision
+     *
      * @param boat1 one of the boat during collision
      * @param boat2 the other boat during collision
      */
-    private void calculateCollisions(Competitor boat1, Competitor boat2){
+    private void calculateCollisions(Competitor boat1, Competitor boat2) {
 
-        MutablePoint p1=mercatorProjection(boat1.getPosition().getXValue(),boat1.getPosition().getYValue());
-        MutablePoint p2=mercatorProjection(boat2.getPosition().getXValue(),boat2.getPosition().getYValue());
+        MutablePoint p1 = mercatorProjection(boat1.getPosition().getXValue(), boat1.getPosition().getYValue());
+        MutablePoint p2 = mercatorProjection(boat2.getPosition().getXValue(), boat2.getPosition().getYValue());
 
-        Force v1=boat1.getBoatSpeed();
+        Force v1 = boat1.getBoatSpeed();
         v1.round();
-        Force v2=boat2.getBoatSpeed();
+        Force v2 = boat2.getBoatSpeed();
         v2.round();
-        Force v1f=calculateFinalVelocity(v1,v2,p1,p2);
-        Force v2f=calculateFinalVelocity(v2,v1,p2,p1);
+        Force v1f = calculateFinalVelocity(v1, v2, p1, p2);
+        Force v2f = calculateFinalVelocity(v2, v1, p2, p1);
 
         boat1.updatePosition(-10);
         boat2.updatePosition(-10);
         //momentum
 
-        boat1.addForce((Force) multiply(5,v1f));
-        boat2.addForce((Force) multiply(5,v2f));
+        boat1.addForce((Force) multiply(5, v1f));
+        boat2.addForce((Force) multiply(5, v2f));
 
     }
 
+    /**
+     * handler for collision, currently throws members off the boat
+     * @param boat the boat involved
+     * @param magnitude the magnitude of the collision
+     * @param health the health reduced
+     */
+    private void collisionHandler(Competitor boat, double magnitude, double health) {
+        Random randomGenerator = new Random();
+        int numLocation = (int) health / 5;
+        List<CrewLocation> location=new ArrayList<>();
+        for (int i = 0; i < numLocation; i++) {
 
+            //distance from the boat with mean magnitude and variance magnitude/2
+            double distance = magnitude + randomGenerator.nextGaussian() * magnitude / 2;
+            //angle from the boat collision from 0 to 360 degrees
+            double angle = randomGenerator.nextDouble() * 360;
+            MutablePoint position = movePoint(new Force(distance, angle, false), boat.getPosition(), 1);
+
+            CrewLocation crewLocation=new CrewLocation(5, position);
+            crewMembers.add(crewLocation);
+            location.add(crewLocation);
+        }
+
+        handler.fallenCrewEvent(location);
+    }
 
     /**
      * Calculates if the boat collides with any other boat and adjusts the position of both boats accordingly.
+     *
      * @param boat Competitor, the boat to check collisions for
      */
     private boolean handleBoatCollisions(Competitor boat) throws IOException, InterruptedException {
 
         //Can bump back a fixed amount or try to simulate a real collision.
-        for (Competitor comp: this.competitors.values()) {
+        for (Competitor comp : this.competitors.values()) {
 
             if (comp.getSourceID() == boat.getSourceID()) continue; //cant collide with self
 
-            double collisionRadius=comp.getCollisionRadius()+boat.getCollisionRadius();
+            double collisionRadius = comp.getCollisionRadius() + boat.getCollisionRadius();
 
 
             double distance = raceCourse.distanceBetweenGPSPoints(comp.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
 //                send a collision packet
-                handler.yachtEvent(comp.getSourceID(),1);
-                handler.yachtEvent(boat.getSourceID(),1);
+                handler.yachtEvent(comp.getSourceID(), 1);
+                handler.yachtEvent(boat.getSourceID(), 1);
 
                 comp.updateHealth(-15);
-                System.out.println("boat collided");
                 handler.boatStateEvent(comp.getSourceID(), comp.getHealthLevel());
-
-                calculateCollisions(comp,boat);
+                calculateCollisions(comp, boat);
                 return true;
             }
         }

@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
 import parsers.BoatStatusEnum;
 import javafx.scene.shape.Line;
+import utility.Calculator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +18,8 @@ import java.util.List;
 public class Boat implements Competitor {
 
 
-    final int earthRadius = 6371;
 
     private String teamName;
-    private double velocity;
     private MutablePoint position;
     private MutablePoint position17;
     private Color color;
@@ -339,11 +338,11 @@ public class Boat implements Competitor {
      */
     public void updatePosition(double elapsedTime) {
         //moves the boat by its speed
-        MutablePoint p=moveBoat(boatSpeed,getPosition(),elapsedTime);
+        MutablePoint p= Calculator.movePoint(boatSpeed,getPosition(),elapsedTime);
 
         //calculate all external forces on it
         for(Force force:new ArrayList<>(externalForces)){
-            p=moveBoat(force,p,elapsedTime);
+            p=Calculator.movePoint(force,p,elapsedTime);
             //reduce the external force
             force.reduce(0.95);
             if(force.getMagnitude()<0.1){
@@ -354,27 +353,8 @@ public class Boat implements Competitor {
 //        System.out.println(p);
     }
 
-    /**
-     * moves the boat from the current position by the force
-     * @param force the force which the boat is affected by
-     * @param point the point at the start
-     * @param elapsedTime the time period of this movement
-     */
-    private MutablePoint moveBoat(Force force,MutablePoint point, double elapsedTime){
-        double distance = force.getMagnitude() * elapsedTime / 1000; // in km
-        double lat1 = point.getXValue() * Math.PI / 180; // in radians
-        double lng1 = point.getYValue() * Math.PI / 180;
-        double bearing = force.getDirection() * Math.PI / 180;
 
-        //calculate new positions
-        double lat2 = Math.asin(Math.sin(lat1) * Math.cos(distance / earthRadius) +
-                Math.cos(lat1) * Math.sin(distance / earthRadius) * Math.cos(bearing));
-        double lng2 = lng1 + Math.atan2(Math.sin(bearing) * Math.sin(distance / earthRadius) * Math.cos(lat1),
-                Math.cos(distance / earthRadius) - Math.sin(lat1) * Math.sin(lat2));
 
-        //turn the new lat and lng back to degrees
-        return new MutablePoint(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI);
-    }
 
     public void addForce(Force externalForce){
         externalForces.add(externalForce);
