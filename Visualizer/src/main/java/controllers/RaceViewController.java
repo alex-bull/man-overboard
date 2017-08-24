@@ -558,7 +558,8 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void zoomIn(){
         zoom=true;
-        mapEngine.executeScript("setZoom(17);");
+        mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getZoomLevel()));
+        System.out.println(dataSource.getZoomLevel());
         updateRace();
         setScale(2);
         track.setVisible(!isZoom());
@@ -571,7 +572,6 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void zoomOut(){
         zoom=false;
-
         drawBackgroundImage();
         updateRace();
         setScale(1);
@@ -1247,13 +1247,14 @@ public class RaceViewController implements Initializable, TableObserver {
             for(MutablePoint p: dataSource.getCourseBoundary17()){
                 courseBoundary.add(p.shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2));
             }
-
+//            System.out.println(dataSource.getStoredFeatures17());
         }else{
             courseFeatures=dataSource.getStoredFeatures();
             courseBoundary = dataSource.getCourseBoundary();
         }
         drawCourse(courseFeatures);
         drawBoundary(courseBoundary);
+
     }
 
     /**

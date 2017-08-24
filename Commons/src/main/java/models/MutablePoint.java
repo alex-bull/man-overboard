@@ -56,9 +56,10 @@ public class MutablePoint implements Vector{
      * @param paddingX double the x padding
      * @param paddingY double the y padding
      */
-    public void factor(double xFactor, double yFactor, double minX, double minY, double paddingX, double paddingY) {
+    public MutablePoint factor(double xFactor, double yFactor, double minX, double minY, double paddingX, double paddingY) {
         setX(((getXValue() - minX) * xFactor + paddingX));
         setY(((getYValue() - minY) * yFactor + paddingY));
+        return new MutablePoint(getXValue(),getYValue());
     }
 
     /**

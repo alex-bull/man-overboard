@@ -19,6 +19,8 @@ import java.util.Set;
  */
 public interface DataSource {
     void receive(String host, int port, Scene scene, StreamDelegate delegate);
+    void changeScaling(int Multiplier);
+    int getZoomLevel();
     List<CrewLocation> getCrewLocations();
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
