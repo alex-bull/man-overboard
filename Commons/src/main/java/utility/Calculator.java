@@ -5,6 +5,7 @@ import models.MutablePoint;
 import models.Vector;
 
 import static java.lang.Math.*;
+import static parsers.Converter.hexByteArrayToInt;
 
 /**
  * Created by psu43 on 17/07/17.
@@ -155,5 +156,6 @@ public class Calculator {
         //turn the new lat and lng back to degrees
         return new MutablePoint(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI);
     }
+
 
 }

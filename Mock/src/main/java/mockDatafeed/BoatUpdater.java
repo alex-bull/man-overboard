@@ -35,7 +35,7 @@ public class BoatUpdater {
     private List<MutablePoint> courseBoundary;
     List<Competitor> finisherList = new ArrayList<>();
     private WindGenerator windGenerator;
-    private List<CrewLocation> crewMembers;
+    private List<CrewLocation> crewMembers=new ArrayList<>();
 
 
     /**
@@ -401,7 +401,7 @@ public class BoatUpdater {
      * @param magnitude the magnitude of the collision
      * @param health the health reduced
      */
-    private void collisionHandler(Competitor boat, double magnitude, double health) {
+    private void collisionHandler(Competitor boat, double magnitude, double health) throws IOException {
         Random randomGenerator = new Random();
         int numLocation = (int) health / 5;
         List<CrewLocation> location=new ArrayList<>();

@@ -12,10 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import models.ColourPool;
-import models.Competitor;
-import models.CourseFeature;
-import models.MutablePoint;
+import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
@@ -52,6 +49,7 @@ import static parsers.BoatStatusEnum.DSQ;
 import static parsers.BoatStatusEnum.FINISHED;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
+import static parsers.fallenCrew.FallenCrewParser.parseFallenCrew;
 import static utility.Calculator.calculateExpectedTack;
 
 /**
@@ -81,7 +79,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     private List<MutablePoint> courseBoundary = new ArrayList<>();
 
-
+    private List<CrewLocation> crewLocations=new ArrayList<>();
 
 
     public HashMap<Integer, CourseFeature> getStoredFeatures17() {
@@ -399,10 +397,32 @@ public class Interpreter implements DataSource, PacketHandler {
                 BoatStateParser boatStateParser = new BoatStateParser(packet);
                 Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());
                 stateBoat.setHealthLevel(boatStateParser.getHealth());
+                break;
+            case FALLEN_CREW:
+                addCrewLocation(parseFallenCrew(packet));
+                break;
 
             default:
                 break;
         }
+    }
+
+    /**
+     * adds crew locations with location converted
+     * @param locations
+     */
+    public void addCrewLocation(List<CrewLocation> locations){
+        for(CrewLocation crewLocation:locations){
+            MutablePoint location = cloner.deepClone(crewLocation.getPosition());
+            location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            MutablePoint location17=cloner.deepClone(crewLocation.getPosition());
+            location17.factor(zoomFactor, zoomFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            crewLocations.add(new CrewLocation(crewLocation.getNumCrew(),location,location17));
+        }
+    }
+
+    public List<CrewLocation> getCrewLocations() {
+        return crewLocations;
     }
 
     /**

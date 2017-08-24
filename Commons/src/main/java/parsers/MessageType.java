@@ -15,6 +15,7 @@ public enum MessageType {
     SOURCE_ID(56),
     YACHT_ACTION(29),
     BOAT_HEALTH(97),
+    FALLEN_CREW(107),
     BOAT_STATE(103);
 
     private final int value;

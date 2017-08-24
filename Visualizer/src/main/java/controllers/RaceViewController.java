@@ -1409,6 +1409,9 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+    public void drawFallenCrew(){
+
+    }
 
     /**
      * Refreshes the contents of the display to match the datasource
@@ -1422,6 +1425,7 @@ public class RaceViewController implements Initializable, TableObserver {
         updateRace();
         checkCollision();
         updateGuidingArrow();
+        drawFallenCrew();
     }
 
     boolean isLoaded() {
