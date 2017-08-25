@@ -96,7 +96,7 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML
     private ListView finisherListView;
 
-    private List<Shape> fallenCrews=new ArrayList<>();
+    private List<ImageView> fallenCrews=new ArrayList<>();
 
     public GridPane getFinisherListPane() {
         return finisherListPane;
@@ -1417,9 +1417,25 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().removeAll(fallenCrews);
         fallenCrews.removeAll(fallenCrews);
         for(CrewLocation crewLocation:dataSource.getCrewLocations()){
-//            System.out.println(crewLocation);
-            Circle crew=new Circle(crewLocation.getPosition().getXValue(),crewLocation.getPosition().getYValue(),crewLocation.getNumCrew(),Color.WHITE);
+            ImageView crew = new ImageView();
+            Image drowning = new Image("/Animations/iCantSwim.gif");
+
+            crew.setImage(drowning);
+
+//            Circle crew;
+            if(isZoom()){
+                MutablePoint p=crewLocation.getPosition17().shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2);
+                crew.setLayoutX(p.getXValue());
+                crew.setLayoutY(p.getYValue());
+
+            }
+            else{
+                crew.setLayoutX(crewLocation.getPosition().getXValue());
+                crew.setLayoutY(crewLocation.getPosition().getYValue());
+            }
             fallenCrews.add(crew);
+//            System.out.println(crewLocation);
+
         }
         raceViewPane.getChildren().addAll(fallenCrews);
     }

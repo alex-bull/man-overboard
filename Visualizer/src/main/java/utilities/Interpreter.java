@@ -418,10 +418,22 @@ public class Interpreter implements DataSource, PacketHandler {
     public void addCrewLocation(List<CrewLocation> locations){
         for(CrewLocation crewLocation:locations){
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
+            MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
             location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            crewLocations.add(new CrewLocation(crewLocation.getNumCrew(),location,location17));
+            crewLocations.add(new CrewLocation(crewLocation.getNumCrew(),location,location17, locationOriginal));
+        }
+    }
+
+    /**
+     * updates crew location when scaling level changes
+     */
+    private void updateCrewLocation(){
+        for(CrewLocation crewLocation: crewLocations){
+            MutablePoint point=cloner.deepClone(crewLocation.getPositionOriginal());
+            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            crewLocation.setPosition17(new MutablePoint(point.getXValue(),point.getYValue()));
         }
     }
 
@@ -653,6 +665,7 @@ public class Interpreter implements DataSource, PacketHandler {
         this.zoomLevel+=deltaLevel;
         updateCourseMarksScaling();
         updateCourseBoundary();
+        updateCrewLocation();
     }
 
     public Set<Integer> getCollisions(){
