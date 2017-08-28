@@ -98,7 +98,8 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
                     protected void updateItem(Competitor boat, boolean empty) {
                         super.updateItem(boat, empty);
                         if (boat != null) {
-                            setText(boat.getTeamName() + ": " + boat.getVelocity() + " m/s");
+//                            setText(boat.getTeamName() + ": " + boat.getVelocity() + " m/s");
+                            setText(String.format("%s: %.2f m/s",boat.getTeamName(),boat.getVelocity()));
                         } else {
                             setText("");
                         }

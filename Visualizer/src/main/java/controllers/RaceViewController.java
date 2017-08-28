@@ -1417,6 +1417,7 @@ public class RaceViewController implements Initializable, TableObserver {
     public void drawFallenCrew(){
 
         Map<Integer,CrewLocation> crewLocation=dataSource.getCrewLocations();
+        System.out.println(dataSource.getCrewLocations());
 
         //remove entries
         Set<Integer> removedLocation= new HashSet<>(fallenCrews.keySet());
