@@ -2,6 +2,7 @@ package controllers;
 
 import Animations.CollisionRipple;
 import Animations.RandomShake;
+import com.google.common.collect.Maps;
 import com.rits.cloning.Cloner;
 import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
@@ -1414,7 +1415,17 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     public void drawFallenCrew(){
+
         Map<Integer,CrewLocation> crewLocation=dataSource.getCrewLocations();
+
+        //remove entries
+        Set<Integer> removedLocation= new HashSet<>(fallenCrews.keySet());
+        removedLocation.removeAll(crewLocation.keySet());
+        for(int sourceId:removedLocation){
+            raceViewPane.getChildren().remove(fallenCrews.get(sourceId));
+            fallenCrews.remove(sourceId);
+        }
+
         for(int sourceID:crewLocation.keySet()) {
             if (!fallenCrews.containsKey(sourceID)) {
                 ImageView crew = new ImageView();

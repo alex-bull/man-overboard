@@ -71,7 +71,7 @@ public class BoatUpdater {
      * @throws InterruptedException InterruptedException
      */
     void updatePosition() throws IOException, InterruptedException {
-
+        boolean crewMemberUpdated=false;
         for (Integer sourceId : competitors.keySet()) {
             Competitor boat = competitors.get(sourceId);
             short windDirection = windGenerator.getWindDirection();
@@ -92,6 +92,7 @@ public class BoatUpdater {
                 boat.getBoatSpeed().reduce(0.99);
             }
 
+            crewMemberUpdated=crewMemberUpdated||pickUpCrew(boat);
             boat.updatePosition(0.1);
 
             boolean courseCollision = this.handleCourseCollisions(boat);
@@ -106,9 +107,28 @@ public class BoatUpdater {
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
         }
+        if(crewMemberUpdated){
+            handler.fallenCrewEvent(crewMembers);
+
+        }
     }
 
 
+    /**
+     * function to check if crew member can be picked up
+     * @param boat
+     */
+    private boolean pickUpCrew(Competitor boat){
+        boolean updated=false;
+        for(CrewLocation crewLocation : new ArrayList<>(crewMembers)){
+            if(boat.getPosition().isWithin(crewLocation.getPosition(),0.0001)){
+                crewMembers.remove(crewLocation);
+                updated=true;
+            }
+        }
+
+        return updated;
+    }
     /**
      * Calculates if the boat rounds the next course feature and adjusts the boats leg index and sends a rounding packet
      *
