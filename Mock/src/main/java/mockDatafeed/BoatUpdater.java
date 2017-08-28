@@ -370,7 +370,7 @@ public class BoatUpdater {
 //              send a collision packet
                 handler.yachtEvent(boat.getSourceID(), 1);
 
-                collisionHandler(boat, boat.getVelocity(), 10);
+                collisionHandler(boat.getPosition(), boat.getVelocity(), 10);
                 boat.updatePosition(-10);
                 return true;
             }
@@ -389,7 +389,7 @@ public class BoatUpdater {
         if (!isPointInPolygon(boat.getPosition(), courseBoundary)) {
             handler.yachtEvent(boat.getSourceID(), 1);
 
-            collisionHandler(boat, boat.getVelocity(), 10);
+            collisionHandler(boat.getPosition(), boat.getVelocity(), 10);
             boat.updatePosition(-10);
             return true;
         }
@@ -416,8 +416,8 @@ public class BoatUpdater {
         Force v2f = calculateFinalVelocity(v2, v1, p2, p1);
 
         //collision event
-        collisionHandler(boat1, v1f.getMagnitude(), 15);
-        collisionHandler(boat2, v2f.getMagnitude(), 15);
+        collisionHandler(boat1.getPosition(), v1f.getMagnitude(), 15);
+        collisionHandler(boat2.getPosition(), v2f.getMagnitude(), 15);
 
         boat1.updatePosition(-10);
         boat2.updatePosition(-10);
@@ -433,11 +433,11 @@ public class BoatUpdater {
      * handler for collision, currently throws members off the boat
      * MUST BE CALLED BEFORE BOAT.UPDATEPOSITION !!!!!!!!!!!!
      *
-     * @param boat      the boat involved
+     * @param location  the location where the collision happend
      * @param magnitude the magnitude of the collision
      * @param health    the health reduced, 5 crew members per location
      */
-    private void collisionHandler(Competitor boat, double magnitude, double health) throws IOException {
+    private void collisionHandler(MutablePoint location, double magnitude, double health) throws IOException {
         Random randomGenerator = new Random();
         int numLocation = (int) health / 5;
         for (int i = 0; i < numLocation; i++) {
@@ -446,7 +446,7 @@ public class BoatUpdater {
             double distance = magnitude * 10 + randomGenerator.nextGaussian() * magnitude * 5;
             //angle from the boat collision from 0 to 360 degrees
             double angle = randomGenerator.nextDouble() * 360;
-            MutablePoint position = movePoint(new Force(distance, angle, false), boat.getPosition(), 1);
+            MutablePoint position = movePoint(new Force(distance, angle, false), location, 1);
 
             CrewLocation crewLocation = new CrewLocation(crewLocationSourceID++, 5, position);
             crewMembers.add(crewLocation);

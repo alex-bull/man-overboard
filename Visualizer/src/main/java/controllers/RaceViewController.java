@@ -336,7 +336,7 @@ public class RaceViewController implements Initializable, TableObserver {
         double maxBarLength = 30;
         double sourceId = boat.getSourceID();
         double healthLevel = boat.getHealthLevel();
-        double healthSize = ((healthLevel /  boat.getMaxHealth()) * maxBarLength);
+        double healthSize = (healthLevel /  boat.getMaxHealth() * maxBarLength);
         if(this.zoom) {
             offset = offset * 2;
             strokeWidth *= 2;
@@ -1417,7 +1417,7 @@ public class RaceViewController implements Initializable, TableObserver {
     public void drawFallenCrew(){
 
         Map<Integer,CrewLocation> crewLocation=dataSource.getCrewLocations();
-        System.out.println(dataSource.getCrewLocations());
+//        System.out.println(dataSource.getCrewLocations());
 
         //remove entries
         Set<Integer> removedLocation= new HashSet<>(fallenCrews.keySet());
