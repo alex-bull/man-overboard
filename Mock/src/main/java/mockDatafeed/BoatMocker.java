@@ -38,15 +38,15 @@ import static utility.Calculator.*;
  * Boat mocker
  */
 public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdateEventHandler {
-    private HashMap<Integer, Competitor> competitors;
+    private HashMap<Integer, Competitor> competitors = new HashMap<>();
     private Map<Integer, Competitor> markBoats;
     //private List<Competitor> markBoats;
     private List<MutablePoint> courseBoundary;
     private RaceData raceData;
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
-    private BinaryPackager binaryPackager;
-    private TCPServer TCPserver;
+    private BinaryPackager binaryPackager = new BinaryPackager();
+//    private TCPServer TCPserver;
     private MutablePoint prestart;
     private WindGenerator windGenerator;
     private int currentSourceID = 100;
@@ -57,25 +57,26 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private Timer timer;
     private BoatUpdater boatUpdater;
 
+    private Server TCPserver;
+
 
     public BoatMocker() throws IOException, JDOMException {
 
         timer = new Timer();
         random = new Random();
-//        prestart = new MutablePoint(32.286577, -64.864304);
         prestart = new MutablePoint(32.295842, -64.857157);
-        int connectionTime = 10000;
-        competitors = new HashMap<>();
-        TCPserver = new TCPServer(4941, this);
 
-        binaryPackager = new BinaryPackager();
+      //  Runnable server = new Server(4941, this);
+
+        TCPserver = new Server(4941, this);
 
         //establishes the connection with Visualizer
-        TCPserver.establishConnection(connectionTime);
+       // TCPserver.establishConnection(connectionTime);
 
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
+
 
         timer.schedule(TCPserver, 0, 1);
 
@@ -309,6 +310,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     public int addConnection() {
         return this.addCompetitors();
+    }
+    public void sendXML() {
+        this.sendAllXML();
     }
 
     /**
