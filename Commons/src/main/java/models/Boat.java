@@ -17,8 +17,6 @@ import java.util.List;
  */
 public class Boat implements Competitor {
 
-
-
     private String teamName;
     private MutablePoint position;
     private MutablePoint position17;
@@ -39,8 +37,8 @@ public class Boat implements Competitor {
     private Line roundingLine2;
     //how much the boat if affected by wind, can be parsed in as constructor
     private double blownFactor = 0.01;
-    private int healthLevel = 100;
-    private int maxHealth = 100;
+    private double healthLevel = 100;
+    private double maxHealth = 100;
     private Force boatSpeed;
 
 
@@ -105,6 +103,7 @@ public class Boat implements Competitor {
         this.status = status;
     }
 
+
     public Boat() {
         this.boatSpeed=new Force(0,0,false);
     }
@@ -132,13 +131,14 @@ public class Boat implements Competitor {
 
     public void setHealthLevel(int health){
         this.healthLevel = health;
+
     }
 
-    public int getMaxHealth() {
+    public double getMaxHealth() {
         return maxHealth;
     }
 
-    public int getHealthLevel() {
+    public double getHealthLevel() {
         return healthLevel;
     }
 
@@ -147,7 +147,7 @@ public class Boat implements Competitor {
      * @param delta int the amount the boat health changes by
      */
     public void updateHealth(int delta) {
-        int resultHealth = healthLevel + delta;
+        double resultHealth = healthLevel + delta;
 
         if(resultHealth > maxHealth) {
            this.healthLevel = maxHealth;
@@ -267,7 +267,7 @@ public class Boat implements Competitor {
     }
 
     public double getVelocity() {
-        return boatSpeed.getMagnitude();
+        return boatSpeed.getMagnitude()*healthLevel/maxHealth;
     }
 
     public void setVelocity(double velocity) {
@@ -338,7 +338,7 @@ public class Boat implements Competitor {
      */
     public void updatePosition(double elapsedTime) {
         //moves the boat by its speed
-        MutablePoint p= Calculator.movePoint(boatSpeed,getPosition(),elapsedTime);
+        MutablePoint p= Calculator.movePoint((Force) Calculator.multiply(healthLevel/maxHealth,boatSpeed),getPosition(),elapsedTime);
 
         //calculate all external forces on it
         for(Force force:new ArrayList<>(externalForces)){

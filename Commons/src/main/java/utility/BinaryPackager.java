@@ -466,7 +466,7 @@ public class BinaryPackager {
      * @param health Integer the health as a percentage integer 0 to 100
      * @return the packet generated
      */
-    public byte[] packageBoatStateEvent(Integer sourceID, Integer health){
+    public byte[] packageBoatStateEvent(Integer sourceID, Double health){
         byte[] packet=new byte[24]; // 19 + 5
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);

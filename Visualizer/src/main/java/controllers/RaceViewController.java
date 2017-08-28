@@ -334,8 +334,8 @@ public class RaceViewController implements Initializable, TableObserver {
         double tombstoneSize = 30;
         double maxBarLength = 30;
         double sourceId = boat.getSourceID();
-        int healthLevel = boat.getHealthLevel();
-        double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength);
+        double healthLevel = boat.getHealthLevel();
+        double healthSize = ((healthLevel /  boat.getMaxHealth()) * maxBarLength);
         if(this.zoom) {
             offset = offset * 2;
             strokeWidth *= 2;
@@ -632,15 +632,15 @@ public class RaceViewController implements Initializable, TableObserver {
                         this.nameAnnotations.put(sourceID, label);
                         break;
                     case BOAT_SPEED:
-                        label = new Label(String.valueOf(boat.getVelocity()) + "m/s");
+                        label = new Label(String.format("%.2f m/s",boat.getVelocity()));
                         this.speedAnnotations.put(sourceID, label);
                         break;
                     case EST_TIME_TO_NEXT_MARK:
-                        label = new Label(String.valueOf(boat.getTimeToNextMark()) + " seconds");
+                        label = new Label(String.format("%d seconds",boat.getTimeToNextMark()));
                         this.timeToMarkAnnotations.put(sourceID, label);
                         break;
                     case TIME_FROM_LAST_MARK:
-                        label = new Label(String.valueOf(timeFromLastMark) + " seconds");
+                        label = new Label(String.format("%d seconds",timeFromLastMark));
                         this.timeFromMarkAnnotations.put(sourceID, label);
                         break;
                 }
@@ -694,12 +694,12 @@ public class RaceViewController implements Initializable, TableObserver {
                     break;
                 case BOAT_SPEED:
                     label = this.speedAnnotations.get(sourceID);
-                    label.setText(String.valueOf(boat.getVelocity()) + "m/s");
+                    label.setText(String.format("%.2f m/s",boat.getVelocity()));
                     break;
                 case EST_TIME_TO_NEXT_MARK:
                     label = this.timeToMarkAnnotations.get(sourceID);
                     if (boat.getTimeToNextMark() > 0) {
-                        label.setText(String.valueOf(boat.getTimeToNextMark()) + "s to Next Mark");
+                        label.setText(String.format("%d seconds",boat.getTimeToNextMark()));
                     } else {
                         label.setText("--");
                     }
@@ -707,7 +707,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 case TIME_FROM_LAST_MARK:
                     label = this.timeFromMarkAnnotations.get(sourceID);
                     if (timeFromLastMark > 0) {
-                        label.setText(String.valueOf(timeFromLastMark) + "s from Last Mark");
+                        label.setText(String.format("%d seconds",timeFromLastMark));
                     } else {
                         label.setText("--");
                     }

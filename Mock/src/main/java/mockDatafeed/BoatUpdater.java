@@ -82,6 +82,7 @@ public class BoatUpdater {
             double speed = polarTable.getSpeed(twa);
             if (boat.getStatus() != DSQ) {
                 if (boat.hasSailsOut()) {
+                    boat.getBoatSpeed().increase(0.01);
                     boat.getBoatSpeed().setMagnitude(speed * 4);
                     boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
                 } else {

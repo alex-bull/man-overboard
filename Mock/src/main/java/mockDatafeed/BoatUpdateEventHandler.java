@@ -12,7 +12,7 @@ import java.util.List;
 public interface BoatUpdateEventHandler {
     void yachtEvent(int sourceId, int eventId);
     void markRoundingEvent(int sourceId, int compoundMarkId);
-    void boatStateEvent(Integer sourceId, Integer health);
+    void boatStateEvent(Integer sourceId, double health);
     void fallenCrewEvent(List<CrewLocation> locations) throws IOException;
 
 }

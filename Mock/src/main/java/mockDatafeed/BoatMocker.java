@@ -130,7 +130,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * @param sourceId Integer source id of the boat
      * @param health   Integer health of the boat
      */
-    public void boatStateEvent(Integer sourceId, Integer health) {
+    public void boatStateEvent(Integer sourceId, double health) {
         try {
             Competitor boat = competitors.get(sourceId);
             if (health >= boat.getMaxHealth()) {
