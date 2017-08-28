@@ -2,8 +2,10 @@ package models;
 
 /**
  * Created by khe60 on 24/08/17.
+ * class for crewLocation
  */
 public class CrewLocation {
+    private int sourceId;
     private int numCrew;
     private MutablePoint position;
     private MutablePoint position17;
@@ -13,12 +15,19 @@ public class CrewLocation {
         return positionOriginal;
     }
 
-    public CrewLocation(int numCrew, MutablePoint position) {
+    public int getSourceId() {
+        return sourceId;
+    }
+
+    public CrewLocation(int sourceId, int numCrew, MutablePoint position) {
+        this.sourceId+=sourceId;
+
         this.numCrew = numCrew;
         this.position = position;
     }
 
-    public CrewLocation(int numCrew, MutablePoint position,MutablePoint position17, MutablePoint positionOriginal) {
+    public CrewLocation(int sourceId,int numCrew, MutablePoint position,MutablePoint position17, MutablePoint positionOriginal) {
+        this.sourceId=sourceId;
         this.numCrew = numCrew;
         this.position = position;
         this.position17=position17;

@@ -96,7 +96,7 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML
     private ListView finisherListView;
 
-    private List<ImageView> fallenCrews=new ArrayList<>();
+    private Map<Integer, ImageView> fallenCrews=new HashMap<>();
 
     public GridPane getFinisherListPane() {
         return finisherListPane;
@@ -559,7 +559,7 @@ public class RaceViewController implements Initializable, TableObserver {
     public void zoomIn(){
         zoom=true;
         mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getZoomLevel()));
-        System.out.println(dataSource.getZoomLevel());
+//        System.out.println("zoomLevel"+ dataSource.getZoomLevel());
         updateRace();
         setScale(2);
         track.setVisible(!isZoom());
@@ -1414,45 +1414,47 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     public void drawFallenCrew(){
-        raceViewPane.getChildren().removeAll(fallenCrews);
-        fallenCrews.removeAll(fallenCrews);
-        for(CrewLocation crewLocation:dataSource.getCrewLocations()){
-            ImageView crew = new ImageView();
-            Image drowning = new Image("/Animations/iCantSwim.gif");
-
-            crew.setImage(drowning);
+        Map<Integer,CrewLocation> crewLocation=dataSource.getCrewLocations();
+        for(int sourceID:crewLocation.keySet()) {
+            if (!fallenCrews.containsKey(sourceID)) {
+                ImageView crew = new ImageView();
+                Image drowning = new Image("/Animations/iCantSwim.gif");
+                crew.setImage(drowning);
 
 //            Circle crew;
-            if(isZoom()){
-                MutablePoint p=crewLocation.getPosition17().shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2);
-                crew.setLayoutX(p.getXValue());
-                crew.setLayoutY(p.getYValue());
-
-            }
-            else{
-                crew.setLayoutX(crewLocation.getPosition().getXValue());
-                crew.setLayoutY(crewLocation.getPosition().getYValue());
-            }
-            fallenCrews.add(crew);
+                fallenCrews.put(sourceID,crew);
+                raceViewPane.getChildren().add(crew);
 //            System.out.println(crewLocation);
+            }
+
+            Image image=fallenCrews.get(sourceID).getImage();
+            if (isZoom()) {
+                MutablePoint p = crewLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+                fallenCrews.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+            } else {
+                MutablePoint p=crewLocation.get(sourceID).getPosition();
+                fallenCrews.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+            }
 
         }
-        raceViewPane.getChildren().addAll(fallenCrews);
+
     }
+
+
 
     /**
      * Refreshes the contents of the display to match the datasource
      *
      */
     void refresh() {
-
+        drawFallenCrew();
         updateRaceStatus();
         updateFPS();
         setBoatLocation();
         updateRace();
         checkCollision();
         updateGuidingArrow();
-        drawFallenCrew();
+
     }
 
     boolean isLoaded() {

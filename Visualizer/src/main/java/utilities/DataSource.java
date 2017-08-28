@@ -21,7 +21,7 @@ public interface DataSource {
     void receive(String host, int port, Scene scene, StreamDelegate delegate);
     void changeScaling(int Multiplier);
     int getZoomLevel();
-    List<CrewLocation> getCrewLocations();
+    Map<Integer, CrewLocation> getCrewLocations();
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
     List<Integer> getStartMarks();

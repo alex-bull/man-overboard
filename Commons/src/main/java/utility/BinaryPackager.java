@@ -490,19 +490,20 @@ public class BinaryPackager {
      */
     public byte[] packageFallenCrewEvent(List<CrewLocation> locations){
         int n=locations.size();
-        byte[] packet=new byte[20+n*9]; // total size of packet
+        byte[] packet=new byte[20+n*13]; // total size of packet
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
         byte type = 107;
-        short bodyLength = (short) (n*9+1);
+        short bodyLength = (short) (n*13+1);
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.put((byte) n);
-        for(int i=0;i<n;i++){
-            packetBuffer.put((byte)locations.get(i).getNumCrew());
-            packetBuffer.putInt(latLngToInt(locations.get(i).getLatitude()));
-            packetBuffer.putInt(latLngToInt(locations.get(i).getLongitude()));
+        for(CrewLocation crewLocation:locations){
+            packetBuffer.putInt(crewLocation.getSourceId());
+            packetBuffer.put((byte)crewLocation.getNumCrew());
+            packetBuffer.putInt(latLngToInt(crewLocation.getLatitude()));
+            packetBuffer.putInt(latLngToInt(crewLocation.getLongitude()));
         }
 
 

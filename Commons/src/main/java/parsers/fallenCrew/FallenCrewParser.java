@@ -21,12 +21,13 @@ public class FallenCrewParser {
         Integer n = hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 1));
         int currentByte=1;
         for(int i=0;i<n;i++){
-            Integer crewNumber = hexByteArrayToInt(Arrays.copyOfRange(packet, currentByte, currentByte+1));
-            double latitude = parseCoordinate(Arrays.copyOfRange(packet, currentByte+1, currentByte+5));
-            double longitude = parseCoordinate(Arrays.copyOfRange(packet, currentByte+5, currentByte+9));
-            crewLocations.add(new CrewLocation(crewNumber,new MutablePoint(latitude,longitude)));
-            currentByte+=9;
-            System.out.println(packet.length);
+            Integer sourceId = hexByteArrayToInt(Arrays.copyOfRange(packet, currentByte, currentByte+4));
+            Integer crewNumber = hexByteArrayToInt(Arrays.copyOfRange(packet, currentByte+4, currentByte+5));
+            double latitude = parseCoordinate(Arrays.copyOfRange(packet, currentByte+5, currentByte+9));
+            double longitude = parseCoordinate(Arrays.copyOfRange(packet, currentByte+9, currentByte+13));
+            crewLocations.add(new CrewLocation(sourceId,crewNumber,new MutablePoint(latitude,longitude)));
+            currentByte+=13;
+
         }
         return crewLocations;
     }

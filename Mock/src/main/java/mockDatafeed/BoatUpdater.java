@@ -35,6 +35,7 @@ public class BoatUpdater {
     private List<MutablePoint> courseBoundary;
     List<Competitor> finisherList = new ArrayList<>();
     private WindGenerator windGenerator;
+    private int crewLocationSourceID=0;
     private List<CrewLocation> crewMembers=new ArrayList<>();
 
 
@@ -408,12 +409,12 @@ public class BoatUpdater {
         for (int i = 0; i < numLocation; i++) {
 
             //distance from the boat with mean magnitude and variance magnitude/2
-            double distance = magnitude + randomGenerator.nextGaussian() * magnitude / 2;
+            double distance = magnitude*10 + randomGenerator.nextGaussian() * magnitude / 2;
             //angle from the boat collision from 0 to 360 degrees
             double angle = randomGenerator.nextDouble() * 360;
             MutablePoint position = movePoint(new Force(distance, angle, false), boat.getPosition(), 1);
 
-            CrewLocation crewLocation=new CrewLocation(5, position);
+            CrewLocation crewLocation=new CrewLocation(crewLocationSourceID++,5, position);
             crewMembers.add(crewLocation);
             location.add(crewLocation);
         }

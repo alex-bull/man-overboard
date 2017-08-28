@@ -83,7 +83,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private List<MutablePoint> courseBoundary = new ArrayList<>();
     private List<MutablePoint> courseBoundaryOriginal = new ArrayList<>();
 
-    private List<CrewLocation> crewLocations=new ArrayList<>();
+    private Map<Integer,CrewLocation> crewLocations=new HashMap<>();
 
 
     public HashMap<Integer, CourseFeature> getStoredFeatures17() {
@@ -422,7 +422,7 @@ public class Interpreter implements DataSource, PacketHandler {
             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
             location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            crewLocations.add(new CrewLocation(crewLocation.getNumCrew(),location,location17, locationOriginal));
+            crewLocations.put(crewLocation.getSourceId(),new CrewLocation(crewLocation.getSourceId(),crewLocation.getNumCrew(),location,location17, locationOriginal));
         }
     }
 
@@ -430,14 +430,14 @@ public class Interpreter implements DataSource, PacketHandler {
      * updates crew location when scaling level changes
      */
     private void updateCrewLocation(){
-        for(CrewLocation crewLocation: crewLocations){
+        for(CrewLocation crewLocation: crewLocations.values()){
             MutablePoint point=cloner.deepClone(crewLocation.getPositionOriginal());
             point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            crewLocation.setPosition17(new MutablePoint(point.getXValue(),point.getYValue()));
+            crewLocation.setPosition17(point);
         }
     }
 
-    public List<CrewLocation> getCrewLocations() {
+    public Map<Integer,CrewLocation> getCrewLocations() {
         return crewLocations;
     }
 
