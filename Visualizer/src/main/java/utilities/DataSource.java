@@ -6,7 +6,6 @@ import models.CourseFeature;
 import models.MutablePoint;
 import parsers.RaceStatusEnum;
 
-import java.io.EOFException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ import java.util.Set;
  * Data source
  */
 public interface DataSource {
-    void receive(String host, int port, Scene scene, StreamDelegate delegate);
+    void receive(String host, int port, Scene scene, StreamObserver delegate);
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
     List<Integer> getStartMarks();

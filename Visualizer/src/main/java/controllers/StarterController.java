@@ -24,9 +24,10 @@ import models.Clock;
 import models.ClockHandler;
 import models.Competitor;
 import models.WorldClock;
+import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
-import utilities.StreamDelegate;
+import utilities.StreamObserver;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,7 +38,7 @@ import java.util.ResourceBundle;
  * Created by rjc249 on 5/04/17.
  * Controller for the start scene.
  */
-public class StarterController implements Initializable, ClockHandler, StreamDelegate {
+public class StarterController implements Initializable, ClockHandler, StreamObserver {
 
     private DataSource dataSource;
     private final int STARTTIME = 1;
@@ -76,6 +77,7 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
             worldClockValue.setText(newTime);
         }
     }
+
 
     /**
      * Initialiser for StarterController
@@ -132,16 +134,17 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
 
     }
 
+
     /**
-     * StreamDelegate method
+     * StreamObserver method
      * Alerts the user if the connection failed
      */
     public void streamFailed() {
         this.progressIndicator.setVisible(false);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Connection Failed");
+        alert.setTitle("Connection to server failed");
         alert.setHeaderText(null);
-        alert.setContentText("Sorry, cannot connect to this stream right now.");
+        alert.setContentText("Sorry, cannot connect to this game right now.");
         alert.showAndWait();
         this.hostField.setDisable(false);
         this.confirmButton.setDisable(false);
@@ -150,18 +153,28 @@ public class StarterController implements Initializable, ClockHandler, StreamDel
 
 
     /**
-     * StreamDelegate method
+     * StreamObserver method
      * Call set fields
      * Change to the raceView
      */
-    public void streamStarted() {
+    public void raceStatusUpdated(RaceStatusEnum status) {
 
-        System.out.println("Streaming data");
-        progressIndicator.setVisible(false);
-        this.setFields();
-        this.loadRaceView();
+        System.out.println("Status updated " + status.toString());
+
+//        progressIndicator.setVisible(false);
+//        this.setFields();
+//        this.loadRaceView();
     }
 
+
+    /**
+     * StreamObserver method
+     * Updates the list with the new boats
+     */
+    public void boatsUpdated() {
+        this.progressIndicator.setVisible(false);
+        this.compList.setAll(dataSource.getCompetitorsPosition());
+    }
 
 
 

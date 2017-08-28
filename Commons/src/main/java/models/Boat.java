@@ -61,7 +61,7 @@ public class Boat implements Competitor {
         this.position17 = position17;
     }
 
-    private boolean sailsOut = true;
+    private boolean sailsOut = false;
     /**
      * Creates a boat
      *

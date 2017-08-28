@@ -58,6 +58,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private BoatUpdater boatUpdater;
 
     private Server TCPserver;
+    private boolean raceInProgress = false;
 
 
     public BoatMocker() throws IOException, JDOMException {
@@ -66,13 +67,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         random = new Random();
         prestart = new MutablePoint(32.295842, -64.857157);
 
-      //  Runnable server = new Server(4941, this);
-
         TCPserver = new Server(4941, this);
-
-        //establishes the connection with Visualizer
-       // TCPserver.establishConnection(connectionTime);
-
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
@@ -481,6 +476,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     @Override
     public void run() {
+
+        if (!raceInProgress) {
+            this.sendAllXML();
+            return;
+        }
 
         //send the boat info to receiver
 

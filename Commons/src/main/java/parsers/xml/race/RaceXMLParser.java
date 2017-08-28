@@ -75,6 +75,8 @@ public class RaceXMLParser {
      */
     public RaceData parseRaceData(String xmlStr) throws IOException, JDOMException {
 
+
+
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));

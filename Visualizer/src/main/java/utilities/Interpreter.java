@@ -1,14 +1,7 @@
 package utilities;
 
-import controllers.RaceViewController;
-import javafx.collections.ObservableArray;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -49,7 +42,6 @@ import java.util.*;
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.collections.FXCollections.observableList;
 import static parsers.BoatStatusEnum.DSQ;
-import static parsers.BoatStatusEnum.FINISHED;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
 import static utility.Calculator.calculateExpectedTack;
@@ -82,8 +74,6 @@ public class Interpreter implements DataSource, PacketHandler {
     private List<MutablePoint> courseBoundary = new ArrayList<>();
 
 
-
-
     public HashMap<Integer, CourseFeature> getStoredFeatures17() {
         return storedFeatures17;
     }
@@ -102,7 +92,9 @@ public class Interpreter implements DataSource, PacketHandler {
     private int numBoats = 0;
     private boolean seenRaceXML = false;
     private int sourceID;
+
     private TCPClient TCPClient;
+    private StreamObserver observer;
 
     //zoom factor for scaling
     private double zoomFactor=Math.pow(2,17);
@@ -196,7 +188,9 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param scene the scene of the stage, for size calculations
      *
      */
-    public void receive(String host, int port, Scene scene, StreamDelegate delegate) throws NullPointerException{
+    public void receive(String host, int port, Scene scene, StreamObserver observer) throws NullPointerException{
+
+        this.observer = observer;
 
         Rectangle2D primaryScreenBounds;
         try {
@@ -205,12 +199,12 @@ public class Interpreter implements DataSource, PacketHandler {
         }
         catch (UnresolvedAddressException e){
             System.out.println("Address is not found");
-            delegate.streamFailed();
+            observer.streamFailed();
             return;
         }
         catch (IOException e) {
             System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
-            delegate.streamFailed();
+            observer.streamFailed();
             return;
         }
 
@@ -222,37 +216,7 @@ public class Interpreter implements DataSource, PacketHandler {
         Timer receiverTimer = new Timer();
         receiverTimer.schedule(TCPClient, 0, 1);
 
-        //Wait for incoming data on a background thread
-        Task task = new Task<Boolean>() {
-            @Override public Boolean call() {
-                try {
-                    //wait for data to come in before setting fields
-                    while (numBoats < 1 || storedCompetitors.size() < numBoats) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (Exception e) {
-                            System.out.println("Thread sleep error");
-                            return false;
-                        }
-                    }
-                } catch (NullPointerException e) {
-                    System.out.println("Live stream is down");
-                    return false;
-                }
-                return true;
-            }
-        };
 
-        //Handle success or failure on the background thread
-        task.setOnSucceeded(event -> {
-            if ((boolean) task.getValue()) {
-                delegate.streamStarted();
-            } else {
-                delegate.streamFailed();
-            }
-        });
-
-        new Thread(task).start();
 
     }
 
@@ -294,6 +258,7 @@ public class Interpreter implements DataSource, PacketHandler {
                         storedCompetitors.get(id).setStatus(raceStatusData.getBoatStatuses().get(id).getBoatStatus());
                         storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                     }
+                    observer.raceStatusUpdated(raceStatus); //tell controller that race status has been updated
                 }
 
                 break;
@@ -445,7 +410,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 colourPool.getColours().remove(colour);
             }
             this.storedCompetitors.put(boatID, competitor);
-            competitorsPosition.add(competitor);
+           // competitorsPosition.add(competitor);
         } else {
             //update its properties
             Competitor updatingBoat=storedCompetitors.get(boatID);
@@ -510,7 +475,11 @@ public class Interpreter implements DataSource, PacketHandler {
 
                     break;
                 case BOAT:
+                    System.out.println("got boat xml");
                     this.boatXMLParser = new BoatXMLParser(xml.trim());
+                    competitorsPosition.clear();
+                    competitorsPosition.addAll(boatXMLParser.getBoats().values());
+                    this.observer.boatsUpdated();
                     break;
             }
         }

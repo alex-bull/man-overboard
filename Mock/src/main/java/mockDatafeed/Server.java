@@ -157,7 +157,7 @@ public class Server extends TimerTask {
                         //In the future the source id will be generated and sent upon a req message
                         //THe source id will be attached to the key
                         int sourceID = connectionClient.addConnection();
-                        connectionClient.sendXML();
+
                         byte[] packet = new BinaryPackager().packageSourceID(sourceID);
                         ByteBuffer buffer = ByteBuffer.wrap(packet);
                         try {
