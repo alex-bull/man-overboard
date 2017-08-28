@@ -478,6 +478,46 @@ public class BinaryPackager {
     }
 
 
+    /**
+     * package connection request
+     * @param clientType byte the connection type
+     * @return the packet generated
+     */
+    public byte[] packageConnectionRequest(byte clientType){
+        byte[] packet=new byte[20]; //
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 101;
+        short bodyLength = 1;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.put(clientType);
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+
+    /**
+     * package connection response
+     * @param status byte the connection status
+     * @param sourceID Integer the source id allocated to the client
+     * @return the packet generated
+     */
+    public byte[] packageConnectionResponse(byte status, Integer sourceID){
+        byte[] packet=new byte[24]; //
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 102;
+        short bodyLength = 5;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.putInt(sourceID);
+        packetBuffer.put(status);
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
 
 
 }

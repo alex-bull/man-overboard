@@ -1,5 +1,6 @@
 package mockDatafeed;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import utility.BinaryPackager;
 import utility.ConnectionClient;
 
@@ -43,9 +44,7 @@ public class Server extends TimerTask {
     }
 
 
-    public void sendData(byte[] data) throws IOException {
-        this.broadcast(data);
-    }
+
 
 
     /**
@@ -54,7 +53,7 @@ public class Server extends TimerTask {
      * @param data byte[] byte array of the data
      * @throws IOException IOException
      */
-    private void broadcast(byte[] data) throws IOException {
+    public void broadcast(byte[] data) throws IOException {
 
         selector.select(1);
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
@@ -64,7 +63,7 @@ public class Server extends TimerTask {
                 SocketChannel client = (SocketChannel) key.channel();
                 try {
                     while(buffer.hasRemaining()) client.write(buffer);
-                } catch (IOException e) {
+                } catch (IOException ie) {
                     System.out.println(client.getRemoteAddress() + " has disconnected, removing client");
                     key.cancel();
                 }
@@ -77,10 +76,25 @@ public class Server extends TimerTask {
     /**
      * Send a message to a single client with an identifier
      * @param data byte[] the message
-     * @param channel int the id of the client channel to send to
+     * @param clientId Integer the id of the client channel to send to
      */
-    private void unicast(byte[] data, int channel) {
+    public void unicast(byte[] data, Integer clientId) throws IOException {
 
+        selector.select(1);
+        for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
+            //write to the channel if writable
+            if (key.attachment().equals(clientId) && key.isWritable()) {
+                ByteBuffer buffer = ByteBuffer.wrap(data);
+                SocketChannel client = (SocketChannel) key.channel();
+                try {
+                    while(buffer.hasRemaining()) client.write(buffer);
+                } catch (IOException e) {
+                    System.out.println(client.getRemoteAddress() + " is unreachable, removing client");
+                    key.cancel();
+                }
+            }
+            selector.selectedKeys().remove(key);
+        }
     }
 
 
@@ -88,9 +102,10 @@ public class Server extends TimerTask {
     /**
      * Reads data from client and puts the message in the queue.
      * @param client SocketChannel the client to read from
+     * @param id Integer the key id for the channel
      * @throws IOException reading message can fail
      */
-    private void processClient(SocketChannel client) throws IOException {
+    private void processClient(SocketChannel client, Integer id) throws IOException {
         // -125 is equivalent to 0x83 unsigned
         byte[] expected = {0x47,-125};
         byte[] actual = new byte[2];
@@ -103,7 +118,7 @@ public class Server extends TimerTask {
             byte[] message = new byte[length];
             ByteBuffer messageBuffer = ByteBuffer.wrap(message);
             client.read(messageBuffer);
-            this.connectionClient.interpretPacket(header, message);
+            this.connectionClient.interpretPacket(header, message, id);
         }
 
     }
@@ -118,7 +133,7 @@ public class Server extends TimerTask {
 //        ByteBuffer header=ByteBuffer.allocate(13);
 //        client.read(header);
         byte[] header=new byte[13];
-        ByteBuffer buffer  =ByteBuffer.wrap(header);
+        ByteBuffer buffer = ByteBuffer.wrap(header);
 
         client.read(buffer);
         return header;
@@ -150,31 +165,18 @@ public class Server extends TimerTask {
                     if (key.isAcceptable()) {
                         SocketChannel client = serverSocket.accept();
                         client.configureBlocking(false);
-                        client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE);
-                        key.attach("MychannelID"); //assign an id to the key for unicast
 
-                        //TODO:- for now just send back a source id
-                        //In the future the source id will be generated and sent upon a req message
-                        //THe source id will be attached to the key
-                        int sourceID = connectionClient.addConnection();
-
-                        byte[] packet = new BinaryPackager().packageSourceID(sourceID);
-                        ByteBuffer buffer = ByteBuffer.wrap(packet);
-                        try {
-                            while (buffer.hasRemaining()) {
-                                client.write(buffer);
-                            }
-                        } catch (IOException e) {
-                            System.out.println("failed to register sourceID " + sourceID);
-                            key.cancel();
-                        }
-
+                        // Assign the connection a unique source id
+                        // This will become the boat source id if they register as a player
+                        int sourceID = connectionClient.getNextSourceId();
+                        client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE, sourceID);
                     }
 
                     //handle incoming messages
-                    if (key.isReadable()) {
+                    else if (key.isReadable()) {
                         SocketChannel client = (SocketChannel) key.channel();
-                        this.processClient(client);
+                        System.out.println("Incoming data from channel " + key.attachment());
+                        this.processClient(client, (Integer) key.attachment());
                     }
                     selector.selectedKeys().remove(key);
                 }

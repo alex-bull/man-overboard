@@ -58,7 +58,7 @@ public class BoatMockerTest {
             }
         }
 
-        boatMocker.interpretPacket(header, packet);
+        boatMocker.interpretPacket(header, packet, 1);
 
         for (Competitor competitor : boatMocker.getCompetitors()) {
             if (competitor.getSourceID() == sourceID) {
@@ -91,7 +91,7 @@ public class BoatMockerTest {
             }
         }
 
-        boatMocker.interpretPacket(header, packet);
+        boatMocker.interpretPacket(header, packet, 1);
 
         for (Competitor competitor : boatMocker.getCompetitors()) {
             if (competitor.getSourceID() == sourceID) {

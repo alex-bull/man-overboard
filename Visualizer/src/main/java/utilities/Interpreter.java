@@ -18,6 +18,7 @@ import parsers.boatAction.BoatActionParser;
 import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
 import parsers.boatState.BoatStateParser;
+import parsers.connection.ConnectionParser;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.markRounding.MarkRoundingData;
@@ -29,6 +30,7 @@ import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
+import utility.BinaryPackager;
 import utility.PacketHandler;
 import com.rits.cloning.Cloner;
 
@@ -216,6 +218,8 @@ public class Interpreter implements DataSource, PacketHandler {
         Timer receiverTimer = new Timer();
         receiverTimer.schedule(TCPClient, 0, 1);
 
+        //request game join
+        this.send(new BinaryPackager().packageConnectionRequest((byte)1));
 
 
     }
@@ -342,13 +346,6 @@ public class Interpreter implements DataSource, PacketHandler {
                     }
 
                 }
-
-
-                break;
-            case SOURCE_ID:
-                ByteBuffer byteBuffer=ByteBuffer.wrap(packet);
-                byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-                sourceID = byteBuffer.get();
                 break;
             case YACHT_ACTION:
                 YachtEventParser parser = new YachtEventParser(packet);
@@ -364,7 +361,12 @@ public class Interpreter implements DataSource, PacketHandler {
                 BoatStateParser boatStateParser = new BoatStateParser(packet);
                 Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());
                 stateBoat.setHealthLevel(boatStateParser.getHealth());
-
+                break;
+            case CONNECTION_RES:
+                ConnectionParser connectionParser = new ConnectionParser(packet);
+                this.sourceID = connectionParser.getSourceId();
+                System.out.println("Connection accepted, my source ID: " + sourceID);
+                break;
             default:
                 break;
         }
@@ -475,7 +477,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
                     break;
                 case BOAT:
-                    System.out.println("got boat xml");
                     this.boatXMLParser = new BoatXMLParser(xml.trim());
                     competitorsPosition.clear();
                     competitorsPosition.addAll(boatXMLParser.getBoats().values());
