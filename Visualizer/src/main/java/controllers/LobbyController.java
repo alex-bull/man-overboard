@@ -24,6 +24,7 @@ import models.Competitor;
 import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
+import utility.BinaryPackager;
 
 import java.io.IOException;
 import java.net.URL;
@@ -113,7 +114,8 @@ public class LobbyController implements Initializable {
      */
     @FXML
     public void playerReady() {
-
+        readyButton.setDisable(true);
+        dataSource.send(new BinaryPackager().packagePlayerReady());
     }
 
 

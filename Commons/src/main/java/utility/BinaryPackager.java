@@ -520,6 +520,25 @@ public class BinaryPackager {
     }
 
 
+    /**
+     * package player ready message
+     * @return the packet generated
+     */
+    public byte[] packagePlayerReady() {
+        byte[] packet=new byte[19]; //
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 110;
+        short bodyLength = 0;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+
+
 }
 
 

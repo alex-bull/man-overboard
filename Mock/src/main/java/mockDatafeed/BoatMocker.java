@@ -88,7 +88,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         //send all xml data first
         sendAllXML();
         //start the race, updates boat position at a rate of 60 hz
-        timer.schedule(this, 0, 1000);
+        timer.schedule(this, 0, 16);
     }
 
 
@@ -394,7 +394,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             TCPserver.broadcast(boatinfo);
 
         }
-        //send mark boats
+        //send mark boats only once
         if (flag) {
             for (Competitor markBoat : markBoats.values()) {
                 byte[] boatinfo = binaryPackager.packageBoatLocation(markBoat.getSourceID(), markBoat.getPosition().getXValue(), markBoat.getPosition().getYValue(),
