@@ -538,6 +538,22 @@ public class BinaryPackager {
     }
 
 
+    /**
+     * package leave lobby message
+     * @return the packet generated
+     */
+    public byte[] packageLeaveLobby() {
+
+        byte[] packet=new byte[19]; //
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 111;
+        short bodyLength = 0;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
 
 }
 

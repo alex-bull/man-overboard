@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 public class LobbyController implements Initializable {
 
     private DataSource dataSource;
-    private final int STARTTIME = 10;
+    private final int STARTTIME = 9;
     @FXML private ListView<String> starterList;
     @FXML private Button readyButton;
     @FXML private Label countdownLabel;
@@ -125,10 +125,9 @@ public class LobbyController implements Initializable {
      */
     @FXML
     public void leaveLobby() {
-
+        dataSource.send(new BinaryPackager().packageLeaveLobby());
+        System.exit(0); //this will go back to the home screen
     }
-
-
 
 
 
