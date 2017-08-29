@@ -155,39 +155,36 @@ public class Server extends TimerTask {
 
     public void run() {
 
-//        while (true) {
+        try {
+            selector.select(1);
+            for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
 
-            try {
-                selector.select(1);
-                for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
+                //handle new clients connecting
+                if (key.isAcceptable()) {
 
-                    //handle new clients connecting
-                    if (key.isAcceptable()) {
+                    SocketChannel client = serverSocket.accept();
+                    client.configureBlocking(false);
 
-                        SocketChannel client = serverSocket.accept();
-                        client.configureBlocking(false);
-
-                        // Assign the connection a unique source id
-                        // This will become the boat source id if they register as a player
-                        int sourceID = connectionClient.getNextSourceId();
-                        client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE, sourceID);
-                        System.out.println("Added new client: " + sourceID);
-                    }
-
-                    //handle incoming messages
-                    else if (key.isReadable()) {
-
-                        SocketChannel client = (SocketChannel) key.channel();
-                        selector.selectedKeys().remove(key); //remove key so that it can be written to for a response
-                        this.processClient(client, (Integer) key.attachment());
-                    }
-                    selector.selectedKeys().remove(key);
+                    // Assign the connection a unique source id
+                    // This will become the boat source id if they register as a player
+                    int sourceID = connectionClient.getNextSourceId();
+                    client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE, sourceID);
+                    System.out.println("Added new client: " + sourceID);
                 }
 
-            } catch(IOException e) {
-                e.printStackTrace();
+                //handle incoming messages
+                else if (key.isReadable()) {
+
+                    SocketChannel client = (SocketChannel) key.channel();
+                    selector.selectedKeys().remove(key); //remove key so that it can be written to for a response
+                    this.processClient(client, (Integer) key.attachment());
+                }
+                selector.selectedKeys().remove(key);
             }
-//        }
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

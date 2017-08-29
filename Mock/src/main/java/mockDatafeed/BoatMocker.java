@@ -49,13 +49,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private MutablePoint prestart;
     private WindGenerator windGenerator;
     private int currentSourceID = 99;
-    private Random random;
-    private int raceStatus;
+    private Random random = new Random();
 
     private boolean flag = true;
-    private Timer timer;
     private BoatUpdater boatUpdater;
-    long startTime = System.currentTimeMillis() / 1000;//time in seconds
+    private long startTime = System.currentTimeMillis() / 1000;//time in seconds
 
     private Server TCPserver;
     private boolean raceInProgress = false;
@@ -63,36 +61,28 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
 
 
-    public BoatMocker() throws IOException, JDOMException {
+    BoatMocker() throws IOException, JDOMException {
 
-        timer = new Timer();
-        random = new Random();
         prestart = new MutablePoint(32.295842, -64.857157);
-
-        TCPserver = new Server(4941, this);
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
 
-
-        timer.schedule(TCPserver, 0, 1);
+        TCPserver = new Server(4941, this);
+        Timer serverTimer = new Timer();
+        serverTimer.schedule(TCPserver, 0, 1);
 
         //find out the coordinates of the course
         generateCourse();
         generateMarkCompetitors();
         generateWind();
-//        collisionUtility.setCourseInformation();
-//        courseLineEquations = collisionUtility.getCourseLineEquations();
 
         boatUpdater = new BoatUpdater(competitors, markBoats, raceData, this, courseBoundary, windGenerator);
 
-        //send all xml data first
-        sendAllXML();
         //start the race, updates boat position at a rate of 60 hz
+        Timer timer = new Timer();
         timer.schedule(this, 0, 16);
     }
-
-
 
 
 
@@ -155,19 +145,21 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     }
 
 
+    /**
+     * Adds a dummy connection for testing
+     */
+    void addConnection() {this.addCompetitor(3);} //for tests
 
-    public void addConnection() {this.addCompetitor(3);} //for tests
 
     /**
      * adds a competitor to the list of competitors
      * Sends a response with a source id for the client
-     * Stores the client in the clientstate map
-     * @param clientId the channel id of the client, this is used as the source id of the boat
+     * Stores the client in the clientState map
+     * @param clientId the channel id of the client, this is used as the source id of the new competitor
      */
     private void addCompetitor(Integer clientId) {
 
-        double a = 0.005 * competitors.size();
-//        prestart = new MutablePoint(32.286577 + a, -64.864304);
+        double a = 0.005 * competitors.size(); //shift competitors so they aren't colliding at the start
         prestart = new MutablePoint(32.41011 + a, -64.88937);
 
         Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
@@ -197,10 +189,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
 
     /**
-     * Sets the client to ready
+     * Sets the client to ready if they are a registered player
      * @param clientId Integer the id of the client to mark as ready
      */
     private void updateReady(Integer clientId) {
+        if (this.competitors.get(clientId) == null) return; //not a registered player
         clientStates.put(clientId, true);
     }
 
@@ -443,6 +436,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private void sendRaceStatus() throws IOException {
         short windDirection = windGenerator.getWindDirection();
         short windSpeed = windGenerator.getWindSpeed();
+        int raceStatus;
         if(boatUpdater.checkAllFinished()){
             raceStatus = 4;
         } else {

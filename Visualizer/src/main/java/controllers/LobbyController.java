@@ -127,6 +127,7 @@ public class LobbyController implements Initializable {
      */
     @FXML
     public void playerReady() {
+        if (dataSource.getSourceID() == 0) return; //player has not connected yet
         readyButton.setDisable(true);
         dataSource.send(new BinaryPackager().packagePlayerReady());
     }

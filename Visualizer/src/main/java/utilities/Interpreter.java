@@ -84,7 +84,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private ColourPool colourPool = new ColourPool();
     private int numBoats = 0;
     private boolean seenRaceXML = false;
-    private int sourceID;
+    private int sourceID = 0;
 
     private TCPClient TCPClient;
 
