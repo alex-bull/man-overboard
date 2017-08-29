@@ -17,7 +17,8 @@ public enum MessageType {
     BOAT_HEALTH(97),
     BOAT_STATE(103),
     CONNECTION_REQ(101),
-    CONNECTION_RES(102);
+    CONNECTION_RES(102),
+    PLAYER_READY(110);
 
     private final int value;
 

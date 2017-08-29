@@ -19,22 +19,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.util.Duration;
-import models.Clock;
-import models.ClockHandler;
 import models.Competitor;
-import models.WorldClock;
 import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
-import utilities.StreamObserver;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 
@@ -184,6 +177,7 @@ public class LobbyController implements Initializable {
 
         this.timer.stop(); //cancel the animation timer
         this.leaveButton.setDisable(true); //cant leave once game is starting
+        this.readyButton.setDisable(true);
 
         //count down for 5 seconds
         gameStartLabel.setVisible(true);

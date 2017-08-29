@@ -58,6 +58,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     private Server TCPserver;
     private boolean raceInProgress = false;
+    private Map<Integer, Boolean> clientStates = new HashMap<>();
 
 
 
@@ -142,14 +143,21 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 break;
             case CONNECTION_REQ:
                 this.addCompetitor(clientId);
+                break;
+            case PLAYER_READY:
+                this.updateReady(clientId);
 
         }
     }
+
+
 
     public void addConnection() {this.addCompetitor(3);} //for tests
 
     /**
      * adds a competitor to the list of competitors
+     * Sends a response with a source id for the client
+     * Stores the client in the clientstate map
      * @param clientId the channel id of the client, this is used as the source id of the boat
      */
     private void addCompetitor(Integer clientId) {
@@ -166,11 +174,35 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         try {
             //send connection response and broadcast XML so update lobbies
             TCPserver.unicast(res, clientId);
+            this.clientStates.put(clientId, false);
             this.sendAllXML();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
+    /**
+     * gets the next available source id
+     * @return int the source id
+     */
+    public int getNextSourceId() {
+        currentSourceID += 1;
+        return currentSourceID;
+    }
+
+
+    /**
+     * Sets the client to ready and checks if all clients are ready
+     * If all ready then change the raceInProgress flag
+     * @param clientId Integer the id of the client to mark as ready
+     */
+    private void updateReady(Integer clientId) {
+        clientStates.put(clientId, true);
+        if (clientStates.values().contains(false)) return;
+        this.raceInProgress = true;
+    }
+
 
 
     /**
@@ -184,17 +216,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
         return boats;
     }
-
-
-    /**
-     * gets the next available source id
-     * @return int the source id
-     */
-    public int getNextSourceId() {
-        currentSourceID += 1;
-        return currentSourceID;
-    }
-
 
 
     /**
@@ -494,7 +515,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     public void run() {
 
 
-        if ((System.currentTimeMillis() / 1000) - startTime > 30) raceInProgress = true;
+        //start the game after a minute if even if not all the players have pressed ready
+        if ((System.currentTimeMillis() / 1000) - startTime > 60) raceInProgress = true;
+
+
         if (!raceInProgress) return;
 
         try {
