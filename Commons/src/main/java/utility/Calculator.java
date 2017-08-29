@@ -1,5 +1,9 @@
 package utility;
 
+import models.Force;
+import models.MutablePoint;
+import models.Vector;
+
 import static java.lang.Math.*;
 
 /**
@@ -13,13 +17,25 @@ public class Calculator {
      * @param x1 point 1's x value
      * @param y1 point 1's y value
      * @param x2 point 2's x value
-     * @param y2 point 2's y valie
+     * @param y2 point 2's y value
      * @return double the angle
      */
     public static double calcAngleBetweenPoints(double x1, double y1, double x2, double y2) {
         double rangeX = x1 - x2;
         double rangeY = y1 - y2;
         return atan2(rangeY, rangeX) + Math.PI;
+    }
+
+    /**
+     * Calculates the angle between y intercept and the line made by the two point p1 and p2
+     * @param p1 point 1
+     * @param p2 point 2
+     * @return the angle between two points in degrees
+     */
+    public static double calculateContactAngle(MutablePoint p1, MutablePoint p2) {
+        double rangeX = p1.getXValue()-p2.getXValue();
+        double rangeY = p1.getYValue()-p2.getYValue();
+        return toDegrees(atan2(rangeY, rangeX));
     }
 
     /**
@@ -43,6 +59,50 @@ public class Calculator {
     }
 
     /**
+     * Calculates the distance between a point and a line segment
+     * @param x Point x
+     * @param y Point y
+     * @param x1 lineStartx
+     * @param y1 lineStarty
+     * @param x2 lineEndx
+     * @param y2 lineEndy
+     * @return double, the shortest distance
+     */
+    public static double pointDistance(double x, double y, double x1, double y1, double x2, double y2) {
+
+        double A = x - x1;
+        double B = y - y1;
+        double C = x2 - x1;
+        double D = y2 - y1;
+
+        double dot = A * C + B * D;
+        double len_sq = C * C + D * D;
+        double param = -1;
+        if (len_sq != 0) //in case of 0 length line
+            param = dot / len_sq;
+
+        double xx, yy;
+
+        if (param < 0) {
+            xx = x1;
+            yy = y1;
+        }
+        else if (param > 1) {
+            xx = x2;
+            yy = y2;
+        }
+        else {
+            xx = x1 + param * C;
+            yy = y1 + param * D;
+        }
+        double dx = x - xx;
+        double dy = y - yy;
+        return (double) Math.sqrt(dx * dx + dy * dy);
+    }
+
+
+
+    /**
      * Calculates the expected tack angle
      * @param windDirection double wind direction in degrees
      * @param boatHeading double boat heading in degrees
@@ -53,5 +113,23 @@ public class Calculator {
     }
 
 
+    /**
+     * calculates the dot product between v1 and v2
+     * @param v1 vector 1
+     * @param v2 vector 2
+     * @return the dot product
+     */
+    public static double dot(Vector v1, Vector v2){
+        return v1.getXValue()*v2.getXValue()+v1.getYValue()*v2.getYValue();
+    }
+
+
+    public static Vector subtract(Vector v1, Vector v2){
+        return new Force(v1.getXValue()-v2.getXValue(),v1.getYValue()-v2.getYValue(),true);
+    }
+
+    public static Vector multiply(double s, Vector v){
+        return new Force(s*v.getXValue(),s*v.getYValue(),true);
+    }
 
 }

@@ -1,26 +1,33 @@
 package controllers;
 
-import com.google.common.primitives.Doubles;
+import Animations.CollisionRipple;
+import Animations.RandomShake;
 import com.rits.cloning.Cloner;
 import javafx.animation.FadeTransition;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
+import javafx.event.ActionEvent;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.*;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -29,15 +36,21 @@ import javafx.scene.transform.Translate;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
-import javafx.util.Pair;
+import mockDatafeed.Keys;
 import models.Competitor;
 import models.CourseFeature;
-import models.Dot;
 import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.Converter;
+import parsers.RaceStatusEnum;
+import utilities.*;
 import utilities.*;
 
+import utilities.Annotation;
+
+import utilities.DataSource;
+import utilities.PolarTable;
+import utility.BinaryPackager;
 
 import java.awt.geom.Line2D;
 import java.io.IOException;
@@ -45,19 +58,21 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.getExponent;
+import static java.lang.Math.*;
+import static javafx.collections.FXCollections.observableArrayList;
+import static javafx.collections.FXCollections.observableList;
 import static javafx.scene.paint.Color.*;
+import static parsers.BoatStatusEnum.DSQ;
 import static parsers.RaceStatusEnum.PREPARATORY;
 import static parsers.RaceStatusEnum.STARTED;
-import static utilities.RaceCalculator.calcVirtualLinePoints;
-import static utilities.RaceCalculator.calculateStartSymbol;
+import static utilities.RaceCalculator.*;
 
 /**
  * Controller for the race view.
  */
 public class RaceViewController implements Initializable, TableObserver {
 
+    @FXML private AnchorPane raceView;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
     @FXML private Label fpsCounter;
@@ -72,10 +87,33 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Text status;
     @FXML private Group annotationGroup;
     @FXML private WebView mapView;
+    @FXML private Pane raceParentPane;
+    @FXML private ImageView controlsView;
+    @FXML private HBox controlsBox;
+    @FXML
+    private GridPane finisherListPane;
+    @FXML
+    private ListView finisherListView;
+
+    public GridPane getFinisherListPane() {
+        return finisherListPane;
+    }
+
+    public ListView getFinisherListView() {
+        return finisherListView;
+    }
+
+    private ObservableList<String> observableFinisherList = observableArrayList();
+    private Boolean finisherListDisplayed = false;
+
+    static final Color backgroundColor = Color.POWDERBLUE;
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Shape playerMarker;
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
+    private Map<Double, Line> healthBars = new HashMap<>();
+    private Map<Integer, ImageView> ripImages = new HashMap<>();
+    private Map<Double, Line> healthBarBackgrounds = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
     private Map<Integer, Label> speedAnnotations = new HashMap<>();
     private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
@@ -88,7 +126,9 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line startLine;
     private Line finishLine;
     private Line virtualLine;
+    private Polygon guideArrow;
 
+    private RaceCalculator raceCalculator;
     private WebEngine mapEngine;
     private DataSource dataSource;
     private PolarTable polarTable;
@@ -101,7 +141,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private boolean isLoaded = false;
 
     //if state of zooming
-    private boolean zoom=false;
+    private boolean zoom = false;
 
     //current boat position in screen coordinates
     private double boatPositionX;
@@ -111,7 +151,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private MutablePoint currentPosition17;
 
     //Deep cloner
-    private Cloner cloner=new Cloner();
+//    private Cloner cloner=new Cloner();
 
     //graphics context
     private GraphicsContext gc;
@@ -140,6 +180,9 @@ public class RaceViewController implements Initializable, TableObserver {
         showAllAnnotations();
         fpsToggle.setSelected(true);
 
+        finisherListPane.setVisible(false);
+
+        initialiseGuideArrow();
         gc=raceViewCanvas.getGraphicsContext2D();
 
         mapEngine = mapView.getEngine();
@@ -160,6 +203,31 @@ public class RaceViewController implements Initializable, TableObserver {
             }
         });
 
+    }
+
+    /**
+     * Initialise arrow to guide the user where to go to round the next mark
+     */
+    private void initialiseGuideArrow() {
+        guideArrow = new Polygon();
+        double arrowLength = -60; // default arrow points vertically in the -y direction (upwards)
+        double arrowHeadLength = -20;
+        double offsetFromOrigin = -1 * (arrowLength + arrowHeadLength) + 30;
+
+        controlsView = new ImageView();
+        Image image = new Image("controls.png");
+        controlsView.setImage(image);
+        guideArrow.getPoints().addAll(
+                -5., offsetFromOrigin, //tail left
+                5., offsetFromOrigin, //tail right
+                5., arrowLength + offsetFromOrigin,
+                15., arrowLength + offsetFromOrigin,
+                0., arrowLength + arrowHeadLength + offsetFromOrigin, // tip
+                -15., arrowLength + offsetFromOrigin,
+                -5.,arrowLength + offsetFromOrigin);
+        guideArrow.setFill(backgroundColor.brighter());
+        this.raceViewPane.getChildren().add(guideArrow);
+        guideArrow.toBack();
     }
 
     /**
@@ -197,6 +265,8 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
         raceViewPane.setPrefWidth(width);
+        controlsBox.setPrefHeight(height);
+        controlsBox.setPrefWidth(width);
         raceViewPane.getChildren().add(track);
 
         this.dataSource = dataSource;
@@ -209,7 +279,6 @@ public class RaceViewController implements Initializable, TableObserver {
                 e.printStackTrace();
             }
         }
-
 
     }
 
@@ -247,6 +316,94 @@ public class RaceViewController implements Initializable, TableObserver {
         sailLine.toFront();
 
     }
+
+    /**
+     * Draws the health bar representing the health of the boat
+     * @param boat Competitor the boat in the race
+     */
+    private void drawHealthBar(Competitor boat) {
+
+        double boatX = boat.getPosition().getXValue();
+        double boatY = boat.getPosition().getYValue();
+
+        double strokeWidth = 5;
+        double offset = 20;
+        double tombstoneSize = 30;
+        double maxBarLength = 30;
+        double sourceId = boat.getSourceID();
+        int healthLevel = boat.getHealthLevel();
+        double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength);
+        if(this.zoom) {
+            offset = offset * 2;
+            strokeWidth *= 2;
+            healthLevel *= 2;
+            maxBarLength *= 2;
+            tombstoneSize *= 2;
+            boatX = getBoatLocation(boat).getXValue();
+            boatY = getBoatLocation(boat).getYValue();
+            healthSize*=2;
+        }
+        if(healthLevel > 0) {
+            Color healthColour = calculateHealthColour(boat);
+            if (healthBars.get(sourceId) == null) {
+
+                Line healthBarBackground = new Line();
+                raceViewPane.getChildren().add(healthBarBackground);
+                this.healthBarBackgrounds.put(sourceId, healthBarBackground);
+
+                Line healthBar = new Line();
+                raceViewPane.getChildren().add(healthBar);
+                this.healthBars.put(sourceId, healthBar);
+            }
+
+            Line healthBarBackground = healthBarBackgrounds.get(sourceId);
+            healthBarBackground.setStrokeWidth(strokeWidth);
+            healthBarBackground.setStartX(boatX);
+            healthBarBackground.setStartY(boatY - offset);
+            healthBarBackground.setEndX(boatX + maxBarLength);
+            healthBarBackground.setEndY(boatY - offset);
+            healthBarBackground.setStroke(Color.WHITE);
+
+            Line healthBar = healthBars.get(sourceId);
+            healthBar.setStrokeWidth(strokeWidth);
+            healthBar.setStartX(boatX);
+            healthBar.setStartY(boatY - offset);
+            healthBar.setEndX(boatX + healthSize);
+            healthBar.setEndY(boatY - offset);
+
+            healthBar.setStroke(healthColour);
+            healthBar.toFront();
+
+
+        }
+        else {
+            ImageView ripImage = ripImages.get((int) sourceId);
+
+            if(boat.getStatus() != DSQ) {
+                boat.setStatus(DSQ);
+                ripImage.setVisible(true);
+                BinaryPackager binaryPackager = new BinaryPackager();
+                this.dataSource.send(binaryPackager.packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
+
+                if(dataSource.getSourceID() == boat.getSourceID()){
+                    sailLine.setVisible(false);
+                    playerMarker.setVisible(false);
+                    this.raceViewPane.getChildren().remove(guideArrow);
+                }
+
+                healthBars.get(sourceId).setVisible(false);
+                healthBarBackgrounds.get(sourceId).setVisible(false);
+                boatModels.get((int) sourceId).setVisible(false);
+            }
+
+            ripImage.setX(boatX);
+            ripImage.setY(boatY);
+            ripImage.setFitHeight(tombstoneSize);
+            ripImage.setFitHeight(tombstoneSize);
+
+        }
+    }
+
 
     /**
      * Draws the virtual line of the selected boat with the same color
@@ -368,6 +525,30 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+    /**
+     * Check to see if the race is finished and display finisher list if it is
+     */
+    public void checkRaceFinished(){
+        if (dataSource.getRaceStatus().equals(RaceStatusEnum.FINISHED) && !finisherListDisplayed) {
+            for (Competitor aCompetitor : dataSource.getCompetitorsPosition()){
+                if (aCompetitor.getStatus() == DSQ) {
+                    observableFinisherList.add("RIP " + aCompetitor.getTeamName());
+                } else {
+                    observableFinisherList.add((dataSource.getCompetitorsPosition().indexOf(aCompetitor) + 1 ) + ". " + aCompetitor.getTeamName());
+                }
+            }
+            finisherListView.setItems(observableFinisherList);
+            finisherListView.refresh();
+            finisherListPane.setVisible(true);
+            finisherListDisplayed = true;
+
+            double width = raceViewPane.getWidth();
+            double height = raceViewPane.getHeight();
+            finisherListPane.setLayoutX(width/2 - finisherListPane.getWidth()/2);
+            finisherListPane.setLayoutY(height/2 - finisherListPane.getHeight()/2);
+        }
+    }
+
 
     /**
      * Zooms in on your boat
@@ -419,7 +600,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
             gc.strokePolygon(boundaryX, boundaryY, boundaryX.length);
             gc.setGlobalAlpha(0.4);
-            gc.setFill(Color.POWDERBLUE);
+            gc.setFill(backgroundColor);
             //shade inside the boundary
             gc.fillPolygon(boundaryX,boundaryY, boundaryX.length);
             gc.setGlobalAlpha(1.0);
@@ -529,7 +710,13 @@ public class RaceViewController implements Initializable, TableObserver {
                     }
                     break;
 
+
             }
+
+            if(boat.getStatus() == DSQ) {
+                label.setText("");
+            }
+
             label.setVisible(checkBox.isSelected());
             label.setLayoutX(point.getXValue() + 5);
             label.setLayoutY(point.getYValue()+ offset);
@@ -637,6 +824,13 @@ public class RaceViewController implements Initializable, TableObserver {
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
 
+            ImageView ripImage = new ImageView();
+            Image tombstone = new Image("/cross.png");
+            ripImage.setImage(tombstone);
+            ripImage.setPreserveRatio(true);
+            ripImage.setVisible(false);
+            this.ripImages.put(sourceId, ripImage);
+            raceViewPane.getChildren().add(ripImage);
 
             this.boatModels.put(sourceId, boatModel);
             //Boats selected can be selected/unselected by clicking on them
@@ -678,7 +872,8 @@ public class RaceViewController implements Initializable, TableObserver {
             raceViewPane.getChildren().add(wake);
             this.wakeModels.put(boat.getSourceID(), wake);
         }
-        double newLength = boat.getVelocity() * 2*wakeLengthFactor;
+
+        double newLength = boat.getVelocity() * 2 * wakeLengthFactor;
         Polygon wakeModel = wakeModels.get(boat.getSourceID());
         wakeModel.getTransforms().clear();
         wakeModel.getPoints().clear();
@@ -719,6 +914,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor the boat to draw the laylines for
      */
     private void drawLaylines(Competitor boat) {
+
 
         if (this.polarTable == null) {
             try {
@@ -820,9 +1016,9 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     /**
-     * Gets the centre coords for the next mark a boat will round
-     * @param boat Competitor
-     * @return Pair the coords
+     * Gets the centre coordinates for a mark or gate
+
+     * @return MutablePoint (x,y) coordinates
      */
     private MutablePoint getNextGateCentre(Competitor boat) {
 
@@ -856,7 +1052,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param y3 Double line two
      * @param x4 Double line two
      * @param y4 Double line two
-     * @return Pair the intersection point x, y
+     * @return MutablePoint the intersection point x, y
      */
     private MutablePoint calculateIntersection(Double x1, Double y1, Double x2, Double y2, Double x3, Double y3, Double x4, Double y4) {
         //first convert to slope intercept y = mx + b
@@ -870,9 +1066,6 @@ public class RaceViewController implements Initializable, TableObserver {
         Double y = m1 * x + b1;
         return new MutablePoint(x, y);
     }
-
-
-
 
     /**
      * Draws a layline on the pane
@@ -896,7 +1089,94 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+    /**
+     * Gets the centre coordinates for a mark or gate
+     * @param markIndex index of the mark (based on the order they are rounded)
+     * @return MutablePoint (x,y) coordinates
+     */
+    private MutablePoint getGateCentre(Integer markIndex) {
 
+        Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
+        if (markIndex > features.size()) return null; //passed the finish line
+
+        List<Integer> ids = features.get(markIndex);
+        CourseFeature featureOne = this.dataSource.getCourseFeatureMap().get(ids.get(0));
+        Double markX = featureOne.getPixelCentre().getXValue();
+        Double markY = featureOne.getPixelCentre().getYValue();
+
+        if (ids.size() > 1) { //Get the centre point of gates
+            CourseFeature featureTwo = this.dataSource.getCourseFeatureMap().get(ids.get(1));
+            markX = (featureOne.getPixelCentre().getXValue() + featureTwo.getPixelCentre().getXValue()) / 2;
+            markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
+        }
+        return new MutablePoint(markX, markY);
+    }
+
+
+    /**
+     * Draw a directional arrow on the canvas to guide the boat in the right direction to the next mark
+     *
+     */
+    private void updateGuidingArrow() {
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        int currentIndex = boat.getCurrentLegIndex();
+        double xOffset = 0, yOffset = 0;
+        double angle;
+        MutablePoint nextMarkLocation = getGateCentre(currentIndex + 1);
+
+        if (nextMarkLocation == null) {
+            // end of race
+            this.raceViewPane.getChildren().remove(guideArrow);
+            return;
+        }
+
+        if (currentIndex == 0 && !isZoom()) {
+            // boat has not yet rounded first mark
+            angle = 90;
+        } else {
+            Double xDist;
+            Double yDist;
+            if (isZoom()) {
+                // arrow points from boat to next mark
+                xDist = boat.getPosition().getXValue() - nextMarkLocation.getXValue();
+                yDist = boat.getPosition().getYValue() - nextMarkLocation.getYValue();
+            } else {
+                // arrow points from previous mark to next mark
+                MutablePoint prevMarkLocation = getGateCentre(currentIndex);
+                assert prevMarkLocation != null;
+                xDist = prevMarkLocation.getXValue() - nextMarkLocation.getXValue();
+                yDist = prevMarkLocation.getYValue() - nextMarkLocation.getYValue();
+            }
+
+            angle = calculateAngleBetweenMarks(xDist, yDist);
+            xOffset = 150 * cos(toRadians(angle - 90));
+            yOffset = 150 * sin(toRadians(angle - 90));
+        }
+
+        double x, y;
+        if (isZoom()) {
+            x = boatPositionX + xOffset;
+            y = boatPositionY + yOffset;
+        } else {
+            x = nextMarkLocation.getXValue();
+            y = nextMarkLocation.getYValue();
+        }
+        applyTransformsToArrow(angle, x, y);
+    }
+
+    /**
+     * Apply translation and rotation transforms to the guiding arrow
+     *
+     * @param angle double the angle by which to rotate the arrow, from north
+     * @param x double the x coordinate for the arrow's origin
+     * @param y double the y coordinate for the arrow's origin
+     */
+    private void applyTransformsToArrow(double angle, double x, double y) {
+        guideArrow.getTransforms().clear();
+        guideArrow.setLayoutX(x);
+        guideArrow.setLayoutY(y);
+        guideArrow.getTransforms().add(new Rotate(angle, 0, 0));
+    }
 
 
     /**
@@ -922,7 +1202,6 @@ public class RaceViewController implements Initializable, TableObserver {
         return calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), timeUntilStart);
     }
 
-
     /**
      * Updates the FPS counter
      */
@@ -946,6 +1225,7 @@ public class RaceViewController implements Initializable, TableObserver {
         if (!statusString.equals(status.getText())) {
             status.setText("Race status: " + dataSource.getRaceStatus());
         }
+        checkRaceFinished();
     }
 
     /**
@@ -1021,14 +1301,58 @@ public class RaceViewController implements Initializable, TableObserver {
                 }
             }
 
-            this.drawWake(boat,boatLength,startWakeOffset,wakeWidthFactor,wakeLengthFactor);
+            this.drawWake(boat, boatLength, startWakeOffset, wakeWidthFactor, wakeLengthFactor);
             this.drawBoat(boat);
+            this.drawHealthBar(boat);
             this.moveAnnotations(boat);
-            if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
-            if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
-        }
 
-        drawSail(width, length);
+//            if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
+//            if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
+
+        }
+        this.drawSail(width, length);
+
+    }
+
+
+    /**
+     * draws a collision border
+     * @param width the width of the screen
+     * @param height the height of the screen
+     * @param thickness the thickness of the border
+     */
+    public void drawBorder(double width, double height, double thickness){
+        List<Shape> border=new ArrayList<>();
+        //offset which the screen shakes by
+        double shakeOffset=10;
+        LinearGradient linearGradient=new LinearGradient(0,0,0,1,true,CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
+//        LinearGradient linearGradient2=new LinearGradient(0,1,0,0,true,CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
+        LinearGradient linearGradient3=new LinearGradient(0,0,1,0,true,CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
+        LinearGradient linearGradient4=new LinearGradient(1,0,0,0,true,CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
+
+        Rectangle rectTop =new Rectangle(-shakeOffset,-shakeOffset,width+shakeOffset*2,thickness+shakeOffset);
+        rectTop.setFill(linearGradient);
+
+        Rectangle rectLeft =new Rectangle(-shakeOffset,-shakeOffset,thickness+shakeOffset,height+shakeOffset*2);
+        rectLeft.setFill(linearGradient3);
+        Rectangle rectRight =new Rectangle(width-thickness,-shakeOffset,thickness+shakeOffset,height+shakeOffset*2);
+        rectRight.setFill(linearGradient4);
+
+        border.add(rectTop);
+//        border.add(rectBot);
+        border.add(rectLeft);
+        border.add(rectRight);
+
+        for(Shape rect: border ){
+            FadeTransition fadeTransition=new FadeTransition(Duration.millis(500),rect);
+            fadeTransition.setOnFinished(event -> raceParentPane.getChildren().remove(rect));
+            fadeTransition.setFromValue(1.0);
+            fadeTransition.setToValue(0.0);
+            raceParentPane.getChildren().add(rect);
+            fadeTransition.play();
+            rect.toFront();
+
+        }
     }
 
     /**
@@ -1036,10 +1360,19 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void checkCollision(){
         for(int sourceID:new HashSet<>(dataSource.getCollisions())){
-            drawCollision(boatPositionX,boatPositionY);
-            Competitor boat=dataSource.getStoredCompetitors().get(sourceID);
-            mapEngine.executeScript(String.format("create_collision(%.9f,%.9f)",boat.getLatitude(),boat.getLongitude()));
+            MutablePoint point=setRelativePosition(dataSource.getStoredCompetitors().get(sourceID));
+            if (sourceID == dataSource.getSourceID()) {
+                drawBorder(raceViewPane.getWidth(),raceViewPane.getHeight(),25);
+
+
+                new RandomShake(raceParentPane).animate();
+
+            }
+            drawCollision(point.getXValue(), point.getYValue());
             dataSource.removeCollsions(sourceID);
+//            Competitor boat=dataSource.getStoredCompetitors().get(sourceID);
+//            mapEngine.executeScript(String.format("create_collision(%.9f,%.9f)",boat.getLatitude(),boat.getLongitude()));
+
         }
 
     }
@@ -1050,11 +1383,31 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param centerY the y coordinate of the collision
      */
     public void drawCollision(double centerX,double centerY){
-        CollisionRipple ripple = new CollisionRipple(centerX, centerY, 100);
+        int radius=20;
+        if(isZoom()){
+            radius*=2;
+        }
+        CollisionRipple ripple = new CollisionRipple(centerX, centerY,radius );
         raceViewPane.getChildren().add(ripple);
+
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
+
     }
 
+    /**
+     * Toggles a control layout of the game
+     * @param actionEvent
+     */
+    public void toggleControls(ActionEvent actionEvent) {
+        if (!raceViewPane.getChildren().contains(controlsBox)){
+            controlsBox.getChildren().add(controlsView);
+            raceViewPane.getChildren().add(controlsBox);
+        }
+        else {
+            controlsBox.getChildren().remove(controlsView);
+            raceViewPane.getChildren().remove(controlsBox);
+        }
+    }
 
 
     /**
@@ -1068,11 +1421,11 @@ public class RaceViewController implements Initializable, TableObserver {
         setBoatLocation();
         updateRace();
         checkCollision();
-
-
+        updateGuidingArrow();
     }
 
     boolean isLoaded() {
         return isLoaded;
     }
+
 }

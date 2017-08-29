@@ -1,7 +1,9 @@
 package utilities;
 
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.util.converter.PercentageStringConverter;
 import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
@@ -23,10 +25,16 @@ import static java.lang.Math.sqrt;
 public class RaceCalculator {
 
 
+
     /**
      * Calculates whether boat is heading to the start line
      * and if it does calculates the virtual line points and returns them so they can be used for drawing
      * returns empty list if boat is not heading to the start line
+     * @param boatModel boat model
+     * @param startMark1 start mark 1
+     * @param startMark2 start mark 2
+     * @param startLine1 start line 1
+     * @param expectedStartTime expected start time
      * @param selectedBoat selected boat
      * @return List virtualLinePoints
      */
@@ -162,8 +170,9 @@ public class RaceCalculator {
     }
 
     /**
-     * Calculates the distance in metres from the selected boat to its virtual start line.
+     * Calculates distance between the player's boat and the virtual line
      * @param selectedBoat selected boat
+     * @param timeUntilStart time until start
      * @return double distance (m)
      */
     public static double calcDistToVirtual(Competitor selectedBoat, long timeUntilStart) {
@@ -171,8 +180,9 @@ public class RaceCalculator {
     }
 
     /**
-     * Calculates the distance in metres from the selected boat to the race start line.
+     * Calculates distance between the player's boat and the start line
      * @param selectedBoat selected boat
+     * @param startLine1 start line
      * @return double distance (m)
      */
     public static double calcDistToStart(Competitor selectedBoat, CourseFeature startLine1) {
@@ -206,5 +216,51 @@ public class RaceCalculator {
         return earthRadius * c;
     }
 
+    /**
+     * Returns the colour of the health scale of the given boat
+     * @param boat Competitor a boat
+     * @return Color the colour of the health bar
+     */
+    public static Color calculateHealthColour(Competitor boat) {
+        double healthLevel = boat.getHealthLevel();
+        double maxHealth = boat.getMaxHealth();
+        double percentage = healthLevel/maxHealth;
+        if(percentage > 0.7) {
+            return Color.GREEN;
+        }
+        else if(percentage > 0.6) {
+            return Color.GREENYELLOW;
+        }
+        else if(percentage > 0.5) {
+            return Color.YELLOW;
+        }
+        else if(percentage > 0.4) {
+            return Color.ORANGE;
+        }
+        else {
+            return Color.RED;
+        }
+    }
+
+    /**
+     * Calculates the angle between marks
+     * @param xDist Double the distance between marks in the x direction
+     * @param yDist Double the distance between marks in the y direction
+     * @return double the angle
+     */
+    public static double calculateAngleBetweenMarks(Double xDist, Double yDist) {
+        double arctan = atan(yDist/xDist);
+        if (arctan < 0) {
+            arctan += 2 * Math.PI;
+        }
+        double angle = toDegrees(arctan);
+
+        if (xDist < 0) {
+            angle += 90;
+        } else {
+            angle += 270;
+        }
+        return angle;
+    }
 
 }

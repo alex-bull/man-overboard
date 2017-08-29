@@ -1,39 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import javafx.scene.web.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.canvas.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
 
-<AnchorPane fx:id="raceView" layoutX="69.0" layoutY="26.0" prefHeight="1080.0" prefWidth="1000.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
+<Pane fx:id="raceParentPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
+   <children>
+      <AnchorPane fx:id="raceView" prefHeight="1080.0" prefWidth="1000.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
-    <children>
-        <Canvas fx:id="raceViewCanvas" height="1000.0" width="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-        <Pane fx:id="raceViewPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="4000.0" prefWidth="4000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-        <Text fx:id="status" strokeType="OUTSIDE" strokeWidth="0.0" text="-" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-        <Label fx:id="fpsCounter" layoutX="955.0" layoutY="1006.0" text="-" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
-            <font>
-                <Font size="23.0" />
-            </font>
-        </Label>
-        <CheckBox fx:id="fpsToggle" layoutX="10.0" layoutY="391.0" mnemonicParsing="false" text="Show FPS" />
-        <Text layoutX="12.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Annotations" />
-      <WebView fx:id="mapView" prefHeight="200.0" prefWidth="200.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-        <Group fx:id="annotationGroup" layoutX="10.0" layoutY="252.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="252.0">
-            <children>
-                <CheckBox fx:id="nameButton" mnemonicParsing="false" selected="true" text="Team Name" />
-                <CheckBox fx:id="speedButton" layoutY="30.0" mnemonicParsing="false" text="Speed" />
-                <CheckBox fx:id="timeToMarkButton" layoutY="61.0" mnemonicParsing="false" text="Est Time to Next Mark" />
-                <CheckBox fx:id="timeFromMarkButton" layoutY="92.0" mnemonicParsing="false" text="Time from Last Mark" />
-            </children>
-        </Group>
-        <RadioButton fx:id="allAnnotationsRadio" layoutX="10.0" layoutY="220.0" mnemonicParsing="false" onAction="#showAllAnnotations" selected="true" text="All" />
-        <RadioButton fx:id="noAnnotationsRadio" layoutX="136.0" layoutY="220.0" mnemonicParsing="false" onAction="#clearAnnotations" text="None" />
-        <RadioButton fx:id="someAnnotationsRadio" layoutX="64.0" layoutY="220.0" mnemonicParsing="false" text="Partial" />
-    </children>
+          <children>
+              <HBox fx:id="controlsBox" alignment="CENTER" prefHeight="4000.0" prefWidth="4000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              <Canvas fx:id="raceViewCanvas" height="1000.0" width="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              <Pane fx:id="raceViewPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="4000.0" prefWidth="4000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              <ImageView fx:id="controlsView" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true" />
+              <Text fx:id="status" strokeType="OUTSIDE" strokeWidth="0.0" text="-" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+              <Label fx:id="fpsCounter" layoutX="955.0" layoutY="1006.0" text="-" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                  <font>
+                      <Font size="23.0" />
+                  </font>
+              </Label>
+              <CheckBox fx:id="fpsToggle" layoutX="10.0" layoutY="391.0" mnemonicParsing="false" text="Show FPS" />
+              <Text layoutX="12.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Annotations" />
+              <WebView fx:id="mapView" prefHeight="200.0" prefWidth="200.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              <Group fx:id="annotationGroup" layoutX="10.0" layoutY="252.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="252.0">
+                  <children>
+                      <CheckBox fx:id="nameButton" mnemonicParsing="false" selected="true" text="Team Name" />
+                      <CheckBox fx:id="speedButton" layoutY="30.0" mnemonicParsing="false" text="Speed" />
+                      <CheckBox fx:id="timeToMarkButton" layoutY="61.0" mnemonicParsing="false" text="Est Time to Next Mark" />
+                      <CheckBox fx:id="timeFromMarkButton" layoutY="92.0" mnemonicParsing="false" text="Time from Last Mark" />
+                  </children>
+              </Group>
+              <RadioButton fx:id="allAnnotationsRadio" layoutX="10.0" layoutY="220.0" mnemonicParsing="false" onAction="#showAllAnnotations" selected="true" text="All" />
+              <RadioButton fx:id="noAnnotationsRadio" layoutX="136.0" layoutY="220.0" mnemonicParsing="false" onAction="#clearAnnotations" text="None" />
+              <RadioButton fx:id="someAnnotationsRadio" layoutX="64.0" layoutY="220.0" mnemonicParsing="false" text="Partial" />
+              <Button layoutX="17.0" layoutY="433.0" mnemonicParsing="false" onAction="#toggleControls" text="Show Controls" />
+              <GridPane fx:id="finisherListPane" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="479.0" prefWidth="358.0">
+                  <children>
+                      <Pane opacity="0.6" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" GridPane.rowSpan="2147483647">
+                          <effect>
+                              <GaussianBlur radius="4.75" />
+                          </effect>
+                      </Pane>
+                      <Pane prefHeight="480.0" prefWidth="358.0" GridPane.rowSpan="2147483647">
+                          <children>
+                              <Label alignment="CENTER" layoutX="1.0" layoutY="89.0" prefHeight="51.0" prefWidth="357.0" text="Standings:" textFill="#e0efef">
+                                  <font>
+                                      <Font name="System Bold Italic" size="15.0" />
+                                  </font>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="1.0" layoutY="38.0" prefHeight="51.0" prefWidth="357.0" text="Race Complete" textFill="#e0efef">
+                                  <font>
+                                      <Font name="Gentium Book Basic Bold Italic" size="38.0" />
+                                  </font>
+                              </Label>
+                              <ListView fx:id="finisherListView" layoutX="49.0" layoutY="165.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="218.0" prefWidth="262.0">
+                                  <effect>
+                                      <InnerShadow blurType="GAUSSIAN" />
+                                  </effect>
+                              </ListView>
+                          </children>
+                      </Pane>
+                  </children>
+                  <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  </columnConstraints>
+                  <rowConstraints>
+                      <RowConstraints maxHeight="393.0" minHeight="10.0" prefHeight="376.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="103.0" vgrow="SOMETIMES" />
+                  </rowConstraints>
+              </GridPane>
+          </children>
 
 
-</AnchorPane>
+      </AnchorPane>
+   </children>
+</Pane>

@@ -24,7 +24,8 @@ public class BoatActionParser {
     public BoatAction processMessage(byte[] body) {
         try {
             int actionNum = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 1));
-            return BoatAction.values()[actionNum - 1];
+
+            return BoatAction.getBoatAction(actionNum);
         }
         catch (Exception e) {
             return null;

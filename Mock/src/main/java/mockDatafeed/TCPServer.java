@@ -38,11 +38,16 @@ public class TCPServer extends TimerTask{
     public TCPServer(int port, ConnectionClient connectionClient) throws IOException {
         this.connectionClient = connectionClient;
         binaryPackager=new BinaryPackager();
+
         selector = Selector.open();
         serverSocket = ServerSocketChannel.open();
+
         serverSocket.configureBlocking(false);
+
         serverSocket.socket().bind(new InetSocketAddress("0.0.0.0", port));
+
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+
     }
 
 

@@ -3,11 +3,13 @@ package models;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
+import static java.lang.Math.sqrt;
+
 /**
  * Created by mgo65 on 6/03/17.
  * Represents a moving point on a cartesian plane
  */
-public class MutablePoint {
+public class MutablePoint implements Vector{
 
     private DoubleProperty x = new SimpleDoubleProperty();
     private DoubleProperty y = new SimpleDoubleProperty();
@@ -103,11 +105,14 @@ public class MutablePoint {
         return Math.abs(getXValue() - o.getXValue()) < EPSILON && Math.abs(getYValue() - o.getYValue()) < EPSILON * 2;
     }
 
-
+    public double getMagnitude(){
+        return sqrt(getXValue()*getXValue()+getYValue()*getYValue());
+    }
     /**
      * shifts the point by x,y
      * @param x the x value to be shifted by
      * @param y the y value to be shifted by
+     * @return MutablePoint the shifted point
      */
     public MutablePoint shift(double x, double y){
         return new MutablePoint(getXValue()+x,getYValue()+y);
