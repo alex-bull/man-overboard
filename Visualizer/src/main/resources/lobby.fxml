@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane styleClass="background" stylesheets="@css/theme.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LobbyController">
+    <children>
+        <GridPane layoutX="178.0" layoutY="141.0" prefHeight="966.0" prefWidth="1460.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="25.0" prefWidth="605.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="25.0" prefWidth="605.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="408.0" minWidth="0.0" percentWidth="40.0" prefWidth="24.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints maxHeight="50.0" minHeight="0.0" percentHeight="5.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="50.0" minHeight="0.0" percentHeight="5.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="300.0" minHeight="0.0" percentHeight="70.0" prefHeight="86.71890258789062" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="291.2810974121094" minHeight="70.0" percentHeight="10.0" prefHeight="291.2810974121094" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="291.2810974121094" minHeight="0.0" percentHeight="10.0" prefHeight="291.2810974121094" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="291.2810974121094" minHeight="0.0" percentHeight="5.0" prefHeight="291.2810974121094" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Button fx:id="readyButton" mnemonicParsing="false" onAction="#playerReady" prefHeight="30.0" prefWidth="160.0" text="Ready" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin></Button>
+                <ListView fx:id="starterList" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets bottom="10.0" left="40.0" right="40.0" top="20.0" />
+               </GridPane.margin></ListView>
+                <Label text="Competitors" textFill="#e0efef" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <font>
+                        <Font name="Gentium Book Basic Bold Italic" size="25.0" />
+                    </font>
+                </Label>
+                  <Label text="Starting In" textFill="#e0efef" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+               <font>
+                  <Font name="Gentium Book Basic Bold Italic" size="20.0" />
+               </font>
+               <padding>
+                  <Insets right="20.0" />
+               </padding>
+            </Label>
+                  <Label fx:id="countDownLabel" prefHeight="25.0" prefWidth="270.0" text="-" textAlignment="CENTER" textFill="#e0efef" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+               <font>
+                  <Font name="Gentium Book Basic Bold Italic" size="20.0" />
+               </font>
+               <padding>
+                  <Insets left="20.0" />
+               </padding></Label>
+            <ProgressIndicator fx:id="progressIndicator" maxHeight="70.0" stylesheets="@css/theme.css" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+            <Button fx:id="leaveButton" mnemonicParsing="false" onAction="#leaveLobby" prefHeight="30.0" prefWidth="160.0" text="Leave" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            </children>
+        </GridPane>
+    </children>
+</AnchorPane>
