@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -32,17 +33,20 @@ import utilities.StreamObserver;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 
 /**
  * Created by rjc249 on 5/04/17.
  * Controller for the start scene.
  */
-public class StarterController implements Initializable, ClockHandler, StreamObserver {
+public class LobbyController implements Initializable, ClockHandler, StreamObserver {
 
     private DataSource dataSource;
     private final int STARTTIME = 1;
-    @FXML private ListView<Competitor> starterList;
+    @FXML private ListView<String> starterList;
     @FXML private Label worldClockValue;
     @FXML private Button confirmButton;
     @FXML private Label countDownLabel;
@@ -50,9 +54,10 @@ public class StarterController implements Initializable, ClockHandler, StreamObs
     @FXML private ProgressIndicator progressIndicator;
     private Clock worldClock;
     private Stage primaryStage;
-    private ObservableList<Competitor> compList;
+    private ObservableList<String> competitorList = FXCollections.observableArrayList();
     private Rectangle2D primaryScreenBounds;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
+    private AnimationTimer timer;
 
     /**
      * Sets the stage
@@ -69,8 +74,8 @@ public class StarterController implements Initializable, ClockHandler, StreamObs
 
     /**
      * Implementation of ClockHandler interface method
-     *
      * @param newTime The currentTime of the clock
+     *
      */
     public void clockTicked(String newTime, Clock clock) {
         if (clock == worldClock) {
@@ -80,8 +85,7 @@ public class StarterController implements Initializable, ClockHandler, StreamObs
 
 
     /**
-     * Initialiser for StarterController
-     *
+     * Initialiser for LobbyController
      * @param location  URL
      * @param resources ResourceBundle
      */
@@ -90,25 +94,8 @@ public class StarterController implements Initializable, ClockHandler, StreamObs
 
         progressIndicator.setVisible(false);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        compList = FXCollections.observableArrayList();
-        starterList.setCellFactory(new Callback<ListView<Competitor>, ListCell<Competitor>>() {
-            @Override
-            public ListCell<Competitor> call(ListView<Competitor> param) {
-                return new ListCell<Competitor>() {
+        starterList.setItems(competitorList);
 
-                    @Override
-                    protected void updateItem(Competitor boat, boolean empty) {
-                        super.updateItem(boat, empty);
-                        if (boat != null) {
-                            setText(boat.getTeamName() + ": " + boat.getVelocity() + " m/s");
-                        } else {
-                            setText("");
-                        }
-                    }
-                };
-            }
-        });
-        starterList.setItems(compList);
     }
 
 
@@ -154,16 +141,16 @@ public class StarterController implements Initializable, ClockHandler, StreamObs
 
     /**
      * StreamObserver method
-     * Call set fields
-     * Change to the raceView
+     * Change to the raceView upon preparatory signal
      */
     public void raceStatusUpdated(RaceStatusEnum status) {
 
         System.out.println("Status updated " + status.toString());
 
-//        progressIndicator.setVisible(false);
-//        this.setFields();
-//        this.loadRaceView();
+        if (status == RaceStatusEnum.PREPARATORY) {
+            this.timer.stop();
+            this.loadRaceView();
+        }
     }
 
 
@@ -173,34 +160,11 @@ public class StarterController implements Initializable, ClockHandler, StreamObs
      */
     public void boatsUpdated() {
         this.progressIndicator.setVisible(false);
-        this.compList.setAll(dataSource.getCompetitorsPosition());
+        this.competitorList.clear();
+        this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
     }
 
 
-
-    /**
-     * Set fields using data from the stream
-     */
-    private void setFields() {
-
-
-        while (dataSource.getCourseTimezone() == null) {
-            System.out.print("");
-        }
-        this.worldClock = new WorldClock(this, dataSource.getCourseTimezone());
-        worldClock.start();
-        compList.setAll(dataSource.getCompetitorsPosition());
-
-        if (dataSource.getCompetitorsPosition().size() == 0) {
-            Stage thisStage = (Stage) confirmButton.getScene().getWindow();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Information Dialog");
-            alert.initOwner(thisStage);
-            alert.setHeaderText(null);
-            alert.setContentText("Sorry, this data stream hasn't started.");
-            alert.showAndWait();
-        }
-    }
 
     /**
      * Countdown until the race start, updates the countdown time text.
@@ -244,5 +208,24 @@ public class StarterController implements Initializable, ClockHandler, StreamObs
             }
         });
     }
+
+
+    /**
+     * Continuously polls the datasource to update the view
+     * Uses an animation timer as it is updating the GUI thread
+     */
+    void loop() {
+
+        this.timer = new AnimationTimer() {
+
+            @Override
+            public void handle(long now) {
+                boatsUpdated();
+            }
+        };
+
+        timer.start();
+    }
+
 
 }

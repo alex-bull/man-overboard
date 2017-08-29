@@ -39,16 +39,15 @@ App extends Application {
 
 
 
-        StarterController starterController = loader.getController();
-        starterController.setStage(primaryStage);
-        starterController.setDataSource(new Interpreter());
+        LobbyController lobbyController = loader.getController();
+        lobbyController.setStage(primaryStage);
 
         String imagePath = "file: resources/logo.png";
         primaryStage.getIcons().add(new Image(imagePath));
         Interpreter interpreter = new Interpreter();
         interpreter.setPrimaryStage(primaryStage);
-        starterController.setDataSource(interpreter);
-
+        lobbyController.setDataSource(interpreter);
+        lobbyController.loop();
         // for mac
 //        java.awt.Image image = Toolkit.getDefaultToolkit().getImage(imagePath);
 //        Application.getApplication().setDockIconImage(image);
@@ -72,7 +71,7 @@ App extends Application {
         });
 
         primaryStage.show();
-//        starterController.autoStart();
+//        lobbyController.autoStart();
 
     }
 

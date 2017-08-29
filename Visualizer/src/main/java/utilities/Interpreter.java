@@ -1,5 +1,6 @@
 package utilities;
 
+import com.rits.cloning.Cloner;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -32,17 +33,12 @@ import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
 import utility.BinaryPackager;
 import utility.PacketHandler;
-import com.rits.cloning.Cloner;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
-import static javafx.collections.FXCollections.observableArrayList;
-import static javafx.collections.FXCollections.observableList;
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
@@ -59,7 +55,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private XmlSubtype xmlSubType;
     private List<Competitor> competitorsPosition;
     private double windDirection;
-    Cloner cloner=new Cloner();
+    private Cloner cloner=new Cloner();
     private RaceData raceData;
     private Set<Integer> collisions;
     private BoatAction boatAction;
@@ -74,13 +70,8 @@ public class Interpreter implements DataSource, PacketHandler {
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
 
     private List<MutablePoint> courseBoundary = new ArrayList<>();
-
-
-    public HashMap<Integer, CourseFeature> getStoredFeatures17() {
-        return storedFeatures17;
-    }
-
     private List<MutablePoint> courseBoundary17 = new ArrayList<>();
+
     private double paddingX;
     private double paddingY;
     private double scaleFactor;
@@ -116,6 +107,14 @@ public class Interpreter implements DataSource, PacketHandler {
 
     public List<MutablePoint> getCourseBoundary() {
         return courseBoundary;
+    }
+
+    public List<MutablePoint> getCourseBoundary17() {
+        return courseBoundary17;
+    }
+
+    public HashMap<Integer, CourseFeature> getStoredFeatures17() {
+        return storedFeatures17;
     }
 
     public String getCourseTimezone() {
@@ -219,6 +218,7 @@ public class Interpreter implements DataSource, PacketHandler {
         receiverTimer.schedule(TCPClient, 0, 1);
 
         //request game join
+        System.out.println("Sending connection request...");
         this.send(new BinaryPackager().packageConnectionRequest((byte)1));
 
 
@@ -429,6 +429,7 @@ public class Interpreter implements DataSource, PacketHandler {
 //        this.competitorsPosition = comps;
     }
 
+
     /**
      * Updates the course features/marks
      * @param courseFeature CourseFeature
@@ -444,6 +445,7 @@ public class Interpreter implements DataSource, PacketHandler {
         }
 
     }
+
 
     /**
      * Parse binary data into XML and create a new parser dependant on the XmlSubType
@@ -480,16 +482,13 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.boatXMLParser = new BoatXMLParser(xml.trim());
                     competitorsPosition.clear();
                     competitorsPosition.addAll(boatXMLParser.getBoats().values());
-                    this.observer.boatsUpdated();
                     break;
             }
         }
 
     }
 
-    public List<MutablePoint> getCourseBoundary17() {
-        return courseBoundary17;
-    }
+
 
     /**
      * Parse binary data into XML

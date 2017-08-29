@@ -40,13 +40,11 @@ import static utility.Calculator.*;
 public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdateEventHandler {
     private HashMap<Integer, Competitor> competitors = new HashMap<>();
     private Map<Integer, Competitor> markBoats;
-    //private List<Competitor> markBoats;
     private List<MutablePoint> courseBoundary;
     private RaceData raceData;
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager = new BinaryPackager();
-//    private TCPServer TCPserver;
     private MutablePoint prestart;
     private WindGenerator windGenerator;
     private int currentSourceID = 99;
@@ -88,7 +86,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         //send all xml data first
         sendAllXML();
         //start the race, updates boat position at a rate of 60 hz
-        timer.schedule(this, 0, 16);
+        timer.schedule(this, 0, 1000);
     }
 
 
@@ -148,7 +146,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
     }
 
-    public void addConnection() {this.addCompetitor(3);}
+    public void addConnection() {this.addCompetitor(3);} //for tests
 
     /**
      * adds a competitor to the list of competitors
@@ -167,6 +165,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         byte[] res = binaryPackager.packageConnectionResponse((byte)1, clientId);
         try {
+            System.out.println("Sending connection response");
             TCPserver.unicast(res, clientId);
         } catch (IOException e) {
             e.printStackTrace();
@@ -493,7 +492,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     public void run() {
 
         if (!raceInProgress) {
-            this.sendAllXML();
+            //this.sendAllXML();
             return;
         }
 

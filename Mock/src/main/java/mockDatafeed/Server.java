@@ -54,8 +54,8 @@ public class Server extends TimerTask {
      * @throws IOException IOException
      */
     public void broadcast(byte[] data) throws IOException {
-
         selector.select(1);
+
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             //write to channel if writable
             if (key.isWritable()) {
@@ -83,7 +83,7 @@ public class Server extends TimerTask {
         selector.select(1);
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             //write to the channel if writable
-            if (key.attachment().equals(clientId) && key.isWritable()) {
+            if (key.attachment() == clientId && key.isWritable()) {
                 ByteBuffer buffer = ByteBuffer.wrap(data);
                 SocketChannel client = (SocketChannel) key.channel();
                 try {
@@ -163,6 +163,7 @@ public class Server extends TimerTask {
 
                     //handle new clients connecting
                     if (key.isAcceptable()) {
+
                         SocketChannel client = serverSocket.accept();
                         client.configureBlocking(false);
 
@@ -170,12 +171,14 @@ public class Server extends TimerTask {
                         // This will become the boat source id if they register as a player
                         int sourceID = connectionClient.getNextSourceId();
                         client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE, sourceID);
+                        System.out.println("Added new client: " + sourceID);
                     }
 
                     //handle incoming messages
                     else if (key.isReadable()) {
+
                         SocketChannel client = (SocketChannel) key.channel();
-                        System.out.println("Incoming data from channel " + key.attachment());
+                        selector.selectedKeys().remove(key); //remove key so that it can be written to for a response
                         this.processClient(client, (Integer) key.attachment());
                     }
                     selector.selectedKeys().remove(key);

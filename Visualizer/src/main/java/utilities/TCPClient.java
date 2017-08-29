@@ -26,7 +26,6 @@ public class TCPClient extends TimerTask {
     private PacketHandler handler;
     private DataInputStream dis;
     private DataOutputStream dos;
-    private int sourceID;
 
 
     /**
