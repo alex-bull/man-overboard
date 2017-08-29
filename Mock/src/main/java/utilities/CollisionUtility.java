@@ -16,6 +16,7 @@ import static utility.Calculator.subtract;
 
 /**
  * Created by msl47 on 7/08/17.
+ *
  */
 public class CollisionUtility {
 

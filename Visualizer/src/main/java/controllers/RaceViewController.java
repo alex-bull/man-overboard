@@ -19,6 +19,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.AnchorPane;
@@ -1428,4 +1430,20 @@ public class RaceViewController implements Initializable, TableObserver {
         return isLoaded;
     }
 
+
+    public void mouseClicked(MouseEvent mouseEvent) {
+
+//        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+
+        double touchX = mouseEvent.getX();
+        double touchY = mouseEvent.getY();
+
+        double deltaX = touchX - boatPositionX;
+        double deltaY = touchY - boatPositionY;
+        double theta = atan2(deltaY, deltaX);
+        theta = (theta * 180/PI) + 90;
+
+        System.out.println(theta);
+        System.out.println("mouse clicked");
+    }
 }
