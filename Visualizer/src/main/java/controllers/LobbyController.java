@@ -155,10 +155,9 @@ public class LobbyController implements Initializable, ClockHandler, StreamObser
 
 
     /**
-     * StreamObserver method
-     * Updates the list with the new boats
+     * Updates the list with the competitors in the datasource
      */
-    public void boatsUpdated() {
+    private void updateList() {
         this.progressIndicator.setVisible(false);
         this.competitorList.clear();
         this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
@@ -196,15 +195,10 @@ public class LobbyController implements Initializable, ClockHandler, StreamObser
 
                 assert root != null;
                 Scene scene = new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-
                 MainController mainController = loader.getController();
-
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 primaryStage.setTitle("Man Overboard");
-//                primaryStage.setMaxWidth(primaryScreenBounds.getWidth());
-//                primaryStage.setMaxHeight(primaryScreenBounds.getHeight());
                 primaryStage.setScene(scene);
-
             }
         });
     }
@@ -220,7 +214,7 @@ public class LobbyController implements Initializable, ClockHandler, StreamObser
 
             @Override
             public void handle(long now) {
-                boatsUpdated();
+                updateList();
             }
         };
 

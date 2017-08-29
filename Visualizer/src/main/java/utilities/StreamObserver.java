@@ -9,6 +9,4 @@ public interface StreamObserver {
 
     void raceStatusUpdated(RaceStatusEnum status);
     void streamFailed();
-    void boatsUpdated();
-
 }

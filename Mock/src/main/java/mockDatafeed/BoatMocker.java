@@ -38,6 +38,7 @@ import static utility.Calculator.*;
  * Boat mocker
  */
 public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdateEventHandler {
+
     private HashMap<Integer, Competitor> competitors = new HashMap<>();
     private Map<Integer, Competitor> markBoats;
     private List<MutablePoint> courseBoundary;
@@ -140,7 +141,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 }
                 break;
             case CONNECTION_REQ:
-                System.out.println("Connection req");
                 this.addCompetitor(clientId);
 
         }
@@ -154,7 +154,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void addCompetitor(Integer clientId) {
 
-
         double a = 0.005 * competitors.size();
 //        prestart = new MutablePoint(32.286577 + a, -64.864304);
         prestart = new MutablePoint(32.41011 + a, -64.88937);
@@ -165,8 +164,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         byte[] res = binaryPackager.packageConnectionResponse((byte)1, clientId);
         try {
-            System.out.println("Sending connection response");
+            //send connection response and broadcast XML so update lobbies
             TCPserver.unicast(res, clientId);
+            this.sendAllXML();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -491,12 +491,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     @Override
     public void run() {
 
-        if (!raceInProgress) {
-            //this.sendAllXML();
-            return;
-        }
-
-        //send the boat info to receiver
+        if (!raceInProgress) return;
 
         try {
             boatUpdater.updatePosition();
