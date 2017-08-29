@@ -55,6 +55,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private boolean flag = true;
     private Timer timer;
     private BoatUpdater boatUpdater;
+    long startTime = System.currentTimeMillis() / 1000;//time in seconds
 
     private Server TCPserver;
     private boolean raceInProgress = false;
@@ -146,6 +147,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 break;
             case PLAYER_READY:
                 this.updateReady(clientId);
+                break;
+            case LEAVE_LOBBY:
+                this.removePlayer(clientId);
 
         }
     }
@@ -193,14 +197,39 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
 
     /**
-     * Sets the client to ready and checks if all clients are ready
-     * If all ready then change the raceInProgress flag
+     * Sets the client to ready
      * @param clientId Integer the id of the client to mark as ready
      */
     private void updateReady(Integer clientId) {
         clientStates.put(clientId, true);
-        if (clientStates.values().contains(false)) return;
-        this.raceInProgress = true;
+    }
+
+
+    /**
+     * returns true if the game if the game should start
+     * There must be at least one player
+     * All players must be ready or the timer must have reached a minute
+     */
+    private boolean shouldStartGame() {
+        if (raceInProgress) return false; //game already in progress
+        if (competitors.size() < 1) return false; //no competitors
+
+        //all players are ready or the timer has reached a minute
+        if (!clientStates.values().contains(false) || ((System.currentTimeMillis() / 1000) - startTime > 60)) return true;
+        return false;
+    }
+
+
+    /**
+     * Removes the player from the race
+     * the server will automatically remove selector key when socket disconnects
+     * Send xml to update other clients
+     * @param clientId Integer, the client to remove
+     */
+    private void removePlayer(Integer clientId) {
+        clientStates.remove(clientId);
+        this.competitors.remove(clientId);
+        this.sendAllXML();
     }
 
 
@@ -506,7 +535,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     }
 
 
-    long startTime = System.currentTimeMillis() / 1000;//time in seconds
+
 
     /**
      * updates the boats location
@@ -514,10 +543,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     @Override
     public void run() {
 
-
-        //start the game after a minute if even if not all the players have pressed ready
-        if ((System.currentTimeMillis() / 1000) - startTime > 60) raceInProgress = true;
-
+        if (shouldStartGame()) {
+            raceInProgress = true;
+        }
 
         if (!raceInProgress) return;
 
