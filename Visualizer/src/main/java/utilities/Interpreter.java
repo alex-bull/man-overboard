@@ -167,7 +167,7 @@ public class Interpreter implements DataSource, PacketHandler {
         try {
             TCPClient.send(data);
         }
-        catch (IOException e) {
+        catch (Exception e) {
             System.out.println("Could not send data");
         }
     }

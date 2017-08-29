@@ -17,6 +17,8 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -46,6 +48,11 @@ public class LobbyController implements Initializable {
     @FXML private Button leaveButton;
     @FXML private ProgressIndicator progressIndicator;
     @FXML private Label gameStartLabel;
+    @FXML private ImageView boatImageView;
+    @FXML private ImageView courseImageView;
+    @FXML private Label locationLabel;
+    @FXML private Label gameTypeLabel;
+    @FXML private Label playerLabel;
     private Stage primaryStage;
     private ObservableList<String> competitorList = FXCollections.observableArrayList();
     private Rectangle2D primaryScreenBounds;
@@ -76,6 +83,12 @@ public class LobbyController implements Initializable {
         boolean connected = this.dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
         if (!connected) {
             System.out.println("Failed to connect to server");
+            this.progressIndicator.setVisible(false);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Connection to server failed");
+            alert.setHeaderText(null);
+            alert.setContentText("Sorry, cannot connect to this game right now.");
+            alert.showAndWait();
             return;
         }
 
@@ -130,20 +143,39 @@ public class LobbyController implements Initializable {
     }
 
 
-
     /**
-     * StreamObserver method
-     * Alerts the user if the connection failed
+     * Sets the game details on the lobby screen
+     * @param courseImage String, the url of the course image
+     * @param location String, the name of the chosen course
+     * @param gameMode String, the game type
      */
-    public void streamFailed() {
-        this.progressIndicator.setVisible(false);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Connection to server failed");
-        alert.setHeaderText(null);
-        alert.setContentText("Sorry, cannot connect to this game right now.");
-        alert.showAndWait();
+    public void setGame(String courseImage, String location, String gameMode) {
+
+        try {
+            this.courseImageView.setImage(new Image(courseImage));
+        } catch(IllegalArgumentException e) {
+            System.out.println("Invalid image url, using default image");
+            return;
+        }
+        this.locationLabel.setText(location);
+        this.gameTypeLabel.setText(gameMode);
     }
 
+
+    /**
+     * Sets the player details on the lobby screen
+     * @param boatImage String, the url of the boat image
+     * @param playerAlias String, the players in game name
+     */
+    public void setPlayer(String boatImage, String playerAlias) {
+        try {
+            this.boatImageView.setImage(new Image(boatImage));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid boat image url, using default image");
+            return;
+        }
+        this.playerLabel.setText(playerAlias);
+    }
 
 
     /**

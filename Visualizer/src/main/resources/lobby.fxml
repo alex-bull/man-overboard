@@ -57,37 +57,41 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ImageView fitHeight="337.0" fitWidth="382.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
-                     <image>
-                        <Image url="@courseImage.png" />
-                     </image>
-                  </ImageView>
-                  <Label maxWidth="-Infinity" minWidth="-Infinity" prefWidth="382.0" style="-fx-background-color: grey;" text="Bermuda" textFill="#e0efef" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
-                     <font>
-                        <Font size="30.0" />
-                     </font>
-                     <padding>
-                        <Insets bottom="20.0" left="250.0" />
-                     </padding>
-                  </Label>
-                  <Label maxWidth="-Infinity" minWidth="-Infinity" prefWidth="382.0" style="-fx-background-color: grey;" text="Match Race" textFill="#e0efef" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
-                     <font>
-                        <Font size="20.0" />
-                     </font>
-                     <padding>
-                        <Insets left="260.0" />
-                     </padding>
-                  </Label>
-                  <ImageView fitHeight="136.0" fitWidth="382.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                  <ImageView fx:id="boatImageView" fitHeight="136.0" fitWidth="382.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
                      <image>
                         <Image url="@boat.png" />
                      </image>
                   </ImageView>
-                  <Label text="My boat" textFill="#e0efef" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                  <Label fx:id="playerLabel" text="xXXQuickBoater2000XxXx" textFill="#e0efef" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <font>
-                        <Font name="Gentium Book Basic Bold Italic" size="25.0" />
+                        <Font size="20.0" />
                      </font>
                   </Label>
+                  <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="400.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+                     <children>
+                        <ImageView fx:id="courseImageView" fitWidth="400.0" layoutX="32.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                           <image>
+                              <Image url="@courseImage.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="locationLabel" layoutX="48.0" layoutY="148.0" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="382.0" style="-fx-background-color: grey;" text="Bermuda" textFill="#e0efef" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                           <font>
+                              <Font size="30.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="20.0" left="250.0" />
+                           </padding>
+                        </Label>
+                        <Label fx:id="gameTypeLabel" layoutX="112.0" layoutY="253.0" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="382.0" style="-fx-background-color: grey;" text="Match Race" textFill="#e0efef" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <padding>
+                              <Insets left="260.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </AnchorPane>
                </children>
             </GridPane>
             <GridPane GridPane.columnIndex="3" GridPane.rowIndex="3">
