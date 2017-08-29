@@ -87,7 +87,6 @@ public class Interpreter implements DataSource, PacketHandler {
     private int sourceID;
 
     private TCPClient TCPClient;
-    private StreamObserver observer;
 
     //zoom factor for scaling
     private double zoomFactor=Math.pow(2,17);
@@ -187,11 +186,11 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param host  String the host to stream from
      * @param port  Int the port to stream from
      * @param scene the scene of the stage, for size calculations
+     * @return boolean, false if connetion failed, true otherwise
      *
      */
-    public void receive(String host, int port, Scene scene, StreamObserver observer) throws NullPointerException{
+    public boolean receive(String host, int port, Scene scene) throws NullPointerException{
 
-        this.observer = observer;
 
         Rectangle2D primaryScreenBounds;
         try {
@@ -200,13 +199,11 @@ public class Interpreter implements DataSource, PacketHandler {
         }
         catch (UnresolvedAddressException e){
             System.out.println("Address is not found");
-            observer.streamFailed();
-            return;
+            return false;
         }
         catch (IOException e) {
             System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
-            observer.streamFailed();
-            return;
+            return false;
         }
 
         //calculate the effective width and height of the screen
@@ -220,7 +217,7 @@ public class Interpreter implements DataSource, PacketHandler {
         //request game join
         System.out.println("Sending connection request...");
         this.send(new BinaryPackager().packageConnectionRequest((byte)1));
-
+        return true;
 
     }
 
@@ -262,7 +259,6 @@ public class Interpreter implements DataSource, PacketHandler {
                         storedCompetitors.get(id).setStatus(raceStatusData.getBoatStatuses().get(id).getBoatStatus());
                         storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                     }
-                    observer.raceStatusUpdated(raceStatus); //tell controller that race status has been updated
                 }
 
                 break;

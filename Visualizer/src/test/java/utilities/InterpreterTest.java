@@ -20,20 +20,9 @@ public class InterpreterTest {
     private Scene mockScene;
 
     private boolean streamStarted = false;
-    private TestDelegate mockDelegate;
 
 
-    class TestDelegate implements StreamObserver {
 
-        public void streamFailed() {
-            streamStarted = false;
-        }
-
-        public void raceStatusUpdated(RaceStatusEnum status) {
-            streamStarted = true;
-        }
-        public void boatsUpdated() {};
-    }
 
     @Before
     public void setUp() throws Exception {
@@ -42,7 +31,6 @@ public class InterpreterTest {
 
         mockThread = new Thread(() -> BoatMocker.main(null));
         streamStarted = false;
-        mockDelegate = new TestDelegate();
 
     }
 
@@ -51,9 +39,9 @@ public class InterpreterTest {
 
         mockThread.start();
         Thread.sleep(200); // give mock time to start before visualiser
-        interpreter.receive("invalidhost", 4,mockScene, mockDelegate);
+        boolean running = interpreter.receive("invalidhost", 4,mockScene);
 
-        Thread visualiserThread = new Thread(() -> assertFalse(streamStarted));
+        Thread visualiserThread = new Thread(() -> assertFalse(running));
         visualiserThread.run();
     }
 
@@ -63,8 +51,8 @@ public class InterpreterTest {
         mockThread.start();
         Thread.sleep(200); // give mock time to start before visualiser
 
-        interpreter.receive("localhost", 4,mockScene, mockDelegate);
-        Thread visualiserThread = new Thread(() -> assertFalse(streamStarted));
+        boolean connected = interpreter.receive("localhost", 4,mockScene);
+        Thread visualiserThread = new Thread(() -> assertFalse(connected));
         visualiserThread.run();
     }
 
@@ -76,8 +64,8 @@ public class InterpreterTest {
 
         Thread visualiserThread = new Thread(() -> {
             //JFXPanel toolkit = new JFXPanel(); // causes JavaFX toolkit including Application Thread to start, doesn't work on CI runner because no display
-            interpreter.receive("localhost", 4941,mockScene, mockDelegate);
-            assertTrue(streamStarted);
+            boolean connected = interpreter.receive("localhost", 4941,mockScene);
+            assertTrue(connected);
         });
         visualiserThread.run();
 

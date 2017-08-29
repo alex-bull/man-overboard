@@ -42,17 +42,16 @@ import java.util.stream.Collectors;
  * Created by rjc249 on 5/04/17.
  * Controller for the start scene.
  */
-public class LobbyController implements Initializable, ClockHandler, StreamObserver {
+public class LobbyController implements Initializable {
 
     private DataSource dataSource;
-    private final int STARTTIME = 1;
+    private final int STARTTIME = 10;
     @FXML private ListView<String> starterList;
-    @FXML private Label worldClockValue;
-    @FXML private Button confirmButton;
-    @FXML private Label countDownLabel;
-    @FXML private TextField hostField;
+    @FXML private Button readyButton;
+    @FXML private Label countdownLabel;
+    @FXML private Button leaveButton;
     @FXML private ProgressIndicator progressIndicator;
-    private Clock worldClock;
+    @FXML private Label gameStartLabel;
     private Stage primaryStage;
     private ObservableList<String> competitorList = FXCollections.observableArrayList();
     private Rectangle2D primaryScreenBounds;
@@ -73,15 +72,29 @@ public class LobbyController implements Initializable, ClockHandler, StreamObser
 
 
     /**
-     * Implementation of ClockHandler interface method
-     * @param newTime The currentTime of the clock
-     *
+     * Begins connection to server
+     * Continuously polls the datasource to update the view
+     * Uses an animation timer as it is updating the GUI thread
      */
-    public void clockTicked(String newTime, Clock clock) {
-        if (clock == worldClock) {
-            worldClockValue.setText(newTime);
+    void begin() {
+
+        Scene scene=primaryStage.getScene();
+        boolean connected = this.dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
+        if (!connected) {
+            System.out.println("Failed to connect to server");
+            return;
         }
+
+        this.timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateList();
+                checkStatus();
+            }
+        };
+        timer.start();
     }
+
 
 
     /**
@@ -92,7 +105,9 @@ public class LobbyController implements Initializable, ClockHandler, StreamObser
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        progressIndicator.setVisible(false);
+        progressIndicator.setVisible(true);
+        countdownLabel.setText("");
+        gameStartLabel.setVisible(false);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         starterList.setItems(competitorList);
 
@@ -100,26 +115,26 @@ public class LobbyController implements Initializable, ClockHandler, StreamObser
 
 
     /**
-     * Called when the user clicks confirm.
-     * Begins streaming data from the selected server
+     * Called when the ready button is pressed
+     * Tell server that player is ready
      */
     @FXML
-    public void confirmStream() {
-
-        //get the selected stream
-        String host = this.hostField.getText();
-        if (host == null || host.equals("")) {
-            System.out.println("Invalid host");
-            return;
-        }
-        progressIndicator.setVisible(true);
-        this.hostField.setDisable(true);
-        this.confirmButton.setDisable(true);
-
-        Scene scene=primaryStage.getScene();
-        this.dataSource.receive(host, EnvironmentConfig.port, scene, this);
+    public void playerReady() {
 
     }
+
+
+    /**
+     * Called when leave lobby is pressed
+     * Tell server that player has left and exit lobby
+     */
+    @FXML
+    public void leaveLobby() {
+
+    }
+
+
+
 
 
     /**
@@ -133,22 +148,18 @@ public class LobbyController implements Initializable, ClockHandler, StreamObser
         alert.setHeaderText(null);
         alert.setContentText("Sorry, cannot connect to this game right now.");
         alert.showAndWait();
-        this.hostField.setDisable(false);
-        this.confirmButton.setDisable(false);
-
     }
 
 
+
     /**
-     * StreamObserver method
-     * Change to the raceView upon preparatory signal
+     * Check the current race status
+     * Change to the raceView upon started signal
      */
-    public void raceStatusUpdated(RaceStatusEnum status) {
+    public void checkStatus() {
 
-        System.out.println("Status updated " + status.toString());
-
-        if (status == RaceStatusEnum.PREPARATORY) {
-            this.timer.stop();
+        if (dataSource.getRaceStatus() == RaceStatusEnum.STARTED) {
+            System.out.println("game beginning...");
             this.loadRaceView();
         }
     }
@@ -171,9 +182,12 @@ public class LobbyController implements Initializable, ClockHandler, StreamObser
      */
     private void loadRaceView() {
 
-        //count down for 5 seconds
-        countDownLabel.textProperty().bind(timeSeconds.asString());
+        this.timer.stop(); //cancel the animation timer
+        this.leaveButton.setDisable(true); //cant leave once game is starting
 
+        //count down for 5 seconds
+        gameStartLabel.setVisible(true);
+        countdownLabel.textProperty().bind(timeSeconds.asString());
         timeSeconds.set(STARTTIME);
         Timeline timeline = new Timeline();
         timeline.getKeyFrames().add(
@@ -204,22 +218,7 @@ public class LobbyController implements Initializable, ClockHandler, StreamObser
     }
 
 
-    /**
-     * Continuously polls the datasource to update the view
-     * Uses an animation timer as it is updating the GUI thread
-     */
-    void loop() {
 
-        this.timer = new AnimationTimer() {
-
-            @Override
-            public void handle(long now) {
-                updateList();
-            }
-        };
-
-        timer.start();
-    }
 
 
 }

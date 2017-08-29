@@ -16,7 +16,7 @@ import java.util.Set;
  * Data source
  */
 public interface DataSource {
-    void receive(String host, int port, Scene scene, StreamObserver delegate);
+    boolean receive(String host, int port, Scene scene);
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
     List<Integer> getStartMarks();

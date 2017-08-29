@@ -485,12 +485,16 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     }
 
 
+    long startTime = System.currentTimeMillis() / 1000;//time in seconds
+
     /**
      * updates the boats location
      */
     @Override
     public void run() {
 
+
+        if ((System.currentTimeMillis() / 1000) - startTime > 30) raceInProgress = true;
         if (!raceInProgress) return;
 
         try {
