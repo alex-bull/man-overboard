@@ -21,8 +21,6 @@ public class MainController {
     @FXML private RaceViewController raceViewController;
     @FXML private SplitPane splitPane;
     @FXML private WindController windController;
-    @FXML private TimerController timerController;
-    @FXML private SparklinesController sparklinesController;
     @FXML private GridPane loadingPane;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
@@ -56,7 +54,6 @@ public class MainController {
                         raceViewController.zoomOut();
                         if (!tableController.isVisible()) {
                             tableController.makeVisible();
-                            sparklinesController.makeVisible();
                         }
                     }
                     else{
@@ -66,17 +63,12 @@ public class MainController {
                 case BACK_QUOTE:
                     if (raceViewController.isZoom() && tableController.isVisible()){
                         tableController.makeInvisible();
-                        sparklinesController.makeInvisible();
                     }
                     else if (raceViewController.isZoom()) {
                         tableController.makeVisible();
-                        sparklinesController.makeVisible();
                     }
                     break;
             }
-
-
-
     }
 
 
@@ -89,9 +81,7 @@ public class MainController {
     void beginRace(DataSource dataSource, double width, double height) {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
-        timerController.begin(dataSource);
         tableController.addObserver(raceViewController);
-        sparklinesController.setCompetitors(dataSource, width);
         this.binaryPackager = new BinaryPackager();
 
         AnimationTimer timer = new AnimationTimer() {
@@ -102,7 +92,6 @@ public class MainController {
                     raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
-                    sparklinesController.refresh();
                     loadingPane.toBack();
                 }
                 else {
