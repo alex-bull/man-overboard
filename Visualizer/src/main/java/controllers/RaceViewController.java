@@ -1430,20 +1430,26 @@ public class RaceViewController implements Initializable, TableObserver {
         return isLoaded;
     }
 
+    /**
+     * Tack the boat when a touch pressed event is sent
+     * @param touchEvent touch event
+     */
+    public void touchPressed(TouchEvent touchEvent) {
 
-    public void mouseClicked(MouseEvent mouseEvent) {
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
 
-//        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+//        double touchX = touchEvent.getTouchPoint().getX();
+//        double touchY = touchEvent.getTouchPoint().getY();
+//
+//        double deltaX = touchX - boatPositionX;
+//        double deltaY = touchY - boatPositionY;
+//        double theta = atan2(deltaY, deltaX);
+//        theta = (theta * 180/PI) + 90;
+//
+//        boat.setCurrentHeading(theta);
 
-        double touchX = mouseEvent.getX();
-        double touchY = mouseEvent.getY();
+        BinaryPackager binaryPackager = new BinaryPackager();
+        this.dataSource.send(binaryPackager.packageBoatAction(Keys.TACK.getValue(), boat.getSourceID()));
 
-        double deltaX = touchX - boatPositionX;
-        double deltaY = touchY - boatPositionY;
-        double theta = atan2(deltaY, deltaX);
-        theta = (theta * 180/PI) + 90;
-
-        System.out.println(theta);
-        System.out.println("mouse clicked");
     }
 }
