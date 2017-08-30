@@ -21,6 +21,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
+import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.AnchorPane;
@@ -1452,4 +1453,20 @@ public class RaceViewController implements Initializable, TableObserver {
         this.dataSource.send(binaryPackager.packageBoatAction(Keys.TACK.getValue(), boat.getSourceID()));
 
     }
+
+    /**
+     * Zoom the screen in and out upon touch zoom event
+     * @param zoomEvent zoom event
+     */
+    public void zoom(ZoomEvent zoomEvent){
+        if(isZoom()){
+            zoomOut();
+        } else{
+            zoomIn();
+        }
+    }
+
+
+
+
 }
