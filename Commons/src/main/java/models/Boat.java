@@ -392,7 +392,7 @@ public class Boat implements Competitor {
      * @param windAngle double wind angle
      * @return double downWind
      */
-    private double getDownWind(double windAngle) {
+    public double getDownWind(double windAngle) {
        double downWind = windAngle + 180;
        if(downWind > 360) {
            downWind = downWind - 360;
@@ -412,12 +412,12 @@ public class Boat implements Competitor {
         double downWind = getDownWind(windAngle);
         double currentHeading=getCurrentHeading();
         if(currentHeading>= windAngle && currentHeading <= downWind) {
-            if(upwind) {
-                setCurrentHeading(currentHeading - turnAngle);
-            }
-            else {
-                setCurrentHeading(currentHeading + turnAngle);
-            }
+        if(upwind) {
+            setCurrentHeading(currentHeading - turnAngle);
+        }
+        else {
+            setCurrentHeading(currentHeading + turnAngle);
+        }
         }
         else {
 

@@ -85,7 +85,7 @@ public interface Competitor {
 
     void setHealthLevel(int health);
 
-
+    double getDownWind(double windAngle);
 
     void startRounding();
 

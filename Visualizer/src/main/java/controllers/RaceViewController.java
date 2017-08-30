@@ -1433,43 +1433,59 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     /**
-     * Tack the boat when a touch pressed event is sent
+     * Turn the boat when a touch pressed stationary event is sent
      * @param touchEvent pressed touch event
      */
-    public void touchPressed(TouchEvent touchEvent) {
+    public void turnBoat(TouchEvent touchEvent) {
 
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        double heading = boat.getCurrentHeading();
+        double windAngle = dataSource.getWindDirection();
+        double downWind = boat.getDownWind(windAngle);
+        double touchX = touchEvent.getTouchPoint().getX();
+        double touchY = touchEvent.getTouchPoint().getY();
 
-//        double touchX = touchEvent.getTouchPoint().getX();
-//        double touchY = touchEvent.getTouchPoint().getY();
-//
-//        double deltaX = touchX - boatPositionX;
-//        double deltaY = touchY - boatPositionY;
-//        double theta = atan2(deltaY, deltaX);
-//        theta = (theta * 180/PI) + 90;
-//
-//        boat.setCurrentHeading(theta);
+        double deltaX = touchX - boatPositionX;
+        double deltaY = touchY - boatPositionY;
+        double theta = atan2(deltaY, deltaX);
+        theta = (theta * 180 / PI) + 90;
 
-        BinaryPackager binaryPackager = new BinaryPackager();
-        this.dataSource.send(binaryPackager.packageBoatAction(Keys.TACK.getValue(), boat.getSourceID()));
-
-    }
-
-    /**
-     * Given a rotate event, turn the boat depending on the direction of the rotate
-     * @param rotateEvent rotate event
-     */
-    public void turnBoat(RotateEvent rotateEvent){
-        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-        BinaryPackager binaryPackager = new BinaryPackager();
-
-        if(rotateEvent.getTotalAngle() <= 0){
-            this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-        } else {
-            this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+        if(theta < 0){
+            theta = 360 - theta;
         }
 
+
+        BinaryPackager binaryPackager = new BinaryPackager();
+        if (!(heading <= theta + 10 && heading >= theta - 10)) {
+            System.out.println(downWind + " downwind thingy. " + windAngle%360 + " windangle");
+
+            if(heading<= windAngle%360 && heading >= downWind%360) {
+                if(heading > theta) {
+                    System.out.println("downwind");
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+                }
+                else {
+                    System.out.println("upwind");
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+                }
+            }
+            else {
+                if(heading < theta) {
+                    System.out.println("downwind");
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+                }
+                else {
+                    System.out.println("upwind");
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+                }
+            }
+
+
+        }
+        System.out.println(heading + " heading od boat. " + theta + " theta");
+
     }
+
 
     /**
      * Zoom the screen in and out upon touch zoom event
