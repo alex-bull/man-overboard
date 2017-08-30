@@ -20,6 +20,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.RotateEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.GridPane;
@@ -1433,7 +1434,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Tack the boat when a touch pressed event is sent
-     * @param touchEvent touch event
+     * @param touchEvent pressed touch event
      */
     public void touchPressed(TouchEvent touchEvent) {
 
@@ -1455,6 +1456,22 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     /**
+     * Given a rotate event, turn the boat depending on the direction of the rotate
+     * @param rotateEvent rotate event
+     */
+    public void turnBoat(RotateEvent rotateEvent){
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        BinaryPackager binaryPackager = new BinaryPackager();
+
+        if(rotateEvent.getTotalAngle() <= 0){
+            this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+        } else {
+            this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+        }
+
+    }
+
+    /**
      * Zoom the screen in and out upon touch zoom event
      * @param zoomEvent zoom event
      */
@@ -1465,6 +1482,7 @@ public class RaceViewController implements Initializable, TableObserver {
             zoomIn();
         }
     }
+
 
 
 
