@@ -469,7 +469,6 @@ public class RaceViewController implements Initializable, TableObserver {
         updateRace();
         setScale(2);
         track.setVisible(!isZoom());
-        //updateGuidingArrow();
     }
 
 
@@ -478,15 +477,11 @@ public class RaceViewController implements Initializable, TableObserver {
      * Zooms out from your boat
      */
     void zoomOut(){
-        System.out.println("Zooming out");
         zoom=false;
         drawBackgroundImage();
-        System.out.println("drawing background image");
         updateRace();
-        System.out.println("Updating race");
         setScale(1);
         track.setVisible(!isZoom());
-       // updateGuidingArrow();
     }
 
     boolean isZoom() {
@@ -751,8 +746,6 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-
-
     /**
      * Gets the centre coordinates for a mark or gate
      * @param markIndex index of the mark (based on the order they are rounded)
@@ -779,16 +772,12 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     /**
-     * Draw a directional arrow on the canvas to guide the boat in the right direction to the next mark
+     * Update the position of the guide arrow
      */
     private void updateGuidingArrow() {
 
-
-
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         int currentIndex = boat.getCurrentLegIndex();
-//        double xOffset = 0, yOffset = 0;
-//        double angle;
         MutablePoint nextMarkLocation = getGateCentre(currentIndex + 1);
 
         if (nextMarkLocation == null) { //end of race
@@ -797,47 +786,7 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         if (isZoom()) guideArrow.updateArrowZoomed(boat, boatPositionX, boatPositionY, nextMarkLocation);
         else guideArrow.updateArrow(getGateCentre(currentIndex), nextMarkLocation);
-
-//        if (currentIndex == 0 && !isZoom()) {
-//            // boat has not yet rounded first mark
-//            angle = 90;
-//        } else {
-//            Double xDist;
-//            Double yDist;
-//            if (isZoom()) {
-//                // arrow points from boat to next mark
-//                xDist = boat.getPosition().getXValue() - nextMarkLocation.getXValue();
-//                yDist = boat.getPosition().getYValue() - nextMarkLocation.getYValue();
-//            } else {
-//                // arrow points from previous mark to next mark
-//                MutablePoint prevMarkLocation = getGateCentre(currentIndex);
-//                assert prevMarkLocation != null;
-//                xDist = prevMarkLocation.getXValue() - nextMarkLocation.getXValue();
-//                yDist = prevMarkLocation.getYValue() - nextMarkLocation.getYValue();
-//            }
-//
-//            angle = calculateAngleBetweenMarks(xDist, yDist);
-//            xOffset = 150 * cos(toRadians(angle - 90));
-//            yOffset = 150 * sin(toRadians(angle - 90));
-//        }
-//
-//        double x, y;
-//        if (isZoom()) {
-//            x = boatPositionX + xOffset;
-//            y = boatPositionY + yOffset;
-//        } else {
-//            x = nextMarkLocation.getXValue();
-//            y = nextMarkLocation.getYValue();
-//        }
-//        applyTransformsToArrow(angle, x, y);
     }
-
-
-
-
-
-
-
 
 
     /**
@@ -972,10 +921,8 @@ public class RaceViewController implements Initializable, TableObserver {
         setBoatLocation();
         updateRace();
         checkCollision();
-//        if (dataSource.getRoundings().contains(dataSource.getSourceID())) {
-//            dataSource.getRoundings().remove(dataSource.getSourceID());
-            updateGuidingArrow();
-//        }
+        updateGuidingArrow();
+
     }
 
     boolean isLoaded() {

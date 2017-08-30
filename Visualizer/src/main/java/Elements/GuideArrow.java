@@ -56,7 +56,6 @@ public class GuideArrow extends Polygon {
      */
     public void updateArrowZoomed(Competitor boat, Double boatX, Double boatY, MutablePoint nextMarkLocation) {
 
-        System.out.println("Updating arrow zoom "+ boat + " " + boatX + " " + boatY + " " + nextMarkLocation);
 
         // arrow points from boat to next mark
         Double xDist;
@@ -68,7 +67,6 @@ public class GuideArrow extends Polygon {
         double yOffset = 150 * sin(toRadians(angle - 90));
         double x = boatX + xOffset;
         double y = boatY + yOffset;
-        System.out.println("Updating arrow zoom" +angle + ", " + x + ", " + y);
         applyTransformsToArrow(angle, x, y);
     }
 
@@ -80,7 +78,6 @@ public class GuideArrow extends Polygon {
      */
     public void updateArrow(MutablePoint prevMarkLocation, MutablePoint nextMarkLocation) {
 
-        System.out.println("Updating arrow "+ prevMarkLocation + " " + nextMarkLocation);
 
         double angle;
         if (prevMarkLocation == null) { //before first mark
@@ -96,7 +93,6 @@ public class GuideArrow extends Polygon {
         }
         double x = nextMarkLocation.getXValue();
         double y = nextMarkLocation.getYValue();
-        System.out.println("Updating arrow " +angle + ", " + x + ", " + y);
         applyTransformsToArrow(angle, x, y);
     }
 
