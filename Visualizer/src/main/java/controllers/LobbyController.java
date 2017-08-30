@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 public class LobbyController implements Initializable {
 
     private DataSource dataSource;
-    private final int STARTTIME = 9;
+    private final int STARTTIME = 1;
     @FXML private ListView<String> starterList;
     @FXML private Button readyButton;
     @FXML private Label countdownLabel;

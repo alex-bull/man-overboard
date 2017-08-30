@@ -3,35 +3,33 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
-import com.rits.cloning.Cloner;
+import Elements.GuideArrow;
 import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.scene.web.WebEngine;
@@ -42,26 +40,16 @@ import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
 import netscape.javascript.JSException;
-import parsers.Converter;
 import parsers.RaceStatusEnum;
-import utilities.*;
-import utilities.*;
-
-import utilities.Annotation;
-
 import utilities.DataSource;
-import utilities.PolarTable;
 import utility.BinaryPackager;
 
-import java.awt.geom.Line2D;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
 import static java.lang.Math.*;
 import static javafx.collections.FXCollections.observableArrayList;
-import static javafx.collections.FXCollections.observableList;
 import static javafx.scene.paint.Color.*;
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.RaceStatusEnum.PREPARATORY;
@@ -102,7 +90,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line startLine;
     private Line finishLine;
     private Line virtualLine;
-    private Polygon guideArrow;
+    private GuideArrow guideArrow;
     private WebEngine mapEngine;
     private DataSource dataSource;
     private Line sailLine;
@@ -140,8 +128,12 @@ public class RaceViewController implements Initializable, TableObserver {
 
         finisherListPane.setVisible(false);
 
-        initialiseGuideArrow();
-        gc=raceViewCanvas.getGraphicsContext2D();
+//        initialiseGuideArrow();
+        this.guideArrow = new GuideArrow(backgroundColor.brighter(), 90.0);
+        raceViewPane.getChildren().add(guideArrow);
+        controlsView = new ImageView(new Image("controls.png"));
+
+        gc = raceViewCanvas.getGraphicsContext2D();
 
         mapEngine = mapView.getEngine();
         mapView.setVisible(true);
@@ -163,30 +155,6 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-    /**
-     * Initialise arrow to guide the user where to go to round the next mark
-     */
-    private void initialiseGuideArrow() {
-        guideArrow = new Polygon();
-        double arrowLength = -60; // default arrow points vertically in the -y direction (upwards)
-        double arrowHeadLength = -20;
-        double offsetFromOrigin = -1 * (arrowLength + arrowHeadLength) + 30;
-
-        controlsView = new ImageView();
-        Image image = new Image("controls.png");
-        controlsView.setImage(image);
-        guideArrow.getPoints().addAll(
-                -5., offsetFromOrigin, //tail left
-                5., offsetFromOrigin, //tail right
-                5., arrowLength + offsetFromOrigin,
-                15., arrowLength + offsetFromOrigin,
-                0., arrowLength + arrowHeadLength + offsetFromOrigin, // tip
-                -15., arrowLength + offsetFromOrigin,
-                -5.,arrowLength + offsetFromOrigin);
-        guideArrow.setFill(backgroundColor.brighter());
-        this.raceViewPane.getChildren().add(guideArrow);
-        guideArrow.toBack();
-    }
 
 
 
@@ -501,6 +469,7 @@ public class RaceViewController implements Initializable, TableObserver {
         updateRace();
         setScale(2);
         track.setVisible(!isZoom());
+        //updateGuidingArrow();
     }
 
 
@@ -509,12 +478,15 @@ public class RaceViewController implements Initializable, TableObserver {
      * Zooms out from your boat
      */
     void zoomOut(){
+        System.out.println("Zooming out");
         zoom=false;
-
         drawBackgroundImage();
+        System.out.println("drawing background image");
         updateRace();
+        System.out.println("Updating race");
         setScale(1);
         track.setVisible(!isZoom());
+       // updateGuidingArrow();
     }
 
     boolean isZoom() {
@@ -792,6 +764,7 @@ public class RaceViewController implements Initializable, TableObserver {
         if (markIndex > features.size()) return null; //passed the finish line
 
         List<Integer> ids = features.get(markIndex);
+        if (ids == null) return null;
         CourseFeature featureOne = this.dataSource.getCourseFeatureMap().get(ids.get(0));
         Double markX = featureOne.getPixelCentre().getXValue();
         Double markY = featureOne.getPixelCentre().getYValue();
@@ -807,94 +780,62 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Draw a directional arrow on the canvas to guide the boat in the right direction to the next mark
-     *
      */
     private void updateGuidingArrow() {
 
+
+
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         int currentIndex = boat.getCurrentLegIndex();
-        double xOffset = 0, yOffset = 0;
-        double angle;
+//        double xOffset = 0, yOffset = 0;
+//        double angle;
         MutablePoint nextMarkLocation = getGateCentre(currentIndex + 1);
 
-        if (nextMarkLocation == null) {
-            // end of race
+        if (nextMarkLocation == null) { //end of race
             this.raceViewPane.getChildren().remove(guideArrow);
             return;
         }
+        if (isZoom()) guideArrow.updateArrowZoomed(boat, boatPositionX, boatPositionY, nextMarkLocation);
+        else guideArrow.updateArrow(getGateCentre(currentIndex), nextMarkLocation);
 
-        if (currentIndex == 0 && !isZoom()) {
-            // boat has not yet rounded first mark
-            angle = 90;
-        } else {
-            Double xDist;
-            Double yDist;
-            if (isZoom()) {
-                // arrow points from boat to next mark
-                xDist = boat.getPosition().getXValue() - nextMarkLocation.getXValue();
-                yDist = boat.getPosition().getYValue() - nextMarkLocation.getYValue();
-            } else {
-                // arrow points from previous mark to next mark
-                MutablePoint prevMarkLocation = getGateCentre(currentIndex);
-                assert prevMarkLocation != null;
-                xDist = prevMarkLocation.getXValue() - nextMarkLocation.getXValue();
-                yDist = prevMarkLocation.getYValue() - nextMarkLocation.getYValue();
-            }
-
-            angle = calculateAngleBetweenMarks(xDist, yDist);
-            xOffset = 150 * cos(toRadians(angle - 90));
-            yOffset = 150 * sin(toRadians(angle - 90));
-        }
-
-        double x, y;
-        if (isZoom()) {
-            x = boatPositionX + xOffset;
-            y = boatPositionY + yOffset;
-        } else {
-            x = nextMarkLocation.getXValue();
-            y = nextMarkLocation.getYValue();
-        }
-        applyTransformsToArrow(angle, x, y);
+//        if (currentIndex == 0 && !isZoom()) {
+//            // boat has not yet rounded first mark
+//            angle = 90;
+//        } else {
+//            Double xDist;
+//            Double yDist;
+//            if (isZoom()) {
+//                // arrow points from boat to next mark
+//                xDist = boat.getPosition().getXValue() - nextMarkLocation.getXValue();
+//                yDist = boat.getPosition().getYValue() - nextMarkLocation.getYValue();
+//            } else {
+//                // arrow points from previous mark to next mark
+//                MutablePoint prevMarkLocation = getGateCentre(currentIndex);
+//                assert prevMarkLocation != null;
+//                xDist = prevMarkLocation.getXValue() - nextMarkLocation.getXValue();
+//                yDist = prevMarkLocation.getYValue() - nextMarkLocation.getYValue();
+//            }
+//
+//            angle = calculateAngleBetweenMarks(xDist, yDist);
+//            xOffset = 150 * cos(toRadians(angle - 90));
+//            yOffset = 150 * sin(toRadians(angle - 90));
+//        }
+//
+//        double x, y;
+//        if (isZoom()) {
+//            x = boatPositionX + xOffset;
+//            y = boatPositionY + yOffset;
+//        } else {
+//            x = nextMarkLocation.getXValue();
+//            y = nextMarkLocation.getYValue();
+//        }
+//        applyTransformsToArrow(angle, x, y);
     }
 
 
-    /**
-     * Apply translation and rotation transforms to the guiding arrow
-     *
-     * @param angle double the angle by which to rotate the arrow, from north
-     * @param x double the x coordinate for the arrow's origin
-     * @param y double the y coordinate for the arrow's origin
-     */
-    private void applyTransformsToArrow(double angle, double x, double y) {
-        guideArrow.getTransforms().clear();
-        guideArrow.setLayoutX(x);
-        guideArrow.setLayoutY(y);
-        guideArrow.getTransforms().add(new Rotate(angle, 0, 0));
-    }
 
 
-    /**
-     * Calculate the time to the start line from the given boat
-     *
-     * @param boat Competitor
-     * @return the time to the start line of the competitor
-     */
-    private String getStartSymbol(Competitor boat) {
-        float boatX = (float) boat.getPosition().getXValue();
-        float boatY = (float) boat.getPosition().getYValue();
 
-        float startLineEndX = (float) startLine.getEndX();
-        float startLineEndY = (float) startLine.getEndY();
-        float startLineStartX = (float) startLine.getStartX();
-        float startLineStartY = (float) startLine.getStartY();
-
-        Point2D boatPoint = new Point2D(boatX, boatY);
-        double distanceToStart = boatPoint.distance(startLineStartX, startLineStartY);
-        double distanceToEnd = boatPoint.distance(startLineEndX, startLineEndY);
-        long timeUntilStart = Converter.convertToRelativeTime(dataSource.getExpectedStartTime(), dataSource.getMessageTime()) * -1;
-
-        return calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), timeUntilStart);
-    }
 
 
 
@@ -1027,11 +968,14 @@ public class RaceViewController implements Initializable, TableObserver {
      *
      */
     void refresh() {
-
+        checkRaceFinished();
         setBoatLocation();
         updateRace();
         checkCollision();
-        updateGuidingArrow();
+//        if (dataSource.getRoundings().contains(dataSource.getSourceID())) {
+//            dataSource.getRoundings().remove(dataSource.getSourceID());
+            updateGuidingArrow();
+//        }
     }
 
     boolean isLoaded() {

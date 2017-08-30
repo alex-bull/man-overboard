@@ -58,6 +58,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private Cloner cloner=new Cloner();
     private RaceData raceData;
     private Set<Integer> collisions;
+    private Set<Integer> roundings = new HashSet<>();
     private BoatAction boatAction;
     private String timezone;
     private double windSpeed;
@@ -157,6 +158,11 @@ public class Interpreter implements DataSource, PacketHandler {
     public Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures() {
         return this.raceData.getLegIndexToMarkSourceIds();
     }
+
+    public Set<Integer> getRoundings() {
+        return roundings;
+    }
+
 
 
     /**
@@ -301,6 +307,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     Competitor markRoundingBoat = storedCompetitors.get(markRoundingData.getSourceID());
                     markRoundingBoat.setLastMarkPassed(markName);
                     markRoundingBoat.setTimeAtLastMark(roundingTime);
+                    roundings.add(markRoundingData.getSourceID());
 
                 }
                 break;
