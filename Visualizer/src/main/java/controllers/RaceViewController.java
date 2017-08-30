@@ -2,26 +2,26 @@ package controllers;
 
 import Animations.CollisionRipple;
 import Animations.RandomShake;
-import com.rits.cloning.Cloner;
+import Animations.WiggleLine;
 import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -43,13 +43,10 @@ import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.Converter;
 import parsers.RaceStatusEnum;
-import utilities.*;
-import utilities.*;
-
 import utilities.Annotation;
-
 import utilities.DataSource;
 import utilities.PolarTable;
+import utilities.RaceCalculator;
 import utility.BinaryPackager;
 
 import java.awt.geom.Line2D;
@@ -60,7 +57,6 @@ import java.util.*;
 
 import static java.lang.Math.*;
 import static javafx.collections.FXCollections.observableArrayList;
-import static javafx.collections.FXCollections.observableList;
 import static javafx.scene.paint.Color.*;
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.RaceStatusEnum.PREPARATORY;
@@ -137,6 +133,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private long timeFromLastMark;
     private String startAnnotation;
     private Line sailLine;
+    private WiggleLine wiggleLine;
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
 
@@ -165,7 +162,9 @@ public class RaceViewController implements Initializable, TableObserver {
 
         //draws the sail on the boat
         sailLine = new Line();
+        wiggleLine = new WiggleLine();
         sailLine.setStroke(Color.WHITE);
+        wiggleLine.setStroke(Color.WHITE);
 
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
@@ -306,16 +305,39 @@ public class RaceViewController implements Initializable, TableObserver {
         sailLine.setEndY(boatPositionY + length);
         sailLine.getTransforms().clear();
 
+        wiggleLine.setStrokeWidth(width);
+        wiggleLine.setStartX(boatPositionX);
+        wiggleLine.setStartY(boatPositionY);
+        wiggleLine.setControlX1(boatPositionX + 10);
+        wiggleLine.setControlY1(boatPositionY + (length/4));
+        wiggleLine.setControlX2(boatPositionX - 10);
+        wiggleLine.setControlY2(boatPositionY + (3*length/4));
+        wiggleLine.setEndX(boatPositionX);
+        wiggleLine.setEndY(boatPositionY + length);
+        wiggleLine.getTransforms().clear();
 
         if (boat.hasSailsOut()) {
+            if (!raceViewPane.getChildren().contains(sailLine)) {
+                raceViewPane.getChildren().add(sailLine);
+            }
+            if (raceViewPane.getChildren().contains(wiggleLine)) {
+                raceViewPane.getChildren().remove(wiggleLine);
+            }
             sailLine.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatPositionX, boatPositionY));
+
         } else {
-            sailLine.getTransforms().add(new Rotate(windAngle, boatPositionX, boatPositionY));
+            if (!raceViewPane.getChildren().contains(wiggleLine)) {
+                raceViewPane.getChildren().add(wiggleLine);
+            }
+            if (raceViewPane.getChildren().contains(sailLine)) {
+                raceViewPane.getChildren().remove(sailLine);
+            }
+            wiggleLine.getTransforms().add(new Rotate(windAngle, boatPositionX, boatPositionY));
         }
-
         sailLine.toFront();
-
+        wiggleLine.toFront();
     }
+
 
     /**
      * Draws the health bar representing the health of the boat
