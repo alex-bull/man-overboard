@@ -8,4 +8,5 @@ import com.sun.tools.corba.se.idl.InterfaceGen;
 public interface ConnectionClient {
     int getNextSourceId();
     void interpretPacket(byte[] header, byte[] packet, Integer clientId);
+    boolean isAccepting();
 }

@@ -57,7 +57,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private BoatUpdater boatUpdater;
     private long startTime = System.currentTimeMillis() / 1000;//time in seconds
 
-    private Server TCPserver;
+    private TCPServer TCPserver;
     private boolean raceInProgress = false;
     private Map<Integer, Boolean> clientStates = new HashMap<>();
 
@@ -80,7 +80,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         //Start the server
 
-        TCPserver = new Server(4941, this, sendQueue, receiveQueue);
+        TCPserver = new TCPServer(4941, this, sendQueue, receiveQueue);
         Timer serverTimer = new Timer();
         serverTimer.schedule(TCPserver, 0, 1);
 
@@ -186,6 +186,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     public int getNextSourceId() {
         currentSourceID += 1;
         return currentSourceID;
+    }
+
+    /**
+     * Returns true if new connections are still being accepted
+     * @return boolean
+     */
+    public boolean isAccepting() {
+        return !raceInProgress;
     }
 
 
