@@ -91,23 +91,14 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Pane raceParentPane;
     @FXML private ImageView controlsView;
     @FXML private HBox controlsBox;
-    @FXML
-    private GridPane finisherListPane;
-    @FXML
-    private ListView finisherListView;
+    @FXML private GridPane finisherListPane;
+    @FXML private ListView finisherListView;
 
-    public GridPane getFinisherListPane() {
-        return finisherListPane;
-    }
-
-    public ListView getFinisherListView() {
-        return finisherListView;
-    }
 
     private ObservableList<String> observableFinisherList = observableArrayList();
     private Boolean finisherListDisplayed = false;
 
-    static final Color backgroundColor = Color.POWDERBLUE;
+    private static final Color backgroundColor = Color.POWDERBLUE;
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Shape playerMarker;
@@ -150,11 +141,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
     //boat position in screen coordinates with zoom level 17
     private MutablePoint currentPosition17;
-
-    //Deep cloner
-//    private Cloner cloner=new Cloner();
-
-    //graphics context
     private GraphicsContext gc;
 
     @Override
@@ -203,8 +189,8 @@ public class RaceViewController implements Initializable, TableObserver {
                 drawBackgroundImage();
             }
         });
-
     }
+
 
     /**
      * Initialise arrow to guide the user where to go to round the next mark
@@ -231,6 +217,7 @@ public class RaceViewController implements Initializable, TableObserver {
         guideArrow.toBack();
     }
 
+
     /**
      * Called when the user clicks no annotations button.
      * Clears individual annotations
@@ -243,6 +230,7 @@ public class RaceViewController implements Initializable, TableObserver {
         timeFromMarkButton.setSelected(false);
     }
 
+
     /**
      * Called when the user clicks all Annotations button.
      * Clears individual annotations
@@ -254,6 +242,7 @@ public class RaceViewController implements Initializable, TableObserver {
         timeToMarkButton.setSelected(true);
         timeFromMarkButton.setSelected(true);
     }
+
 
     /**
      * Sets the race and the race start time and then animates the race
@@ -283,6 +272,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     }
 
+
     /**
      * Observer method for table observer
      * Updates the selected boat property
@@ -292,10 +282,10 @@ public class RaceViewController implements Initializable, TableObserver {
         this.selectedBoatSourceId = sourceId;
     }
 
+
     /**
      * Draws the line representing the sail of the boat
      */
-
     private void drawSail( double width, double length) {
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         double windAngle = dataSource.getWindDirection();
@@ -317,6 +307,7 @@ public class RaceViewController implements Initializable, TableObserver {
         sailLine.toFront();
 
     }
+
 
     /**
      * Draws the health bar representing the health of the boat
@@ -453,6 +444,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     }
 
+
     /**
      * Draws the line for gates
      * @param line Line the line to be drawn
@@ -470,6 +462,7 @@ public class RaceViewController implements Initializable, TableObserver {
         line.setEndX(x2);
         line.setEndY(y2);
     }
+
 
     /**
      * Draw the mark of the course feature
@@ -490,6 +483,7 @@ public class RaceViewController implements Initializable, TableObserver {
             mark.setCenterY(y);
         }
     }
+
 
     /**
      * Draw the background as the map and relocate it to the screen bounds
@@ -579,6 +573,7 @@ public class RaceViewController implements Initializable, TableObserver {
     public boolean isZoom() {
         return zoom;
     }
+
 
     /**
      * Draw boundary
@@ -758,6 +753,7 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+
     /**
      * returns the position of boat relative to the current boat, assume zoomed in
      * @param boat location of the boat to be calculated
@@ -766,6 +762,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private MutablePoint getBoatLocation(Competitor boat){
         return boat.getPosition17().shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2);
     }
+
 
     /**
      * sets the relative position of other boats compared to the visualizers boat
@@ -794,6 +791,7 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         return new MutablePoint(pointX,pointY);
     }
+
 
     /**
      * Draw or move a boat model for a competitor
@@ -856,6 +854,7 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+
     /**
      * Draw boat's wake
      *
@@ -886,6 +885,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     }
 
+
     /**
      * Draw the next dot of track for the boat on the canvas
      *
@@ -904,7 +904,6 @@ public class RaceViewController implements Initializable, TableObserver {
         });
         ft.play();
         track.getChildren().add(circle);
-
 
     }
 
@@ -940,6 +939,7 @@ public class RaceViewController implements Initializable, TableObserver {
      *
      */
     private void updateGuidingArrow() {
+
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         int currentIndex = boat.getCurrentLegIndex();
         double xOffset = 0, yOffset = 0;
@@ -986,6 +986,7 @@ public class RaceViewController implements Initializable, TableObserver {
         applyTransformsToArrow(angle, x, y);
     }
 
+
     /**
      * Apply translation and rotation transforms to the guiding arrow
      *
@@ -1024,6 +1025,7 @@ public class RaceViewController implements Initializable, TableObserver {
         return calculateStartSymbol(distanceToStart, distanceToEnd, boat.getVelocity(), timeUntilStart);
     }
 
+
     /**
      * Updates the FPS counter
      */
@@ -1038,6 +1040,7 @@ public class RaceViewController implements Initializable, TableObserver {
             counter = 0;
         }
     }
+
 
     /**
      * Updates the race status
@@ -1075,6 +1078,7 @@ public class RaceViewController implements Initializable, TableObserver {
         drawBoundary(courseBoundary);
     }
 
+
     /**
      * Draws the race. This includes the boat, wakes, track and annotations.
      */
@@ -1096,7 +1100,6 @@ public class RaceViewController implements Initializable, TableObserver {
 //            wakeWidthFactor*= 1;
             wakeLengthFactor*=2;
         }
-
 
         updateCourse();
 
@@ -1122,7 +1125,6 @@ public class RaceViewController implements Initializable, TableObserver {
                     virtualLine=null;
                 }
             }
-
             this.drawWake(boat, boatLength, startWakeOffset, wakeWidthFactor, wakeLengthFactor);
             this.drawBoat(boat);
             this.drawHealthBar(boat);
@@ -1130,12 +1132,10 @@ public class RaceViewController implements Initializable, TableObserver {
 
 //            if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
 //            if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
-
         }
         this.drawSail(width, length);
-
     }
-    
+
 
 
     /**

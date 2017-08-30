@@ -188,6 +188,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         return currentSourceID;
     }
 
+
     /**
      * Returns true if new connections are still being accepted
      * @return boolean
@@ -289,6 +290,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         windGenerator = new WindGenerator(windSpeed, windDirection);
 //        polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
     }
+
 
     /**
      * finds the current course of the race
@@ -472,10 +474,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         return String.format(xmlTemplate, raceID, creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), participants);
     }
 
+
     /**
      * Send a race xml file to client, uses raceTemplate.xml to generate custom race xml messages
      */
-
     private void sendRaceXML() throws IOException {
         int messageType = 6;
         String raceTemplateString = fileToString("/raceTemplate.xml");
@@ -484,6 +486,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         this.sendQueue.put(null, binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
 
     }
+
 
     /**
      * Send a xml file
@@ -539,7 +542,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
 
     /**
-     * Get all messges from recieve queue and pass them to interpreter
+     * Get all messages from receive queue and pass them to interpreter
      */
     private void readAllMessages() {
         for (QueueMessage m: receiveQueue.drain()) {
@@ -557,9 +560,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         this.readAllMessages();
 
-        if (shouldStartGame()) {
-            raceInProgress = true;
-        }
+        if (shouldStartGame()) raceInProgress = true;
 
         if (!raceInProgress) return;
 
