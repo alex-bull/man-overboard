@@ -368,6 +368,7 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
+
     /**
      * returns the sourceID of the clients boat
      * @return the sourceID of the clients boat
@@ -375,6 +376,7 @@ public class Interpreter implements DataSource, PacketHandler {
     public int getSourceID() {
         return sourceID;
     }
+
 
     /**
      * removes sourceID from collisions list
@@ -384,6 +386,7 @@ public class Interpreter implements DataSource, PacketHandler {
     public void removeCollsions(int sourceID) {
         collisions.remove(sourceID);
     }
+
 
     /**
      * Updates the boat properties as data is being received.
@@ -399,7 +402,9 @@ public class Interpreter implements DataSource, PacketHandler {
 
 
         //add to competitorsPosition and storedCompetitors if they are new
-        if (!storedCompetitors.keySet().contains(boatID)) {
+
+        if (storedCompetitors.get(boatID) == null) {
+//        if (!storedCompetitors.keySet().contains(boatID)) {
             Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
             // boat colour
             if (competitor.getColor() == null) {

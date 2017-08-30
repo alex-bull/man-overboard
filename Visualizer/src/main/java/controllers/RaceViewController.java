@@ -1,5 +1,6 @@
 package controllers;
 
+import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
 import com.rits.cloning.Cloner;
@@ -909,185 +910,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
 
-    /**
-     * Calculates and draws laylines on the pane for the given boat
-     * @param boat Competitor the boat to draw the laylines for
-     */
-    private void drawLaylines(Competitor boat) {
-
-
-        if (this.polarTable == null) {
-            try {
-                polarTable = new PolarTable("/polars/VO70_polar.txt", 12);
-            } catch (IOException e) {
-                System.out.println("Could not find polar file");
-                return;
-            }
-        }
-
-        Integer upWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), true);
-        Integer downWindAngle = (int) polarTable.getMinimalTwa(this.dataSource.getWindSpeed(), false);
-
-        MutablePoint markCentre = this.getNextGateCentre(boat);
-        if (markCentre == null) return;
-        Double markX = markCentre.getXValue();
-        Double markY = markCentre.getYValue();
-
-        Double boatX = boat.getPosition().getXValue();
-        Double boatY = boat.getPosition().getYValue();
-        Double heading = boat.getCurrentHeading();
-        Double windAngle = dataSource.getWindDirection();
-        Double windSpeed = dataSource.getWindSpeed();
-
-        //semi arbitrary point in front of the boat along the heading angle
-        Double bx = boatX + (2000 * Math.sin(Math.toRadians(heading)));
-        Double by = boatY - (2000 * Math.cos(Math.toRadians(heading)));
-
-        //Difference between heading and wind angle- used to check if boat is going upwind or downwind
-        Double anglediff = abs((heading - windAngle + 180 + 360) % 360 - 180);
-        Double layLineStarboardAngle = 0.0;
-        Double layLinePortAngle = 0.0;
-
-        //CASE: upwind
-        if (anglediff > 90) {
-            layLineStarboardAngle = windAngle - upWindAngle;
-            layLinePortAngle = windAngle + upWindAngle;
-        }
-        //CASE: downwind
-        else if (anglediff < 90) {
-            layLineStarboardAngle = windAngle + downWindAngle;
-            layLinePortAngle = windAngle - downWindAngle;
-        }
-
-        //normalize angles
-        if (layLineStarboardAngle > 360) layLineStarboardAngle = layLineStarboardAngle - 360;
-        if (layLinePortAngle > 360) layLinePortAngle = layLinePortAngle - 360;
-
-        //Starboard layline
-        Double mx = markX + 2000 * Math.sin(Math.toRadians(layLineStarboardAngle));
-        Double my = markY - 2000 * Math.cos(Math.toRadians(layLineStarboardAngle));
-        Double mx2 = markX -2000 * Math.sin(Math.toRadians(layLineStarboardAngle));
-        Double my2 = markY + 2000 * Math.cos(Math.toRadians(layLineStarboardAngle));
-        //Port layline
-        Double mx3 = markX + 2000 * Math.sin(Math.toRadians(layLinePortAngle));
-        Double my3 = markY - 2000 * Math.cos(Math.toRadians(layLinePortAngle));
-        Double mx4 = markX -2000 * Math.sin(Math.toRadians(layLinePortAngle));
-        Double my4 = markY + 2000 * Math.cos(Math.toRadians(layLinePortAngle));
-
-        //Intersections of lay lines and boat heading
-        MutablePoint intersectionPoint = new MutablePoint(0.0, 0.0);
-        MutablePoint intersectionOne = new MutablePoint(0.0, 0.0);
-        MutablePoint intersectionTwo = new MutablePoint(0.0, 0.0);
-
-        Boolean intersectsStarboardLayline = Line2D.linesIntersect(boatX, boatY, bx, by, mx2, my2, mx, my);
-        Boolean intersectsPortLayline = Line2D.linesIntersect(boatX, boatY, bx, by, mx3, my3, mx4, my4);
-        Boolean draw = false;
-
-        raceViewPane.getChildren().removeAll(layLines);
-        layLines.clear();
-
-        //FIND INTERSECTIONS
-        if (intersectsStarboardLayline) {
-            draw = true;
-            //If the line segments intersect then find the intersection point to draw the lines with
-            intersectionOne = this.calculateIntersection(boatX, boatY, bx, by, markX, markY, mx, my);
-            intersectionPoint = intersectionOne;
-//            yIntersection = y;
-        }
-        if (intersectsPortLayline) {
-            draw = true;
-            intersectionTwo = this.calculateIntersection(boatX, boatY, bx, by, markX, markY, mx3, my3);
-            intersectionPoint = intersectionTwo;
-        }
-        if (intersectsStarboardLayline && intersectsPortLayline) {
-            //FIND THE CLOSEST INTERSECTION
-            Double distance1 = Math.hypot(boatX-intersectionOne.getXValue(), boatY-intersectionOne.getYValue());
-            Double distance2 = Math.hypot(boatX-intersectionTwo.getXValue(), boatY-intersectionTwo.getYValue());
-            if (distance1 < distance2) {
-                intersectionPoint = intersectionOne;
-            }
-        }
-        //DRAW
-        if (draw) {
-            this.drawLayLine(boatX, boatY, intersectionPoint.getXValue(), intersectionPoint.getYValue(), boat.getColor());
-            this.drawLayLine(markX, markY, intersectionPoint.getXValue(), intersectionPoint.getYValue(), boat.getColor());
-        }
-    }
-
-
-    /**
-     * Gets the centre coordinates for a mark or gate
-
-     * @return MutablePoint (x,y) coordinates
-     */
-    private MutablePoint getNextGateCentre(Competitor boat) {
-
-        Integer markId = boat.getCurrentLegIndex() + 1;
-        // if (EnvironmentConfig.currentStream.equals(EnvironmentConfig.liveStream)) markId += 1; //HACKY :- The livestream seq numbers are 1 place off the csse numbers
-
-        Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
-        if (markId > features.size()) return null; //passed the finish line
-
-        List<Integer> ids = features.get(markId);
-        CourseFeature featureOne = this.dataSource.getCourseFeatureMap().get(ids.get(0));
-        Double markX = featureOne.getPixelCentre().getXValue();
-        Double markY = featureOne.getPixelCentre().getYValue();
-
-        if (ids.size() > 1) { //Get the centre point of gates
-            CourseFeature featureTwo = this.dataSource.getCourseFeatureMap().get(ids.get(1));
-            markX = (featureOne.getPixelCentre().getXValue() + featureTwo.getPixelCentre().getXValue()) / 2;
-            markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
-        }
-        return new MutablePoint(markX, markY);
-    }
-
-
-    /**
-     * Calculates the intersection point of two lines. Result is undefined for non intersecting lines
-     * @param x1 Double line one
-     * @param y1 Double line one
-     * @param x2 Double line one
-     * @param y2 Double line one
-     * @param x3 Double line two
-     * @param y3 Double line two
-     * @param x4 Double line two
-     * @param y4 Double line two
-     * @return MutablePoint the intersection point x, y
-     */
-    private MutablePoint calculateIntersection(Double x1, Double y1, Double x2, Double y2, Double x3, Double y3, Double x4, Double y4) {
-        //first convert to slope intercept y = mx + b
-        Double m1 = (y2 - y1) / (x2 - x1);
-        Double m2 = (y4 - y3) / (x4 - x3);
-        //b = y - mx
-        Double b1 = y1 - m1 * x1;
-        Double b2 = y3 - m2 * x3;
-        //the intersection point of the lines
-        Double x = (b2 - b1) / (m1 - m2);
-        Double y = m1 * x + b1;
-        return new MutablePoint(x, y);
-    }
-
-    /**
-     * Draws a layline on the pane
-     * @param x Double, The first x value
-     * @param y Double, The first y value
-     * @param x2 Double, The second x value
-     * @param y2 Double, The second y value
-     * @param colour Color the colour of the line
-     */
-    private void drawLayLine(Double x, Double y, Double x2, Double y2, Color colour) {
-
-        Polyline line = new Polyline();
-        line.getPoints().addAll(
-                x, y, //top
-                x2, y2);
-        line.setFill(colour);
-        line.setStroke(colour);
-        line.setStrokeWidth(1);
-        raceViewPane.getChildren().add(line);
-        layLines.add(line);
-    }
-
 
     /**
      * Gets the centre coordinates for a mark or gate
@@ -1313,47 +1135,8 @@ public class RaceViewController implements Initializable, TableObserver {
         this.drawSail(width, length);
 
     }
+    
 
-
-    /**
-     * draws a collision border
-     * @param width the width of the screen
-     * @param height the height of the screen
-     * @param thickness the thickness of the border
-     */
-    public void drawBorder(double width, double height, double thickness){
-        List<Shape> border=new ArrayList<>();
-        //offset which the screen shakes by
-        double shakeOffset=10;
-        LinearGradient linearGradient=new LinearGradient(0,0,0,1,true,CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
-//        LinearGradient linearGradient2=new LinearGradient(0,1,0,0,true,CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
-        LinearGradient linearGradient3=new LinearGradient(0,0,1,0,true,CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
-        LinearGradient linearGradient4=new LinearGradient(1,0,0,0,true,CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
-
-        Rectangle rectTop =new Rectangle(-shakeOffset,-shakeOffset,width+shakeOffset*2,thickness+shakeOffset);
-        rectTop.setFill(linearGradient);
-
-        Rectangle rectLeft =new Rectangle(-shakeOffset,-shakeOffset,thickness+shakeOffset,height+shakeOffset*2);
-        rectLeft.setFill(linearGradient3);
-        Rectangle rectRight =new Rectangle(width-thickness,-shakeOffset,thickness+shakeOffset,height+shakeOffset*2);
-        rectRight.setFill(linearGradient4);
-
-        border.add(rectTop);
-//        border.add(rectBot);
-        border.add(rectLeft);
-        border.add(rectRight);
-
-        for(Shape rect: border ){
-            FadeTransition fadeTransition=new FadeTransition(Duration.millis(500),rect);
-            fadeTransition.setOnFinished(event -> raceParentPane.getChildren().remove(rect));
-            fadeTransition.setFromValue(1.0);
-            fadeTransition.setToValue(0.0);
-            raceParentPane.getChildren().add(rect);
-            fadeTransition.play();
-            rect.toFront();
-
-        }
-    }
 
     /**
      * checks collisions and draws them
@@ -1362,20 +1145,15 @@ public class RaceViewController implements Initializable, TableObserver {
         for(int sourceID:new HashSet<>(dataSource.getCollisions())){
             MutablePoint point=setRelativePosition(dataSource.getStoredCompetitors().get(sourceID));
             if (sourceID == dataSource.getSourceID()) {
-                drawBorder(raceViewPane.getWidth(),raceViewPane.getHeight(),25);
-
-
+                //drawBorder(raceViewPane.getWidth(),raceViewPane.getHeight(),25);
+                new BorderAnimation(raceParentPane, 25).animate();
                 new RandomShake(raceParentPane).animate();
-
             }
             drawCollision(point.getXValue(), point.getYValue());
             dataSource.removeCollsions(sourceID);
-//            Competitor boat=dataSource.getStoredCompetitors().get(sourceID);
-//            mapEngine.executeScript(String.format("create_collision(%.9f,%.9f)",boat.getLatitude(),boat.getLongitude()));
-
         }
-
     }
+
 
     /**
      * draws collisions at the location passed in
@@ -1384,15 +1162,12 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void drawCollision(double centerX,double centerY){
         int radius=20;
-        if(isZoom()){
-            radius*=2;
-        }
+        if(isZoom()) radius *= 2;
         CollisionRipple ripple = new CollisionRipple(centerX, centerY,radius );
         raceViewPane.getChildren().add(ripple);
-
         ripple.animate().setOnFinished(event -> raceViewPane.getChildren().remove(ripple));
-
     }
+
 
     /**
      * Toggles a control layout of the game
