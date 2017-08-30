@@ -1,7 +1,5 @@
 package mockDatafeed;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-import utility.BinaryPackager;
 import utility.ConnectionClient;
 
 import java.io.IOException;
@@ -11,9 +9,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.TimerTask;
+import java.util.*;
 
 import static parsers.Converter.hexByteArrayToInt;
 
@@ -25,15 +21,20 @@ public class Server extends TimerTask {
     private Selector selector;
     private ServerSocketChannel serverSocket;
     private ConnectionClient connectionClient;
-
+    private WorkQueue sendQueue;
+    private WorkQueue receiveQueue;
 
     /**
      * Intialize a server instance on the given port
      * @param port int the port to expose the service on
      * @param connectionClient ConnectionClient, a handler for incoming data
+     * @param sendQueue
+     * @param receiveQueue
      * @throws IOException If the server cannot be opened
      */
-    Server(int port, ConnectionClient connectionClient) throws IOException {
+    Server(int port, ConnectionClient connectionClient, WorkQueue sendQueue, WorkQueue receiveQueue) throws IOException {
+        this.sendQueue = sendQueue;
+        this.receiveQueue = receiveQueue;
         this.connectionClient = connectionClient;
         selector = Selector.open();
         serverSocket = ServerSocketChannel.open();
@@ -53,7 +54,7 @@ public class Server extends TimerTask {
      * @param data byte[] byte array of the data
      * @throws IOException IOException
      */
-    public void broadcast(byte[] data) throws IOException {
+    private void broadcast(byte[] data) throws IOException {
         selector.select(1);
 
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
@@ -78,7 +79,7 @@ public class Server extends TimerTask {
      * @param data byte[] the message
      * @param clientId Integer the id of the client channel to send to
      */
-    public void unicast(byte[] data, Integer clientId) throws IOException {
+    private void unicast(byte[] data, Integer clientId) throws IOException {
 
         selector.select(1);
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
@@ -118,7 +119,8 @@ public class Server extends TimerTask {
             byte[] message = new byte[length];
             ByteBuffer messageBuffer = ByteBuffer.wrap(message);
             client.read(messageBuffer);
-            this.connectionClient.interpretPacket(header, message, id);
+            //this.connectionClient.interpretPacket(header, message, id);
+            this.receiveQueue.put(id, header, message);
         }
 
     }
@@ -150,11 +152,29 @@ public class Server extends TimerTask {
         return hexByteArrayToInt(messageLengthBytes);
     }
 
+    /**
+     * Send all messages in the send queue
+     */
+    private void sendQueuedMessages() {
+
+        for (QueueMessage sm: sendQueue.drain()) {
+            try {
+                if (sm.getClientId() == null) this.broadcast(sm.getMessage());
+                else this.unicast(sm.getMessage(), sm.getClientId());
+            } catch (IOException e) {
+                System.out.println("Failed to send message");
+            }
+        }
+    }
 
 
 
     public void run() {
 
+        //send all messages
+        this.sendQueuedMessages();
+
+        //listen for incoming data
         try {
             selector.select(1);
             for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
@@ -165,7 +185,7 @@ public class Server extends TimerTask {
                     SocketChannel client = serverSocket.accept();
                     client.configureBlocking(false);
 
-                    // Assign the connection a unique source id
+                    // Assign the connection a unique source id TODO:- this may need to change to remove the method call to connectionClient
                     // This will become the boat source id if they register as a player
                     int sourceID = connectionClient.getNextSourceId();
                     client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE, sourceID);
