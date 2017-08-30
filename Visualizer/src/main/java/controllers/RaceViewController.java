@@ -76,17 +76,6 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private AnchorPane raceView;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
-    @FXML private Label fpsCounter;
-    @FXML private RadioButton allAnnotationsRadio;
-    @FXML private RadioButton noAnnotationsRadio;
-    @FXML private RadioButton someAnnotationsRadio;
-    @FXML private CheckBox speedButton;
-    @FXML private CheckBox nameButton;
-    @FXML private CheckBox timeToMarkButton;
-    @FXML private CheckBox timeFromMarkButton;
-    @FXML private CheckBox fpsToggle;
-    @FXML private Text status;
-    @FXML private Group annotationGroup;
     @FXML private WebView mapView;
     @FXML private Pane raceParentPane;
     @FXML private ImageView controlsView;
@@ -108,29 +97,18 @@ public class RaceViewController implements Initializable, TableObserver {
     private Map<Double, Line> healthBarBackgrounds = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
     private Map<Integer, Label> speedAnnotations = new HashMap<>();
-    private Map<Integer, Label> timeToMarkAnnotations = new HashMap<>();
-    private Map<Integer, Label> timeFromMarkAnnotations = new HashMap<>();
-    private Map<Integer, Label> timeToStartlineAnnotations = new HashMap<>();
     private Map<String, Shape> markModels = new HashMap<>();
     private Group track=new Group();
-    private List<Polyline> layLines = new ArrayList<>();
-    private Label startLabel;
     private Line startLine;
     private Line finishLine;
     private Line virtualLine;
     private Polygon guideArrow;
-
-    private RaceCalculator raceCalculator;
     private WebEngine mapEngine;
     private DataSource dataSource;
-    private PolarTable polarTable;
-    private int counter;
-    private long startTimeNano = System.nanoTime();
-    private long timeFromLastMark;
-    private String startAnnotation;
     private Line sailLine;
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
+    private int counter = 0;
 
     //if state of zooming
     private boolean zoom = false;
@@ -159,13 +137,6 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().add(virtualLine);
         raceViewPane.getChildren().add(sailLine);
 
-        final ToggleGroup annotations = new ToggleGroup();
-        allAnnotationsRadio.setToggleGroup(annotations);
-        noAnnotationsRadio.setToggleGroup(annotations);
-        someAnnotationsRadio.setToggleGroup(annotations);
-        allAnnotationsRadio.setSelected(true);
-        showAllAnnotations();
-        fpsToggle.setSelected(true);
 
         finisherListPane.setVisible(false);
 
@@ -218,30 +189,6 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-    /**
-     * Called when the user clicks no annotations button.
-     * Clears individual annotations
-     */
-    @FXML
-    public void clearAnnotations() {
-        speedButton.setSelected(false);
-        nameButton.setSelected(false);
-        timeToMarkButton.setSelected(false);
-        timeFromMarkButton.setSelected(false);
-    }
-
-
-    /**
-     * Called when the user clicks all Annotations button.
-     * Clears individual annotations
-     */
-    @FXML
-    public void showAllAnnotations() {
-        speedButton.setSelected(true);
-        nameButton.setSelected(true);
-        timeToMarkButton.setSelected(true);
-        timeFromMarkButton.setSelected(true);
-    }
 
 
     /**
@@ -548,7 +495,7 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Zooms in on your boat
      */
-    public void zoomIn(){
+    void zoomIn(){
         zoom=true;
         mapEngine.executeScript("setZoom(17);");
         updateRace();
@@ -561,7 +508,7 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Zooms out from your boat
      */
-    public void zoomOut(){
+    void zoomOut(){
         zoom=false;
 
         drawBackgroundImage();
@@ -570,7 +517,7 @@ public class RaceViewController implements Initializable, TableObserver {
         track.setVisible(!isZoom());
     }
 
-    public boolean isZoom() {
+    boolean isZoom() {
         return zoom;
     }
 
@@ -614,41 +561,19 @@ public class RaceViewController implements Initializable, TableObserver {
         for (Competitor boat : dataSource.getStoredCompetitors().values()) {
             int sourceID = boat.getSourceID();
 
-            for (int i = 0; i < annotationGroup.getChildren().size(); i++) {
-                String annotationType = ((CheckBox) annotationGroup.getChildren().get(i)).getText();
-                Annotation annotation = Annotation.stringToAnnotation(annotationType);
-                Label label = null;
-                assert annotation != null;
-                switch (annotation) {
-                    case TEAM_NAME:
-                        label = new Label(boat.getAbbreName());
-                        this.nameAnnotations.put(sourceID, label);
-                        break;
-                    case BOAT_SPEED:
-                        label = new Label(String.valueOf(boat.getVelocity()) + "m/s");
-                        this.speedAnnotations.put(sourceID, label);
-                        break;
-                    case EST_TIME_TO_NEXT_MARK:
-                        label = new Label(String.valueOf(boat.getTimeToNextMark()) + " seconds");
-                        this.timeToMarkAnnotations.put(sourceID, label);
-                        break;
-                    case TIME_FROM_LAST_MARK:
-                        label = new Label(String.valueOf(timeFromLastMark) + " seconds");
-                        this.timeFromMarkAnnotations.put(sourceID, label);
-                        break;
-                }
+            Label name = new Label(boat.getAbbreName());
+            this.nameAnnotations.put(sourceID, name);
 
-                startLabel = new Label(startAnnotation);
-                startLabel.setFont(Font.font(null, FontWeight.BOLD, 20));
-                startLabel.setTextFill(boat.getColor());
-                this.timeToStartlineAnnotations.put(sourceID, startLabel);
-                this.raceViewPane.getChildren().add(startLabel);
+            Label speed = new Label(String.valueOf(boat.getVelocity()) + "m/s");
+            this.speedAnnotations.put(sourceID, speed);
 
-                label.setFont(Font.font("Monospaced"));
-                label.setTextFill(boat.getColor());
-                this.raceViewPane.getChildren().add(label);
+            name.setFont(Font.font("Monospaced"));
+            name.setTextFill(boat.getColor());
+            this.raceViewPane.getChildren().add(name);
+            speed.setFont(Font.font("Monospaced"));
+            speed.setTextFill(boat.getColor());
+            this.raceViewPane.getChildren().add(speed);
 
-            }
         }
     }
 
@@ -663,79 +588,25 @@ public class RaceViewController implements Initializable, TableObserver {
         MutablePoint point = setRelativePosition(boat);
 
         int offset = 15;
-        if(isZoom()){
-            offset*=2;
+        if(isZoom()) offset *= 2;
+
+        Label name = this.nameAnnotations.get(sourceID);
+        Label speed = this.speedAnnotations.get(sourceID);
+        speed.setText(String.valueOf(boat.getVelocity()) + "m/s");
+
+        if(boat.getStatus() == DSQ) {
+            name.setText("");
+            speed.setText("");
         }
 
-        //all selected will be true if all selected
-        boolean allSelected = true;
-
-        //none selected will be false if none selected
-        boolean noneSelected = false;
-
-        //change radio button depending on what is selected
-        for (int i = 0; i < annotationGroup.getChildren().size(); i++) {
-            CheckBox checkBox = (CheckBox) annotationGroup.getChildren().get(i);
-            Annotation annotation = Annotation.stringToAnnotation(checkBox.getText());
-            Label label = null;
-            allSelected = allSelected && checkBox.isSelected();
-            noneSelected = noneSelected || checkBox.isSelected();
-            assert annotation != null;
-            switch (annotation) {
-                case TEAM_NAME:
-                    label = this.nameAnnotations.get(sourceID);
-                    break;
-                case BOAT_SPEED:
-                    label = this.speedAnnotations.get(sourceID);
-                    label.setText(String.valueOf(boat.getVelocity()) + "m/s");
-                    break;
-                case EST_TIME_TO_NEXT_MARK:
-                    label = this.timeToMarkAnnotations.get(sourceID);
-                    if (boat.getTimeToNextMark() > 0) {
-                        label.setText(String.valueOf(boat.getTimeToNextMark()) + "s to Next Mark");
-                    } else {
-                        label.setText("--");
-                    }
-                    break;
-                case TIME_FROM_LAST_MARK:
-                    label = this.timeFromMarkAnnotations.get(sourceID);
-                    if (timeFromLastMark > 0) {
-                        label.setText(String.valueOf(timeFromLastMark) + "s from Last Mark");
-                    } else {
-                        label.setText("--");
-                    }
-                    break;
-
-
-            }
-
-            if(boat.getStatus() == DSQ) {
-                label.setText("");
-            }
-
-            label.setVisible(checkBox.isSelected());
-            label.setLayoutX(point.getXValue() + 5);
-            label.setLayoutY(point.getYValue()+ offset);
-            if (checkBox.isSelected()) {
-                offset += 12;
-            }
-
-            startLabel = this.timeToStartlineAnnotations.get(sourceID);
-            startLabel.setText(startAnnotation);
-            startLabel.setLayoutX(point.getXValue() + 5);
-            startLabel.setLayoutY(point.getYValue() + offset);
-
-        }
-
-        someAnnotationsRadio.setSelected(((allSelected || !noneSelected) && someAnnotationsRadio.isSelected()) ||
-                !allSelected && noneSelected);
-        allAnnotationsRadio.setSelected(allSelected && !someAnnotationsRadio.isSelected());
-        noAnnotationsRadio.setSelected(!noneSelected && !someAnnotationsRadio.isSelected());
-
-        // draws FPS counter
-        fpsCounter.setVisible(fpsToggle.isSelected());
-
+        name.setLayoutX(point.getXValue() + 5);
+        name.setLayoutY(point.getYValue()+ offset);
+        offset += 12;
+        speed.setLayoutX(point.getXValue() + 5);
+        speed.setLayoutY(point.getYValue()+ offset);
     }
+
+
 
     /**
      * sets the current boat position of the current boat controlled by visualizer
@@ -1026,32 +897,7 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-    /**
-     * Updates the FPS counter
-     */
-    private void updateFPS() {
-        counter++; // increment fps counter
 
-        // calculate fps
-        long currentTimeNano = System.nanoTime();
-        if (currentTimeNano > startTimeNano + 1000000000) {
-            startTimeNano = System.nanoTime();
-            fpsCounter.setText(String.format("FPS: %d", counter));
-            counter = 0;
-        }
-    }
-
-
-    /**
-     * Updates the race status
-     */
-    private void updateRaceStatus() {
-        String statusString = "Race status: " + dataSource.getRaceStatus();
-        if (!statusString.equals(status.getText())) {
-            status.setText("Race status: " + dataSource.getRaceStatus());
-        }
-        checkRaceFinished();
-    }
 
     /**
      * Check if course need to be redrawn and draws the course features and the course boundary
@@ -1105,15 +951,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
         List<Competitor> competitors = dataSource.getCompetitorsPosition();
         for (Competitor boat : competitors) {
-            timeFromLastMark = Converter.convertToRelativeTime(boat.getTimeAtLastMark(), dataSource.getMessageTime());
-            if (dataSource.getRaceStatus().equals(PREPARATORY)) {
-                startAnnotation = getStartSymbol(boat);
-            }
-            else{
-                startAnnotation="";
-            }
-            if (counter % 70 == 0) {
 
+            if (counter % 70 == 0) {
                 drawTrack(boat);
                 if (selectedBoatSourceId != 0
                         && selectedBoatSourceId == boat.getSourceID()
@@ -1129,11 +968,9 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawBoat(boat);
             this.drawHealthBar(boat);
             this.moveAnnotations(boat);
-
-//            if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
-//            if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
         }
         this.drawSail(width, length);
+        counter++;
     }
 
 
@@ -1141,7 +978,7 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * checks collisions and draws them
      */
-    public void checkCollision(){
+    private void checkCollision(){
         for(int sourceID:new HashSet<>(dataSource.getCollisions())){
             MutablePoint point=setRelativePosition(dataSource.getStoredCompetitors().get(sourceID));
             if (sourceID == dataSource.getSourceID()) {
@@ -1191,8 +1028,6 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     void refresh() {
 
-        updateRaceStatus();
-        updateFPS();
         setBoatLocation();
         updateRace();
         checkCollision();

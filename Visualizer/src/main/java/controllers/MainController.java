@@ -21,8 +21,6 @@ public class MainController {
     @FXML private RaceViewController raceViewController;
     @FXML private SplitPane splitPane;
     @FXML private WindController windController;
-    @FXML private TimerController timerController;
-    @FXML private SparklinesController sparklinesController;
     @FXML private GridPane loadingPane;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
@@ -35,48 +33,42 @@ public class MainController {
      */
     @FXML public void keyPressed(KeyEvent event) {
 
-            switch (event.getCode()) {
-                case W:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.UP.getValue(), dataSource.getSourceID()));
-                    break;
-                case S:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.DOWN.getValue(), dataSource.getSourceID()));
-                    break;
-                case SPACE:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.VMG.getValue(), dataSource.getSourceID()));
-                    break;
-                case SHIFT:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILS.getValue(), dataSource.getSourceID()));
-                    break;
-                case ENTER:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
-                    break;
-                case Q:
-                    if(raceViewController.isZoom()) {
-                        raceViewController.zoomOut();
-                        if (!tableController.isVisible()) {
-                            tableController.makeVisible();
-                            sparklinesController.makeVisible();
-                        }
-                    }
-                    else{
-                        raceViewController.zoomIn();
-                    }
-                    break;
-                case BACK_QUOTE:
-                    if (raceViewController.isZoom() && tableController.isVisible()){
-                        tableController.makeInvisible();
-                        sparklinesController.makeInvisible();
-                    }
-                    else if (raceViewController.isZoom()) {
+        switch (event.getCode()) {
+            case W:
+                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.UP.getValue(), dataSource.getSourceID()));
+                break;
+            case S:
+                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.DOWN.getValue(), dataSource.getSourceID()));
+                break;
+            case SPACE:
+                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.VMG.getValue(), dataSource.getSourceID()));
+                break;
+            case SHIFT:
+                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILS.getValue(), dataSource.getSourceID()));
+                break;
+            case ENTER:
+                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
+                break;
+            case Q:
+                if(raceViewController.isZoom()) {
+                    raceViewController.zoomOut();
+                    if (!tableController.isVisible()) {
                         tableController.makeVisible();
-                        sparklinesController.makeVisible();
                     }
-                    break;
-            }
-
-
-
+                }
+                else{
+                    raceViewController.zoomIn();
+                }
+                break;
+            case BACK_QUOTE:
+                if (raceViewController.isZoom() && tableController.isVisible()){
+                    tableController.makeInvisible();
+                }
+                else if (raceViewController.isZoom()) {
+                    tableController.makeVisible();
+                }
+                break;
+        }
     }
 
 
@@ -89,9 +81,7 @@ public class MainController {
     void beginRace(DataSource dataSource, double width, double height) {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
-        timerController.begin(dataSource);
         tableController.addObserver(raceViewController);
-        sparklinesController.setCompetitors(dataSource, width);
         this.binaryPackager = new BinaryPackager();
 
         AnimationTimer timer = new AnimationTimer() {
@@ -102,7 +92,6 @@ public class MainController {
                     raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
-                    sparklinesController.refresh();
                     loadingPane.toBack();
                 }
                 else {
