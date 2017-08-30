@@ -1440,8 +1440,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         double heading = boat.getCurrentHeading();
-        double windAngle = dataSource.getWindDirection();
-        double downWind = boat.getDownWind(windAngle);
+        double windAngle = (dataSource.getWindDirection())%360;
+        double downWind = (boat.getDownWind(windAngle))%360;
         double touchX = touchEvent.getTouchPoint().getX();
         double touchY = touchEvent.getTouchPoint().getY();
 
@@ -1451,15 +1451,15 @@ public class RaceViewController implements Initializable, TableObserver {
         theta = (theta * 180 / PI) + 90;
 
         if(theta < 0){
-            theta = 360 - theta;
+            theta = 360 + theta;
         }
 
 
         BinaryPackager binaryPackager = new BinaryPackager();
-        if (!(heading <= theta + 10 && heading >= theta - 10)) {
-            System.out.println(downWind + " downwind thingy. " + windAngle%360 + " windangle");
+        if (!(heading <= (theta + 10)%360 && heading >= (theta -10)%360)) {
+            System.out.println(downWind + " downwind thingy. " + windAngle + " windangle");
 
-            if(heading<= windAngle%360 && heading >= downWind%360) {
+            if(heading<= windAngle && heading >= downWind) {
                 if(heading > theta) {
                     System.out.println("downwind");
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
@@ -1470,7 +1470,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 }
             }
             else {
-                if(heading < theta) {
+                if(heading < theta%360) {
                     System.out.println("downwind");
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
                 }
