@@ -1,5 +1,6 @@
 package steps;
 
+import Elements.HealthBar;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -9,7 +10,6 @@ import models.Boat;
 import models.Competitor;
 
 import static org.junit.Assert.assertEquals;
-import static utilities.RaceCalculator.calculateHealthColour;
 
 /**
  * Created by psu43 on 10/08/17.
@@ -17,6 +17,7 @@ import static utilities.RaceCalculator.calculateHealthColour;
  */
 public class HealthBarSteps {
     private Competitor boat=new Boat();
+    private HealthBar healthBar = new HealthBar();
 
     @Given("^the max health is (\\d+)$")
     public void the_max_health_is(int maxHealth) throws Throwable {
@@ -42,30 +43,30 @@ public class HealthBarSteps {
 
     @Then("^the colour of the health bar should be GREEN$")
     public void the_colour_of_the_health_bar_should_be_GREEN() throws Throwable {
-        Color result = calculateHealthColour(boat);
+        Color result = healthBar.calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
         assertEquals(Color.GREEN, result);
     }
     @Then("^the colour of the health bar should be GREENYELLOW$")
     public void the_colour_of_the_health_bar_should_be_GREENYELLOW() throws Throwable {
-        Color result = calculateHealthColour(boat);
+        Color result = healthBar.calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
         assertEquals(Color.GREENYELLOW, result);
     }
 
     @Then("^the colour of the health bar should be YELLOW$")
     public void the_colour_of_the_health_bar_should_be_YELLOW() throws Throwable {
-        Color result = calculateHealthColour(boat);
+        Color result = healthBar.calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
         assertEquals(Color.YELLOW, result);
     }
 
     @Then("^the colour of the health bar should be ORANGE$")
     public void the_colour_of_the_health_bar_should_be_ORANGE() throws Throwable {
-        Color result = calculateHealthColour(boat);
+        Color result = healthBar.calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
         assertEquals(Color.ORANGE, result);
     }
 
     @Then("^the colour of the health bar should be RED$")
     public void the_colour_of_the_health_bar_should_be_RED() throws Throwable {
-        Color result = calculateHealthColour(boat);
+        Color result = healthBar.calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
         assertEquals(Color.RED, result);
     }
 }

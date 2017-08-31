@@ -4,6 +4,7 @@ import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
 import Elements.GuideArrow;
+import Elements.HealthBar;
 import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
@@ -42,19 +43,19 @@ import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
 import utilities.DataSource;
+import utilities.RaceCalculator;
 import utility.BinaryPackager;
 
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-import static java.lang.Math.*;
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.scene.paint.Color.*;
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.RaceStatusEnum.PREPARATORY;
 import static parsers.RaceStatusEnum.STARTED;
-import static utilities.RaceCalculator.*;
+
 
 /**
  * Controller for the race view.
@@ -80,9 +81,10 @@ public class RaceViewController implements Initializable, TableObserver {
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Shape playerMarker;
     private Map<Integer, Polygon> wakeModels = new HashMap<>();
-    private Map<Double, Line> healthBars = new HashMap<>();
-    private Map<Integer, ImageView> ripImages = new HashMap<>();
-    private Map<Double, Line> healthBarBackgrounds = new HashMap<>();
+    //private Map<Double, Line> healthBars = new HashMap<>();
+    //private Map<Integer, ImageView> ripImages = new HashMap<>();
+    //private Map<Double, Line> healthBarBackgrounds = new HashMap<>();
+    private Map<Double, HealthBar> healthBars = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
     private Map<Integer, Label> speedAnnotations = new HashMap<>();
     private Map<String, Shape> markModels = new HashMap<>();
@@ -225,91 +227,130 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     /**
-     * Draws the health bar representing the health of the boat
-     * @param boat Competitor the boat in the race
+     * Draw the health bar for a boat
+     * @param boat
      */
     private void drawHealthBar(Competitor boat) {
 
-        double boatX = boat.getPosition().getXValue();
-        double boatY = boat.getPosition().getYValue();
-
-        double strokeWidth = 5;
-        double offset = 20;
-        double tombstoneSize = 30;
-        double maxBarLength = 30;
         double sourceId = boat.getSourceID();
-        int healthLevel = boat.getHealthLevel();
-        double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength);
-        if(this.zoom) {
-            offset = offset * 2;
-            strokeWidth *= 2;
-            healthLevel *= 2;
-            maxBarLength *= 2;
-            tombstoneSize *= 2;
-            boatX = getBoatLocation(boat).getXValue();
-            boatY = getBoatLocation(boat).getYValue();
-            healthSize*=2;
+        HealthBar healthBar = healthBars.get(sourceId);
+        if (healthBar == null) {
+            healthBar = new HealthBar();
+            this.healthBars.put(sourceId, healthBar);
+            this.raceViewPane.getChildren().add(healthBar);
+            return;
         }
-        if(healthLevel > 0) {
-            Color healthColour = calculateHealthColour(boat);
-            if (healthBars.get(sourceId) == null) {
-
-                Line healthBarBackground = new Line();
-                raceViewPane.getChildren().add(healthBarBackground);
-                this.healthBarBackgrounds.put(sourceId, healthBarBackground);
-
-                Line healthBar = new Line();
-                raceViewPane.getChildren().add(healthBar);
-                this.healthBars.put(sourceId, healthBar);
-            }
-
-            Line healthBarBackground = healthBarBackgrounds.get(sourceId);
-            healthBarBackground.setStrokeWidth(strokeWidth);
-            healthBarBackground.setStartX(boatX);
-            healthBarBackground.setStartY(boatY - offset);
-            healthBarBackground.setEndX(boatX + maxBarLength);
-            healthBarBackground.setEndY(boatY - offset);
-            healthBarBackground.setStroke(Color.WHITE);
-
-            Line healthBar = healthBars.get(sourceId);
-            healthBar.setStrokeWidth(strokeWidth);
-            healthBar.setStartX(boatX);
-            healthBar.setStartY(boatY - offset);
-            healthBar.setEndX(boatX + healthSize);
-            healthBar.setEndY(boatY - offset);
-
-            healthBar.setStroke(healthColour);
-            healthBar.toFront();
-
-
+        boolean alive;
+        if (isZoom()) {
+            MutablePoint location = getZoomedBoatLocation(boat);
+            alive = healthBar.update(boat, location.getXValue(), location.getYValue(), true);
+        } else {
+            alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), false);
         }
-        else {
-            ImageView ripImage = ripImages.get((int) sourceId);
-
-            if(boat.getStatus() != DSQ) {
-                boat.setStatus(DSQ);
-                ripImage.setVisible(true);
-                BinaryPackager binaryPackager = new BinaryPackager();
-                this.dataSource.send(binaryPackager.packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
-
-                if(dataSource.getSourceID() == boat.getSourceID()){
-                    sailLine.setVisible(false);
-                    playerMarker.setVisible(false);
-                    this.raceViewPane.getChildren().remove(guideArrow);
-                }
-
-                healthBars.get(sourceId).setVisible(false);
-                healthBarBackgrounds.get(sourceId).setVisible(false);
-                boatModels.get((int) sourceId).setVisible(false);
-            }
-
-            ripImage.setX(boatX);
-            ripImage.setY(boatY);
-            ripImage.setFitHeight(tombstoneSize);
-            ripImage.setFitHeight(tombstoneSize);
-
-        }
+        if (!alive) this.killBoat(boat);
     }
+
+    /**
+     * Remove dead boat and attachments from the view
+     * @param boat
+     */
+    private void killBoat(Competitor boat) {
+        this.dataSource.send(new BinaryPackager().packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
+        if(dataSource.getSourceID() == boat.getSourceID()){
+            sailLine.setVisible(false);
+            playerMarker.setVisible(false);
+            this.raceViewPane.getChildren().remove(guideArrow);
+        }
+        boatModels.get(boat.getSourceID()).setVisible(false);
+        wakeModels.get(boat.getSourceID()).setVisible(false);
+    }
+
+//    /**
+//     * Draws the health bar representing the health of the boat
+//     * @param boat Competitor the boat in the race
+//     */
+//    private void drawHealthBar(Competitor boat) {
+//
+//        double boatX = boat.getPosition().getXValue();
+//        double boatY = boat.getPosition().getYValue();
+//
+//        double strokeWidth = 5;
+//        double offset = 20;
+//        double tombstoneSize = 30;
+//        double maxBarLength = 30;f
+//        double sourceId = boat.getSourceID();
+//        int healthLevel = boat.getHealthLevel();
+//        double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength);
+//        if(this.zoom) {
+//            offset = offset * 2;
+//            strokeWidth *= 2;
+//            healthLevel *= 2;
+//            maxBarLength *= 2;
+//            tombstoneSize *= 2;
+//            boatX = getZoomedBoatLocation(boat).getXValue();
+//            boatY = getZoomedBoatLocation(boat).getYValue();
+//            healthSize*=2;
+//        }
+//        if(healthLevel > 0) {
+//            Color healthColour = calculateHealthColour(boat);
+//            if (healthBars.get(sourceId) == null) {
+//
+//                Line healthBarBackground = new Line();
+//                raceViewPane.getChildren().add(healthBarBackground);
+//                this.healthBarBackgrounds.put(sourceId, healthBarBackground);
+//
+//                Line healthBar = new Line();
+//                raceViewPane.getChildren().add(healthBar);
+//                this.healthBars.put(sourceId, healthBar);
+//            }
+//
+//            Line healthBarBackground = healthBarBackgrounds.get(sourceId);
+//            healthBarBackground.setStrokeWidth(strokeWidth);
+//            healthBarBackground.setStartX(boatX);
+//            healthBarBackground.setStartY(boatY - offset);
+//            healthBarBackground.setEndX(boatX + maxBarLength);
+//            healthBarBackground.setEndY(boatY - offset);
+//            healthBarBackground.setStroke(Color.WHITE);
+//
+//            Line healthBar = healthBars.get(sourceId);
+//            healthBar.setStrokeWidth(strokeWidth);
+//            healthBar.setStartX(boatX);
+//            healthBar.setStartY(boatY - offset);
+//            healthBar.setEndX(boatX + healthSize);
+//            healthBar.setEndY(boatY - offset);
+//
+//            healthBar.setStroke(healthColour);
+//            healthBar.toFront();
+//
+//
+//        }
+//        else {
+//            ImageView ripImage = ripImages.get((int) sourceId);
+//
+//            if(boat.getStatus() != DSQ) {
+//                boat.setStatus(DSQ);
+//                ripImage.setVisible(true);
+//                BinaryPackager binaryPackager = new BinaryPackager();
+//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
+//
+//                if(dataSource.getSourceID() == boat.getSourceID()){
+//                    sailLine.setVisible(false);
+//                    playerMarker.setVisible(false);
+//                    this.raceViewPane.getChildren().remove(guideArrow);
+//                }
+//
+//                healthBars.get(sourceId).setVisible(false);
+//                healthBarBackgrounds.get(sourceId).setVisible(false);
+//                boatModels.get((int) sourceId).setVisible(false);
+//            }
+//
+//            ripImage.setX(boatX);
+//            ripImage.setY(boatY);
+//            ripImage.setFitHeight(tombstoneSize);
+//            ripImage.setFitHeight(tombstoneSize);
+//
+//        }
+//    }
 
 
     /**
@@ -326,7 +367,7 @@ public class RaceViewController implements Initializable, TableObserver {
         long expectedStartTime = dataSource.getExpectedStartTime();
         long messageTime = dataSource.getMessageTime();
 
-        List<MutablePoint> virtualLinePoints = calcVirtualLinePoints(selectedBoat, boatModels.get(selectedBoat.getSourceID()),startMark1,startMark2,startLine1,expectedStartTime,messageTime);
+        List<MutablePoint> virtualLinePoints = RaceCalculator.calcVirtualLinePoints(selectedBoat, boatModels.get(selectedBoat.getSourceID()),startMark1,startMark2,startLine1,expectedStartTime,messageTime);
         if (!virtualLinePoints.isEmpty()) {
             MutablePoint virtualLine1 = virtualLinePoints.get(0);
             MutablePoint virtualLine2 = virtualLinePoints.get(1);
@@ -597,7 +638,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat location of the boat to be calculated
      * @return the relative position
      */
-    private MutablePoint getBoatLocation(Competitor boat){
+    private MutablePoint getZoomedBoatLocation(Competitor boat){
         return boat.getPosition17().shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2);
     }
 
@@ -617,7 +658,7 @@ public class RaceViewController implements Initializable, TableObserver {
             pointY=boatPositionY;
         }else{
             if(isZoom()){
-                MutablePoint point=getBoatLocation(boat);
+                MutablePoint point= getZoomedBoatLocation(boat);
                 pointX=point.getXValue();
                 pointY=point.getYValue();
 
@@ -661,13 +702,13 @@ public class RaceViewController implements Initializable, TableObserver {
             //add to the pane and store a reference
             this.raceViewPane.getChildren().add(boatModel);
 
-            ImageView ripImage = new ImageView();
-            Image tombstone = new Image("/cross.png");
-            ripImage.setImage(tombstone);
-            ripImage.setPreserveRatio(true);
-            ripImage.setVisible(false);
-            this.ripImages.put(sourceId, ripImage);
-            raceViewPane.getChildren().add(ripImage);
+//            ImageView ripImage = new ImageView();
+//            Image tombstone = new Image("/cross.png");
+//            ripImage.setImage(tombstone);
+//            ripImage.setPreserveRatio(true);
+//            ripImage.setVisible(false);
+//            this.ripImages.put(sourceId, ripImage);
+//            raceViewPane.getChildren().add(ripImage);
 
             this.boatModels.put(sourceId, boatModel);
             //Boats selected can be selected/unselected by clicking on them
