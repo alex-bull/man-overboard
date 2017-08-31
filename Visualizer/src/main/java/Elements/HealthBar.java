@@ -51,7 +51,8 @@ public class HealthBar extends Group {
         double maxBarLength = 30 * scale;
         int healthLevel = boat.getHealthLevel() * scale;
         double tombstoneSize = 30 * scale;
-        double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength);
+        double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength) / scale;
+
 
         if(healthLevel > 0) {
             Color healthColour = calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
