@@ -5,6 +5,7 @@ import Animations.CollisionRipple;
 import Animations.RandomShake;
 import Elements.GuideArrow;
 import Elements.HealthBar;
+import Elements.Sail;
 import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
@@ -92,7 +93,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private GuideArrow guideArrow;
     private WebEngine mapEngine;
     private DataSource dataSource;
-    private Line sailLine;
+    private Sail sailLine;
     private Integer selectedBoatSourceId = 0;
     private boolean isLoaded = false;
     private int counter = 0;
@@ -116,8 +117,7 @@ public class RaceViewController implements Initializable, TableObserver {
         virtualLine = new Line();
 
         //draws the sail on the boat
-        sailLine = new Line();
-        sailLine.setStroke(Color.WHITE);
+        sailLine = new Sail(Color.WHITE);
 
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
@@ -151,8 +151,6 @@ public class RaceViewController implements Initializable, TableObserver {
             }
         });
     }
-
-
 
 
     /**
@@ -196,26 +194,8 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Draws the line representing the sail of the boat
      */
-    private void drawSail( double width, double length) {
-        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-        double windAngle = dataSource.getWindDirection();
-
-        sailLine.setStrokeWidth(width);
-        sailLine.setStartX(boatPositionX);
-        sailLine.setStartY(boatPositionY);
-        sailLine.setEndX(boatPositionX);
-        sailLine.setEndY(boatPositionY + length);
-        sailLine.getTransforms().clear();
-
-
-        if (boat.hasSailsOut()) {
-            sailLine.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatPositionX, boatPositionY));
-        } else {
-            sailLine.getTransforms().add(new Rotate(windAngle, boatPositionX, boatPositionY));
-        }
-
-        sailLine.toFront();
-
+    private void drawSail( double width, double length, Competitor boat) {
+        this.sailLine.update(width, length, boat, dataSource.getWindDirection(), boatPositionX, boatPositionY);
     }
 
 
@@ -242,6 +222,7 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         if (!alive) this.killBoat(boat);
     }
+
 
     /**
      * Remove dead boat and attachments from the view
@@ -798,7 +779,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawHealthBar(boat);
             this.moveAnnotations(boat);
         }
-        this.drawSail(width, length);
+        this.drawSail(width, length, dataSource.getStoredCompetitors().get(dataSource.getSourceID()));
         counter++;
     }
 
