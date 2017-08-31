@@ -320,16 +320,6 @@ public class RaceViewController implements Initializable, TableObserver {
             sailLine.getTransforms().add(new Rotate(windAngle, boatPositionX, boatPositionY));
         }
 
-        sailSlider.valueProperty().addListener((ov, old_val, new_val) -> {
-            BinaryPackager binaryPackager = new BinaryPackager();
-            if(new_val.doubleValue() >= 50){
-                this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), boat.getSourceID()));
-            } else if (new_val.doubleValue() < 50){
-                this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), boat.getSourceID()));
-            }
-
-        });
-
         sailLine.toFront();
 
     }
@@ -1326,8 +1316,10 @@ public class RaceViewController implements Initializable, TableObserver {
 //            if (boat.getSourceID() == this.selectedBoatSourceId) this.drawLaylines(boat);
 //            if (this.selectedBoatSourceId == 0) raceViewPane.getChildren().removeAll(layLines);
 
+
         }
         this.drawSail(width, length);
+
 
     }
 
@@ -1426,6 +1418,22 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+    /**
+     * Checks the slider position and updates the sail of the boat
+     */
+    private void updateSails(){
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        sailSlider.valueProperty().addListener((ov, old_val, new_val) -> {
+            BinaryPackager binaryPackager = new BinaryPackager();
+            if(new_val.doubleValue() >= 90){
+                this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), boat.getSourceID()));
+            } else if (new_val.doubleValue() <= 10){
+                this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), boat.getSourceID()));
+            }
+
+        });
+    }
+
 
     /**
      * Refreshes the contents of the display to match the datasource
@@ -1437,6 +1445,7 @@ public class RaceViewController implements Initializable, TableObserver {
         updateFPS();
         setBoatLocation();
         updateRace();
+        updateSails();
         checkCollision();
         updateGuidingArrow();
     }
@@ -1463,23 +1472,14 @@ public class RaceViewController implements Initializable, TableObserver {
         double theta = atan2(deltaY, deltaX);
         theta = (theta * 180 / PI) + 90;
 
-        if(theta < 0){
-            theta = 360 + theta;
-        }
+        if(theta < 0){ theta = 360 + theta; }
         boolean westOfWind;
 
         BinaryPackager binaryPackager = new BinaryPackager();
+        System.out.println("\n\nHeading : " + heading + "\nTheta : " + theta + "\nWindAngle : " + windAngle + "\nDownwind : "+ downWind);
         if (!(heading <= theta + 10 && heading >= theta -10)) {
 
-            if(heading > downWind && heading < downWind +180){
-                westOfWind = true;
-            } else if ( heading < windAngle && heading - windAngle < 0){
-                westOfWind = true;
-            } else if (heading < windAngle && heading > downWind){
-                westOfWind = true;
-            } else {
-                westOfWind = false;
-            }
+            westOfWind = (heading > downWind && heading < downWind + 180) || (heading < windAngle && heading - windAngle < 0) || (heading < windAngle && heading > downWind);
             if(westOfWind) {
                 if ((heading - theta) % 360 > (theta - heading) % 360 && theta > heading) {
                     System.out.println("downwind LEFT");
@@ -1498,34 +1498,7 @@ public class RaceViewController implements Initializable, TableObserver {
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
                 }
             }
-
-
-
-            System.out.println("\n\nHeading : " + heading + "\nTheta : " + theta + "\nWindAngle : " + windAngle + "\nDownwind : "+ downWind);
-//            if((heading<= windAngle || heading < downWind + 180)  && (heading >= downWind || heading - windAngle < 0 )) {
-//                if((heading - theta)%360 < (theta - heading)%360) {
-//                    System.out.println("downwind LEFT");
-//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-//                }
-//                else {
-//                    System.out.println("upwind LEFT");
-//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-//                }
-//            }
-//            else {
-//                if((heading - theta)%360 > (theta - heading)%360 ){
-//                    System.out.println("upwind RIGHT");
-//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-//                }
-//                else {
-//                    System.out.println("downwind RIGHT");
-//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-//                }
-//            }
-
-
         }
-
 
     }
 
