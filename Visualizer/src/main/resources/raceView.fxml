@@ -12,7 +12,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<Pane fx:id="raceParentPane"  onZoom="#zoom" onTouchStationary="#turnBoat" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
+<Pane fx:id="raceParentPane" onTouchStationary="#turnBoat" onZoom="#zoom" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
    <children>
       <AnchorPane fx:id="raceView" prefHeight="1080.0" prefWidth="1000.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
@@ -29,7 +29,7 @@
               </Label>
               <CheckBox fx:id="fpsToggle" layoutX="10.0" layoutY="391.0" mnemonicParsing="false" text="Show FPS" />
               <Text layoutX="12.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Annotations" />
-              <WebView fx:id="mapView" prefHeight="200.0" prefWidth="200.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              <WebView fx:id="mapView" layoutX="-165.0" layoutY="-37.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="37.0" AnchorPane.leftAnchor="-165.0" AnchorPane.rightAnchor="165.0" AnchorPane.topAnchor="-37.0" />
               <Group fx:id="annotationGroup" layoutX="10.0" layoutY="252.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="252.0">
                   <children>
                       <CheckBox fx:id="nameButton" mnemonicParsing="false" selected="true" text="Team Name" />
@@ -77,6 +77,7 @@
                       <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="103.0" vgrow="SOMETIMES" />
                   </rowConstraints>
               </GridPane>
+            <Slider fx:id="sailSlider" layoutX="1350.0" layoutY="350.0" orientation="VERTICAL" prefHeight="250.0" prefWidth="60.0" />
           </children>
 
 

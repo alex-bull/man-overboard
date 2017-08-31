@@ -4,6 +4,8 @@ import Animations.CollisionRipple;
 import Animations.RandomShake;
 import com.rits.cloning.Cloner;
 import javafx.animation.FadeTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
@@ -80,6 +82,7 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
     @FXML private Label fpsCounter;
+    @FXML private Slider sailSlider;
     @FXML private RadioButton allAnnotationsRadio;
     @FXML private RadioButton noAnnotationsRadio;
     @FXML private RadioButton someAnnotationsRadio;
@@ -316,6 +319,16 @@ public class RaceViewController implements Initializable, TableObserver {
         } else {
             sailLine.getTransforms().add(new Rotate(windAngle, boatPositionX, boatPositionY));
         }
+
+        sailSlider.valueProperty().addListener((ov, old_val, new_val) -> {
+            BinaryPackager binaryPackager = new BinaryPackager();
+            if(old_val.doubleValue() < 50 && new_val.doubleValue() >= 50){
+                this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILS.getValue(), boat.getSourceID()));
+            } else if (old_val.doubleValue() >= 50 && new_val.doubleValue() < 50){
+                this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILS.getValue(), boat.getSourceID()));
+            }
+
+        });
 
         sailLine.toFront();
 
@@ -1454,30 +1467,21 @@ public class RaceViewController implements Initializable, TableObserver {
             theta = 360 + theta;
         }
 
-
-
         BinaryPackager binaryPackager = new BinaryPackager();
         if (!(heading <= theta + 10 && heading >= theta -10)) {
-            System.out.println(downWind + " downwind thingy. " + windAngle + " windangle");
-            System.out.println(heading + " heading od boat. " + theta + " theta");
-            System.out.println(heading - windAngle);
             if(heading<= windAngle && (heading >= downWind || heading - windAngle < 0 )) {
                 if((heading - theta)%360 > (theta - heading)%360) {
-                    System.out.println("1 downwind");
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
                 }
                 else {
-                    System.out.println("1 upwind");
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
                 }
             }
             else {
                 if((heading - theta)%360 < (theta - heading)%360 ){
-                    System.out.println("2 downwind");
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
                 }
                 else {
-                    System.out.println("2 upwind");
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
                 }
             }
