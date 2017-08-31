@@ -242,33 +242,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     /**
-     * Draws the virtual line of the selected boat with the same color
-     * @param boatColor color of the boat
-     * @param selectedBoat selected boat
-     */
-    private void drawVirtualLine(Color boatColor, Competitor selectedBoat) {
-
-        //get things we need
-        MutablePoint startMark1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0)).getPixelLocations().get(0);
-        MutablePoint startMark2 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(1)).getPixelLocations().get(0);
-        CourseFeature startLine1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0));
-        long expectedStartTime = dataSource.getExpectedStartTime();
-        long messageTime = dataSource.getMessageTime();
-
-        List<MutablePoint> virtualLinePoints = RaceCalculator.calcVirtualLinePoints(selectedBoat, boatModels.get(selectedBoat.getSourceID()),startMark1,startMark2,startLine1,expectedStartTime,messageTime);
-        if (!virtualLinePoints.isEmpty()) {
-            MutablePoint virtualLine1 = virtualLinePoints.get(0);
-            MutablePoint virtualLine2 = virtualLinePoints.get(1);
-            virtualLine.setStroke(boatColor);
-            virtualLine.setStartX(virtualLine1.getXValue());
-            virtualLine.setStartY(virtualLine1.getYValue());
-            virtualLine.setEndX(virtualLine2.getXValue());
-            virtualLine.setEndY(virtualLine2.getYValue());
-        }
-    }
-
-
-    /**
      * Draws the course features on the canvas
      */
     private void drawCourse(Map<Integer,CourseFeature> courseFeatures) {
@@ -276,16 +249,13 @@ public class RaceViewController implements Initializable, TableObserver {
         // loops through all course features
         for (CourseFeature courseFeature : courseFeatures.values()) {
             drawMark(courseFeature);
-//            mapEngine.executeScript(String.format("drawMarker(%.9f,%.9f);",courseFeature.getGPSPoint().getXValue(),courseFeature.getGPSPoint().getYValue()));
         }
-
         MutablePoint startLine1=courseFeatures.get(dataSource.getStartMarks().get(0)).getPixelLocations().get(0);
         MutablePoint startLine2=courseFeatures.get(dataSource.getStartMarks().get(1)).getPixelLocations().get(0);
         MutablePoint finishLine1=courseFeatures.get(dataSource.getFinishMarks().get(0)).getPixelLocations().get(0);
         MutablePoint finishLine2=courseFeatures.get(dataSource.getFinishMarks().get(1)).getPixelLocations().get(0);
         drawLine(startLine, startLine1,startLine2);
         drawLine(finishLine,finishLine1,finishLine2);
-
     }
 
 
@@ -469,7 +439,6 @@ public class RaceViewController implements Initializable, TableObserver {
             speed.setFont(Font.font("Monospaced"));
             speed.setTextFill(boat.getColor());
             this.raceViewPane.getChildren().add(speed);
-
         }
     }
 
@@ -494,7 +463,6 @@ public class RaceViewController implements Initializable, TableObserver {
             name.setText("");
             speed.setText("");
         }
-
         name.setLayoutX(point.getXValue() + 5);
         name.setLayoutY(point.getYValue()+ offset);
         offset += 12;
@@ -764,15 +732,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
             if (counter % 70 == 0) {
                 drawTrack(boat);
-                if (selectedBoatSourceId != 0
-                        && selectedBoatSourceId == boat.getSourceID()
-                        && dataSource.getRaceStatus() == PREPARATORY) {
-                    Color boatColor = boat.getColor();
-                    drawVirtualLine(boatColor, boat);
-                } else if (dataSource.getRaceStatus() == STARTED) {
-                    raceViewPane.getChildren().remove(virtualLine);
-                    virtualLine=null;
-                }
             }
             this.drawWake(boat, boatLength, startWakeOffset, wakeWidthFactor, wakeLengthFactor);
             this.drawBoat(boat);
