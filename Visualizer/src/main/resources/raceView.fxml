@@ -77,7 +77,7 @@
                       <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="103.0" vgrow="SOMETIMES" />
                   </rowConstraints>
               </GridPane>
-            <Slider fx:id="sailSlider" layoutX="1350.0" layoutY="350.0" orientation="VERTICAL" prefHeight="250.0" prefWidth="60.0" />
+            <Slider fx:id="sailSlider" layoutX="1350.0" layoutY="350.0" orientation="VERTICAL" prefHeight="250.0" prefWidth="60.0" value="100.0" />
           </children>
 
 

@@ -26,8 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import static mockDatafeed.Keys.RIP;
-import static mockDatafeed.Keys.SAILS;
+import static mockDatafeed.Keys.*;
 import static parsers.BoatStatusEnum.*;
 import static parsers.MessageType.UNKNOWN;
 import static utilities.Utility.fileToString;
@@ -196,9 +195,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 int sourceID = headerData.getSourceID();
                 Keys action = Keys.getKeys(packet[0]);
                 switch (action) {
-                    case SAILS:
-                        sendBoatAction(SAILS.getValue(), sourceID);
-                        competitors.get(sourceID).switchSails();
+                    case SAILSIN:
+                        sendBoatAction(SAILSIN.getValue(), sourceID);
+                        competitors.get(sourceID).sailsIn();
+                        break;
+                    case SAILSOUT:
+                        sendBoatAction(SAILSOUT.getValue(), sourceID);
+                        competitors.get(sourceID).sailsOut();
                         break;
                     case UP:
                         competitors.get(sourceID).changeHeading(true, shortToDegrees(windGenerator.getWindDirection()));
@@ -293,7 +296,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         prestart = new MutablePoint(32.41011 + a, -64.88937);
 
         Boat newCompetitor = new Boat("Boat " + currentSourceID, random.nextInt(20) + 20, prestart, "B" + currentSourceID, currentSourceID, PRESTART);
-        newCompetitor.setCurrentHeading(0);
+        newCompetitor.setCurrentHeading(90);
         competitors.put(currentSourceID, newCompetitor);
         currentSourceID += 1;
         return currentSourceID - 1;

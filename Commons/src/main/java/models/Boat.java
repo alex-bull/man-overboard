@@ -163,6 +163,16 @@ public class Boat implements Competitor {
     }
 
     /**
+     * Switches the sail state of the boat to be in
+     */
+    public void sailsIn(){ sailsOut = false; }
+
+    /**
+     * Switches the sails state of the boat to be out
+     */
+    public void sailsOut(){ sailsOut = true; }
+
+    /**
      * Returns the sail state of the boat
      * @return sailsOut sail state of the boat
      */

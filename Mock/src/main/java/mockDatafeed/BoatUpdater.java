@@ -217,7 +217,7 @@ public class BoatUpdater {
 
         if(boat.getCurrentLegIndex() == 6){
             if (!finisherList.contains(boat)){
-                boat.switchSails();
+                boat.sailsIn();
                 finisherList.add(boat);
             }
         }
