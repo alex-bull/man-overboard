@@ -1455,34 +1455,36 @@ public class RaceViewController implements Initializable, TableObserver {
         }
 
 
-        BinaryPackager binaryPackager = new BinaryPackager();
-        if (!(heading <= (theta + 10)%360 && heading >= (theta -10)%360)) {
-            System.out.println(downWind + " downwind thingy. " + windAngle + " windangle");
 
-            if(heading<= windAngle && heading >= downWind) {
-                if(heading > theta) {
-                    System.out.println("downwind");
+        BinaryPackager binaryPackager = new BinaryPackager();
+        if (!(heading <= theta + 10 && heading >= theta -10)) {
+            System.out.println(downWind + " downwind thingy. " + windAngle + " windangle");
+            System.out.println(heading + " heading od boat. " + theta + " theta");
+            System.out.println(heading - windAngle);
+            if(heading<= windAngle && (heading >= downWind || heading - windAngle < 0 )) {
+                if((heading - theta)%360 > (theta - heading)%360) {
+                    System.out.println("1 downwind");
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
                 }
                 else {
-                    System.out.println("upwind");
+                    System.out.println("1 upwind");
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
                 }
             }
             else {
-                if(heading < theta%360) {
-                    System.out.println("downwind");
+                if((heading - theta)%360 < (theta - heading)%360 ){
+                    System.out.println("2 downwind");
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
                 }
                 else {
-                    System.out.println("upwind");
+                    System.out.println("2 upwind");
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
                 }
             }
 
 
         }
-        System.out.println(heading + " heading od boat. " + theta + " theta");
+
 
     }
 
