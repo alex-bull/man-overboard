@@ -2,10 +2,7 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
-import models.Boat;
-import models.Competitor;
-import models.MutablePoint;
-import models.RaceCourse;
+import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.header.HeaderData;
@@ -351,7 +348,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * @param sourceId Integer source id of the boat
      * @param health   Integer health of the boat
      */
-    public void boatStateEvent(Integer sourceId, Integer health) {
+    public void boatStateEvent(Integer sourceId, double health) {
 
         Competitor boat = competitors.get(sourceId);
         if (health >= boat.getMaxHealth()) {

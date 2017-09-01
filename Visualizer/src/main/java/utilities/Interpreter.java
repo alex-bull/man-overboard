@@ -564,10 +564,6 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
-    public List<MutablePoint> getCourseBoundary17() {
-        return courseBoundary17;
-    }
-
     @Override
     public int getZoomLevel() {
         return zoomLevel;

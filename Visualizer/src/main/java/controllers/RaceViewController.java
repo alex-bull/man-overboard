@@ -3,18 +3,13 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
-import com.google.common.collect.Maps;
-import com.rits.cloning.Cloner;
 import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -47,7 +42,6 @@ import netscape.javascript.JSException;
 import parsers.Converter;
 import parsers.RaceStatusEnum;
 import utilities.*;
-import utilities.*;
 
 import utilities.Annotation;
 
@@ -55,8 +49,6 @@ import utilities.DataSource;
 import utilities.PolarTable;
 import utility.BinaryPackager;
 
-import java.awt.geom.Line2D;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -213,7 +205,7 @@ public class RaceViewController implements Initializable, TableObserver {
         double offsetFromOrigin = -1 * (arrowLength + arrowHeadLength) + 30;
 
         controlsView = new ImageView();
-        Image image = new Image("controls.png");
+        Image image = new Image("images/controls.png");
         controlsView.setImage(image);
         guideArrow.getPoints().addAll(
                 -5., offsetFromOrigin, //tail left
@@ -834,7 +826,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.raceViewPane.getChildren().add(boatModel);
 
             ImageView ripImage = new ImageView();
-            Image tombstone = new Image("/cross.png");
+            Image tombstone = new Image("/images/cross.png");
             ripImage.setImage(tombstone);
             ripImage.setPreserveRatio(true);
             ripImage.setVisible(false);

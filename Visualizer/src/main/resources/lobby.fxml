@@ -59,7 +59,7 @@
                <children>
                   <ImageView fx:id="boatImageView" fitHeight="136.0" fitWidth="382.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
                      <image>
-                        <Image url="@boat.png" />
+                        <Image url="@images/boat.png" />
                      </image>
                   </ImageView>
                   <Label fx:id="playerLabel" text="xXXQuickBoater2000XxXx" textFill="#e0efef" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
@@ -71,7 +71,7 @@
                      <children>
                         <ImageView fx:id="courseImageView" fitWidth="400.0" layoutX="32.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <image>
-                              <Image url="@courseImage.png" />
+                              <Image url="@images/courseImage.png" />
                            </image>
                         </ImageView>
                         <Label fx:id="locationLabel" layoutX="48.0" layoutY="148.0" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="382.0" style="-fx-background-color: grey;" text="Bermuda" textFill="#e0efef" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
