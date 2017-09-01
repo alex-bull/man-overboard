@@ -189,7 +189,7 @@ public class TCPServer extends TimerTask {
                         SocketChannel client = serverSocket.accept();
                         client.configureBlocking(false);
 
-                        // Assign the connection a unique source id TODO:- this may need to change to remove the method call to connectionClient
+                        // Assign the connection a unique source id
                         // This will become the boat source id if they register as a player
                         int sourceID = connectionClient.getNextSourceId();
                         client.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, sourceID);
