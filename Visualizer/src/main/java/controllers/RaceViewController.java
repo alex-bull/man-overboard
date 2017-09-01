@@ -132,8 +132,6 @@ public class RaceViewController implements Initializable, TableObserver {
         mapEngine.setJavaScriptEnabled(true);
         mapView.toBack();
 
-        isLoaded = true; //TODO:- TAKE THIS OUT AGAIN
-
         try {
             mapEngine.load(getClass().getClassLoader().getResource("maps.html").toURI().toString());
         } catch (URISyntaxException e) {
