@@ -240,4 +240,33 @@ public class RaceCalculator {
         return angle;
     }
 
+
+
+    /**
+     * Gets the centre coordinates for a mark or gate
+     * @param markIndex index of the mark (based on the order they are rounded)
+     * @param indexMap Map of index to sourceId
+     * @param featureMap Map of sourceId to courseFeature
+     * @return MutablePoint (x,y) coordinates
+     */
+    public static MutablePoint getGateCentre(Integer markIndex, Map<Integer, List<Integer>> indexMap,  Map<Integer, CourseFeature> featureMap) {
+
+        Map<Integer, List<Integer>> features = indexMap;
+        if (markIndex > features.size()) return null; //passed the finish line
+
+        List<Integer> ids = features.get(markIndex);
+        if (ids == null) return null;
+        CourseFeature featureOne = featureMap.get(ids.get(0));
+        Double markX = featureOne.getPixelCentre().getXValue();
+        Double markY = featureOne.getPixelCentre().getYValue();
+
+        if (ids.size() > 1) { //Get the centre point of gates
+            CourseFeature featureTwo = featureMap.get(ids.get(1));
+            markX = (featureOne.getPixelCentre().getXValue() + featureTwo.getPixelCentre().getXValue()) / 2;
+            markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
+        }
+        return new MutablePoint(markX, markY);
+    }
+
+
 }

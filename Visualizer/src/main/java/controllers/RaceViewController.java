@@ -38,6 +38,7 @@ import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
 import utilities.DataSource;
+import utilities.RaceCalculator;
 import utility.BinaryPackager;
 
 import java.net.URISyntaxException;
@@ -550,17 +551,19 @@ public class RaceViewController implements Initializable, TableObserver {
      * Update the position of the guide arrow
      */
     private void drawGuidingArrow() {
+        Map<Integer, List<Integer>> indexMap = dataSource.getIndexToSourceIdCourseFeatures();
+        Map<Integer, CourseFeature> featureMap = dataSource.getCourseFeatureMap();
 
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         int currentIndex = boat.getCurrentLegIndex();
-        MutablePoint nextMarkLocation = getGateCentre(currentIndex + 1);
+        MutablePoint nextMarkLocation = RaceCalculator.getGateCentre(currentIndex + 1, indexMap, featureMap);
 
         if (nextMarkLocation == null) { //end of race
             this.raceViewPane.getChildren().remove(guideArrow);
             return;
         }
         if (isZoom()) guideArrow.updateArrowZoomed(boat, boatPositionX, boatPositionY, nextMarkLocation);
-        else guideArrow.updateArrow(getGateCentre(currentIndex), nextMarkLocation);
+        else guideArrow.updateArrow(RaceCalculator.getGateCentre(currentIndex, indexMap, featureMap), nextMarkLocation);
     }
 
 
@@ -568,7 +571,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draw annotations and move with boat positions
      */
     private void drawAnnotations(Competitor boat) {
-        
+
         Annotation annotation = annotations.get(boat.getSourceID());
         if (annotation == null) {
             annotation = new Annotation(boat);
@@ -595,6 +598,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
 
+
     //================================================================================================================
     // VIEW SCALING
     //================================================================================================================
@@ -617,7 +621,6 @@ public class RaceViewController implements Initializable, TableObserver {
         playerMarker.setScaleY(scale);
 
     }
-
 
 
     /**
@@ -677,35 +680,13 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
 
-    /**
-     * Gets the centre coordinates for a mark or gate
-     * @param markIndex index of the mark (based on the order they are rounded)
-     * @return MutablePoint (x,y) coordinates
-     */
-    private MutablePoint getGateCentre(Integer markIndex) {
-
-        Map<Integer, List<Integer>> features = this.dataSource.getIndexToSourceIdCourseFeatures();
-        if (markIndex > features.size()) return null; //passed the finish line
-
-        List<Integer> ids = features.get(markIndex);
-        if (ids == null) return null;
-        CourseFeature featureOne = this.dataSource.getCourseFeatureMap().get(ids.get(0));
-        Double markX = featureOne.getPixelCentre().getXValue();
-        Double markY = featureOne.getPixelCentre().getYValue();
-
-        if (ids.size() > 1) { //Get the centre point of gates
-            CourseFeature featureTwo = this.dataSource.getCourseFeatureMap().get(ids.get(1));
-            markX = (featureOne.getPixelCentre().getXValue() + featureTwo.getPixelCentre().getXValue()) / 2;
-            markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
-        }
-        return new MutablePoint(markX, markY);
-    }
 
 
 
 
-
-
+    //================================================================================================================
+    // MAIN
+    //================================================================================================================
 
 
     /**
@@ -746,10 +727,6 @@ public class RaceViewController implements Initializable, TableObserver {
         this.drawGuidingArrow();
         counter++;
     }
-
-
-
-
 
 
     /**
