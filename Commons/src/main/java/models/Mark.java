@@ -33,6 +33,10 @@ public class Mark implements CourseFeature {
         this.index = index;
     }
 
+    @Override
+    public void setPixelLocation(MutablePoint newLocation) {
+        pixelLocation=newLocation;
+    }
 
     public boolean isLine() {
         return false;
@@ -101,8 +105,8 @@ public class Mark implements CourseFeature {
      * @param minY    double the min y value
      */
     @Override
-    public void factor(double xFactor, double yFactor, double minX, double minY, double xBuffer, double yBuffer) {
-        pixelLocation.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
+    public MutablePoint factor(double xFactor, double yFactor, double minX, double minY, double xBuffer, double yBuffer) {
+        return pixelLocation.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
     }
 
     /**

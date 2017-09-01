@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'merriweather';
+    src: url('../fonts/merriweather.regular.ttf');
+}
+
 .background {
     -fx-background-color: #7dcdcd;
 
@@ -148,4 +153,8 @@
 
 .table-view .table-column {
     -fx-alignment: CENTER;
+}
+
+.merriweather{
+    -fx-font-family: 'merriweather';
 }

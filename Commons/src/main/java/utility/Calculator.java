@@ -5,6 +5,7 @@ import models.MutablePoint;
 import models.Vector;
 
 import static java.lang.Math.*;
+import static parsers.Converter.hexByteArrayToInt;
 
 /**
  * Created by psu43 on 17/07/17.
@@ -12,6 +13,8 @@ import static java.lang.Math.*;
  */
 public class Calculator {
 
+
+    final static int earthRadius = 6371;
     /**
      * Calculates the angle between two points
      * @param x1 point 1's x value
@@ -131,5 +134,28 @@ public class Calculator {
     public static Vector multiply(double s, Vector v){
         return new Force(s*v.getXValue(),s*v.getYValue(),true);
     }
+
+    /**
+     * moves the point from the current position by the force
+     * @param force the force which the boat is affected by
+     * @param point the point at the start
+     * @param elapsedTime the time period of this movement
+     */
+    public static MutablePoint movePoint(Force force, MutablePoint point, double elapsedTime){
+        double distance = force.getMagnitude() * elapsedTime / 1000; // in km
+        double lat1 = point.getXValue() * Math.PI / 180; // in radians
+        double lng1 = point.getYValue() * Math.PI / 180;
+        double bearing = force.getDirection() * Math.PI / 180;
+
+        //calculate new positions
+        double lat2 = Math.asin(Math.sin(lat1) * Math.cos(distance / earthRadius) +
+                Math.cos(lat1) * Math.sin(distance / earthRadius) * Math.cos(bearing));
+        double lng2 = lng1 + Math.atan2(Math.sin(bearing) * Math.sin(distance / earthRadius) * Math.cos(lat1),
+                Math.cos(distance / earthRadius) - Math.sin(lat1) * Math.sin(lat2));
+
+        //turn the new lat and lng back to degrees
+        return new MutablePoint(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI);
+    }
+
 
 }

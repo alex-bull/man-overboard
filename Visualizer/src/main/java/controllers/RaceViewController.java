@@ -3,6 +3,7 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
+import com.google.common.collect.Maps;
 import com.rits.cloning.Cloner;
 import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
@@ -40,6 +41,7 @@ import javafx.util.Duration;
 import mockDatafeed.Keys;
 import models.Competitor;
 import models.CourseFeature;
+import models.CrewLocation;
 import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.Converter;
@@ -94,6 +96,15 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private GridPane finisherListPane;
     @FXML private ListView finisherListView;
 
+    private Map<Integer, ImageView> fallenCrews=new HashMap<>();
+
+    public GridPane getFinisherListPane() {
+        return finisherListPane;
+    }
+
+    public ListView getFinisherListView() {
+        return finisherListView;
+    }
 
     private ObservableList<String> observableFinisherList = observableArrayList();
     private Boolean finisherListDisplayed = false;
@@ -323,8 +334,8 @@ public class RaceViewController implements Initializable, TableObserver {
         double tombstoneSize = 30;
         double maxBarLength = 30;
         double sourceId = boat.getSourceID();
-        int healthLevel = boat.getHealthLevel();
-        double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength);
+        double healthLevel = boat.getHealthLevel();
+        double healthSize = (healthLevel /  boat.getMaxHealth() * maxBarLength);
         if(this.zoom) {
             offset = offset * 2;
             strokeWidth *= 2;
@@ -550,7 +561,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void zoomIn(){
         zoom=true;
-        mapEngine.executeScript("setZoom(17);");
+        mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getZoomLevel()));
         updateRace();
         setScale(2);
         track.setVisible(!isZoom());
@@ -563,7 +574,6 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void zoomOut(){
         zoom=false;
-
         drawBackgroundImage();
         updateRace();
         setScale(1);
@@ -625,15 +635,15 @@ public class RaceViewController implements Initializable, TableObserver {
                         this.nameAnnotations.put(sourceID, label);
                         break;
                     case BOAT_SPEED:
-                        label = new Label(String.valueOf(boat.getVelocity()) + "m/s");
+                        label = new Label(String.format("%.2f m/s",boat.getVelocity()));
                         this.speedAnnotations.put(sourceID, label);
                         break;
                     case EST_TIME_TO_NEXT_MARK:
-                        label = new Label(String.valueOf(boat.getTimeToNextMark()) + " seconds");
+                        label = new Label(String.format("%d seconds",boat.getTimeToNextMark()));
                         this.timeToMarkAnnotations.put(sourceID, label);
                         break;
                     case TIME_FROM_LAST_MARK:
-                        label = new Label(String.valueOf(timeFromLastMark) + " seconds");
+                        label = new Label(String.format("%d seconds",timeFromLastMark));
                         this.timeFromMarkAnnotations.put(sourceID, label);
                         break;
                 }
@@ -687,12 +697,12 @@ public class RaceViewController implements Initializable, TableObserver {
                     break;
                 case BOAT_SPEED:
                     label = this.speedAnnotations.get(sourceID);
-                    label.setText(String.valueOf(boat.getVelocity()) + "m/s");
+                    label.setText(String.format("%.2f m/s",boat.getVelocity()));
                     break;
                 case EST_TIME_TO_NEXT_MARK:
                     label = this.timeToMarkAnnotations.get(sourceID);
                     if (boat.getTimeToNextMark() > 0) {
-                        label.setText(String.valueOf(boat.getTimeToNextMark()) + "s to Next Mark");
+                        label.setText(String.format("%d seconds",boat.getTimeToNextMark()));
                     } else {
                         label.setText("--");
                     }
@@ -700,7 +710,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 case TIME_FROM_LAST_MARK:
                     label = this.timeFromMarkAnnotations.get(sourceID);
                     if (timeFromLastMark > 0) {
-                        label.setText(String.valueOf(timeFromLastMark) + "s from Last Mark");
+                        label.setText(String.format("%d seconds",timeFromLastMark));
                     } else {
                         label.setText("--");
                     }
@@ -1069,13 +1079,13 @@ public class RaceViewController implements Initializable, TableObserver {
             for(MutablePoint p: dataSource.getCourseBoundary17()){
                 courseBoundary.add(p.shift(-currentPosition17.getXValue()+raceViewCanvas.getWidth()/2,-currentPosition17.getYValue()+raceViewCanvas.getHeight()/2));
             }
-
         }else{
             courseFeatures=dataSource.getStoredFeatures();
             courseBoundary = dataSource.getCourseBoundary();
         }
         drawCourse(courseFeatures);
         drawBoundary(courseBoundary);
+
     }
 
 
@@ -1184,19 +1194,59 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+    public void drawFallenCrew(){
+
+        Map<Integer,CrewLocation> crewLocation=dataSource.getCrewLocations();
+//        System.out.println(dataSource.getCrewLocations());
+
+        //remove entries
+        Set<Integer> removedLocation= new HashSet<>(fallenCrews.keySet());
+        removedLocation.removeAll(crewLocation.keySet());
+        for(int sourceId:removedLocation){
+            raceViewPane.getChildren().remove(fallenCrews.get(sourceId));
+            fallenCrews.remove(sourceId);
+        }
+
+        for(int sourceID:crewLocation.keySet()) {
+            if (!fallenCrews.containsKey(sourceID)) {
+                ImageView crew = new ImageView();
+                Image drowning = new Image("/Animations/iCantSwim.gif");
+                crew.setImage(drowning);
+
+//            Circle crew;
+                fallenCrews.put(sourceID,crew);
+                raceViewPane.getChildren().add(crew);
+//            System.out.println(crewLocation);
+            }
+
+            Image image=fallenCrews.get(sourceID).getImage();
+            if (isZoom()) {
+                MutablePoint p = crewLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+                fallenCrews.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+            } else {
+                MutablePoint p=crewLocation.get(sourceID).getPosition();
+                fallenCrews.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+            }
+
+        }
+
+    }
+
+
 
     /**
      * Refreshes the contents of the display to match the datasource
      *
      */
     void refresh() {
-
+        drawFallenCrew();
         updateRaceStatus();
         updateFPS();
         setBoatLocation();
         updateRace();
         checkCollision();
         updateGuidingArrow();
+
     }
 
     boolean isLoaded() {

@@ -4,6 +4,8 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
 import parsers.RaceStatusEnum;
@@ -24,8 +26,6 @@ public class MainController {
     @FXML private GridPane loadingPane;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
-
-
 
     /**
      * Handle control key events
@@ -67,6 +67,15 @@ public class MainController {
                     else if (raceViewController.isZoom()) {
                         tableController.makeVisible();
                     }
+                    break;
+
+                case UP:
+                    dataSource.changeScaling(1);
+                    raceViewController.zoomIn();
+                    break;
+                case DOWN:
+                    dataSource.changeScaling(-1);
+                    raceViewController.zoomIn();
                     break;
             }
     }

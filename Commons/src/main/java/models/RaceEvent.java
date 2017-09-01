@@ -8,7 +8,7 @@ public class RaceEvent{
 
     private Integer boatSourceId;
     private String teamName;
-    private Double speed;
+    private String speed;
     private int position;
     private String feature;
 
@@ -21,7 +21,7 @@ public class RaceEvent{
      * @param feature String the course feature the boat has passed
      * @param position int the position of the boat
      */
-    public RaceEvent(Integer boatSourceId, String teamName, String feature, Double speed, int position) {
+    public RaceEvent(Integer boatSourceId, String teamName, String feature, String speed, int position) {
         this.boatSourceId = boatSourceId;
         this.teamName = teamName;
         this.feature = feature;
@@ -46,11 +46,11 @@ public class RaceEvent{
         return teamName;
     }
 
-    public Double getSpeed() {
+    public String getSpeed() {
         return speed;
     }
 
-    public void setSpeed(Double speed) {
+    public void setSpeed(String speed) {
         this.speed = speed;
     }
 
