@@ -532,6 +532,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawAnnotations(Competitor boat) {
 
+        if (boat.getSourceID() == dataSource.getSourceID()) return; //don't draw annotations for the player
         Annotation annotation = annotations.get(boat.getSourceID());
         if (annotation == null) {
             annotation = new Annotation(boat);
