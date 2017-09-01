@@ -12,11 +12,10 @@ import static javafx.scene.paint.Color.BLACK;
 
 /**
  * Created by mattgoodson on 1/09/17.
+ * A visual representation of a boat
  */
 public class BoatModel extends Group {
-
-    private Polygon boat;
-    private Shape playerMarker;
+    
 
     public BoatModel(Color color, boolean player) {
 
@@ -48,10 +47,7 @@ public class BoatModel extends Group {
         this.toFront();
         this.getTransforms().clear();
         this.getTransforms().add(new Rotate(heading, 0, 0));
-        if (this.playerMarker != null) {
-            playerMarker.setLayoutX(position.getXValue());
-            playerMarker.setLayoutY(position.getYValue());
-        }
+
     }
 
 }
