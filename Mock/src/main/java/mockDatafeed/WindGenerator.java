@@ -36,14 +36,14 @@ class WindGenerator {
      * @return short wind speed
      */
     private short getRandomWindSpeed() {
-        if(windSpeed < 3000) {
-            windSpeed = (short) (ThreadLocalRandom.current().nextInt(0, 2+1) + windSpeed);
+        if(windSpeed < 4000) {
+            windSpeed = (short) (ThreadLocalRandom.current().nextInt(0, 10) + windSpeed);
         }
         else if(windSpeed > 8000) {
-            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-2, 0) + windSpeed);
+            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-10, 0) + windSpeed);
         }
         else {
-            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-2, 2+1) + windSpeed);
+            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-10, 11) + windSpeed);
         }
 
         return windSpeed;

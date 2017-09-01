@@ -175,6 +175,7 @@ public class RaceViewController implements Initializable, TableObserver {
         controlsBox.setPrefHeight(height);
         controlsBox.setPrefWidth(width);
         raceViewPane.getChildren().add(track);
+        gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
 
         this.dataSource = dataSource;
 
