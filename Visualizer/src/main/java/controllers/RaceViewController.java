@@ -13,7 +13,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -26,7 +25,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -46,7 +44,8 @@ import java.net.URL;
 import java.util.*;
 
 import static javafx.collections.FXCollections.observableArrayList;
-import static javafx.scene.paint.Color.*;
+import static javafx.scene.paint.Color.BLACK;
+import static javafx.scene.paint.Color.ORANGERED;
 import static parsers.BoatStatusEnum.DSQ;
 
 
@@ -56,7 +55,7 @@ import static parsers.BoatStatusEnum.DSQ;
 public class RaceViewController implements Initializable, TableObserver {
 
 
-    //VIEW ARTIFACTS
+    //VIEW ELEMENTS
     @FXML private AnchorPane raceView;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
@@ -71,11 +70,9 @@ public class RaceViewController implements Initializable, TableObserver {
     private Shape playerMarker;
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Double, HealthBar> healthBars = new HashMap<>();
-//    private Map<Integer, Label> nameAnnotations = new HashMap<>();
-//    private Map<Integer, Label> speedAnnotations = new HashMap<>();
     private Map<Integer, Annotation> annotations = new HashMap<>();
     private Map<String, Shape> markModels = new HashMap<>();
-    private Group track=new Group();
+    private Track track = new Track();
     private Line startLine;
     private Line finishLine;
     private GuideArrow guideArrow;
@@ -528,22 +525,10 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Draw the next dot of track for the boat on the canvas
-     *
      * @param boat Competitor
      */
     private void drawTrack(Competitor boat) {
-
-        MutablePoint point=boat.getPosition();
-        Circle circle = new Circle(point.getXValue(), point.getYValue(), 1.5, boat.getColor());
-        //add fade transition
-        FadeTransition ft = new FadeTransition(Duration.millis(20000), circle);
-        ft.setFromValue(1);
-        ft.setToValue(0.15);
-        ft.setOnFinished(event -> {
-            track.getChildren().remove(circle);
-        });
-        ft.play();
-        track.getChildren().add(circle);
+        this.track.addDot(boat.getPosition(), boat.getColor());
     }
 
 
