@@ -314,10 +314,11 @@ public class RaceViewController implements Initializable, TableObserver {
         sailLine.getTransforms().clear();
 
 
-        if (boat.hasSailsOut()) {
-            sailLine.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatPositionX, boatPositionY));
-        } else {
+        if (boat.getSailValue() == 0) {
             sailLine.getTransforms().add(new Rotate(windAngle, boatPositionX, boatPositionY));
+
+        } else {
+            sailLine.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatPositionX, boatPositionY));
         }
 
         sailLine.toFront();
@@ -1422,16 +1423,22 @@ public class RaceViewController implements Initializable, TableObserver {
      * Checks the slider position and updates the sail of the boat
      */
     private void updateSails(){
+
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+
         sailSlider.valueProperty().addListener((ov, old_val, new_val) -> {
             BinaryPackager binaryPackager = new BinaryPackager();
-            if(new_val.doubleValue() >= 90){
+            if(new_val.doubleValue() > old_val.doubleValue()){
+                System.out.println("boat sails OUT ");
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), boat.getSourceID()));
-            } else if (new_val.doubleValue() <= 10){
+            } else{
+                System.out.println("boat sails IN ");
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), boat.getSourceID()));
             }
 
         });
+
+
     }
 
 

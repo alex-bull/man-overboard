@@ -62,6 +62,8 @@ public class Boat implements Competitor {
     }
 
     private boolean sailsOut = true;
+    private double sailValue = 1;
+
     /**
      * Creates a boat
      *
@@ -163,22 +165,30 @@ public class Boat implements Competitor {
     }
 
     /**
-     * Switches the sail state of the boat to be in
+     * Switches the sail state of the boat to be further in
      */
-    public void sailsIn(){ sailsOut = false; }
+    public void sailsIn(){
+        double minSailValue = 0;
+        if(sailValue != minSailValue){
+            sailValue -= .5;
+        }
+    }
 
     /**
-     * Switches the sails state of the boat to be out
+     * Switches the sails state of the boat to be further out
      */
-    public void sailsOut(){ sailsOut = true; }
+    public void sailsOut(){
+        double maxSailValue = 4;
+        if(sailValue != maxSailValue){
+            sailValue += .5;
+        }
+    }
 
     /**
      * Returns the sail state of the boat
-     * @return sailsOut sail state of the boat
+     * @return double - the value of the sail slider
      */
-    public boolean hasSailsOut() {
-        return sailsOut;
-    }
+    public double getSailValue() { return sailValue; }
 
     public double getCollisionRadius() {
         return collisionRadius;
