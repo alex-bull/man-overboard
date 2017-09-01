@@ -421,19 +421,19 @@ public class Interpreter implements DataSource, PacketHandler {
         //add to competitorsPosition and storedCompetitors if they are new
 
         if (storedCompetitors.get(boatID) == null) {
-//        if (!storedCompetitors.keySet().contains(boatID)) {
             Competitor competitor = this.boatXMLParser.getBoats().get(boatID);
-            // boat colour
-            if (competitor.getColor() == null) {
-                Color colour = this.colourPool.getColours().get(0);
-                competitor.setColor(colour);
-                colourPool.getColours().remove(colour);
-            }
             this.storedCompetitors.put(boatID, competitor);
-           // competitorsPosition.add(competitor);
         } else {
             //update its properties
             Competitor updatingBoat=storedCompetitors.get(boatID);
+
+            // boat colour
+            if (updatingBoat.getColor() == null) {
+                Color colour = this.colourPool.getColours().get(0);
+                updatingBoat.setColor(colour);
+                colourPool.getColours().remove(colour);
+            }
+
             updatingBoat.setPosition(location);
             updatingBoat.setPosition17(location17);
             updatingBoat.setVelocity(boatData.getSpeed());
@@ -444,7 +444,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
         //order the list of competitors
         competitorsPosition.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
-//        this.competitorsPosition = comps;
     }
 
 
@@ -500,6 +499,9 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.boatXMLParser = new BoatXMLParser(xml.trim());
                     competitorsPosition.clear();
                     competitorsPosition.addAll(boatXMLParser.getBoats().values());
+                    if (this.sourceID != 0 && boatXMLParser.getBoats().get(this.sourceID) != null) {
+                        this.storedCompetitors.put(this.sourceID, boatXMLParser.getBoats().get(this.sourceID));
+                    }
                     break;
             }
         }

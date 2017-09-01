@@ -200,6 +200,7 @@ public class LobbyController implements Initializable {
         this.progressIndicator.setVisible(false);
         this.competitorList.clear();
         this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
+        if (dataSource.getCompetitor() != null) this.playerLabel.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
     }
 
 
