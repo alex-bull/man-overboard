@@ -8,9 +8,16 @@ import java.util.List;
 
 /**
  * Created by mattgoodson on 1/09/17.
+ * A tool for drawing on the canvas
  */
 public class CanvasDraw {
 
+    /**
+     * Draw a polygon on a canvas
+     * @param gc GraphicsContext, where to draw the polygon
+     * @param vertices List the vertices of the polygon
+     * @param fill Color the color of the polygon fill
+     */
     public static void polygon(GraphicsContext gc, List<MutablePoint> vertices, Color fill) {
         if (vertices != null) {
             gc.save();

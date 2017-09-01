@@ -15,8 +15,13 @@ import static javafx.scene.paint.Color.BLACK;
  * A visual representation of a boat
  */
 public class BoatModel extends Group {
-    
 
+
+    /**
+     * Initialize a boat model
+     * @param color Color the color of the boat
+     * @param player boolean, true if the player marker should be shown
+     */
     public BoatModel(Color color, boolean player) {
 
         Polygon boatModel = new Polygon();
@@ -39,7 +44,11 @@ public class BoatModel extends Group {
     }
 
 
-
+    /**
+     * Update the position of the boat model
+     * @param position MutablePoint the new location
+     * @param heading double the heading of the boat in degrees
+     */
     public void update(MutablePoint position, double heading) {
 
         this.setLayoutX(position.getXValue());

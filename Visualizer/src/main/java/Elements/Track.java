@@ -9,9 +9,15 @@ import models.MutablePoint;
 
 /**
  * Created by mattgoodson on 1/09/17.
+ * A Visual representation of a boats path
  */
 public class Track extends Group {
 
+    /**
+     * Adds a new fading point on the track
+     * @param position Mutable point the location of the dot
+     * @param color Color the color of the dot
+     */
     public void addDot(MutablePoint position, Color color) {
 
         Circle circle = new Circle(position.getXValue(), position.getYValue(), 1.5, color);

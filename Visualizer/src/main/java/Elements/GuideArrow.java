@@ -25,7 +25,11 @@ import static utilities.RaceCalculator.calculateAngleBetweenMarks;
 public class GuideArrow extends Polygon {
 
 
-
+    /**
+     * Initialize a guide arrow
+     * @param color Color, the color of the arrow
+     * @param startAngle double, the angle which the arrow points initially
+     */
     public GuideArrow(Color color, Double startAngle) {
 
         double arrowLength = -60; // default arrow points vertically in the -y direction (upwards)
@@ -49,10 +53,10 @@ public class GuideArrow extends Polygon {
 
     /**
      * Update the arrow position when zoomed in
-     * @param boat
-     * @param boatX
-     * @param boatY
-     * @param nextMarkLocation
+     * @param boat Competitor, the boat to position the arrow for
+     * @param boatX double, the x coord of the boat in screen coords
+     * @param boatY double, the y coord of the boat in screen coords
+     * @param nextMarkLocation MutablePoint, the location of the next mark
      */
     public void updateArrowZoomed(Competitor boat, Double boatX, Double boatY, MutablePoint nextMarkLocation) {
 
@@ -73,8 +77,8 @@ public class GuideArrow extends Polygon {
 
     /**
      * Update the arrow position when not zoomed in
-     * @param prevMarkLocation
-     * @param nextMarkLocation
+     * @param prevMarkLocation MutablePoint, the location of the last mark passed
+     * @param nextMarkLocation MutablePoint, the location of the next mark
      */
     public void updateArrow(MutablePoint prevMarkLocation, MutablePoint nextMarkLocation) {
 
@@ -86,7 +90,6 @@ public class GuideArrow extends Polygon {
             Double xDist;
             Double yDist;
             // arrow points from previous mark to next mark
-            assert prevMarkLocation != null;
             xDist = prevMarkLocation.getXValue() - nextMarkLocation.getXValue();
             yDist = prevMarkLocation.getYValue() - nextMarkLocation.getYValue();
             angle = calculateAngleBetweenMarks(xDist, yDist);
