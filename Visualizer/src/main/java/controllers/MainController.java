@@ -21,6 +21,7 @@ public class MainController {
     @FXML private RaceViewController raceViewController;
     @FXML private SplitPane splitPane;
     @FXML private WindController windController;
+    @FXML private PlayerController playerController;
     @FXML private GridPane loadingPane;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
@@ -82,6 +83,7 @@ public class MainController {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
         tableController.addObserver(raceViewController);
+        playerController.setuo(dataSource);
         this.binaryPackager = new BinaryPackager();
 
         AnimationTimer timer = new AnimationTimer() {
@@ -93,6 +95,7 @@ public class MainController {
                     raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
+                    playerController.refresh();
                     loadingPane.toBack();
                 }
                 else {

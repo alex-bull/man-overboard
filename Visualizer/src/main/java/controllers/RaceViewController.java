@@ -66,14 +66,11 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private HBox controlsBox;
     @FXML private GridPane finisherListPane;
     @FXML private ListView<String> finisherListView;
-    @FXML private Pane healthPane;
-    @FXML private ImageView playerImageView;
-    @FXML private Label gamerTagLabel;
+
 
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Double, HealthBar> healthBars = new HashMap<>();
-    private HealthBar screenHealthBar = new HealthBar();
     private Map<Integer, Annotation> annotations = new HashMap<>();
     private Map<String, Shape> markModels = new HashMap<>();
     private Track track = new Track();
@@ -129,9 +126,7 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().add(sailLine);
 
         finisherListPane.setVisible(false);
-        healthPane.getChildren().add(screenHealthBar);
 
-//        initialiseGuideArrow();
         this.guideArrow = new GuideArrow(backgroundColor.brighter(), 90.0);
         raceViewPane.getChildren().add(guideArrow);
         controlsView = new ImageView(new Image("controls.png"));
@@ -175,7 +170,7 @@ public class RaceViewController implements Initializable, TableObserver {
         controlsBox.setPrefHeight(height);
         controlsBox.setPrefWidth(width);
         raceViewPane.getChildren().add(track);
-        gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
+//        gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
 
         this.dataSource = dataSource;
 
@@ -332,7 +327,6 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawHealthBar(Competitor boat) {
 
-        this.updateScreenHealthBar();
         double sourceId = boat.getSourceID();
         HealthBar healthBar = healthBars.get(sourceId);
 
@@ -352,14 +346,7 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-    /**
-     * Updates the large health bar at the bottom of the screen
-     */
-    private void updateScreenHealthBar() {
 
-        Competitor boat = dataSource.getCompetitor();
-        screenHealthBar.update(boat, 15, 5);
-    }
 
 
 

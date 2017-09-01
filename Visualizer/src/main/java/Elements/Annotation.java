@@ -46,7 +46,8 @@ public class Annotation extends Group {
         int offset = 15;
         if(zoom) offset *= 2;
 
-        speed.setText(String.valueOf(boat.getVelocity()) + "m/s");
+        String sp = String.format("%.1f", boat.getVelocity());
+        speed.setText(sp + "m/s");
 
         if(boat.getStatus() == DSQ) {
             name.setText("");
