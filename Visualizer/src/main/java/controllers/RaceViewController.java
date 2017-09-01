@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -65,10 +66,14 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private HBox controlsBox;
     @FXML private GridPane finisherListPane;
     @FXML private ListView<String> finisherListView;
+    @FXML private Pane healthPane;
+    @FXML private ImageView playerImageView;
+    @FXML private Label gamerTagLabel;
 
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Double, HealthBar> healthBars = new HashMap<>();
+    private HealthBar screenHealthBar = new HealthBar();
     private Map<Integer, Annotation> annotations = new HashMap<>();
     private Map<String, Shape> markModels = new HashMap<>();
     private Track track = new Track();
@@ -124,6 +129,7 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().add(sailLine);
 
         finisherListPane.setVisible(false);
+        healthPane.getChildren().add(screenHealthBar);
 
 //        initialiseGuideArrow();
         this.guideArrow = new GuideArrow(backgroundColor.brighter(), 90.0);
@@ -136,6 +142,9 @@ public class RaceViewController implements Initializable, TableObserver {
         mapView.setVisible(true);
         mapEngine.setJavaScriptEnabled(true);
         mapView.toBack();
+
+        isLoaded = true; //TODO:- TAKE THIS OUT AGAIN
+
         try {
             mapEngine.load(getClass().getClassLoader().getResource("maps.html").toURI().toString());
         } catch (URISyntaxException e) {
@@ -322,8 +331,10 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawHealthBar(Competitor boat) {
 
+        this.updateScreenHealthBar();
         double sourceId = boat.getSourceID();
         HealthBar healthBar = healthBars.get(sourceId);
+
         if (healthBar == null) {
             healthBar = new HealthBar();
             this.healthBars.put(sourceId, healthBar);
@@ -336,7 +347,19 @@ public class RaceViewController implements Initializable, TableObserver {
             alive = healthBar.update(boat, location.getXValue(), location.getYValue(), true);
         } else alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), false);
         if (!alive) this.killBoat(boat);
+
     }
+
+
+    /**
+     * Updates the large health bar at the bottom of the screen
+     */
+    private void updateScreenHealthBar() {
+
+        Competitor boat = dataSource.getCompetitor();
+        screenHealthBar.update(boat, 15, 5);
+    }
+
 
 
     /**
