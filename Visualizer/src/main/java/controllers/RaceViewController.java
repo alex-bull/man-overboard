@@ -4,7 +4,6 @@ import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
 import Elements.*;
-import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
@@ -13,7 +12,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,12 +22,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Rotate;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.util.Duration;
 import mockDatafeed.Keys;
 import models.Competitor;
 import models.CourseFeature;
@@ -45,7 +40,6 @@ import java.net.URL;
 import java.util.*;
 
 import static javafx.collections.FXCollections.observableArrayList;
-import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.ORANGERED;
 import static parsers.BoatStatusEnum.DSQ;
 
@@ -395,21 +389,13 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     /**
-     * Draws the line for gates
+     * Update the given line
      * @param line Line the line to be drawn
-     *             @param p1 one of the point on the line
-*                       @param p2 the other point
+     * @param p1 one of the point on the line
+     * @param p2 the other point
      */
     private void drawLine(Line line, MutablePoint p1, MutablePoint p2) {
-
-        double x1 = p1.getXValue();
-        double y1 = p1.getYValue();
-        double x2 = p2.getXValue();
-        double y2 = p2.getYValue();
-        line.setStartX(x1);
-        line.setStartY(y1);
-        line.setEndX(x2);
-        line.setEndY(y2);
+        ShapeDraw.line(line, p1, p2);
     }
 
 
@@ -438,7 +424,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draw boundary
      */
     private void drawBoundary(List<MutablePoint> courseBoundary) {
-        CanvasDraw.polygon(gc, courseBoundary, backgroundColor);
+        ShapeDraw.polygon(gc, courseBoundary, backgroundColor);
     }
 
 
