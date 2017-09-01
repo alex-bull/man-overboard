@@ -86,7 +86,7 @@ public class BoatUpdater {
             }
             double speed = polarTable.getSpeed(twa);
             if(boat.getStatus() != DSQ) {
-
+                //TODO: SPEED IS INCORRECT
                 boat.getBoatSpeed().setMagnitude(speed * boat.getSailValue());
                 boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
 //                if (boat.getSailValue() == 0) {
