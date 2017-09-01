@@ -1,4 +1,4 @@
-package mockDatafeed;
+package utility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class WorkQueue {
 
     private ArrayBlockingQueue<QueueMessage> queue;
 
-    WorkQueue(int capacity) {
+    public WorkQueue(int capacity) {
         this.queue = new ArrayBlockingQueue<>(capacity);
     }
 

@@ -17,6 +17,8 @@ import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import utility.BinaryPackager;
 import utility.ConnectionClient;
+import utility.QueueMessage;
+import utility.WorkQueue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

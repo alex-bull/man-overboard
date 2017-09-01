@@ -1,4 +1,4 @@
-package mockDatafeed;
+package utility;
 
 /**
  * Created by mattgoodson on 30/08/17.
@@ -11,14 +11,14 @@ public class QueueMessage {
     private byte[] body;
     private byte[] message;
 
-    QueueMessage(Integer clientId, byte[] header, byte[] body) {
+    public QueueMessage(Integer clientId, byte[] header, byte[] body) {
         this.header = header;
         this.body = body;
         this.clientId = clientId;
     }
 
 
-    QueueMessage(Integer clientId, byte[] message) {
+    public QueueMessage(Integer clientId, byte[] message) {
         this.message = message;
         this.clientId = clientId;
     }

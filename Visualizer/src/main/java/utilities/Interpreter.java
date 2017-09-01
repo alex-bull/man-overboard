@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import utility.QueueMessage;
+import utility.WorkQueue;
 import models.ColourPool;
 import models.Competitor;
 import models.CourseFeature;
@@ -91,6 +93,9 @@ public class Interpreter implements DataSource, PacketHandler {
     //zoom factor for scaling
     private double zoomFactor=Math.pow(2,17);
 
+    private WorkQueue receiveQueue = new WorkQueue(1000000);
+
+
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
         collisions=new HashSet<>();
@@ -157,6 +162,12 @@ public class Interpreter implements DataSource, PacketHandler {
     public Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures() {
         return this.raceData.getLegIndexToMarkSourceIds();
     }
+    /**
+     * @return the boat which the visualizer controls
+     */
+    public Competitor getCompetitor() {
+        return storedCompetitors.get(sourceID);
+    }
 
 
 
@@ -167,21 +178,13 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     public void send(byte[] data) {
         try {
-            TCPClient.send(data);
-        }
-        catch (Exception e) {
-            System.out.println("Could not send data");
+            this.TCPClient.send(data);
+        } catch (IOException e) {
+            System.out.println("Failed to send data");
         }
     }
 
-    /**
-     *
-     * @return the boat which the visualizer controls
-     */
-    @Override
-    public Competitor getCompetitor() {
-        return storedCompetitors.get(sourceID);
-    }
+
 
     /**
      * Begins data receiver streaming from port.
@@ -196,7 +199,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
         Rectangle2D primaryScreenBounds;
         try {
-            TCPClient = new TCPClient(host, port, this);
+            TCPClient = new TCPClient(host, port, receiveQueue);
             primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         }
         catch (UnresolvedAddressException e){
@@ -223,6 +226,15 @@ public class Interpreter implements DataSource, PacketHandler {
 
     }
 
+
+    /**
+     * handle server updates
+     */
+    public void update() {
+        for (QueueMessage m: this.receiveQueue.drain()) {
+            this.interpretPacket(m.getHeader(), m.getBody());
+        }
+    }
 
 
     /**

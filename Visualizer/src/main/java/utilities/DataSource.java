@@ -41,5 +41,6 @@ public interface DataSource {
     Competitor getCompetitor();
     List<MutablePoint> getCourseBoundary17();
     HashMap<Integer, CourseFeature> getStoredFeatures17();
+    void update();
 
 }

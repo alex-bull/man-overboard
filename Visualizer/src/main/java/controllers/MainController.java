@@ -88,6 +88,7 @@ public class MainController {
 
             @Override
             public void handle(long now) {
+                dataSource.update();
                 if (raceViewController.isLoaded()) {
                     raceViewController.refresh();
                     tableController.refresh(dataSource);

@@ -95,6 +95,7 @@ public class LobbyController implements Initializable {
         this.timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
+                dataSource.update();
                 updateList();
                 checkStatus();
             }

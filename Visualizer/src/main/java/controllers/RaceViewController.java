@@ -554,7 +554,7 @@ public class RaceViewController implements Initializable, TableObserver {
         Map<Integer, List<Integer>> indexMap = dataSource.getIndexToSourceIdCourseFeatures();
         Map<Integer, CourseFeature> featureMap = dataSource.getCourseFeatureMap();
 
-        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        Competitor boat = dataSource.getCompetitor();
         int currentIndex = boat.getCurrentLegIndex();
         MutablePoint nextMarkLocation = RaceCalculator.getGateCentre(currentIndex + 1, indexMap, featureMap);
 
@@ -723,7 +723,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawHealthBar(boat);
             this.drawAnnotations(boat);
         }
-        this.drawSail(width, length, dataSource.getStoredCompetitors().get(dataSource.getSourceID()));
+        this.drawSail(width, length, dataSource.getCompetitor());
         this.drawGuidingArrow();
         counter++;
     }
