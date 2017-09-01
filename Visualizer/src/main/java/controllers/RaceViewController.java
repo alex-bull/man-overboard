@@ -6,6 +6,7 @@ import Animations.RandomShake;
 import Elements.GuideArrow;
 import Elements.HealthBar;
 import Elements.Sail;
+import Elements.Wake;
 import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
@@ -81,7 +82,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     private Map<Integer, Polygon> boatModels = new HashMap<>();
     private Shape playerMarker;
-    private Map<Integer, Polygon> wakeModels = new HashMap<>();
+    private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Double, HealthBar> healthBars = new HashMap<>();
     private Map<Integer, Label> nameAnnotations = new HashMap<>();
     private Map<Integer, Label> speedAnnotations = new HashMap<>();
@@ -589,26 +590,13 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawWake(Competitor boat, double boatLength,double startWakeOffset, double wakeWidthFactor, double wakeLengthFactor) {
         MutablePoint point= setRelativePosition(boat);
 
-        if (!wakeModels.containsKey(boat.getSourceID())) {
-            double wakeLength = boat.getVelocity()*wakeLengthFactor;
-            Polygon wake = new Polygon();
-            wake.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + wakeLength * wakeWidthFactor, wakeLength + boatLength, -startWakeOffset - wakeLength * wakeWidthFactor, wakeLength + boatLength);
-            LinearGradient linearGradient = new LinearGradient(0.0, 0, 0.0, 1, true, CycleMethod.NO_CYCLE, new Stop(0.0f, Color.rgb(0, 0, 255, 0.7)), new Stop(1.0f, TRANSPARENT));
-            wake.setFill(linearGradient);
-            raceViewPane.getChildren().add(wake);
+        Wake wake = wakeModels.get(boat.getSourceID());
+        if (wake == null) {
+            wake = new Wake(boat, boatLength, startWakeOffset, wakeWidthFactor, wakeLengthFactor);
             this.wakeModels.put(boat.getSourceID(), wake);
+            this.raceViewPane.getChildren().add(wake);
         }
-
-        double newLength = boat.getVelocity() * 2 * wakeLengthFactor;
-        Polygon wakeModel = wakeModels.get(boat.getSourceID());
-        wakeModel.getTransforms().clear();
-        wakeModel.getPoints().clear();
-        wakeModel.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + newLength * wakeWidthFactor, newLength + boatLength, -startWakeOffset - newLength * wakeWidthFactor, newLength + boatLength);
-        wakeModel.getTransforms().add(new Translate(point.getXValue(), point.getYValue()));
-        wakeModel.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
-        wakeModel.toFront();
-
-
+        wake.update(boat, boatLength, startWakeOffset, wakeWidthFactor, wakeLengthFactor, point);
     }
 
 
@@ -727,8 +715,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
         updateCourse();
 
-        List<Competitor> competitors = dataSource.getCompetitorsPosition();
-        for (Competitor boat : competitors) {
+        for (Competitor boat : dataSource.getCompetitorsPosition()) {
 
             if (counter % 70 == 0) {
                 drawTrack(boat);
