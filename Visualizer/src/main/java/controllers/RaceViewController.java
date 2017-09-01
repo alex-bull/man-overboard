@@ -66,8 +66,7 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private GridPane finisherListPane;
     @FXML private ListView<String> finisherListView;
 
-    private Map<Integer, Polygon> boatModels = new HashMap<>();
-    private Shape playerMarker;
+    private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Double, HealthBar> healthBars = new HashMap<>();
     private Map<Integer, Annotation> annotations = new HashMap<>();
@@ -208,7 +207,6 @@ public class RaceViewController implements Initializable, TableObserver {
         this.dataSource.send(new BinaryPackager().packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
         if(dataSource.getSourceID() == boat.getSourceID()){
             sailLine.setVisible(false);
-            playerMarker.setVisible(false);
             this.raceViewPane.getChildren().remove(guideArrow);
         }
         boatModels.get(boat.getSourceID()).setVisible(false);
@@ -457,48 +455,14 @@ public class RaceViewController implements Initializable, TableObserver {
         Integer sourceId = boat.getSourceID();
 
         MutablePoint point = setRelativePosition(boat);
-
-        if (boatModels.get(sourceId) == null) {
-            Polygon boatModel = new Polygon();
-            boatModel.getPoints().addAll(
-                    0.0, -10.0, //top
-                    -5.0, 10.0, //left
-                    5.0, 10.0); //right
-            boatModel.setFill(boat.getColor());
-
-            boatModel.setStroke(BLACK);
-
-            if (sourceId== dataSource.getSourceID()) {
-                playerMarker = new Circle(0, 0, 15);
-                playerMarker.setStrokeWidth(2.5);
-                playerMarker.setStroke(Color.rgb(255,255,255,0.5));
-                playerMarker.setFill(Color.rgb(0,0,0,0.2));
-                this.raceViewPane.getChildren().add(playerMarker);
-            }
-
-            //add to the pane and store a reference
+        Boolean player = sourceId == dataSource.getSourceID();
+        BoatModel boatModel = boatModels.get(sourceId);
+        if (boatModel == null) {
+            boatModel = new BoatModel(boat.getColor(), player);
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(sourceId, boatModel);
-            //Boats selected can be selected/unselected by clicking on them
-            boatModel.setOnMouseClicked(event -> {
-                if (!Objects.equals(selectedBoatSourceId, sourceId)) {
-                    selectedBoatSourceId = sourceId;
-                } else {
-                    selectedBoatSourceId = 0;
-                }
-            });
         }
-        //Translate and rotate the corresponding boat models
-        boatModels.get(sourceId).setLayoutX(point.getXValue());
-        boatModels.get(sourceId).setLayoutY(point.getYValue());
-        boatModels.get(sourceId).toFront();
-        boatModels.get(sourceId).getTransforms().clear();
-        boatModels.get(sourceId).getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
-
-        if (sourceId == dataSource.getSourceID()) {
-            playerMarker.setLayoutX(point.getXValue());
-            playerMarker.setLayoutY(point.getYValue());
-        }
+        boatModel.update(point, boat.getCurrentHeading());
     }
 
 
@@ -572,7 +536,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param centerX the x coordinate of the collision
      * @param centerY the y coordinate of the collision
      */
-    public void drawCollision(double centerX,double centerY){
+    private void drawCollision(double centerX, double centerY){
         int radius=20;
         if(isZoom()) radius *= 2;
         CollisionRipple ripple = new CollisionRipple(centerX, centerY,radius );
@@ -594,7 +558,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * adds scaling to all shapes in the scene
      */
     private void setScale(double scale){
-        for(Polygon model : boatModels.values()) {
+        for(Group model : boatModels.values()) {
             model.setScaleX(scale);
             model.setScaleY(scale);
         }
@@ -602,8 +566,6 @@ public class RaceViewController implements Initializable, TableObserver {
             model.setScaleX(scale);
             model.setScaleY(scale);
         }
-        playerMarker.setScaleX(scale);
-        playerMarker.setScaleY(scale);
 
     }
 
