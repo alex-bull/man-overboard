@@ -31,7 +31,7 @@ public class HealthBar extends Group {
         this.getChildren().add(healthBarBackground);
         this.healthBar = new Line();
         this.getChildren().add(healthBar);
-        this.ripImage = new ImageView(new Image("/cross.png"));
+        this.ripImage = new ImageView(new Image("images/cross.png"));
         this.ripImage.setPreserveRatio(true);
     }
 
@@ -47,8 +47,8 @@ public class HealthBar extends Group {
         double strokeWidth = 5 * widthScale;
         double offset = 0;
         double maxBarLength = 30 * lengthScale;
-        int healthLevel = boat.getHealthLevel() * lengthScale;
-        double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength) / lengthScale;
+        double healthLevel = boat.getHealthLevel() * lengthScale;
+        double healthSize = ((healthLevel / boat.getMaxHealth()) * maxBarLength) / lengthScale;
         Color healthColour = calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
         healthBarBackground.setStrokeWidth(strokeWidth + (2 * widthScale));
         healthBarBackground.setStartX(0);
@@ -83,7 +83,7 @@ public class HealthBar extends Group {
         double strokeWidth = 5 * scale;
         double offset = 20 * scale;
         double maxBarLength = 30 * scale;
-        int healthLevel = boat.getHealthLevel() * scale;
+        double healthLevel = boat.getHealthLevel() * scale;
         double tombstoneSize = 30 * scale;
         double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength) / scale;
 
