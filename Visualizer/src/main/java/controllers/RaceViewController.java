@@ -99,15 +99,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private DataSource dataSource;
     private GraphicsContext gc;
 
-    public GridPane getFinisherListPane() {
-        return finisherListPane;
-    }
-
-    public ListView getFinisherListView() {
-        return finisherListView;
-    }
-
-
 
 
 
