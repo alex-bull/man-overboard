@@ -12,6 +12,7 @@ import models.ColourPool;
 import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
+import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
@@ -35,15 +36,21 @@ import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
 import utility.BinaryPackager;
 import utility.PacketHandler;
+import com.rits.cloning.Cloner;
+import utility.Projection;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
+import static java.lang.Math.pow;
+import static javafx.collections.FXCollections.observableArrayList;
+import static javafx.collections.FXCollections.observableList;
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
+import static parsers.fallenCrew.FallenCrewParser.parseFallenCrew;
 import static utility.Calculator.calculateExpectedTack;
 
 /**
@@ -67,11 +74,13 @@ public class Interpreter implements DataSource, PacketHandler {
     private long messageTime;
     private long expectedStartTime;
     private RaceXMLParser raceXMLParser;
+    private HashMap<Integer, CourseFeature> originalCourseFeature = new HashMap<>();
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
     private HashMap<Integer,CourseFeature> storedFeatures17=new HashMap<>();
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
 
     private List<MutablePoint> courseBoundary = new ArrayList<>();
+    private List<MutablePoint> courseBoundaryOriginal = new ArrayList<>();
     private List<MutablePoint> courseBoundary17 = new ArrayList<>();
 
     private double paddingX;
@@ -91,7 +100,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private TCPClient TCPClient;
 
     //zoom factor for scaling
-    private double zoomFactor=Math.pow(2,17);
+    private int zoomLevel=17;
 
     private WorkQueue receiveQueue = new WorkQueue(1000000);
 
@@ -169,6 +178,9 @@ public class Interpreter implements DataSource, PacketHandler {
         return storedCompetitors.get(sourceID);
     }
 
+
+
+    private Map<Integer,CrewLocation> crewLocations=new HashMap<>();
 
 
 
@@ -380,11 +392,46 @@ public class Interpreter implements DataSource, PacketHandler {
                 this.sourceID = connectionParser.getSourceId();
                 System.out.println("Connection accepted, my source ID: " + sourceID);
                 break;
+            case FALLEN_CREW:
+                addCrewLocation(parseFallenCrew(packet));
+                break;
+
             default:
                 break;
         }
     }
 
+    /**
+     * adds crew locations with location converted
+     * @param locations
+     */
+    public void addCrewLocation(List<CrewLocation> locations){
+        System.out.println(locations.size());
+        crewLocations.clear();
+        for(CrewLocation crewLocation:locations){
+            MutablePoint location = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
+            MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
+            location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
+            location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            crewLocations.put(crewLocation.getSourceId(),new CrewLocation(crewLocation.getSourceId(),crewLocation.getNumCrew(),location,location17, locationOriginal));
+        }
+    }
+
+    /**
+     * updates crew location when scaling level changes
+     */
+    private void updateCrewLocation(){
+        for(CrewLocation crewLocation: crewLocations.values()){
+            MutablePoint point=cloner.deepClone(crewLocation.getPositionOriginal());
+            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            crewLocation.setPosition17(point);
+        }
+    }
+
+    public Map<Integer,CrewLocation> getCrewLocations() {
+        return crewLocations;
+    }
 
     /**
      * returns the sourceID of the clients boat
@@ -415,8 +462,7 @@ public class Interpreter implements DataSource, PacketHandler {
         MutablePoint location17=cloner.deepClone(boatData.getMercatorPoint());
 
         location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-        location17.factor(zoomFactor, zoomFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-
+        location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
         //add to competitorsPosition and storedCompetitors if they are new
 
@@ -453,14 +499,26 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     private void updateCourseMarks(CourseFeature courseFeature,BoatData boatData) {
         CourseFeature courseFeature17=cloner.deepClone(courseFeature);
+        CourseFeature courseFeatureOriginal=cloner.deepClone(courseFeature);
         courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-        courseFeature17.factor(zoomFactor, zoomFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        courseFeature17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
         if(!storedFeatures.containsKey(boatData.getSourceID())) {
             this.storedFeatures.put(boatData.getSourceID(), courseFeature);
             this.storedFeatures17.put(boatData.getSourceID(), courseFeature17);
+            this.originalCourseFeature.put(boatData.getSourceID(),courseFeatureOriginal);
         }
+    }
 
+    /**
+     * updates the scaling of course marks when scaling level changes
+     */
+    private void updateCourseMarksScaling(){
+        HashMap<Integer,CourseFeature> clone=cloner.deepClone(originalCourseFeature);
+        for(int sourceId:clone.keySet()){
+            MutablePoint newLocation=clone.get(sourceId).factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            this.storedFeatures17.get(sourceId).setPixelLocation(newLocation);
+        }
     }
 
 
@@ -486,11 +544,10 @@ public class Interpreter implements DataSource, PacketHandler {
                         raceXMLParser.setScreenSize(width, height);
 //                        this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.raceData = raceXMLParser.parseRaceData(xml.trim());
-                        this.courseBoundary = raceXMLParser.getCourseBoundary();
-                        this.courseBoundary17=raceXMLParser.getCourseBoundary17();
-
-                        GPSbounds = raceXMLParser.getGPSBounds();
                         setScalingFactors();
+                        setCourseBoundary(raceXMLParser.getCourseBoundary());
+//                        this.courseBoundary17=raceXMLParser.getCourseBoundary17();
+                        GPSbounds = raceXMLParser.getGPSBounds();
 //                        this.seenRaceXML = true;
                     }
 
@@ -508,7 +565,31 @@ public class Interpreter implements DataSource, PacketHandler {
 
     }
 
+    private void setCourseBoundary(List<MutablePoint> courseBoundary){
+        courseBoundaryOriginal=cloner.deepClone(courseBoundary);
 
+        for(MutablePoint p: cloner.deepClone(courseBoundary)){
+            this.courseBoundary.add(p.factor(scaleFactor,scaleFactor,minXMercatorCoord,minYMercatorCoord,paddingX,paddingY));
+        }
+
+        updateCourseBoundary();
+
+    }
+
+    /**
+     * updates course boundary when zoom level changes
+     */
+    private void updateCourseBoundary(){
+        courseBoundary17.removeAll(courseBoundary17);
+        for(MutablePoint p: cloner.deepClone(courseBoundaryOriginal)){
+            courseBoundary17.add(p.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY));
+        }
+    }
+
+    @Override
+    public int getZoomLevel() {
+        return zoomLevel;
+    }
 
     /**
      * Parse binary data into XML
@@ -569,6 +650,17 @@ public class Interpreter implements DataSource, PacketHandler {
 
     public void setScalingFactor(double scaleFactor){
         this.scaleFactor=scaleFactor;
+    }
+
+    /**
+     * changes the scaling when zoomed in
+     * @param deltaLevel
+     */
+    public void changeScaling(int deltaLevel){
+        this.zoomLevel+=deltaLevel;
+        updateCourseMarksScaling();
+        updateCourseBoundary();
+        updateCrewLocation();
     }
 
     public Set<Integer> getCollisions(){

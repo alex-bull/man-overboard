@@ -94,7 +94,7 @@ public class TableController implements Initializable {
             Double speed = comps.get(i).getVelocity();
             String featureName = comps.get(i).getLastMarkPassed();
             Integer sourceId = comps.get(i).getSourceID();
-            RaceEvent raceEvent = new RaceEvent(sourceId, teamName, featureName, speed, i + 1);
+            RaceEvent raceEvent = new RaceEvent(sourceId, teamName, featureName, String.format("%.2f",speed), i + 1);
             events.add(raceEvent);
         }
 

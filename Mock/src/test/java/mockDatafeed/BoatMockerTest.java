@@ -1,9 +1,7 @@
 package mockDatafeed;
 
 import models.Competitor;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -18,14 +16,15 @@ import static utilities.Utility.fileToString;
  * Created by khe60 on 30/05/17.
  */
 public class BoatMockerTest {
-    private BoatMocker boatMocker;
-    private Class<?> mockerClass;
+    private static BoatMocker boatMocker;
+    private static Class<?> mockerClass;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
         boatMocker=new BoatMocker();
         mockerClass=boatMocker.getClass();
     }
+
 
     @Test
     public void sendRaceXMLTest() throws Exception{
@@ -43,7 +42,7 @@ public class BoatMockerTest {
 
         byte messageType = (byte) BOAT_ACTION.getValue();
         byte action = (byte) UP.getValue();
-        byte sourceID = 100;
+        byte sourceID = 1;
 
         header[0] = messageType;
         header[7] = sourceID;
@@ -75,7 +74,7 @@ public class BoatMockerTest {
 
         byte messageType = (byte) BOAT_ACTION.getValue();
         byte action = (byte) TACK.getValue();
-        byte sourceID = 100;
+        byte sourceID = 1;
 
         header[0] = messageType;
         header[7] = sourceID;

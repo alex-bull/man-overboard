@@ -10,6 +10,8 @@ class WindGenerator {
 
     private short windSpeed;
     private short windDirection;
+    private final int speedVariance=2;
+    private final int directionVariance=30;
 
     /**
      * Constructs a wind generator
@@ -36,17 +38,16 @@ class WindGenerator {
      * @return short wind speed
      */
     private short getRandomWindSpeed() {
-        if(windSpeed < 4000) {
-            windSpeed = (short) (ThreadLocalRandom.current().nextInt(0, 10) + windSpeed);
-        }
-        else if(windSpeed > 8000) {
-            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-10, 0) + windSpeed);
-        }
-        else {
-            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-10, 11) + windSpeed);
-        }
-
-        return windSpeed;
+//        if(windSpeed < 3000) {
+//            windSpeed = (short) (ThreadLocalRandom.current().nextInt(0, 2+1) + windSpeed);
+//        }
+//        else if(windSpeed > 8000) {
+//            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-2, 0) + windSpeed);
+//        }
+//        else {
+//            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-2, 2+1) + windSpeed);
+//        }
+        return (short) (windSpeed+ThreadLocalRandom.current().nextGaussian()*speedVariance);
 
     }
 
@@ -55,7 +56,7 @@ class WindGenerator {
      * @return short wind direction
      */
     private short getRandomWindDirection() {
-        windDirection = (short) (ThreadLocalRandom.current().nextInt(-30, 30+1) + windDirection);
-        return windDirection;
+
+        return (short) (windDirection+ThreadLocalRandom.current().nextGaussian()*directionVariance);
     }
 }

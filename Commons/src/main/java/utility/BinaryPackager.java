@@ -3,6 +3,7 @@ package utility;
 
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import models.Competitor;
+import models.CrewLocation;
 import parsers.BoatStatusEnum;
 
 import java.io.IOException;
@@ -45,6 +46,10 @@ public class BinaryPackager {
 
     }
 
+    private int latLngToInt(double value){
+       return (int)(value* 2147483648.0 / 180.0); //latitude
+    }
+
     /**
      * Takes boat position data and encapsulates it in a binary packet
      *
@@ -77,11 +82,11 @@ public class BinaryPackager {
         packetBuffer.putInt(sequenceNumber); //sequence number
         packetBuffer.put((byte) deviceType); //device type:
 
-        latitude = latitude * 2147483648.0 / 180.0; //latitude
-        packetBuffer.putInt(latitude.intValue());
+         //latitude
+        packetBuffer.putInt(latLngToInt(latitude));
 
-        longitude = longitude * 2147483648.0 / 180.0; //longitude
-        packetBuffer.putInt(longitude.intValue());
+        //longitude
+        packetBuffer.putInt(latLngToInt(longitude));
 
         packetBuffer.putInt(1); //Altitude: TODO:- Figure out what value altitude should be
 
@@ -461,7 +466,7 @@ public class BinaryPackager {
      * @param health Integer the health as a percentage integer 0 to 100
      * @return the packet generated
      */
-    public byte[] packageBoatStateEvent(Integer sourceID, Integer health){
+    public byte[] packageBoatStateEvent(Integer sourceID, Double health){
         byte[] packet=new byte[24]; // 19 + 5
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -551,6 +556,36 @@ public class BinaryPackager {
         byte type = 111;
         short bodyLength = 0;
         this.writeHeader(packetBuffer, type, bodyLength);
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+
+    /**
+     * packages fallen crew event
+     * @param locations the location of the fallen crew members
+     * @return the packet for event
+     */
+    public byte[] packageFallenCrewEvent(List<CrewLocation> locations){
+        int n=locations.size();
+        byte[] packet=new byte[20+n*13]; // total size of packet
+
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 107;
+        short bodyLength = (short) (n*13+1);
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.put((byte) n);
+        for(CrewLocation crewLocation:locations){
+            packetBuffer.putInt(crewLocation.getSourceId());
+            packetBuffer.put((byte)crewLocation.getNumCrew());
+            packetBuffer.putInt(latLngToInt(crewLocation.getLatitude()));
+            packetBuffer.putInt(latLngToInt(crewLocation.getLongitude()));
+        }
+
+
+        //CRC
         this.writeCRC(packetBuffer);
         return packet;
     }

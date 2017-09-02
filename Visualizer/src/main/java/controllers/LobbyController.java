@@ -1,5 +1,6 @@
 package controllers;
 
+import Animations.SoundPlayer;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -129,6 +130,7 @@ public class LobbyController implements Initializable {
     @FXML
     public void playerReady() {
         if (dataSource.getSourceID() == 0) return; //player has not connected yet
+        new SoundPlayer().playSound("sounds/im-ready.au");
         readyButton.setDisable(true);
         dataSource.send(new BinaryPackager().packagePlayerReady());
     }

@@ -3,6 +3,7 @@ package utilities;
 import javafx.scene.Scene;
 import models.Competitor;
 import models.CourseFeature;
+import models.CrewLocation;
 import models.MutablePoint;
 import parsers.RaceStatusEnum;
 
@@ -16,6 +17,9 @@ import java.util.Set;
  * Data source
  */
 public interface DataSource {
+    void changeScaling(int Multiplier);
+    int getZoomLevel();
+    Map<Integer, CrewLocation> getCrewLocations();
     boolean receive(String host, int port, Scene scene);
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();

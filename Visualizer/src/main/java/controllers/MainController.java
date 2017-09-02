@@ -4,6 +4,8 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
 import parsers.RaceStatusEnum;
@@ -26,50 +28,57 @@ public class MainController {
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
 
-
-
     /**
      * Handle control key events
      * @param event KeyEvent
      */
     @FXML public void keyPressed(KeyEvent event) {
 
-        switch (event.getCode()) {
-            case W:
-                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.UP.getValue(), dataSource.getSourceID()));
-                break;
-            case S:
-                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.DOWN.getValue(), dataSource.getSourceID()));
-                break;
-            case SPACE:
-                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.VMG.getValue(), dataSource.getSourceID()));
-                break;
-            case SHIFT:
-                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILS.getValue(), dataSource.getSourceID()));
-                break;
-            case ENTER:
-                this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
-                break;
-            case Q:
-                if(raceViewController.isZoom()) {
-                    raceViewController.zoomOut();
-                    if (!tableController.isVisible()) {
+            switch (event.getCode()) {
+                case W:
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.UP.getValue(), dataSource.getSourceID()));
+                    break;
+                case S:
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.DOWN.getValue(), dataSource.getSourceID()));
+                    break;
+                case SPACE:
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.VMG.getValue(), dataSource.getSourceID()));
+                    break;
+                case SHIFT:
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILS.getValue(), dataSource.getSourceID()));
+                    break;
+                case ENTER:
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
+                    break;
+                case Q:
+                    if(raceViewController.isZoom()) {
+                        raceViewController.zoomOut();
+                        if (!tableController.isVisible()) {
+                            tableController.makeVisible();
+                        }
+                    }
+                    else{
+                        raceViewController.zoomIn();
+                    }
+                    break;
+                case BACK_QUOTE:
+                    if (raceViewController.isZoom() && tableController.isVisible()){
+                        tableController.makeInvisible();
+                    }
+                    else if (raceViewController.isZoom()) {
                         tableController.makeVisible();
                     }
-                }
-                else{
+                    break;
+
+                case UP:
+                    dataSource.changeScaling(1);
                     raceViewController.zoomIn();
-                }
-                break;
-            case BACK_QUOTE:
-                if (raceViewController.isZoom() && tableController.isVisible()){
-                    tableController.makeInvisible();
-                }
-                else if (raceViewController.isZoom()) {
-                    tableController.makeVisible();
-                }
-                break;
-        }
+                    break;
+                case DOWN:
+                    dataSource.changeScaling(-1);
+                    raceViewController.zoomIn();
+                    break;
+            }
     }
 
 
