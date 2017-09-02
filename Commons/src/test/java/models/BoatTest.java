@@ -55,23 +55,23 @@ public class BoatTest {
 
     @Test
     public void sailsOutByDefault() throws Exception {
-        assertTrue(boat.hasSailsOut());
+        assertFalse(boat.hasSailsOut());
     }
 
     @Test
     public void toggleSails() throws Exception {
-        assertTrue(boat.hasSailsOut());
-        boat.switchSails();
         assertFalse(boat.hasSailsOut());
+        boat.switchSails();
+        assertTrue(boat.hasSailsOut());
     }
 
     @Test
     public void toggleSailsTwice() throws Exception {
-        assertTrue(boat.hasSailsOut());
-        boat.switchSails();
         assertFalse(boat.hasSailsOut());
         boat.switchSails();
         assertTrue(boat.hasSailsOut());
+        boat.switchSails();
+        assertFalse(boat.hasSailsOut());
     }
 
     @Test
