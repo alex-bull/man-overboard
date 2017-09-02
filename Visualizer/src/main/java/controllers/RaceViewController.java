@@ -46,6 +46,7 @@ import mockDatafeed.Keys;
 import models.Competitor;
 import models.CourseFeature;
 import models.MutablePoint;
+import models.Vector2D;
 import netscape.javascript.JSException;
 import parsers.Converter;
 import parsers.RaceStatusEnum;
@@ -1426,7 +1427,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private void updateSails(){
         BinaryPackager binaryPackager = new BinaryPackager();
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-//        System.out.println(sailSlider.getValue());
         if (sailValue - sailSlider.getValue() == sailSlider.getBlockIncrement()) {
             sailValue = sailSlider.getValue();
             this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), boat.getSourceID()));
@@ -1478,44 +1478,87 @@ public class RaceViewController implements Initializable, TableObserver {
     public void turnBoat(TouchEvent touchEvent) {
 
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        BinaryPackager binaryPackager = new BinaryPackager();
         double heading = boat.getCurrentHeading();
         double windAngle = (dataSource.getWindDirection())%360;
         double downWind = (boat.getDownWind(windAngle))%360;
         double touchX = touchEvent.getTouchPoint().getX();
         double touchY = touchEvent.getTouchPoint().getY();
 
-        double deltaX = touchX - boatPositionX;
-        double deltaY = touchY - boatPositionY;
-        double theta = atan2(deltaY, deltaX);
+        Vector2D boatDirection = new Vector2D(boatPositionX, boatPositionY, touchX, touchY);
+        double theta = atan2(boatDirection.getY(), boatDirection.getX());
         theta = (theta * 180 / PI) + 90;
-
-        if(theta < 0){ theta = 360 + theta; }
-        boolean westOfWind;
-
-        BinaryPackager binaryPackager = new BinaryPackager();
-//        System.out.println("\n\nHeading : " + heading + "\nTheta : " + theta + "\nWindAngle : " + windAngle + "\nDownwind : "+ downWind);
-        if (!(heading <= theta + 10 && heading >= theta -10)) {
-
-            westOfWind = (heading > downWind && heading < downWind + 180) || (heading < windAngle && heading - windAngle < 0) || (heading < windAngle && heading > downWind);
-            if(westOfWind) {
-                if ((heading - theta) % 360 > (theta - heading) % 360 && theta > heading) {
-//                    System.out.println("downwind LEFT");
+        if (theta < 0) { theta = 360 + theta;}
+        double difference = theta - heading;
+        if (downWind < 180) {
+            if (heading < 180) {
+                if (difference > 0 && difference < 180) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+                } else if (difference > 0 && difference > 180) {
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-                } else {
-//                    System.out.println("upwind LEFT");
+                } else if (difference < 0) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+                }
+            } else {
+                if (difference > 0) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+                } else if (difference < 0 && difference > -180) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+                } else if (difference < 0 && difference < -180) {
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
                 }
-            } else{
-                if((heading - theta)%360 > (theta - heading)%360){
-//                    System.out.println("upwind RIGHT");
+            }
+        }
+        else {
+            if (heading < 180) {
+                if (difference > 0 && difference < 180) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+                } else if (difference > 0 && difference > 180) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+                } else if (difference < 0) {
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
                 }
-                else {
-//                    System.out.println("downwind RIGHT");
+            } else {
+                if (difference > 0) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+                } else if (difference < 0 && difference > -180) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+                } else if (difference < 0 && difference < -180) {
                     this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
                 }
             }
         }
+
+
+
+
+//        if(theta < 0){ theta = 360 + theta; }
+//        boolean westOfWind;
+//
+
+////        System.out.println("\n\nHeading : " + heading + "\nTheta : " + theta + "\nWindAngle : " + windAngle + "\nDownwind : "+ downWind);
+//        if (!(heading <= theta + 10 && heading >= theta -10)) {
+//
+//            westOfWind = (heading > downWind && heading < downWind + 180) || (heading < windAngle && heading - windAngle < 0) || (heading < windAngle && heading > downWind);
+//            if(westOfWind) {
+//                if ((heading - theta) % 360 > (theta - heading) % 360 && theta > heading) {
+////                    System.out.println("downwind LEFT");
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+//                } else {
+////                    System.out.println("upwind LEFT");
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//                }
+//            } else{
+//                if((heading - theta)%360 > (theta - heading)%360){
+////                    System.out.println("upwind RIGHT");
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//                }
+//                else {
+////                    System.out.println("downwind RIGHT");
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+//                }
+//            }
+//        }
 
     }
 

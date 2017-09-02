@@ -62,7 +62,7 @@ public class Boat implements Competitor {
     }
 
     private boolean sailsOut = true;
-    private double sailValue = 10;
+    private double sailValue = 4;
 
     /**
      * Creates a boat
@@ -170,7 +170,7 @@ public class Boat implements Competitor {
     public void sailsIn(){
         double minSailValue = 0;
         if(sailValue != minSailValue){
-            sailValue -= 2;
+            sailValue -= 0.8;
         }
     }
 
@@ -178,9 +178,9 @@ public class Boat implements Competitor {
      * Switches the sails state of the boat to be further out
      */
     public void sailsOut(){
-        double maxSailValue = 10;
+        double maxSailValue = 4;
         if(sailValue != maxSailValue){
-            sailValue += 2;
+            sailValue += 0.8;
         }
     }
 
