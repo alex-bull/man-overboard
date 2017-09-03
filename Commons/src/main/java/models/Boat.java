@@ -62,7 +62,7 @@ public class Boat implements Competitor {
     }
 
     private boolean sailsOut = true;
-    private double sailValue = 4;
+    private double sailValue = 5;
 
     /**
      * Creates a boat
@@ -71,7 +71,7 @@ public class Boat implements Competitor {
      * @param velocity      int the velocity of the boat in m/s
      * @param startPosition MutablePoint the boat's start position coordinate
      * @param color         Color the boat colour
-     * @param abbreName     String the abbreviated name of the boat
+     * @param abbreName   0.8  String the abbreviated name of the boat
      */
     public Boat(String teamName, int velocity, MutablePoint startPosition, Color color, String abbreName) {
         this.boatSpeed=new Force(velocity,0,false);
@@ -169,8 +169,8 @@ public class Boat implements Competitor {
      */
     public void sailsIn(){
         double minSailValue = 0;
-        if(sailValue != minSailValue){
-            sailValue -= 0.8;
+        if(sailValue >= minSailValue){
+            sailValue -= 1;
         }
     }
 
@@ -178,9 +178,9 @@ public class Boat implements Competitor {
      * Switches the sails state of the boat to be further out
      */
     public void sailsOut(){
-        double maxSailValue = 4;
-        if(sailValue != maxSailValue){
-            sailValue += 0.8;
+        double maxSailValue = 5;
+        if(sailValue <= maxSailValue){
+            sailValue += 1;
         }
     }
 

@@ -167,7 +167,7 @@ public class RaceViewController implements Initializable, TableObserver {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        sailValue = 10;
+        sailValue = 5;
         startLine = new Line();
         finishLine = new Line();
         virtualLine = new Line();
@@ -1427,28 +1427,22 @@ public class RaceViewController implements Initializable, TableObserver {
     private void updateSails(){
         BinaryPackager binaryPackager = new BinaryPackager();
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-        if (sailValue - sailSlider.getValue() == sailSlider.getBlockIncrement()) {
+        double blocksMoved;
+        if(sailValue > sailSlider.getValue() && sailSlider.getValue()%1 == 0){
+            blocksMoved = sailValue - sailSlider.getValue();
             sailValue = sailSlider.getValue();
-            this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), boat.getSourceID()));
-        } else if (sailValue - sailSlider.getValue() > sailSlider.getBlockIncrement()) {
-            double difference = sailValue - sailSlider.getValue();
-            double repeat = difference / sailSlider.getBlockIncrement();
-            sailValue = sailSlider.getValue();
-            for (int i = 0; i < repeat; i ++) {
+            for(int i = 0; i < blocksMoved; i++){
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), boat.getSourceID()));
             }
-        } else if (abs(sailSlider.getValue() - sailValue) == sailSlider.getBlockIncrement()) {
+        }else if(sailValue < sailSlider.getValue() && sailSlider.getValue()%1 == 0){
+            blocksMoved = sailSlider.getValue() - sailValue;
             sailValue = sailSlider.getValue();
-            this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), boat.getSourceID()));
-        }
-        else if (abs(sailSlider.getValue() - sailValue) > sailSlider.getBlockIncrement()) {
-            double difference = abs(sailSlider.getValue() - sailValue);
-            double repeat = difference / sailSlider.getBlockIncrement();
-            sailValue = sailSlider.getValue();
-            for (int i = 0; i < repeat; i ++) {
+            for(int i = 0; i < blocksMoved; i++){
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), boat.getSourceID()));
             }
+
         }
+
     }
 
 
