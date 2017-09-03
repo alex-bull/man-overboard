@@ -432,15 +432,14 @@ public class Boat implements Competitor {
         double downWind = getDownWind(windAngle);
         double currentHeading=getCurrentHeading();
         if(currentHeading>= windAngle && currentHeading <= downWind) {
-        if(upwind) {
-            setCurrentHeading(currentHeading - turnAngle);
+            if(upwind) {
+                setCurrentHeading(currentHeading - turnAngle);
+            }
+            else {
+                setCurrentHeading(currentHeading + turnAngle);
+            }
         }
         else {
-            setCurrentHeading(currentHeading + turnAngle);
-        }
-        }
-        else {
-
             if(upwind) {
                 setCurrentHeading(currentHeading + turnAngle);
             }

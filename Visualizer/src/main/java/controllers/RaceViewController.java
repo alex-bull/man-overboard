@@ -1490,6 +1490,30 @@ public class RaceViewController implements Initializable, TableObserver {
         theta = (theta * 180 / PI) + 90;
         if (theta < 0) { theta = 360 + theta;}
         double difference = theta - heading;
+
+
+//        if (heading < 180) {
+//            if (difference > 0 && difference > 180) {
+//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//            } else if (difference > 0 && difference < 180) {
+//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+//            } else if (difference < 0 && difference > -180) {
+//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//            } else if (difference < 0 && difference < -180) {
+//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//            }
+//        } else {
+//            if (difference > 0 && difference < 180) {
+//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//            } else if (difference > 0 && difference > 180) {
+//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+//            } else if (difference < 0 && difference < -180) {
+//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+//            } else if (difference < 0 && difference > -180) {
+//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//            }
+//        }
+
         if (downWind < 180) {
             if (heading < 180) {
                 if (difference > 0 && difference < 180) {
