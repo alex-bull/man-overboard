@@ -1427,17 +1427,17 @@ public class RaceViewController implements Initializable, TableObserver {
     private void updateSails(){
         BinaryPackager binaryPackager = new BinaryPackager();
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-
+        double blocksMoved;
         if(sailValue > sailSlider.getValue() && sailSlider.getValue()%1 == 0){
-            double increments = sailValue - sailSlider.getValue();
+            blocksMoved = sailValue - sailSlider.getValue();
             sailValue = sailSlider.getValue();
-            for(int i = 0; i < increments; i++){
+            for(int i = 0; i < blocksMoved; i++){
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), boat.getSourceID()));
             }
         }else if(sailValue < sailSlider.getValue() && sailSlider.getValue()%1 == 0){
-            double decrements = sailSlider.getValue() - sailValue;
+            blocksMoved = sailSlider.getValue() - sailValue;
             sailValue = sailSlider.getValue();
-            for(int i = 0; i < decrements; i++){
+            for(int i = 0; i < blocksMoved; i++){
                 this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), boat.getSourceID()));
             }
 

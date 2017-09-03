@@ -86,16 +86,13 @@ public class BoatUpdater {
             }
             double speed = polarTable.getSpeed(twa);
             if(boat.getStatus() != DSQ) {
-                boat.getBoatSpeed().setMagnitude(speed * boat.getSailValue());
-                System.out.println("BOAT SPEED " + boat.getSailValue());
-                boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
-//                if (boat.getSailValue() == 0) {
-//                    boat.getBoatSpeed().reduce(0.99);
-//
-//                } else {
-//                    boat.getBoatSpeed().setMagnitude(speed * 4);
-//                    boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
-//                }
+                if(boat.getSailValue() == 0){
+                  boat.getBoatSpeed().reduce(0.99);
+                } else{
+                    boat.getBoatSpeed().setMagnitude(speed * boat.getSailValue());
+                    boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
+                }
+
             } else {boat.getBoatSpeed().reduce(0.99);
             }
 

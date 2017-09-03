@@ -112,6 +112,7 @@ public class Force implements Vector{
         setMagnitude(getMagnitude()*amount);
     }
 
+
     /**
      * rounds the force down to 0 if its small
      */

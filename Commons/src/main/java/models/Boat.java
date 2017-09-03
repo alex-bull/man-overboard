@@ -169,10 +169,9 @@ public class Boat implements Competitor {
      */
     public void sailsIn(){
         double minSailValue = 0;
-        if(sailValue != minSailValue){
+        if(sailValue >= minSailValue){
             sailValue -= 1;
         }
-        System.out.println("sail value"+sailValue);
     }
 
     /**
@@ -180,11 +179,9 @@ public class Boat implements Competitor {
      */
     public void sailsOut(){
         double maxSailValue = 5;
-        if(sailValue != maxSailValue){
+        if(sailValue <= maxSailValue){
             sailValue += 1;
         }
-
-        System.out.println("sail value"+sailValue);
     }
 
     /**
