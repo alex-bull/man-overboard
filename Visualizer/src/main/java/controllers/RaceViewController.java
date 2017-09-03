@@ -341,10 +341,6 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-
-
-
-
     /**
      * Check if course need to be redrawn and draws the course features and the course boundary
      */

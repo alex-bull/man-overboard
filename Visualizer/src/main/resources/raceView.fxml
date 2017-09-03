@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.effect.GaussianBlur?>
 <?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -26,7 +27,14 @@
               <Pane fx:id="raceViewPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
               <ImageView fx:id="controlsView" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true" />
               <WebView fx:id="mapView" prefHeight="200.0" prefWidth="200.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-              <Button mnemonicParsing="false" onAction="#toggleControls" text="Show Controls" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0" />
+              <Button id="controlbutton" mnemonicParsing="false" onAction="#toggleControls" prefHeight="70.0" prefWidth="76.0" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="50.0">
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/controlButton.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
               <GridPane fx:id="finisherListPane" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="479.0" prefWidth="358.0">
                   <children>
                       <Pane opacity="0.6" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" GridPane.rowSpan="2147483647">
