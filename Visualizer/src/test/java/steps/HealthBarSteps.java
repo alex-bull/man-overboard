@@ -1,9 +1,13 @@
 package steps;
 
 import Elements.HealthBar;
+import Mocks.MockApplicationFX;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import cucumber.runtime.Runtime;
+import javafx.application.Application;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import models.Boat;
@@ -16,6 +20,7 @@ import static org.junit.Assert.assertEquals;
  * Testing Health Bar
  */
 public class HealthBarSteps {
+
     private Competitor boat=new Boat();
     private HealthBar healthBar = new HealthBar();
 

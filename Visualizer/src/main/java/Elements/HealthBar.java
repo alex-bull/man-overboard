@@ -31,7 +31,11 @@ public class HealthBar extends Group {
         this.getChildren().add(healthBarBackground);
         this.healthBar = new Line();
         this.getChildren().add(healthBar);
-        this.ripImage = new ImageView(new Image("images/cross.png"));
+        try {
+            this.ripImage = new ImageView(new Image("images/cross.png"));
+        } catch(Exception e) {
+            this.ripImage = new ImageView();
+        }
         this.ripImage.setPreserveRatio(true);
     }
 
