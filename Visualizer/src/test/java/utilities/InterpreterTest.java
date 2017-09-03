@@ -56,21 +56,21 @@ public class InterpreterTest {
         visualiserThread.run();
     }
 
-    @Test
-    public void returnsTrueWhenConnectionSuccessful() throws Exception {
-
-        mockThread.start();
-        Thread.sleep(200); // give mock time to start before visualiser
-
-        Thread visualiserThread = new Thread(() -> {
-            //JFXPanel toolkit = new JFXPanel(); // causes JavaFX toolkit including Application Thread to start, doesn't work on CI runner because no display
-            boolean connected = interpreter.receive("localhost", 4941,mockScene);
-
-            assertFalse(connected);
-        });
-        visualiserThread.run();
-
-    }
+//    @Test
+//    public void returnsTrueWhenConnectionSuccessful() throws Exception {
+//
+//        mockThread.start();
+//        Thread.sleep(200); // give mock time to start before visualiser
+//
+//        Thread visualiserThread = new Thread(() -> {
+//            //JFXPanel toolkit = new JFXPanel(); // causes JavaFX toolkit including Application Thread to start, doesn't work on CI runner because no display
+//            boolean connected = interpreter.receive("localhost", 4941,mockScene);
+//
+//            assertFalse(connected);
+//        });
+//        visualiserThread.run();
+//
+//    }
 
     @Test
     public void ignoresPacketWithUnknownMessageType() {

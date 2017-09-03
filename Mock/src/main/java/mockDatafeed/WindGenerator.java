@@ -8,10 +8,13 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 class WindGenerator {
 
+    private short windSpeedOriginal;
+    private short windDirectionOriginal;
     private short windSpeed;
     private short windDirection;
-    private final int speedVariance=2;
-    private final int directionVariance=30;
+    private long lastUpdateTime=0;
+    private final int speedVariance=100;
+    private final int directionVariance=300;
 
     /**
      * Constructs a wind generator
@@ -19,25 +22,35 @@ class WindGenerator {
      * @param windDirection int wind direction initial direction
      */
     WindGenerator(int windSpeed, int windDirection) {
-        this.windSpeed = (short) windSpeed;
-        this.windDirection = (short) windDirection;
+        this.windSpeedOriginal = (short) windSpeed;
+        this.windDirectionOriginal = (short) windDirection;
     }
 
-    short getWindSpeed() {
-        return getRandomWindSpeed();
+    public short getWindSpeed() {
+        if(System.currentTimeMillis()-lastUpdateTime>5000){
+            lastUpdateTime=System.currentTimeMillis();
+            getRandomWindSpeed();
+            getRandomWindDirection();
+        }
+        return windSpeed;
     }
 
-    short getWindDirection() {
-        return getRandomWindDirection();
+    public short getWindDirection() {
+        if(System.currentTimeMillis()-lastUpdateTime>5000){
+            lastUpdateTime=System.currentTimeMillis();
+            getRandomWindDirection();
+            getRandomWindSpeed();
+        }
+        return windDirection;
     }
 
 
 
     /**
      * Generates a random value for wind speed.
-     * @return short wind speed
+
      */
-    private short getRandomWindSpeed() {
+    private void getRandomWindSpeed() {
 //        if(windSpeed < 3000) {
 //            windSpeed = (short) (ThreadLocalRandom.current().nextInt(0, 2+1) + windSpeed);
 //        }
@@ -47,16 +60,15 @@ class WindGenerator {
 //        else {
 //            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-2, 2+1) + windSpeed);
 //        }
-        return (short) (windSpeed+ThreadLocalRandom.current().nextGaussian()*speedVariance);
+        windSpeed= (short) (windSpeedOriginal+ThreadLocalRandom.current().nextGaussian()*speedVariance);
 
     }
 
     /**
      * Generates a random value for wind direction
-     * @return short wind direction
      */
-    private short getRandomWindDirection() {
+    private void getRandomWindDirection() {
 
-        return (short) (windDirection+ThreadLocalRandom.current().nextGaussian()*directionVariance);
+        windDirection= (short) (windDirectionOriginal+ThreadLocalRandom.current().nextGaussian()*directionVariance);
     }
 }

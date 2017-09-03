@@ -3,6 +3,7 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
+import Animations.SoundPlayer;
 import Elements.*;
 import Elements.Annotation;
 import javafx.animation.FadeTransition;
@@ -99,7 +100,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private DataSource dataSource;
     private GraphicsContext gc;
 
-
+    //SOUNDS
+    private SoundPlayer soundPlayer=new SoundPlayer();
 
 
 
@@ -166,7 +168,7 @@ public class RaceViewController implements Initializable, TableObserver {
         controlsBox.setPrefHeight(height);
         controlsBox.setPrefWidth(width);
         raceViewPane.getChildren().add(track);
-
+//        soundPlayer.playMP3("sounds/bensound-epic.mp3");
         this.dataSource = dataSource;
 
         while (dataSource.getCompetitorsPosition() == null) {

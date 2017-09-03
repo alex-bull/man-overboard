@@ -59,6 +59,7 @@ public class LobbyController implements Initializable {
     private Rectangle2D primaryScreenBounds;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private AnimationTimer timer;
+    private SoundPlayer soundPlayer=new SoundPlayer();
 
     /**
      * Sets the stage
@@ -92,6 +93,7 @@ public class LobbyController implements Initializable {
             alert.showAndWait();
             return;
         }
+        soundPlayer.playMP3("sounds/bensound-instinct.mp3");
 
         this.timer = new AnimationTimer() {
             @Override
@@ -130,7 +132,7 @@ public class LobbyController implements Initializable {
     @FXML
     public void playerReady() {
         if (dataSource.getSourceID() == 0) return; //player has not connected yet
-        new SoundPlayer().playSound("sounds/im-ready.au");
+//        soundPlayer.playSound("sounds/im-ready.au");
         readyButton.setDisable(true);
         dataSource.send(new BinaryPackager().packagePlayerReady());
     }

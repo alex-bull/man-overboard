@@ -1,5 +1,6 @@
 package controllers;
 
+import Animations.SoundPlayer;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
@@ -27,6 +28,7 @@ public class MainController {
     @FXML private GridPane loadingPane;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
+    private SoundPlayer soundPlayer;
 
     /**
      * Handle control key events
@@ -112,7 +114,8 @@ public class MainController {
                 }
             }
         };
-
         timer.start();
+        soundPlayer=new SoundPlayer();
+        soundPlayer.playMP3("sounds/bensound-epic.mp3");
     }
 }
