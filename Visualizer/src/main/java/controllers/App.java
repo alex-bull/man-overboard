@@ -30,7 +30,7 @@ public class App extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
         Parent root = loader.load();
 
         Scene rootScene = new Scene(root);
@@ -38,15 +38,12 @@ public class App extends Application {
 
 
 
-        LobbyController lobbyController = loader.getController();
-        lobbyController.setStage(primaryStage);
+        StartController startController = loader.getController();
+        startController.setStage(primaryStage);
 
         String imagePath = "file: resources/logo.png";
         primaryStage.getIcons().add(new Image(imagePath));
-        Interpreter interpreter = new Interpreter();
-        interpreter.setPrimaryStage(primaryStage);
-        lobbyController.setDataSource(interpreter);
-        lobbyController.begin();
+        startController.begin();
         // for mac
 //        java.awt.Image image = Toolkit.getDefaultToolkit().getImage(imagePath);
 //        Application.getApplication().setDockIconImage(image);

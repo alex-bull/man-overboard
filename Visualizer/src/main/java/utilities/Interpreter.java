@@ -191,7 +191,7 @@ public class Interpreter implements DataSource, PacketHandler {
     public void send(byte[] data) {
         try {
             this.TCPClient.send(data);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Failed to send data");
         }
     }

@@ -5,11 +5,8 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
-import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utility.BinaryPackager;
 
@@ -29,6 +26,7 @@ public class MainController {
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private SoundPlayer soundPlayer;
+    private boolean playing = false;
 
     /**
      * Handle control key events
@@ -103,6 +101,7 @@ public class MainController {
             public void handle(long now) {
                 dataSource.update();
                 if (raceViewController.isLoaded()) {
+                    if (!playing) playGameMusic();
                     raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
@@ -115,7 +114,16 @@ public class MainController {
             }
         };
         timer.start();
+
+    }
+
+
+    /**
+     * Play the game music loop
+     */
+    private void playGameMusic() {
         soundPlayer=new SoundPlayer();
-        soundPlayer.playMP3("sounds/bensound-epic.mp3");
+        soundPlayer.loopMP3("sounds/bensound-epic.mp3");
+        playing = true;
     }
 }

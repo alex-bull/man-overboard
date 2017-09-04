@@ -168,7 +168,7 @@ public class RaceViewController implements Initializable, TableObserver {
         controlsBox.setPrefHeight(height);
         controlsBox.setPrefWidth(width);
         raceViewPane.getChildren().add(track);
-//        soundPlayer.playMP3("sounds/bensound-epic.mp3");
+//        soundPlayer.loopMP3("sounds/bensound-epic.mp3");
         this.dataSource = dataSource;
 
         while (dataSource.getCompetitorsPosition() == null) {

@@ -9,6 +9,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -80,21 +81,31 @@ public class LobbyController implements Initializable {
      * Uses an animation timer as it is updating the GUI thread
      */
     void begin() {
-
         Scene scene=primaryStage.getScene();
-        boolean connected = this.dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
-        if (!connected) {
-            System.out.println("Failed to connect to server");
-            this.progressIndicator.setVisible(false);
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Connection to server failed");
-            alert.setHeaderText(null);
-            alert.setContentText("Sorry, cannot connect to this game right now.");
-            alert.showAndWait();
-            return;
-        }
-        soundPlayer.playMP3("sounds/bensound-instinct.mp3");
 
+        //start sound loop
+        soundPlayer.loopMP3("sounds/bensound-instinct.mp3");
+
+        Runnable r = new Runnable() {
+            public void run() {
+
+            }
+        };
+
+        new Thread(r).start();
+
+        //Connect to a game
+        boolean connected = this.dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
+        while (!connected) {
+//            try {
+//                //Thread.sleep(500);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+            connected = this.dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
+        }
+
+        //start the main lobby loop
         this.timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -145,7 +156,7 @@ public class LobbyController implements Initializable {
     @FXML
     public void leaveLobby() {
         dataSource.send(new BinaryPackager().packageLeaveLobby());
-        System.exit(0); //this will go back to the home screen
+        this.loadStartView();
     }
 
 
@@ -208,6 +219,26 @@ public class LobbyController implements Initializable {
     }
 
 
+    /**
+     * Loads the start view
+     */
+    private void loadStartView() {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assert root != null;
+        Scene scene = new Scene(root);
+        StartController startController = loader.getController();
+        startController.setStage(primaryStage);
+        startController.begin();
+        primaryStage.setScene(scene);
+    }
+
 
     /**
      * Countdown until the race start, updates the countdown time text.
@@ -219,7 +250,9 @@ public class LobbyController implements Initializable {
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
 
-        //count down for 5 seconds
+        soundPlayer.fade("sounds/bensound-instinct.mp3", 10);
+
+        //count down for 10 seconds
         gameStartLabel.setVisible(true);
         countdownLabel.textProperty().bind(timeSeconds.asString());
         timeSeconds.set(STARTTIME);
