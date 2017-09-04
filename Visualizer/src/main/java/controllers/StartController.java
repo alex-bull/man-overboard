@@ -24,8 +24,9 @@ public class StartController {
     void begin() {
 
         soundPlayer = new SoundPlayer();
-        soundPlayer.loopMP3WithFade("sounds/bensound-theduel.mp3", 6);
+        soundPlayer.loopMP3WithFade("sounds/bensound-theduel.mp3", 10);
     }
+
 
 
     @FXML
@@ -49,6 +50,26 @@ public class StartController {
         lobbyController.begin();
         stage.setScene(scene);
     }
+
+
+    @FXML
+    public void settings() {
+
+    }
+
+
+    @FXML
+    public void controls() {
+
+    }
+
+
+    @FXML
+    public void quit() {
+        System.exit(0);
+    }
+
+
 
 
 }

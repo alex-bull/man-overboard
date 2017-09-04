@@ -20,7 +20,7 @@
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="25.0" prefWidth="605.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="25.0" prefWidth="605.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="408.0" minWidth="0.0" percentWidth="40.0" prefWidth="24.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="408.0" minWidth="0.0" percentWidth="40.0" prefWidth="24.0" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints maxHeight="50.0" minHeight="0.0" percentHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
@@ -62,7 +62,7 @@
                         <Image url="@images/boat.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="playerLabel" text="xXXQuickBoater2000XxXx" textFill="#e0efef" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                  <Label fx:id="playerLabel" text="Player" textFill="#e0efef" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -124,6 +124,14 @@
                   </Label>
                </children>
             </GridPane>
+            <Label fx:id="loadingLabel" style="-fx-text-fill: #7dcdcd;" text="Finding a game..." textFill="#06d4f8" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+               <padding>
+                  <Insets top="120.0" />
+               </padding>
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
             </children>
         </GridPane>
     </children>

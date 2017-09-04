@@ -10,7 +10,7 @@
 
 <AnchorPane prefHeight="800.0" prefWidth="1300.0" styleClass="background" stylesheets="@css/theme.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.StartController">
    <children>
-      <GridPane layoutX="577.0" layoutY="331.0" AnchorPane.bottomAnchor="250.0" AnchorPane.leftAnchor="400.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="300.0">
+      <GridPane layoutX="577.0" layoutY="331.0" AnchorPane.bottomAnchor="220.0" AnchorPane.leftAnchor="400.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="330.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -22,12 +22,12 @@
         </rowConstraints>
          <children>
             <Button fx:id="joinButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#joinGame" prefWidth="150.0" text="Join Game" GridPane.halignment="CENTER" />
-            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="150.0" text="Settings" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" prefWidth="150.0" text="Controls" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-            <Button mnemonicParsing="false" prefWidth="150.0" text="Quit" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#settings" prefWidth="150.0" text="Settings" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" onAction="#controls" prefWidth="150.0" text="Controls" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false" onAction="#quit" prefWidth="150.0" text="Quit" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
          </children>
       </GridPane>
-      <ImageView fitHeight="139.0" fitWidth="369.0" layoutX="475.0" layoutY="79.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="475.0" AnchorPane.rightAnchor="456.0" AnchorPane.topAnchor="80.0">
+      <ImageView fitHeight="139.0" fitWidth="369.0" layoutX="467.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="467.0" AnchorPane.rightAnchor="466.4814147949219" AnchorPane.topAnchor="80.0">
          <image>
             <Image url="@images/logoWordManOver.png" />
          </image>

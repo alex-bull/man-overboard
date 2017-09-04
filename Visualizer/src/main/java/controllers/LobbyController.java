@@ -55,6 +55,8 @@ public class LobbyController implements Initializable {
     @FXML private Label locationLabel;
     @FXML private Label gameTypeLabel;
     @FXML private Label playerLabel;
+    @FXML private Label loadingLabel;
+
     private ObservableList<String> competitorList = FXCollections.observableArrayList();
     private Rectangle2D primaryScreenBounds;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
@@ -126,6 +128,7 @@ public class LobbyController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         progressIndicator.setVisible(true);
+        loadingLabel.setVisible(true);
         countdownLabel.setText("");
         gameStartLabel.setVisible(false);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -212,6 +215,7 @@ public class LobbyController implements Initializable {
      */
     private void updateList() {
         this.progressIndicator.setVisible(false);
+        this.loadingLabel.setVisible(false);
         this.competitorList.clear();
         this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
         if (dataSource.getCompetitor() != null) this.playerLabel.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
