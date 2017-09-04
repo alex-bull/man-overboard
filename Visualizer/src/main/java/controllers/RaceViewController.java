@@ -278,6 +278,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 //drawBorder(raceViewPane.getWidth(),raceViewPane.getHeight(),25);
                 new BorderAnimation(raceParentPane, 25).animate();
                 new RandomShake(raceParentPane).animate();
+                soundPlayer.playMP3("sounds/impact.mp3");
             }
             drawCollision(point.getXValue(), point.getYValue());
             dataSource.removeCollsions(sourceID);

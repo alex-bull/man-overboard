@@ -24,22 +24,20 @@ public class SoundPlayer {
     private Map<String, MediaPlayer> players = new HashMap<>();
 
 
-    public void playSound(String soundFile) {
-        try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(soundFile);
-            AudioStream audioStream = new AudioStream(inputStream);
-            AudioPlayer.player.start(audioStream);
+    /**
+     * Play a sound file
+     * @param track String the file to play
+     */
+    public void playMP3(String track) {
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            // a special way i'm handling logging in this application
-            System.out.println("Could not find sound tile");
-        }
+        Media sound = new Media(getClass().getClassLoader().getResource(track).toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        players.put(track, mediaPlayer);
+        mediaPlayer.play();
     }
 
-
     /**
-     * Loop a sound file
+     * Loop a sound file continuously
      * @param track String, the sound file to play
      */
     public void loopMP3(String track) {
@@ -49,6 +47,18 @@ public class SoundPlayer {
         players.put(track, mediaPlayer);
         mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(ZERO));
         mediaPlayer.play();
+    }
+
+
+    /**
+     * Set the volume of a track
+     * @param track String, the track to set
+     * @param volume Double, the volume (0 - 1)
+     */
+    public void setVolume(String track, Double volume) {
+        MediaPlayer player = players.get(track);
+        if (player == null) return;
+        player.setVolume(volume);
     }
 
 

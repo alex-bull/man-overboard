@@ -28,6 +28,7 @@ public class MainController {
     private SoundPlayer soundPlayer;
     private boolean playing = false;
 
+
     /**
      * Handle control key events
      * @param event KeyEvent
@@ -124,6 +125,7 @@ public class MainController {
     private void playGameMusic() {
         soundPlayer=new SoundPlayer();
         soundPlayer.loopMP3("sounds/bensound-epic.mp3");
+        soundPlayer.setVolume("sounds/bensound-epic.mp3", 0.3);
         playing = true;
     }
 }
