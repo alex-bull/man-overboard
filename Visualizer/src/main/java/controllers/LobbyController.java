@@ -55,20 +55,12 @@ public class LobbyController implements Initializable {
     @FXML private Label locationLabel;
     @FXML private Label gameTypeLabel;
     @FXML private Label playerLabel;
-    private Stage primaryStage;
     private ObservableList<String> competitorList = FXCollections.observableArrayList();
     private Rectangle2D primaryScreenBounds;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private AnimationTimer timer;
     private SoundPlayer soundPlayer=new SoundPlayer();
 
-    /**
-     * Sets the stage
-     * @param primaryStage Stage the stage for this window
-     */
-    void setStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
 
     void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -77,35 +69,41 @@ public class LobbyController implements Initializable {
 
     /**
      * Begins connection to server
-     * Continuously polls the datasource to update the view
-     * Uses an animation timer as it is updating the GUI thread
+     * Continuously tries to connect on background thread
      */
     void begin() {
-        Scene scene=primaryStage.getScene();
+        Scene scene = starterList.getScene();
 
         //start sound loop
-        soundPlayer.loopMP3("sounds/bensound-instinct.mp3");
+        soundPlayer.loopMP3WithFade("sounds/bensound-instinct.mp3", 4);
 
-        Runnable r = new Runnable() {
-            public void run() {
+        //Connect to a game in the background
+        Task connect = new Task() {
 
+            @Override public Boolean call() {
+                boolean connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
+                while (!connected) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {}
+                    connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
+                }
+                return true;
             }
         };
 
-        new Thread(r).start();
+        connect.setOnSucceeded(event -> this.loop());
+        Thread connection = new Thread(connect);
+        connection.start();
+    }
 
-        //Connect to a game
-        boolean connected = this.dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
-        while (!connected) {
-//            try {
-//                //Thread.sleep(500);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-            connected = this.dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
-        }
 
-        //start the main lobby loop
+    /**
+     * Start the main loop
+     * Continuously polls the datasource to update the view
+     * Uses an animation timer as it is updating the GUI thread
+     */
+    private void loop() {
         this.timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -155,6 +153,7 @@ public class LobbyController implements Initializable {
      */
     @FXML
     public void leaveLobby() {
+        if (timer != null) timer.stop();
         dataSource.send(new BinaryPackager().packageLeaveLobby());
         this.loadStartView();
     }
@@ -219,10 +218,17 @@ public class LobbyController implements Initializable {
     }
 
 
+
     /**
      * Loads the start view
      */
     private void loadStartView() {
+
+        //clean up first
+        if (timer != null) timer.stop();
+        soundPlayer.fade("sounds/bensound-instinct.mp3", 2);
+        dataSource = null;
+
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
         Parent root = null;
         try {
@@ -234,9 +240,9 @@ public class LobbyController implements Initializable {
         assert root != null;
         Scene scene = new Scene(root);
         StartController startController = loader.getController();
-        startController.setStage(primaryStage);
+        Stage stage = (Stage) gameTypeLabel.getScene().getWindow();
         startController.begin();
-        primaryStage.setScene(scene);
+        stage.setScene(scene);
     }
 
 
@@ -246,7 +252,8 @@ public class LobbyController implements Initializable {
      */
     private void loadRaceView() {
 
-        this.timer.stop(); //cancel the animation timer
+        //clean up
+        if (timer != null) timer.stop();
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
 
@@ -278,8 +285,9 @@ public class LobbyController implements Initializable {
                 Scene scene = new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 MainController mainController = loader.getController();
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                primaryStage.setTitle("Man Overboard");
-                primaryStage.setScene(scene);
+                Stage stage = (Stage) gameTypeLabel.getScene().getWindow();
+                stage.setTitle("Man Overboard");
+                stage.setScene(scene);
             }
         });
     }

@@ -39,7 +39,6 @@ public class App extends Application {
 
 
         StartController startController = loader.getController();
-        startController.setStage(primaryStage);
 
         String imagePath = "file: resources/logo.png";
         primaryStage.getIcons().add(new Image(imagePath));
