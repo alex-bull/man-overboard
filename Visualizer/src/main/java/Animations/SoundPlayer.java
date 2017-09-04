@@ -36,6 +36,7 @@ public class SoundPlayer {
         mediaPlayer.play();
     }
 
+
     /**
      * Loop a sound file continuously
      * @param track String, the sound file to play
@@ -79,7 +80,6 @@ public class SoundPlayer {
                         new KeyValue(mediaPlayer.volumeProperty(), 1.0)));
         mediaPlayer.play();
         timeline.play();
-
     }
 
 

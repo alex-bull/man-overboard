@@ -74,6 +74,12 @@ public class LobbyController implements Initializable {
      * Continuously tries to connect on background thread
      */
     void begin() {
+
+
+//        for (int i = 0; i<8; i++) {
+//            competitorList.add("Boat 10" +i);
+//        }
+
         Scene scene = starterList.getScene();
 
         //start sound loop
@@ -214,10 +220,12 @@ public class LobbyController implements Initializable {
      * Updates the list with the competitors in the datasource
      */
     private void updateList() {
-        this.progressIndicator.setVisible(false);
-        this.loadingLabel.setVisible(false);
         this.competitorList.clear();
-        this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
+        if (dataSource.getCompetitorsPosition().size() > 0) {
+            this.progressIndicator.setVisible(false);
+            this.loadingLabel.setVisible(false);
+            this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
+        }
         if (dataSource.getCompetitor() != null) this.playerLabel.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
     }
 
