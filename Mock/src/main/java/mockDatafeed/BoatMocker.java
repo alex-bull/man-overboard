@@ -557,6 +557,17 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         this.sendQueue.put(null, eventPacket);
     }
 
+    /**
+     * Packages and sends shark event
+     * @param locations data for the event
+     * @throws IOException if send fails
+     */
+    public void sharkEvent(List<Shark> locations) throws IOException {
+
+        byte[] eventPacket = binaryPackager.packageSharkEvent(locations);
+        this.sendQueue.put(null, eventPacket);
+    }
+
 
 
     /**

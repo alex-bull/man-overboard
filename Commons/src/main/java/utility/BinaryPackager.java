@@ -4,6 +4,7 @@ package utility;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import models.Competitor;
 import models.CrewLocation;
+import models.Shark;
 import parsers.BoatStatusEnum;
 
 import java.io.IOException;
@@ -582,6 +583,35 @@ public class BinaryPackager {
             packetBuffer.put((byte)crewLocation.getNumCrew());
             packetBuffer.putInt(latLngToInt(crewLocation.getLatitude()));
             packetBuffer.putInt(latLngToInt(crewLocation.getLongitude()));
+        }
+
+
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+    /**
+     * Packages Shark event
+     * @param locations the location of the sharks
+     * @return the packet for event
+     */
+    public byte[] packageSharkEvent(List<Shark> locations){
+        int n=locations.size();
+        byte[] packet=new byte[20+n*13]; // total size of packet
+
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 107;
+        short bodyLength = (short) (n*13+1);
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.put((byte) n);
+        for(Shark shark:locations){
+            packetBuffer.putInt(shark.getSourceId());
+            packetBuffer.put((byte)shark.getNumSharks());
+            packetBuffer.putInt(latLngToInt(shark.getLatitude()));
+            packetBuffer.putInt(latLngToInt(shark.getLongitude()));
         }
 
 

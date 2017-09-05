@@ -51,6 +51,7 @@ import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
 import static parsers.fallenCrew.FallenCrewParser.parseFallenCrew;
+import static parsers.obstacles.SharkParser.parseShark;
 import static utility.Calculator.calculateExpectedTack;
 
 /**
@@ -181,6 +182,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
 
     private Map<Integer,CrewLocation> crewLocations=new HashMap<>();
+    private Map<Integer, Shark> sharkLocations = new HashMap<>();
 
 
 
@@ -395,6 +397,9 @@ public class Interpreter implements DataSource, PacketHandler {
             case FALLEN_CREW:
                 addCrewLocation(parseFallenCrew(packet));
                 break;
+            case SHARK:
+                addShark(parseShark(packet));
+                break;
 
             default:
                 break;
@@ -406,7 +411,7 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param locations
      */
     public void addCrewLocation(List<CrewLocation> locations){
-        System.out.println(locations.size());
+        System.out.println(locations.size() + " CREW");
         crewLocations.clear();
         for(CrewLocation crewLocation:locations){
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
@@ -429,8 +434,40 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
+    /**
+     * adds shark locations with location converted
+     * @param locations list of shark locations
+     */
+    public void addShark(List<Shark> locations){
+        System.out.println(locations.size() + "SHARKS");
+        sharkLocations.clear();
+        for(Shark shark:locations){
+            MutablePoint location = cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
+            MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
+            location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
+            location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            sharkLocations.put(shark.getSourceId(),new Shark(shark.getSourceId(),shark.getNumSharks(),location,location17, locationOriginal));
+        }
+    }
+
+    /**
+     * updates shark location when scaling level changes
+     */
+    private void updateSharkLocation(){
+        for(Shark shark: sharkLocations.values()){
+            MutablePoint point=cloner.deepClone(shark.getPositionOriginal());
+            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            shark.setPosition17(point);
+        }
+    }
+
     public Map<Integer,CrewLocation> getCrewLocations() {
         return crewLocations;
+    }
+
+    public Map<Integer,Shark> getSharkLocations() {
+        return sharkLocations;
     }
 
     /**
@@ -661,6 +698,7 @@ public class Interpreter implements DataSource, PacketHandler {
         updateCourseMarksScaling();
         updateCourseBoundary();
         updateCrewLocation();
+        updateSharkLocation();
     }
 
     public Set<Integer> getCollisions(){

@@ -36,7 +36,9 @@ public class BoatUpdater {
     private List<MutablePoint> courseBoundary;
     private WindGenerator windGenerator;
     private int crewLocationSourceID = 0;
+    private int sharkSourceID = 0;
     private List<CrewLocation> crewMembers = new ArrayList<>();
+    private List<Shark> sharks = new ArrayList<>();
 
 
     /**
@@ -92,7 +94,7 @@ public class BoatUpdater {
                 boat.getBoatSpeed().reduce(0.99);
             }
 
-            crewMemberUpdated = crewMemberUpdated || pickUpCrew(boat);
+            crewMemberUpdated = crewMemberUpdated || pickUpCrew(boat) || crewEaten();
             boat.updatePosition(0.1);
 
             boolean courseCollision = this.handleCourseCollisions(boat);
@@ -109,15 +111,18 @@ public class BoatUpdater {
         }
         if (crewMemberUpdated) {
             handler.fallenCrewEvent(crewMembers);
-
+            handler.sharkEvent(sharks);
         }
+
+
     }
 
 
     /**
      * function to check if crew member can be picked up
      *
-     * @param boat
+     * @param boat competitor
+     * @return boolean if the crew has been picked up
      */
     private boolean pickUpCrew(Competitor boat) {
         boolean updated = false;
@@ -132,6 +137,28 @@ public class BoatUpdater {
 
         return updated;
     }
+
+
+    /**
+     * function to check if a crew member has been eaten by a shark
+     * @return boolean if a crew member has been eaten
+     */
+    private boolean crewEaten() {
+        boolean updated = false;
+        for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
+            for (Shark shark : new ArrayList<>(sharks)){
+                if (shark.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
+                    crewMembers.remove(crewLocation);
+                    updated = true;
+                }
+            }
+        }
+
+        return updated;
+
+    }
+
+
 
     /**
      * Calculates if the boat rounds the next course feature and adjusts the boats leg index and sends a rounding packet
@@ -433,7 +460,7 @@ public class BoatUpdater {
      * handler for collision, currently throws members off the boat
      * MUST BE CALLED BEFORE BOAT.UPDATEPOSITION !!!!!!!!!!!!
      *
-     * @param location  the location where the collision happend
+     * @param location  the location where the collision happened
      * @param magnitude the magnitude of the collision
      * @param health    the health reduced, 5 crew members per location
      */
@@ -450,10 +477,19 @@ public class BoatUpdater {
 
             CrewLocation crewLocation = new CrewLocation(crewLocationSourceID++, 5, position);
             crewMembers.add(crewLocation);
+
+            Shark shark = new Shark(sharkSourceID++, 2, position);
+            sharks.add(shark);
         }
 
         handler.fallenCrewEvent(crewMembers);
+        handler.sharkEvent(sharks);
     }
+
+
+
+
+
 
     /**
      * Calculates if the boat collides with any other boat and adjusts the position of both boats accordingly.

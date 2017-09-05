@@ -30,10 +30,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mockDatafeed.Keys;
-import models.Competitor;
-import models.CourseFeature;
-import models.CrewLocation;
-import models.MutablePoint;
+import models.*;
 import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
 import utilities.*;
@@ -68,6 +65,7 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private ListView<String> finisherListView;
 
     private Map<Integer, ImageView> fallenCrews=new HashMap<>();
+    private Map<Integer, ImageView> sharks = new HashMap<>();
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Double, HealthBar> healthBars = new HashMap<>();
@@ -579,6 +577,45 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+    /**
+     * Draw sharks in the water
+     */
+    private void drawSharks(){
+        Map<Integer, Shark> sharkLocation = dataSource.getSharkLocations();
+
+        //remove entries
+        Set<Integer> removedLocation= new HashSet<>(sharks.keySet());
+        removedLocation.removeAll(sharkLocation.keySet());
+        for(int sourceId:removedLocation){
+            raceViewPane.getChildren().remove(sharks.get(sourceId));
+            sharks.remove(sourceId);
+        }
+
+
+        for(int sourceID : sharkLocation.keySet()) {
+            if (!sharks.containsKey(sourceID)) {
+                ImageView shark = new ImageView();
+                Image drowning = new Image("/Animations/shark.jpg");
+                shark.setImage(drowning);
+                sharks.put(sourceID,shark);
+                raceViewPane.getChildren().add(shark);
+                System.out.println("draw shark");
+            }
+
+            Image image = sharks.get(sourceID).getImage();
+            if (isZoom()) {
+                MutablePoint p = sharkLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+                sharks.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+            } else {
+                MutablePoint p = sharkLocation.get(sourceID).getPosition();
+                sharks.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+            }
+        }
+
+
+
+    }
+
 
 
 
@@ -719,6 +756,7 @@ public class RaceViewController implements Initializable, TableObserver {
     void refresh() {
         checkRaceFinished();
         drawFallenCrew();
+        drawSharks();
         setBoatLocation();
         updateRace();
         checkCollision();
@@ -727,5 +765,8 @@ public class RaceViewController implements Initializable, TableObserver {
     boolean isLoaded() {
         return isLoaded;
     }
+
+
+
 
 }
