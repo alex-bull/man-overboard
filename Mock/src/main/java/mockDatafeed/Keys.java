@@ -5,7 +5,7 @@ package mockDatafeed;
  * Enum for key presses
  */
 public enum Keys {
-    UP(5), DOWN(6), VMG(1), SAILSIN(2), SAILSOUT(3), TACK(4), UNKNOWN(-1), RIP(0);
+    UP(5), DOWN(6), VMG(1), SAILSIN(2), SAILSOUT(3), SWITCHSAILS(7),  TACK(4), UNKNOWN(-1), RIP(0);
 
     private final int value;
 
@@ -35,6 +35,8 @@ public enum Keys {
                 return SAILSOUT;
             case 4:
                 return TACK;
+            case 7:
+                return SWITCHSAILS;
             case 0:
                 return RIP;
             default:

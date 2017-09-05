@@ -203,6 +203,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                         sendBoatAction(SAILSOUT.getValue(), sourceID);
                         competitors.get(sourceID).sailsOut();
                         break;
+                    case SWITCHSAILS:
+                        sendBoatAction(SWITCHSAILS.getValue(), sourceID);
+                        competitors.get(sourceID).switchSails();
+                        break;
                     case UP:
                         competitors.get(sourceID).changeHeading(true, shortToDegrees(windGenerator.getWindDirection()));
                         break;

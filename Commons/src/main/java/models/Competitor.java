@@ -77,6 +77,8 @@ public interface Competitor {
 
     double getSailValue();
 
+    boolean hasSailsOut();
+
     void setSailValue(double sailValue);
 
     void changeHeading(boolean upwind, double angle);

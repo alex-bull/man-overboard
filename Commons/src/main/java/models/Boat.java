@@ -162,6 +162,11 @@ public class Boat implements Competitor {
      */
     public void switchSails() {
         sailsOut = !sailsOut;
+        if(sailsOut){
+            sailValue = 5;
+        } else {
+            sailValue = 0;
+        }
     }
 
     /**
@@ -172,6 +177,9 @@ public class Boat implements Competitor {
         if(sailValue >= minSailValue){
             sailValue -= 1;
         }
+        else{
+            sailsOut = false;
+        }
     }
 
     /**
@@ -181,6 +189,7 @@ public class Boat implements Competitor {
         double maxSailValue = 5;
         if(sailValue <= maxSailValue){
             sailValue += 1;
+            sailsOut = true;
         }
     }
 
@@ -192,6 +201,8 @@ public class Boat implements Competitor {
     public double getSailValue() { return sailValue; }
 
     public void setSailValue(double sailValue){ this.sailValue = sailValue; }
+
+    public boolean hasSailsOut(){ return sailsOut;}
 
     public double getCollisionRadius() {
         return collisionRadius;

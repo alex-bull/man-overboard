@@ -1428,6 +1428,7 @@ public class RaceViewController implements Initializable, TableObserver {
         BinaryPackager binaryPackager = new BinaryPackager();
         Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
         double blocksMoved;
+
         if(sailValue > sailSlider.getValue() && sailSlider.getValue()%1 == 0){
             blocksMoved = sailValue - sailSlider.getValue();
             sailValue = sailSlider.getValue();
@@ -1444,6 +1445,8 @@ public class RaceViewController implements Initializable, TableObserver {
         }
 
     }
+
+
 
 
     /**
