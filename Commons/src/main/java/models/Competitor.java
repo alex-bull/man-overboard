@@ -77,6 +77,8 @@ public interface Competitor {
 
     double getSailValue();
 
+    void setSailValue(double sailValue);
+
     void changeHeading(boolean upwind, double angle);
 
     int getHealthLevel();

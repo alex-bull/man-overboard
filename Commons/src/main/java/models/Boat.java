@@ -184,11 +184,14 @@ public class Boat implements Competitor {
         }
     }
 
+
     /**
      * Returns the sail state of the boat
      * @return double - the value of the sail slider
      */
     public double getSailValue() { return sailValue; }
+
+    public void setSailValue(double sailValue){ this.sailValue = sailValue; }
 
     public double getCollisionRadius() {
         return collisionRadius;
