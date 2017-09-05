@@ -478,7 +478,7 @@ public class BoatUpdater {
             CrewLocation crewLocation = new CrewLocation(crewLocationSourceID++, 5, position);
             crewMembers.add(crewLocation);
 
-            Shark shark = new Shark(sharkSourceID++, 2, position);
+            Shark shark = new Shark(sharkSourceID++, 1, position);
             sharks.add(shark);
         }
 

@@ -2,6 +2,7 @@ package models;
 
 /**
  * Created by Izzy on 5/09/17.
+ *
  */
 public class Shark {
 
@@ -44,6 +45,7 @@ public class Shark {
     public MutablePoint getPosition() {
         return position;
     }
+
     public MutablePoint getPosition17(){
         return position17;
     }

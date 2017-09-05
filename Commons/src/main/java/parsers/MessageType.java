@@ -21,7 +21,7 @@ public enum MessageType {
     PLAYER_READY(110),
     LEAVE_LOBBY(111),
     FALLEN_CREW(107),
-    SHARK(109);
+    SHARK(120);
 
     private final int value;
 

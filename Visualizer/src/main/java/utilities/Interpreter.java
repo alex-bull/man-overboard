@@ -440,6 +440,7 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     public void addShark(List<Shark> locations){
         System.out.println(locations.size() + "SHARKS");
+
         sharkLocations.clear();
         for(Shark shark:locations){
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
