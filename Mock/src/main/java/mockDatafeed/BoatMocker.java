@@ -289,7 +289,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             if (angle > 2 * Math.PI) {
                 angle = angle - 2 * Math.PI; // wind direction cannot be more than 360
             }
-            windDirection = convertRadiansToShort(4.71239);
+            windDirection = convertRadiansToShort(angle);
         }
         windGenerator = new WindGenerator(windSpeed, windDirection);
 //        polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);

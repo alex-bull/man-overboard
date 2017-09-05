@@ -10,8 +10,6 @@ import utility.Calculator;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.StrictMath.abs;
-
 
 /**
  * Created by mgo65 on 3/03/17.
@@ -152,7 +150,7 @@ public class Boat implements Competitor {
         double resultHealth = healthLevel + delta;
 
         if(resultHealth > maxHealth) {
-           this.healthLevel = maxHealth;
+            this.healthLevel = maxHealth;
         } else this.healthLevel = resultHealth;
     }
 
@@ -375,14 +373,11 @@ public class Boat implements Competitor {
      * @return double downWind
      */
     private double getDownWind(double windAngle) {
-       double downWind = windAngle + 180;
-       if(downWind > 360) {
-           downWind -= 360;
-       }
-       if(downWind < 0) {
-           downWind += 360;
-       }
-       return downWind;
+        double downWind = windAngle + 180;
+        if(downWind > 360) {
+            downWind = downWind - 360;
+        }
+        return downWind;
     }
 
     /**
@@ -396,16 +391,6 @@ public class Boat implements Competitor {
 
         double downWind = getDownWind(windAngle);
         double currentHeading=getCurrentHeading();
-        System.out.println("c" + currentHeading);
-        System.out.println("wind angle is " + windAngle);
-        System.out.println("Dpwn"  + downWind);
-
-//        double diff = 360 - windAngle;
-//        windAngle += diff;
-//        downWind += diff;
-        if(abs(currentHeading-windAngle)>abs(currentHeading+360-windAngle)){
-            currentHeading+=360;
-        }
         if(currentHeading>= windAngle && currentHeading <= downWind) {
             if(upwind) {
                 setCurrentHeading(currentHeading - turnAngle);
@@ -424,7 +409,7 @@ public class Boat implements Competitor {
             }
         }
 //        setCurrentHeading(currentHeading % 360);
-        System.out.println(currentHeading);
+//        System.out.println(currentHeading);
 //        System.out.println(boatSpeed.getDirection());
 //        currentHeading.setValue(currentHeading.getValue() % 360);
     }
