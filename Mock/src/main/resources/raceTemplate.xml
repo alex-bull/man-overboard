@@ -11,6 +11,7 @@
     <Participants>
         %s
     </Participants>
+
     <!--<Course>-->
         <!--<CompoundMark CompoundMarkID="1" Name="Start Line">-->
             <!--<Mark SeqID="1" Name="Start Line 1" TargetLat="32.353960" TargetLng="-64.793784" SourceID="122"/>-->
@@ -41,6 +42,8 @@
             <!--<Mark SeqID="2" Name="Finish Line 2" TargetLat="32.370902" TargetLng="-64.778286" SourceID="129"/>-->
         <!--</CompoundMark>-->
     <!--</Course>-->
+
+    <!--OCTAGON COURSE-->
     <Course>
         <CompoundMark CompoundMarkID="1" Name="Start Line">
             <Mark SeqID="1" Name="Start Line 1" TargetLat="32.42244" TargetLng="-64.86768" SourceID="122"/>
@@ -83,27 +86,19 @@
     </CompoundMarkSequence>
 
     <!--<CourseLimit>-->
-        <!--&lt;!&ndash;<Limit SeqID="3" Lat="32.3028767" Lon="-64.8209667"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<Limit SeqID="5" Lat="32.2768286" Lon="-64.8519516"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<Limit SeqID="6" Lat="32.2918489" Lon="-64.8545266"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<Limit SeqID="7" Lat="32.2935902" Lon="-64.8600197"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<Limit SeqID="8" Lat="32.299467" Lon="-64.8581314"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<Limit SeqID="10" Lat="32.3122319" Lon="-64.8378754"/>&ndash;&gt;-->
         <!--<Limit SeqID="1" Lat="32.372304" Lon="-64.785311"/>-->
         <!--<Limit SeqID="2" Lat="32.372093" Lon="-64.776740"/>-->
         <!--<Limit SeqID="3" Lat="32.362881" Lon="-64.768176"/>-->
         <!--<Limit SeqID="4" Lat="32.329907" Lon="-64.780616"/>-->
         <!--<Limit SeqID="5" Lat="32.330120" Lon="-64.795713"/>-->
         <!--<Limit SeqID="6" Lat="32.341306" Lon="-64.794240"/>-->
-        <!--&lt;!&ndash;<Limit SeqID="7" Lat="32.291799" Lon="-64.867632"/>&ndash;&gt;-->
         <!--<Limit SeqID="7" Lat="32.344870" Lon="-64.809476"/>-->
-        <!--&lt;!&ndash;<Limit SeqID="8" Lat="32.303291" Lon="-64.863019"/>&ndash;&gt;-->
         <!--<Limit SeqID="8" Lat="32.360300" Lon="-64.804304"/>-->
-        <!--&lt;!&ndash;<Limit SeqID="9" Lat="32.2982336" Lon="-64.8480892"/>&ndash;&gt;-->
         <!--<Limit SeqID="9" Lat="32.358349" Lon="-64.792028"/>-->
         <!--<Limit SeqID="10" Lat="32.367811" Lon="-64.786272"/>-->
     <!--</CourseLimit>-->
 
+    <!--OCTAGON BOUNDARY-->
     <CourseLimit>
         <Limit SeqID="1" Lat="32.47604" Lon="-64.84642"/>
         <Limit SeqID="2" Lat="32.47598" Lon="-64.77141"/>

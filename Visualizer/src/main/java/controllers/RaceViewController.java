@@ -1488,68 +1488,112 @@ public class RaceViewController implements Initializable, TableObserver {
         if (theta < 0) { theta = 360 + theta;}
         double difference = theta - heading;
 
+        int UP = 5;
+        int DOWN = 6;
+        boolean westOfWind = (heading > downWind) || (heading < windAngle);
+        System.out.println(westOfWind);
 
-//        if (heading < 180) {
-//            if (difference > 0 && difference > 180) {
-//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-//            } else if (difference > 0 && difference < 180) {
-//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-//            } else if (difference < 0 && difference > -180) {
-//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-//            } else if (difference < 0 && difference < -180) {
-//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-//            }
-//        } else {
-//            if (difference > 0 && difference < 180) {
-//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-//            } else if (difference > 0 && difference > 180) {
-//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-//            } else if (difference < 0 && difference < -180) {
-//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-//            } else if (difference < 0 && difference > -180) {
-//                this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+        if (heading < 180) {
+            if (difference > 0 && difference < 180) {
+                if (heading - windAngle < -3) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
+                }
+                else if (westOfWind) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
+                }
+                else {
+                    this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
+                }
+            } else if (difference > 0 && difference > 180) {
+                if (heading - windAngle < 3) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
+                }
+                else {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+                }
+            } else if (difference < 0) {
+                if (westOfWind) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+                }
+                else {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+                }
+            }
+        } else {
+            if (difference > 0 && difference < 180) {
+                if (westOfWind) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+                }
+                else {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+                }
+            }
+            else if(difference > 0 && difference > 180) {
+                if (westOfWind) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+                }
+                else {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+
+                }
+            }
+            else if (difference < 0 && difference > -180) {
+                if (westOfWind) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+                }
+                else {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+
+                }
+            } else if (difference < 0 && difference < -180) {
+                if (westOfWind) {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+                }
+                else {
+                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+                }
+            }
+        }
+//
+//        if (downWind < 180) {
+//            if (heading < 180) {
+//                if (difference > 0 && difference < 180) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//                } else if (difference > 0 && difference > 180) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+//                } else if (difference < 0) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+//                }
+//            } else {
+//                if (difference > 0) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//                } else if (difference < 0 && difference > -180) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+//                } else if (difference < 0 && difference < -180) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//                }
 //            }
 //        }
-
-        if (downWind < 180) {
-            if (heading < 180) {
-                if (difference > 0 && difference < 180) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-                } else if (difference > 0 && difference > 180) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-                } else if (difference < 0) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-                }
-            } else {
-                if (difference > 0) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-                } else if (difference < 0 && difference > -180) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-                } else if (difference < 0 && difference < -180) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-                }
-            }
-        }
-        else {
-            if (heading < 180) {
-                if (difference > 0 && difference < 180) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-                } else if (difference > 0 && difference > 180) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-                } else if (difference < 0) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-                }
-            } else {
-                if (difference > 0) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-                } else if (difference < 0 && difference > -180) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
-                } else if (difference < 0 && difference < -180) {
-                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
-                }
-            }
-        }
-
+//        else {
+//            if (heading < 180) {
+//                if (difference > 0 && difference < 180) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+//                } else if (difference > 0 && difference > 180) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//                } else if (difference < 0) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//                }
+//            } else {
+//                if (difference > 0) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+//                } else if (difference < 0 && difference > -180) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.UP.getValue(), boat.getSourceID()));
+//                } else if (difference < 0 && difference < -180) {
+//                    this.dataSource.send(binaryPackager.packageBoatAction(Keys.DOWN.getValue(), boat.getSourceID()));
+//                }
+//            }
+//        }
+//
 
 
 
