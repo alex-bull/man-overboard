@@ -448,7 +448,8 @@ public class Interpreter implements DataSource, PacketHandler {
             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
             location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            sharkLocations.put(shark.getSourceId(),new Shark(shark.getSourceId(),shark.getNumSharks(),location,location17, locationOriginal));
+            float heading = cloner.deepClone(shark.getHeading());
+            sharkLocations.put(shark.getSourceId(),new Shark(shark.getSourceId(),shark.getNumSharks(),location,location17, locationOriginal, heading));
         }
     }
 

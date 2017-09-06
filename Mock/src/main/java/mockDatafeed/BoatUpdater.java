@@ -108,6 +108,8 @@ public class BoatUpdater {
 
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
+            updateShark();
+
         }
         if (crewMemberUpdated) {
             handler.fallenCrewEvent(crewMembers);
@@ -156,6 +158,26 @@ public class BoatUpdater {
 
         return updated;
 
+    }
+
+    /**
+     * update the position of the sharks
+     */
+    private void updateShark() {
+
+        for (Shark shark : sharks) {
+            double crew_x = crewMembers.get(0).getLongitude();
+            double crew_y = crewMembers.get(0).getLatitude();
+
+            float angle = (float) Math.toDegrees(Math.atan2(crew_y - shark.getLatitude(), crew_x - shark.getLongitude()));
+
+            if (angle < 0) {
+                angle += 360;
+            }
+
+            shark.setHeading(angle);
+            System.out.println(angle + " ANGLE");
+        }
     }
 
 
@@ -478,12 +500,17 @@ public class BoatUpdater {
             CrewLocation crewLocation = new CrewLocation(crewLocationSourceID++, 5, position);
             crewMembers.add(crewLocation);
 
-            double sharkDist = distance * 50;
-            double sharkAngle = randomGenerator.nextDouble() * 360;;
-            MutablePoint sharkPosition = movePoint(new Force(sharkDist, sharkAngle, false), location, 1);
+            if(sharks.size() == 0) {
 
-            Shark shark = new Shark(sharkSourceID++, 1, sharkPosition);
-            sharks.add(shark);
+                double sharkDist = distance * 40;
+                double sharkAngle = randomGenerator.nextDouble() * 360;
+
+                MutablePoint sharkPosition = movePoint(new Force(sharkDist, sharkAngle, false), location, 1);
+
+                Shark shark = new Shark(sharkSourceID++, 1, sharkPosition);
+                sharks.add(shark);
+
+            }
         }
 
         handler.fallenCrewEvent(crewMembers);
