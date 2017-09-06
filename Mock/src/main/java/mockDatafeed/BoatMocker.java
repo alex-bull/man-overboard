@@ -26,11 +26,13 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static mockDatafeed.Keys.RIP;
 import static mockDatafeed.Keys.SAILS;
 import static parsers.BoatStatusEnum.*;
 import static parsers.MessageType.UNKNOWN;
+import static utilities.CollisionUtility.isPointInPolygon;
 import static utilities.Utility.fileToString;
 import static utility.Calculator.*;
 
@@ -470,15 +472,44 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         if(currentTime > previousTime + 30000 && raceInProgress) {
             long timeout = currentTime + 20000;
-            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, 32.295842, -64.857157, (short) 10, 0, 7000, timeout);
-            this.sendQueue.put(null, eventPacket);
 
+            MutablePoint generatedLocation = getRandomLocation();
+
+            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) 10, 0, 7000, timeout);
+            this.sendQueue.put(null, eventPacket);
             previousTime = currentTime;
             this.powerUpId += 1;
 
         }
 
     }
+
+    /**
+     * Generate a random point in the course near a random boat
+     * @return MutablePoint a mutable point of the location
+     */
+    private MutablePoint getRandomLocation() {
+        Random random = new Random();
+        List<Integer> keys = new ArrayList<>(competitors.keySet());
+        Integer randomKey = keys.get(random.nextInt(keys.size()));
+        Competitor randomBoat = competitors.get(randomKey);
+
+        double randomLat = randomBoat.getPosition().getXValue() + (ThreadLocalRandom.current().nextInt(-5, 5) / 100.0);
+        double randomLon = randomBoat.getPosition().getYValue() + (ThreadLocalRandom.current().nextInt(-5, 5) / 100.0);
+
+        MutablePoint generatedLocation = new MutablePoint(randomLat, randomLon);
+
+        while (!isPointInPolygon(generatedLocation, courseBoundary)) {
+            randomLat = randomBoat.getPosition().getXValue() + (ThreadLocalRandom.current().nextInt(-5, 5) / 100.0);
+            randomLon = randomBoat.getPosition().getYValue() + (ThreadLocalRandom.current().nextInt(-5, 5) / 100.0);
+            generatedLocation=new MutablePoint(randomLat,randomLon);
+
+        }
+        return generatedLocation;
+
+    }
+
+
 
 
     /**

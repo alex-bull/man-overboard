@@ -584,6 +584,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
     private void drawPowerUps() {
         Map<Integer,PowerUp> receivedPowerUps = dataSource.getPowerUps();
+        Integer imageWidth = 32;
+        Integer imageHeight = 32;
         if (receivedPowerUps != null) {
             for(int sourceID : receivedPowerUps.keySet()) {
 
@@ -591,21 +593,20 @@ public class RaceViewController implements Initializable, TableObserver {
                     ImageView imageView = new ImageView();
                     Image image = new Image("/images/speed3.png");
                     imageView.setImage(image);
-                    imageView.setFitHeight(32);
-                    imageView.setFitWidth(32);
+                    imageView.setFitHeight(imageHeight);
+                    imageView.setFitWidth(imageWidth);
                     powerUps.put(sourceID, imageView);
                     raceViewPane.getChildren().add(imageView);
                 }
 
-                Image image=powerUps.get(sourceID).getImage();
                 PowerUp powerUp = receivedPowerUps.get(sourceID);
 
                 if (isZoom()) {
                     MutablePoint p = powerUp.getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-                    powerUps.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+                    powerUps.get(sourceID).relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
                 } else {
                     MutablePoint p=powerUp.getPosition();
-                    powerUps.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+                    powerUps.get(sourceID).relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
                 }
             }
         }
