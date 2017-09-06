@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import parsers.powerUp.PowerUp;
+import parsers.powerUp.PowerUpParser;
 import utility.QueueMessage;
 import utility.WorkQueue;
 import models.ColourPool;
@@ -180,7 +182,9 @@ public class Interpreter implements DataSource, PacketHandler {
 
 
 
-    private Map<Integer,CrewLocation> crewLocations=new HashMap<>();
+    private Map<Integer, CrewLocation> crewLocations=new HashMap<>();
+    private Map<Integer, PowerUp> powerUps = new HashMap<>();
+
 
 
 
@@ -394,6 +398,13 @@ public class Interpreter implements DataSource, PacketHandler {
                 break;
             case FALLEN_CREW:
                 addCrewLocation(parseFallenCrew(packet));
+                break;
+            case POWER_UP:
+                PowerUpParser powerUpParser = new PowerUpParser();
+                PowerUp powerUp = powerUpParser.parsePowerUp(packet);
+                this.powerUps.put(powerUp.getId(), powerUp);
+                System.out.println(this.powerUps);
+                System.out.println(this.powerUps.size());
                 break;
 
             default:

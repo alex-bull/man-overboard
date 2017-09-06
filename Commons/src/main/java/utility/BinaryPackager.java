@@ -590,6 +590,46 @@ public class BinaryPackager {
         return packet;
     }
 
+
+    /**
+     * packages power up
+     * @param powerId Integer ID of power up
+     * @param latitude Double Latitude of power up location
+     * @param longitude Double Longitude of power up location
+     * @param radius short Radius of power up in meters
+     * @param powerType int Type of power up, 0 is speed and 1 is for projectile
+     * @param duration int Time power up is active for
+     * @param timeout long the timeout of the power up
+     * @return the packet for power up
+     */
+    public byte[] packagePowerUp(Integer powerId, Double latitude, Double longitude, short radius, int powerType, int duration, long timeout){
+        byte[] packet=new byte[44];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 112;
+        short bodyLength = 25;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        //BODY - note: chars are used as unsigned shorts
+        packetBuffer.putInt(powerId); //power id
+
+        //latitude
+        packetBuffer.putInt(latLngToInt(latitude));
+
+        //longitude
+        packetBuffer.putInt(latLngToInt(longitude));
+
+        packetBuffer.putShort(radius);
+
+        packetBuffer.put(this.get48bitTime(timeout));
+        packetBuffer.put((byte) powerType);
+
+        packetBuffer.putInt(duration);
+
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
 }
 
 

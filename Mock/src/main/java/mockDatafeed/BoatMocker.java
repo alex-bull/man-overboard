@@ -62,6 +62,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     private WorkQueue sendQueue = new WorkQueue(1000000);
     private WorkQueue receiveQueue = new WorkQueue(1000000);
+    private Integer powerUpId = 0;
+    private long previousTime = System.currentTimeMillis();
 
 
 
@@ -459,6 +461,27 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
 
     /**
+     * Sends power up to output port
+     *
+     * @throws IOException IOException
+     */
+    private void sendPowerUp() throws IOException {
+        long currentTime = System.currentTimeMillis();
+
+        if(currentTime > previousTime + 30000 && raceInProgress) {
+            long timeout = currentTime + 20000;
+            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, 32.295842, -64.857157, (short) 10, 0, 7000, timeout);
+            this.sendQueue.put(null, eventPacket);
+
+            previousTime = currentTime;
+            this.powerUpId += 1;
+
+        }
+
+    }
+
+
+    /**
      * formats the racexml template
      *
      * @param xmlTemplate the template for race xml
@@ -575,6 +598,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             boatUpdater.updatePosition();
             sendBoatLocation();
             sendRaceStatus();
+            sendPowerUp();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
