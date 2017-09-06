@@ -630,6 +630,29 @@ public class BinaryPackager {
         return packet;
     }
 
+
+    /**
+     * packages power up taken
+     * @param boatId Boat ID of power up
+     * @param powerId Integer ID of power up
+     * @param duration int Time power up is active for
+     * @return the packet for power up taken
+     */
+    public byte[] packagePowerUpTaken(int boatId, int powerId, int duration){
+        byte[] packet=new byte[31];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 113;
+        short bodyLength = 12;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.putInt(boatId); //boat id
+        packetBuffer.putInt(powerId); //power id
+        packetBuffer.putInt(duration); //duration
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
 }
 
 

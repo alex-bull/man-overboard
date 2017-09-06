@@ -8,6 +8,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpParser;
+import parsers.powerUp.PowerUpTakenParser;
 import utility.QueueMessage;
 import utility.WorkQueue;
 import models.ColourPool;
@@ -424,6 +425,19 @@ public class Interpreter implements DataSource, PacketHandler {
                 this.powerUps.put(powerUp.getId(), powerUp);
 
                 break;
+            case POWER_UP_TAKEN:
+                PowerUpTakenParser powerUpTakenParser = new PowerUpTakenParser(packet);
+
+                System.out.println("RECIEVED TAKEN " + powerUpTakenParser.getBoatId() + " , " + powerUpTakenParser.getPowerId());
+                System.out.println("Duration " + powerUpTakenParser.getDuration());
+                System.out.println(powerUps);
+
+                int id = powerUpTakenParser.getPowerId();
+                if(powerUps.containsKey(id)) {
+                    PowerUp power = powerUps.get(id);
+                    power.taken();
+                }
+
 
             default:
                 break;
@@ -438,7 +452,6 @@ public class Interpreter implements DataSource, PacketHandler {
         System.out.println(locations.size());
         crewLocations.clear();
         for(CrewLocation crewLocation:locations){
-            System.out.println("adding a crew " + crewLocation.getPosition().getXValue() + ", " + crewLocation.getPosition().getYValue());
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
             MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);

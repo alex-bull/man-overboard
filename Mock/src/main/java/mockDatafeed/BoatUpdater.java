@@ -3,15 +3,13 @@ package mockDatafeed;
 import javafx.scene.shape.Line;
 import models.*;
 import org.jdom2.JDOMException;
+import parsers.powerUp.PowerUp;
 import parsers.xml.race.RaceData;
 import utilities.PolarTable;
 import utility.Calculator;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static java.lang.Math.abs;
 import static parsers.BoatStatusEnum.DSQ;
@@ -37,6 +35,8 @@ public class BoatUpdater {
     private WindGenerator windGenerator;
     private int crewLocationSourceID = 0;
     private List<CrewLocation> crewMembers = new ArrayList<>();
+    private Map<Integer, PowerUp> powerUps = new HashMap<>();
+
 
 
     /**
@@ -104,6 +104,7 @@ public class BoatUpdater {
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
             }
 
+            this.handlePowerUpCollisions(boat);
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
         }
@@ -111,13 +112,32 @@ public class BoatUpdater {
             handler.fallenCrewEvent(crewMembers);
 
         }
+        handler.powerUpEvent();
     }
 
+    /**
+     * Add new power ups into the power ups hashmap.
+     * @param powerUp PowerUp a power up
+     */
+    void updatePowerUps(PowerUp powerUp) {
+        powerUps.put(powerUp.getId(), powerUp);
+        List<Integer> toRemove = new ArrayList<>();
+        for(int id: powerUps.keySet()) {
+            PowerUp power = powerUps.get(id);
+            if(System.currentTimeMillis() > power.getTimeout()) {
+                toRemove.add(id);
+            }
+        }
+        for(int removeId: toRemove) {
+            powerUps.remove(removeId);
+        }
+    }
 
     /**
      * function to check if crew member can be picked up
      *
-     * @param boat
+     * @param boat Competitor boat
+     * @return boolean true if picked
      */
     private boolean pickUpCrew(Competitor boat) {
         boolean updated = false;
@@ -131,6 +151,22 @@ public class BoatUpdater {
         }
 
         return updated;
+    }
+
+    /**
+     * function to check if power up is picked up
+     *
+     * @param boat Competitor boat
+     */
+    private void handlePowerUpCollisions(Competitor boat) {
+        for(int id: powerUps.keySet()) {
+            PowerUp powerUp = powerUps.get(id);
+            if (boat.getPosition().isWithin(powerUp.getLocation(), 0.0005)) {
+                powerUps.remove(id);
+                handler.powerUpTakenEvent(boat.getSourceID(), id, powerUp.getDuration());
+                return;
+            }
+        }
     }
 
     /**
@@ -433,7 +469,7 @@ public class BoatUpdater {
      * handler for collision, currently throws members off the boat
      * MUST BE CALLED BEFORE BOAT.UPDATEPOSITION !!!!!!!!!!!!
      *
-     * @param location  the location where the collision happend
+     * @param location  the location where the collision happened
      * @param magnitude the magnitude of the collision
      * @param health    the health reduced, 5 crew members per location
      */

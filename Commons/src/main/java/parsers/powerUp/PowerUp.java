@@ -16,12 +16,10 @@ public class PowerUp {
     private int type;
     private Integer duration;
     private MutablePoint location;
-
-
-
     private MutablePoint position;
     private MutablePoint position17;
     private MutablePoint positionOriginal;
+    private boolean isTaken = false;
 
     public PowerUp(Integer id, Double latitude, Double longitude, Integer radius, Long timeout, int type, Integer duration) {
         this.id = id;
@@ -33,6 +31,17 @@ public class PowerUp {
         this.duration = duration;
         this.location = new MutablePoint(latitude, longitude);
     }
+
+
+    public void taken() {
+        isTaken = true;
+    }
+
+    public boolean isTaken() {
+        boolean taken = isTaken;
+        return taken;
+    }
+
 
     public MutablePoint getPosition() {
         return position;

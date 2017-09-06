@@ -7,6 +7,7 @@ import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
+import parsers.powerUp.PowerUp;
 import parsers.xml.CourseXMLParser;
 import parsers.xml.race.CompoundMarkData;
 import parsers.xml.race.MarkData;
@@ -64,8 +65,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     private WorkQueue sendQueue = new WorkQueue(1000000);
     private WorkQueue receiveQueue = new WorkQueue(1000000);
-    private Integer powerUpId = 0;
     private long previousTime = System.currentTimeMillis();
+    private int powerUpId = 0;
 
 
 
@@ -83,7 +84,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         //Start the server
 
-        TCPserver = new TCPServer(4941, this, sendQueue, receiveQueue);
+        TCPserver = new TCPServer(4943, this, sendQueue, receiveQueue);
         Timer serverTimer = new Timer();
         serverTimer.schedule(TCPserver, 0, 1);
 
@@ -464,25 +465,32 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     /**
      * Sends power up to output port
-     *
-     * @throws IOException IOException
      */
-    private void sendPowerUp() throws IOException {
+    public void powerUpEvent() {
         long currentTime = System.currentTimeMillis();
 
         if(currentTime > previousTime + 30000 && raceInProgress) {
-            long timeout = currentTime + 20000;
-            System.out.println("TIMEOUT SENDING " + timeout);
-
+            long timeout = currentTime + 60000;
             MutablePoint generatedLocation = getRandomLocation();
+            int radius = 10; // we dont use this but other teams do
+            int powerType = 0;
+            int duration = 20000; // we dont use this but other teams do
 
-            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) 10, 0, 7000, timeout);
+            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, powerType, duration, timeout);
             this.sendQueue.put(null, eventPacket);
+            PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, powerType, duration);
+            boatUpdater.updatePowerUps(powerUp);
             previousTime = currentTime;
-            this.powerUpId += 1;
-
+            this.powerUpId++;
         }
+    }
 
+    /**
+     * Sends power up taken to output port
+     */
+    public void powerUpTakenEvent(int boatId, int powerId, int duration) {
+        byte[] eventPacket = binaryPackager.packagePowerUpTaken(boatId, powerId, duration);
+        this.sendQueue.put(null, eventPacket);
     }
 
     /**
@@ -630,7 +638,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             boatUpdater.updatePosition();
             sendBoatLocation();
             sendRaceStatus();
-            sendPowerUp();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

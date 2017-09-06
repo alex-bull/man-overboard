@@ -21,6 +21,7 @@ public enum MessageType {
     PLAYER_READY(110),
     LEAVE_LOBBY(111),
     POWER_UP(112),
+    POWER_UP_TAKEN(113),
     FALLEN_CREW(107);
 
 
