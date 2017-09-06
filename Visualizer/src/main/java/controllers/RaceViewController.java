@@ -586,31 +586,32 @@ public class RaceViewController implements Initializable, TableObserver {
         Map<Integer,PowerUp> receivedPowerUps = dataSource.getPowerUps();
         Integer imageWidth = 32;
         Integer imageHeight = 32;
-        if (receivedPowerUps != null) {
-            for(int sourceID : receivedPowerUps.keySet()) {
 
-                if (!powerUps.containsKey(sourceID)) {
-                    ImageView imageView = new ImageView();
-                    Image image = new Image("/images/speed3.png");
-                    imageView.setImage(image);
-                    imageView.setFitHeight(imageHeight);
-                    imageView.setFitWidth(imageWidth);
-                    powerUps.put(sourceID, imageView);
-                    raceViewPane.getChildren().add(imageView);
-                }
+        for(int sourceID : receivedPowerUps.keySet()) {
 
-                PowerUp powerUp = receivedPowerUps.get(sourceID);
-
-                if (isZoom()) {
-                    MutablePoint p = powerUp.getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-                    powerUps.get(sourceID).relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
-                } else {
-                    MutablePoint p=powerUp.getPosition();
-                    powerUps.get(sourceID).relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
-                }
+            if (!powerUps.containsKey(sourceID)) {
+                ImageView imageView = new ImageView();
+                Image image = new Image("/images/speed3.png");
+                imageView.setImage(image);
+                imageView.setFitHeight(imageHeight);
+                imageView.setFitWidth(imageWidth);
+                powerUps.put(sourceID, imageView);
+                raceViewPane.getChildren().add(imageView);
             }
+
+            PowerUp powerUp = receivedPowerUps.get(sourceID);
+
+            if (isZoom()) {
+                MutablePoint p = powerUp.getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+                powerUps.get(sourceID).relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
+            } else {
+                MutablePoint p=powerUp.getPosition();
+                powerUps.get(sourceID).relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
+            }
+
         }
     }
+
 
 
     //================================================================================================================

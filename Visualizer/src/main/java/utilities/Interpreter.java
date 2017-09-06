@@ -422,8 +422,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 powerUp.setPositionOriginal(positionOriginal);
 
                 this.powerUps.put(powerUp.getId(), powerUp);
-                System.out.println(this.powerUps);
-                System.out.println(this.powerUps.size());
+
                 break;
 
             default:
@@ -433,12 +432,13 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * adds crew locations with location converted
-     * @param locations
+     * @param locations List locations
      */
-    public void addCrewLocation(List<CrewLocation> locations){
+    private void addCrewLocation(List<CrewLocation> locations){
         System.out.println(locations.size());
         crewLocations.clear();
         for(CrewLocation crewLocation:locations){
+            System.out.println("adding a crew " + crewLocation.getPosition().getXValue() + ", " + crewLocation.getPosition().getYValue());
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
             MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
@@ -456,6 +456,17 @@ public class Interpreter implements DataSource, PacketHandler {
             MutablePoint point=cloner.deepClone(crewLocation.getPositionOriginal());
             point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             crewLocation.setPosition17(point);
+        }
+    }
+
+    /**
+     * updates power up location when scaling level changes
+     */
+    private void updatePowerUpLocation(){
+        for(PowerUp powerUp: powerUps.values()){
+            MutablePoint point=cloner.deepClone(powerUp.getPositionOriginal());
+            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            powerUp.setPosition17(point);
         }
     }
 
@@ -691,6 +702,7 @@ public class Interpreter implements DataSource, PacketHandler {
         updateCourseMarksScaling();
         updateCourseBoundary();
         updateCrewLocation();
+        updatePowerUpLocation();
     }
 
     public Set<Integer> getCollisions(){
