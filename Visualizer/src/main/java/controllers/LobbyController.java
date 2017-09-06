@@ -93,7 +93,7 @@ public class LobbyController implements Initializable {
             alert.showAndWait();
             return;
         }
-        soundPlayer.playMP3("sounds/bensound-instinct.mp3");
+//        soundPlayer.playMP3("sounds/bensound-instinct.mp3");
 
         this.timer = new AnimationTimer() {
             @Override

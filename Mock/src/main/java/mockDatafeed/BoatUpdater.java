@@ -478,7 +478,11 @@ public class BoatUpdater {
             CrewLocation crewLocation = new CrewLocation(crewLocationSourceID++, 5, position);
             crewMembers.add(crewLocation);
 
-            Shark shark = new Shark(sharkSourceID++, 1, position);
+            double sharkDist = distance * 50;
+            double sharkAngle = randomGenerator.nextDouble() * 360;;
+            MutablePoint sharkPosition = movePoint(new Force(sharkDist, sharkAngle, false), location, 1);
+
+            Shark shark = new Shark(sharkSourceID++, 1, sharkPosition);
             sharks.add(shark);
         }
 

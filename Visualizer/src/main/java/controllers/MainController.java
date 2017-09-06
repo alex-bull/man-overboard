@@ -115,7 +115,7 @@ public class MainController {
             }
         };
         timer.start();
-        soundPlayer=new SoundPlayer();
-        soundPlayer.playMP3("sounds/bensound-epic.mp3");
+//        soundPlayer=new SoundPlayer();
+//        soundPlayer.playMP3("sounds/bensound-epic.mp3");
     }
 }
