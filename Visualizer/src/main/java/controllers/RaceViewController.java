@@ -609,6 +609,15 @@ public class RaceViewController implements Initializable, TableObserver {
                 powerUps.get(sourceID).relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
             }
 
+            Long timeout = powerUp.getTimeout();
+
+            if(System.currentTimeMillis() > timeout) {
+                powerUps.get(sourceID).setVisible(false);
+                powerUps.remove(sourceID);
+                dataSource.getPowerUps().remove(sourceID);
+                break;
+            }
+
         }
     }
 

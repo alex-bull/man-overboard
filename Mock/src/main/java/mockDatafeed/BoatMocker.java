@@ -472,6 +472,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         if(currentTime > previousTime + 30000 && raceInProgress) {
             long timeout = currentTime + 20000;
+            System.out.println("TIMEOUT SENDING " + timeout);
 
             MutablePoint generatedLocation = getRandomLocation();
 
