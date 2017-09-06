@@ -183,6 +183,11 @@ public class Interpreter implements DataSource, PacketHandler {
 
 
     private Map<Integer, CrewLocation> crewLocations=new HashMap<>();
+
+    public Map<Integer, PowerUp> getPowerUps() {
+        return powerUps;
+    }
+
     private Map<Integer, PowerUp> powerUps = new HashMap<>();
 
 
@@ -402,6 +407,20 @@ public class Interpreter implements DataSource, PacketHandler {
             case POWER_UP:
                 PowerUpParser powerUpParser = new PowerUpParser();
                 PowerUp powerUp = powerUpParser.parsePowerUp(packet);
+                MutablePoint location = powerUp.getLocation();
+
+                MutablePoint positionOriginal = cloner.deepClone(Projection.mercatorProjection(location));
+
+                MutablePoint position = cloner.deepClone(Projection.mercatorProjection(location));
+                position.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+
+                MutablePoint position17=cloner.deepClone(Projection.mercatorProjection(position));
+                position17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+
+                powerUp.setPosition(position);
+                powerUp.setPosition17(position17);
+                powerUp.setPositionOriginal(positionOriginal);
+
                 this.powerUps.put(powerUp.getId(), powerUp);
                 System.out.println(this.powerUps);
                 System.out.println(this.powerUps.size());

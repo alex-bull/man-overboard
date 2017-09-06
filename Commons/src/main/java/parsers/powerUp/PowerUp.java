@@ -1,5 +1,7 @@
 package parsers.powerUp;
 
+import models.MutablePoint;
+
 /**
  * Created by psu43 on 6/09/17.
  * Power up
@@ -13,6 +15,13 @@ public class PowerUp {
     private Long timeout;
     private int type;
     private Integer duration;
+    private MutablePoint location;
+
+
+
+    private MutablePoint position;
+    private MutablePoint position17;
+    private MutablePoint positionOriginal;
 
     public PowerUp(Integer id, Double latitude, Double longitude, Integer radius, Long timeout, int type, Integer duration) {
         this.id = id;
@@ -22,6 +31,34 @@ public class PowerUp {
         this.timeout = timeout;
         this.type = type;
         this.duration = duration;
+        this.location = new MutablePoint(latitude, longitude);
+    }
+
+    public MutablePoint getPosition() {
+        return position;
+    }
+
+    public MutablePoint getPosition17() {
+        return position17;
+    }
+
+    public MutablePoint getPositionOriginal() {
+        return positionOriginal;
+    }
+    public MutablePoint getLocation() {
+        return location;
+    }
+
+    public void setPosition(MutablePoint position) {
+        this.position = position;
+    }
+
+    public void setPosition17(MutablePoint position17) {
+        this.position17 = position17;
+    }
+
+    public void setPositionOriginal(MutablePoint positionOriginal) {
+        this.positionOriginal = positionOriginal;
     }
 
     public Integer getId() {
@@ -51,5 +88,6 @@ public class PowerUp {
     public Integer getDuration() {
         return duration;
     }
+
 
 }

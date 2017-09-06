@@ -36,6 +36,7 @@ import models.CrewLocation;
 import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
+import parsers.powerUp.PowerUp;
 import utilities.*;
 import utilities.DataSource;
 import utilities.RaceCalculator;
@@ -68,6 +69,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private ListView<String> finisherListView;
 
     private Map<Integer, ImageView> fallenCrews=new HashMap<>();
+    private Map<Integer, ImageView> powerUps=new HashMap<>();
+
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Double, HealthBar> healthBars = new HashMap<>();
@@ -579,7 +582,34 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+    private void drawPowerUps() {
+        Map<Integer,PowerUp> receivedPowerUps = dataSource.getPowerUps();
+        if (receivedPowerUps != null) {
+            for(int sourceID : receivedPowerUps.keySet()) {
 
+                if (!powerUps.containsKey(sourceID)) {
+                    ImageView imageView = new ImageView();
+                    Image image = new Image("/images/speed3.png");
+                    imageView.setImage(image);
+                    imageView.setFitHeight(32);
+                    imageView.setFitWidth(32);
+                    powerUps.put(sourceID, imageView);
+                    raceViewPane.getChildren().add(imageView);
+                }
+
+                Image image=powerUps.get(sourceID).getImage();
+                PowerUp powerUp = receivedPowerUps.get(sourceID);
+
+                if (isZoom()) {
+                    MutablePoint p = powerUp.getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+                    powerUps.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+                } else {
+                    MutablePoint p=powerUp.getPosition();
+                    powerUps.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+                }
+            }
+        }
+    }
 
 
     //================================================================================================================
@@ -719,6 +749,7 @@ public class RaceViewController implements Initializable, TableObserver {
     void refresh() {
         checkRaceFinished();
         drawFallenCrew();
+        drawPowerUps();
         setBoatLocation();
         updateRace();
         checkCollision();

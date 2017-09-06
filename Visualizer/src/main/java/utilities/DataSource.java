@@ -6,6 +6,7 @@ import models.CourseFeature;
 import models.CrewLocation;
 import models.MutablePoint;
 import parsers.RaceStatusEnum;
+import parsers.powerUp.PowerUp;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,5 +47,5 @@ public interface DataSource {
     List<MutablePoint> getCourseBoundary17();
     HashMap<Integer, CourseFeature> getStoredFeatures17();
     void update();
-
+    Map<Integer, PowerUp> getPowerUps();
 }
