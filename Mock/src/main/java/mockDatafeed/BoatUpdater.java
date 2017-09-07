@@ -1,5 +1,6 @@
 package mockDatafeed;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.scene.shape.Line;
 import models.*;
 import org.jdom2.JDOMException;
@@ -148,16 +149,18 @@ public class BoatUpdater {
      * function to check if a crew member has been eaten by a shark
      * @return boolean if a crew member has been eaten
      */
-    private boolean crewEaten() {
+    private boolean crewEaten() throws IOException{
         boolean updated = false;
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
             for (Shark shark : new ArrayList<>(sharks)){
                 if (shark.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
                     crewMembers.remove(crewLocation);
                     updated = true;
+//                    handler.bloodEvent(shark.getPosition());
                 }
             }
         }
+
 
         return updated;
 

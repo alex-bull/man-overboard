@@ -1,9 +1,8 @@
-package parsers.obstacles;
+package parsers.sharks;
 
 import models.MutablePoint;
 import models.Shark;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +16,7 @@ import static parsers.Converter.parseCoordinate;
  *
  */
 public class SharkParser {
+
 
     public static List<Shark> parseShark(byte[] packet) {
         List<Shark> sharkLocations=new ArrayList<>();

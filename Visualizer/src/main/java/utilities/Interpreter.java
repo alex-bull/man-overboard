@@ -36,7 +36,6 @@ import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
 import utility.BinaryPackager;
 import utility.PacketHandler;
-import com.rits.cloning.Cloner;
 import utility.Projection;
 
 import java.io.IOException;
@@ -51,7 +50,7 @@ import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
 import static parsers.fallenCrew.FallenCrewParser.parseFallenCrew;
-import static parsers.obstacles.SharkParser.parseShark;
+import static parsers.sharks.SharkParser.parseShark;
 import static utility.Calculator.calculateExpectedTack;
 
 /**
@@ -399,6 +398,9 @@ public class Interpreter implements DataSource, PacketHandler {
                 break;
             case SHARK:
                 addShark(parseShark(packet));
+                break;
+            case BLOOD:
+                System.out.println("reading blood");
                 break;
 
             default:

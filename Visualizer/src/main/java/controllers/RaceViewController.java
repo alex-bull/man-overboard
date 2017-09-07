@@ -74,6 +74,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private GuideArrow guideArrow;
     private Sail sailLine;
     private SharkModel sharkModel;
+    private Blood blood;
     //FLAGS
     private Boolean finisherListDisplayed = false;
     private boolean isLoaded = false;
@@ -117,6 +118,7 @@ public class RaceViewController implements Initializable, TableObserver {
         sailLine = new Sail(Color.WHITE);
 
         sharkModel = new SharkModel(new Image("/Animations/sharkMoving.gif"));
+        blood = new Blood(new Image("/Animations/blood.jpg"));
 
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
@@ -282,6 +284,9 @@ public class RaceViewController implements Initializable, TableObserver {
             dataSource.removeCollsions(sourceID);
         }
     }
+
+
+
 
 
     /**
@@ -600,6 +605,15 @@ public class RaceViewController implements Initializable, TableObserver {
         }
 
     }
+
+    /**
+     * draw blood when a shark eats a fallen crew member
+     */
+    private void drawBlood(){
+
+
+    }
+
 
 
 

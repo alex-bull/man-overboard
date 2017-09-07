@@ -568,6 +568,17 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         this.sendQueue.put(null, eventPacket);
     }
 
+    /**
+     * Packages and sends blood event
+     * @param location data for the event
+     * @throws IOException if send fails
+     */
+    public void bloodEvent(MutablePoint location) throws IOException {
+
+        byte[] eventPacket = binaryPackager.packageBloodEvent(location);
+        this.sendQueue.put(null, eventPacket);
+    }
+
 
 
     /**
