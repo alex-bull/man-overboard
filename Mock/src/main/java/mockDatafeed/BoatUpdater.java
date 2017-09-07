@@ -97,6 +97,7 @@ public class BoatUpdater {
             crewMemberUpdated = crewMemberUpdated || pickUpCrew(boat) || crewEaten();
             boat.updatePosition(0.1);
 
+
             boolean courseCollision = this.handleCourseCollisions(boat);
             handleBoatCollisions(boat);
             boolean boundaryCollision = this.handleBoundaryCollisions(boat);
@@ -109,6 +110,7 @@ public class BoatUpdater {
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
             updateShark();
+
 
         }
         if (crewMemberUpdated) {
@@ -161,7 +163,7 @@ public class BoatUpdater {
     }
 
     /**
-     * update the position of the sharks
+     * update the position and heading of the sharks
      */
     private void updateShark() {
 
@@ -170,14 +172,16 @@ public class BoatUpdater {
             double crew_y = crewMembers.get(0).getLatitude();
 
             float angle = (float) Math.toDegrees(Math.atan2(crew_y - shark.getLatitude(), crew_x - shark.getLongitude()));
-
-            if (angle < 0) {
-                angle += 360;
-            }
-
+            if (angle < 0) { angle += 360; }
             shark.setHeading(angle);
-            System.out.println(angle + " ANGLE");
+            shark.getSharkSpeed().increase(0.01);
+            shark.getSharkSpeed().setDirection(shark.getHeading());
+
+            shark.updatePosition(0.1);
+            System.out.println(shark.getPosition());
+
         }
+
     }
 
 
@@ -500,17 +504,16 @@ public class BoatUpdater {
             CrewLocation crewLocation = new CrewLocation(crewLocationSourceID++, 5, position);
             crewMembers.add(crewLocation);
 
-            if(sharks.size() == 0) {
-
+            if(sharks.size() < 3) {
                 double sharkDist = distance * 40;
                 double sharkAngle = randomGenerator.nextDouble() * 360;
-
+                int velocity = randomGenerator.nextInt(20) + 20;
                 MutablePoint sharkPosition = movePoint(new Force(sharkDist, sharkAngle, false), location, 1);
 
-                Shark shark = new Shark(sharkSourceID++, 1, sharkPosition);
+                Shark shark = new Shark(sharkSourceID++, 1, sharkPosition, velocity);
                 sharks.add(shark);
-
             }
+
         }
 
         handler.fallenCrewEvent(crewMembers);

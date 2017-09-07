@@ -1,5 +1,9 @@
 package models;
 
+import utility.Calculator;
+
+import java.util.ArrayList;
+
 /**
  * Created by Izzy on 5/09/17.
  *
@@ -9,6 +13,8 @@ public class Shark {
     private int sourceId;
     private int numSharks;
     private float heading;
+    private int velocity;
+    private Force sharkSpeed;
     private MutablePoint position;
     private MutablePoint position17;
     private MutablePoint positionOriginal;
@@ -21,19 +27,23 @@ public class Shark {
         return sourceId;
     }
 
-    public Shark(int sourceId, int numSharks, MutablePoint position) {
+    public Shark(int sourceId, int numSharks, MutablePoint position, int velocity) {
         this.sourceId += sourceId;
         this.numSharks = numSharks;
         this.position = position;
+        this.velocity = velocity;
+        this.sharkSpeed = new Force(velocity,0,false);
     }
 
-    public Shark(int sourceId,int numSharks, MutablePoint position, MutablePoint position17, MutablePoint positionOriginal, float heading) {
+    public Shark(int sourceId,int numSharks, MutablePoint position, MutablePoint position17, MutablePoint positionOriginal, float heading, int velocity) {
         this.sourceId=sourceId;
         this.numSharks = numSharks;
         this.position = position;
         this.position17=position17;
         this.positionOriginal=positionOriginal;
         this.heading = heading;
+        this.velocity = velocity;
+        this.sharkSpeed = new Force(velocity,0,false);
     }
 
     public void setPosition17(MutablePoint position17) {
@@ -65,6 +75,38 @@ public class Shark {
     public double getLongitude(){
         return position.getYValue();
     }
+
+    public Force getSharkSpeed() { return sharkSpeed; }
+
+    public void setSpeed(int velocity){ sharkSpeed.setMagnitude(velocity);}
+
+    public double getSpeed(){ return sharkSpeed.getMagnitude();}
+
+    public int getVelocity(){ return velocity; }
+
+
+    /**
+     * Updates the sharks position given the time changed
+     *
+     * @param elapsedTime the time elapsed in seconds
+     */
+    public void updatePosition(double elapsedTime) {
+        //moves the boat by its speed
+        MutablePoint p= Calculator.movePoint(sharkSpeed,getPosition(),elapsedTime);
+
+        //calculate all external forces on it
+//        for(Force force:new ArrayList<>(externalForces)){
+//            p=Calculator.movePoint(force,p,elapsedTime);
+//            //reduce the external force
+//            force.reduce(0.95);
+//            if(force.getMagnitude()<0.1){
+//                externalForces.remove(force);
+//            }
+//        }
+        setPosition(p);
+//        System.out.println(p);
+    }
+
 
     @Override
     public String toString() {

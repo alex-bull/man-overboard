@@ -398,7 +398,9 @@ public class Interpreter implements DataSource, PacketHandler {
                 addCrewLocation(parseFallenCrew(packet));
                 break;
             case SHARK:
+                System.out.println("add a new shark");
                 addShark(parseShark(packet));
+
                 break;
 
             default:
@@ -449,7 +451,9 @@ public class Interpreter implements DataSource, PacketHandler {
             MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
             location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             float heading = cloner.deepClone(shark.getHeading());
-            sharkLocations.put(shark.getSourceId(),new Shark(shark.getSourceId(),shark.getNumSharks(),location,location17, locationOriginal, heading));
+            int velocity = cloner.deepClone(shark.getVelocity());
+            sharkLocations.put(shark.getSourceId(),new Shark(shark.getSourceId(),shark.getNumSharks(),location,location17, locationOriginal, heading, velocity));
+            shark.setSpeed(shark.getVelocity());
         }
     }
 

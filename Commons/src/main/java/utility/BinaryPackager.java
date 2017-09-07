@@ -598,13 +598,13 @@ public class BinaryPackager {
      */
     public byte[] packageSharkEvent(List<Shark> locations){
         int n=locations.size();
-        byte[] packet=new byte[20+n*13]; // total size of packet
+        byte[] packet=new byte[20+n*14]; // total size of packet
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
         byte type = 120;
-        short bodyLength = (short) (n*13+1);
+        short bodyLength = (short) (n*14+1);
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.put((byte) n);
         for(Shark shark:locations){
@@ -612,6 +612,7 @@ public class BinaryPackager {
             packetBuffer.put((byte)shark.getNumSharks());
             packetBuffer.putInt(latLngToInt(shark.getLatitude()));
             packetBuffer.putInt(latLngToInt(shark.getLongitude()));
+            packetBuffer.put((byte) shark.getVelocity());
         }
 
 

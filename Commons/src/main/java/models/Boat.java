@@ -396,9 +396,9 @@ public class Boat implements Competitor {
 
         double downWind = getDownWind(windAngle);
         double currentHeading=getCurrentHeading();
-        System.out.println("c" + currentHeading);
-        System.out.println("wind angle is " + windAngle);
-        System.out.println("Dpwn"  + downWind);
+//        System.out.println("c" + currentHeading);
+//        System.out.println("wind angle is " + windAngle);
+//        System.out.println("Dpwn"  + downWind);
 
 //        double diff = 360 - windAngle;
 //        windAngle += diff;

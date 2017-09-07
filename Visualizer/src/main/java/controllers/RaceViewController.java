@@ -591,7 +591,6 @@ public class RaceViewController implements Initializable, TableObserver {
             sharks.remove(sourceId);
         }
 
-
         for(int sourceID : sharkLocation.keySet()) {
             if (!sharks.containsKey(sourceID)) {
                 ImageView shark = new ImageView();
@@ -609,6 +608,8 @@ public class RaceViewController implements Initializable, TableObserver {
                 MutablePoint p = sharkLocation.get(sourceID).getPosition();
                 sharks.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
             }
+
+            sharks.get(sourceID).toFront();
         }
 
 
