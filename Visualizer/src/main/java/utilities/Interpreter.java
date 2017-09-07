@@ -433,9 +433,14 @@ public class Interpreter implements DataSource, PacketHandler {
                 System.out.println(powerUps);
 
                 int id = powerUpTakenParser.getPowerId();
+                int boatId = powerUpTakenParser.getBoatId();
                 if(powerUps.containsKey(id)) {
                     PowerUp power = powerUps.get(id);
                     power.taken();
+                }
+                if(getCompetitor().getSourceID() == boatId) {
+                    getCompetitor().enableBoost();
+                    System.out.println("Enable boost " + boatId);
                 }
 
 

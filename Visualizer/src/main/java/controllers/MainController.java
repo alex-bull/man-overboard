@@ -5,11 +5,8 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
-import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utility.BinaryPackager;
 
@@ -94,7 +91,7 @@ public class MainController {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
         tableController.addObserver(raceViewController);
-        playerController.setuo(dataSource);
+        playerController.setup(dataSource);
         this.binaryPackager = new BinaryPackager();
 
         AnimationTimer timer = new AnimationTimer() {

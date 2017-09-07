@@ -101,5 +101,9 @@ public interface Competitor {
 
     void setRoundingLine2(Line roundingLine2);
 
+    boolean hasSpeedBoost();
+
+    void enableBoost();
+
 
 }

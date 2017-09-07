@@ -19,6 +19,7 @@ public class PlayerController {
     @FXML private ImageView playerImageView;
     @FXML private Label gamerTagLabel;
     @FXML private Label boatSpeedLabel;
+    @FXML private ImageView speed;
 
     private HealthBar screenHealthBar = new HealthBar();
     private DataSource dataSource;
@@ -28,9 +29,10 @@ public class PlayerController {
      * Setup
      * @param dataSource Datasource
      */
-    void setuo(DataSource dataSource) {
+    void setup(DataSource dataSource) {
         this.dataSource = dataSource;
         this.healthPane.getChildren().add(screenHealthBar);
+        this.speed.setVisible(false);
         gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
     }
 
@@ -44,6 +46,12 @@ public class PlayerController {
         screenHealthBar.update(boat, 15, 5);
         String speed = String.format("%.1f", boat.getVelocity());
         boatSpeedLabel.setText(speed + "m/s");
+        if(boat.hasSpeedBoost()) {
+            this.speed.setVisible(true);
+        }
+        else {
+            this.speed.setVisible(false);
+        }
 
     }
 

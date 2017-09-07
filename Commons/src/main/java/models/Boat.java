@@ -40,6 +40,7 @@ public class Boat implements Competitor {
     private double healthLevel = 100;
     private double maxHealth = 100;
     private Force boatSpeed;
+    private boolean hasSpeedBoost = false;
 
 
     //collision size
@@ -108,6 +109,15 @@ public class Boat implements Competitor {
         this.boatSpeed=new Force(0,0,false);
     }
 
+
+    public boolean hasSpeedBoost() {
+        boolean speeding = hasSpeedBoost;
+        return speeding;
+    }
+
+    public void enableBoost() {
+        this.hasSpeedBoost = true;
+    }
 
     public Line getRoundingLine1() {
         return roundingLine1;

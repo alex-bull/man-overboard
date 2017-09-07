@@ -68,6 +68,7 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private GridPane finisherListPane;
     @FXML private ListView<String> finisherListView;
 
+
     private Map<Integer, ImageView> fallenCrews=new HashMap<>();
     private Map<Integer, ImageView> powerUps=new HashMap<>();
 
