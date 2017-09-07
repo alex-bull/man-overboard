@@ -105,5 +105,16 @@ public interface Competitor {
 
     void enableBoost();
 
+    void disableBoost();
+
+    void deactivateBoost();
+
+    void activateBoost();
+
+    boolean boostActivated();
+
+    long getBoostTimeout();
+
+    void resetBoostTimeout();
 
 }

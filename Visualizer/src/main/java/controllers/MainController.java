@@ -77,6 +77,13 @@ public class MainController {
                     dataSource.changeScaling(-1);
                     raceViewController.zoomIn();
                     break;
+                case D:
+                    if(dataSource.getCompetitor().hasSpeedBoost()) {
+                        this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.BOOST.getValue(), dataSource.getSourceID()));
+                        dataSource.getCompetitor().disableBoost();
+                        playerController.hideBoost();
+                    }
+                    break;
             }
     }
 

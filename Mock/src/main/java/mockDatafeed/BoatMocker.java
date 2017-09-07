@@ -141,6 +141,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
                         boat.setCurrentHeading(windAngle - (boat.getCurrentHeading() - windAngle));
                         break;
+                    case BOOST:
+                        System.out.println("boost received");
+                        competitors.get(sourceID).activateBoost();
+//                        competitors.get(sourceID).setVelocity(competitors.get(sourceID).getVelocity() + 40);
+                        System.out.println("activated boost timeout " + competitors.get(sourceID).getBoostTimeout());
+                        break;
                 }
                 break;
             case CONNECTION_REQ:

@@ -41,6 +41,9 @@ public class Boat implements Competitor {
     private double maxHealth = 100;
     private Force boatSpeed;
     private boolean hasSpeedBoost = false;
+    private boolean activatedBoost = false;
+
+    private long boostTimeout = 0;
 
 
     //collision size
@@ -109,6 +112,31 @@ public class Boat implements Competitor {
         this.boatSpeed=new Force(0,0,false);
     }
 
+    public boolean boostActivated() {
+        boolean activated = activatedBoost;
+        return activated;
+    }
+
+    public long getBoostTimeout() {
+        return boostTimeout;
+    }
+
+    public void resetBoostTimeout() {
+        this.boostTimeout = 0;
+    }
+
+
+    public void activateBoost() {
+        if(this.hasSpeedBoost) {
+            this.activatedBoost = true;
+            this.boostTimeout = System.currentTimeMillis() + 7000;
+            this.hasSpeedBoost = false;
+        }
+    }
+
+    public void deactivateBoost() {
+        this.activatedBoost = false;
+    }
 
     public boolean hasSpeedBoost() {
         boolean speeding = hasSpeedBoost;
@@ -117,6 +145,10 @@ public class Boat implements Competitor {
 
     public void enableBoost() {
         this.hasSpeedBoost = true;
+    }
+
+    public void disableBoost() {
+        this.hasSpeedBoost = false;
     }
 
     public Line getRoundingLine1() {

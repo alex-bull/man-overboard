@@ -55,5 +55,13 @@ public class PlayerController {
 
     }
 
+    /**
+     * Hides the speed icon
+     */
+    void hideBoost() {
+        System.out.println("HIDNG BOOST");
+        this.speed.setVisible(false);
+    }
+
 
 }

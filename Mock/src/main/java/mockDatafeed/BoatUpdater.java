@@ -82,11 +82,26 @@ public class BoatUpdater {
             double speed = polarTable.getSpeed(twa);
             if (boat.getStatus() != DSQ) {
                 if (boat.hasSailsOut()) {
-                    boat.getBoatSpeed().increase(0.01);
-                    boat.getBoatSpeed().setMagnitude(speed * 4);
-                    boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
+                    if (boat.boostActivated()) {
+                        boat.getBoatSpeed().increase(0.01);
+                        boat.getBoatSpeed().setMagnitude(speed * 10);
+                        boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
+                    }
+                    else {
+                        boat.getBoatSpeed().increase(0.01);
+                        boat.getBoatSpeed().setMagnitude(speed * 4);
+                        boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
+                    }
                 } else {
                     boat.getBoatSpeed().reduce(0.99);
+                }
+
+                if(boat.getBoostTimeout() != 0 && System.currentTimeMillis() > boat.getBoostTimeout()) {
+                    System.out.println("decrease boost");
+                    boat.getBoatSpeed().reduce(0.99);
+                    boat.resetBoostTimeout();
+                    boat.deactivateBoost();
+                    boat.disableBoost();
                 }
             } else {
                 boat.getBoatSpeed().reduce(0.99);
@@ -163,6 +178,7 @@ public class BoatUpdater {
             PowerUp powerUp = powerUps.get(id);
             if (boat.getPosition().isWithin(powerUp.getLocation(), 0.0005)) {
                 powerUps.remove(id);
+                boat.enableBoost();
                 handler.powerUpTakenEvent(boat.getSourceID(), id, powerUp.getDuration());
                 return;
             }
