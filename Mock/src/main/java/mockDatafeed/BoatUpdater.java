@@ -109,7 +109,9 @@ public class BoatUpdater {
 
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
-            updateShark();
+            if(!sharks.isEmpty()) {
+                updateShark();
+            }
 
 
         }
@@ -179,10 +181,6 @@ public class BoatUpdater {
 
             shark.updatePosition(0.1);
 
-
-        }
-        if(sharks.size() > 0) {
-            System.out.println(sharks.get(0).getPosition());
         }
 
     }

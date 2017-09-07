@@ -594,7 +594,7 @@ public class RaceViewController implements Initializable, TableObserver {
         for(int sourceID : sharkLocation.keySet()) {
             if (!sharks.containsKey(sourceID)) {
                 ImageView shark = new ImageView();
-                Image swimming = new Image("/Animations/shark.jpg");
+                Image swimming = new Image("/Animations/sharkMoving2.gif");
                 shark.setImage(swimming);
                 sharks.put(sourceID,shark);
                 raceViewPane.getChildren().add(shark);
