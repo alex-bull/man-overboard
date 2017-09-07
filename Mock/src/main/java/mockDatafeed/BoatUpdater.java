@@ -174,7 +174,8 @@ public class BoatUpdater {
                 double crew_y = crewMembers.get(0).getLongitude();
                 double angle = atan2(crew_y - shark.getLongitude(), crew_x - shark.getLatitude()) * 180 / PI;
 //            float angle = (float) Math.toDegrees(atan2(crew_y - shark.getLatitude(), crew_x - shark.getLongitude()));
-                if (angle < 0) { angle += 360; }
+                angle = (angle % 360 + 360) % 360;
+                System.out.println(angle);
                 shark.setHeading(angle);
                 shark.getSharkSpeed().setDirection(shark.getHeading());
                 shark.updatePosition(0.1);
@@ -508,7 +509,7 @@ public class BoatUpdater {
             if(sharks.size() < 2) {
                 double sharkDist = distance * 40;
                 double sharkAngle = randomGenerator.nextDouble() * 360;
-                int velocity = randomGenerator.nextInt(20) + 20;
+                int velocity = 50;
 //                MutablePoint sharkPosition = movePoint(new Force(sharkDist, sharkAngle, false), location, 1);
                 MutablePoint sharkPosition = new MutablePoint(32.41011, -64.88937);
                 Shark shark = new Shark(sharkSourceID++, 1, sharkPosition, velocity, 0);

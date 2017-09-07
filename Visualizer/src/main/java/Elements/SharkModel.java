@@ -3,7 +3,6 @@ package Elements;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.transform.Rotate;
 
 public class SharkModel extends ImageView {
 
@@ -15,8 +14,7 @@ public class SharkModel extends ImageView {
         this.setX(PosX);
         this.setY(PosY);
 
-        this.getTransforms().clear();
-
-        this.getTransforms().add(new Rotate(heading, PosX, PosY));
+        this.setRotate(0);
+        this.setRotate(heading);
     }
 }
