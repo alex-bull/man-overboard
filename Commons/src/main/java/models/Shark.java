@@ -92,19 +92,8 @@ public class Shark {
      */
     public void updatePosition(double elapsedTime) {
         //moves the boat by its speed
-        MutablePoint p= Calculator.movePoint(sharkSpeed,getPosition(),elapsedTime);
-
-        //calculate all external forces on it
-//        for(Force force:new ArrayList<>(externalForces)){
-//            p=Calculator.movePoint(force,p,elapsedTime);
-//            //reduce the external force
-//            force.reduce(0.95);
-//            if(force.getMagnitude()<0.1){
-//                externalForces.remove(force);
-//            }
-//        }
-        setPosition(p);
-//        System.out.println(p);
+        MutablePoint position = Calculator.movePoint(sharkSpeed, getPosition(), elapsedTime);
+        setPosition(position);
     }
 
 

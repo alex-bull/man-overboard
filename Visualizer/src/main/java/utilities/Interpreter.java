@@ -398,9 +398,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 addCrewLocation(parseFallenCrew(packet));
                 break;
             case SHARK:
-                System.out.println("add a new shark");
                 addShark(parseShark(packet));
-
                 break;
 
             default:

@@ -424,7 +424,7 @@ public class Boat implements Competitor {
             }
         }
 //        setCurrentHeading(currentHeading % 360);
-        System.out.println(currentHeading);
+//        System.out.println(currentHeading);
 //        System.out.println(boatSpeed.getDirection());
 //        currentHeading.setValue(currentHeading.getValue() % 360);
     }

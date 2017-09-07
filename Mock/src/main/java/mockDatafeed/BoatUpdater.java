@@ -174,12 +174,15 @@ public class BoatUpdater {
             float angle = (float) Math.toDegrees(Math.atan2(crew_y - shark.getLatitude(), crew_x - shark.getLongitude()));
             if (angle < 0) { angle += 360; }
             shark.setHeading(angle);
-            shark.getSharkSpeed().increase(0.01);
+
             shark.getSharkSpeed().setDirection(shark.getHeading());
 
             shark.updatePosition(0.1);
-            System.out.println(shark.getPosition());
 
+
+        }
+        if(sharks.size() > 0) {
+            System.out.println(sharks.get(0).getPosition());
         }
 
     }
