@@ -27,11 +27,12 @@ public class Shark {
         return sourceId;
     }
 
-    public Shark(int sourceId, int numSharks, MutablePoint position, int velocity) {
+    public Shark(int sourceId, int numSharks, MutablePoint position, int velocity, double heading) {
         this.sourceId += sourceId;
         this.numSharks = numSharks;
         this.position = position;
         this.velocity = velocity;
+        this.heading = heading;
         this.sharkSpeed = new Force(velocity,0,false);
     }
 

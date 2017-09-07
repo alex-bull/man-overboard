@@ -584,48 +584,22 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawSharks(){
         Map<Integer, Shark> sharkLocation = dataSource.getSharkLocations();
 
+
         if (!sharkLocation.isEmpty()) {
-            sharkModel.setVisible(true);
             Shark shark = sharkLocation.get(0);
+            sharkModel.setVisible(true);
             sharkModel.update(shark.getPosition().getXValue(), shark.getPosition().getYValue(), shark.getHeading());
             sharkModel.toFront();
         }
-        else {
-            sharkModel.setVisible(false);
-        }
 
-//        //remove entries
-//        Set<Integer> removedLocation= new HashSet<>(sharks.keySet());
-//        removedLocation.removeAll(sharkLocation.keySet());
-//        for(int sourceId:removedLocation){
-//            raceViewPane.getChildren().remove(sharks.get(sourceId));
-//            sharks.remove(sourceId);
+//        if (isZoom()) {
+//            MutablePoint p = sharkLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+//            sharks.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+//        } else {
+//            MutablePoint p = sharkLocation.get(sourceID).getPosition();
+//            sharks.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
 //        }
-//
-//        for(int sourceID : sharkLocation.keySet()) {
-//            Shark shark = sharkLocation.get(sourceID);
-//            if (!sharks.containsKey(sourceID)) {
-//                ImageView sharkView = new ImageView();
-//                Image swimming = new Image("/Animations/sharkMoving.gif");
-//                sharkView.setImage(swimming);
-//                sharks.put(sourceID,sharkView);
-//                raceViewPane.getChildren().add(sharkView);
-//                sharkView.getTransforms().add(
-//                        new Rotate(shark.getHeading(), shark.getPosition().getXValue(), shark.getPosition().getYValue())
-//                );
-//            }
-//
-//            Image image = sharks.get(sourceID).getImage();
-//            if (isZoom()) {
-//                MutablePoint p = sharkLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-//                sharks.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
-//            } else {
-//                MutablePoint p = sharkLocation.get(sourceID).getPosition();
-//                sharks.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
-//            }
-//
-//            sharks.get(sourceID).toFront();
-//        }
+
 
 
     }

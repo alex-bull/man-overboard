@@ -3,11 +3,13 @@ package parsers.obstacles;
 import models.MutablePoint;
 import models.Shark;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static parsers.Converter.hexByteArrayToInt;
+import static parsers.Converter.hexByteArrayToLong;
 import static parsers.Converter.parseCoordinate;
 
 /**
@@ -27,8 +29,9 @@ public class SharkParser {
             double latitude = parseCoordinate(Arrays.copyOfRange(packet, currentByte+5, currentByte+9));
             double longitude = parseCoordinate(Arrays.copyOfRange(packet, currentByte+9, currentByte+13));
             Integer velocity = hexByteArrayToInt(Arrays.copyOfRange(packet, currentByte+13, currentByte+14));
-            sharkLocations.add(new Shark(sourceId,sharkNumber,new MutablePoint(latitude,longitude), velocity));
-            currentByte+=14;
+            double heading = hexByteArrayToLong(Arrays.copyOfRange(packet, currentByte+14, currentByte+18));
+            sharkLocations.add(new Shark(sourceId,sharkNumber,new MutablePoint(latitude,longitude), velocity, heading));
+            currentByte+=18;
 
         }
         return sharkLocations;
