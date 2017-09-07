@@ -12,7 +12,7 @@ public class Shark {
 
     private int sourceId;
     private int numSharks;
-    private float heading;
+    private double heading;
     private int velocity;
     private Force sharkSpeed;
     private MutablePoint position;
@@ -35,7 +35,7 @@ public class Shark {
         this.sharkSpeed = new Force(velocity,0,false);
     }
 
-    public Shark(int sourceId,int numSharks, MutablePoint position, MutablePoint position17, MutablePoint positionOriginal, float heading, int velocity) {
+    public Shark(int sourceId,int numSharks, MutablePoint position, MutablePoint position17, MutablePoint positionOriginal, double heading, int velocity) {
         this.sourceId=sourceId;
         this.numSharks = numSharks;
         this.position = position;
@@ -52,9 +52,9 @@ public class Shark {
 
     public void setPosition(MutablePoint position){ this.position = position;}
 
-    public void setHeading(float heading){this.heading = heading;}
+    public void setHeading(double heading){this.heading = heading;}
 
-    public float getHeading(){ return heading; }
+    public double getHeading(){ return heading; }
 
     public int getNumSharks() {
         return numSharks;

@@ -439,7 +439,6 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param locations list of shark locations
      */
     public void addShark(List<Shark> locations){
-        System.out.println(locations.size() + "SHARKS");
 
         sharkLocations.clear();
         for(Shark shark:locations){
@@ -448,7 +447,7 @@ public class Interpreter implements DataSource, PacketHandler {
             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
             location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            float heading = cloner.deepClone(shark.getHeading());
+            double heading = cloner.deepClone(shark.getHeading());
             int velocity = cloner.deepClone(shark.getVelocity());
             sharkLocations.put(shark.getSourceId(),new Shark(shark.getSourceId(),shark.getNumSharks(),location,location17, locationOriginal, heading, velocity));
             shark.setSpeed(shark.getVelocity());

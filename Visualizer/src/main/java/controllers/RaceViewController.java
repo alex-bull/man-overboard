@@ -6,13 +6,11 @@ import Animations.RandomShake;
 import Animations.SoundPlayer;
 import Elements.*;
 import Elements.Annotation;
-import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -27,13 +25,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Rotate;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mockDatafeed.Keys;
 import models.*;
 import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
-import utilities.*;
 import utilities.DataSource;
 import utilities.RaceCalculator;
 import utility.BinaryPackager;
@@ -76,7 +74,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line finishLine;
     private GuideArrow guideArrow;
     private Sail sailLine;
-
+    private SharkModel sharkModel;
     //FLAGS
     private Boolean finisherListDisplayed = false;
     private boolean isLoaded = false;
@@ -119,9 +117,12 @@ public class RaceViewController implements Initializable, TableObserver {
         //draws the sail on the boat
         sailLine = new Sail(Color.WHITE);
 
+        sharkModel = new SharkModel(new Image("/Animations/sharkMoving.gif"));
+
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(sailLine);
+        raceViewPane.getChildren().add(sharkModel);
 
         finisherListPane.setVisible(false);
 
@@ -583,35 +584,48 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawSharks(){
         Map<Integer, Shark> sharkLocation = dataSource.getSharkLocations();
 
-        //remove entries
-        Set<Integer> removedLocation= new HashSet<>(sharks.keySet());
-        removedLocation.removeAll(sharkLocation.keySet());
-        for(int sourceId:removedLocation){
-            raceViewPane.getChildren().remove(sharks.get(sourceId));
-            sharks.remove(sourceId);
+        if (!sharkLocation.isEmpty()) {
+            sharkModel.setVisible(true);
+            Shark shark = sharkLocation.get(0);
+            sharkModel.update(shark.getPosition().getXValue(), shark.getPosition().getYValue(), shark.getHeading());
+            sharkModel.toFront();
+        }
+        else {
+            sharkModel.setVisible(false);
         }
 
-        for(int sourceID : sharkLocation.keySet()) {
-            if (!sharks.containsKey(sourceID)) {
-                ImageView shark = new ImageView();
-                Image swimming = new Image("/Animations/sharkMoving2.gif");
-                shark.setImage(swimming);
-                sharks.put(sourceID,shark);
-                raceViewPane.getChildren().add(shark);
-            }
-
-            Image image = sharks.get(sourceID).getImage();
-            if (isZoom()) {
-                MutablePoint p = sharkLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-                sharks.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
-            } else {
-                MutablePoint p = sharkLocation.get(sourceID).getPosition();
-                sharks.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
-            }
-
-            sharks.get(sourceID).toFront();
-        }
-
+//        //remove entries
+//        Set<Integer> removedLocation= new HashSet<>(sharks.keySet());
+//        removedLocation.removeAll(sharkLocation.keySet());
+//        for(int sourceId:removedLocation){
+//            raceViewPane.getChildren().remove(sharks.get(sourceId));
+//            sharks.remove(sourceId);
+//        }
+//
+//        for(int sourceID : sharkLocation.keySet()) {
+//            Shark shark = sharkLocation.get(sourceID);
+//            if (!sharks.containsKey(sourceID)) {
+//                ImageView sharkView = new ImageView();
+//                Image swimming = new Image("/Animations/sharkMoving.gif");
+//                sharkView.setImage(swimming);
+//                sharks.put(sourceID,sharkView);
+//                raceViewPane.getChildren().add(sharkView);
+//                sharkView.getTransforms().add(
+//                        new Rotate(shark.getHeading(), shark.getPosition().getXValue(), shark.getPosition().getYValue())
+//                );
+//            }
+//
+//            Image image = sharks.get(sourceID).getImage();
+//            if (isZoom()) {
+//                MutablePoint p = sharkLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+//                sharks.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+//            } else {
+//                MutablePoint p = sharkLocation.get(sourceID).getPosition();
+//                sharks.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+//            }
+//
+//            sharks.get(sourceID).toFront();
+//        }
 
 
     }

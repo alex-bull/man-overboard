@@ -21,6 +21,7 @@ public class SharkParser {
         Integer n = hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 1));
         int currentByte=1;
         for(int i=0;i<n;i++){
+            //TODO: ADD HEADING
             Integer sourceId = hexByteArrayToInt(Arrays.copyOfRange(packet, currentByte, currentByte+4));
             Integer sharkNumber = hexByteArrayToInt(Arrays.copyOfRange(packet, currentByte+4, currentByte+5));
             double latitude = parseCoordinate(Arrays.copyOfRange(packet, currentByte+5, currentByte+9));

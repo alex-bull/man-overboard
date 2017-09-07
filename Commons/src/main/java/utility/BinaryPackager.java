@@ -608,6 +608,7 @@ public class BinaryPackager {
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.put((byte) n);
         for(Shark shark:locations){
+            //TODO: ADD HEADING
             packetBuffer.putInt(shark.getSourceId());
             packetBuffer.put((byte)shark.getNumSharks());
             packetBuffer.putInt(latLngToInt(shark.getLatitude()));
