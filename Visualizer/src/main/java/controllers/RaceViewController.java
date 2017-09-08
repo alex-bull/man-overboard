@@ -589,10 +589,17 @@ public class RaceViewController implements Initializable, TableObserver {
         Integer imageHeight = 32;
 
         for(int sourceID : receivedPowerUps.keySet()) {
+            PowerUp receivedPowerUp = receivedPowerUps.get(sourceID);
 
-            if (!powerUps.containsKey(sourceID)) {
+            if (!powerUps.containsKey(sourceID) && (receivedPowerUp.getType() == 0 || receivedPowerUp.getType() == 3)) {
                 ImageView imageView = new ImageView();
-                Image image = new Image("/images/speed3.png");
+                Image image;
+                if(receivedPowerUp.getType() == 0) {
+                    image = new Image("/images/speed3.png");
+                }
+                else {
+                    image = new Image("/images/potion.png");
+                }
                 imageView.setImage(image);
                 imageView.setFitHeight(imageHeight);
                 imageView.setFitWidth(imageWidth);

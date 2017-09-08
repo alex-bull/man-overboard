@@ -117,7 +117,6 @@ public class BoatUpdater {
                 boat.updateHealth(-15);
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
             }
-
             this.handlePowerUpCollisions(boat);
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
@@ -177,7 +176,12 @@ public class BoatUpdater {
             PowerUp powerUp = powerUps.get(id);
             if (boat.getPosition().isWithin(powerUp.getLocation(), 0.0005)) {
                 powerUps.remove(id);
-                boat.enableBoost();
+                if(powerUp.getType() == 0) {
+                    boat.enableBoost();
+                }
+                else if(powerUp.getType() == 3) {
+                    boat.enablePotion();
+                }
                 handler.powerUpTakenEvent(boat.getSourceID(), id, powerUp.getDuration());
                 return;
             }

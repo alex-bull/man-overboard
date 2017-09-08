@@ -84,6 +84,13 @@ public class MainController {
                         playerController.hideBoost();
                     }
                     break;
+                case F:
+                    if(dataSource.getCompetitor().hasPotion()) {
+                        this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.POTION.getValue(), dataSource.getSourceID()));
+                        dataSource.getCompetitor().usePotion();
+                        playerController.hidePotion();
+                    }
+                    break;
             }
     }
 

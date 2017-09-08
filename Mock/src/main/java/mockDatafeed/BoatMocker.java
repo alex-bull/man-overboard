@@ -65,7 +65,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     private WorkQueue sendQueue = new WorkQueue(1000000);
     private WorkQueue receiveQueue = new WorkQueue(1000000);
-    private long previousTime = System.currentTimeMillis();
+    private long previousPotionTime = System.currentTimeMillis();
+    private long previousBoostTime = System.currentTimeMillis();
     private int powerUpId = 0;
 
 
@@ -116,20 +117,21 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 HeaderParser headerParser = new HeaderParser();
                 HeaderData headerData = headerParser.processMessage(header);
                 int sourceID = headerData.getSourceID();
+                Competitor boat = competitors.get(sourceID);
                 Keys action = Keys.getKeys(packet[0]);
                 switch (action) {
                     case SAILS:
                         sendBoatAction(SAILS.getValue(), sourceID);
-                        competitors.get(sourceID).switchSails();
+                        boat.switchSails();
                         break;
                     case UP:
-                        competitors.get(sourceID).changeHeading(true, shortToDegrees(windGenerator.getWindDirection()));
+                        boat.changeHeading(true, shortToDegrees(windGenerator.getWindDirection()));
                         break;
                     case DOWN:
-                        competitors.get(sourceID).changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
+                        boat.changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
                         break;
                     case RIP:
-                        competitors.get(sourceID).setStatus(DSQ);
+                        boat.setStatus(DSQ);
                         sendBoatAction(RIP.getValue(), sourceID);
                         if (!boatUpdater.finisherList.contains(competitors.get(sourceID))){
                             boatUpdater.finisherList.add(competitors.get(sourceID));
@@ -137,15 +139,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                         break;
                     case TACK:
                         double windAngle = shortToDegrees(windGenerator.getWindDirection());
-                        Competitor boat = competitors.get(sourceID);
-
                         boat.setCurrentHeading(windAngle - (boat.getCurrentHeading() - windAngle));
                         break;
                     case BOOST:
-                        System.out.println("boost received");
-                        competitors.get(sourceID).activateBoost();
-//                        competitors.get(sourceID).setVelocity(competitors.get(sourceID).getVelocity() + 40);
-                        System.out.println("activated boost timeout " + competitors.get(sourceID).getBoostTimeout());
+                        boat.activateBoost();
+                        break;
+                    case POTION:
+                        boat.updateHealth((int)  boat.getMaxHealth() / 2);
+                        boatStateEvent(sourceID, boat.getHealthLevel());
                         break;
                 }
                 break;
@@ -476,7 +477,24 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     public void powerUpEvent() {
         long currentTime = System.currentTimeMillis();
 
-        if(currentTime > previousTime + 30000 && raceInProgress) {
+        // potion
+        if(currentTime > previousPotionTime + 40000 && raceInProgress) {
+            long timeout = currentTime + 70000;
+            MutablePoint generatedLocation = getRandomLocation();
+            int radius = 10; // we dont use this but other teams do
+            int powerType = 3;
+            int duration = 20000; // we dont use this but other teams do
+
+            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, powerType, duration, timeout);
+            this.sendQueue.put(null, eventPacket);
+            PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, powerType, duration);
+            boatUpdater.updatePowerUps(powerUp);
+            previousPotionTime = currentTime;
+            this.powerUpId++;
+        }
+
+        // speed boost
+        if(currentTime > previousBoostTime + 30000 && raceInProgress) {
             long timeout = currentTime + 60000;
             MutablePoint generatedLocation = getRandomLocation();
             int radius = 10; // we dont use this but other teams do
@@ -485,11 +503,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
             byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, powerType, duration, timeout);
             this.sendQueue.put(null, eventPacket);
+
             PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, powerType, duration);
             boatUpdater.updatePowerUps(powerUp);
-            previousTime = currentTime;
+            previousBoostTime = currentTime;
             this.powerUpId++;
         }
+
     }
 
     /**

@@ -117,4 +117,10 @@ public interface Competitor {
 
     void resetBoostTimeout();
 
+    void enablePotion();
+
+    boolean hasPotion();
+
+    void usePotion();
+
 }

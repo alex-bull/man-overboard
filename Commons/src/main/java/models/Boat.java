@@ -44,6 +44,7 @@ public class Boat implements Competitor {
     private boolean activatedBoost = false;
 
     private long boostTimeout = 0;
+    private boolean hasPotion = false;
 
 
     //collision size
@@ -117,6 +118,18 @@ public class Boat implements Competitor {
         return activated;
     }
 
+    public void enablePotion() {
+        this.hasPotion = true;
+    }
+
+    public boolean hasPotion() {
+        return hasPotion;
+    }
+
+    public void usePotion() {
+        this.hasPotion = false;
+    }
+
     public long getBoostTimeout() {
         return boostTimeout;
     }
@@ -124,7 +137,6 @@ public class Boat implements Competitor {
     public void resetBoostTimeout() {
         this.boostTimeout = 0;
     }
-
 
     public void activateBoost() {
         if(this.hasSpeedBoost) {
@@ -176,6 +188,7 @@ public class Boat implements Competitor {
 
     }
 
+
     public double getMaxHealth() {
         return maxHealth;
     }
@@ -190,7 +203,6 @@ public class Boat implements Competitor {
      */
     public void updateHealth(int delta) {
         double resultHealth = healthLevel + delta;
-
         if(resultHealth > maxHealth) {
             this.healthLevel = maxHealth;
         } else this.healthLevel = resultHealth;

@@ -408,40 +408,41 @@ public class Interpreter implements DataSource, PacketHandler {
             case POWER_UP:
                 PowerUpParser powerUpParser = new PowerUpParser();
                 PowerUp powerUp = powerUpParser.parsePowerUp(packet);
-                MutablePoint location = powerUp.getLocation();
+                if(powerUp.getType() == 0 || powerUp.getType() == 3) {
+                    MutablePoint location = powerUp.getLocation();
+                    MutablePoint positionOriginal = cloner.deepClone(Projection.mercatorProjection(location));
 
-                MutablePoint positionOriginal = cloner.deepClone(Projection.mercatorProjection(location));
+                    MutablePoint position = cloner.deepClone(Projection.mercatorProjection(location));
+                    position.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
-                MutablePoint position = cloner.deepClone(Projection.mercatorProjection(location));
-                position.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+                    MutablePoint position17=cloner.deepClone(Projection.mercatorProjection(position));
+                    position17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
-                MutablePoint position17=cloner.deepClone(Projection.mercatorProjection(position));
-                position17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+                    powerUp.setPosition(position);
+                    powerUp.setPosition17(position17);
+                    powerUp.setPositionOriginal(positionOriginal);
 
-                powerUp.setPosition(position);
-                powerUp.setPosition17(position17);
-                powerUp.setPositionOriginal(positionOriginal);
-
-                this.powerUps.put(powerUp.getId(), powerUp);
-
+                    this.powerUps.put(powerUp.getId(), powerUp);
+                }
                 break;
             case POWER_UP_TAKEN:
                 PowerUpTakenParser powerUpTakenParser = new PowerUpTakenParser(packet);
-
-                System.out.println("RECIEVED TAKEN " + powerUpTakenParser.getBoatId() + " , " + powerUpTakenParser.getPowerId());
-                System.out.println("Duration " + powerUpTakenParser.getDuration());
-                System.out.println(powerUps);
-
                 int id = powerUpTakenParser.getPowerId();
                 int boatId = powerUpTakenParser.getBoatId();
                 if(powerUps.containsKey(id)) {
                     PowerUp power = powerUps.get(id);
                     power.taken();
+                    int type = power.getType();
+                    if(getCompetitor().getSourceID() == boatId) {
+                        if(type == 0) {
+                            getCompetitor().enableBoost();
+                        }
+                        else if(type == 3) {
+                            getCompetitor().enablePotion();
+                        }
+                    }
                 }
-                if(getCompetitor().getSourceID() == boatId) {
-                    getCompetitor().enableBoost();
-                    System.out.println("Enable boost " + boatId);
-                }
+
 
 
             default:

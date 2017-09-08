@@ -20,6 +20,7 @@ public class PlayerController {
     @FXML private Label gamerTagLabel;
     @FXML private Label boatSpeedLabel;
     @FXML private ImageView speed;
+    @FXML private ImageView potion;
 
     private HealthBar screenHealthBar = new HealthBar();
     private DataSource dataSource;
@@ -34,6 +35,7 @@ public class PlayerController {
         this.healthPane.getChildren().add(screenHealthBar);
         this.healthPane.toBack();
         this.speed.setVisible(false);
+        this.potion.setVisible(false);
         gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
     }
 
@@ -54,14 +56,27 @@ public class PlayerController {
             this.speed.setVisible(false);
         }
 
+        if(boat.hasPotion()) {
+            this.potion.setVisible(true);
+        }
+        else {
+            this.potion.setVisible(false);
+        }
+
     }
 
     /**
      * Hides the speed icon
      */
     void hideBoost() {
-        System.out.println("HIDNG BOOST");
         this.speed.setVisible(false);
+    }
+
+    /**
+     * Hides the potion icon
+     */
+    void hidePotion() {
+        this.potion.setVisible(false);
     }
 
 
