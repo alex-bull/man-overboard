@@ -84,12 +84,12 @@ public class BoatUpdater {
                 if (boat.hasSailsOut()) {
                     if (boat.boostActivated()) {
                         boat.getBoatSpeed().increase(0.01);
-                        boat.getBoatSpeed().setMagnitude(speed * 10);
+                        boat.getBoatSpeed().setMagnitude(speed * 4);
                         boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
                     }
                     else {
                         boat.getBoatSpeed().increase(0.01);
-                        boat.getBoatSpeed().setMagnitude(speed * 4);
+                        boat.getBoatSpeed().setMagnitude(speed * 1);
                         boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
                     }
                 } else {

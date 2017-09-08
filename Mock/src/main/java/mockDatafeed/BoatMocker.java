@@ -84,7 +84,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         //Start the server
 
-        TCPserver = new TCPServer(4941, this, sendQueue, receiveQueue);
+        TCPserver = new TCPServer(4942, this, sendQueue, receiveQueue);
         Timer serverTimer = new Timer();
         serverTimer.schedule(TCPserver, 0, 1);
 
@@ -180,7 +180,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private void addCompetitor(Integer clientId) {
 
         double a = 0.005 * competitors.size(); //shift competitors so they aren't colliding at the start
-        prestart = new MutablePoint(32.41011 + a, -64.88937);
+//        prestart = new MutablePoint(32.41011 + a, -64.88937);
+        prestart = new MutablePoint(32.347847 + a, -64.794);
 
         Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
         newCompetitor.setCurrentHeading(0);
