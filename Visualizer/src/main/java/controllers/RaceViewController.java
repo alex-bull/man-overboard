@@ -766,6 +766,7 @@ public class RaceViewController implements Initializable, TableObserver {
         setBoatLocation();
         updateRace();
         checkCollision();
+
     }
 
     boolean isLoaded() {

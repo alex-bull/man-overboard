@@ -32,6 +32,7 @@ public class PlayerController {
     void setup(DataSource dataSource) {
         this.dataSource = dataSource;
         this.healthPane.getChildren().add(screenHealthBar);
+        this.healthPane.toBack();
         this.speed.setVisible(false);
         gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
     }

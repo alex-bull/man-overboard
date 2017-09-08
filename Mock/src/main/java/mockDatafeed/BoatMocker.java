@@ -181,7 +181,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         double a = 0.005 * competitors.size(); //shift competitors so they aren't colliding at the start
 //        prestart = new MutablePoint(32.41011 + a, -64.88937);
-        prestart = new MutablePoint(32.347847 + a, -64.794);
+        prestart = new MutablePoint(32.350797 + a, -64.799214);
 
         Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
         newCompetitor.setCurrentHeading(0);
@@ -510,19 +510,27 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         Integer randomKey = keys.get(random.nextInt(keys.size()));
         Competitor randomBoat = competitors.get(randomKey);
 
-        double randomLat = randomBoat.getPosition().getXValue() + (ThreadLocalRandom.current().nextInt(-5, 5) / 100.0);
-        double randomLon = randomBoat.getPosition().getYValue() + (ThreadLocalRandom.current().nextInt(-5, 5) / 100.0);
+        double randomLat = randomBoat.getPosition().getXValue() + getRandomRadius();
+        double randomLon = randomBoat.getPosition().getYValue() + getRandomRadius();
 
         MutablePoint generatedLocation = new MutablePoint(randomLat, randomLon);
 
         while (!isPointInPolygon(generatedLocation, courseBoundary)) {
-            randomLat = randomBoat.getPosition().getXValue() + (ThreadLocalRandom.current().nextInt(-5, 5) / 100.0);
-            randomLon = randomBoat.getPosition().getYValue() + (ThreadLocalRandom.current().nextInt(-5, 5) / 100.0);
+            randomLat = randomBoat.getPosition().getXValue() + getRandomRadius();
+            randomLon = randomBoat.getPosition().getYValue() + getRandomRadius();
             generatedLocation=new MutablePoint(randomLat,randomLon);
 
         }
         return generatedLocation;
 
+    }
+
+    /**
+     * Generates a random number for the radius of power up spawning
+     * @return double radius
+     */
+    private double getRandomRadius() {
+        return (ThreadLocalRandom.current().nextInt(-10, 10) / 1000.0);
     }
 
 

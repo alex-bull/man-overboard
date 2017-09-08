@@ -531,7 +531,6 @@ public class Interpreter implements DataSource, PacketHandler {
         } else {
             //update its properties
             Competitor updatingBoat=storedCompetitors.get(boatID);
-
             // boat colour
             if (updatingBoat.getColor() == null) {
                 Color colour = this.colourPool.getColours().get(0);
@@ -541,7 +540,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
             updatingBoat.setPosition(location);
             updatingBoat.setPosition17(location17);
-            System.out.println("speed received " + boatData.getSpeed());
             updatingBoat.setVelocity(boatData.getSpeed());
             updatingBoat.setCurrentHeading(boatData.getHeading());
             updatingBoat.setLatitude(boatData.getLatitude());
