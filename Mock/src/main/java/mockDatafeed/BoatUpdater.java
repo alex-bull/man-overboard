@@ -39,6 +39,7 @@ public class BoatUpdater {
     private List<MutablePoint> courseBoundary;
     private WindGenerator windGenerator;
     private int crewLocationSourceID = 0;
+    private int bloodlocationSourceID = 0;
     private int sharkSourceID = 0;
     private List<CrewLocation> crewMembers = new ArrayList<>();
     private List<Shark> sharks = new ArrayList<>();
@@ -156,7 +157,7 @@ public class BoatUpdater {
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
             for (Shark shark : new ArrayList<>(sharks)){
                 if (shark.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
-                    Blood blood = new Blood(crewLocation.getSourceId(),crewLocation.getPosition());
+                    Blood blood = new Blood(bloodlocationSourceID++,crewLocation.getPosition());
                     bloodList.add(blood);
                     crewMembers.remove(crewLocation);
                     updated = true;

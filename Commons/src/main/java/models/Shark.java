@@ -98,11 +98,4 @@ public class Shark {
     }
 
 
-    @Override
-    public String toString() {
-        return "Shark{" +
-                "numSharks=" + numSharks +
-                ", position=" + position +
-                '}';
-    }
 }

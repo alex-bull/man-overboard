@@ -635,7 +635,7 @@ public class BinaryPackager {
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        byte type = -20;
+        byte type = -100;
         short bodyLength = (short) (n*12+1);
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.put((byte) n);

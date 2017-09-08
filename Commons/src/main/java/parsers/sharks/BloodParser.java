@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static parsers.Converter.hexByteArrayToInt;
+import static parsers.Converter.hexByteArrayToLong;
 import static parsers.Converter.parseCoordinate;
 
 /**
@@ -17,7 +18,7 @@ import static parsers.Converter.parseCoordinate;
 public class BloodParser {
 
     public static List<Blood> parseBlood(byte[] packet) {
-        List<Blood> deadCrewLocations=new ArrayList<>();
+        List<Blood> deadCrewLocations = new ArrayList<>();
         Integer n = hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 1));
         int currentByte=1;
         for(int i=0;i<n;i++){

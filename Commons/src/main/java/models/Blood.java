@@ -7,12 +7,15 @@ package models;
 public class Blood {
 
     private int sourceID;
+    private double opacity = 0.0;
     private MutablePoint position;
     private MutablePoint position17;
     private MutablePoint positionOriginal;
 
+    private boolean isIncreasing = true;
 
-    public Blood(int sourceID,MutablePoint position) {
+
+    public Blood(int sourceID, MutablePoint position) {
         this.sourceID = sourceID;
         this.position = position;
     }
@@ -26,9 +29,12 @@ public class Blood {
 
     public int getSourceID(){ return sourceID; }
 
+
     public MutablePoint getPosition() {return position; }
 
     public MutablePoint getPosition17() {return position17; }
+
+    public void setPosition17(MutablePoint position17) { this.position17 = position17; }
 
     public MutablePoint getPositionOriginal() {
         return positionOriginal;
@@ -42,11 +48,17 @@ public class Blood {
         return position.getYValue();
     }
 
-    @Override
-    public String toString() {
-        return "Blood{" +
-                "position=" + position +
-                '}';
+    public double getOpacity(){ return opacity; }
+
+    public void updateOpacity(){
+        double max = 1;
+
+        if(isIncreasing){ opacity += 0.01; }
+        else { opacity -= 0.001; }
+
+        if(opacity >= max){ isIncreasing = false; }
     }
+
+
 
 }
