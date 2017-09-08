@@ -50,6 +50,7 @@ import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
 import static parsers.fallenCrew.FallenCrewParser.parseFallenCrew;
+import static parsers.sharks.BloodParser.parseBlood;
 import static parsers.sharks.SharkParser.parseShark;
 import static utility.Calculator.calculateExpectedTack;
 
@@ -182,6 +183,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     private Map<Integer,CrewLocation> crewLocations=new HashMap<>();
     private Map<Integer, Shark> sharkLocations = new HashMap<>();
+    private Map<Integer, Blood> bloodLocations = new HashMap<>();
 
 
 
@@ -400,7 +402,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 addShark(parseShark(packet));
                 break;
             case BLOOD:
-                System.out.println("reading blood");
+                addBloodLocation(parseBlood(packet));
                 break;
 
             default:
@@ -437,6 +439,23 @@ public class Interpreter implements DataSource, PacketHandler {
     }
 
     /**
+     * adds crew locations with location converted
+     * @param locations list of the blood locations
+     */
+    public void addBloodLocation(List<Blood> locations){
+        System.out.println(locations.size() + " BLOOD");
+        bloodLocations.clear();
+        for(Blood blood:locations){
+            MutablePoint location = cloner.deepClone(Projection.mercatorProjection(blood.getPosition()));
+            MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(blood.getPosition()));
+            location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(blood.getPosition()));
+            location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            bloodLocations.put(blood.getSourceID(), new Blood(blood.getSourceID(), location, location17, locationOriginal));
+        }
+    }
+
+    /**
      * adds shark locations with location converted
      * @param locations list of shark locations
      */
@@ -467,12 +486,14 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
-    public Map<Integer,CrewLocation> getCrewLocations() {
-        return crewLocations;
-    }
+    public Map<Integer,CrewLocation> getCrewLocations() { return crewLocations; }
 
     public Map<Integer,Shark> getSharkLocations() {
         return sharkLocations;
+    }
+
+    public Map<Integer,Blood> getBloodLocations() {
+        return bloodLocations;
     }
 
     /**

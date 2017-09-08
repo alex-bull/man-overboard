@@ -42,6 +42,7 @@ public class BoatUpdater {
     private int sharkSourceID = 0;
     private List<CrewLocation> crewMembers = new ArrayList<>();
     private List<Shark> sharks = new ArrayList<>();
+    private List<Blood> bloodList = new ArrayList<>();
 
 
     /**
@@ -117,7 +118,11 @@ public class BoatUpdater {
                 handler.sharkEvent(sharks);
             }
         }
-        if (crewMemberUpdated) { handler.fallenCrewEvent(crewMembers); }
+        if (crewMemberUpdated) {
+            handler.fallenCrewEvent(crewMembers);
+            System.out.println(bloodList);
+            handler.bloodEvent(bloodList);
+        }
 
 
 
@@ -154,9 +159,11 @@ public class BoatUpdater {
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
             for (Shark shark : new ArrayList<>(sharks)){
                 if (shark.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
+                    Blood blood = new Blood(crewLocation.getSourceId(),crewLocation.getPosition());
+                    bloodList.add(blood);
                     crewMembers.remove(crewLocation);
                     updated = true;
-//                    handler.bloodEvent(shark.getPosition());
+
                 }
             }
         }

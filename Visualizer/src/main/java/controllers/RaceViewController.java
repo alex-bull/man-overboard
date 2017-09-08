@@ -63,6 +63,7 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private ListView<String> finisherListView;
 
     private Map<Integer, ImageView> fallenCrews=new HashMap<>();
+    private Map<Integer, ImageView> bloodImages = new HashMap<>();
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Double, HealthBar> healthBars = new HashMap<>();
@@ -74,7 +75,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private GuideArrow guideArrow;
     private Sail sailLine;
     private SharkModel sharkModel;
-    private Blood blood;
     //FLAGS
     private Boolean finisherListDisplayed = false;
     private boolean isLoaded = false;
@@ -118,7 +118,6 @@ public class RaceViewController implements Initializable, TableObserver {
         sailLine = new Sail(Color.WHITE);
 
         sharkModel = new SharkModel(new Image("/Animations/sharkMoving.gif"));
-        blood = new Blood(new Image("/Animations/blood.jpg"));
 
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
@@ -550,7 +549,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawFallenCrew(){
 
-        Map<Integer,CrewLocation> crewLocation=dataSource.getCrewLocations();
+        Map<Integer,CrewLocation> crewLocation = dataSource.getCrewLocations();
 
         //remove entries
         Set<Integer> removedLocation= new HashSet<>(fallenCrews.keySet());
@@ -610,6 +609,37 @@ public class RaceViewController implements Initializable, TableObserver {
      * draw blood when a shark eats a fallen crew member
      */
     private void drawBlood(){
+        Map<Integer, Blood> bloodLocation = dataSource.getBloodLocations();
+
+
+        //remove entries
+        Set<Integer> removedLocation= new HashSet<>(bloodImages.keySet());
+        removedLocation.removeAll(bloodLocation.keySet());
+        for(int sourceId:removedLocation){
+            raceViewPane.getChildren().remove(bloodImages.get(sourceId));
+            bloodImages.remove(sourceId);
+        }
+
+        for(int sourceID : bloodLocation.keySet()){
+            if(!bloodImages.containsKey(sourceID)) {
+                ImageView blood = new ImageView();
+                Image redBlob = (new Image("/Animations/blood.jpg"));
+                blood.setImage(redBlob);
+                bloodImages.put(sourceID,blood);
+                raceViewPane.getChildren().add(blood);
+
+            }
+
+            Image image = bloodImages.get(sourceID).getImage();
+            if (isZoom()) {
+                MutablePoint p = bloodLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+                bloodImages.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+            } else {
+                MutablePoint p=bloodLocation.get(sourceID).getPosition();
+                bloodImages.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+            }
+        }
+
 
 
     }
@@ -756,6 +786,7 @@ public class RaceViewController implements Initializable, TableObserver {
         checkRaceFinished();
         drawFallenCrew();
         drawSharks();
+        drawBlood();
         setBoatLocation();
         updateRace();
         checkCollision();

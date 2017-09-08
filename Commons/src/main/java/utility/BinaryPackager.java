@@ -2,10 +2,7 @@ package utility;
 
 
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import models.Competitor;
-import models.CrewLocation;
-import models.MutablePoint;
-import models.Shark;
+import models.*;
 import parsers.BoatStatusEnum;
 
 import java.io.IOException;
@@ -628,21 +625,24 @@ public class BinaryPackager {
 
     /**
      * Packages Blood event
-     * @param location the location of the blood pool
+     * @param locations the location of the blood pool
      * @return the packet for event
      */
-    public byte[] packageBloodEvent(MutablePoint location){
-        byte[] packet=new byte[20*9]; // total size of packet
+    public byte[] packageBloodEvent(List<Blood> locations){
+        int n=locations.size();
+        byte[] packet=new byte[20+n*12]; // total size of packet
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        byte type = 121;
-        short bodyLength = (short) (9+1);
+        byte type = -20;
+        short bodyLength = (short) (n*12+1);
         this.writeHeader(packetBuffer, type, bodyLength);
-        packetBuffer.put((byte) 1);
-        packetBuffer.putInt(latLngToInt(location.getXValue()));
-        packetBuffer.putInt(latLngToInt(location.getYValue()));
+        packetBuffer.put((byte) n);
+        for(Blood blood: locations) {
+            packetBuffer.putInt(latLngToInt(blood.getLatitude()));
+            packetBuffer.putInt(latLngToInt(blood.getLongitude()));
+        }
 
 
         //CRC

@@ -18,7 +18,7 @@ public interface DataSource {
     int getZoomLevel();
     Map<Integer, CrewLocation> getCrewLocations();
     Map<Integer, Shark> getSharkLocations();
-
+    Map<Integer, Blood> getBloodLocations();
     boolean receive(String host, int port, Scene scene);
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
