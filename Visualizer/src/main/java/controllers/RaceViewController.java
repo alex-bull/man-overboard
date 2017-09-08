@@ -611,7 +611,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawBlood(){
         Map<Integer, Blood> bloodLocation = dataSource.getBloodLocations();
 
-
         //remove entries
         Set<Integer> removedLocation= new HashSet<>(bloodImages.keySet());
         removedLocation.removeAll(bloodLocation.keySet());
@@ -627,7 +626,6 @@ public class RaceViewController implements Initializable, TableObserver {
                 blood.setImage(redBlob);
                 bloodImages.put(sourceID,blood);
                 raceViewPane.getChildren().add(blood);
-
             }
 
             Image image = bloodImages.get(sourceID).getImage();
@@ -639,7 +637,6 @@ public class RaceViewController implements Initializable, TableObserver {
                 bloodImages.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
             }
         }
-
 
 
     }

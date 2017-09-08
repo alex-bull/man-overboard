@@ -12,7 +12,7 @@ import static parsers.Converter.parseCoordinate;
 
 /**
  * Created by Izzy on 7/09/17.
- *
+ * Parse a blood packet
  */
 public class BloodParser {
 

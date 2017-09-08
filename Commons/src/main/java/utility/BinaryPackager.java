@@ -640,10 +640,10 @@ public class BinaryPackager {
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.put((byte) n);
         for(Blood blood: locations) {
+            packetBuffer.putInt(blood.getSourceID());
             packetBuffer.putInt(latLngToInt(blood.getLatitude()));
             packetBuffer.putInt(latLngToInt(blood.getLongitude()));
         }
-
 
         //CRC
         this.writeCRC(packetBuffer);

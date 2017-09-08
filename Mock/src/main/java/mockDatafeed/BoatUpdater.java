@@ -120,11 +120,8 @@ public class BoatUpdater {
         }
         if (crewMemberUpdated) {
             handler.fallenCrewEvent(crewMembers);
-            System.out.println(bloodList);
             handler.bloodEvent(bloodList);
         }
-
-
 
     }
 
