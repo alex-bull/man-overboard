@@ -541,6 +541,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
             updatingBoat.setPosition(location);
             updatingBoat.setPosition17(location17);
+            System.out.println("speed received " + boatData.getSpeed());
             updatingBoat.setVelocity(boatData.getSpeed());
             updatingBoat.setCurrentHeading(boatData.getHeading());
             updatingBoat.setLatitude(boatData.getLatitude());

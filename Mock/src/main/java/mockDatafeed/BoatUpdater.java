@@ -97,7 +97,6 @@ public class BoatUpdater {
                 }
 
                 if(boat.getBoostTimeout() != 0 && System.currentTimeMillis() > boat.getBoostTimeout()) {
-                    System.out.println("decrease boost");
                     boat.getBoatSpeed().reduce(0.99);
                     boat.resetBoostTimeout();
                     boat.deactivateBoost();
