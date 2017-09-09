@@ -23,7 +23,7 @@ import static utility.Projection.mercatorProjection;
 public class RaceXMLParser {
 
     private List<MutablePoint> courseBoundary;
-    private List<MutablePoint> courseBoundary17;
+//    private List<MutablePoint> courseBoundary17;
 
     private double scaleFactor;
     private double paddingX;
@@ -74,6 +74,8 @@ public class RaceXMLParser {
      * @throws JDOMException JDOMException
      */
     public RaceData parseRaceData(String xmlStr) throws IOException, JDOMException {
+
+
 
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
@@ -180,9 +182,9 @@ public class RaceXMLParser {
         return courseBoundary;
     }
 
-    public List<MutablePoint> getCourseBoundary17() {
-        return courseBoundary17;
-    }
+//    public List<MutablePoint> getCourseBoundary17() {
+//        return courseBoundary17;
+//    }
 
     /**
      * Set buffers and call course parsers
@@ -290,14 +292,14 @@ public class RaceXMLParser {
             //calculate shift distance in pixels
             shiftDistance = bufferY / 2;
         }
-        Cloner clone = new Cloner();
-        List<MutablePoint> boundary17=clone.deepClone(boundary);
-
-
-        boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, xMin, yMin, paddingX, paddingY));
-        boundary17.forEach(p -> p.factor(Math.pow(2,17), Math.pow(2,17), xMin, yMin, paddingX, paddingY));
-
-        this.courseBoundary17=boundary17;
+//        Cloner clone = new Cloner();
+//        List<MutablePoint> boundary17=clone.deepClone(boundary);
+//
+//
+//        boundary.forEach(p -> p.factor(scaleFactor, scaleFactor, xMin, yMin, paddingX, paddingY));
+//        boundary17.forEach(p -> p.factor(Math.pow(2,17), Math.pow(2,17), xMin, yMin, paddingX, paddingY));
+//
+//        this.courseBoundary17=boundary17;
         this.courseBoundary = boundary;
     }
 

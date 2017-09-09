@@ -58,7 +58,15 @@ public class Converter {
         }
         return relativeTime;
     }
-
+    /**
+     * Convert a byte array of little endian hex values into a decimal latitude or longitude
+     *
+     * @param hexValues byte[] a byte array of (4) hexadecimal bytes in little endian format
+     * @return Double the value of the coordinate value
+     */
+    public static Double parseCoordinate(byte[] hexValues) {
+        return (double) hexByteArrayToInt(hexValues) * 180.0 / 2147483648.0;
+    }
     /**
      * Converts the received race status integer to a string with meaning.
      * @param status Integer the race status integer

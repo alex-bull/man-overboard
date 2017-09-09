@@ -27,7 +27,7 @@ public class BoatStoppedSteps {
 
     @Given("^Boat has its sails out$")
     public void boat_has_its_sails_out() throws Throwable {
-        Assert.assertTrue(boat.hasSailsOut());
+        Assert.assertFalse(boat.hasSailsOut());
     }
 
     @When("^The sails in/out key is pressed$")
@@ -44,7 +44,7 @@ public class BoatStoppedSteps {
 
     @Then("^The sails are in$")
     public void the_sails_are_in() throws Throwable {
-        Assert.assertFalse(boat.hasSailsOut());
+        Assert.assertTrue(boat.hasSailsOut());
     }
 
 }

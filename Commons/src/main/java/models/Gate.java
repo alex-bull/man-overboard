@@ -108,9 +108,15 @@ public class Gate implements CourseFeature {
      * @param minY    double the min y value
      */
     @Override
-    public void factor(double xFactor, double yFactor, double minX, double minY, double xBuffer, double yBuffer) {
+    public MutablePoint factor(double xFactor, double yFactor, double minX, double minY, double xBuffer, double yBuffer) {
         pixelPoint1.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
-        pixelPoint2.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
+
+        return pixelPoint2.factor(xFactor, yFactor, minX, minY, xBuffer, yBuffer);
+    }
+
+    @Override
+    public void setPixelLocation(MutablePoint newLocation) {
+
     }
 
     /**

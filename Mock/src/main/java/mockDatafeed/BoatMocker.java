@@ -12,9 +12,10 @@ import parsers.xml.race.CompoundMarkData;
 import parsers.xml.race.MarkData;
 import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
-import utilities.PolarTable;
 import utility.BinaryPackager;
 import utility.ConnectionClient;
+import utility.QueueMessage;
+import utility.WorkQueue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -38,141 +39,56 @@ import static utility.Calculator.*;
  * Boat mocker
  */
 public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdateEventHandler {
-    private HashMap<Integer, Competitor> competitors;
+
+    private HashMap<Integer, Competitor> competitors = new HashMap<>();
     private Map<Integer, Competitor> markBoats;
-    //private List<Competitor> markBoats;
     private List<MutablePoint> courseBoundary;
     private RaceData raceData;
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
-    private BinaryPackager binaryPackager;
-    private TCPServer TCPserver;
-    private MutablePoint prestart;
+    private BinaryPackager binaryPackager = new BinaryPackager();
+    private MutablePoint prestart = new MutablePoint(32.295842, -64.857157);
     private WindGenerator windGenerator;
-    private int currentSourceID = 100;
-    private Random random;
-    private int raceStatus;
+    private int currentSourceID = 99;
+    private Random random = new Random();
 
     private boolean flag = true;
-    private Timer timer;
     private BoatUpdater boatUpdater;
+    private long startTime = System.currentTimeMillis() / 1000;//time in seconds
+
+    private TCPServer TCPserver;
+    private boolean raceInProgress = false;
+    private Map<Integer, Boolean> clientStates = new HashMap<>();
+
+    private WorkQueue sendQueue = new WorkQueue(1000000);
+    private WorkQueue receiveQueue = new WorkQueue(1000000);
 
 
-    public BoatMocker() throws IOException, JDOMException {
 
-        timer = new Timer();
-        random = new Random();
-//        prestart = new MutablePoint(32.286577, -64.864304);
-        prestart = new MutablePoint(32.295842, -64.857157);
-        int connectionTime = 10000;
-        competitors = new HashMap<>();
-        TCPserver = new TCPServer(4941, this);
-
-        binaryPackager = new BinaryPackager();
-
-        //establishes the connection with Visualizer
-        TCPserver.establishConnection(connectionTime);
-
+    BoatMocker() throws IOException, JDOMException {
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
-
-        timer.schedule(TCPserver, 0, 1);
 
         //find out the coordinates of the course
         generateCourse();
         generateMarkCompetitors();
         generateWind();
-//        collisionUtility.setCourseInformation();
-//        courseLineEquations = collisionUtility.getCourseLineEquations();
-
         boatUpdater = new BoatUpdater(competitors, markBoats, raceData, this, courseBoundary, windGenerator);
 
-        //send all xml data first
-        sendAllXML();
+
+        //Start the server
+
+        TCPserver = new TCPServer(4941, this, sendQueue, receiveQueue);
+        Timer serverTimer = new Timer();
+        serverTimer.schedule(TCPserver, 0, 1);
+
+
         //start the race, updates boat position at a rate of 60 hz
+        Timer timer = new Timer();
         timer.schedule(this, 0, 16);
     }
 
-
-    /**
-     * initializes the boats
-     *
-     * @param args String[]
-     */
-    public static void main(String[] args) {
-        try {
-            new BoatMocker();
-        } catch (SocketException ignored) {
-
-        } catch (IOException | JDOMException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Send packet for yacht event
-     *
-     * @param sourceId source id of the boat
-     * @param eventId  event id
-     */
-    public void yachtEvent(int sourceId, int eventId) {
-        try {
-            sendYachtEvent(sourceId, eventId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Send packet for health event
-     *
-     * @param sourceId Integer source id of the boat
-     * @param health   Integer health of the boat
-     */
-    public void boatStateEvent(Integer sourceId, Integer health) {
-        try {
-            Competitor boat = competitors.get(sourceId);
-            if (health >= boat.getMaxHealth()) {
-                health = boat.getMaxHealth();
-            }
-            else if (health < 0) {
-                health = 0; // make sure that negative health is not sent
-            }
-            // System.out.println("boat health sending " + health);
-            this.TCPserver.sendData(binaryPackager.packageBoatStateEvent(sourceId, health));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Send packet for mark rounding
-     *
-     * @param sourceId       source id of the boat
-     * @param compoundMarkId id of the mark
-     */
-    public void markRoundingEvent(int sourceId, int compoundMarkId) {
-        try {
-            this.TCPserver.sendData(binaryPackager.packageMarkRounding(sourceId, (byte) 1, compoundMarkId));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Sends the boat action data to the Visualiser
-     *
-     * @param action action of the boat
-     */
-    private void sendBoatAction(int action, int sourceId) {
-        try {
-            this.TCPserver.sendData(binaryPackager.packageBoatAction(action, sourceId));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     /**
@@ -180,8 +96,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      *
      * @param header byte[] the packet header
      * @param packet byte[] the packet body
+     * @param clientId Integer the id of the client who sent the message
      */
-    public void interpretPacket(byte[] header, byte[] packet) {
+    public void interpretPacket(byte[] header, byte[] packet, Integer clientId) {
         MessageType messageType = UNKNOWN;
         for (MessageType messageEnum : MessageType.values()) {
             if (header[0] == messageEnum.getValue()) {
@@ -216,11 +133,122 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                     case TACK:
                         double windAngle = shortToDegrees(windGenerator.getWindDirection());
                         Competitor boat = competitors.get(sourceID);
+
                         boat.setCurrentHeading(windAngle - (boat.getCurrentHeading() - windAngle));
                         break;
                 }
                 break;
+            case CONNECTION_REQ:
+                this.addCompetitor(clientId);
+                break;
+            case PLAYER_READY:
+                this.updateReady(clientId);
+                break;
+            case LEAVE_LOBBY:
+                this.removePlayer(clientId);
         }
+    }
+
+
+    /**
+     * Adds a dummy connection for testing
+     */
+    void addConnection() {
+        Boat b = new Boat("Boat", random.nextInt(20) + 20, prestart, "B" , 1, PRESTART);
+        b.setCurrentHeading(0);
+        this.competitors.put(1, b);
+    }
+
+
+    /**
+     * adds a competitor to the list of competitors
+     * Sends a response with a source id for the client
+     * Stores the client in the clientState map
+     * @param clientId the channel id of the client, this is used as the source id of the new competitor
+     */
+    private void addCompetitor(Integer clientId) {
+
+        double a = 0.005 * competitors.size(); //shift competitors so they aren't colliding at the start
+        prestart = new MutablePoint(32.41011 + a, -64.88937);
+
+        Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
+        newCompetitor.setCurrentHeading(0);
+        competitors.put(clientId, newCompetitor);
+
+        byte[] res = binaryPackager.packageConnectionResponse((byte)1, clientId);
+        //send connection response and broadcast XML so update lobbies
+        sendQueue.put(clientId, res);
+        this.clientStates.put(clientId, false);
+        this.sendAllXML();
+    }
+
+
+    /**
+     * gets the next available source id
+     * @return int the source id
+     */
+    public int getNextSourceId() {
+        currentSourceID += 1;
+        return currentSourceID;
+    }
+
+
+    /**
+     * Returns true if new connections are still being accepted
+     * @return boolean
+     */
+    public boolean isAccepting() {
+        return !raceInProgress;
+    }
+
+
+    /**
+     * Sets the client to ready if they are a registered player
+     * @param clientId Integer the id of the client to mark as ready
+     */
+    private void updateReady(Integer clientId) {
+        if (this.competitors.get(clientId) == null) return; //not a registered player
+        clientStates.put(clientId, true);
+    }
+
+
+    /**
+     * returns true if the game if the game should start
+     * There must be at least one player
+     * All players must be ready or the timer must have reached a minute
+     */
+    private boolean shouldStartGame() {
+        if (raceInProgress) return false; //game already in progress
+        if (competitors.size() < 1) return false; //no competitors
+
+        //all players are ready or the timer has reached a minute
+        return !clientStates.values().contains(false) || ((System.currentTimeMillis() / 1000) - startTime > 60);
+    }
+
+
+    /**
+     * Removes the player from the race
+     * the server will automatically remove selector key when socket disconnects
+     * Send xml to update other clients
+     * @param clientId Integer, the client to remove
+     */
+    private void removePlayer(Integer clientId) {
+        clientStates.remove(clientId);
+        this.competitors.remove(clientId);
+        this.sendAllXML();
+    }
+
+
+    /**
+     *get a list of competitors
+     * @return List the competitors
+     */
+    public List<Competitor> getCompetitors() {
+        List<Competitor> boats = new ArrayList<>();
+        for (Competitor competitor : competitors.values()) {
+            boats.add(competitor);
+        }
+        return boats;
     }
 
 
@@ -267,6 +295,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 //        polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
     }
 
+
     /**
      * finds the current course of the race
      */
@@ -280,36 +309,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 //        collisionUtility.setCourseBoundary(courseBoundary);
     }
 
-    /**
-     * adds a competitor to the list of competitors
-     *
-     * @return the source Id added
-     */
-    private int addCompetitors() {
 
 
-        double a = 0.005 * competitors.size();
-//        prestart = new MutablePoint(32.286577 + a, -64.864304);
-        prestart = new MutablePoint(32.41011 + a, -64.88937);
 
-        Boat newCompetitor = new Boat("Boat " + currentSourceID, random.nextInt(20) + 20, prestart, "B" + currentSourceID, currentSourceID, PRESTART);
-        newCompetitor.setCurrentHeading(0);
-        competitors.put(currentSourceID, newCompetitor);
-        currentSourceID += 1;
-        return currentSourceID - 1;
-    }
-
-    public List<Competitor> getCompetitors() {
-        List<Competitor> boats = new ArrayList<>();
-        for (Competitor competitor : competitors.values()) {
-            boats.add(competitor);
-        }
-        return boats;
-    }
-
-    public int addConnection() {
-        return this.addCompetitors();
-    }
 
     /**
      * generates the competitors list from the XML race file
@@ -331,6 +333,70 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     }
 
 
+
+
+    /**
+     * Send packet for yacht event
+     *
+     * @param sourceId source id of the boat
+     * @param eventId  event id
+     */
+    public void yachtEvent(int sourceId, int eventId) {
+        try {
+            sendYachtEvent(sourceId, eventId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Send packet for health event
+     *
+     * @param sourceId Integer source id of the boat
+     * @param health   Integer health of the boat
+     */
+    public void boatStateEvent(Integer sourceId, double health) {
+
+        Competitor boat = competitors.get(sourceId);
+        if (health >= boat.getMaxHealth()) {
+            health = boat.getMaxHealth();
+        }
+        else if (health < 0) {
+            health = 0; // make sure that negative health is not sent
+        }
+        // System.out.println("boat health sending " + health);
+//            this.TCPserver.broadcast(binaryPackager.packageBoatStateEvent(sourceId, health));
+        this.sendQueue.put(null, binaryPackager.packageBoatStateEvent(sourceId, health));
+    }
+
+    /**
+     * Send packet for mark rounding
+     *
+     * @param sourceId       source id of the boat
+     * @param compoundMarkId id of the mark
+     */
+    public void markRoundingEvent(int sourceId, int compoundMarkId) {
+        //this.TCPserver.broadcast(binaryPackager.packageMarkRounding(sourceId, (byte) 1, compoundMarkId));
+        this.sendQueue.put(null, binaryPackager.packageMarkRounding(sourceId, (byte) 1, compoundMarkId));
+
+    }
+
+
+    /**
+     * Sends the boat action data to the Visualiser
+     *
+     * @param action action of the boat
+     */
+    private void sendBoatAction(int action, int sourceId) {
+//        try {
+//            this.TCPserver.broadcast(binaryPackager.packageBoatAction(action, sourceId));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        this.sendQueue.put(null, binaryPackager.packageBoatAction(action, sourceId));
+    }
+
+
     /**
      * generate and send a yacht event to all the clients
      *
@@ -339,10 +405,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void sendYachtEvent(int sourceID, int eventID) throws IOException, InterruptedException {
         byte[] eventPacket = binaryPackager.packageYachtEvent(sourceID, eventID);
-        TCPserver.sendData(eventPacket);
-
+//        TCPserver.broadcast(eventPacket);
+        this.sendQueue.put(null, eventPacket);
         //wait for it to be send
-        Thread.sleep(20);
+//        Thread.sleep(20);
     }
 
 
@@ -357,15 +423,15 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             byte[] boatinfo = binaryPackager.packageBoatLocation(boat.getSourceID(), boat.getPosition().getXValue(), boat.getPosition().getYValue(),
                     boat.getCurrentHeading(), boat.getVelocity() * 1000, 1);
 
-            TCPserver.sendData(boatinfo);
+            this.sendQueue.put(null, boatinfo);
 
         }
-        //send mark boats
+        //send mark boats only once
         if (flag) {
             for (Competitor markBoat : markBoats.values()) {
                 byte[] boatinfo = binaryPackager.packageBoatLocation(markBoat.getSourceID(), markBoat.getPosition().getXValue(), markBoat.getPosition().getYValue(),
                         markBoat.getCurrentHeading(), markBoat.getVelocity() * 1000, 3);
-                TCPserver.sendData(boatinfo);
+                this.sendQueue.put(null, boatinfo);
             }
             flag = false;
         }
@@ -380,6 +446,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private void sendRaceStatus() throws IOException {
         short windDirection = windGenerator.getWindDirection();
         short windSpeed = windGenerator.getWindSpeed();
+        int raceStatus;
         if(boatUpdater.checkAllFinished()){
             raceStatus = 4;
         } else {
@@ -387,7 +454,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed,competitors.size());
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
-        TCPserver.sendData(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
+        this.sendQueue.put(null, binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
     }
 
 
@@ -408,26 +475,25 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         return String.format(xmlTemplate, raceID, creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), participants);
     }
 
+
     /**
      * Send a race xml file to client, uses raceTemplate.xml to generate custom race xml messages
      */
-
     private void sendRaceXML() throws IOException {
         int messageType = 6;
         String raceTemplateString = fileToString("/raceTemplate.xml");
         String raceXML = formatRaceXML(raceTemplateString);
-        TCPserver.sendData(binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
+        this.sendQueue.put(null, binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
 
     }
+
 
     /**
      * Send a xml file
      */
     private void sendXML(String xmlPath, int messageType) throws IOException {
         String xmlString = CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
-        //        String mockBoatsString = Files.toString(new File(xmlPath), Charsets.UTF_8);
-        TCPserver.sendData(binaryPackager.packageXML(xmlString.length(), xmlString, messageType));
-
+        this.sendQueue.put(null, binaryPackager.packageXML(xmlString.length(), xmlString, messageType));
     }
 
     /**
@@ -452,7 +518,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
         String xmlString = CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
         String boatXML = String.format(xmlString, stringBuilder.toString());
-        TCPserver.sendData(binaryPackager.packageXML(boatXML.length(), boatXML, messageType));
+        this.sendQueue.put(null, binaryPackager.packageXML(boatXML.length(), boatXML, messageType));
     }
 
 
@@ -468,23 +534,64 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 
     /**
-     * updates the boats location
+     * Get all messages from receive queue and pass them to interpreter
+     */
+    private void readAllMessages() {
+        for (QueueMessage m: receiveQueue.drain()) {
+            this.interpretPacket(m.getHeader(), m.getBody(), m.getClientId());
+        }
+    }
+
+    /**
+     * packages and sends fallen crew event
+     * @param locations data for the event
+     * @throws IOException if send fails
+     */
+    public void fallenCrewEvent(List<CrewLocation> locations) throws IOException {
+
+        byte[] eventPacket = binaryPackager.packageFallenCrewEvent(locations);
+        this.sendQueue.put(null, eventPacket);
+    }
+
+
+
+    /**
+     * updates the boats location and handles outgoing and incoming messages
      */
     @Override
     public void run() {
 
-        //send the boat info to receiver
+        this.readAllMessages();
+
+        if (shouldStartGame()) raceInProgress = true;
+
+        if (!raceInProgress) return;
 
         try {
             boatUpdater.updatePosition();
             sendBoatLocation();
             sendRaceStatus();
         } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * initializes the boats
+     *
+     * @param args String[]
+     */
+    public static void main(String[] args) {
+        try {
+            new BoatMocker();
+        } catch (SocketException ignored) {
+
+        } catch (IOException | JDOMException e) {
             e.printStackTrace();
         }
     }
