@@ -620,7 +620,6 @@ public class RaceViewController implements Initializable, TableObserver {
             Long timeout = powerUp.getTimeout();
 
             if(System.currentTimeMillis() > timeout || powerUp.isTaken()) {
-                System.out.println(powerUp.isTaken() + "--" + powerUp.getId());
                 raceViewPane.getChildren().remove(powerUps.get(sourceID));
                 powerUps.remove(sourceID);
                 dataSource.getPowerUps().remove(sourceID);

@@ -455,7 +455,6 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param locations List locations
      */
     private void addCrewLocation(List<CrewLocation> locations){
-        System.out.println(locations.size());
         crewLocations.clear();
         for(CrewLocation crewLocation:locations){
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));

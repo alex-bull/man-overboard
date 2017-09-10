@@ -85,7 +85,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         //Start the server
 
-        TCPserver = new TCPServer(4942, this, sendQueue, receiveQueue);
+        TCPserver = new TCPServer(4941, this, sendQueue, receiveQueue);
         Timer serverTimer = new Timer();
         serverTimer.schedule(TCPserver, 0, 1);
 
