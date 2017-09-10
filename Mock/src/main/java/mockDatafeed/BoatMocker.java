@@ -677,6 +677,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         try {
             boatUpdater.updatePosition();
+            powerUpEvent();
             sendBoatLocation();
             sendRaceStatus();
         } catch (IOException | InterruptedException e) {

@@ -72,11 +72,11 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     private Map<Integer, ImageView> fallenCrews=new HashMap<>();
-    private Map<Integer, ImageView> powerUps=new HashMap<>();
+    private Map<Integer, PowerUpModel> powerUps=new HashMap<>();
 
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
-    private Map<Double, HealthBar> healthBars = new HashMap<>();
+    private Map<Integer, HealthBar> healthBars = new HashMap<>();
     private Map<Integer, Annotation> annotations = new HashMap<>();
     private Map<String, Shape> markModels = new HashMap<>();
     private Track track = new Track();
@@ -329,11 +329,11 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Draw the health bar for a boat
-     * @param boat
+     * @param boat Competitor
      */
     private void drawHealthBar(Competitor boat) {
 
-        double sourceId = boat.getSourceID();
+        int sourceId = boat.getSourceID();
         HealthBar healthBar = healthBars.get(sourceId);
 
         if (healthBar == null) {
@@ -596,44 +596,24 @@ public class RaceViewController implements Initializable, TableObserver {
 
     private void drawPowerUps() {
         Map<Integer,PowerUp> receivedPowerUps = dataSource.getPowerUps();
-        Integer imageWidth = 32;
-        Integer imageHeight = 32;
 
-        for(int sourceID : receivedPowerUps.keySet()) {
-            PowerUp receivedPowerUp = receivedPowerUps.get(sourceID);
 
-            if (!powerUps.containsKey(sourceID) && (receivedPowerUp.getType() == BOOST.getValue() || receivedPowerUp.getType() == POTION.getValue())) {
-                ImageView imageView = new ImageView();
-                Image image;
-                if(receivedPowerUp.getType() == BOOST.getValue()) {
-                    image = new Image("/images/speed3.png");
-                }
-                else {
-                    image = new Image("/images/potion.png");
-                }
-                imageView.setImage(image);
-                imageView.setFitHeight(imageHeight);
-                imageView.setFitWidth(imageWidth);
-                powerUps.put(sourceID, imageView);
-                raceViewPane.getChildren().add(imageView);
+        for(PowerUp receivedPowerUp: receivedPowerUps.values()) {
+            int sourceId = receivedPowerUp.getId();
+            if (!powerUps.containsKey(sourceId)) {
+                PowerUpModel powerUpModel = new PowerUpModel(receivedPowerUp);
+                powerUps.put(sourceId, powerUpModel);
+                raceViewPane.getChildren().add(powerUpModel);
             }
 
-            PowerUp powerUp = receivedPowerUps.get(sourceID);
+            powerUps.get(sourceId).update(isZoom(), receivedPowerUp, currentPosition17, raceViewCanvas.getWidth(), raceViewCanvas.getHeight());
 
-            if (isZoom()) {
-                MutablePoint p = powerUp.getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-                powerUps.get(sourceID).relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
-            } else {
-                MutablePoint p=powerUp.getPosition();
-                powerUps.get(sourceID).relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
-            }
+            Long timeout = receivedPowerUp.getTimeout();
 
-            Long timeout = powerUp.getTimeout();
-
-            if(System.currentTimeMillis() > timeout || powerUp.isTaken()) {
-                raceViewPane.getChildren().remove(powerUps.get(sourceID));
-                powerUps.remove(sourceID);
-                dataSource.getPowerUps().remove(sourceID);
+            if(System.currentTimeMillis() > timeout || receivedPowerUp.isTaken()) {
+                raceViewPane.getChildren().remove(powerUps.get(sourceId));
+                powerUps.remove(sourceId);
+                dataSource.getPowerUps().remove(sourceId);
                 break;
             }
 

@@ -127,7 +127,6 @@ public class BoatUpdater {
             handler.fallenCrewEvent(crewMembers);
 
         }
-        handler.powerUpEvent();
     }
 
     /**
