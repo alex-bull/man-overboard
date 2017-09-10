@@ -1,5 +1,6 @@
 package mockDatafeed;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.scene.shape.Line;
 import models.*;
 import org.jdom2.JDOMException;
@@ -38,9 +39,11 @@ public class BoatUpdater {
     private List<MutablePoint> courseBoundary;
     private WindGenerator windGenerator;
     private int crewLocationSourceID = 0;
+    private int bloodlocationSourceID = 0;
     private int sharkSourceID = 0;
     private List<CrewLocation> crewMembers = new ArrayList<>();
     private List<Shark> sharks = new ArrayList<>();
+    private List<Blood> bloodList = new ArrayList<>();
 
 
     /**
@@ -116,9 +119,10 @@ public class BoatUpdater {
                 handler.sharkEvent(sharks);
             }
         }
-        if (crewMemberUpdated) { handler.fallenCrewEvent(crewMembers); }
-
-
+        if (crewMemberUpdated) {
+            handler.fallenCrewEvent(crewMembers);
+            handler.bloodEvent(bloodList);
+        }
 
     }
 
@@ -148,16 +152,20 @@ public class BoatUpdater {
      * function to check if a crew member has been eaten by a shark
      * @return boolean if a crew member has been eaten
      */
-    private boolean crewEaten() {
+    private boolean crewEaten() throws IOException{
         boolean updated = false;
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
             for (Shark shark : new ArrayList<>(sharks)){
                 if (shark.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
+                    Blood blood = new Blood(bloodlocationSourceID++,crewLocation.getPosition());
+                    bloodList.add(blood);
                     crewMembers.remove(crewLocation);
                     updated = true;
+
                 }
             }
         }
+
 
         return updated;
 

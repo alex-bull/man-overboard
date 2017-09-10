@@ -1,5 +1,6 @@
 package utilities;
 
+import com.google.common.collect.Maps;
 import com.rits.cloning.Cloner;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -36,7 +37,6 @@ import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
 import utility.BinaryPackager;
 import utility.PacketHandler;
-import com.rits.cloning.Cloner;
 import utility.Projection;
 
 import java.io.IOException;
@@ -51,7 +51,8 @@ import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
 import static parsers.fallenCrew.FallenCrewParser.parseFallenCrew;
-import static parsers.obstacles.SharkParser.parseShark;
+import static parsers.sharks.BloodParser.parseBlood;
+import static parsers.sharks.SharkParser.parseShark;
 import static utility.Calculator.calculateExpectedTack;
 
 /**
@@ -183,6 +184,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     private Map<Integer,CrewLocation> crewLocations=new HashMap<>();
     private Map<Integer, Shark> sharkLocations = new HashMap<>();
+    private Map<Integer, Blood> bloodLocations = new HashMap<>();
 
 
 
@@ -400,6 +402,9 @@ public class Interpreter implements DataSource, PacketHandler {
             case SHARK:
                 addShark(parseShark(packet));
                 break;
+            case BLOOD:
+                addBloodLocation(parseBlood(packet));
+                break;
 
             default:
                 break;
@@ -435,6 +440,35 @@ public class Interpreter implements DataSource, PacketHandler {
     }
 
     /**
+     * adds crew locations with location converted
+     * @param locations list of the blood locations
+     */
+    public void addBloodLocation(List<Blood> locations){
+        System.out.println(locations.size() + " BLOOD");
+        for(Blood blood:locations){
+            if(!bloodLocations.containsKey(blood.getSourceID())) {
+                MutablePoint location = cloner.deepClone(Projection.mercatorProjection(blood.getPosition()));
+                MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(blood.getPosition()));
+                location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+                MutablePoint location17 = cloner.deepClone(Projection.mercatorProjection(blood.getPosition()));
+                location17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+                bloodLocations.put(blood.getSourceID(), new Blood(blood.getSourceID(), location, location17, locationOriginal));
+            }
+        }
+    }
+
+    /**
+     * updates blood location when scaling level changes
+     */
+    private void updateBloodLocation(){
+        for(Blood blood: bloodLocations.values()){
+            MutablePoint point=cloner.deepClone(blood.getPositionOriginal());
+            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            blood.setPosition17(point);
+        }
+    }
+
+    /**
      * adds shark locations with location converted
      * @param locations list of shark locations
      */
@@ -465,13 +499,16 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
-    public Map<Integer,CrewLocation> getCrewLocations() {
-        return crewLocations;
-    }
+    public Map<Integer,CrewLocation> getCrewLocations() { return crewLocations; }
 
     public Map<Integer,Shark> getSharkLocations() {
         return sharkLocations;
     }
+
+    public Map<Integer,Blood> getBloodLocations() {
+        return bloodLocations;
+    }
+
 
     /**
      * returns the sourceID of the clients boat
@@ -702,6 +739,7 @@ public class Interpreter implements DataSource, PacketHandler {
         updateCourseBoundary();
         updateCrewLocation();
         updateSharkLocation();
+        updateBloodLocation();
     }
 
     public Set<Integer> getCollisions(){
