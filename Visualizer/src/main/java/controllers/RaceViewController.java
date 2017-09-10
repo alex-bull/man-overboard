@@ -466,6 +466,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.boatModels.put(sourceId, boatModel);
         }
         if(boat.getStatus() == DSQ) {
+            boatModels.get(boat.getSourceID()).die();
             boatModel.update(point, 0);
         }
         else boatModel.update(point, boat.getCurrentHeading());

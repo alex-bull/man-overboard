@@ -105,6 +105,7 @@ public class HealthBar extends Group {
         }
 
         if(boat.getStatus() != DSQ) {
+            healthBar.setVisible(false);
             this.getChildren().clear();
             boat.setStatus(DSQ);
             return false;

@@ -22,6 +22,7 @@ public class BoatModel extends Group {
     private Polygon boatModel;
     private Circle playerMarker;
     private ImageView ripImage;
+    private boolean isDead = false;
 
     /**
      * Initialize a boat model
@@ -75,9 +76,12 @@ public class BoatModel extends Group {
      * The boat is dead so hide player marker and boat shape then show rip image
      */
     public void die() {
-        boatModel.setVisible(false);
-        this.getChildren().remove(playerMarker);
-        ripImage.setVisible(true);
+        if(!isDead) {
+            isDead = true;
+            boatModel.setVisible(false);
+            this.getChildren().remove(playerMarker);
+            ripImage.setVisible(true);
+        }
 
     }
 
