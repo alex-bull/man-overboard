@@ -15,6 +15,9 @@ Feature:  The boat's heading is adjustable by the player
         |358         |31       |down |355            |
         |1           |31       |down |358            |
         |270         |31       |down |267            |
+        |20          |320      |up   |17             |
+        |20          |320      |down |23             |
+        |35          |315      |down |38             |
 
 
 
