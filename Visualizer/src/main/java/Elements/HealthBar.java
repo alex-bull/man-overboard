@@ -1,6 +1,7 @@
 package Elements;
 
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -32,7 +33,7 @@ public class HealthBar extends Group {
         this.healthBar = new Line();
         this.getChildren().add(healthBar);
         try {
-            this.ripImage = new ImageView(new Image("images/cross.png"));
+            this.ripImage = new ImageView(new Image("images/cross-small.png"));
         } catch(Exception e) {
             this.ripImage = new ImageView();
         }
@@ -88,8 +89,8 @@ public class HealthBar extends Group {
         double offset = 20 * scale;
         double maxBarLength = 30 * scale;
         double healthLevel = boat.getHealthLevel() * scale;
-        double tombstoneSize = 30 * scale;
-        double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength) / scale;
+        double tombstoneSize = 30;
+        double healthSize = ((healthLevel / boat.getMaxHealth()) * maxBarLength) / scale;
 
 
         if(healthLevel > 0) {
@@ -112,6 +113,10 @@ public class HealthBar extends Group {
             return true;
         }
 
+        if(boat.getStatus() == DSQ) {
+            Node rip = this.getChildren().get(0);
+            rip.relocate(boatX, boatY);
+        }
         if(boat.getStatus() != DSQ) {
             this.getChildren().clear();
             boat.setStatus(DSQ);
@@ -119,9 +124,9 @@ public class HealthBar extends Group {
             ripImage.setX(boatX);
             ripImage.setY(boatY);
             ripImage.setFitHeight(tombstoneSize);
-            ripImage.setFitHeight(tombstoneSize);
             return false;
         }
+
         return true;
     }
 

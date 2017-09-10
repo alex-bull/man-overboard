@@ -125,10 +125,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                         boat.switchSails();
                         break;
                     case UP:
-                        boat.changeHeading(true, shortToDegrees(windGenerator.getWindDirection()));
+                        if(boat.getStatus() != DSQ) {
+                            boat.changeHeading(true, shortToDegrees(windGenerator.getWindDirection()));
+                        }
                         break;
                     case DOWN:
-                        boat.changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
+                        if(boat.getStatus() != DSQ) {
+                            boat.changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
+                        }
                         break;
                     case RIP:
                         boat.setStatus(DSQ);
@@ -180,7 +184,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void addCompetitor(Integer clientId) {
 
-        double a = 0.005 * competitors.size(); //shift competitors so they aren't colliding at the start
+        double a = 0.001 * competitors.size(); //shift competitors so they aren't colliding at the start
 //        prestart = new MutablePoint(32.41011 + a, -64.88937);
         prestart = new MutablePoint(32.350797 + a, -64.799214);
 
