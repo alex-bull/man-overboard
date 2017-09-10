@@ -83,11 +83,11 @@ public interface Competitor {
 
     void changeHeading(boolean upwind, double angle);
 
-    int getHealthLevel();
+    double getHealthLevel();
 
     void updateHealth(int delta);
 
-    int getMaxHealth();
+    double getMaxHealth();
 
     void setMaxHealth(int health);
 

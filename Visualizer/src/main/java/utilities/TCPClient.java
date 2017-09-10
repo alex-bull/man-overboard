@@ -1,6 +1,7 @@
 package utilities;
 
-import javafx.concurrent.Task;
+import utility.QueueMessage;
+import utility.WorkQueue;
 import utility.PacketHandler;
 
 import java.io.DataInputStream;
@@ -23,28 +24,30 @@ import static parsers.Converter.hexByteArrayToInt;
 public class TCPClient extends TimerTask {
 
 //    private SocketChannel client;
-    private PacketHandler handler;
     private DataInputStream dis;
     private DataOutputStream dos;
-    private int sourceID;
+    private WorkQueue receiveQueue;
+
 
 
     /**
      * Initializes port to receive binary data from
      * @param host String host of the server
      * @param port int number of port of the server
-     * @param handler PacketHandler handler for incoming packets
+     * @param receiveQueue WorkQueue a thread safe queue to put unwrapped packets in
      * @throws IOException IOException
      */
-    TCPClient(String host, int port, PacketHandler handler) throws UnresolvedAddressException, IOException {
+    TCPClient(String host, int port, WorkQueue receiveQueue) throws UnresolvedAddressException, IOException {
 
-        this.handler = handler;
+        this.receiveQueue = receiveQueue;
         Socket receiveSock = new Socket(host, port);
         dis = new DataInputStream(receiveSock.getInputStream());
         dos = new DataOutputStream(receiveSock.getOutputStream());
         System.out.println("Start connection to server...");
 
     }
+
+
 
 
     /**
@@ -56,6 +59,7 @@ public class TCPClient extends TimerTask {
         dos.write(data);
         dos.flush();
     }
+
 
     /**
      * Check for the first and second sync byte
@@ -99,6 +103,7 @@ public class TCPClient extends TimerTask {
      */
     public void run() throws NullPointerException {
 
+
         try {
             boolean isStartOfPacket = checkForSyncBytes();
             if (isStartOfPacket) {
@@ -107,7 +112,7 @@ public class TCPClient extends TimerTask {
                 int length = this.getMessageLength(header);
                 byte[] message=new byte[length];
                 dis.readFully(message);
-                this.handler.interpretPacket(header, message);
+                this.receiveQueue.put(null, header, message);
 
             }
 

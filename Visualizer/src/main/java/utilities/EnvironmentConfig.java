@@ -8,6 +8,7 @@ public class EnvironmentConfig {
 
 
     public static Integer port = 4941;
+    public static String host = "localhost";
 //    public static Integer port = 4942;
 
 }

@@ -1,7 +1,8 @@
 package mockDatafeed;
 
-import utility.BinaryPackager;
 import utility.ConnectionClient;
+import utility.QueueMessage;
+import utility.WorkQueue;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -10,44 +11,39 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.TimerTask;
+import java.util.*;
 
 import static parsers.Converter.hexByteArrayToInt;
 
-
 /**
- * Created by khe60 on 10/04/17.
- * The TCPServer class
+ * Created by mattgoodson on 28/08/17. A TCP server
  */
-public class TCPServer extends TimerTask{
+public class TCPServer extends TimerTask {
 
     private Selector selector;
     private ServerSocketChannel serverSocket;
     private ConnectionClient connectionClient;
-    private BinaryPackager binaryPackager;
+    private WorkQueue sendQueue;
+    private WorkQueue receiveQueue;
 
     /**
-     * Constructor for TCPServer, creates port at given port
-     * @param connectionClient Connection Client
-     * @param port int The port number
-     * @throws IOException IOException
+     * Intialize a server instance on the given port
+     * @param port int the port to expose the service on
+     * @param connectionClient ConnectionClient, a handler for incoming data
+     * @param sendQueue
+     * @param receiveQueue
+     * @throws IOException If the server cannot be opened
      */
-    public TCPServer(int port, ConnectionClient connectionClient) throws IOException {
+    TCPServer(int port, ConnectionClient connectionClient, WorkQueue sendQueue, WorkQueue receiveQueue) throws IOException {
+        this.sendQueue = sendQueue;
+        this.receiveQueue = receiveQueue;
         this.connectionClient = connectionClient;
-        binaryPackager=new BinaryPackager();
-
         selector = Selector.open();
         serverSocket = ServerSocketChannel.open();
-
+        serverSocket.bind(new InetSocketAddress("localhost", port));
         serverSocket.configureBlocking(false);
-
-        serverSocket.socket().bind(new InetSocketAddress("0.0.0.0", port));
-
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-
+        System.out.println("TCPServer listening on localhost " + port);
     }
 
 
@@ -55,77 +51,24 @@ public class TCPServer extends TimerTask{
 
 
     /**
-     * The establishment period of the datasender, runs for time milliseconds
+     * Broadcast a message to all clients
      *
-     * @param time the amount of time in milliseconds of the connection establishment period
+     * @param data byte[] byte array of the data
      * @throws IOException IOException
      */
-    public void establishConnection(long time) throws IOException {
-        System.out.println("start client connection");
-        long finishTime = System.currentTimeMillis() + time;
-        while (System.currentTimeMillis() < finishTime) {
-            selector.select(time);
-            Iterator<SelectionKey> iter=selector.selectedKeys().iterator();
-            while(iter.hasNext()){
-                SelectionKey key=iter.next();
-                //accept client connection
-                if (key.isAcceptable()) {
-                    SocketChannel client = serverSocket.accept();
-                    client.configureBlocking(false);
-                    client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE);
-                    //generate and send sourceID to client
+    private void broadcast(byte[] data) throws IOException {
+        selector.select(1);
 
-                }
-                iter.remove();
-            }
-//            for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
-//                //accept client connection
-//                if (key.isAcceptable()) {
-//                    SocketChannel client = serverSocket.accept();
-//                    client.configureBlocking(false);
-//                    client.register(selector, SelectionKey.OP_READ|SelectionKey.OP_WRITE);
-//                    //generate and send sourceID to client
-//
-//                }
-//                selector.selectedKeys().remove(key);
-//            }
-        }
-        serverSocket.close();
-
-        System.out.println("finish client connection");
-        sendSourceID();
-    }
-
-
-    /**
-     * Handle incoming messages from clients
-     */
-    public void run() {
-
-        try {
-            selector.select(1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
-            //accept client connection
-            if (key.isReadable()) {
-
+            //write to channel if writable
+            if (key.isWritable()) {
+                ByteBuffer buffer = ByteBuffer.wrap(data);
                 SocketChannel client = (SocketChannel) key.channel();
-
                 try {
-                    boolean isStartOfPacket = checkForSyncBytes(client);
-                    if (isStartOfPacket) {
-                        byte[] header = this.getHeader(client);
-                        int length = this.getMessageLength(header);
-                        byte[] message = new byte[length];
-                        ByteBuffer buffer = ByteBuffer.wrap(message);
-                        client.read(buffer);
-                        this.connectionClient.interpretPacket(header, message);
-                    }
-                }
-                catch (Exception e) {
-                    System.out.println("Incoming message aborted");
+                    while(buffer.hasRemaining()) client.write(buffer);
+                } catch (IOException ie) {
+                    System.out.println(client.getRemoteAddress() + " has disconnected, removing client");
+                    key.cancel();
                 }
             }
             selector.selectedKeys().remove(key);
@@ -133,24 +76,55 @@ public class TCPServer extends TimerTask{
     }
 
 
-    /**`
-     * Check for the first and second sync byte
-     *
-     * @return Boolean if Sync Byte found
-     * @throws IOException IOException
+    /**
+     * Send a message to a single client with an identifier
+     * @param data byte[] the message
+     * @param clientId Integer the id of the client channel to send to
      */
-    private boolean checkForSyncBytes(SocketChannel client) throws IOException {
+    private void unicast(byte[] data, Integer clientId) throws IOException {
 
+        selector.select(1);
+        for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
+            //write to the channel if writable
+            if (key.attachment() == clientId && key.isWritable()) {
+                ByteBuffer buffer = ByteBuffer.wrap(data);
+                SocketChannel client = (SocketChannel) key.channel();
+                try {
+                    while(buffer.hasRemaining()) client.write(buffer);
+                } catch (IOException e) {
+                    System.out.println(client.getRemoteAddress() + " is unreachable, removing client");
+                    key.cancel();
+                }
+            }
+            selector.selectedKeys().remove(key);
+        }
+    }
+
+
+
+    /**
+     * Reads data from client and puts the message in the queue.
+     * @param client SocketChannel the client to read from
+     * @param id Integer the key id for the channel
+     * @throws IOException reading message can fail
+     */
+    private void processClient(SocketChannel client, Integer id) throws IOException {
         // -125 is equivalent to 0x83 unsigned
         byte[] expected = {0x47,-125};
-
         byte[] actual = new byte[2];
-
         ByteBuffer buffer = ByteBuffer.wrap(actual);
-
-//        client.read(ByteBuffer.wrap(actual));
         client.read(buffer);
-        return Arrays.equals(actual, expected);
+
+        if (Arrays.equals(expected, actual)) {
+            byte[] header = this.getHeader(client);
+            int length = this.getMessageLength(header);
+            byte[] message = new byte[length];
+            ByteBuffer messageBuffer = ByteBuffer.wrap(message);
+            client.read(messageBuffer);
+            //this.connectionClient.interpretPacket(header, message, id);
+            this.receiveQueue.put(id, header, message);
+        }
+
     }
 
 
@@ -163,7 +137,7 @@ public class TCPServer extends TimerTask{
 //        ByteBuffer header=ByteBuffer.allocate(13);
 //        client.read(header);
         byte[] header=new byte[13];
-        ByteBuffer buffer  =ByteBuffer.wrap(header);
+        ByteBuffer buffer = ByteBuffer.wrap(header);
 
         client.read(buffer);
         return header;
@@ -180,65 +154,68 @@ public class TCPServer extends TimerTask{
         return hexByteArrayToInt(messageLengthBytes);
     }
 
-
     /**
-     * sends the sourceID to the selection key
-     *
+     * Send all messages in the send queue
      */
-    private void sendSourceID() throws IOException {
+    private void sendQueuedMessages() {
 
-        selector.select(1);
-        for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
-            if (key.isWritable()) {
-
-                int sourceID = connectionClient.addConnection();
-                byte[] packet = binaryPackager.packageSourceID(sourceID);
-                ByteBuffer buffer=ByteBuffer.wrap(packet);
-                SocketChannel client = (SocketChannel) key.channel();
-                try {
-                    while(buffer.hasRemaining()) {
-                        client.write(buffer);
-                    }
-                } catch (IOException e) {
-                    System.out.println("failed to register sourceID " + sourceID);
-                    key.cancel();
-                }
+        for (QueueMessage sm: sendQueue.drain()) {
+            try {
+                if (sm.getClientId() == null) this.broadcast(sm.getMessage());
+                else this.unicast(sm.getMessage(), sm.getClientId());
+            } catch (IOException e) {
+                System.out.println("Failed to send message");
             }
         }
     }
 
 
 
+    public void run() {
 
-    /**
-     * sends the data to the output socket
-     *
-     * @param data byte[] byte array of the data
-     * @throws IOException IOException
-     */
-    public void sendData(byte[] data) throws IOException {
 
-        selector.select(1);
-        for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
-            //write to channel if writable
-            if (key.isWritable()) {
-                ByteBuffer buffer = ByteBuffer.wrap(data);
-                SocketChannel client = (SocketChannel) key.channel();
-                try {
-                    while(buffer.hasRemaining()) {
-                        client.write(buffer);
+        //send all messages
+        this.sendQueuedMessages();
+
+        //listen for incoming data
+        try {
+            selector.select(1);
+            for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
+
+                //handle new clients connecting
+                if (key.isAcceptable()) {
+                    if (!connectionClient.isAccepting()) {
+                        key.cancel();
                     }
+                    else {
 
-                } catch (IOException e) {
-                    System.out.println(client.getRemoteAddress() + " has disconnected, removing client");
-                    key.cancel();
+                        SocketChannel client = serverSocket.accept();
+                        client.configureBlocking(false);
+
+                        // Assign the connection a unique source id
+                        // This will become the boat source id if they register as a player
+                        int sourceID = connectionClient.getNextSourceId();
+                        client.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, sourceID);
+                        System.out.println("Added new client: " + sourceID);
+                    }
                 }
-            }
-            selector.selectedKeys().remove(key);
-        }
 
+                //handle incoming messages
+                else if (key.isReadable()) {
+
+                    SocketChannel client = (SocketChannel) key.channel();
+                    selector.selectedKeys().remove(key); //remove key so that it can be written to for a response
+                    this.processClient(client, (Integer) key.attachment());
+                }
+                selector.selectedKeys().remove(key);
+            }
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
+
+
+
+
 }
-
-
-
