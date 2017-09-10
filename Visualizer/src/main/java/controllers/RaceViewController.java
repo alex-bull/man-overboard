@@ -66,7 +66,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private ListView<String> finisherListView;
 
     private Map<Integer, ImageView> fallenCrews=new HashMap<>();
-    private Map<Integer, ImageView> bloodImages = new HashMap<>();
+    private Map<Integer, Image> bloodImages = new HashMap<>();
+    private Map<Integer, ImageView> blood = new HashMap<>();
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Double, HealthBar> healthBars = new HashMap<>();
@@ -121,6 +122,9 @@ public class RaceViewController implements Initializable, TableObserver {
         sailLine = new Sail(Color.WHITE);
 
         sharkModel = new SharkModel(new Image("/Animations/sharkMoving.gif"));
+        bloodImages.put(0, new Image("/images/blood.png"));
+        bloodImages.put(1, new Image("/images/blood1.png"));
+        bloodImages.put(2, new Image("/images/blood2.png"));
 
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
@@ -605,6 +609,8 @@ public class RaceViewController implements Initializable, TableObserver {
                 MutablePoint p = sharkLocation.get(0).getPosition();
                 sharkModel.relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
             }
+        }else {
+            sharkModel.setVisible(false);
         }
 
     }
@@ -616,42 +622,41 @@ public class RaceViewController implements Initializable, TableObserver {
         Map<Integer, Blood> bloodLocation = dataSource.getBloodLocations();
 
         //remove entries
-        Set<Integer> removedLocation= new HashSet<>(bloodImages.keySet());
+        Set<Integer> removedLocation= new HashSet<>(blood.keySet());
         removedLocation.removeAll(bloodLocation.keySet());
         for(int sourceId:removedLocation){
-            raceViewPane.getChildren().remove(bloodImages.get(sourceId));
-            bloodImages.remove(sourceId);
+            raceViewPane.getChildren().remove(blood.get(sourceId));
+            blood.remove(sourceId);
         }
 
         for(int sourceID : bloodLocation.keySet()){
-            if(!bloodImages.containsKey(sourceID)) {
-                ImageView blood = new ImageView();
-                Image redBlob = (new Image("/images/blood.png"));
-                blood.setImage(redBlob);
-                bloodImages.put(sourceID,blood);
-                raceViewPane.getChildren().add(blood);
+            if(!blood.containsKey(sourceID)) {
+                Random randomGenerator = new Random();
+                ImageView bloodImage = new ImageView();
+                Image redBlob = bloodImages.get(randomGenerator.nextInt(bloodImages.size()));
+                bloodImage.setImage(redBlob);
+                blood.put(sourceID,bloodImage);
+                raceViewPane.getChildren().add(bloodImage);
 
             }
             double opacity = bloodLocation.get(sourceID).getOpacity();
             if(opacity >= 0){
                 bloodLocation.get(sourceID).updateOpacity();
-                bloodImages.get(sourceID).setOpacity(opacity);
+                blood.get(sourceID).setOpacity(opacity);
             }
 
-            Image image = bloodImages.get(sourceID).getImage();
+            Image image = blood.get(sourceID).getImage();
 
             if (isZoom()) {
                 MutablePoint p = bloodLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-                bloodImages.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+                blood.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
             } else {
                 MutablePoint p=bloodLocation.get(sourceID).getPosition();
-                bloodImages.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+                blood.get(sourceID).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
             }
 
         }
-        else {
-            sharkModel.setVisible(false);
-        }
+
 
 
 
