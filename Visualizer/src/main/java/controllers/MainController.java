@@ -77,14 +77,14 @@ public class MainController {
                     dataSource.changeScaling(-1);
                     raceViewController.zoomIn();
                     break;
-                case D:
+                case DIGIT1:
                     if(dataSource.getCompetitor().hasSpeedBoost()) {
                         this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.BOOST.getValue(), dataSource.getSourceID()));
                         dataSource.getCompetitor().disableBoost();
                         playerController.hideBoost();
                     }
                     break;
-                case F:
+                case DIGIT2:
                     if(dataSource.getCompetitor().hasPotion()) {
                         this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.POTION.getValue(), dataSource.getSourceID()));
                         dataSource.getCompetitor().usePotion();
