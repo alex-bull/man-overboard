@@ -68,6 +68,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Map<Integer, ImageView> fallenCrews=new HashMap<>();
     private Map<Integer, Image> bloodImages = new HashMap<>();
     private Map<Integer, ImageView> blood = new HashMap<>();
+    private Map<Integer, Image> crewImages = new HashMap<>();
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Double, HealthBar> healthBars = new HashMap<>();
@@ -125,6 +126,8 @@ public class RaceViewController implements Initializable, TableObserver {
         bloodImages.put(0, new Image("/images/blood.png"));
         bloodImages.put(1, new Image("/images/blood1.png"));
         bloodImages.put(2, new Image("/images/blood2.png"));
+        crewImages.put(0, new Image("/Animations/boyCantSwim.gif"));
+        crewImages.put(1, new Image("/Animations/girlCantSwim.gif"));
 
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
@@ -567,9 +570,10 @@ public class RaceViewController implements Initializable, TableObserver {
         }
 
         for(int sourceID:crewLocation.keySet()) {
+            Random randomGenerator = new Random();
             if (!fallenCrews.containsKey(sourceID)) {
                 ImageView crew = new ImageView();
-                Image drowning = new Image("/Animations/iCantSwim.gif");
+                Image drowning = crewImages.get(randomGenerator.nextInt(crewImages.size()));
                 crew.setImage(drowning);
 //            Circle crew;
                 fallenCrews.put(sourceID,crew);
