@@ -389,8 +389,14 @@ public class Boat implements Competitor {
     public void changeHeading(boolean upwind, double windAngle){
         int turnAngle = 3;
 
+        if(windAngle < 360 && windAngle > 180) {
+            windAngle = windAngle - 180;
+            upwind = !upwind;
+        }
+
         double downWind = getDownWind(windAngle);
         double currentHeading=getCurrentHeading();
+
         if(currentHeading>= windAngle && currentHeading <= downWind) {
             if(upwind) {
                 setCurrentHeading(currentHeading - turnAngle);
@@ -400,7 +406,6 @@ public class Boat implements Competitor {
             }
         }
         else {
-
             if(upwind) {
                 setCurrentHeading(currentHeading + turnAngle);
             }
@@ -408,10 +413,7 @@ public class Boat implements Competitor {
                 setCurrentHeading(currentHeading - turnAngle);
             }
         }
-//        setCurrentHeading(currentHeading % 360);
-//        System.out.println(currentHeading);
-//        System.out.println(boatSpeed.getDirection());
-//        currentHeading.setValue(currentHeading.getValue() % 360);
+
     }
 
     @Override
