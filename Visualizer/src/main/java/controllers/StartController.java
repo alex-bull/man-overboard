@@ -85,7 +85,18 @@ public class StartController implements Initializable {
 
     @FXML
     public void controls() {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("controls.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Stage stage = (Stage) joinButton.getScene().getWindow();
 
+        assert root != null;
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
     }
 
 
