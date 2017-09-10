@@ -35,6 +35,7 @@ public class Boat implements Competitor {
     private double latitude;
     private double longitude;
     private boolean isRounding = false;
+    private boolean isUpwind = false;
 
     private Line roundingLine1;
     private Line roundingLine2;
@@ -144,6 +145,10 @@ public class Boat implements Competitor {
     public int getHealthLevel() {
         return healthLevel;
     }
+
+    public void setIsUpwind(boolean upwind){ this.isUpwind = upwind;}
+
+    public boolean isUpwind(){ return isUpwind; }
 
     /**
      * updates the boat health when they collide or round
