@@ -253,6 +253,7 @@ public class RaceViewController implements Initializable, TableObserver {
         mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getZoomLevel()));
         updateRace();
         setScale(2);
+        dataSource.changeScaling(0);
         track.setVisible(!isZoom());
     }
 
@@ -265,6 +266,7 @@ public class RaceViewController implements Initializable, TableObserver {
         drawBackgroundImage();
         updateRace();
         setScale(1);
+        dataSource.changeScaling(0);
         track.setVisible(!isZoom());
     }
 
