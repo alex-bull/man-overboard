@@ -21,6 +21,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -56,6 +58,8 @@ public class LobbyController implements Initializable {
     @FXML private Label gameTypeLabel;
     @FXML private Label playerLabel;
     @FXML private Label loadingLabel;
+    @FXML private GridPane gameGridPane;
+    @FXML private GridPane playerGridPane;
 
     private ObservableList<String> competitorList = FXCollections.observableArrayList();
     private Rectangle2D primaryScreenBounds;
@@ -139,6 +143,15 @@ public class LobbyController implements Initializable {
         gameStartLabel.setVisible(false);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         starterList.setItems(competitorList);
+
+        //image resizing cant be done in fxml >(
+        courseImageView.setPreserveRatio(false);
+        courseImageView.fitWidthProperty().bind(gameGridPane.widthProperty());
+        courseImageView.fitHeightProperty().bind(gameGridPane.heightProperty());
+
+        boatImageView.setPreserveRatio(false);
+        boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
+        boatImageView.fitHeightProperty().bind(playerGridPane.heightProperty());
 
     }
 

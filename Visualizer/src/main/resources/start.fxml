@@ -38,7 +38,7 @@
       </GridPane>
       <ImageView fitHeight="128.0" fitWidth="339.0" layoutX="90.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="90.0" AnchorPane.topAnchor="84.0">
          <image>
-            <Image url="@images/logoWordManOver.png" />
+            <Image url="@images/logoWord50.png" />
          </image>
       </ImageView>
    </children>
