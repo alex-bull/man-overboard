@@ -210,15 +210,13 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat
      */
     private void killBoat(Competitor boat) {
-        System.out.println("killing");
         this.dataSource.send(new BinaryPackager().packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
         if(dataSource.getSourceID() == boat.getSourceID()){
             sailLine.setVisible(false);
             this.raceViewPane.getChildren().remove(guideArrow);
         }
-        boatModels.get(boat.getSourceID()).die();
 
-//        boatModels.get(boat.getSourceID()).setVisible(false);
+        boatModels.get(boat.getSourceID()).die();
         wakeModels.get(boat.getSourceID()).setVisible(false);
     }
 
@@ -467,7 +465,10 @@ public class RaceViewController implements Initializable, TableObserver {
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(sourceId, boatModel);
         }
-        boatModel.update(point, boat.getCurrentHeading());
+        if(boat.getStatus() == DSQ) {
+            boatModel.update(point, 0);
+        }
+        else boatModel.update(point, boat.getCurrentHeading());
     }
 
 
@@ -755,6 +756,7 @@ public class RaceViewController implements Initializable, TableObserver {
             }
             this.drawWake(boat, boatLength, startWakeOffset, wakeWidthFactor, wakeLengthFactor);
             this.drawBoat(boat);
+
             this.drawHealthBar(boat);
             this.drawAnnotations(boat);
         }

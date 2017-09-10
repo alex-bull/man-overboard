@@ -49,7 +49,9 @@ public class BoatModel extends Group {
         }
         this.ripImage = new ImageView(new Image("images/cross-small.png"));
         this.ripImage.setPreserveRatio(true);
-        this.ripImage.setFitHeight(30);
+        this.ripImage.setFitHeight(20);
+        this.getChildren().add(ripImage);
+        ripImage.setVisible(false);
 
     }
 
@@ -60,7 +62,6 @@ public class BoatModel extends Group {
      * @param heading double the heading of the boat in degrees
      */
     public void update(MutablePoint position, double heading) {
-
         this.setLayoutX(position.getXValue());
         this.setLayoutY(position.getYValue());
         this.toFront();
@@ -70,13 +71,13 @@ public class BoatModel extends Group {
     }
 
 
+    /**
+     * The boat is dead so hide player marker and boat shape then show rip image
+     */
     public void die() {
         boatModel.setVisible(false);
         this.getChildren().remove(playerMarker);
-//        this.getChildren().remove(boatModel);
-
-        this.getTransforms().clear();
-        this.getChildren().add(ripImage);
+        ripImage.setVisible(true);
 
     }
 

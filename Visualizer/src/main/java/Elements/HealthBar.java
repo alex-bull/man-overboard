@@ -19,8 +19,6 @@ public class HealthBar extends Group {
 
     private Line healthBarBackground;
     private Line healthBar;
-    private ImageView ripImage;
-
 
     /**
      * Initializes a health bar
@@ -32,12 +30,6 @@ public class HealthBar extends Group {
         this.getChildren().add(healthBarBackground);
         this.healthBar = new Line();
         this.getChildren().add(healthBar);
-        try {
-            this.ripImage = new ImageView(new Image("images/cross-small.png"));
-        } catch(Exception e) {
-            this.ripImage = new ImageView();
-        }
-        this.ripImage.setPreserveRatio(true);
     }
 
 
@@ -89,7 +81,6 @@ public class HealthBar extends Group {
         double offset = 20 * scale;
         double maxBarLength = 30 * scale;
         double healthLevel = boat.getHealthLevel() * scale;
-        double tombstoneSize = 30;
         double healthSize = ((healthLevel / boat.getMaxHealth()) * maxBarLength) / scale;
 
 
@@ -113,17 +104,9 @@ public class HealthBar extends Group {
             return true;
         }
 
-        if(boat.getStatus() == DSQ) {
-            Node rip = this.getChildren().get(0);
-            rip.relocate(boatX, boatY);
-        }
         if(boat.getStatus() != DSQ) {
             this.getChildren().clear();
             boat.setStatus(DSQ);
-            this.getChildren().add(ripImage);
-            ripImage.setX(boatX);
-            ripImage.setY(boatY);
-            ripImage.setFitHeight(tombstoneSize);
             return false;
         }
 
