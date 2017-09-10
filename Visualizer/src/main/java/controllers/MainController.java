@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.stage.Stage;
 import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
@@ -92,7 +93,7 @@ public class MainController {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
         tableController.addObserver(raceViewController);
-        playerController.setuo(dataSource);
+        playerController.setuo(dataSource, App.getPrimaryStage());
         this.binaryPackager = new BinaryPackager();
 
         AnimationTimer timer = new AnimationTimer() {

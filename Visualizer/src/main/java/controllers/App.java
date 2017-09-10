@@ -36,6 +36,7 @@ public class App extends Application {
         Scene rootScene = new Scene(root);
         primaryStage.setScene(rootScene);
 
+        pStage = primaryStage;
 
 
         StartController startController = loader.getController();
@@ -69,6 +70,8 @@ public class App extends Application {
 //        lobbyController.autoStart();
 
     }
+
+
 
 
 }
