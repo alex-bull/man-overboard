@@ -215,7 +215,8 @@ public class RaceViewController implements Initializable, TableObserver {
             sailLine.setVisible(false);
             this.raceViewPane.getChildren().remove(guideArrow);
         }
-        boatModels.get(boat.getSourceID()).setVisible(false);
+
+        boatModels.get(boat.getSourceID()).die();
         wakeModels.get(boat.getSourceID()).setVisible(false);
     }
 
@@ -343,7 +344,9 @@ public class RaceViewController implements Initializable, TableObserver {
         if (isZoom()) {
             MutablePoint location = getZoomedBoatLocation(boat);
             alive = healthBar.update(boat, location.getXValue(), location.getYValue(), true);
-        } else alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), false);
+        } else {
+            alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), false);
+        }
         if (!alive) this.killBoat(boat);
 
     }
@@ -464,7 +467,11 @@ public class RaceViewController implements Initializable, TableObserver {
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(sourceId, boatModel);
         }
-        boatModel.update(point, boat.getCurrentHeading());
+        if(boat.getStatus() == DSQ) {
+            boatModels.get(boat.getSourceID()).die();
+            boatModel.update(point, 0);
+        }
+        else boatModel.update(point, boat.getCurrentHeading());
     }
 
 
@@ -752,6 +759,7 @@ public class RaceViewController implements Initializable, TableObserver {
             }
             this.drawWake(boat, boatLength, startWakeOffset, wakeWidthFactor, wakeLengthFactor);
             this.drawBoat(boat);
+
             this.drawHealthBar(boat);
             this.drawAnnotations(boat);
         }

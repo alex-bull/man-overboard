@@ -525,6 +525,7 @@ public class BoatUpdater {
             double collisionRadius = comp.getCollisionRadius() + boat.getCollisionRadius();
 
 
+
             double distance = raceCourse.distanceBetweenGPSPoints(comp.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
