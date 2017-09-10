@@ -38,7 +38,7 @@ public class BorderAnimation {
 
     /**
      * Show the border
-     * Run the fade animation
+     * Run the fadeOut animation
      */
     public void animate() {
 

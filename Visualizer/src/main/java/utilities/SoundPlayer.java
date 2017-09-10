@@ -1,4 +1,4 @@
-package Animations;
+package utilities;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -6,10 +6,7 @@ import javafx.animation.Timeline;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +31,7 @@ public class SoundPlayer {
         MediaPlayer mediaPlayer = new MediaPlayer(sound);
         players.put(track, mediaPlayer);
         mediaPlayer.play();
+        mediaPlayer.setVolume(EnvironmentConfig.maxMusicVolume);
     }
 
 
@@ -48,6 +46,27 @@ public class SoundPlayer {
         players.put(track, mediaPlayer);
         mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(ZERO));
         mediaPlayer.play();
+        mediaPlayer.setVolume(EnvironmentConfig.maxMusicVolume);
+    }
+
+
+    /**
+     * Loop a sound file with a fadeOut in
+     * @param track String, the sound file to play
+     * @param time int, the fadeOut time
+     */
+    public void loopMP3WithFadeIn(String track, int time) {
+
+        Media sound = new Media(getClass().getClassLoader().getResource(track).toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        players.put(track, mediaPlayer);
+        mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(ZERO));
+        mediaPlayer.setVolume(0);
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(time),
+                        new KeyValue(mediaPlayer.volumeProperty(), EnvironmentConfig.maxMusicVolume)));
+        mediaPlayer.play();
+        timeline.play();
     }
 
 
@@ -59,36 +78,18 @@ public class SoundPlayer {
     public void setVolume(String track, Double volume) {
         MediaPlayer player = players.get(track);
         if (player == null) return;
-        player.setVolume(volume);
+        if (volume > EnvironmentConfig.maxMusicVolume) player.setVolume(EnvironmentConfig.maxMusicVolume);
+        else player.setVolume(volume);
     }
 
-
-    /**
-     * Loop a sound file with a fade in
-     * @param track String, the sound file to play
-     * @param time int, the fade time
-     */
-    public void loopMP3WithFade(String track, int time) {
-
-        Media sound = new Media(getClass().getClassLoader().getResource(track).toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-        players.put(track, mediaPlayer);
-        mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(ZERO));
-        mediaPlayer.setVolume(0);
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(time),
-                        new KeyValue(mediaPlayer.volumeProperty(), 1.0)));
-        mediaPlayer.play();
-        timeline.play();
-    }
 
 
     /**
      * Fade out a playing track
-     * @param track String, the name of the track to fade
-     * @param time int, the fade time
+     * @param track String, the name of the track to fadeOut
+     * @param time int, the fadeOut time
      */
-    public void fade(String track, int time) {
+    public void fadeOut(String track, int time) {
         MediaPlayer player = players.get(track);
         if (player == null) return;
         Timeline timeline = new Timeline(

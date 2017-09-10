@@ -1,6 +1,6 @@
 package controllers;
 
-import Animations.SoundPlayer;
+import utilities.SoundPlayer;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;

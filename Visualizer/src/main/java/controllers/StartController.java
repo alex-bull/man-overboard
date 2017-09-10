@@ -1,6 +1,6 @@
 package controllers;
 
-import Animations.SoundPlayer;
+import utilities.SoundPlayer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -31,7 +31,7 @@ public class StartController implements Initializable {
     void begin() {
 
         soundPlayer = new SoundPlayer();
-        soundPlayer.loopMP3WithFade("sounds/bensound-theduel.mp3", 10);
+        soundPlayer.loopMP3WithFadeIn("sounds/bensound-theduel.mp3", 10);
     }
 
 
@@ -45,7 +45,7 @@ public class StartController implements Initializable {
 
     @FXML
     public void joinGame() {
-        soundPlayer.fade("sounds/bensound-theduel.mp3", 3);
+        soundPlayer.fadeOut("sounds/bensound-theduel.mp3", 3);
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
         Parent root = null;
         try {
@@ -68,7 +68,20 @@ public class StartController implements Initializable {
 
     @FXML
     public void settings() {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("settings.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Stage stage = (Stage) joinButton.getScene().getWindow();
 
+        assert root != null;
+        Scene scene = new Scene(root);
+        SettingsController settingsController = loader.getController();
+        settingsController.refresh();
+        stage.setScene(scene);
     }
 
 
