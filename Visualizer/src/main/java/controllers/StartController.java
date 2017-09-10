@@ -3,21 +3,28 @@ package controllers;
 import Animations.SoundPlayer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import utilities.Interpreter;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * Created by mattgoodson on 4/09/17.
  * Controller for the start view
  */
-public class StartController {
+public class StartController implements Initializable {
 
     @FXML private Button joinButton;
+    @FXML private AnchorPane anchorPane;
+    @FXML private ImageView backgroundImage;
     private SoundPlayer soundPlayer;
 
 
@@ -27,6 +34,13 @@ public class StartController {
         soundPlayer.loopMP3WithFade("sounds/bensound-theduel.mp3", 10);
     }
 
+
+    @FXML
+    public void initialize(URL u, ResourceBundle r) {
+        backgroundImage.setPreserveRatio(false);
+        backgroundImage.fitHeightProperty().bind(anchorPane.heightProperty());
+        backgroundImage.fitWidthProperty().bind(anchorPane.widthProperty());
+    }
 
 
     @FXML
