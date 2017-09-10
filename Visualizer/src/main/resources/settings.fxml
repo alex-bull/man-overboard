@@ -27,7 +27,7 @@
                 <RowConstraints maxHeight="291.2810974121094" minHeight="0.0" percentHeight="15.0" prefHeight="291.2810974121094" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAndExit" prefHeight="30.0" prefWidth="160.0" text="Save and Exit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAndExit" prefHeight="30.0" prefWidth="160.0" text="Done" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="TOP" />
             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />

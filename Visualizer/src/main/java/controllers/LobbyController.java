@@ -1,6 +1,6 @@
 package controllers;
 
-import utilities.SoundPlayer;
+import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -64,7 +64,6 @@ public class LobbyController implements Initializable {
     private Rectangle2D primaryScreenBounds;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private AnimationTimer timer;
-    private SoundPlayer soundPlayer=new SoundPlayer();
 
 
     void setDataSource(DataSource dataSource) {
@@ -86,7 +85,7 @@ public class LobbyController implements Initializable {
         Scene scene = starterList.getScene();
 
         //start sound loop
-        soundPlayer.loopMP3WithFadeIn("sounds/bensound-instinct.mp3", 4);
+        Sounds.player.loopMP3WithFadeIn("sounds/bensound-instinct.mp3", 4);
 
         //Connect to a game in the background
         Task connect = new Task() {
@@ -250,7 +249,7 @@ public class LobbyController implements Initializable {
 
         //clean up first
         if (timer != null) timer.stop();
-        soundPlayer.fadeOut("sounds/bensound-instinct.mp3", 2);
+        Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 2);
         dataSource = null;
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
@@ -281,7 +280,7 @@ public class LobbyController implements Initializable {
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
 
-        soundPlayer.fadeOut("sounds/bensound-instinct.mp3", 10);
+        Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 10);
 
         //count down for 10 seconds
         gameStartLabel.setVisible(true);

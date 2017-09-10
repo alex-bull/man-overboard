@@ -1,6 +1,6 @@
 package controllers;
 
-import utilities.SoundPlayer;
+import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
@@ -25,7 +25,6 @@ public class MainController {
     @FXML private GridPane loadingPane;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
-    private SoundPlayer soundPlayer;
     private boolean playing = false;
 
 
@@ -123,9 +122,8 @@ public class MainController {
      * Play the game music loop
      */
     private void playGameMusic() {
-        soundPlayer=new SoundPlayer();
-        soundPlayer.loopMP3("sounds/bensound-epic.mp3");
-        soundPlayer.setVolume("sounds/bensound-epic.mp3", 0.3);
+        Sounds.player.loopMP3("sounds/bensound-epic.mp3");
+        Sounds.player.setVolume("sounds/bensound-epic.mp3", 0.5);
         playing = true;
     }
 }

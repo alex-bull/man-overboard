@@ -3,7 +3,7 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
-import utilities.SoundPlayer;
+import utilities.Sounds;
 import Elements.*;
 import Elements.Annotation;
 import javafx.collections.ObservableList;
@@ -97,8 +97,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private DataSource dataSource;
     private GraphicsContext gc;
 
-    //SOUNDS
-    private SoundPlayer soundPlayer=new SoundPlayer();
 
 
 
@@ -275,7 +273,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 //drawBorder(raceViewPane.getWidth(),raceViewPane.getHeight(),25);
                 new BorderAnimation(raceParentPane, 25).animate();
                 new RandomShake(raceParentPane).animate();
-                soundPlayer.playMP3("sounds/impact.mp3");
+                Sounds.player.playSoundEffect("sounds/impact.mp3");
             }
             drawCollision(point.getXValue(), point.getYValue());
             dataSource.removeCollsions(sourceID);
