@@ -49,6 +49,8 @@ import java.util.*;
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.scene.paint.Color.ORANGERED;
 import static parsers.BoatStatusEnum.DSQ;
+import static parsers.powerUp.PowerUpType.BOOST;
+import static parsers.powerUp.PowerUpType.POTION;
 
 
 /**
@@ -600,10 +602,10 @@ public class RaceViewController implements Initializable, TableObserver {
         for(int sourceID : receivedPowerUps.keySet()) {
             PowerUp receivedPowerUp = receivedPowerUps.get(sourceID);
 
-            if (!powerUps.containsKey(sourceID) && (receivedPowerUp.getType() == 0 || receivedPowerUp.getType() == 3)) {
+            if (!powerUps.containsKey(sourceID) && (receivedPowerUp.getType() == BOOST.getValue() || receivedPowerUp.getType() == POTION.getValue())) {
                 ImageView imageView = new ImageView();
                 Image image;
-                if(receivedPowerUp.getType() == 0) {
+                if(receivedPowerUp.getType() == BOOST.getValue()) {
                     image = new Image("/images/speed3.png");
                 }
                 else {

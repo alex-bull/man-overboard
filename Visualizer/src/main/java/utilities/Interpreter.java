@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpParser;
 import parsers.powerUp.PowerUpTakenParser;
+import parsers.powerUp.PowerUpType;
 import utility.QueueMessage;
 import utility.WorkQueue;
 import models.ColourPool;
@@ -48,12 +49,14 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
 import static java.lang.Math.pow;
-import static javafx.collections.FXCollections.observableArrayList;
-import static javafx.collections.FXCollections.observableList;
+
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
 import static parsers.fallenCrew.FallenCrewParser.parseFallenCrew;
+import static parsers.powerUp.PowerUpType.BOOST;
+
+import static parsers.powerUp.PowerUpType.POTION;
 import static utility.Calculator.calculateExpectedTack;
 
 /**
@@ -408,7 +411,7 @@ public class Interpreter implements DataSource, PacketHandler {
             case POWER_UP:
                 PowerUpParser powerUpParser = new PowerUpParser();
                 PowerUp powerUp = powerUpParser.parsePowerUp(packet);
-                if(powerUp.getType() == 0 || powerUp.getType() == 3) {
+                if(powerUp.getType() == BOOST.getValue() || powerUp.getType() == POTION.getValue()) {
                     MutablePoint location = powerUp.getLocation();
                     MutablePoint positionOriginal = cloner.deepClone(Projection.mercatorProjection(location));
 

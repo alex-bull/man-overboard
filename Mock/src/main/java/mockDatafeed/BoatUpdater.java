@@ -13,6 +13,8 @@ import java.util.*;
 
 import static java.lang.Math.abs;
 import static parsers.BoatStatusEnum.DSQ;
+import static parsers.powerUp.PowerUpType.BOOST;
+import static parsers.powerUp.PowerUpType.POTION;
 import static utilities.CollisionUtility.calculateFinalVelocity;
 import static utilities.CollisionUtility.isPointInPolygon;
 import static utility.Calculator.*;
@@ -176,10 +178,10 @@ public class BoatUpdater {
             PowerUp powerUp = powerUps.get(id);
             if (boat.getPosition().isWithin(powerUp.getLocation(), 0.0005)) {
                 powerUps.remove(id);
-                if(powerUp.getType() == 0) {
+                if(powerUp.getType() == BOOST.getValue()) {
                     boat.enableBoost();
                 }
-                else if(powerUp.getType() == 3) {
+                else if(powerUp.getType() == POTION.getValue()) {
                     boat.enablePotion();
                 }
                 handler.powerUpTakenEvent(boat.getSourceID(), id, powerUp.getDuration());

@@ -480,9 +480,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     public void powerUpEvent() {
         long currentTime = System.currentTimeMillis();
+        int potionTime = 40000;
+        int boostTime = 30000;
 
         // potion
-        if(currentTime > previousPotionTime + 40000 && raceInProgress) {
+        if(currentTime > previousPotionTime + potionTime && raceInProgress) {
             long timeout = currentTime + 70000;
             MutablePoint generatedLocation = getRandomLocation();
             int radius = 10; // we dont use this but other teams do
@@ -498,7 +500,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
 
         // speed boost
-        if(currentTime > previousBoostTime + 30000 && raceInProgress) {
+        if(currentTime > previousBoostTime + boostTime && raceInProgress) {
             long timeout = currentTime + 60000;
             MutablePoint generatedLocation = getRandomLocation();
             int radius = 10; // we dont use this but other teams do
