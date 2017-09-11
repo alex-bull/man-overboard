@@ -416,7 +416,6 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param locations
      */
     public void addCrewLocation(List<CrewLocation> locations){
-        System.out.println(locations.size() + " CREW");
         crewLocations.clear();
         for(CrewLocation crewLocation:locations){
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
@@ -444,7 +443,6 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param locations list of the blood locations
      */
     public void addBloodLocation(List<Blood> locations){
-        System.out.println(locations.size() + " BLOOD");
         for(Blood blood:locations){
             if(!bloodLocations.containsKey(blood.getSourceID())) {
                 MutablePoint location = cloner.deepClone(Projection.mercatorProjection(blood.getPosition()));
