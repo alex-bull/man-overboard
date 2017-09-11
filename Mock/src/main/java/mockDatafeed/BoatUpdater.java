@@ -1,6 +1,5 @@
 package mockDatafeed;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.scene.shape.Line;
 import models.*;
 import org.jdom2.JDOMException;
