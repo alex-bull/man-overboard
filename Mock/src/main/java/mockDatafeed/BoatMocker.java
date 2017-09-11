@@ -429,6 +429,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                     boat.getCurrentHeading(), boat.getVelocity() * 1000, 1);
 
             this.sendQueue.put(null, boatinfo);
+
 //            System.out.println(boat.getPosition());
         }
         //send mark boats only once

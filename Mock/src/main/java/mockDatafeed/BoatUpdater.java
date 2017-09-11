@@ -80,17 +80,20 @@ public class BoatUpdater {
                 twa = 180 - (twa - 180); // interpolator only goes up to 180
             }
             double speed = polarTable.getSpeed(twa);
-            if(boat.getStatus() != DSQ) {
-                if(boat.getSailValue() == 0){
-                  boat.getBoatSpeed().reduce(0.99);
-                } else{
-                    boat.getBoatSpeed().setMagnitude(speed * 4);
+            if (boat.getStatus() != DSQ) {
+                if (boat.isSailsOut()) {
+                    boat.getBoatSpeed().reduce(0.99);
+                } else {
+                    boat.getBoatSpeed().increase(0.01);
+                    boat.setVelocity(speed * 4);
                     boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
+
+//                    System.out.println("asdf2 "+boat.getBoatSpeed());
                 }
 
-            } else {boat.getBoatSpeed().reduce(0.99);
+            } else {
+                boat.getBoatSpeed().reduce(0.99);
             }
-
             crewMemberUpdated = crewMemberUpdated || pickUpCrew(boat);
             boat.updatePosition(0.1);
 
@@ -105,11 +108,13 @@ public class BoatUpdater {
 
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
+//            System.out.println("asdf "+boat.getBoatSpeed());
+//            System.out.println("safdasdfa "+ boat.getVelocity());
         }
         if (crewMemberUpdated) {
             handler.fallenCrewEvent(crewMembers);
-
         }
+
     }
 
 

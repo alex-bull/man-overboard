@@ -59,7 +59,7 @@ public class Boat implements Competitor {
     }
 
     private boolean sailsOut = true;
-    private double sailValue = 0;
+    private double sailValue = 1;
 
     /**
      * Creates a boat
@@ -142,6 +142,10 @@ public class Boat implements Competitor {
         return healthLevel;
     }
 
+    public boolean isSailsOut() {
+        return sailsOut;
+    }
+
     /**
      * updates the boat health when they collide or round
      * @param delta int the amount the boat health changes by
@@ -161,21 +165,21 @@ public class Boat implements Competitor {
     public void switchSails() {
         sailsOut = !sailsOut;
         if(sailsOut){
-            sailValue = 0;
-        } else {
             sailValue = 1;
+        } else {
+            sailValue = 0;
         }
     }
 
     @Override
     public void sailsIn() {
-        sailValue = 1;
+        sailValue = 0;
         sailsOut = false;
     }
 
     @Override
     public void sailsOut() {
-        sailValue = 0;
+        sailValue = 1;
         sailsOut = true;
     }
 

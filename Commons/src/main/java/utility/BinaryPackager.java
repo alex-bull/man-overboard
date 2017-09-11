@@ -63,9 +63,9 @@ public class BinaryPackager {
      */
     public byte[] packageBoatLocation(Integer sourceId, Double latitude, Double longitude, Double heading, Double boatSpeed, int deviceType) {
 
-        System.out.println("lat: " + latitude );
-        System.out.println("long: " + longitude );
-        System.out.println("speed: " + boatSpeed + "\n" );
+//        System.out.println("lat: " + latitude );
+//        System.out.println("long: " + longitude );
+//        System.out.println("speed: " + boatSpeed + "\n" );
 
         byte[] packet = new byte[75];
 

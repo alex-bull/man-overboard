@@ -352,16 +352,19 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 HeaderData headerData = headerParser.processMessage(header);
                 this.boatAction = boatActionParser.processMessage(packet);
+
                 if (boatAction != null && headerData != null) {
                     int headerDataSourceID = headerData.getSourceID();
 
                     if (boatAction.equals(BoatAction.SAILS_IN) && headerDataSourceID == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         boat.sailsIn();
+
                     }
                     if (boatAction.equals(BoatAction.SAILS_OUT) && headerDataSourceID == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         boat.sailsOut();
+
                     }
                     if (boatAction.equals(BoatAction.SWITCH_SAILS) && headerDataSourceID == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);

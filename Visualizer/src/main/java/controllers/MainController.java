@@ -5,10 +5,7 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.TouchEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
 import parsers.RaceStatusEnum;
@@ -33,14 +30,12 @@ public class MainController {
     private BinaryPackager binaryPackager;
     private SoundPlayer soundPlayer;
 
-    @FXML public void drag(){
-        if(sailSlider.getValue()<=0.5){
+    @FXML public void updateSlider(){
+        if(sailSlider.getValue()<0.5){
             this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), dataSource.getSourceID()));
-            sailSlider.setValue(0);
         }
         else{
             this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), dataSource.getSourceID()));
-            sailSlider.setValue(1);
         }
     }
 
@@ -63,6 +58,7 @@ public class MainController {
                 case SHIFT:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SWITCHSAILS.getValue(), dataSource.getSourceID()));
                     sailSlider.setValue(this.dataSource.getCompetitor().getSailValue());
+                    System.out.println(this.dataSource.getCompetitor().getSailValue());
                     break;
                 case ENTER:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
@@ -111,6 +107,8 @@ public class MainController {
         tableController.addObserver(raceViewController);
         playerController.setuo(dataSource);
         this.binaryPackager = new BinaryPackager();
+
+
 
         AnimationTimer timer = new AnimationTimer() {
 

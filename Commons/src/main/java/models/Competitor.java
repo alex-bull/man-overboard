@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface Competitor {
     String getTeamName();
-
+    boolean isSailsOut();
     double getVelocity();
     double getCollisionRadius();
     void setVelocity(double velocity);
