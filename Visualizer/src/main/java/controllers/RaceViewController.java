@@ -597,7 +597,6 @@ public class RaceViewController implements Initializable, TableObserver {
         if (!sharkLocation.isEmpty()) {
             Shark shark = sharkLocation.get(0);
             sharkModel.setVisible(true);
-            System.out.println(shark.getHeading());
             sharkModel.update(shark.getPosition().getXValue(), shark.getPosition().getYValue(), shark.getHeading());
             sharkModel.toFront();
 
