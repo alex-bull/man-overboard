@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.scene.layout.GridPane;
 import utilities.Sounds;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +39,7 @@ public class StartController implements Initializable {
         backgroundImage.setPreserveRatio(false);
         backgroundImage.fitHeightProperty().bind(anchorPane.heightProperty());
         backgroundImage.fitWidthProperty().bind(anchorPane.widthProperty());
+
     }
 
 
