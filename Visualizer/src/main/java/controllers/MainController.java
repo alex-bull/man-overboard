@@ -3,9 +3,11 @@ package controllers;
 import Animations.SoundPlayer;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
+import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
@@ -26,9 +28,21 @@ public class MainController {
     @FXML private WindController windController;
     @FXML private PlayerController playerController;
     @FXML private GridPane loadingPane;
+    @FXML private Slider sailSlider;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private SoundPlayer soundPlayer;
+
+    @FXML public void drag(){
+        if(sailSlider.getValue()<=0.5){
+            this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), dataSource.getSourceID()));
+            sailSlider.setValue(0);
+        }
+        else{
+            this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), dataSource.getSourceID()));
+            sailSlider.setValue(1);
+        }
+    }
 
     /**
      * Handle control key events
@@ -48,6 +62,7 @@ public class MainController {
                     break;
                 case SHIFT:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SWITCHSAILS.getValue(), dataSource.getSourceID()));
+                    sailSlider.setValue(this.dataSource.getCompetitor().getSailValue());
                     break;
                 case ENTER:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
@@ -107,6 +122,7 @@ public class MainController {
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
                     playerController.refresh();
+                    sailSlider.toFront();
                     loadingPane.toBack();
                 }
                 else {

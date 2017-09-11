@@ -84,7 +84,7 @@ public class BoatUpdater {
                 if(boat.getSailValue() == 0){
                   boat.getBoatSpeed().reduce(0.99);
                 } else{
-                    boat.getBoatSpeed().setMagnitude(speed * boat.getSailValue());
+                    boat.getBoatSpeed().setMagnitude(speed * 4);
                     boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
                 }
 
@@ -241,7 +241,7 @@ public class BoatUpdater {
 
         if (boat.getCurrentLegIndex() == 6) {
             if (!finisherList.contains(boat)) {
-                boat.switchSails();
+                boat.sailsOut();
                 finisherList.add(boat);
             }
         }

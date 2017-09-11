@@ -30,7 +30,7 @@ public class RaceCalculator {
      * @param touchY y value of touch point's position
      * @return double theta
      */
-    public double calcBoatDirection(double boatX, double boatY, double touchX, double touchY) {
+    public static double calcBoatDirection(double boatX, double boatY, double touchX, double touchY) {
         Vector2D boatDirection = new Vector2D(boatX, boatY, touchX, touchY);
         double theta = atan2(boatDirection.getY(), boatDirection.getX());
         theta = (theta * 180 / PI) + 90;
@@ -46,7 +46,7 @@ public class RaceCalculator {
      * @param windAngle angle of wind
      * @return boolean
      */
-    public boolean isWestOfWind(double heading, double downWind, double windAngle) {
+    public static boolean isWestOfWind(double heading, double downWind, double windAngle) {
         return (heading > downWind) || (heading < windAngle);
     }
 

@@ -34,6 +34,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Rotate;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mockDatafeed.Keys;
@@ -68,7 +69,7 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private AnchorPane raceView;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
-    @FXML private Slider sailSlider;
+
     @FXML private WebView mapView;
     @FXML private Pane raceParentPane;
     @FXML private ImageView controlsView;
@@ -120,12 +121,9 @@ public class RaceViewController implements Initializable, TableObserver {
     //================================================================================================================
 
 
-
-    private double sailValue;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        sailValue = 5;
         startLine = new Line();
         finishLine = new Line();
 
@@ -226,24 +224,7 @@ public class RaceViewController implements Initializable, TableObserver {
         wakeModels.get(boat.getSourceID()).setVisible(false);
     }
 
-    private void drawSail( double width, double length) {
-        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-        double windAngle = dataSource.getWindDirection();
 
-        sailLine.setStrokeWidth(width);
-        sailLine.setStartX(boatPositionX);
-        sailLine.setStartY(boatPositionY);
-        sailLine.setEndX(boatPositionX);
-        sailLine.setEndY(boatPositionY + length);
-        sailLine.getTransforms().clear();
-
-
-        if (boat.getSailValue() == 0) {
-            sailLine.getTransforms().add(new Rotate(windAngle, boatPositionX, boatPositionY));
-
-        } else {
-            sailLine.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatPositionX, boatPositionY));
-        }
     /**
      * Check to see if the race is finished and display finisher list if it is
      */
@@ -343,6 +324,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawSail( double width, double length, Competitor boat) {
         this.sailLine.update(width, length, boat, dataSource.getWindDirection(), boatPositionX, boatPositionY);
+
     }
 
 
@@ -737,36 +719,6 @@ public class RaceViewController implements Initializable, TableObserver {
         counter++;
     }
 
-
-
-    /**
-     * Checks the slider position and updates the sail of the boat
-     */
-    private void updateSails(){
-        BinaryPackager binaryPackager = new BinaryPackager();
-        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-        double blocksMoved;
-
-        if(sailValue > sailSlider.getValue() && sailSlider.getValue()%1 == 0){
-            blocksMoved = sailValue - sailSlider.getValue();
-            sailValue = sailSlider.getValue();
-            for(int i = 0; i < blocksMoved; i++){
-                this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), boat.getSourceID()));
-            }
-        }else if(sailValue < sailSlider.getValue() && sailSlider.getValue()%1 == 0){
-            blocksMoved = sailSlider.getValue() - sailValue;
-            sailValue = sailSlider.getValue();
-            for(int i = 0; i < blocksMoved; i++){
-                this.dataSource.send(binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), boat.getSourceID()));
-            }
-
-        }
-
-    }
-
-
-
-
     /**
      * Refreshes the contents of the display to match the datasource
      *
@@ -776,7 +728,6 @@ public class RaceViewController implements Initializable, TableObserver {
         drawFallenCrew();
         setBoatLocation();
         updateRace();
-        updateSails();
         checkCollision();
     }
 
@@ -797,10 +748,10 @@ public class RaceViewController implements Initializable, TableObserver {
         double downWind = (boat.getDownWind(windAngle))%360;
         double touchX = touchEvent.getTouchPoint().getX();
         double touchY = touchEvent.getTouchPoint().getY();
-        double theta = raceCalculator.calcBoatDirection(boatPositionX, boatPositionY, touchX, touchY);
+        double theta = RaceCalculator.calcBoatDirection(boatPositionX, boatPositionY, touchX, touchY);
         double difference = theta - heading;
 
-        if (raceCalculator.isWestOfWind(heading, downWind, windAngle)) {UP = 6; DOWN = 5;}
+        if (RaceCalculator.isWestOfWind(heading, downWind, windAngle)) {UP = 6; DOWN = 5;}
 
         if (difference > 0 && difference < 180) {
             this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));

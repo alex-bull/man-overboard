@@ -17,7 +17,8 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<Pane fx:id="raceParentPane"  onTouchStationary="#turnBoat" onZoom="#zoom" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
+<?import javafx.scene.control.Slider?>
+<Pane fx:id="raceParentPane" onTouchStationary="#turnBoat" onZoom="#zoom" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
    <children>
       <AnchorPane fx:id="raceView" prefHeight="900.0" prefWidth="1000.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
@@ -70,7 +71,7 @@
                       <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="103.0" vgrow="SOMETIMES" />
                   </rowConstraints>
               </GridPane>
-            <Slider fx:id="sailSlider" blockIncrement="1.0" layoutX="1350.0" layoutY="350.0" majorTickUnit="1.0" max="5.0" minorTickCount="0" orientation="VERTICAL" prefHeight="250.0" prefWidth="60.0" showTickMarks="true" snapToTicks="true" value="5.0" />
+
           </children>
 
 

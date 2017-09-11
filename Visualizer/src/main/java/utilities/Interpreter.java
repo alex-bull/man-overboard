@@ -362,9 +362,11 @@ public class Interpreter implements DataSource, PacketHandler {
                     if (boatAction.equals(BoatAction.SAILS_OUT) && headerDataSourceID == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         boat.sailsOut();
-
                     }
-
+                    if (boatAction.equals(BoatAction.SWITCH_SAILS) && headerDataSourceID == this.sourceID) {
+                        Competitor boat = this.storedCompetitors.get(this.sourceID);
+                        boat.switchSails();
+                    }
                     if (boatAction.equals(BoatAction.TACK_GYBE) && headerDataSourceID == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         double boatHeading = boat.getCurrentHeading();
@@ -377,6 +379,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 }
                 break;
+
             case YACHT_ACTION:
                 YachtEventParser parser = new YachtEventParser(packet);
                 switch (parser.getEventID()){
@@ -491,6 +494,11 @@ public class Interpreter implements DataSource, PacketHandler {
             updatingBoat.setCurrentHeading(boatData.getHeading());
             updatingBoat.setLatitude(boatData.getLatitude());
             updatingBoat.setLongitude(boatData.getLongitude());
+
+
+//            System.out.println("** lat: " + boatData.getLatitude() );
+//            System.out.println("** long: " + boatData.getLongitude() );
+//            System.out.println("** speed: " + boatData.getSpeed() + "\n" );
         }
 
         //order the list of competitors

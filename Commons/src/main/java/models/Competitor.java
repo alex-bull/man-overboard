@@ -47,11 +47,7 @@ public interface Competitor {
 
     double getLongitude();
 
-    long getTimeToNextMark();
-
     void setTimeToNextMark(long timeToNextMark);
-
-    long getTimeAtLastMark();
 
     void setTimeAtLastMark(long timeAtLastMark);
 

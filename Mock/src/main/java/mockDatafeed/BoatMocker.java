@@ -423,12 +423,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         //send competitor boats
         for (Integer sourceId : competitors.keySet()) {
 
+
             Competitor boat = competitors.get(sourceId);
             byte[] boatinfo = binaryPackager.packageBoatLocation(boat.getSourceID(), boat.getPosition().getXValue(), boat.getPosition().getYValue(),
                     boat.getCurrentHeading(), boat.getVelocity() * 1000, 1);
 
             this.sendQueue.put(null, boatinfo);
-
+//            System.out.println(boat.getPosition());
         }
         //send mark boats only once
         if (flag) {

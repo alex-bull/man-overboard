@@ -58,8 +58,8 @@ public class Boat implements Competitor {
         this.position17 = position17;
     }
 
-    private boolean sailsOut = false;
-    private double sailValue = 5;
+    private boolean sailsOut = true;
+    private double sailValue = 0;
 
     /**
      * Creates a boat
@@ -157,39 +157,27 @@ public class Boat implements Competitor {
     /**
      * Switches the sail state of the boat between sails in and sails out
      */
+    @Override
     public void switchSails() {
         sailsOut = !sailsOut;
         if(sailsOut){
-            sailValue = 5;
-        } else {
             sailValue = 0;
+        } else {
+            sailValue = 1;
         }
     }
 
-    /**
-     * Switches the sail state of the boat to be further in
-     */
-    public void sailsIn(){
-        double minSailValue = 0;
-        if(sailValue >= minSailValue){
-            sailValue -= 1;
-        }
-        else{
-            sailsOut = false;
-        }
+    @Override
+    public void sailsIn() {
+        sailValue = 1;
+        sailsOut = false;
     }
 
-    /**
-     * Switches the sails state of the boat to be further out
-     */
-    public void sailsOut(){
-        double maxSailValue = 5;
-        if(sailValue <= maxSailValue){
-            sailValue += 1;
-            sailsOut = true;
-        }
+    @Override
+    public void sailsOut() {
+        sailValue = 0;
+        sailsOut = true;
     }
-
 
     /**
      * Returns the sail state of the boat
@@ -249,30 +237,14 @@ public class Boat implements Competitor {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-    public long getTimeToNextMark() {
-        return timeToNextMark;
-    }
 
-    public void setTimeToNextMark(long timeToNextMark) {
-        this.timeToNextMark =  timeToNextMark;
-    }
+    public void setTimeToNextMark(long timeToNextMark) {this.timeToNextMark =  timeToNextMark;}
 
-    public long getTimeAtLastMark() {
-        return timeAtLastMark;
-    }
+    public void setTimeAtLastMark(long timeAtLastMark) {this.timeAtLastMark = timeAtLastMark;}
 
-    public void setTimeAtLastMark(long timeAtLastMark) {
-        this.timeAtLastMark = timeAtLastMark;
-    }
+    public String getLastMarkPassed() {return lastMarkPassed;}
 
-
-    public String getLastMarkPassed() {
-        return lastMarkPassed;
-    }
-
-    public void setLastMarkPassed(String lastMarkPassed) {
-        this.lastMarkPassed = lastMarkPassed;
-    }
+    public void setLastMarkPassed(String lastMarkPassed) {this.lastMarkPassed = lastMarkPassed;}
 
     public int getSourceID() {
         return sourceID;
@@ -290,6 +262,7 @@ public class Boat implements Competitor {
     public void setSourceID(int sourceID) {
         this.sourceID = sourceID;
     }
+
     public String getTeamName() {
         return this.teamName;
     }
@@ -339,11 +312,9 @@ public class Boat implements Competitor {
     public void setCurrentHeading(double currentHeading) {
         if (currentHeading < 0) {
             this.currentHeading.set(currentHeading+360);
-//            boatSpeed.setDirection(currentHeading + 360);
         }
         else{
             this.currentHeading.set(currentHeading%360);
-//            boatSpeed.setDirection(currentHeading%360);
         }
     }
 
@@ -382,7 +353,6 @@ public class Boat implements Competitor {
             }
         }
         setPosition(p);
-//        System.out.println(p);
     }
 
 
@@ -404,7 +374,7 @@ public class Boat implements Competitor {
      * @param windAngle double wind angle
      * @return double downWind
      */
-    private double getDownWind(double windAngle) {
+    public double getDownWind(double windAngle) {
         double downWind = windAngle + 180;
         if(downWind > 360) {
             downWind = downWind - 360;
