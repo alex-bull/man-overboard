@@ -597,24 +597,17 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawSharks(){
         Map<Integer, Shark> sharkLocation = dataSource.getSharkLocations();
+        Shark shark = sharkLocation.get(0);
+        sharkModel.update(shark.getPosition().getXValue(), shark.getPosition().getYValue(), shark.getHeading());
+        sharkModel.toFront();
 
-        if (!sharkLocation.isEmpty()) {
-            Shark shark = sharkLocation.get(0);
-            sharkModel.setVisible(true);
-            System.out.println(shark.getHeading());
-            sharkModel.update(shark.getPosition().getXValue(), shark.getPosition().getYValue(), shark.getHeading());
-            sharkModel.toFront();
-
-            Image image = sharkModel.getImage();
-            if (isZoom()) {
-                MutablePoint p = sharkLocation.get(0).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-                sharkModel.relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
-            } else {
-                MutablePoint p = sharkLocation.get(0).getPosition();
-                sharkModel.relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
-            }
-        }else {
-            sharkModel.setVisible(false);
+        Image image = sharkModel.getImage();
+        if (isZoom()) {
+            MutablePoint p = sharkLocation.get(0).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+            sharkModel.relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+        } else {
+            MutablePoint p = sharkLocation.get(0).getPosition();
+            sharkModel.relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
         }
 
     }

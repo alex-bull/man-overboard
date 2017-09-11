@@ -1,6 +1,5 @@
 package mockDatafeed;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.scene.shape.Line;
 import models.*;
 import org.jdom2.JDOMException;
@@ -41,6 +40,8 @@ public class BoatUpdater {
     private int crewLocationSourceID = 0;
     private int bloodlocationSourceID = 0;
     private int sharkSourceID = 0;
+    private int sharkRoamIndex = 0;
+    private MutablePoint sharkRoamPos;
     private List<CrewLocation> crewMembers = new ArrayList<>();
     private List<Shark> sharks = new ArrayList<>();
     private List<Blood> bloodList = new ArrayList<>();
@@ -114,6 +115,10 @@ public class BoatUpdater {
 
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
+
+            if (courseBoundary != null && sharks.isEmpty()) {
+                createShark();
+            }
             if(!sharks.isEmpty()) {
                 updateShark();
                 handler.sharkEvent(sharks);
@@ -172,24 +177,61 @@ public class BoatUpdater {
     }
 
     /**
+     * creates Shark at the start
+     */
+    private void createShark() {
+        if(sharks.size() < 2) {
+            int velocity = 50;
+            double sharkPosX = courseBoundary.get(0).getXValue() + 0.005;
+            double sharkPosY = courseBoundary.get(0).getYValue() - 0.02;
+            MutablePoint sharkPosition = new MutablePoint(sharkPosX, sharkPosY);
+            Shark shark = new Shark(sharkSourceID++, 1, sharkPosition, velocity, 0);
+            sharks.add(shark);
+        }
+        updateSharkRoam();
+    }
+
+    /**
+     * updates shark's next target for roaming
+     */
+    private void updateSharkRoam() {
+        Random random = new Random();
+        double PosX = courseBoundary.get(sharkRoamIndex).getXValue();
+        double PosY = courseBoundary.get(sharkRoamIndex).getYValue() - 0.02;
+        sharkRoamPos = new MutablePoint(PosX, PosY);
+
+        for (Shark shark : new ArrayList<>(sharks)){
+            if (shark.getPosition().isWithin(sharkRoamPos, 0.0001)) {
+                sharkRoamIndex = random.nextInt(courseBoundary.size());
+            }
+        }
+    }
+
+    /**
      * update the position and heading of the sharks
      */
     private void updateShark() {
-
         if (!crewMembers.isEmpty()) {
             for (Shark shark : sharks) {
                 double crew_x = crewMembers.get(0).getLatitude();
                 double crew_y = crewMembers.get(0).getLongitude();
                 double angle = atan2(crew_y - shark.getLongitude(), crew_x - shark.getLatitude()) * 180 / PI;
-//            float angle = (float) Math.toDegrees(atan2(crew_y - shark.getLatitude(), crew_x - shark.getLongitude()));
                 angle = (angle % 360 + 360) % 360;
-                System.out.println(angle);
                 shark.setHeading(angle);
                 shark.getSharkSpeed().setDirection(shark.getHeading());
                 shark.updatePosition(0.1);
             }
         }
-
+        else {
+            updateSharkRoam();
+            for (Shark shark : sharks) {
+                double angle = atan2(sharkRoamPos.getYValue() - shark.getLongitude(), sharkRoamPos.getXValue()  - shark.getLatitude()) * 180 / PI;
+                angle = (angle % 360 + 360) % 360;
+                shark.setHeading(angle);
+                shark.getSharkSpeed().setDirection(shark.getHeading());
+                shark.updatePosition(0.1);
+            }
+        }
     }
 
 
@@ -514,20 +556,8 @@ public class BoatUpdater {
             CrewLocation crewLocation = new CrewLocation(crewLocationSourceID++, 5, position);
             crewMembers.add(crewLocation);
 
-            if(sharks.size() < 2) {
-                double sharkDist = distance * 40;
-                double sharkAngle = randomGenerator.nextDouble() * 360;
-                int velocity = 50;
-//                MutablePoint sharkPosition = movePoint(new Force(sharkDist, sharkAngle, false), location, 1);
-                MutablePoint sharkPosition = new MutablePoint(32.41011, -64.88937);
-                Shark shark = new Shark(sharkSourceID++, 1, sharkPosition, velocity, 0);
-                sharks.add(shark);
-            }
-
         }
-
         handler.fallenCrewEvent(crewMembers);
-        handler.sharkEvent(sharks);
     }
 
 

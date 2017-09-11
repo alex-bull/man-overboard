@@ -87,6 +87,7 @@ public class BoatMockerTest {
             if (competitor.getSourceID() == sourceID) {
                 double windAngle = boatMocker.getWindDirection();
                 expectedHeading = windAngle - (competitor.getCurrentHeading() - windAngle);
+                expectedHeading = (expectedHeading % 360 + 360) % 360;
             }
         }
 
