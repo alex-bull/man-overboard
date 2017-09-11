@@ -252,7 +252,6 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
-
     /**
      * Reads packet values and updates model data
      * @param header byte[] packet header
@@ -413,7 +412,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * adds crew locations with location converted
-     * @param locations
+     * @param locations location of crews
      */
     public void addCrewLocation(List<CrewLocation> locations){
         crewLocations.clear();
@@ -729,7 +728,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * changes the scaling when zoomed in
-     * @param deltaLevel
+     * @param deltaLevel level of zoom
      */
     public void changeScaling(int deltaLevel){
         this.zoomLevel+=deltaLevel;

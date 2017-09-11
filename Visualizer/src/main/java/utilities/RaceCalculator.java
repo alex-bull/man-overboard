@@ -36,6 +36,7 @@ public class RaceCalculator {
      * @param startLine1 start line 1
      * @param expectedStartTime expected start time
      * @param selectedBoat selected boat
+     * @param messageTime time of message
      * @return List virtualLinePoints
      */
     public static List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat,Polygon boatModel, MutablePoint startMark1, MutablePoint startMark2, CourseFeature startLine1, long expectedStartTime,long messageTime) {

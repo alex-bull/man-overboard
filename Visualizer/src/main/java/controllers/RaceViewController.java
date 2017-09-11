@@ -300,7 +300,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Toggles a control layout of the game
-     * @param actionEvent
+     * @param actionEvent action
      */
     public void toggleControls(ActionEvent actionEvent) {
         if (!raceViewPane.getChildren().contains(controlsBox)){

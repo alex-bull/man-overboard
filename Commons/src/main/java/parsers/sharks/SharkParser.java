@@ -22,7 +22,7 @@ public class SharkParser {
     /**
      * parse the shark event message
      * @param packet byte[] a byte array of the message that needs parsing
-     * @return List<Shark> List of sharks
+     * @return sharkLocations List of sharks
      */
     public static List<Shark> parseShark(byte[] packet) {
         List<Shark> sharkLocations=new ArrayList<>();

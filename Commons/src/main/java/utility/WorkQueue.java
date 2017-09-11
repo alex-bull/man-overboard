@@ -28,9 +28,9 @@ public class WorkQueue {
 
     /**
      * Add a single element to the tail of the queue
-     * @param clientId
-     * @param header
-     * @param body
+     * @param clientId client's id
+     * @param header header of the message
+     * @param body body part of the message
      */
     public void put(Integer clientId, byte[] header, byte[] body) {
         this.queue.offer(new QueueMessage(clientId, header, body));
