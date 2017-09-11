@@ -30,6 +30,9 @@ public class MainController {
     private BinaryPackager binaryPackager;
     private SoundPlayer soundPlayer;
 
+    /**
+     * updates the slider and sends corresponding packet
+     */
     @FXML public void updateSlider(){
         if(sailSlider.getValue()<0.5){
             this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), dataSource.getSourceID()));
@@ -83,11 +86,11 @@ public class MainController {
                     }
                     break;
 
-                case UP:
+                case A:
                     dataSource.changeScaling(1);
                     raceViewController.zoomIn();
                     break;
-                case DOWN:
+                case D:
                     dataSource.changeScaling(-1);
                     raceViewController.zoomIn();
                     break;
