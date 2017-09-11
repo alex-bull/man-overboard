@@ -61,16 +61,15 @@ public class BoatTest {
 
     @Test
     public void sailMovesIn() throws Exception{
-        double old_value = boat.getSailValue();
+
         boat.sailsIn();
-        assertTrue(boat.getSailValue() < old_value);
+        assertTrue(boat.getSailValue() == 0);
     }
 
     @Test
     public void sailMovesOut() throws Exception{
-        double old_value = boat.getSailValue();
         boat.sailsOut();
-        assertTrue(boat.getSailValue() > old_value);
+        assertTrue(boat.getSailValue() ==1);
     }
 
 
