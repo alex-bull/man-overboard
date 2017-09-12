@@ -9,6 +9,7 @@ public class EnvironmentConfig {
 
     public static Integer port = 4941;
     public static String host = "localhost";
-//    public static Integer port = 4942;
+    public static Double maxMusicVolume = 0.5;
+    public static Double maxFXVolume = 0.5;
 
 }

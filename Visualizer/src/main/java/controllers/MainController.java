@@ -1,15 +1,13 @@
 package controllers;
 
-import Animations.SoundPlayer;
+import javafx.stage.Stage;
+import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
-import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utility.BinaryPackager;
 
@@ -28,7 +26,8 @@ public class MainController {
     @FXML private GridPane loadingPane;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
-    private SoundPlayer soundPlayer;
+    private boolean playing = false;
+
 
     /**
      * Handle control key events
@@ -94,7 +93,7 @@ public class MainController {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
         tableController.addObserver(raceViewController);
-        playerController.setuo(dataSource);
+        playerController.setuo(dataSource, App.getPrimaryStage());
         this.binaryPackager = new BinaryPackager();
 
         AnimationTimer timer = new AnimationTimer() {
@@ -103,6 +102,7 @@ public class MainController {
             public void handle(long now) {
                 dataSource.update();
                 if (raceViewController.isLoaded()) {
+                    if (!playing) playGameMusic();
                     raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
@@ -115,7 +115,16 @@ public class MainController {
             }
         };
         timer.start();
-        soundPlayer=new SoundPlayer();
-        soundPlayer.playMP3("sounds/bensound-epic.mp3");
+
+    }
+
+
+    /**
+     * Play the game music loop
+     */
+    private void playGameMusic() {
+        Sounds.player.loopMP3("sounds/bensound-epic.mp3");
+        Sounds.player.setVolume("sounds/bensound-epic.mp3", 0.5);
+        playing = true;
     }
 }

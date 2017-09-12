@@ -21,7 +21,7 @@ public class Track extends Group {
     public void addDot(MutablePoint position, Color color) {
 
         Circle circle = new Circle(position.getXValue(), position.getYValue(), 1.5, color);
-        //add fade transition
+        //add fadeOut transition
         FadeTransition ft = new FadeTransition(Duration.millis(20000), circle);
         ft.setFromValue(1);
         ft.setToValue(0.15);

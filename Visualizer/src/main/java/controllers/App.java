@@ -17,10 +17,12 @@ public class App extends Application {
 
 
     private static Stage pStage;
+    private static Scene scene;
 
     public static Stage getPrimaryStage() {
         return pStage;
     }
+    public static Scene getScene() {return scene;}
 
     /**
      * Starts the app
@@ -30,29 +32,27 @@ public class App extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
         Parent root = loader.load();
 
         Scene rootScene = new Scene(root);
         primaryStage.setScene(rootScene);
+        primaryStage.setTitle("Man Overboard");
 
+        scene = rootScene;
+        pStage = primaryStage;
 
-
-        LobbyController lobbyController = loader.getController();
-        lobbyController.setStage(primaryStage);
+        StartController startController = loader.getController();
 
         String imagePath = "file: resources/logo.png";
         primaryStage.getIcons().add(new Image(imagePath));
-        Interpreter interpreter = new Interpreter();
-        interpreter.setPrimaryStage(primaryStage);
-        lobbyController.setDataSource(interpreter);
-        lobbyController.begin();
+        startController.begin();
         // for mac
 //        java.awt.Image image = Toolkit.getDefaultToolkit().getImage(imagePath);
 //        Application.getApplication().setDockIconImage(image);
 
-//        primaryStage.setMaximized(true);
-//        primaryStage.setFullScreen(true);
+        primaryStage.setMaximized(true);
+        primaryStage.setFullScreen(true);
 
         //set on close requests
         primaryStage.setOnCloseRequest(event -> {
@@ -73,6 +73,8 @@ public class App extends Application {
 //        lobbyController.autoStart();
 
     }
+
+
 
 
 }

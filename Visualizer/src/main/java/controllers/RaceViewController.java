@@ -3,16 +3,14 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
-import Animations.SoundPlayer;
+import utilities.Sounds;
 import Elements.*;
 import Elements.Annotation;
-import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -36,7 +34,6 @@ import models.CrewLocation;
 import models.MutablePoint;
 import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
-import utilities.*;
 import utilities.DataSource;
 import utilities.RaceCalculator;
 import utility.BinaryPackager;
@@ -100,8 +97,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private DataSource dataSource;
     private GraphicsContext gc;
 
-    //SOUNDS
-    private SoundPlayer soundPlayer=new SoundPlayer();
 
 
 
@@ -168,7 +163,6 @@ public class RaceViewController implements Initializable, TableObserver {
         controlsBox.setPrefHeight(height);
         controlsBox.setPrefWidth(width);
         raceViewPane.getChildren().add(track);
-//        soundPlayer.playMP3("sounds/bensound-epic.mp3");
         this.dataSource = dataSource;
 
         while (dataSource.getCompetitorsPosition() == null) {
@@ -279,6 +273,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 //drawBorder(raceViewPane.getWidth(),raceViewPane.getHeight(),25);
                 new BorderAnimation(raceParentPane, 25).animate();
                 new RandomShake(raceParentPane).animate();
+                Sounds.player.playSoundEffect("sounds/impact.mp3");
             }
             drawCollision(point.getXValue(), point.getYValue());
             dataSource.removeCollsions(sourceID);

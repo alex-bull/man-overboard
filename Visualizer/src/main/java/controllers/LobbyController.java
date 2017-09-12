@@ -1,6 +1,6 @@
 package controllers;
 
-import Animations.SoundPlayer;
+import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -9,6 +9,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -59,6 +60,13 @@ public class LobbyController implements Initializable {
     @FXML private ImageView courseImageView;
     @FXML private Label locationLabel;
     @FXML private Label gameTypeLabel;
+    @FXML private Label loadingLabel;
+    @FXML private GridPane gameGridPane;
+    @FXML private GridPane playerGridPane;
+    @FXML private Label playerLabel;
+
+
+
     @FXML private TextField nameText;
     @FXML private Button confirmButton;
     @FXML private Button leftButton;
@@ -76,15 +84,7 @@ public class LobbyController implements Initializable {
     private Rectangle2D primaryScreenBounds;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private AnimationTimer timer;
-    private SoundPlayer soundPlayer=new SoundPlayer();
 
-    /**
-     * Sets the stage
-     * @param primaryStage Stage the stage for this window
-     */
-    void setStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
 
     void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -93,25 +93,47 @@ public class LobbyController implements Initializable {
 
     /**
      * Begins connection to server
-     * Continuously polls the datasource to update the view
-     * Uses an animation timer as it is updating the GUI thread
+     * Continuously tries to connect on background thread
      */
     void begin() {
 
-        Scene scene=primaryStage.getScene();
-        boolean connected = this.dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
-        if (!connected) {
-            System.out.println("Failed to connect to server");
-            this.progressIndicator.setVisible(false);
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Connection to server failed");
-            alert.setHeaderText(null);
-            alert.setContentText("Sorry, cannot connect to this game right now.");
-            alert.showAndWait();
-            return;
-        }
-        soundPlayer.playMP3("sounds/bensound-instinct.mp3");
 
+//        for (int i = 0; i<8; i++) {
+//            competitorList.add("Boat 10" +i);
+//        }
+
+        Scene scene = starterList.getScene();
+
+        //start sound loop
+        Sounds.player.loopMP3WithFadeIn("sounds/bensound-instinct.mp3", 4);
+
+        //Connect to a game in the background
+        Task connect = new Task() {
+
+            @Override public Boolean call() {
+                boolean connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
+                while (!connected) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {}
+                    connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
+                }
+                return true;
+            }
+        };
+
+        connect.setOnSucceeded(event -> this.loop());
+        Thread connection = new Thread(connect);
+        connection.start();
+    }
+
+
+    /**
+     * Start the main loop
+     * Continuously polls the datasource to update the view
+     * Uses an animation timer as it is updating the GUI thread
+     */
+    private void loop() {
         this.timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -134,6 +156,7 @@ public class LobbyController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         progressIndicator.setVisible(true);
+        loadingLabel.setVisible(true);
         countdownLabel.setText("");
         gameStartLabel.setVisible(false);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -149,6 +172,15 @@ public class LobbyController implements Initializable {
         boatImages.add(galleon);
         boatImageView.setImage(yacht);
         boatImageView.setRotate(90);
+        //image resizing cant be done in fxml >(
+        courseImageView.setPreserveRatio(false);
+        courseImageView.fitWidthProperty().bind(gameGridPane.widthProperty());
+        courseImageView.fitHeightProperty().bind(gameGridPane.heightProperty());
+
+        boatImageView.setPreserveRatio(false);
+        boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
+        boatImageView.fitHeightProperty().bind(playerGridPane.heightProperty());
+
     }
 
 
@@ -171,8 +203,9 @@ public class LobbyController implements Initializable {
      */
     @FXML
     public void leaveLobby() {
+        if (timer != null) timer.stop();
         dataSource.send(new BinaryPackager().packageLeaveLobby());
-        System.exit(0); //this will go back to the home screen
+        this.loadStartView();
     }
 
     @FXML
@@ -256,12 +289,40 @@ public class LobbyController implements Initializable {
      * Updates the list with the competitors in the datasource
      */
     private void updateList() {
-        this.progressIndicator.setVisible(false);
         this.competitorList.clear();
-        this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
-        //if (dataSource.getCompetitor() != null) this.nameText.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
+        if (dataSource.getCompetitorsPosition().size() > 0) {
+            this.progressIndicator.setVisible(false);
+            this.loadingLabel.setVisible(false);
+            this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
+        }
+        if (dataSource.getCompetitor() != null) this.playerLabel.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
     }
 
+
+
+    /**
+     * Loads the start view
+     */
+    private void loadStartView() {
+
+        //clean up first
+        if (timer != null) timer.stop();
+        Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 2);
+        dataSource = null;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assert root != null;
+        StartController startController = loader.getController();
+        startController.begin();
+        App.getScene().setRoot(root);
+    }
 
 
     /**
@@ -270,11 +331,14 @@ public class LobbyController implements Initializable {
      */
     private void loadRaceView() {
 
-        this.timer.stop(); //cancel the animation timer
+        //clean up
+        if (timer != null) timer.stop();
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
 
-        //count down for 5 seconds
+        Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 10);
+
+        //count down for 10 seconds
         gameStartLabel.setVisible(true);
         countdownLabel.textProperty().bind(timeSeconds.asString());
         timeSeconds.set(STARTTIME);
@@ -297,11 +361,9 @@ public class LobbyController implements Initializable {
                 }
 
                 assert root != null;
-                Scene scene = new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 MainController mainController = loader.getController();
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                primaryStage.setTitle("Man Overboard");
-                primaryStage.setScene(scene);
+                App.getScene().setRoot(root);
             }
         });
     }

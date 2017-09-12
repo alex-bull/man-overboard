@@ -6,12 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import utility.QueueMessage;
-import utility.WorkQueue;
-import models.ColourPool;
-import models.Competitor;
-import models.CourseFeature;
-import models.MutablePoint;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
@@ -34,10 +28,7 @@ import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
-import utility.BinaryPackager;
-import utility.PacketHandler;
-import com.rits.cloning.Cloner;
-import utility.Projection;
+import utility.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -45,8 +36,6 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
 import static java.lang.Math.pow;
-import static javafx.collections.FXCollections.observableArrayList;
-import static javafx.collections.FXCollections.observableList;
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
@@ -191,7 +180,7 @@ public class Interpreter implements DataSource, PacketHandler {
     public void send(byte[] data) {
         try {
             this.TCPClient.send(data);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Failed to send data");
         }
     }
@@ -215,11 +204,11 @@ public class Interpreter implements DataSource, PacketHandler {
             primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         }
         catch (UnresolvedAddressException e){
-            System.out.println("Address is not found");
+           // System.out.println("Address is not found");
             return false;
         }
         catch (IOException e) {
-            System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
+          //  System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
             return false;
         }
 
