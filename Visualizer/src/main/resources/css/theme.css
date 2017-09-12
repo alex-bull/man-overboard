@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'merriweather';
+    src: url('../fonts/merriweather.regular.ttf');
+}
+
 .background {
     -fx-background-color: #7dcdcd;
 
@@ -11,6 +16,10 @@
     -fx-font-size: 11pt;
     -fx-text-fill: #444444;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
+}
+
+#controlbutton {
+    -fx-background-color: transparent;
 }
 
 .button:hover {
@@ -150,15 +159,6 @@
     -fx-alignment: CENTER;
 }
 
-.slider .track {
-    -fx-pref-height:20;
-}
-
-.slider:vertical .track {
-    -fx-pref-width:10;
-}
-
-.slider .thumb {
-    -fx-pref-height: 25;
-    -fx-pref-width: 25;
+.merriweather{
+    -fx-font-family: 'merriweather';
 }

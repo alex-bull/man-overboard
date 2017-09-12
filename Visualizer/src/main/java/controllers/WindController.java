@@ -42,7 +42,7 @@ public class WindController implements Initializable{
      */
     void refresh(double angle, double windSpeed) {
         int minWind = 3;
-        int maxWind = 7;
+        int maxWind = 6;
         double factor = 40.0;
         Double windFactor = windSpeed * factor;
         double offset = minWind * factor;
@@ -63,7 +63,7 @@ public class WindController implements Initializable{
             drawArrow(offset, offset);
         }
 
-        speed.setText(String.format("%.3f", windSpeed));
+        speed.setText(String.format("%.1f", windSpeed));
     }
 
 

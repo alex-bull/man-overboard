@@ -2,6 +2,7 @@ package utilities;
 
 import mockDatafeed.BoatMocker;
 import org.junit.Test;
+import utility.WorkQueue;
 
 /**
  * Created by jar156 on 11/05/17.
@@ -29,7 +30,7 @@ public class TCPClientTest {
         String host = "localhost";
         int port = 4941;
 
-        TCPClient = new TCPClient(host, port, interpreter);
+        TCPClient = new TCPClient(host, port, new WorkQueue(1000));
 
     }
 

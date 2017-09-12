@@ -56,9 +56,10 @@ public class MutablePoint implements Vector{
      * @param paddingX double the x padding
      * @param paddingY double the y padding
      */
-    public void factor(double xFactor, double yFactor, double minX, double minY, double paddingX, double paddingY) {
+    public MutablePoint factor(double xFactor, double yFactor, double minX, double minY, double paddingX, double paddingY) {
         setX(((getXValue() - minX) * xFactor + paddingX));
         setY(((getYValue() - minY) * yFactor + paddingY));
+        return new MutablePoint(getXValue(),getYValue());
     }
 
     /**
@@ -100,8 +101,8 @@ public class MutablePoint implements Vector{
      * @param o the other mutable point
      * @return true if this point is close enough to o
      */
-    public boolean isWithin(MutablePoint o) {
-        double EPSILON = 0.0002;
+    public boolean isWithin(MutablePoint o, double EPSILON) {
+//        double EPSILON = 0.0002;
         return Math.abs(getXValue() - o.getXValue()) < EPSILON && Math.abs(getYValue() - o.getYValue()) < EPSILON * 2;
     }
 

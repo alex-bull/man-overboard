@@ -30,7 +30,7 @@ public class RaceCalculator {
      * @param touchY y value of touch point's position
      * @return double theta
      */
-    public double calcBoatDirection(double boatX, double boatY, double touchX, double touchY) {
+    public static double calcBoatDirection(double boatX, double boatY, double touchX, double touchY) {
         Vector2D boatDirection = new Vector2D(boatX, boatY, touchX, touchY);
         double theta = atan2(boatDirection.getY(), boatDirection.getX());
         theta = (theta * 180 / PI) + 90;
@@ -46,7 +46,7 @@ public class RaceCalculator {
      * @param windAngle angle of wind
      * @return boolean
      */
-    public boolean isWestOfWind(double heading, double downWind, double windAngle) {
+    public static boolean isWestOfWind(double heading, double downWind, double windAngle) {
         return (heading > downWind) || (heading < windAngle);
     }
 
@@ -241,31 +241,8 @@ public class RaceCalculator {
         return earthRadius * c;
     }
 
-    /**
-     * Returns the colour of the health scale of the given boat
-     * @param boat Competitor a boat
-     * @return Color the colour of the health bar
-     */
-    public static Color calculateHealthColour(Competitor boat) {
-        double healthLevel = boat.getHealthLevel();
-        double maxHealth = boat.getMaxHealth();
-        double percentage = healthLevel/maxHealth;
-        if(percentage > 0.7) {
-            return Color.GREEN;
-        }
-        else if(percentage > 0.6) {
-            return Color.GREENYELLOW;
-        }
-        else if(percentage > 0.5) {
-            return Color.YELLOW;
-        }
-        else if(percentage > 0.4) {
-            return Color.ORANGE;
-        }
-        else {
-            return Color.RED;
-        }
-    }
+
+
 
     /**
      * Calculates the angle between marks
@@ -287,5 +264,34 @@ public class RaceCalculator {
         }
         return angle;
     }
+
+
+
+    /**
+     * Gets the centre coordinates for a mark or gate
+     * @param markIndex index of the mark (based on the order they are rounded)
+     * @param indexMap Map of index to sourceId
+     * @param featureMap Map of sourceId to courseFeature
+     * @return MutablePoint (x,y) coordinates
+     */
+    public static MutablePoint getGateCentre(Integer markIndex, Map<Integer, List<Integer>> indexMap,  Map<Integer, CourseFeature> featureMap) {
+
+        Map<Integer, List<Integer>> features = indexMap;
+        if (markIndex > features.size()) return null; //passed the finish line
+
+        List<Integer> ids = features.get(markIndex);
+        if (ids == null) return null;
+        CourseFeature featureOne = featureMap.get(ids.get(0));
+        Double markX = featureOne.getPixelCentre().getXValue();
+        Double markY = featureOne.getPixelCentre().getYValue();
+
+        if (ids.size() > 1) { //Get the centre point of gates
+            CourseFeature featureTwo = featureMap.get(ids.get(1));
+            markX = (featureOne.getPixelCentre().getXValue() + featureTwo.getPixelCentre().getXValue()) / 2;
+            markY = (featureOne.getPixelCentre().getYValue() + featureTwo.getPixelCentre().getYValue()) / 2;
+        }
+        return new MutablePoint(markX, markY);
+    }
+
 
 }

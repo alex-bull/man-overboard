@@ -1,11 +1,11 @@
 package controllers;
 
+import Animations.SoundPlayer;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
+import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TouchEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
 import parsers.RaceStatusEnum;
@@ -23,13 +23,24 @@ public class MainController {
     @FXML private RaceViewController raceViewController;
     @FXML private SplitPane splitPane;
     @FXML private WindController windController;
-    @FXML private TimerController timerController;
-    @FXML private SparklinesController sparklinesController;
+    @FXML private PlayerController playerController;
     @FXML private GridPane loadingPane;
+    @FXML private Slider sailSlider;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
+    private SoundPlayer soundPlayer;
 
-
+    /**
+     * updates the slider and sends corresponding packet
+     */
+    @FXML public void updateSlider(){
+        if(sailSlider.getValue()<0.5){
+            this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), dataSource.getSourceID()));
+        }
+        else{
+            this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), dataSource.getSourceID()));
+        }
+    }
 
     /**
      * Handle control key events
@@ -49,6 +60,8 @@ public class MainController {
                     break;
                 case SHIFT:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SWITCHSAILS.getValue(), dataSource.getSourceID()));
+                    sailSlider.setValue(this.dataSource.getCompetitor().getSailValue());
+                    System.out.println(this.dataSource.getCompetitor().getSailValue());
                     break;
                 case ENTER:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
@@ -58,7 +71,6 @@ public class MainController {
                         raceViewController.zoomOut();
                         if (!tableController.isVisible()) {
                             tableController.makeVisible();
-                            sparklinesController.makeVisible();
                         }
                     }
                     else{
@@ -68,17 +80,21 @@ public class MainController {
                 case BACK_QUOTE:
                     if (raceViewController.isZoom() && tableController.isVisible()){
                         tableController.makeInvisible();
-                        sparklinesController.makeInvisible();
                     }
                     else if (raceViewController.isZoom()) {
                         tableController.makeVisible();
-                        sparklinesController.makeVisible();
                     }
                     break;
+
+                case A:
+                    dataSource.changeScaling(1);
+                    raceViewController.zoomIn();
+                    break;
+                case D:
+                    dataSource.changeScaling(-1);
+                    raceViewController.zoomIn();
+                    break;
             }
-
-
-
     }
 
 
@@ -91,20 +107,23 @@ public class MainController {
     void beginRace(DataSource dataSource, double width, double height) {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
-        timerController.begin(dataSource);
         tableController.addObserver(raceViewController);
-        sparklinesController.setCompetitors(dataSource, width);
+        playerController.setuo(dataSource);
         this.binaryPackager = new BinaryPackager();
+
+
 
         AnimationTimer timer = new AnimationTimer() {
 
             @Override
             public void handle(long now) {
+                dataSource.update();
                 if (raceViewController.isLoaded()) {
                     raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
-                    sparklinesController.refresh();
+                    playerController.refresh();
+                    sailSlider.toFront();
                     loadingPane.toBack();
                 }
                 else {
@@ -112,9 +131,8 @@ public class MainController {
                 }
             }
         };
-
         timer.start();
+        soundPlayer=new SoundPlayer();
+        soundPlayer.playMP3("sounds/bensound-epic.mp3");
     }
-
-
 }

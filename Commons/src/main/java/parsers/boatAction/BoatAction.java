@@ -9,6 +9,7 @@ public enum BoatAction {
     VMG(1),
     SAILS_IN(2),
     SAILS_OUT(3),
+    SWITCH_SAILS(7),
     TACK_GYBE(4),
     UPWIND(5),
     DOWNWIND(6),
@@ -52,6 +53,9 @@ public enum BoatAction {
                 break;
             case 6:
                 action = DOWNWIND;
+                break;
+            case 7:
+                action = SWITCH_SAILS;
                 break;
             default:
                 break;

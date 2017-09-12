@@ -3,10 +3,10 @@ package utilities;
 import javafx.scene.Scene;
 import models.Competitor;
 import models.CourseFeature;
+import models.CrewLocation;
 import models.MutablePoint;
 import parsers.RaceStatusEnum;
 
-import java.io.EOFException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +17,10 @@ import java.util.Set;
  * Data source
  */
 public interface DataSource {
-    void receive(String host, int port, Scene scene, StreamDelegate delegate);
+    void changeScaling(int Multiplier);
+    int getZoomLevel();
+    Map<Integer, CrewLocation> getCrewLocations();
+    boolean receive(String host, int port, Scene scene);
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
     List<Integer> getStartMarks();
@@ -42,4 +45,6 @@ public interface DataSource {
     Competitor getCompetitor();
     List<MutablePoint> getCourseBoundary17();
     HashMap<Integer, CourseFeature> getStoredFeatures17();
+    void update();
+
 }

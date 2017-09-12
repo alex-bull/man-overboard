@@ -11,6 +11,7 @@ public class Force implements Vector{
     private double y;
     private double magnitude;
     private double direction;
+    private double factor;
 
     /**
      * constructor for the force vector
@@ -22,6 +23,7 @@ public class Force implements Vector{
      *                  false - x and y are magnitude and direction
      */
     public Force(double x, double y, boolean inputType) {
+        factor=1;
         if(inputType){
             this.x = x;
             this.y = y;
@@ -79,15 +81,15 @@ public class Force implements Vector{
 
 
     public double getXValue() {
-        return x;
+        return x*factor;
     }
 
     public double getYValue() {
-        return y;
+        return y*factor;
     }
 
     public double getMagnitude() {
-        return magnitude;
+        return magnitude*factor;
     }
 
     public double getDirection() {
@@ -109,7 +111,16 @@ public class Force implements Vector{
      * @param amount the amount left
      */
     public void reduce(double amount){
-        setMagnitude(getMagnitude()*amount);
+        factor*=amount;
+    }
+
+
+    /**
+     * increases itself by a certain amount, capped at maximum force
+     * @param amount the amount to increase
+     */
+    public void increase(double amount){
+        factor+=(1-factor)*amount;
     }
 
 

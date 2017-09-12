@@ -13,11 +13,12 @@ public interface CourseFeature {
     void setExitHeading(Double exitHeading);
     int getIndex();
     MutablePoint getGPSPoint();
-    void factor(double xFactor, double yFactor, double minX, double minY, double xBuffer, double yBuffer);
+    MutablePoint factor(double xFactor, double yFactor, double minX, double minY, double xBuffer, double yBuffer);
     int getRounding();
     void setRounding(int rounding);
     boolean isLine();
     CourseFeature shift(double x, double y);
+    void setPixelLocation(MutablePoint newLocation);
 
     MutablePoint getPixelCentre();
 }
