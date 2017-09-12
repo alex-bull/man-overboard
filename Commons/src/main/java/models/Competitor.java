@@ -103,8 +103,8 @@ public interface Competitor {
 
     void setTeamName(String teamName);
 
-    void setBoatType(String boatType);
+    void setBoatType(Integer boatType);
 
-    String getBoatType();
+    Integer getBoatType();
 
 }

@@ -82,6 +82,7 @@ public class LobbyController implements Initializable {
     private Rectangle2D primaryScreenBounds;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private AnimationTimer timer;
+    BinaryPackager binaryPackager = new BinaryPackager();
 
 
     void setDataSource(DataSource dataSource) {
@@ -210,14 +211,19 @@ public class LobbyController implements Initializable {
 
     @FXML
     public void confirmBoatDetails() {
+//        if (dataSource.getCompetitor() != null) {
+//            System.out.println("shit");
+//            return;
+//        }
         Competitor boat = dataSource.getCompetitor();
         if (!Objects.equals(nameText.getText(), "")) {
             boat.setTeamName(nameText.getText());
         }
-        if (index %boatImages.size() == 1) boatType="cog";
-        if (index %boatImages.size() == 2) boatType="frigate";
-        if (index %boatImages.size() == 3) boatType="galleon";
-        boat.setBoatType(boatType);
+        boat.setBoatType(index %boatImages.size());
+
+        System.out.println(index %boatImages.size());
+        this.dataSource.send(binaryPackager.packageBoatName(boat.getSourceID(), nameText.getText()));
+        this.dataSource.send(binaryPackager.packageBoatModel(boat.getSourceID(), index %boatImages.size()));
     }
 
     @FXML

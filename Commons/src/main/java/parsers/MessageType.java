@@ -20,7 +20,9 @@ public enum MessageType {
     CONNECTION_RES(102),
     PLAYER_READY(110),
     LEAVE_LOBBY(111),
-    FALLEN_CREW(107);
+    FALLEN_CREW(107),
+    NAME_REQUEST(106),
+    MODEL_REQUEST(104);
 
     private final int value;
 

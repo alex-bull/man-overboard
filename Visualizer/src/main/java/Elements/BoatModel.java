@@ -26,7 +26,7 @@ public class BoatModel extends Group {
      * @param boatType String, type of boat image to be displayed for player
      * @param player boolean, true if the player marker should be shown
      */
-    public BoatModel(String boatType, boolean player) {
+    public BoatModel(Integer boatType, boolean player) {
 
         Polygon boatModel = new Polygon();
 //        boatModel.getPoints().addAll(
@@ -40,20 +40,21 @@ public class BoatModel extends Group {
                 11.0, 21.0,
                 11.0, -21.0); //right
 
-        if (Objects.equals(boatType, "yacht")) {
-            Image boatImage = new Image("images/yacht.png");
+        System.out.println(boatType);
+        if (boatType == 1) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
-        else if (Objects.equals(boatType, "cog")) {
-            Image boatImage = new Image("images/cog.png");
+        else if (boatType == 2) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
-        else if (Objects.equals(boatType, "frigate")) {
-            Image boatImage = new Image("images/frigate.png");
+        else if (boatType == 3) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
-        else if (Objects.equals(boatType, "galleon")) {
-            Image boatImage = new Image("images/galleon.png");
+        else if (boatType == 4) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
 
