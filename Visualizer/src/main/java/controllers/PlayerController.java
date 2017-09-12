@@ -43,19 +43,19 @@ public class PlayerController {
         gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
         Competitor boat = dataSource.getCompetitor();
         if (Objects.equals(boat.getBoatType(), "yacht")) {
-            Image boatImage = new Image("images/yacht.png");
+            Image boatImage = new Image("images/yachtLandscape.png");
             playerImageView.setImage(boatImage);
         }
         else if (Objects.equals(boat.getBoatType(), "cog")){
-            Image boatImage = new Image("images/cog.png");
+            Image boatImage = new Image("images/cogLandscape.png");
             playerImageView.setImage(boatImage);
         }
         else if (Objects.equals(boat.getBoatType(), "frigate")){
-            Image boatImage = new Image("images/frigate.png");
+            Image boatImage = new Image("images/frigateLandscape.png");
             playerImageView.setImage(boatImage);
         }
         else if (Objects.equals(boat.getBoatType(), "galleon")){
-            Image boatImage = new Image("images/galleon.png");
+            Image boatImage = new Image("images/galleonLandscape.png");
             playerImageView.setImage(boatImage);
         }
         playerImageView.setPreserveRatio(false);

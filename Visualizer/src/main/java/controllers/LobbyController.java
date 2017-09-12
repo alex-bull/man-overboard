@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.geometry.Point3D;
 import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -62,7 +63,6 @@ public class LobbyController implements Initializable {
     @FXML private Label loadingLabel;
     @FXML private GridPane gameGridPane;
     @FXML private GridPane playerGridPane;
-    @FXML private Label playerLabel;
 
 
 
@@ -70,7 +70,6 @@ public class LobbyController implements Initializable {
     @FXML private Button confirmButton;
     @FXML private Button leftButton;
     @FXML private Button rightButton;
-    @FXML private GridPane customPane;
     private Image yacht;
     private Image cog;
     private Image frigate;
@@ -101,7 +100,8 @@ public class LobbyController implements Initializable {
 //            competitorList.add("Boat 10" +i);
 //        }
 
-        Scene scene = starterList.getScene();
+        Scene scene = App.getScene();
+
 
         //start sound loop
         Sounds.player.loopMP3WithFadeIn("sounds/bensound-instinct.mp3", 4);
@@ -161,16 +161,16 @@ public class LobbyController implements Initializable {
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         starterList.setItems(competitorList);
 
-        yacht = new Image("images/yacht.png");
-        cog = new Image("images/cog.png");
-        frigate = new Image("images/frigate.png");
-        galleon = new Image("images/galleon.png");
+        yacht = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
+        cog = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
+        frigate = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
+        galleon = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
+
         boatImages.add(yacht);
         boatImages.add(cog);
         boatImages.add(frigate);
         boatImages.add(galleon);
         boatImageView.setImage(yacht);
-        boatImageView.setRotate(90);
         //image resizing cant be done in fxml >(
         courseImageView.setPreserveRatio(false);
         courseImageView.fitWidthProperty().bind(gameGridPane.widthProperty());
@@ -179,6 +179,7 @@ public class LobbyController implements Initializable {
         boatImageView.setPreserveRatio(false);
         boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
         boatImageView.fitHeightProperty().bind(playerGridPane.heightProperty());
+
 
     }
 
@@ -294,7 +295,7 @@ public class LobbyController implements Initializable {
             this.loadingLabel.setVisible(false);
             this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
         }
-        if (dataSource.getCompetitor() != null) this.playerLabel.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
+        if (dataSource.getCompetitor() != null) this.nameText.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
     }
 
 

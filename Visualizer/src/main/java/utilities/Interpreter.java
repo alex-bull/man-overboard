@@ -204,21 +204,24 @@ public class Interpreter implements DataSource, PacketHandler {
             primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         }
         catch (UnresolvedAddressException e){
-           // System.out.println("Address is not found");
+//            System.out.println("Address is not found");
             return false;
         }
         catch (IOException e) {
-          //  System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
+//            System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
             return false;
         }
+
 
         //calculate the effective width and height of the screen
         width = primaryScreenBounds.getWidth() - scene.getX();
         height = primaryScreenBounds.getHeight() - scene.getY();
 
+        System.out.println("Starting client");
         //start receiving data
         Timer receiverTimer = new Timer();
         receiverTimer.schedule(TCPClient, 0, 1);
+        System.out.println("Done");
 
         //request game join
         System.out.println("Sending connection request...");

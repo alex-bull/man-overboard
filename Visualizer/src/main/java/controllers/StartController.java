@@ -52,6 +52,7 @@ public class StartController implements Initializable {
             root = loader.load();
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(1);
         }
 
         assert root != null;
