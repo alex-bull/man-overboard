@@ -5,6 +5,7 @@ import models.*;
 import org.jdom2.JDOMException;
 import parsers.xml.race.RaceData;
 import utilities.PolarTable;
+import utilities.Utility;
 import utility.Calculator;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class BoatUpdater {
 
     List<Competitor> finisherList = new ArrayList<>();
     private PolarTable polarTable;
+    private Utility utility;
     private RaceData raceData;
     private Map<Integer, Competitor> competitors;
     private Course raceCourse = new RaceCourse(null, true);
@@ -41,10 +43,13 @@ public class BoatUpdater {
     private int bloodlocationSourceID = 0;
     private int sharkSourceID = 0;
     private int sharkRoamIndex = 0;
+    private int leadLeg = 0;
+    private int whirlpoolSourceID = 0;
     private MutablePoint sharkRoamPos;
     private List<CrewLocation> crewMembers = new ArrayList<>();
     private List<Shark> sharks = new ArrayList<>();
     private List<Blood> bloodList = new ArrayList<>();
+    private List<Whirlpool> whirlpools = new ArrayList<>();
 
 
     /**
@@ -68,6 +73,7 @@ public class BoatUpdater {
         this.windGenerator = windGenerator;
 
         polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
+        utility = new Utility();
         this.buildRoundingLines();
     }
 
@@ -107,8 +113,9 @@ public class BoatUpdater {
             boolean courseCollision = this.handleCourseCollisions(boat);
             handleBoatCollisions(boat);
             boolean boundaryCollision = this.handleBoundaryCollisions(boat);
+            boolean whirlPoolCollision = this.handleWhirlpoolCollisions(boat);
 
-            if (courseCollision || boundaryCollision) {
+            if (courseCollision || boundaryCollision || whirlPoolCollision) {
                 boat.updateHealth(-15);
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
             }
@@ -119,6 +126,18 @@ public class BoatUpdater {
             if (courseBoundary != null && sharks.isEmpty()) {
                 createShark();
             }
+
+            if (passedFirstMark()) {
+                createWhirlpool();
+            }
+
+            if (!whirlpools.isEmpty()) {
+                if (updateLeadLeg()) {
+                    updateWhirlpool();
+                }
+                handler.whirlpoolEvent(whirlpools);
+            }
+
             if(!sharks.isEmpty()) {
                 updateShark();
                 handler.sharkEvent(sharks);
@@ -177,6 +196,73 @@ public class BoatUpdater {
     }
 
     /**
+     * Checks whether if any of the players have passed the first mark
+     * @return boolean if a player has passed the first mark
+     */
+    private boolean passedFirstMark() {
+        boolean passed = false;
+        for (Integer sourceId : competitors.keySet()) {
+            Competitor boat = competitors.get(sourceId);
+            if (boat.getCurrentLegIndex() > 0) {
+                passed = true;
+            }
+        }
+        return passed;
+    }
+
+    /**
+     * checks whether the leader has advanced to the next mark
+     * @return boolean if the leader has advanced to the next mark
+     */
+    private boolean updateLeadLeg() {
+        boolean updated = false;
+        for (Integer sourceId : competitors.keySet()) {
+            Competitor boat = competitors.get(sourceId);
+            if (leadLeg < boat.getCurrentLegIndex()) {
+                leadLeg = boat.getCurrentLegIndex();
+                updated = true;
+            }
+        }
+        return updated;
+    }
+
+    /**
+     * Randomly generates whirlpool after players have passed the first mark
+     */
+    private void createWhirlpool() {
+        if ((whirlpools.size() < 2)) {
+            MutablePoint centroid = utility.centroid(courseBoundary);
+            double angle = Math.random()*2*Math.PI;
+            double xOff = Math.cos(angle) * 0.01;
+            double yOff = Math.sin(angle) * 0.01;
+            MutablePoint whirlpoolPos = new MutablePoint(centroid.getXValue() + xOff, centroid.getYValue() + yOff);
+            if (isPointInPolygon(whirlpoolPos, courseBoundary)) {
+                int currentLeg = leadLeg;
+                Whirlpool whirlpool = new Whirlpool(whirlpoolSourceID++, currentLeg, whirlpoolPos);
+                whirlpools.add(whirlpool);
+            }
+        }
+    }
+
+    /**
+     * Updates whirlpool position whenever leader advances to next mark
+     */
+    private void updateWhirlpool() {
+        for (Whirlpool whirlpool:whirlpools) {
+            MutablePoint centroid = utility.centroid(courseBoundary);
+            double angle = Math.random()*2*Math.PI;
+            double xOff = Math.cos(angle) * 0.01;
+            double yOff = Math.sin(angle) * 0.01;
+            MutablePoint whirlpoolPos = new MutablePoint(centroid.getXValue() + xOff, centroid.getYValue() + yOff);
+            if (isPointInPolygon(whirlpoolPos, courseBoundary)) {
+                int currentLeg = leadLeg;
+                whirlpool.setCurrentLeg(currentLeg);
+                whirlpool.setPosition(whirlpoolPos);
+            }
+        }
+    }
+
+    /**
      * creates Shark at the start
      */
     private void createShark() {
@@ -208,7 +294,7 @@ public class BoatUpdater {
     }
 
     /**
-     * update the position and heading of the sharks
+     * update the position and heading of the Obstacles
      */
     private void updateShark() {
         if (!crewMembers.isEmpty()) {
@@ -497,6 +583,29 @@ public class BoatUpdater {
             collisionHandler(boat.getPosition(), boat.getVelocity(), 10);
             boat.updatePosition(-10);
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * Calculates if the boat collides with the whirlpool
+     * @param boat Competitor the boat to check collisions for
+     * @return boolean if boat collides
+     * @throws IOException IOException
+     * @throws InterruptedException InterruptedException
+     */
+    private boolean handleWhirlpoolCollisions(Competitor boat) throws IOException, InterruptedException {
+        for (Whirlpool whirlpool: whirlpools) {
+            double collisionRadius = boat.getCollisionRadius() + whirlpool.getCollisionRadius();
+            double distance = raceCourse.distanceBetweenGPSPoints(whirlpool.getPosition(), boat.getPosition());
+            if (distance <= collisionRadius) {
+                handler.yachtEvent(boat.getSourceID(), 2);
+
+                collisionHandler(boat.getPosition(), whirlpool.getCollisionMaginitude(), 10);
+                boat.updatePosition(-10);
+                return true;
+            }
+
         }
         return false;
     }

@@ -1,9 +1,6 @@
 package mockDatafeed;
 
-import models.Blood;
-import models.CrewLocation;
-import models.MutablePoint;
-import models.Shark;
+import models.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,5 +16,6 @@ public interface BoatUpdateEventHandler {
     void fallenCrewEvent(List<CrewLocation> locations) throws IOException;
     void sharkEvent(List<Shark> locations) throws IOException;
     void bloodEvent(List<Blood> locations) throws IOException;
+    void whirlpoolEvent(List<Whirlpool> whirlpools) throws IOException;
 
 }

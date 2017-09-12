@@ -30,7 +30,6 @@ public class CollisionRipple extends Circle{
                 new KeyFrame(Duration.seconds(0.5), new KeyValue(radiusProperty(), radius)),
                 new KeyFrame(Duration.seconds(0.5), new KeyValue(opacityProperty(), 0))
         );
-
     }
 
 

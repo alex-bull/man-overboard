@@ -1,4 +1,4 @@
-package parsers.sharks;
+package parsers.Obstacles;
 
 import models.Blood;
 import models.MutablePoint;
@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static parsers.Converter.hexByteArrayToInt;
-import static parsers.Converter.hexByteArrayToLong;
 import static parsers.Converter.parseCoordinate;
 
 /**

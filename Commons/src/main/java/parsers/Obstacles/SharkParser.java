@@ -1,4 +1,4 @@
-package parsers.sharks;
+package parsers.Obstacles;
 
 import models.MutablePoint;
 import models.Shark;
@@ -22,7 +22,7 @@ public class SharkParser {
     /**
      * parse the shark event message
      * @param packet byte[] a byte array of the message that needs parsing
-     * @return sharkLocations List of sharks
+     * @return sharkLocations List of Obstacles
      */
     public static List<Shark> parseShark(byte[] packet) {
         List<Shark> sharkLocations=new ArrayList<>();

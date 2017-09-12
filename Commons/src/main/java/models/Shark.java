@@ -87,7 +87,7 @@ public class Shark {
 
 
     /**
-     * Updates the sharks position given the time changed
+     * Updates the Obstacles position given the time changed
      *
      * @param elapsedTime the time elapsed in seconds
      */

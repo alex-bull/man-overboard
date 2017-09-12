@@ -80,6 +80,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private GuideArrow guideArrow;
     private Sail sailLine;
     private SharkModel sharkModel;
+    private Map<Integer, WhirlpoolModel> whirlpools = new HashMap<>();
     //FLAGS
     private Boolean finisherListDisplayed = false;
     private boolean isLoaded = false;
@@ -133,6 +134,7 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(sailLine);
         raceViewPane.getChildren().add(sharkModel);
+
 
         finisherListPane.setVisible(false);
 
@@ -282,14 +284,19 @@ public class RaceViewController implements Initializable, TableObserver {
      * checks collisions and draws them
      */
     private void checkCollision(){
-        for(int sourceID:new HashSet<>(dataSource.getCollisions())){
+        HashMap<Integer, Integer> collisions = new HashMap<>(dataSource.getCollisions());
+        for(int sourceID: collisions.keySet()){
             MutablePoint point=setRelativePosition(dataSource.getStoredCompetitors().get(sourceID));
-            if (sourceID == dataSource.getSourceID()) {
+            if (sourceID == dataSource.getSourceID() && collisions.get(sourceID) == 1) {
                 //drawBorder(raceViewPane.getWidth(),raceViewPane.getHeight(),25);
                 new BorderAnimation(raceParentPane, 25).animate();
                 new RandomShake(raceParentPane).animate();
+                drawCollision(point.getXValue(), point.getYValue());
             }
-            drawCollision(point.getXValue(), point.getYValue());
+            else if (sourceID == dataSource.getSourceID() && collisions.get(sourceID) == 2) {
+                System.out.println("whirlpoool collision");
+                new RandomShake(raceParentPane).spin();
+            }
             dataSource.removeCollsions(sourceID);
         }
     }
@@ -593,7 +600,7 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     /**
-     * Draw sharks in the water
+     * Draw Obstacles in the water
      */
     private void drawSharks(){
         Map<Integer, Shark> sharkLocation = dataSource.getSharkLocations();
@@ -610,6 +617,45 @@ public class RaceViewController implements Initializable, TableObserver {
             sharkModel.relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
         }
 
+    }
+
+    /**
+     * Draw whirlpools in the race
+     */
+    private void drawWhirlpools() {
+        Map<Integer, Whirlpool> whirlpoolsLocation = dataSource.getWhirlpools();
+        Set<Integer> removedLocation= new HashSet<>(whirlpools.keySet());
+        removedLocation.removeAll(whirlpoolsLocation.keySet());
+        for(int sourceId:removedLocation){
+            raceViewPane.getChildren().remove(whirlpools.get(sourceId));
+            whirlpools.remove(sourceId);
+        }
+
+        for (int id: whirlpoolsLocation.keySet()) {
+            if (!whirlpools.containsKey(id)) {
+                Whirlpool whirlpool = whirlpoolsLocation.get(id);
+                WhirlpoolModel model = new WhirlpoolModel(new Image("/images/whirlpool.png"));
+                model.update(whirlpool.getPosition());
+                model.animateSpawn();
+                whirlpools.put(id, model);
+                raceViewPane.getChildren().add(model);
+            }
+            else {
+                for (WhirlpoolModel whirlpool: whirlpools.values()) {
+                    whirlpool.spin();
+                }
+            }
+            Image image = whirlpools.get(id).getImage();
+
+            if (isZoom()) {
+                MutablePoint p = whirlpoolsLocation.get(id).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+                whirlpools.get(id).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+            } else {
+                MutablePoint p=whirlpoolsLocation.get(id).getPosition();
+                whirlpools.get(id).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+            }
+
+        }
     }
 
     /**
@@ -803,6 +849,7 @@ public class RaceViewController implements Initializable, TableObserver {
         drawFallenCrew();
         drawSharks();
         drawBlood();
+        drawWhirlpools();
         setBoatLocation();
         updateRace();
         checkCollision();

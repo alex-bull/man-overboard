@@ -19,6 +19,7 @@ public interface DataSource {
     Map<Integer, CrewLocation> getCrewLocations();
     Map<Integer, Shark> getSharkLocations();
     Map<Integer, Blood> getBloodLocations();
+    Map<Integer, Whirlpool> getWhirlpools();
     boolean receive(String host, int port, Scene scene);
     List<MutablePoint> getCourseBoundary();
     String getCourseTimezone();
@@ -38,7 +39,7 @@ public interface DataSource {
     int getMapZoomLevel();
     double getShiftDistance();
     int getSourceID();
-    Set<Integer> getCollisions();
+    Map<Integer, Integer> getCollisions();
     void removeCollsions(int sourceID);
     void send(byte[] data);
     Competitor getCompetitor();

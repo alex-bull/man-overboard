@@ -579,6 +579,15 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         this.sendQueue.put(null, eventPacket);
     }
 
+    /**
+     * Packages and sends whirlpool event
+     * @param whirlpools data for the event
+     * @throws IOException if send fails
+     */
+    public void whirlpoolEvent(List<Whirlpool> whirlpools) throws IOException {
+        byte[] eventPacket = binaryPackager.packageWhirlpoolEvent(whirlpools);
+        this.sendQueue.put(null, eventPacket);
+    }
 
 
     /**

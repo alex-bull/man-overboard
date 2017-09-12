@@ -1,6 +1,5 @@
 package utilities;
 
-import com.google.common.collect.Maps;
 import com.rits.cloning.Cloner;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -50,9 +49,10 @@ import static javafx.collections.FXCollections.observableList;
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
+import static parsers.Obstacles.WhirlpoolParser.parseWhirlpool;
 import static parsers.fallenCrew.FallenCrewParser.parseFallenCrew;
-import static parsers.sharks.BloodParser.parseBlood;
-import static parsers.sharks.SharkParser.parseShark;
+import static parsers.Obstacles.BloodParser.parseBlood;
+import static parsers.Obstacles.SharkParser.parseShark;
 import static utility.Calculator.calculateExpectedTack;
 
 /**
@@ -68,7 +68,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private double windDirection;
     private Cloner cloner=new Cloner();
     private RaceData raceData;
-    private Set<Integer> collisions;
+    private Map<Integer, Integer> collisions;
     private BoatAction boatAction;
     private String timezone;
     private double windSpeed;
@@ -109,7 +109,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     public Interpreter() {
         competitorsPosition = new ArrayList<>();
-        collisions=new HashSet<>();
+        collisions=new HashMap<>();
         this.raceXMLParser = new RaceXMLParser();
 
     }
@@ -185,6 +185,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private Map<Integer,CrewLocation> crewLocations=new HashMap<>();
     private Map<Integer, Shark> sharkLocations = new HashMap<>();
     private Map<Integer, Blood> bloodLocations = new HashMap<>();
+    private Map<Integer, Whirlpool> whirlpools = new HashMap<>();
 
 
 
@@ -379,8 +380,10 @@ public class Interpreter implements DataSource, PacketHandler {
                 YachtEventParser parser = new YachtEventParser(packet);
                 switch (parser.getEventID()){
                     case 1: // collision
-                        collisions.add(parser.getSourceID());
+                        collisions.put(parser.getSourceID(), parser.getEventID());
                         break;
+                    case 2: // whirlpool
+                        collisions.put(parser.getSourceID(), parser.getEventID());
                     default:
                         break;
                 }
@@ -404,9 +407,37 @@ public class Interpreter implements DataSource, PacketHandler {
             case BLOOD:
                 addBloodLocation(parseBlood(packet));
                 break;
+            case WHIRLPOOL:
+                addWhirlPool(parseWhirlpool(packet));
 
             default:
                 break;
+        }
+    }
+
+    /**
+     * add whirlpools with location converted
+     * @param locations location of whirlpools
+     */
+    private void addWhirlPool(List<Whirlpool> locations) {
+        for(Whirlpool whirlpool: locations){
+            MutablePoint location = cloner.deepClone(Projection.mercatorProjection(whirlpool.getPosition()));
+            MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(whirlpool.getPosition()));
+            location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(whirlpool.getPosition()));
+            location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            whirlpools.put(whirlpool.getSourceID(), new Whirlpool(whirlpool.getSourceID(), whirlpool.getCurrentLeg(), location,location17, locationOriginal));
+        }
+    }
+
+    /**
+     * updates whirlpools when scaling level changes
+     */
+    private void updateWhirlpools() {
+        for(Whirlpool whirlpool: whirlpools.values()){
+            MutablePoint point=cloner.deepClone(whirlpool.getPositionOriginal());
+            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            whirlpool.setPosition17(point);
         }
     }
 
@@ -438,7 +469,7 @@ public class Interpreter implements DataSource, PacketHandler {
     }
 
     /**
-     * adds crew locations with location converted
+     * adds blood locations with location converted
      * @param locations list of the blood locations
      */
     public void addBloodLocation(List<Blood> locations){
@@ -505,6 +536,8 @@ public class Interpreter implements DataSource, PacketHandler {
     public Map<Integer,Blood> getBloodLocations() {
         return bloodLocations;
     }
+
+    public Map<Integer, Whirlpool> getWhirlpools() {return whirlpools;}
 
 
     /**
@@ -737,9 +770,10 @@ public class Interpreter implements DataSource, PacketHandler {
         updateCrewLocation();
         updateSharkLocation();
         updateBloodLocation();
+        updateWhirlpools();
     }
 
-    public Set<Integer> getCollisions(){
+    public Map<Integer, Integer> getCollisions(){
         return collisions;
     }
 

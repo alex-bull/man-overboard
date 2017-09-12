@@ -1,7 +1,6 @@
 package utility;
 
 
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import models.*;
 import parsers.BoatStatusEnum;
 
@@ -591,7 +590,7 @@ public class BinaryPackager {
 
     /**
      * Packages Shark event
-     * @param locations the location of the sharks
+     * @param locations the location of the Obstacles
      * @return the packet for event
      */
     public byte[] packageSharkEvent(List<Shark> locations){
@@ -641,6 +640,34 @@ public class BinaryPackager {
             packetBuffer.putInt(blood.getSourceID());
             packetBuffer.putInt(latLngToInt(blood.getLatitude()));
             packetBuffer.putInt(latLngToInt(blood.getLongitude()));
+        }
+
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+    /**
+     * Packages whirlpool event
+     * @param whirlpools the data for whirlpool
+     * @return the packet for event
+     */
+    public byte[] packageWhirlpoolEvent(List<Whirlpool> whirlpools) {
+        int n=whirlpools.size();
+        byte[] packet=new byte[20+n*16]; // total size of packet
+
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 119;
+        short bodyLength = (short) (n*16+1);
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.put((byte) n);
+        for(Whirlpool whirlpool:whirlpools){
+            packetBuffer.putInt(whirlpool.getSourceID());
+            packetBuffer.putInt(whirlpool.getCurrentLeg());
+            packetBuffer.putInt(latLngToInt(whirlpool.getLatitude()));
+            packetBuffer.putInt(latLngToInt(whirlpool.getLongitude()));
         }
 
         //CRC

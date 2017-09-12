@@ -24,6 +24,15 @@ public class RandomShake {
     }
 
 
+    public void spin(){
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(1), t -> {
+                    node.setRotate(node.getRotate()+4.5);
+                }));
+        timeline.setCycleCount(10);
+        timeline.setOnFinished(event-> node.setRotate(0));
+    }
+
     /**
      * Animates the node to shake for a short time
      */
