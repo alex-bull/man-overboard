@@ -53,16 +53,15 @@ public class StartController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Stage stage = (Stage) joinButton.getScene().getWindow();
 
         assert root != null;
-        Scene scene = new Scene(root);
         LobbyController lobbyController = loader.getController();
         Interpreter interpreter = new Interpreter();
-        interpreter.setPrimaryStage(stage);
+        interpreter.setPrimaryStage(App.getPrimaryStage());
         lobbyController.setDataSource(interpreter);
         lobbyController.begin();
-        stage.setScene(scene);
+        App.getScene().setRoot(root);
+
     }
 
 
@@ -75,13 +74,11 @@ public class StartController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Stage stage = (Stage) joinButton.getScene().getWindow();
 
         assert root != null;
-        Scene scene = new Scene(root);
         SettingsController settingsController = loader.getController();
         settingsController.refresh();
-        stage.setScene(scene);
+        App.getScene().setRoot(root);
     }
 
 
@@ -94,11 +91,9 @@ public class StartController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Stage stage = (Stage) joinButton.getScene().getWindow();
 
         assert root != null;
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+        App.getScene().setRoot(root);
     }
 
 

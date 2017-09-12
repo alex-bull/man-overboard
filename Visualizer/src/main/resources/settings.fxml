@@ -16,7 +16,7 @@
 
 <AnchorPane styleClass="background" stylesheets="@css/theme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SettingsController">
     <children>
-        <GridPane layoutY="-6.0" prefHeight="800.0" prefWidth="1460.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <GridPane prefHeight="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="70.0" prefWidth="605.0" />
@@ -24,11 +24,11 @@
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints maxHeight="50.0" minHeight="0.0" percentHeight="20.0" prefHeight="50.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="300.0" minHeight="10.0" percentHeight="15.0" prefHeight="86.71890258789062" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="300.0" minHeight="10.0" percentHeight="15.0" prefHeight="50.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="300.0" minHeight="10.0" percentHeight="10.0" prefHeight="86.71890258789062" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="300.0" minHeight="0.0" percentHeight="15.0" prefHeight="86.71890258789062" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="291.2810974121094" minHeight="70.0" percentHeight="20.0" prefHeight="291.2810974121094" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="291.2810974121094" minHeight="0.0" percentHeight="15.0" prefHeight="291.2810974121094" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="300.0" minHeight="0.0" percentHeight="15.0" prefHeight="50.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="300.0" minHeight="70.0" percentHeight="20.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="300.0" minHeight="0.0" percentHeight="15.0" prefHeight="50.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
             <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAndExit" prefHeight="30.0" prefWidth="160.0" text="Done" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="TOP" />
@@ -100,7 +100,7 @@
             </GridPane>
             <Label text="Settings" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER">
                <font>
-                  <Font size="35.0" />
+                  <Font name="Gentium Basic Bold Italic" size="60.0" />
                </font>
             </Label>
             </children>

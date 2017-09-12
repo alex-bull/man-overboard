@@ -261,11 +261,9 @@ public class LobbyController implements Initializable {
         }
 
         assert root != null;
-        Scene scene = new Scene(root);
         StartController startController = loader.getController();
-        Stage stage = (Stage) gameTypeLabel.getScene().getWindow();
         startController.begin();
-        stage.setScene(scene);
+        App.getScene().setRoot(root);
     }
 
 
@@ -305,12 +303,9 @@ public class LobbyController implements Initializable {
                 }
 
                 assert root != null;
-                Scene scene = new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
                 MainController mainController = loader.getController();
                 mainController.beginRace(dataSource, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight());
-                Stage stage = (Stage) gameTypeLabel.getScene().getWindow();
-                stage.setTitle("Man Overboard");
-                stage.setScene(scene);
+                App.getScene().setRoot(root);
             }
         });
     }

@@ -62,11 +62,9 @@ public class SettingsController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Stage stage = (Stage) hostField.getScene().getWindow();
 
         assert root != null;
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+        App.getScene().setRoot(root);
 
     }
 
