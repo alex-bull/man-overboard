@@ -38,6 +38,7 @@ public class BoatUpdater {
     private int crewLocationSourceID = 0;
     private List<CrewLocation> crewMembers = new ArrayList<>();
     private Map<Integer, PowerUp> powerUps = new HashMap<>();
+    private Random random=new Random();
 
 
 
@@ -494,18 +495,20 @@ public class BoatUpdater {
      * @param health    the health reduced, 5 crew members per location
      */
     private void collisionHandler(MutablePoint location, double magnitude, double health) throws IOException {
-        Random randomGenerator = new Random();
+
         int numLocation = (int) health / 5;
         for (int i = 0; i < numLocation; i++) {
+            //50% chance of dropping
+            if (random.nextDouble()<0.32) {
+                //distance from the boat with mean magnitude and variance magnitude/2
+                double distance = magnitude * 10 + random.nextGaussian() * magnitude * 5;
+                //angle from the boat collision from 0 to 360 degrees
+                double angle = random.nextDouble() * 360;
+                MutablePoint position = movePoint(new Force(distance, angle, false), location, 1);
 
-            //distance from the boat with mean magnitude and variance magnitude/2
-            double distance = magnitude * 10 + randomGenerator.nextGaussian() * magnitude * 5;
-            //angle from the boat collision from 0 to 360 degrees
-            double angle = randomGenerator.nextDouble() * 360;
-            MutablePoint position = movePoint(new Force(distance, angle, false), location, 1);
-
-            CrewLocation crewLocation = new CrewLocation(crewLocationSourceID++, 5, position);
-            crewMembers.add(crewLocation);
+                CrewLocation crewLocation = new CrewLocation(crewLocationSourceID++, 5, position);
+                crewMembers.add(crewLocation);
+            }
         }
 
         handler.fallenCrewEvent(crewMembers);

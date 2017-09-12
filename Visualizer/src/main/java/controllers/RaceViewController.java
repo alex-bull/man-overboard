@@ -46,6 +46,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
+import static Elements.PowerUpModel.getImageWidth;
+import static java.lang.Math.sqrt;
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.scene.paint.Color.ORANGERED;
 import static parsers.BoatStatusEnum.DSQ;
@@ -255,7 +257,7 @@ public class RaceViewController implements Initializable, TableObserver {
         zoom=true;
         mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getZoomLevel()));
         updateRace();
-        setScale(2);
+        setScale(nodeSizeFunc(dataSource.getZoomLevel()));
         dataSource.changeScaling(0);
         track.setVisible(!isZoom());
     }
@@ -275,6 +277,15 @@ public class RaceViewController implements Initializable, TableObserver {
 
     public boolean isZoom() {
         return zoom;
+    }
+
+    /**
+     * returns the node size scaling corresponding to zoom level
+     * @param zoomLevel the current zoom level of the map
+     * @return the node size to be scaled by
+     */
+    public double nodeSizeFunc(int zoomLevel){
+        return 0.007*zoomLevel*zoomLevel;
     }
 
 
@@ -641,6 +652,12 @@ public class RaceViewController implements Initializable, TableObserver {
             model.setScaleY(scale);
         }
 
+        for(ImageView imageView: powerUps.values()){
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(scale*getImageWidth());
+
+        }
+
     }
 
 
@@ -724,12 +741,13 @@ public class RaceViewController implements Initializable, TableObserver {
         double wakeLengthFactor=1;
 
         if(isZoom()){
-            width*=2;
-            length*=2;
-            boatLength *= 2;
-            startWakeOffset*= 2;
+            double multiplier=nodeSizeFunc(dataSource.getZoomLevel());
+            width*=multiplier;
+            length*=multiplier;
+            boatLength *= multiplier;
+            startWakeOffset*= multiplier;
 //            wakeWidthFactor*= 1;
-            wakeLengthFactor*=2;
+            wakeLengthFactor*=multiplier;
         }
 
         updateCourse();

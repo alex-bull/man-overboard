@@ -13,8 +13,8 @@ import static parsers.powerUp.PowerUpType.POTION;
  * Visual representation of a powerup
  */
 public class PowerUpModel extends ImageView {
-    private Integer imageWidth = 32;
-    private Integer imageHeight = 32;
+    private static final Integer imageWidth = 32;
+    private static final Integer imageHeight = 32;
 
 
     /**
@@ -36,6 +36,9 @@ public class PowerUpModel extends ImageView {
         }
     }
 
+    public static Integer getImageWidth() {
+        return imageWidth;
+    }
 
     /**
      * Update the position of the powerup model
