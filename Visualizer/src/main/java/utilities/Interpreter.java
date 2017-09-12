@@ -354,32 +354,27 @@ public class Interpreter implements DataSource, PacketHandler {
                 this.boatAction = boatActionParser.processMessage(packet);
 
                 if (boatAction != null && headerData != null) {
-                    int headerDataSourceID = headerData.getSourceID();
-
-                    if (boatAction.equals(BoatAction.SAILS_IN) && headerDataSourceID == this.sourceID) {
+                    if(headerData.getSourceID() == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
-                        boat.sailsIn();
-
+                        switch (boatAction) {
+                            case SAILS_IN:
+                                boat.sailsIn();
+                                break;
+                            case SAILS_OUT:
+                                boat.sailsOut();
+                                break;
+                            case SWITCH_SAILS:
+                                boat.switchSails();
+                                break;
+                            case TACK_GYBE:
+                                double boatHeading = boat.getCurrentHeading();
+                                boat.setCurrentHeading(calculateExpectedTack(this.windDirection, boatHeading));
+                                break;
+                            case RIP:
+                                boat.setStatus(DSQ);
+                                break;
+                        }
                     }
-                    if (boatAction.equals(BoatAction.SAILS_OUT) && headerDataSourceID == this.sourceID) {
-                        Competitor boat = this.storedCompetitors.get(this.sourceID);
-                        boat.sailsOut();
-
-                    }
-                    if (boatAction.equals(BoatAction.SWITCH_SAILS) && headerDataSourceID == this.sourceID) {
-                        Competitor boat = this.storedCompetitors.get(this.sourceID);
-                        boat.switchSails();
-                    }
-                    if (boatAction.equals(BoatAction.TACK_GYBE) && headerDataSourceID == this.sourceID) {
-                        Competitor boat = this.storedCompetitors.get(this.sourceID);
-                        double boatHeading = boat.getCurrentHeading();
-                        boat.setCurrentHeading(calculateExpectedTack(this.windDirection, boatHeading));
-                    }
-                    if (boatAction.equals(BoatAction.RIP) && headerDataSourceID == this.sourceID) {
-                        Competitor boat = this.storedCompetitors.get(this.sourceID);
-                        boat.setStatus(DSQ);
-                    }
-
                 }
                 break;
 

@@ -37,10 +37,6 @@ public interface Competitor {
 
     void setColor(Color color);
 
-    void setIsUpwind(boolean upwind);
-
-    boolean isUpwind();
-
     int getCurrentLegIndex();
 
     void setLatitude(double latitude);

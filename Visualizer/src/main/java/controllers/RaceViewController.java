@@ -773,6 +773,8 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param zoomEvent zoom event
      */
     public void zoom(ZoomEvent zoomEvent){
+
+        System.out.println(zoomEvent.getTotalZoomFactor());
         if(isZoom()){
             zoomOut();
         } else{
