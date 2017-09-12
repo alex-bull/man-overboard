@@ -82,7 +82,7 @@ public class LobbyController implements Initializable {
 //            competitorList.add("Boat 10" +i);
 //        }
 
-        Scene scene = starterList.getScene();
+        Scene scene = App.getScene();
 
         //start sound loop
         Sounds.player.loopMP3WithFadeIn("sounds/bensound-instinct.mp3", 4);
