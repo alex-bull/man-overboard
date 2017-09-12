@@ -100,7 +100,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private TCPClient TCPClient;
 
     //zoom factor for scaling
-    private double zoomLevel= 12;
+    private double zoomLevel = 12;
 
     private WorkQueue receiveQueue = new WorkQueue(1000000);
 
@@ -668,7 +668,6 @@ public class Interpreter implements DataSource, PacketHandler {
      * @param deltaLevel
      */
     public void changeScaling(double deltaLevel){
-
         double max = 17;
         double min = 12;
         if ((deltaLevel < 0 && this.zoomLevel > min) ||(deltaLevel > 0 && this.zoomLevel < max)) {
