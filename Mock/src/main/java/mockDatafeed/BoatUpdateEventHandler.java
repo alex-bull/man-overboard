@@ -14,5 +14,6 @@ public interface BoatUpdateEventHandler {
     void markRoundingEvent(int sourceId, int compoundMarkId);
     void boatStateEvent(Integer sourceId, double health);
     void fallenCrewEvent(List<CrewLocation> locations) throws IOException;
+    void powerUpTakenEvent(int boatId, int powerId, int duration);
 
 }

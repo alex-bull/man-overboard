@@ -79,6 +79,20 @@ public class MainController {
                     dataSource.changeScaling(-1);
                     raceViewController.zoomIn();
                     break;
+                case DIGIT1:
+                    if(dataSource.getCompetitor().hasSpeedBoost()) {
+                        this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.BOOST.getValue(), dataSource.getSourceID()));
+                        dataSource.getCompetitor().disableBoost();
+                        playerController.hideBoost();
+                    }
+                    break;
+                case DIGIT2:
+                    if(dataSource.getCompetitor().hasPotion()) {
+                        this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.POTION.getValue(), dataSource.getSourceID()));
+                        dataSource.getCompetitor().usePotion();
+                        playerController.hidePotion();
+                    }
+                    break;
             }
     }
 
@@ -93,7 +107,7 @@ public class MainController {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
         tableController.addObserver(raceViewController);
-        playerController.setuo(dataSource, App.getPrimaryStage());
+        playerController.setup(dataSource, App.getPrimaryStage());
         this.binaryPackager = new BinaryPackager();
 
         AnimationTimer timer = new AnimationTimer() {

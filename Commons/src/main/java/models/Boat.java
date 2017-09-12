@@ -40,6 +40,11 @@ public class Boat implements Competitor {
     private double healthLevel = 100;
     private double maxHealth = 100;
     private Force boatSpeed;
+    private boolean hasSpeedBoost = false;
+    private boolean activatedBoost = false;
+
+    private long boostTimeout = 0;
+    private boolean hasPotion = false;
 
 
     //collision size
@@ -108,6 +113,55 @@ public class Boat implements Competitor {
         this.boatSpeed=new Force(0,0,false);
     }
 
+    public boolean boostActivated() {
+        boolean activated = activatedBoost;
+        return activated;
+    }
+
+    public void enablePotion() {
+        this.hasPotion = true;
+    }
+
+    public boolean hasPotion() {
+        return hasPotion;
+    }
+
+    public void usePotion() {
+        this.hasPotion = false;
+    }
+
+    public long getBoostTimeout() {
+        return boostTimeout;
+    }
+
+    public void resetBoostTimeout() {
+        this.boostTimeout = 0;
+    }
+
+    public void activateBoost() {
+        if(this.hasSpeedBoost) {
+            this.activatedBoost = true;
+            this.boostTimeout = System.currentTimeMillis() + 7000;
+            this.hasSpeedBoost = false;
+        }
+    }
+
+    public void deactivateBoost() {
+        this.activatedBoost = false;
+    }
+
+    public boolean hasSpeedBoost() {
+        boolean speeding = hasSpeedBoost;
+        return speeding;
+    }
+
+    public void enableBoost() {
+        this.hasSpeedBoost = true;
+    }
+
+    public void disableBoost() {
+        this.hasSpeedBoost = false;
+    }
 
     public Line getRoundingLine1() {
         return roundingLine1;
@@ -134,6 +188,7 @@ public class Boat implements Competitor {
 
     }
 
+
     public double getMaxHealth() {
         return maxHealth;
     }
@@ -148,9 +203,8 @@ public class Boat implements Competitor {
      */
     public void updateHealth(int delta) {
         double resultHealth = healthLevel + delta;
-
         if(resultHealth > maxHealth) {
-           this.healthLevel = maxHealth;
+            this.healthLevel = maxHealth;
         } else this.healthLevel = resultHealth;
     }
 
@@ -373,11 +427,11 @@ public class Boat implements Competitor {
      * @return double downWind
      */
     private double getDownWind(double windAngle) {
-       double downWind = windAngle + 180;
-       if(downWind > 360) {
-           downWind = downWind - 360;
-       }
-       return downWind;
+        double downWind = windAngle + 180;
+        if(downWind > 360) {
+            downWind = downWind - 360;
+        }
+        return downWind;
     }
 
     /**
@@ -389,8 +443,14 @@ public class Boat implements Competitor {
     public void changeHeading(boolean upwind, double windAngle){
         int turnAngle = 3;
 
+        if(windAngle < 360 && windAngle > 180) {
+            windAngle = windAngle - 180;
+            upwind = !upwind;
+        }
+
         double downWind = getDownWind(windAngle);
         double currentHeading=getCurrentHeading();
+
         if(currentHeading>= windAngle && currentHeading <= downWind) {
             if(upwind) {
                 setCurrentHeading(currentHeading - turnAngle);
@@ -400,7 +460,6 @@ public class Boat implements Competitor {
             }
         }
         else {
-
             if(upwind) {
                 setCurrentHeading(currentHeading + turnAngle);
             }
@@ -408,10 +467,7 @@ public class Boat implements Competitor {
                 setCurrentHeading(currentHeading - turnAngle);
             }
         }
-//        setCurrentHeading(currentHeading % 360);
-//        System.out.println(currentHeading);
-//        System.out.println(boatSpeed.getDirection());
-//        currentHeading.setValue(currentHeading.getValue() % 360);
+
     }
 
     @Override
