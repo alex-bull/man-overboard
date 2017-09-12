@@ -52,7 +52,7 @@ public class BoatModel extends Group {
             Image boatImage = new Image("images/frigate.png");
             boatModel.setFill(new ImagePattern(boatImage));
         }
-        else if (Objects.equals(boatType, "yacht")) {
+        else if (Objects.equals(boatType, "galleon")) {
             Image boatImage = new Image("images/galleon.png");
             boatModel.setFill(new ImagePattern(boatImage));
         }

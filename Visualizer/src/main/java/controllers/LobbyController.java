@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -177,7 +178,7 @@ public class LobbyController implements Initializable {
     @FXML
     public void confirmBoatDetails() {
         Competitor boat = dataSource.getCompetitor();
-        if (nameText.getText() != null) {
+        if (!Objects.equals(nameText.getText(), "")) {
             boat.setTeamName(nameText.getText());
         }
         if (iterator%boatImages.size() == 1) boatType="cog";
