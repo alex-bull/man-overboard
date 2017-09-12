@@ -87,11 +87,14 @@ public class MainController {
                     break;
 
                 case A:
-                    dataSource.changeScaling(1);
+                    dataSource.changeScaling(0.1);
+                    System.out.println(dataSource.getZoomLevel());
                     raceViewController.zoomIn();
                     break;
                 case D:
-                    dataSource.changeScaling(-1);
+                    dataSource.changeScaling(-0.1);
+                    System.out.println("zooming out");
+                    System.out.println(dataSource.getZoomLevel());
                     raceViewController.zoomIn();
                     break;
             }

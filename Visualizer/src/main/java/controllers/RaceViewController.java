@@ -94,6 +94,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private boolean isLoaded = false;
     private boolean zoom = false;
 
+
     //CONTROL VARIABLES
     private int counter = 0;
     private Integer selectedBoatSourceId = 0;
@@ -101,6 +102,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private double boatPositionY; //current position in screen coords
     private MutablePoint currentPosition17; //boat position in screen coordinates with zoom level 17
     private ObservableList<String> observableFinisherList = observableArrayList();
+    private double touchZoomLevel = 0.0; // current zoom level
+    private double zoomScale = 1.0;
 
     //CONFIG
     private static final Color backgroundColor = Color.POWDERBLUE;
@@ -255,8 +258,12 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void zoomIn(){
         zoom=true;
-        mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getZoomLevel()));
+        mapEngine.executeScript(String.format("setZoom(%f);",dataSource.getZoomLevel()));
         updateRace();
+        if(zoomScale < 2){
+            zoomScale += 0.1;
+            setScale(zoomScale);
+        }
         setScale(2);
         track.setVisible(!isZoom());
     }
@@ -267,10 +274,17 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void zoomOut(){
         zoom=false;
-        drawBackgroundImage();
+        mapEngine.executeScript(String.format("setZoom(%f);",dataSource.getZoomLevel()));
         updateRace();
-        setScale(1);
+        if(zoomScale > 1){
+            zoomScale -= 0.1;
+            setScale(zoomScale);
+        }
+//        setScale(1);
         track.setVisible(!isZoom());
+
+
+
     }
 
     public boolean isZoom() {
@@ -346,8 +360,8 @@ public class RaceViewController implements Initializable, TableObserver {
         boolean alive;
         if (isZoom()) {
             MutablePoint location = getZoomedBoatLocation(boat);
-            alive = healthBar.update(boat, location.getXValue(), location.getYValue(), true);
-        } else alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), false);
+            alive = healthBar.update(boat, location.getXValue(), location.getYValue(), zoom);
+        } else alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), zoom);
         if (!alive) this.killBoat(boat);
 
     }
@@ -443,7 +457,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawBackgroundImage() {
         try {
-            mapEngine.executeScript(String.format("setZoom(%d);",dataSource.getMapZoomLevel()));
+            mapEngine.executeScript(String.format("setZoom(%f);",dataSource.getMapZoomLevel()));
             List<Double> bounds=dataSource.getGPSbounds();
             mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
             mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
@@ -774,12 +788,15 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     public void zoom(ZoomEvent zoomEvent){
 
-        System.out.println(zoomEvent.getTotalZoomFactor());
-        if(isZoom()){
-            zoomOut();
-        } else{
+        if(touchZoomLevel < zoomEvent.getTotalZoomFactor()){
+            dataSource.changeScaling(0.1);
+            zoomIn();
+        } else {
+            dataSource.changeScaling(-0.1);
             zoomIn();
         }
+
+        touchZoomLevel = zoomEvent.getTotalZoomFactor();
     }
 
 

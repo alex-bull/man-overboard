@@ -17,8 +17,8 @@ import java.util.Set;
  * Data source
  */
 public interface DataSource {
-    void changeScaling(int Multiplier);
-    int getZoomLevel();
+    void changeScaling(double Multiplier);
+    double getZoomLevel();
     Map<Integer, CrewLocation> getCrewLocations();
     boolean receive(String host, int port, Scene scene);
     List<MutablePoint> getCourseBoundary();
@@ -36,7 +36,7 @@ public interface DataSource {
     Map<Integer, CourseFeature> getCourseFeatureMap();
     Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures();
     List<Double> getGPSbounds();
-    int getMapZoomLevel();
+    double getMapZoomLevel();
     double getShiftDistance();
     int getSourceID();
     Set<Integer> getCollisions();

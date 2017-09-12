@@ -100,7 +100,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private TCPClient TCPClient;
 
     //zoom factor for scaling
-    private int zoomLevel=17;
+    private double zoomLevel= 12;
 
     private WorkQueue receiveQueue = new WorkQueue(1000000);
 
@@ -598,7 +598,7 @@ public class Interpreter implements DataSource, PacketHandler {
     }
 
     @Override
-    public int getZoomLevel() {
+    public double getZoomLevel() {
         return zoomLevel;
     }
 
@@ -667,8 +667,13 @@ public class Interpreter implements DataSource, PacketHandler {
      * changes the scaling when zoomed in
      * @param deltaLevel
      */
-    public void changeScaling(int deltaLevel){
-        this.zoomLevel+=deltaLevel;
+    public void changeScaling(double deltaLevel){
+
+        double max = 17;
+        double min = 12;
+        if ((deltaLevel < 0 && this.zoomLevel > min) ||(deltaLevel > 0 && this.zoomLevel < max)) {
+            this.zoomLevel += deltaLevel;
+        }
         updateCourseMarksScaling();
         updateCourseBoundary();
         updateCrewLocation();
@@ -686,8 +691,8 @@ public class Interpreter implements DataSource, PacketHandler {
         return GPSbounds;
     }
 
-    public int getMapZoomLevel() {
-        return (int) raceXMLParser.getZoomLevel();
+    public double getMapZoomLevel() {
+        return raceXMLParser.getZoomLevel();
     }
 
     public double getShiftDistance() {
