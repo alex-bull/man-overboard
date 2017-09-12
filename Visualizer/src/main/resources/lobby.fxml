@@ -75,9 +75,6 @@
                      </rowConstraints>
                      <children>
                         <ImageView fx:id="boatImageView" fitHeight="136.0" fitWidth="382.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@images/boat.png" />
-                           </image>
                         </ImageView>
                      </children>
                   </GridPane>

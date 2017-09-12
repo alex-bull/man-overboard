@@ -34,7 +34,6 @@ import utility.BinaryPackager;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.ListIterator;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -77,7 +76,7 @@ public class LobbyController implements Initializable {
     private Image frigate;
     private Image galleon;
     private ArrayList<Image> boatImages = new ArrayList<>();
-    private Integer iterator = 0;
+    private Integer index = 0;
     private String boatType = "yacht";
     private Stage primaryStage;
     private ObservableList<String> competitorList = FXCollections.observableArrayList();
@@ -214,25 +213,25 @@ public class LobbyController implements Initializable {
         if (!Objects.equals(nameText.getText(), "")) {
             boat.setTeamName(nameText.getText());
         }
-        if (iterator%boatImages.size() == 1) boatType="cog";
-        if (iterator%boatImages.size() == 2) boatType="frigate";
-        if (iterator%boatImages.size() == 3) boatType="galleon";
+        if (index %boatImages.size() == 1) boatType="cog";
+        if (index %boatImages.size() == 2) boatType="frigate";
+        if (index %boatImages.size() == 3) boatType="galleon";
         boat.setBoatType(boatType);
     }
 
     @FXML
     public void showPreviousBoat(){
-        iterator--;
-        if (iterator < 0) {
-            iterator += boatImages.size();
+        index--;
+        if (index < 0) {
+            index += boatImages.size();
         }
-        boatImageView.setImage(boatImages.get(iterator%boatImages.size()));
+        boatImageView.setImage(boatImages.get(index %boatImages.size()));
     }
 
     @FXML
     public void showNextBoat(){
-        iterator++;
-        boatImageView.setImage(boatImages.get(iterator%boatImages.size()));
+        index++;
+        boatImageView.setImage(boatImages.get(index %boatImages.size()));
 
     }
 
