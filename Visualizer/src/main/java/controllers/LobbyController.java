@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -31,8 +32,12 @@ import utility.BinaryPackager;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+import static java.lang.Math.abs;
 
 
 /**
@@ -53,7 +58,18 @@ public class LobbyController implements Initializable {
     @FXML private ImageView courseImageView;
     @FXML private Label locationLabel;
     @FXML private Label gameTypeLabel;
-    @FXML private Label playerLabel;
+    @FXML private TextField nameText;
+    @FXML private Button confirmButton;
+    @FXML private Button leftButton;
+    @FXML private Button rightButton;
+    @FXML private GridPane customPane;
+    private Image yacht;
+    private Image cog;
+    private Image frigate;
+    private Image galleon;
+    private ArrayList<Image> boatImages = new ArrayList<>();
+    private Integer iterator = 0;
+    private String boatType = "yacht";
     private Stage primaryStage;
     private ObservableList<String> competitorList = FXCollections.observableArrayList();
     private Rectangle2D primaryScreenBounds;
@@ -122,6 +138,16 @@ public class LobbyController implements Initializable {
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         starterList.setItems(competitorList);
 
+        yacht = new Image("images/yacht.png");
+        cog = new Image("images/cog.png");
+        frigate = new Image("images/frigate.png");
+        galleon = new Image("images/galleon.png");
+        boatImages.add(yacht);
+        boatImages.add(cog);
+        boatImages.add(frigate);
+        boatImages.add(galleon);
+        boatImageView.setImage(yacht);
+        boatImageView.setRotate(90);
     }
 
 
@@ -146,6 +172,34 @@ public class LobbyController implements Initializable {
     public void leaveLobby() {
         dataSource.send(new BinaryPackager().packageLeaveLobby());
         System.exit(0); //this will go back to the home screen
+    }
+
+    @FXML
+    public void confirmBoatDetails() {
+        Competitor boat = dataSource.getCompetitor();
+        if (nameText.getText() != null) {
+            boat.setTeamName(nameText.getText());
+        }
+        if (iterator%boatImages.size() == 1) boatType="cog";
+        if (iterator%boatImages.size() == 2) boatType="frigate";
+        if (iterator%boatImages.size() == 3) boatType="galleon";
+        boat.setBoatType(boatType);
+    }
+
+    @FXML
+    public void showPreviousBoat(){
+        iterator--;
+        if (iterator < 0) {
+            iterator += boatImages.size();
+        }
+        boatImageView.setImage(boatImages.get(iterator%boatImages.size()));
+    }
+
+    @FXML
+    public void showNextBoat(){
+        iterator++;
+        boatImageView.setImage(boatImages.get(iterator%boatImages.size()));
+
     }
 
 
@@ -180,7 +234,7 @@ public class LobbyController implements Initializable {
             System.out.println("Invalid boat image url, using default image");
             return;
         }
-        this.playerLabel.setText(playerAlias);
+        this.nameText.setText(playerAlias);
     }
 
 
@@ -204,7 +258,7 @@ public class LobbyController implements Initializable {
         this.progressIndicator.setVisible(false);
         this.competitorList.clear();
         this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
-        if (dataSource.getCompetitor() != null) this.playerLabel.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
+        //if (dataSource.getCompetitor() != null) this.nameText.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
     }
 
 

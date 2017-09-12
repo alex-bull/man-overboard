@@ -40,6 +40,7 @@ public class Boat implements Competitor {
     private double healthLevel = 100;
     private double maxHealth = 100;
     private Force boatSpeed;
+    private String boatType = "yacht";
 
 
     //collision size
@@ -281,6 +282,10 @@ public class Boat implements Competitor {
     public void setPosition(MutablePoint newPos) {
         this.position = newPos;
     }
+
+    public String getBoatType() { return this.boatType; }
+
+    public void setBoatType(String boatType) { this.boatType = boatType; }
 
     @Override
     public String getAbbreName() {

@@ -101,5 +101,10 @@ public interface Competitor {
 
     void setRoundingLine2(Line roundingLine2);
 
+    void setTeamName(String teamName);
+
+    void setBoatType(String boatType);
+
+    String getBoatType();
 
 }

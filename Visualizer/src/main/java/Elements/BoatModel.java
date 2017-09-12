@@ -1,12 +1,16 @@
 package Elements;
 
 import javafx.scene.Group;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import models.MutablePoint;
+
+import java.util.Objects;
 
 import static javafx.scene.paint.Color.BLACK;
 
@@ -19,19 +23,43 @@ public class BoatModel extends Group {
 
     /**
      * Initialize a boat model
-     * @param color Color the color of the boat
+     * @param boatType String, type of boat image to be displayed for player
      * @param player boolean, true if the player marker should be shown
      */
-    public BoatModel(Color color, boolean player) {
+    public BoatModel(String boatType, boolean player) {
 
         Polygon boatModel = new Polygon();
+//        boatModel.getPoints().addAll(
+//                -6.0, -14.0, //top
+//                -6.0, 14.0, //left
+//                6.0, 14.0,
+//                6.0, -14.0); //right
         boatModel.getPoints().addAll(
-                0.0, -10.0, //top
-                -5.0, 10.0, //left
-                5.0, 10.0); //right
-        boatModel.setFill(color);
+                -11.0, -21.0, //top
+                -11.0, 21.0, //left
+                11.0, 21.0,
+                11.0, -21.0); //right
 
-        boatModel.setStroke(BLACK);
+        if (Objects.equals(boatType, "yacht")) {
+            Image boatImage = new Image("images/yacht.png");
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (Objects.equals(boatType, "cog")) {
+            Image boatImage = new Image("images/cog.png");
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (Objects.equals(boatType, "frigate")) {
+            Image boatImage = new Image("images/frigate.png");
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (Objects.equals(boatType, "yacht")) {
+            Image boatImage = new Image("images/galleon.png");
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+
+
+
+        //boatModel.setStroke(BLACK);
         this.getChildren().add(boatModel);
 
         if (player) {
