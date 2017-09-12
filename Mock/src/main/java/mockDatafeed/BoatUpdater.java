@@ -233,8 +233,8 @@ public class BoatUpdater {
         if ((whirlpools.size() < 2)) {
             MutablePoint centroid = utility.centroid(courseBoundary);
             double angle = Math.random()*2*Math.PI;
-            double xOff = Math.cos(angle) * 0.01;
-            double yOff = Math.sin(angle) * 0.01;
+            double xOff = Math.cos(angle) * 0.05;
+            double yOff = Math.sin(angle) * 0.05;
             MutablePoint whirlpoolPos = new MutablePoint(centroid.getXValue() + xOff, centroid.getYValue() + yOff);
             if (isPointInPolygon(whirlpoolPos, courseBoundary)) {
                 int currentLeg = leadLeg;

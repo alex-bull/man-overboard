@@ -294,7 +294,6 @@ public class RaceViewController implements Initializable, TableObserver {
                 drawCollision(point.getXValue(), point.getYValue());
             }
             else if (sourceID == dataSource.getSourceID() && collisions.get(sourceID) == 2) {
-                System.out.println("whirlpoool collision");
                 new RandomShake(raceParentPane).spin();
             }
             dataSource.removeCollsions(sourceID);

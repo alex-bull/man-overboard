@@ -27,7 +27,7 @@ public class WhirlpoolModel extends ImageView {
     }
 
     public void spin() {
-        this.setRotate(this.getRotate() + 4.5);
+        this.setRotate(this.getRotate() + 8);
     }
 
     public Timeline animateSpawn() {
