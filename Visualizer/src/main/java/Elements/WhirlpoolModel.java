@@ -5,6 +5,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import models.MutablePoint;
 
@@ -16,18 +17,22 @@ public class WhirlpoolModel extends ImageView {
     Timeline animation;
     public WhirlpoolModel(Image image) {
         this.setImage(image);
-        this.setFitHeight(40);
-        this.setFitWidth(40);
     }
 
     public void update(MutablePoint position) {
         this.setX(position.getXValue());
         this.setY(position.getYValue());
+        Circle clip = new Circle(position.getXValue()+20, position.getYValue()+20, 20);
+        this.setClip(clip);
+    }
 
+    public void updateZoom(int zoomLevel) {
+//        this.setFitWidth(40 * (Math.floorDiv(40, zoomLevel)));
+//        this.setFitWidth(40 * (Math.floorDiv(40, zoomLevel)));
     }
 
     public void spin() {
-        this.setRotate(this.getRotate() + 8);
+        this.setRotate(this.getRotate() + 5);
     }
 
     public Timeline animateSpawn() {

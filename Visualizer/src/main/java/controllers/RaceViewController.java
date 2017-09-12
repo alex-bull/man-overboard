@@ -615,7 +615,6 @@ public class RaceViewController implements Initializable, TableObserver {
             MutablePoint p = sharkLocation.get(0).getPosition();
             sharkModel.relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
         }
-
     }
 
     /**
@@ -649,9 +648,11 @@ public class RaceViewController implements Initializable, TableObserver {
             if (isZoom()) {
                 MutablePoint p = whirlpoolsLocation.get(id).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
                 whirlpools.get(id).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+                whirlpools.get(id).updateZoom(dataSource.getZoomLevel());
             } else {
-                MutablePoint p=whirlpoolsLocation.get(id).getPosition();
+                MutablePoint p = whirlpoolsLocation.get(id).getPosition();
                 whirlpools.get(id).relocate(p.getXValue()-image.getWidth()/2,p.getYValue()-image.getHeight()/2);
+                whirlpools.get(id).updateZoom(dataSource.getZoomLevel());
             }
 
         }

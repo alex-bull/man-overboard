@@ -77,7 +77,6 @@ public class BoatUpdater {
         this.buildRoundingLines();
     }
 
-
     /**
      * updates the position of all the boats given the boats speed and heading
      *
@@ -598,10 +597,10 @@ public class BoatUpdater {
         for (Whirlpool whirlpool: whirlpools) {
             double collisionRadius = boat.getCollisionRadius() + whirlpool.getCollisionRadius();
             double distance = raceCourse.distanceBetweenGPSPoints(whirlpool.getPosition(), boat.getPosition());
+//            System.out.println(distance);
             if (distance <= collisionRadius) {
                 handler.yachtEvent(boat.getSourceID(), 2);
-
-                collisionHandler(boat.getPosition(), whirlpool.getCollisionMaginitude(), 10);
+                collisionHandler(boat.getPosition(), whirlpool.getCollisionMagnitude(), 10);
                 boat.updatePosition(-10);
                 return true;
             }

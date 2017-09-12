@@ -424,9 +424,9 @@ public class Interpreter implements DataSource, PacketHandler {
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(whirlpool.getPosition()));
             MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(whirlpool.getPosition()));
             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(whirlpool.getPosition()));
+            MutablePoint location17 = cloner.deepClone(Projection.mercatorProjection(whirlpool.getPosition()));
             location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            whirlpools.put(whirlpool.getSourceID(), new Whirlpool(whirlpool.getSourceID(), whirlpool.getCurrentLeg(), location,location17, locationOriginal));
+            whirlpools.put(whirlpool.getSourceID(), new Whirlpool(whirlpool.getSourceID(), whirlpool.getCurrentLeg(), location, location17, locationOriginal));
         }
     }
 

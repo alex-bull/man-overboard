@@ -7,11 +7,11 @@ public class Whirlpool {
 
     private int sourceID;
     private int currentLeg;
-    private double collisionRadius=2000;
+    private double collisionRadius=500;
     private MutablePoint position;
     private MutablePoint position17;
     private MutablePoint positionOriginal;
-    private double collisionMaginitude = 5;
+    private double collisionMagnitude = 5;
 
     public Whirlpool(int sourceID, int currentLeg, MutablePoint position) {
         this.sourceID = sourceID;
@@ -79,8 +79,8 @@ public class Whirlpool {
         return collisionRadius;
     }
 
-    public double getCollisionMaginitude() {
-        return collisionMaginitude;
+    public double getCollisionMagnitude() {
+        return collisionMagnitude;
     }
 
 

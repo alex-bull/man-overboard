@@ -25,11 +25,13 @@ public class RandomShake {
         this.node = node;
     }
 
-
+    /**
+     * Spins the node multiple times.
+     */
     public void spin(){
         RotateTransition rt = new RotateTransition(Duration.seconds(0.5), node);
         rt.setByAngle(720);
-        rt.setCycleCount(4);
+        rt.setCycleCount(3);
         rt.setOnFinished(event-> node.setRotate(0));
         rt.play();
     }
