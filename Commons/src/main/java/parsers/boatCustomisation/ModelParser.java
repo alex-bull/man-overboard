@@ -19,7 +19,7 @@ public class ModelParser {
      */
     public ModelParser(byte[] body){
         sourceId = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 4));
-        model = hexByteArrayToInt(Arrays.copyOfRange(body, 5, 6));
+        model = hexByteArrayToInt(Arrays.copyOfRange(body, 6, 7));
     }
 
     public Integer getSourceId() {
@@ -27,6 +27,7 @@ public class ModelParser {
     }
 
     public Integer getModel() {
+        System.out.println("modelparser" + model);
         return model;
     }
 }

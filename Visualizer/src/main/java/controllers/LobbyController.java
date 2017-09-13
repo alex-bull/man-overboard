@@ -216,14 +216,13 @@ public class LobbyController implements Initializable {
 //            return;
 //        }
         Competitor boat = dataSource.getCompetitor();
-        if (!Objects.equals(nameText.getText(), "")) {
-            boat.setTeamName(nameText.getText());
+        if (!nameText.getText().equals("")){
+            this.dataSource.send(binaryPackager.packageBoatName(boat.getSourceID(), nameText.getText()));
         }
-        boat.setBoatType(index %boatImages.size());
 
-        System.out.println(index %boatImages.size());
-        this.dataSource.send(binaryPackager.packageBoatName(boat.getSourceID(), nameText.getText()));
+
         this.dataSource.send(binaryPackager.packageBoatModel(boat.getSourceID(), index %boatImages.size()));
+        confirmButton.setDisable(true);
     }
 
     @FXML
@@ -301,7 +300,7 @@ public class LobbyController implements Initializable {
             this.loadingLabel.setVisible(false);
             this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
         }
-        if (dataSource.getCompetitor() != null) this.nameText.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
+        //if (dataSource.getCompetitor() != null) this.nameText.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
     }
 
 
@@ -315,6 +314,8 @@ public class LobbyController implements Initializable {
         if (timer != null) timer.stop();
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 2);
         dataSource = null;
+
+
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
         Parent root = null;
@@ -341,6 +342,8 @@ public class LobbyController implements Initializable {
         if (timer != null) timer.stop();
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
+        nameText.setDisable(true);
+        this.nameText.setText(dataSource.getCompetitor().getTeamName());
 
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 10);
 

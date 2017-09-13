@@ -592,7 +592,7 @@ public class BinaryPackager {
 
     public byte[] packageBoatName(Integer sourceId, String boatName) {
 
-        byte[] packet=new byte[58]; //
+        byte[] packet=new byte[56]; //
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -624,6 +624,7 @@ public class BinaryPackager {
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.putInt(sourceId);
         packetBuffer.putShort((short)2);
+        System.out.println("bpackager" + code);
         packetBuffer.put(code.byteValue());
         this.writeCRC(packetBuffer);
         return packet;

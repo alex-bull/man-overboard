@@ -22,7 +22,7 @@ public class NameParser {
     public NameParser(byte[] body){
         sourceId = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 4));
         try {
-            name = new String(Arrays.copyOfRange(body, 6, 36), "UTF-8");
+            name = new String(Arrays.copyOfRange(body, 7, 37), "UTF-8").trim();
         } catch (UnsupportedEncodingException e) {
             //
         }

@@ -42,22 +42,23 @@ public class PlayerController {
         this.healthPane.getChildren().add(screenHealthBar);
         gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
         Competitor boat = dataSource.getCompetitor();
-        if (Objects.equals(boat.getBoatType(), "yacht")) {
-            Image boatImage = new Image("images/yachtLandscape.png");
+        if (boat.getBoatType() == 0) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
             playerImageView.setImage(boatImage);
         }
-        else if (Objects.equals(boat.getBoatType(), "cog")){
-            Image boatImage = new Image("images/cogLandscape.png");
+        else if (boat.getBoatType() == 1){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
             playerImageView.setImage(boatImage);
         }
-        else if (Objects.equals(boat.getBoatType(), "frigate")){
-            Image boatImage = new Image("images/frigateLandscape.png");
+        else if (boat.getBoatType() == 2){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
             playerImageView.setImage(boatImage);
         }
-        else if (Objects.equals(boat.getBoatType(), "galleon")){
-            Image boatImage = new Image("images/galleonLandscape.png");
+        else if (boat.getBoatType() == 3){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
             playerImageView.setImage(boatImage);
         }
+
         playerImageView.setPreserveRatio(false);
         playerImageView.fitWidthProperty().bind(imageGrid.widthProperty());
         playerImageView.fitHeightProperty().bind(imageGrid.heightProperty());

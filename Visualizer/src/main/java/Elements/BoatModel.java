@@ -40,21 +40,20 @@ public class BoatModel extends Group {
                 11.0, 21.0,
                 11.0, -21.0); //right
 
-        System.out.println(boatType);
-        if (boatType == 1) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
+        if (boatType == 0) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/yacht.png").toString());
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (boatType == 1) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cog.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
         else if (boatType == 2) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigate.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
         else if (boatType == 3) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
-            boatModel.setFill(new ImagePattern(boatImage));
-        }
-        else if (boatType == 4) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleon.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
 

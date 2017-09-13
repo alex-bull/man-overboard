@@ -285,7 +285,9 @@ public class Boat implements Competitor {
 
     public Integer getBoatType() { return this.boatType; }
 
-    public void setBoatType(Integer boatType) { this.boatType = boatType; }
+    public void setBoatType(Integer boatType) {
+        this.boatType = boatType;
+    }
 
     @Override
     public String getAbbreName() {

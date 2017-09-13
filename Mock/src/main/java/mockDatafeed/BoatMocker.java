@@ -151,11 +151,17 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 break;
             case NAME_REQUEST:
                 NameParser nameParser = new NameParser(packet);
+                System.out.println("boatname mocker ");
                 competitors.get(nameParser.getSourceId()).setTeamName(nameParser.getName());
                 this.sendAllXML();
                 break;
             case MODEL_REQUEST:
                 ModelParser modelParser = new ModelParser(packet);
+//                BoatModelEnum boatModelEnum = YACHT;
+//                for (BoatModelEnum modelEnum : BoatModelEnum.values()) {
+//                    if (modelParser.getModel() == modelEnum.getValue()) boatModelEnum = modelEnum;
+//                }
+                //competitors.get(modelParser.getSourceId()).setBoatType(boatModelEnum);
                 competitors.get(modelParser.getSourceId()).setBoatType(modelParser.getModel());
                 this.sendAllXML();
                 break;
@@ -525,6 +531,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 "            <MastTop Z=\"21.496\" Y=\"3.7\" X=\"0\"/>\n" +
                 "            <FlagPosition Z=\"0\" Y=\"6.2\" X=\"0\"/>\n" +
                 "        </Boat>";
+
         for (Integer sourceId : competitors.keySet()) {
             Competitor boat = competitors.get(sourceId);
             stringBuilder.append(String.format(boatTemplate, boat.getSourceID(), boat.getTeamName(), boat.getTeamName(), boat.getBoatType()));
