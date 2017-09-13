@@ -10,21 +10,41 @@
 
 .button {
     -fx-padding: 5 22 5 22;
-    -fx-background-color: white;
+    -fx-border-color: white;
+    -fx-text-fill: white;
+    -fx-border-width: 3px;
+    -fx-background-color: transparent;
     -fx-opacity: 0.8;
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-font-size: 11pt;
-    -fx-text-fill: #444444;
+    -fx-font-size: 12pt;
+    -fx-font-weight: 700;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
 }
 
-#controlbutton {
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: black;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif, bold;
+    -fx-font-size: 25pt;
+    -fx-text-alignment: right;
+}
+
+.menu-button.button:hover {
+    -fx-border-color: black;
+    -fx-text-fill: black;
+    -fx-border-width: 4px;
     -fx-background-color: transparent;
 }
 
+
+#controlbutton {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
 .button:hover {
-    -fx-background-color: #c0e8e8;
-    -fx-text-fill: #3FA9F5;
+    -fx-background-color: #dddddd;
 
 }
 
@@ -49,6 +69,7 @@
 {
     -fx-padding: 5 22 5 22;
     -fx-background-color: white;
+    -fx-background-radius: 0;
     -fx-opacity: 0.8;
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-font-size: 11pt;
@@ -58,14 +79,30 @@
 
 .list-view
 {
-    -fx-padding: 5 22 5 22;
-    -fx-background-color: white;
+    -fx-padding: 3px ;
+    -fx-background-color: #7dcdcd;
     -fx-opacity: 0.8;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-font-size: 11pt;
-    -fx-text-fill: #0014A8;
+
 }
 
+.list-cell
+{
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 12pt;
+    -fx-text-fill: #444444;
+    -fx-cell-size: 40px;
+    -fx-padding: 2px;
+    -fx-background-color: transparent, -fx-background ;
+    -fx-background-insets: 0px, 2px ;
+    -fx-label-padding: 10, 0, 0, 0;
+    -fx-alignment: center;
+}
+
+.list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 2px;
+}
 
 
 /*logo colours : 0014A8, 3FA9F5, 99EEED*/
@@ -139,7 +176,7 @@
 
 .progress-indicator
 {
-    -fx-progress-color: #7dcdcd;
+    -fx-progress-color: white;
 
 }
 

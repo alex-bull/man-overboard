@@ -6,6 +6,10 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import parsers.powerUp.PowerUp;
+import parsers.powerUp.PowerUpParser;
+import parsers.powerUp.PowerUpTakenParser;
+import parsers.powerUp.PowerUpType;
 import utility.QueueMessage;
 import utility.WorkQueue;
 import models.ColourPool;
@@ -34,10 +38,7 @@ import parsers.xml.race.RaceData;
 import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
-import utility.BinaryPackager;
-import utility.PacketHandler;
-import com.rits.cloning.Cloner;
-import utility.Projection;
+import utility.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -45,12 +46,14 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
 import static java.lang.Math.pow;
-import static javafx.collections.FXCollections.observableArrayList;
-import static javafx.collections.FXCollections.observableList;
+
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
 import static parsers.fallenCrew.FallenCrewParser.parseFallenCrew;
+import static parsers.powerUp.PowerUpType.BOOST;
+
+import static parsers.powerUp.PowerUpType.POTION;
 import static utility.Calculator.calculateExpectedTack;
 
 /**
@@ -180,7 +183,14 @@ public class Interpreter implements DataSource, PacketHandler {
 
 
 
-    private Map<Integer,CrewLocation> crewLocations=new HashMap<>();
+    private Map<Integer, CrewLocation> crewLocations=new HashMap<>();
+
+    public Map<Integer, PowerUp> getPowerUps() {
+        return powerUps;
+    }
+
+    private Map<Integer, PowerUp> powerUps = new HashMap<>();
+
 
 
 
@@ -191,7 +201,7 @@ public class Interpreter implements DataSource, PacketHandler {
     public void send(byte[] data) {
         try {
             this.TCPClient.send(data);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Failed to send data");
         }
     }
@@ -215,11 +225,11 @@ public class Interpreter implements DataSource, PacketHandler {
             primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         }
         catch (UnresolvedAddressException e){
-            System.out.println("Address is not found");
+           // System.out.println("Address is not found");
             return false;
         }
         catch (IOException e) {
-            System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
+          //  System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
             return false;
         }
 
@@ -401,6 +411,45 @@ public class Interpreter implements DataSource, PacketHandler {
             case FALLEN_CREW:
                 addCrewLocation(parseFallenCrew(packet));
                 break;
+            case POWER_UP:
+                PowerUpParser powerUpParser = new PowerUpParser();
+                PowerUp powerUp = powerUpParser.parsePowerUp(packet);
+                if(powerUp.getType() == BOOST.getValue() || powerUp.getType() == POTION.getValue()) {
+                    MutablePoint location = powerUp.getLocation();
+                    MutablePoint positionOriginal = cloner.deepClone(Projection.mercatorProjection(location));
+
+                    MutablePoint position = cloner.deepClone(Projection.mercatorProjection(location));
+                    position.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+
+                    MutablePoint position17=cloner.deepClone(Projection.mercatorProjection(position));
+                    position17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+
+                    powerUp.setPosition(position);
+                    powerUp.setPosition17(position17);
+                    powerUp.setPositionOriginal(positionOriginal);
+
+                    this.powerUps.put(powerUp.getId(), powerUp);
+                }
+                break;
+            case POWER_UP_TAKEN:
+                PowerUpTakenParser powerUpTakenParser = new PowerUpTakenParser(packet);
+                int id = powerUpTakenParser.getPowerId();
+                int boatId = powerUpTakenParser.getBoatId();
+                if(powerUps.containsKey(id)) {
+                    PowerUp power = powerUps.get(id);
+                    power.taken();
+                    int type = power.getType();
+                    if(getCompetitor().getSourceID() == boatId) {
+                        if(type == 0) {
+                            getCompetitor().enableBoost();
+                        }
+                        else if(type == 3) {
+                            getCompetitor().enablePotion();
+                        }
+                    }
+                }
+
+
 
             default:
                 break;
@@ -409,10 +458,9 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * adds crew locations with location converted
-     * @param locations
+     * @param locations List locations
      */
-    public void addCrewLocation(List<CrewLocation> locations){
-        System.out.println(locations.size());
+    private void addCrewLocation(List<CrewLocation> locations){
         crewLocations.clear();
         for(CrewLocation crewLocation:locations){
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
@@ -432,6 +480,17 @@ public class Interpreter implements DataSource, PacketHandler {
             MutablePoint point=cloner.deepClone(crewLocation.getPositionOriginal());
             point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             crewLocation.setPosition17(point);
+        }
+    }
+
+    /**
+     * updates power up location when scaling level changes
+     */
+    private void updatePowerUpLocation(){
+        for(PowerUp powerUp: powerUps.values()){
+            MutablePoint point=cloner.deepClone(powerUp.getPositionOriginal());
+            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            powerUp.setPosition17(point);
         }
     }
 
@@ -478,7 +537,6 @@ public class Interpreter implements DataSource, PacketHandler {
         } else {
             //update its properties
             Competitor updatingBoat=storedCompetitors.get(boatID);
-
             // boat colour
             if (updatingBoat.getColor() == null) {
                 Color colour = this.colourPool.getColours().get(0);
@@ -673,6 +731,7 @@ public class Interpreter implements DataSource, PacketHandler {
         updateCourseMarksScaling();
         updateCourseBoundary();
         updateCrewLocation();
+        updatePowerUpLocation();
     }
 
     public Set<Integer> getCollisions(){

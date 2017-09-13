@@ -1,6 +1,8 @@
 package Elements;
 
 import javafx.scene.Group;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
@@ -9,6 +11,7 @@ import javafx.scene.transform.Rotate;
 import models.MutablePoint;
 
 import static javafx.scene.paint.Color.BLACK;
+import static javafx.scene.paint.Color.YELLOW;
 
 /**
  * Created by mattgoodson on 1/09/17.
@@ -16,6 +19,10 @@ import static javafx.scene.paint.Color.BLACK;
  */
 public class BoatModel extends Group {
 
+    private Polygon boatModel;
+    private Circle playerMarker;
+    private ImageView ripImage;
+    private boolean isDead = false;
 
     /**
      * Initialize a boat model
@@ -24,7 +31,7 @@ public class BoatModel extends Group {
      */
     public BoatModel(Color color, boolean player) {
 
-        Polygon boatModel = new Polygon();
+        this.boatModel = new Polygon();
         boatModel.getPoints().addAll(
                 0.0, -10.0, //top
                 -5.0, 10.0, //left
@@ -35,12 +42,18 @@ public class BoatModel extends Group {
         this.getChildren().add(boatModel);
 
         if (player) {
-            Shape playerMarker = new Circle(0, 0, 15);
+            this.playerMarker = new Circle(0, 0, 15);
             playerMarker.setStrokeWidth(2.5);
             playerMarker.setStroke(Color.rgb(255,255,255,0.5));
             playerMarker.setFill(Color.rgb(0,0,0,0.2));
             this.getChildren().add(playerMarker);
         }
+        this.ripImage = new ImageView(new Image("images/cross-small.png"));
+        this.ripImage.setPreserveRatio(true);
+        this.ripImage.setFitHeight(20);
+        this.getChildren().add(ripImage);
+        ripImage.setVisible(false);
+
     }
 
 
@@ -50,7 +63,6 @@ public class BoatModel extends Group {
      * @param heading double the heading of the boat in degrees
      */
     public void update(MutablePoint position, double heading) {
-
         this.setLayoutX(position.getXValue());
         this.setLayoutY(position.getYValue());
         this.toFront();
@@ -58,5 +70,20 @@ public class BoatModel extends Group {
         this.getTransforms().add(new Rotate(heading, 0, 0));
 
     }
+
+
+    /**
+     * The boat is dead so hide player marker and boat shape then show rip image
+     */
+    public void die() {
+        if(!isDead) {
+            isDead = true;
+            boatModel.setVisible(false);
+            this.getChildren().remove(playerMarker);
+            ripImage.setVisible(true);
+        }
+
+    }
+
 
 }

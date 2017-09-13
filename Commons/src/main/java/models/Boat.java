@@ -40,6 +40,11 @@ public class Boat implements Competitor {
     private double healthLevel = 100;
     private double maxHealth = 100;
     private Force boatSpeed;
+    private boolean hasSpeedBoost = false;
+    private boolean activatedBoost = false;
+
+    private long boostTimeout = 0;
+    private boolean hasPotion = false;
 
 
     //collision size
@@ -109,6 +114,55 @@ public class Boat implements Competitor {
         this.boatSpeed=new Force(0,0,false);
     }
 
+    public boolean boostActivated() {
+        boolean activated = activatedBoost;
+        return activated;
+    }
+
+    public void enablePotion() {
+        this.hasPotion = true;
+    }
+
+    public boolean hasPotion() {
+        return hasPotion;
+    }
+
+    public void usePotion() {
+        this.hasPotion = false;
+    }
+
+    public long getBoostTimeout() {
+        return boostTimeout;
+    }
+
+    public void resetBoostTimeout() {
+        this.boostTimeout = 0;
+    }
+
+    public void activateBoost() {
+        if(this.hasSpeedBoost) {
+            this.activatedBoost = true;
+            this.boostTimeout = System.currentTimeMillis() + 7000;
+            this.hasSpeedBoost = false;
+        }
+    }
+
+    public void deactivateBoost() {
+        this.activatedBoost = false;
+    }
+
+    public boolean hasSpeedBoost() {
+        boolean speeding = hasSpeedBoost;
+        return speeding;
+    }
+
+    public void enableBoost() {
+        this.hasSpeedBoost = true;
+    }
+
+    public void disableBoost() {
+        this.hasSpeedBoost = false;
+    }
 
     public Line getRoundingLine1() {
         return roundingLine1;
@@ -134,6 +188,7 @@ public class Boat implements Competitor {
         this.healthLevel = health;
     }
 
+
     public double getMaxHealth() {
         return maxHealth;
     }
@@ -152,7 +207,6 @@ public class Boat implements Competitor {
      */
     public void updateHealth(int delta) {
         double resultHealth = healthLevel + delta;
-
         if(resultHealth > maxHealth) {
             this.healthLevel = maxHealth;
         } else this.healthLevel = resultHealth;

@@ -1,6 +1,7 @@
 package controllers;
 
-import Animations.SoundPlayer;
+import javafx.stage.Stage;
+import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
@@ -8,7 +9,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
-import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utility.BinaryPackager;
 
@@ -28,7 +28,8 @@ public class MainController {
     @FXML private Slider sailSlider;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
-    private SoundPlayer soundPlayer;
+    private boolean playing = false;
+
 
     /**
      * updates the slider and sends corresponding packet
@@ -61,22 +62,12 @@ public class MainController {
                 case SHIFT:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SWITCHSAILS.getValue(), dataSource.getSourceID()));
                     sailSlider.setValue(this.dataSource.getCompetitor().getSailValue());
-                    System.out.println(this.dataSource.getCompetitor().getSailValue());
                     break;
                 case ENTER:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
                     break;
                 case Q:
                     raceViewController.toggleZoom();
-//                    if(raceViewController.isZoom()) {
-//                        raceViewController.zoomOut();
-//                        if (!tableController.isVisible()) {
-//                            tableController.makeVisible();
-//                        }
-//                    }
-//                    else{
-//                        raceViewController.zoomIn();
-//                    }
                     break;
                 case BACK_QUOTE:
                     if (raceViewController.isZoom() && tableController.isVisible()){
@@ -99,6 +90,20 @@ public class MainController {
                         raceViewController.zoomIn();
                     }
                     break;
+                case DIGIT1:
+                    if(dataSource.getCompetitor().hasSpeedBoost()) {
+                        this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.BOOST.getValue(), dataSource.getSourceID()));
+                        dataSource.getCompetitor().disableBoost();
+                        playerController.hideBoost();
+                    }
+                    break;
+                case DIGIT2:
+                    if(dataSource.getCompetitor().hasPotion()) {
+                        this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.POTION.getValue(), dataSource.getSourceID()));
+                        dataSource.getCompetitor().usePotion();
+                        playerController.hidePotion();
+                    }
+                    break;
             }
     }
 
@@ -113,10 +118,8 @@ public class MainController {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
         tableController.addObserver(raceViewController);
-        playerController.setuo(dataSource);
+        playerController.setup(dataSource, App.getPrimaryStage());
         this.binaryPackager = new BinaryPackager();
-
-
 
         AnimationTimer timer = new AnimationTimer() {
 
@@ -124,6 +127,7 @@ public class MainController {
             public void handle(long now) {
                 dataSource.update();
                 if (raceViewController.isLoaded()) {
+                    if (!playing) playGameMusic();
                     raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
@@ -137,7 +141,16 @@ public class MainController {
             }
         };
         timer.start();
-        soundPlayer=new SoundPlayer();
-        soundPlayer.playMP3("sounds/bensound-epic.mp3");
+
+    }
+
+
+    /**
+     * Play the game music loop
+     */
+    private void playGameMusic() {
+        Sounds.player.loopMP3("sounds/bensound-epic.mp3");
+        Sounds.player.setVolume("sounds/bensound-epic.mp3", 0.5);
+        playing = true;
     }
 }
