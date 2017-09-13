@@ -67,15 +67,16 @@ public class MainController {
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
                     break;
                 case Q:
-                    if(raceViewController.isZoom()) {
-                        raceViewController.zoomOut();
-                        if (!tableController.isVisible()) {
-                            tableController.makeVisible();
-                        }
-                    }
-                    else{
-                        raceViewController.zoomIn();
-                    }
+                    raceViewController.toggleZoom();
+//                    if(raceViewController.isZoom()) {
+//                        raceViewController.zoomOut();
+//                        if (!tableController.isVisible()) {
+//                            tableController.makeVisible();
+//                        }
+//                    }
+//                    else{
+//                        raceViewController.zoomIn();
+//                    }
                     break;
                 case BACK_QUOTE:
                     if (raceViewController.isZoom() && tableController.isVisible()){
@@ -87,12 +88,12 @@ public class MainController {
                     break;
 
                 case A:
-                    dataSource.changeScaling(0.1);
+                    dataSource.changeScaling(1);
                     raceViewController.zoomIn();
                     break;
                 case D:
-                    dataSource.changeScaling(-0.1);
-                    raceViewController.zoomOut();
+                    dataSource.changeScaling(-1);
+                    raceViewController.zoomIn();
                     break;
             }
     }
