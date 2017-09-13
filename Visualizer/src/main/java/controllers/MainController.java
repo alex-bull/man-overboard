@@ -88,13 +88,13 @@ public class MainController {
                     break;
 
                 case A:
-                    if(dataSource.getZoomLevel() < 18) {
+                    if(dataSource.getZoomLevel() < 18 && raceViewController.isZoom()) {
                         dataSource.changeScaling(1);
                         raceViewController.zoomIn();
                     }
                     break;
                 case D:
-                    if(dataSource.getZoomLevel() > 12) {
+                    if(dataSource.getZoomLevel() > 12 && raceViewController.isZoom()) {
                         dataSource.changeScaling(-1);
                         raceViewController.zoomIn();
                     }

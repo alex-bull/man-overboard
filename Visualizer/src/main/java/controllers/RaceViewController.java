@@ -808,21 +808,19 @@ public class RaceViewController implements Initializable, TableObserver {
      * Zoom the screen in and out upon touch zoom event
      * @param zoomEvent zoom event
      */
-    public void zoom(ZoomEvent zoomEvent){
-        if(dataSource.getZoomLevel() < 18) {
-            if (touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
-                dataSource.changeScaling(1);
-                zoomIn();
+    public void zoom(ZoomEvent zoomEvent) {
+        if (zoom) {
+            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
+                    dataSource.changeScaling(1);
+                    zoomIn();
             }
-        }
-        if(dataSource.getZoomLevel() > 12) {
-            if (touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
+            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
                 dataSource.changeScaling(-1);
                 zoomIn();
             }
+            touchZoomLevel = zoomEvent.getTotalZoomFactor();
         }
-        touchZoomLevel = zoomEvent.getTotalZoomFactor();
-        }
+    }
 
 
 
