@@ -74,6 +74,9 @@ public class LobbyController implements Initializable {
     private Image cog;
     private Image frigate;
     private Image galleon;
+    private Image boat;
+    private Image cat;
+    private Image pirate;
     private ArrayList<Image> boatImages = new ArrayList<>();
     private Integer index = 0;
     private String boatType = "yacht";
@@ -166,11 +169,17 @@ public class LobbyController implements Initializable {
         cog = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
         frigate = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
         galleon = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
+        boat = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
+        cat = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
+        pirate = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
 
         boatImages.add(yacht);
         boatImages.add(cog);
         boatImages.add(frigate);
         boatImages.add(galleon);
+        boatImages.add(boat);
+        boatImages.add(cat);
+        boatImages.add(pirate);
         boatImageView.setImage(yacht);
         //image resizing cant be done in fxml >(
         courseImageView.setPreserveRatio(false);

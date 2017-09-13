@@ -58,6 +58,18 @@ public class PlayerController {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
             playerImageView.setImage(boatImage);
         }
+        else if (boat.getBoatType() == 4){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
+            playerImageView.setImage(boatImage);
+        }
+        else if (boat.getBoatType() == 5){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
+            playerImageView.setImage(boatImage);
+        }
+        else if (boat.getBoatType() == 6){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
+            playerImageView.setImage(boatImage);
+        }
 
         playerImageView.setPreserveRatio(false);
         playerImageView.fitWidthProperty().bind(imageGrid.widthProperty());

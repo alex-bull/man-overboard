@@ -56,6 +56,18 @@ public class BoatModel extends Group {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleon.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
+        else if (boatType == 4) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boatq.png").toString());
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (boatType == 5) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cat.png").toString());
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (boatType == 6) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/pirate.png").toString());
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
 
 
 
