@@ -66,7 +66,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     //VIEW ELEMENTS
-    @FXML private TableController tableController;
+    @FXML private TableController tableController = new TableController();
     @FXML private AnchorPane raceView;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
@@ -809,16 +809,21 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param zoomEvent zoom event
      */
     public void zoom(ZoomEvent zoomEvent){
-
-        if (touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
-            dataSource.changeScaling(1);
-            zoomIn();
-        } else{
-            dataSource.changeScaling(-1);
-            zoomIn();
+        if(dataSource.getZoomLevel() < 18) {
+            if (touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
+                dataSource.changeScaling(1);
+                zoomIn();
+            }
+        }
+        if(dataSource.getZoomLevel() > 12) {
+            if (touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
+                dataSource.changeScaling(-1);
+                zoomIn();
+            }
         }
         touchZoomLevel = zoomEvent.getTotalZoomFactor();
-    }
+        }
+
 
 
 }
