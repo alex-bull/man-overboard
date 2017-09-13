@@ -22,13 +22,8 @@ public class WhirlpoolModel extends ImageView {
     public void update(MutablePoint position) {
         this.setX(position.getXValue());
         this.setY(position.getYValue());
-        Circle clip = new Circle(position.getXValue()+20, position.getYValue()+20, 20);
+        Circle clip = new Circle(this.getX()+20, this.getY()+20, 20);
         this.setClip(clip);
-    }
-
-    public void updateZoom(int zoomLevel) {
-//        this.setFitWidth(40 * (Math.floorDiv(40, zoomLevel)));
-//        this.setFitWidth(40 * (Math.floorDiv(40, zoomLevel)));
     }
 
     public void spin() {

@@ -159,7 +159,7 @@ public class BoatUpdater {
     private boolean pickUpCrew(Competitor boat) {
         boolean updated = false;
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
-            if (boat.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
+            if (boat.getPosition().isWithin(crewLocation.getPosition(), 0.001)) {
                 crewMembers.remove(crewLocation);
                 boat.updateHealth(crewLocation.getNumCrew());
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
@@ -601,7 +601,7 @@ public class BoatUpdater {
             if (distance <= collisionRadius) {
                 handler.yachtEvent(boat.getSourceID(), 2);
                 collisionHandler(boat.getPosition(), whirlpool.getCollisionMagnitude(), 10);
-                boat.updatePosition(-10);
+                boat.updatePosition(-20);
                 return true;
             }
 
