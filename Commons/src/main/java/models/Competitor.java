@@ -105,6 +105,11 @@ public interface Competitor {
 
     void setRoundingLine2(Line roundingLine2);
 
+    void setTeamName(String teamName);
+
+    void setBoatType(Integer boatType);
+
+    Integer getBoatType();
     boolean hasSpeedBoost();
 
     void enableBoost();

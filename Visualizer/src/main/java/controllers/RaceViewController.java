@@ -512,7 +512,7 @@ public class RaceViewController implements Initializable, TableObserver {
         Boolean player = sourceId == dataSource.getSourceID();
         BoatModel boatModel = boatModels.get(sourceId);
         if (boatModel == null) {
-            boatModel = new BoatModel(boat.getColor(), player);
+            boatModel = new BoatModel(boat.getBoatType(), player);
             this.raceViewPane.getChildren().add(boatModel);
             this.boatModels.put(sourceId, boatModel);
         }

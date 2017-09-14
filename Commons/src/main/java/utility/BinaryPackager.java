@@ -737,6 +737,45 @@ public class BinaryPackager {
         this.writeCRC(packetBuffer);
         return packet;
     }
+    public byte[] packageBoatName(Integer sourceId, String boatName) {
+
+        byte[] packet=new byte[56]; //
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 106;
+        short bodyLength = 37;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.putInt(sourceId);
+        packetBuffer.put((byte)0);
+        packetBuffer.put((byte)0);
+        packetBuffer.put((byte)0);
+
+        byte[] name = new byte[30];
+        ByteBuffer namebuffer = ByteBuffer.wrap(name);
+        namebuffer.put(boatName.getBytes());
+        packetBuffer.put(name);
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+
+    public byte[] packageBoatModel(Integer sourceId, Integer code) {
+
+        byte[] packet=new byte[26]; //
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 104;
+        short bodyLength = 7;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.putInt(sourceId);
+        packetBuffer.putShort((short)2);
+        System.out.println("bpackager" + code);
+        packetBuffer.put(code.byteValue());
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
 }
 
 

@@ -40,6 +40,7 @@ public class Boat implements Competitor {
     private double healthLevel = 100;
     private double maxHealth = 100;
     private Force boatSpeed;
+    private Integer boatType = 0;
     private boolean hasSpeedBoost = false;
     private boolean activatedBoost = false;
 
@@ -345,6 +346,12 @@ public class Boat implements Competitor {
 
     public void setPosition(MutablePoint newPos) {
         this.position = newPos;
+    }
+
+    public Integer getBoatType() { return this.boatType; }
+
+    public void setBoatType(Integer boatType) {
+        this.boatType = boatType;
     }
 
     @Override

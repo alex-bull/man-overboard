@@ -3,12 +3,15 @@ package controllers;
 import Elements.HealthBar;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import models.Competitor;
 import utilities.DataSource;
+
+import java.util.Objects;
 
 /**
  * Created by mattgoodson on 1/09/17.
@@ -43,6 +46,36 @@ public class PlayerController {
         this.speed.setVisible(false);
         this.potion.setVisible(false);
         gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
+        Competitor boat = dataSource.getCompetitor();
+        if (boat.getBoatType() == 0) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
+            playerImageView.setImage(boatImage);
+        }
+        else if (boat.getBoatType() == 1){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
+            playerImageView.setImage(boatImage);
+        }
+        else if (boat.getBoatType() == 2){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
+            playerImageView.setImage(boatImage);
+        }
+        else if (boat.getBoatType() == 3){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
+            playerImageView.setImage(boatImage);
+        }
+        else if (boat.getBoatType() == 4){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
+            playerImageView.setImage(boatImage);
+        }
+        else if (boat.getBoatType() == 5){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
+            playerImageView.setImage(boatImage);
+        }
+        else if (boat.getBoatType() == 6){
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
+            playerImageView.setImage(boatImage);
+        }
+
         playerImageView.setPreserveRatio(false);
         playerImageView.fitWidthProperty().bind(imageGrid.widthProperty());
         playerImageView.fitHeightProperty().bind(imageGrid.heightProperty());
@@ -95,6 +128,7 @@ public class PlayerController {
      */
     void hidePotion() {
         this.potion.setVisible(false);
+
     }
 
 

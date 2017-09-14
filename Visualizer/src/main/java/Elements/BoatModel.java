@@ -2,13 +2,17 @@ package Elements;
 
 import javafx.scene.Group;
 import javafx.scene.image.Image;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import models.MutablePoint;
+
+import java.util.Objects;
 
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.YELLOW;
@@ -26,20 +30,57 @@ public class BoatModel extends Group {
 
     /**
      * Initialize a boat model
-     * @param color Color the color of the boat
+     * @param boatType String, type of boat image to be displayed for player
      * @param player boolean, true if the player marker should be shown
      */
-    public BoatModel(Color color, boolean player) {
+    public BoatModel(Integer boatType, boolean player) {
 
         this.boatModel = new Polygon();
+        Polygon boatModel = new Polygon();
+//        boatModel.getPoints().addAll(
+//                -6.0, -14.0, //top
+//                -6.0, 14.0, //left
+//                6.0, 14.0,
+//                6.0, -14.0); //right
         boatModel.getPoints().addAll(
-                0.0, -10.0, //top
-                -5.0, 10.0, //left
-                5.0, 10.0); //right
-        boatModel.setFill(color);
+                -11.0, -21.0, //top
+                -11.0, 21.0, //left
+                11.0, 21.0,
+                11.0, -21.0); //right
 
-        boatModel.setStroke(BLACK);
-        this.getChildren().add(boatModel);
+        if (boatType == 0) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/yacht.png").toString());
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (boatType == 1) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cog.png").toString());
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (boatType == 2) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigate.png").toString());
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (boatType == 3) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleon.png").toString());
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (boatType == 4) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boat.png").toString());
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (boatType == 5) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cat.png").toString());
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+        else if (boatType == 6) {
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/pirate.png").toString());
+            boatModel.setFill(new ImagePattern(boatImage));
+        }
+
+
+
+        //boatModel.setStroke(BLACK);
+
 
         if (player) {
             this.playerMarker = new Circle(0, 0, 15);
@@ -54,6 +95,7 @@ public class BoatModel extends Group {
         this.getChildren().add(ripImage);
         ripImage.setVisible(false);
 
+        this.getChildren().add(boatModel);
     }
 
 

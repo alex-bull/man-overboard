@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.geometry.Point3D;
 import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -33,8 +34,12 @@ import utility.BinaryPackager;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+import static java.lang.Math.abs;
 
 
 /**
@@ -55,15 +60,32 @@ public class LobbyController implements Initializable {
     @FXML private ImageView courseImageView;
     @FXML private Label locationLabel;
     @FXML private Label gameTypeLabel;
-    @FXML private Label playerLabel;
     @FXML private Label loadingLabel;
     @FXML private GridPane gameGridPane;
     @FXML private GridPane playerGridPane;
 
+
+
+    @FXML private TextField nameText;
+    @FXML private Button confirmButton;
+    @FXML private Button leftButton;
+    @FXML private Button rightButton;
+    private Image yacht;
+    private Image cog;
+    private Image frigate;
+    private Image galleon;
+    private Image boat;
+    private Image cat;
+    private Image pirate;
+    private ArrayList<Image> boatImages = new ArrayList<>();
+    private Integer index = 0;
+    private String boatType = "yacht";
+    private Stage primaryStage;
     private ObservableList<String> competitorList = FXCollections.observableArrayList();
     private Rectangle2D primaryScreenBounds;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private AnimationTimer timer;
+    BinaryPackager binaryPackager = new BinaryPackager();
 
 
     void setDataSource(DataSource dataSource) {
@@ -79,10 +101,11 @@ public class LobbyController implements Initializable {
 
 
 //        for (int i = 0; i<8; i++) {
-//            competitorList.add("Boat 10" +i);
+//            competitorList.add("Boaty 10" +i);
 //        }
 
         Scene scene = App.getScene();
+
 
         //start sound loop
         Sounds.player.loopMP3WithFadeIn("sounds/bensound-instinct.mp3", 4);
@@ -142,6 +165,22 @@ public class LobbyController implements Initializable {
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         starterList.setItems(competitorList);
 
+        yacht = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
+        cog = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
+        frigate = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
+        galleon = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
+        boat = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
+        cat = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
+        pirate = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
+
+        boatImages.add(yacht);
+        boatImages.add(cog);
+        boatImages.add(frigate);
+        boatImages.add(galleon);
+        boatImages.add(boat);
+        boatImages.add(cat);
+        boatImages.add(pirate);
+        boatImageView.setImage(yacht);
         //image resizing cant be done in fxml >(
         courseImageView.setPreserveRatio(false);
         courseImageView.fitWidthProperty().bind(gameGridPane.widthProperty());
@@ -150,6 +189,7 @@ public class LobbyController implements Initializable {
         boatImageView.setPreserveRatio(false);
         boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
         boatImageView.fitHeightProperty().bind(playerGridPane.heightProperty());
+
 
     }
 
@@ -176,6 +216,37 @@ public class LobbyController implements Initializable {
         if (timer != null) timer.stop();
         dataSource.send(new BinaryPackager().packageLeaveLobby());
         this.loadStartView();
+    }
+
+    @FXML
+    public void confirmBoatDetails() {
+        if (dataSource.getCompetitor() == null) return;
+        Competitor boat = dataSource.getCompetitor();
+
+        if (!nameText.getText().equals("")) this.dataSource.send(binaryPackager.packageBoatName(boat.getSourceID(), nameText.getText()));
+        else nameText.setText(boat.getTeamName()); //use server assigned name
+
+        this.dataSource.send(binaryPackager.packageBoatModel(boat.getSourceID(), index %boatImages.size()));
+        confirmButton.setVisible(false);
+        nameText.setDisable(true);
+        leftButton.setVisible(false);
+        rightButton.setVisible(false);
+    }
+
+    @FXML
+    public void showPreviousBoat(){
+        index--;
+        if (index < 0) {
+            index += boatImages.size();
+        }
+        boatImageView.setImage(boatImages.get(index %boatImages.size()));
+    }
+
+    @FXML
+    public void showNextBoat(){
+        index++;
+        boatImageView.setImage(boatImages.get(index %boatImages.size()));
+
     }
 
 
@@ -210,7 +281,7 @@ public class LobbyController implements Initializable {
             System.out.println("Invalid boat image url, using default image");
             return;
         }
-        this.playerLabel.setText(playerAlias);
+        this.nameText.setText(playerAlias);
     }
 
 
@@ -237,7 +308,7 @@ public class LobbyController implements Initializable {
             this.loadingLabel.setVisible(false);
             this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
         }
-        if (dataSource.getCompetitor() != null) this.playerLabel.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
+        //if (dataSource.getCompetitor() != null) this.nameText.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
     }
 
 
@@ -251,6 +322,8 @@ public class LobbyController implements Initializable {
         if (timer != null) timer.stop();
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 2);
         dataSource = null;
+
+
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
         Parent root = null;
@@ -277,6 +350,8 @@ public class LobbyController implements Initializable {
         if (timer != null) timer.stop();
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
+        nameText.setDisable(true);
+        this.nameText.setText(dataSource.getCompetitor().getTeamName());
 
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 10);
 

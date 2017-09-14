@@ -85,6 +85,10 @@
 
 }
 
+#finish-list {
+    -fx-background-color: white;
+}
+
 .list-cell
 {
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
@@ -94,7 +98,7 @@
     -fx-padding: 2px;
     -fx-background-color: transparent, -fx-background ;
     -fx-background-insets: 0px, 2px ;
-    -fx-label-padding: 10, 0, 0, 0;
+    -fx-label-padding: 0, 0, 0, 0;
     -fx-alignment: center;
 }
 
@@ -103,6 +107,7 @@
     -fx-background-insets: 0;
     -fx-padding: 2px;
 }
+
 
 
 /*logo colours : 0014A8, 3FA9F5, 99EEED*/

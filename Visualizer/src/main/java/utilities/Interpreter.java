@@ -231,11 +231,11 @@ public class Interpreter implements DataSource, PacketHandler {
             primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         }
         catch (UnresolvedAddressException e){
-            System.out.println("Address is not found");
+           // System.out.println("Address is not found");
             return false;
         }
         catch (IOException e) {
-            System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
+          //  System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
             return false;
         }
 
@@ -243,9 +243,11 @@ public class Interpreter implements DataSource, PacketHandler {
         width = primaryScreenBounds.getWidth() - scene.getX();
         height = primaryScreenBounds.getHeight() - scene.getY();
 
+        System.out.println("Starting client");
         //start receiving data
         Timer receiverTimer = new Timer();
         receiverTimer.schedule(TCPClient, 0, 1);
+        System.out.println("Done");
 
         //request game join
         System.out.println("Sending connection request...");
@@ -381,7 +383,6 @@ public class Interpreter implements DataSource, PacketHandler {
                                 break;
                             case SWITCH_SAILS:
                                 boat.switchSails();
-//                                System.out.println(boat.hasSailsOut());
                                 break;
                             case TACK_GYBE:
                                 double boatHeading = boat.getCurrentHeading();
@@ -397,6 +398,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     }
                 }
                 break;
+
             case YACHT_ACTION:
                 YachtEventParser parser = new YachtEventParser(packet);
                 switch (parser.getEventID()){
@@ -649,7 +651,6 @@ public class Interpreter implements DataSource, PacketHandler {
         } else {
             //update its properties
             Competitor updatingBoat=storedCompetitors.get(boatID);
-
             // boat colour
             if (updatingBoat.getColor() == null) {
                 Color colour = this.colourPool.getColours().get(0);
@@ -767,6 +768,7 @@ public class Interpreter implements DataSource, PacketHandler {
     public int getZoomLevel() {
         return zoomLevel;
     }
+
 
     /**
      * Parse binary data into XML

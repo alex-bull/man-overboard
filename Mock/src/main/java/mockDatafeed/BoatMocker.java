@@ -6,6 +6,8 @@ import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.boatAction.BoatAction;
+import parsers.boatCustomisation.ModelParser;
+import parsers.boatCustomisation.NameParser;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.powerUp.PowerUp;
@@ -131,7 +133,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                     case SWITCH_SAILS:
                         sendBoatAction(action.getValue(), sourceID);
                         competitors.get(sourceID).switchSails();
-//                        System.out.println("switch sail");
                         break;
                     case UPWIND:
                         if(boat.getStatus() != DSQ) {
@@ -171,6 +172,23 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 break;
             case LEAVE_LOBBY:
                 this.removePlayer(clientId);
+                break;
+            case NAME_REQUEST:
+                NameParser nameParser = new NameParser(packet);
+                System.out.println("boatname mocker ");
+                competitors.get(nameParser.getSourceId()).setTeamName(nameParser.getName());
+                this.sendAllXML();
+                break;
+            case MODEL_REQUEST:
+                ModelParser modelParser = new ModelParser(packet);
+//                BoatModelEnum boatModelEnum = YACHT;
+//                for (BoatModelEnum modelEnum : BoatModelEnum.values()) {
+//                    if (modelParser.getModel() == modelEnum.getValue()) boatModelEnum = modelEnum;
+//                }
+                //competitors.get(modelParser.getSourceId()).setBoatType(boatModelEnum);
+                competitors.get(modelParser.getSourceId()).setBoatType(modelParser.getModel());
+                this.sendAllXML();
+                break;
         }
     }
 
@@ -618,14 +636,15 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         StringBuilder stringBuilder = new StringBuilder();
         String boatTemplate = "<Boat Type=\"Yacht\" SourceID=\"%s\" ShapeID=\"15\" StoweName=\"USA\" ShortName=\"%s\" ShorterName=\"USA\"\n" +
                 "              BoatName=\"%s\" HullNum=\"AC4515\" Skipper=\"SPITHILL\" Helmsman=\"SPITHILL\" Country=\"USA\"\n" +
-                "              PeliID=\"101\" RadioIP=\"172.20.2.101\">\n" +
+                "              PeliID=\"101\" RadioIP=\"172.20.2.101\" Model=\"%s\">\n" +
                 "            <GPSposition Z=\"1.78\" Y=\"-0.331\" X=\"-0.006\"/>\n" +
                 "            <MastTop Z=\"21.496\" Y=\"3.7\" X=\"0\"/>\n" +
                 "            <FlagPosition Z=\"0\" Y=\"6.2\" X=\"0\"/>\n" +
                 "        </Boat>";
+
         for (Integer sourceId : competitors.keySet()) {
             Competitor boat = competitors.get(sourceId);
-            stringBuilder.append(String.format(boatTemplate, boat.getSourceID(), boat.getTeamName(), boat.getTeamName()));
+            stringBuilder.append(String.format(boatTemplate, boat.getSourceID(), boat.getTeamName(), boat.getTeamName(), boat.getBoatType()));
         }
         String xmlString = CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
         String boatXML = String.format(xmlString, stringBuilder.toString());
