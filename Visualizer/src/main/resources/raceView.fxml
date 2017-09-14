@@ -17,17 +17,17 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<Pane fx:id="raceParentPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
+<Pane fx:id="raceParentPane" onTouchStationary="#turnBoat" onZoom="#zoom" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
    <children>
       <AnchorPane fx:id="raceView" prefHeight="900.0" prefWidth="1000.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
           <children>
               <HBox fx:id="controlsBox" alignment="CENTER" prefHeight="1080.0" prefWidth="2000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
               <Canvas fx:id="raceViewCanvas" height="1000.0" width="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-              <Pane fx:id="raceViewPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              <Pane fx:id="raceViewPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1520.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="0.0" />
               <ImageView fx:id="controlsView" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true" />
-              <WebView fx:id="mapView" prefHeight="200.0" prefWidth="200.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-              <Button id="controlbutton" mnemonicParsing="false" onAction="#toggleControls" prefHeight="70.0" prefWidth="76.0" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="50.0">
+              <WebView fx:id="mapView" layoutX="-282.0" layoutY="-4.0" prefHeight="993.0" prefWidth="2084.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="-282.0" AnchorPane.rightAnchor="-2.0" AnchorPane.topAnchor="-4.0" />
+              <Button id="controlbutton" layoutX="25.0" layoutY="411.0" mnemonicParsing="false" onAction="#toggleControls" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="411.0">
                <graphic>
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -70,6 +70,16 @@
                       <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="103.0" vgrow="SOMETIMES" />
                   </rowConstraints>
               </GridPane>
+            <Button id="controlbutton" layoutX="25.0" layoutY="515.0" mnemonicParsing="false" onAction="#toggleZoom" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="515.0">
+               <graphic>
+                  <ImageView id="controlbutton" fitHeight="43.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/eagleIcon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+
           </children>
 
 

@@ -3,6 +3,7 @@ package utilities;
 import javafx.scene.Scene;
 import models.*;
 import parsers.RaceStatusEnum;
+import parsers.powerUp.PowerUp;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Set;
  * Data source
  */
 public interface DataSource {
-    void changeScaling(int Multiplier);
+    void changeScaling(double Multiplier);
     int getZoomLevel();
     Map<Integer, CrewLocation> getCrewLocations();
     Map<Integer, Shark> getSharkLocations();
@@ -46,5 +47,5 @@ public interface DataSource {
     List<MutablePoint> getCourseBoundary17();
     HashMap<Integer, CourseFeature> getStoredFeatures17();
     void update();
-
+    Map<Integer, PowerUp> getPowerUps();
 }

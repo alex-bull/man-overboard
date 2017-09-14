@@ -17,5 +17,6 @@ public interface BoatUpdateEventHandler {
     void sharkEvent(List<Shark> locations) throws IOException;
     void bloodEvent(List<Blood> locations) throws IOException;
     void whirlpoolEvent(List<Whirlpool> whirlpools) throws IOException;
+    void powerUpTakenEvent(int boatId, int powerId, int duration);
 
 }

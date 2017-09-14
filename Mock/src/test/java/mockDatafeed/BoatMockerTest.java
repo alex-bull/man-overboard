@@ -5,6 +5,7 @@ import org.junit.*;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 
 import static mockDatafeed.Keys.TACK;
 import static mockDatafeed.Keys.UP;
@@ -81,6 +82,7 @@ public class BoatMockerTest {
         packet[0] = action;
 
         boatMocker.addConnection(); // generate competitors
+
 
         double expectedHeading = 0;
         for (Competitor competitor : boatMocker.getCompetitors()) {

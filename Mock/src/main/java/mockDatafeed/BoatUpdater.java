@@ -3,21 +3,21 @@ package mockDatafeed;
 import javafx.scene.shape.Line;
 import models.*;
 import org.jdom2.JDOMException;
+import parsers.powerUp.PowerUp;
 import parsers.xml.race.RaceData;
 import utilities.PolarTable;
 import utilities.Utility;
 import utility.Calculator;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static parsers.BoatStatusEnum.DSQ;
+import static parsers.powerUp.PowerUpType.BOOST;
+import static parsers.powerUp.PowerUpType.POTION;
 import static utilities.CollisionUtility.calculateFinalVelocity;
 import static utilities.CollisionUtility.isPointInPolygon;
 import static utility.Calculator.*;
@@ -50,6 +50,9 @@ public class BoatUpdater {
     private List<Shark> sharks = new ArrayList<>();
     private List<Blood> bloodList = new ArrayList<>();
     private List<Whirlpool> whirlpools = new ArrayList<>();
+    private Map<Integer, PowerUp> powerUps = new HashMap<>();
+    private Random random=new Random();
+
 
 
     /**
@@ -77,6 +80,7 @@ public class BoatUpdater {
         this.buildRoundingLines();
     }
 
+
     /**
      * updates the position of all the boats given the boats speed and heading
      *
@@ -94,12 +98,27 @@ public class BoatUpdater {
             }
             double speed = polarTable.getSpeed(twa);
             if (boat.getStatus() != DSQ) {
-                if (boat.hasSailsOut()) {
-                    boat.getBoatSpeed().increase(0.01);
-                    boat.getBoatSpeed().setMagnitude(speed * 4);
-                    boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
+
+                if (!boat.hasSailsOut()) {
+                    if (boat.boostActivated()) {
+                        boat.getBoatSpeed().increase(0.01);
+                        boat.getBoatSpeed().setMagnitude(speed * 4);
+                        boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
+                    }
+                    else {
+                        boat.getBoatSpeed().increase(0.01);
+                        boat.getBoatSpeed().setMagnitude(speed * 1);
+                        boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
+                    }
                 } else {
                     boat.getBoatSpeed().reduce(0.99);
+                }
+
+                if(boat.getBoostTimeout() != 0 && System.currentTimeMillis() > boat.getBoostTimeout()) {
+                    boat.getBoatSpeed().reduce(0.99);
+                    boat.resetBoostTimeout();
+                    boat.deactivateBoost();
+                    boat.disableBoost();
                 }
             } else {
                 boat.getBoatSpeed().reduce(0.99);
@@ -118,7 +137,7 @@ public class BoatUpdater {
                 boat.updateHealth(-15);
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
             }
-
+            this.handlePowerUpCollisions(boat);
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
 
@@ -149,6 +168,23 @@ public class BoatUpdater {
 
     }
 
+    /**
+     * Add new power ups into the power ups hashmap.
+     * @param powerUp PowerUp a power up
+     */
+    void updatePowerUps(PowerUp powerUp) {
+        powerUps.put(powerUp.getId(), powerUp);
+        List<Integer> toRemove = new ArrayList<>();
+        for(int id: powerUps.keySet()) {
+            PowerUp power = powerUps.get(id);
+            if(System.currentTimeMillis() > power.getTimeout()) {
+                toRemove.add(id);
+            }
+        }
+        for(int removeId: toRemove) {
+            powerUps.remove(removeId);
+        }
+    }
 
     /**
      * function to check if crew member can be picked up
@@ -168,6 +204,28 @@ public class BoatUpdater {
         }
 
         return updated;
+    }
+
+    /**
+     * function to check if power up is picked up
+     *
+     * @param boat Competitor boat
+     */
+    private void handlePowerUpCollisions(Competitor boat) {
+        for(int id: powerUps.keySet()) {
+            PowerUp powerUp = powerUps.get(id);
+            if (boat.getPosition().isWithin(powerUp.getLocation(), 0.0005)) {
+                powerUps.remove(id);
+                if(powerUp.getType() == BOOST.getValue()) {
+                    boat.enableBoost();
+                }
+                else if(powerUp.getType() == POTION.getValue()) {
+                    boat.enablePotion();
+                }
+                handler.powerUpTakenEvent(boat.getSourceID(), id, powerUp.getDuration());
+                return;
+            }
+        }
     }
 
 
@@ -651,27 +709,24 @@ public class BoatUpdater {
      * @param health    the health reduced, 5 crew members per location
      */
     private void collisionHandler(MutablePoint location, double magnitude, double health) throws IOException {
-        Random randomGenerator = new Random();
+
         int numLocation = (int) health / 5;
         for (int i = 0; i < numLocation; i++) {
+            //50% chance of dropping
+            if (random.nextDouble()<0.32) {
+                //distance from the boat with mean magnitude and variance magnitude/2
+                double distance = magnitude * 10 + random.nextGaussian() * magnitude * 5;
+                //angle from the boat collision from 0 to 360 degrees
+                double angle = random.nextDouble() * 360;
+                MutablePoint position = movePoint(new Force(distance, angle, false), location, 1);
 
-            //distance from the boat with mean magnitude and variance magnitude/2
-            double distance = magnitude * 10 + randomGenerator.nextGaussian() * magnitude * 5;
-            //angle from the boat collision from 0 to 360 degrees
-            double angle = randomGenerator.nextDouble() * 360;
-            MutablePoint position = movePoint(new Force(distance, angle, false), location, 1);
-
-            CrewLocation crewLocation = new CrewLocation(crewLocationSourceID++, 5, position);
-            crewMembers.add(crewLocation);
-
+                CrewLocation crewLocation = new CrewLocation(crewLocationSourceID++, 5, position);
+                crewMembers.add(crewLocation);
+            }
         }
+
         handler.fallenCrewEvent(crewMembers);
     }
-
-
-
-
-
 
     /**
      * Calculates if the boat collides with any other boat and adjusts the position of both boats accordingly.

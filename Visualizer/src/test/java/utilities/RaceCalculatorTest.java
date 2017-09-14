@@ -22,5 +22,21 @@ public class RaceCalculatorTest {
         Assert.assertEquals("", testWithinBound);
     }
 
+    @Test
+    public void testCalculateBoatDirection() {
+        double theta = raceCalculator.calcBoatDirection(10, 10, 20, 20);
+        Assert.assertEquals(135.0, theta, 0.1);
+    }
+
+    @Test
+    public void testisWestOfWind() {
+        boolean isNotWestOfWind = raceCalculator.isWestOfWind(50, 100, 20);
+        Assert.assertEquals(false, isNotWestOfWind);
+        boolean isWestOfWind = raceCalculator.isWestOfWind(130, 100, 20);
+        Assert.assertEquals(true, isWestOfWind);
+
+
+    }
+
 
 }

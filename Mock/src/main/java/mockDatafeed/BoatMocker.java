@@ -7,6 +7,7 @@ import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
+import parsers.powerUp.PowerUp;
 import parsers.xml.CourseXMLParser;
 import parsers.xml.race.CompoundMarkData;
 import parsers.xml.race.MarkData;
@@ -26,11 +27,12 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
-import static mockDatafeed.Keys.RIP;
-import static mockDatafeed.Keys.SAILS;
+import static mockDatafeed.Keys.*;
 import static parsers.BoatStatusEnum.*;
 import static parsers.MessageType.UNKNOWN;
+import static utilities.CollisionUtility.isPointInPolygon;
 import static utilities.Utility.fileToString;
 import static utility.Calculator.*;
 
@@ -62,6 +64,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     private WorkQueue sendQueue = new WorkQueue(1000000);
     private WorkQueue receiveQueue = new WorkQueue(1000000);
+    private long previousPotionTime = System.currentTimeMillis();
+    private long previousBoostTime = System.currentTimeMillis();
+    private int powerUpId = 0;
 
 
 
@@ -111,20 +116,33 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 HeaderParser headerParser = new HeaderParser();
                 HeaderData headerData = headerParser.processMessage(header);
                 int sourceID = headerData.getSourceID();
+                Competitor boat = competitors.get(sourceID);
                 Keys action = Keys.getKeys(packet[0]);
                 switch (action) {
-                    case SAILS:
-                        sendBoatAction(SAILS.getValue(), sourceID);
+                    case SAILSIN:
+                        sendBoatAction(SAILSIN.getValue(), sourceID);
+                        competitors.get(sourceID).sailsIn();
+                        break;
+                    case SAILSOUT:
+                        sendBoatAction(SAILSOUT.getValue(), sourceID);
+                        competitors.get(sourceID).sailsOut();
+                        break;
+                    case SWITCHSAILS:
+                        sendBoatAction(SWITCHSAILS.getValue(), sourceID);
                         competitors.get(sourceID).switchSails();
                         break;
                     case UP:
-                        competitors.get(sourceID).changeHeading(true, shortToDegrees(windGenerator.getWindDirection()));
+                        if(boat.getStatus() != DSQ) {
+                            boat.changeHeading(true, shortToDegrees(windGenerator.getWindDirection()));
+                        }
                         break;
                     case DOWN:
-                        competitors.get(sourceID).changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
+                        if(boat.getStatus() != DSQ) {
+                            boat.changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
+                        }
                         break;
                     case RIP:
-                        competitors.get(sourceID).setStatus(DSQ);
+                        boat.setStatus(DSQ);
                         sendBoatAction(RIP.getValue(), sourceID);
                         if (!boatUpdater.finisherList.contains(competitors.get(sourceID))){
                             boatUpdater.finisherList.add(competitors.get(sourceID));
@@ -132,9 +150,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                         break;
                     case TACK:
                         double windAngle = shortToDegrees(windGenerator.getWindDirection());
-                        Competitor boat = competitors.get(sourceID);
-
                         boat.setCurrentHeading(windAngle - (boat.getCurrentHeading() - windAngle));
+                        break;
+                    case BOOST:
+                        boat.activateBoost();
+                        break;
+                    case POTION:
+                        boat.updateHealth((int)  boat.getMaxHealth() / 2);
+                        boatStateEvent(sourceID, boat.getHealthLevel());
                         break;
                 }
                 break;
@@ -168,8 +191,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void addCompetitor(Integer clientId) {
 
-        double a = 0.005 * competitors.size(); //shift competitors so they aren't colliding at the start
-        prestart = new MutablePoint(32.41011 + a, -64.88937);
+        double a = 0.001 * competitors.size(); //shift competitors so they aren't colliding at the start
+//        prestart = new MutablePoint(32.41011 + a, -64.88937);
+        prestart = new MutablePoint(32.35763 + a, -64.81332);
 
         Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
         newCompetitor.setCurrentHeading(0);
@@ -289,7 +313,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             if (angle > 2 * Math.PI) {
                 angle = angle - 2 * Math.PI; // wind direction cannot be more than 360
             }
-            windDirection = convertRadiansToShort(4.71239);
+            windDirection = convertRadiansToShort(angle);
         }
         windGenerator = new WindGenerator(windSpeed, windDirection);
 //        polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
@@ -331,8 +355,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             }
         }
     }
-
-
 
 
     /**
@@ -456,6 +478,93 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         this.sendQueue.put(null, binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
     }
+
+
+    /**
+     * Sends power up to output port
+     */
+    public void powerUpEvent() {
+        long currentTime = System.currentTimeMillis();
+        int potionTime = 40000;
+        int boostTime = 30000;
+
+        // potion
+        if(currentTime > previousPotionTime + potionTime && raceInProgress) {
+            long timeout = currentTime + 70000;
+            MutablePoint generatedLocation = getRandomLocation();
+            int radius = 10; // we dont use this but other teams do
+            int powerType = 3;
+            int duration = 20000; // we dont use this but other teams do
+
+            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, powerType, duration, timeout);
+            this.sendQueue.put(null, eventPacket);
+            PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, powerType, duration);
+            boatUpdater.updatePowerUps(powerUp);
+            previousPotionTime = currentTime;
+            this.powerUpId++;
+        }
+
+        // speed boost
+        if(currentTime > previousBoostTime + boostTime && raceInProgress) {
+            long timeout = currentTime + 60000;
+            MutablePoint generatedLocation = getRandomLocation();
+            int radius = 10; // we dont use this but other teams do
+            int powerType = 0;
+            int duration = 20000; // we dont use this but other teams do
+
+            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, powerType, duration, timeout);
+            this.sendQueue.put(null, eventPacket);
+
+            PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, powerType, duration);
+            boatUpdater.updatePowerUps(powerUp);
+            previousBoostTime = currentTime;
+            this.powerUpId++;
+        }
+
+    }
+
+    /**
+     * Sends power up taken to output port
+     */
+    public void powerUpTakenEvent(int boatId, int powerId, int duration) {
+        byte[] eventPacket = binaryPackager.packagePowerUpTaken(boatId, powerId, duration);
+        this.sendQueue.put(null, eventPacket);
+    }
+
+    /**
+     * Generate a random point in the course near a random boat
+     * @return MutablePoint a mutable point of the location
+     */
+    private MutablePoint getRandomLocation() {
+        Random random = new Random();
+        List<Integer> keys = new ArrayList<>(competitors.keySet());
+        Integer randomKey = keys.get(random.nextInt(keys.size()));
+        Competitor randomBoat = competitors.get(randomKey);
+
+        double randomLat = randomBoat.getPosition().getXValue() + getRandomRadius();
+        double randomLon = randomBoat.getPosition().getYValue() + getRandomRadius();
+
+        MutablePoint generatedLocation = new MutablePoint(randomLat, randomLon);
+
+        while (!isPointInPolygon(generatedLocation, courseBoundary)) {
+            randomLat = randomBoat.getPosition().getXValue() + getRandomRadius();
+            randomLon = randomBoat.getPosition().getYValue() + getRandomRadius();
+            generatedLocation=new MutablePoint(randomLat,randomLon);
+
+        }
+        return generatedLocation;
+
+    }
+
+    /**
+     * Generates a random number for the radius of power up spawning
+     * @return double radius
+     */
+    private double getRandomRadius() {
+        return (ThreadLocalRandom.current().nextInt(-10, 10) / 1000.0);
+    }
+
+
 
 
     /**
@@ -604,6 +713,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         try {
             boatUpdater.updatePosition();
+            powerUpEvent();
             sendBoatLocation();
             sendRaceStatus();
         } catch (IOException | InterruptedException e) {
