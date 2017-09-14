@@ -106,5 +106,26 @@ public interface Competitor {
     void setBoatType(Integer boatType);
 
     Integer getBoatType();
+    boolean hasSpeedBoost();
+
+    void enableBoost();
+
+    void disableBoost();
+
+    void deactivateBoost();
+
+    void activateBoost();
+
+    boolean boostActivated();
+
+    long getBoostTimeout();
+
+    void resetBoostTimeout();
+
+    void enablePotion();
+
+    boolean hasPotion();
+
+    void usePotion();
 
 }

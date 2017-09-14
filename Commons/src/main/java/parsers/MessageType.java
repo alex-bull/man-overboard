@@ -23,6 +23,10 @@ public enum MessageType {
     FALLEN_CREW(107),
     NAME_REQUEST(106),
     MODEL_REQUEST(104);
+    POWER_UP(112),
+    POWER_UP_TAKEN(113),
+    FALLEN_CREW(107);
+
 
     private final int value;
 

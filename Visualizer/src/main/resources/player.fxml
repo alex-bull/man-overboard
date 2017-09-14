@@ -86,5 +86,24 @@
             </Label>
          </children>
       </GridPane>
+
+      <ImageView fx:id="speed" fitHeight="51.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="TOP">
+         <image>
+            <Image url="@images/speed3.png" />
+         </image>
+         <GridPane.margin>
+            <Insets top="5.0" />
+         </GridPane.margin>
+      </ImageView>
+
+      <ImageView fx:id="potion" fitHeight="51.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="TOP">
+         <image>
+            <Image url="@images/potion.png" />
+         </image>
+         <GridPane.margin>
+            <Insets left="55.0" />
+         </GridPane.margin>
+      </ImageView>
+
    </children>
 </GridPane>
