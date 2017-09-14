@@ -41,7 +41,7 @@
                <children>
                   <ImageView fx:id="imageView" fitHeight="521.0" fitWidth="965.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                      <image>
-                        <Image url="@images/pc-beta-controller-layout.jpg" />
+                        <Image url="@images/controlsLayout.png" />
                      </image>
                   </ImageView>
                </children>

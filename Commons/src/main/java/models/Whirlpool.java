@@ -11,7 +11,7 @@ public class Whirlpool {
     private MutablePoint position;
     private MutablePoint position17;
     private MutablePoint positionOriginal;
-    private double collisionMagnitude = 10;
+    private double collisionMagnitude = 5;
 
     public Whirlpool(int sourceID, int currentLeg, MutablePoint position) {
         this.sourceID = sourceID;
