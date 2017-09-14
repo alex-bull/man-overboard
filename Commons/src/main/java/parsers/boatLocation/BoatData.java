@@ -17,12 +17,13 @@ public class BoatData {
 
     /**
      * Constructs a boat data read from a data source
-     * @param sourceID int sourceID of the boat
-     * @param deviceType int the device type
-     * @param latitude double latitude
-     * @param longitude double longitude
-     * @param heading double heading
-     * @param speed double speed
+     *
+     * @param sourceID      int sourceID of the boat
+     * @param deviceType    int the device type
+     * @param latitude      double latitude
+     * @param longitude     double longitude
+     * @param heading       double heading
+     * @param speed         double speed
      * @param mercatorPoint MutablePoint pixel point
      */
     BoatData(int sourceID, int deviceType, double latitude, double longitude, double heading, double speed, MutablePoint mercatorPoint) {

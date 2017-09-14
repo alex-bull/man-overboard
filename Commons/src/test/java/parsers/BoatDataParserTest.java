@@ -49,7 +49,7 @@ public class BoatDataParserTest {
 
         try {
             BoatDataParser boatDataParser = new BoatDataParser();
-            assertTrue(boatDataParser.processMessage(packet).getSpeed() == (double)expectedSpeedInMms / 1000);
+            assertTrue(boatDataParser.processMessage(packet).getSpeed() == (double) expectedSpeedInMms / 1000);
         } catch (Exception e) {
             Assert.fail();
         }

@@ -19,8 +19,9 @@ public class WorkQueue {
 
     /**
      * Adds a single element to the tail of the queue
+     *
      * @param clientId Integer
-     * @param message byte[]
+     * @param message  byte[]
      */
     public void put(Integer clientId, byte[] message) {
         this.queue.offer(new QueueMessage(clientId, message));
@@ -28,9 +29,10 @@ public class WorkQueue {
 
     /**
      * Add a single element to the tail of the queue
+     *
      * @param clientId client's id
-     * @param header header of the message
-     * @param body body part of the message
+     * @param header   header of the message
+     * @param body     body part of the message
      */
     public void put(Integer clientId, byte[] header, byte[] body) {
         this.queue.offer(new QueueMessage(clientId, header, body));
@@ -39,6 +41,7 @@ public class WorkQueue {
 
     /**
      * Removes and returns the element at the head of the queue
+     *
      * @return QueueMessage
      */
     public QueueMessage pop() {
@@ -48,6 +51,7 @@ public class WorkQueue {
 
     /**
      * Removes and returns all elements in the queue
+     *
      * @return List
      */
     public List<QueueMessage> drain() {

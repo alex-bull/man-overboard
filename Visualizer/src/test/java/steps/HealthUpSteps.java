@@ -37,7 +37,7 @@ public class HealthUpSteps {
     @When("^The boat uses the potion$")
     public void the_boat_uses_the_potion() throws Throwable {
         boat.usePotion();
-        boat.updateHealth((int) boat.getMaxHealth()/2);
+        boat.updateHealth((int) boat.getMaxHealth() / 2);
     }
 
     @Then("^The boat health is increased by (\\d+) and the boat has no more potion$")

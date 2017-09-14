@@ -14,8 +14,9 @@ public class CompoundMarkData {
 
     /**
      * Compound mark data
-     * @param ID int ID
-     * @param name String name
+     *
+     * @param ID    int ID
+     * @param name  String name
      * @param marks List marks
      */
     CompoundMarkData(int ID, String name, List<MarkData> marks) {

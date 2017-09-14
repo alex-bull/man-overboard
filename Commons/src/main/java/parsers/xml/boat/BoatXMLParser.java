@@ -23,6 +23,7 @@ public class BoatXMLParser {
 
     /**
      * Parse the XML string and set competitor and mark properties from given boat data
+     *
      * @param xmlStr XML String of a boat data
      * @throws IOException   IOException
      * @throws JDOMException JDOMException

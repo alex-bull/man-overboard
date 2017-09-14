@@ -9,6 +9,7 @@ public class CornerData {
 
     /**
      * Corner Data from the data stream (currently only reading rounding)
+     *
      * @param rounding String rounding
      */
     CornerData(String rounding) {
@@ -22,7 +23,6 @@ public class CornerData {
     public void setRounding(String rounding) {
         this.rounding = rounding;
     }
-
 
 
 }

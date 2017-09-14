@@ -1,20 +1,19 @@
 package utilities;
 
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import javafx.util.converter.PercentageStringConverter;
-import models.*;
+import models.Competitor;
+import models.CourseFeature;
+import models.MutablePoint;
+import models.Vector2D;
 import parsers.Converter;
 
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.lang.Math.*;
-import static java.lang.Math.sqrt;
 
 /**
  * Created by psu43 on 25/05/17.
@@ -24,8 +23,9 @@ public class RaceCalculator {
 
     /**
      * Calculates the boat's direction when screen was touched
-     * @param boatX x value of boat's position
-     * @param boatY y value of boat's position
+     *
+     * @param boatX  x value of boat's position
+     * @param boatY  y value of boat's position
      * @param touchX x value of touch point's position
      * @param touchY y value of touch point's position
      * @return double theta
@@ -34,15 +34,18 @@ public class RaceCalculator {
         Vector2D boatDirection = new Vector2D(boatX, boatY, touchX, touchY);
         double theta = atan2(boatDirection.getY(), boatDirection.getX());
         theta = (theta * 180 / PI) + 90;
-        if (theta < 0) { theta = 360 + theta;}
+        if (theta < 0) {
+            theta = 360 + theta;
+        }
 
         return theta;
     }
 
     /**
      * Calculates whether the boat is currently west of wind or not
-     * @param heading boat's heading
-     * @param downWind angle of down wind
+     *
+     * @param heading   boat's heading
+     * @param downWind  angle of down wind
      * @param windAngle angle of wind
      * @return boolean
      */
@@ -55,16 +58,17 @@ public class RaceCalculator {
      * Calculates whether boat is heading to the start line
      * and if it does calculates the virtual line points and returns them so they can be used for drawing
      * returns empty list if boat is not heading to the start line
-     * @param boatModel boat model
-     * @param startMark1 start mark 1
-     * @param startMark2 start mark 2
-     * @param startLine1 start line 1
+     *
+     * @param boatModel         boat model
+     * @param startMark1        start mark 1
+     * @param startMark2        start mark 2
+     * @param startLine1        start line 1
      * @param expectedStartTime expected start time
-     * @param selectedBoat selected boat
-     * @param messageTime time of message
+     * @param selectedBoat      selected boat
+     * @param messageTime       time of message
      * @return List virtualLinePoints
      */
-    public static List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat,Polygon boatModel, MutablePoint startMark1, MutablePoint startMark2, CourseFeature startLine1, long expectedStartTime,long messageTime) {
+    public static List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat, Polygon boatModel, MutablePoint startMark1, MutablePoint startMark2, CourseFeature startLine1, long expectedStartTime, long messageTime) {
         List<MutablePoint> virtualLinePoints = new ArrayList<>();
 
 //
@@ -86,13 +90,13 @@ public class RaceCalculator {
 
 
 //            CourseFeature startLine1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0));
-            double distanceToStartLine = calcDistToStart(selectedBoat,startLine1);
+            double distanceToStartLine = calcDistToStart(selectedBoat, startLine1);
 
 //            long expectedStartTime = dataSource.getExpectedStartTime();
 //            long messageTime = dataSource.getMessageTime();
             long timeUntilStart = Converter.convertToRelativeTime(expectedStartTime, messageTime) * -1; // seconds, negative because race hasn't started
 
-            double distanceToVirtualLine = calcDistToVirtual(selectedBoat,timeUntilStart);
+            double distanceToVirtualLine = calcDistToVirtual(selectedBoat, timeUntilStart);
 
             if (distanceToStartLine != 0) {
                 double ratio = distanceToVirtualLine / distanceToStartLine;
@@ -106,8 +110,9 @@ public class RaceCalculator {
 
     /**
      * Calculates the point of intersection of the boat's heading line and the start line.
-     * @param boatFront Point2D The front of the boat.
-     * @param boatBack Point2D The back of the boat.
+     *
+     * @param boatFront  Point2D The front of the boat.
+     * @param boatBack   Point2D The back of the boat.
      * @param startMark1 MutablePoint One end of the start line.
      * @param startMark2 MutablePoint The other end of the start line.
      * @return MutablePoint Point of intersection.
@@ -152,13 +157,14 @@ public class RaceCalculator {
 
     /**
      * Calculates the position of a point on the virtual start line corresponding to a point on the real start line.
-     * @param ratio double The ratio of the distance from the boat to virtual and real start lines.
+     *
+     * @param ratio       double The ratio of the distance from the boat to virtual and real start lines.
      * @param xDifference double The difference along the x-axis between the front of the boat and point of intersection with the start line.
      * @param yDifference double The difference along the y-axis between the front of the boat and point of intersection with the start line.
-     * @param startMark MutablePoint A point on the real start line.
+     * @param startMark   MutablePoint A point on the real start line.
      * @return MutablePoint A point on the virtual start line.
      */
-    public  static MutablePoint calcVirtualLinePoint(double ratio, double xDifference, double yDifference, MutablePoint startMark) {
+    public static MutablePoint calcVirtualLinePoint(double ratio, double xDifference, double yDifference, MutablePoint startMark) {
         double startToVirtualX = (1 - ratio) * xDifference;
         double startToVirtualY = (1 - ratio) * yDifference;
 
@@ -170,13 +176,14 @@ public class RaceCalculator {
 
     /**
      * Calculates the estimated time to the mark and compares it to expected race start time.
+     *
      * @param distanceToStart double the Distance to the a point on a start line
-     * @param distanceToEnd double the Distance to the a point on a start line
-     * @param velocity double the speed of the boat
-     * @param timeUntilStart long the time until start
+     * @param distanceToEnd   double the Distance to the a point on a start line
+     * @param velocity        double the speed of the boat
+     * @param timeUntilStart  long the time until start
      * @return String "-" if the boat is going to cross early, "+" if late and "" if within 5 seconds.
      */
-    public  static String calculateStartSymbol(double distanceToStart, double distanceToEnd, double velocity, long timeUntilStart) {
+    public static String calculateStartSymbol(double distanceToStart, double distanceToEnd, double velocity, long timeUntilStart) {
         int timeBound = 5;
         double selectedTime;
 
@@ -197,7 +204,8 @@ public class RaceCalculator {
 
     /**
      * Calculates distance between the player's boat and the virtual line
-     * @param selectedBoat selected boat
+     *
+     * @param selectedBoat   selected boat
      * @param timeUntilStart time until start
      * @return double distance (m)
      */
@@ -207,8 +215,9 @@ public class RaceCalculator {
 
     /**
      * Calculates distance between the player's boat and the start line
+     *
      * @param selectedBoat selected boat
-     * @param startLine1 start line
+     * @param startLine1   start line
      * @return double distance (m)
      */
     public static double calcDistToStart(Competitor selectedBoat, CourseFeature startLine1) {
@@ -223,13 +232,14 @@ public class RaceCalculator {
 
     /**
      * Calculates the distance in metres between a pair of coordinates.
-     * @param latitude1 first point's latitude
+     *
+     * @param latitude1  first point's latitude
      * @param longitude1 first point's longitude
-     * @param latitude2 second point's latitude
+     * @param latitude2  second point's latitude
      * @param longitude2 second point's longitude
      * @return double distance (m)
      */
-    public  static double calcDistBetweenGPSPoints(double latitude1, double longitude1, double latitude2, double longitude2) {
+    public static double calcDistBetweenGPSPoints(double latitude1, double longitude1, double latitude2, double longitude2) {
         long earthRadius = 6371000;
         double phiStart = Math.toRadians(latitude2);
         double phiBoat = Math.toRadians(latitude1);
@@ -243,16 +253,15 @@ public class RaceCalculator {
     }
 
 
-
-
     /**
      * Calculates the angle between marks
+     *
      * @param xDist Double the distance between marks in the x direction
      * @param yDist Double the distance between marks in the y direction
      * @return double the angle
      */
     public static double calculateAngleBetweenMarks(Double xDist, Double yDist) {
-        double arctan = atan(yDist/xDist);
+        double arctan = atan(yDist / xDist);
         if (arctan < 0) {
             arctan += 2 * Math.PI;
         }
@@ -267,15 +276,15 @@ public class RaceCalculator {
     }
 
 
-
     /**
      * Gets the centre coordinates for a mark or gate
-     * @param markIndex index of the mark (based on the order they are rounded)
-     * @param indexMap Map of index to sourceId
+     *
+     * @param markIndex  index of the mark (based on the order they are rounded)
+     * @param indexMap   Map of index to sourceId
      * @param featureMap Map of sourceId to courseFeature
      * @return MutablePoint (x,y) coordinates
      */
-    public static MutablePoint getGateCentre(Integer markIndex, Map<Integer, List<Integer>> indexMap,  Map<Integer, CourseFeature> featureMap) {
+    public static MutablePoint getGateCentre(Integer markIndex, Map<Integer, List<Integer>> indexMap, Map<Integer, CourseFeature> featureMap) {
 
         Map<Integer, List<Integer>> features = indexMap;
         if (markIndex > features.size()) return null; //passed the finish line

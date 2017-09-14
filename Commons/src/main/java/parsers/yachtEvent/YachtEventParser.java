@@ -1,11 +1,8 @@
 package parsers.yachtEvent;
 
 import parsers.Converter;
-import parsers.boatAction.BoatAction;
-import parsers.raceStatus.BoatStatus;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 import static parsers.Converter.hexByteArrayToInt;
 
@@ -25,16 +22,17 @@ public class YachtEventParser {
 
     /**
      * Process the given data and get SourceID and EventID
+     *
      * @param data the data received
      */
-   public YachtEventParser(byte[] data){
-       currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(data, 1, 7));
-       ackNumber = hexByteArrayToInt(Arrays.copyOfRange(data, 7, 9));
-       raceID= hexByteArrayToInt(Arrays.copyOfRange(data, 9, 13));
-       sourceID = Converter.hexByteArrayToInt(Arrays.copyOfRange(data, 13, 17));
-       incidentID = hexByteArrayToInt(Arrays.copyOfRange(data, 17, 21));
-       eventID= hexByteArrayToInt(Arrays.copyOfRange(data, 21, 22));
-   }
+    public YachtEventParser(byte[] data) {
+        currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(data, 1, 7));
+        ackNumber = hexByteArrayToInt(Arrays.copyOfRange(data, 7, 9));
+        raceID = hexByteArrayToInt(Arrays.copyOfRange(data, 9, 13));
+        sourceID = Converter.hexByteArrayToInt(Arrays.copyOfRange(data, 13, 17));
+        incidentID = hexByteArrayToInt(Arrays.copyOfRange(data, 17, 21));
+        eventID = hexByteArrayToInt(Arrays.copyOfRange(data, 21, 22));
+    }
 
     public long getCurrentTime() {
         return currentTime;

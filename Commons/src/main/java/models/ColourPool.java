@@ -17,7 +17,7 @@ public class ColourPool {
      * Constructs a colour pool with colours.
      */
     public ColourPool() {
-        this.colours.add(Color.rgb(0,20,168)); // ZAFFRE
+        this.colours.add(Color.rgb(0, 20, 168)); // ZAFFRE
         this.colours.add(Color.BLACK);
         this.colours.add(Color.BLUEVIOLET);
         this.colours.add(Color.GREEN);

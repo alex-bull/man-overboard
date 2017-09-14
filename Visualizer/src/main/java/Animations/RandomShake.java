@@ -1,13 +1,10 @@
 package Animations;
 
 import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 import javafx.util.Duration;
-import parsers.xml.race.RaceData;
 
 import java.util.Random;
 
@@ -28,10 +25,10 @@ public class RandomShake {
     /**
      * Spins the node multiple times.
      */
-    public void spin(){
+    public void spin() {
         RotateTransition rt = new RotateTransition(Duration.seconds(3), node);
         rt.setByAngle(1080);
-        rt.setOnFinished(event-> node.setRotate(0));
+        rt.setOnFinished(event -> node.setRotate(0));
         rt.play();
     }
 
@@ -41,7 +38,7 @@ public class RandomShake {
     public void animate() {
 
         Timeline timelineX = new Timeline(new KeyFrame(Duration.seconds(0.05), t -> {
-            int val = new Random().nextInt(20)-10;
+            int val = new Random().nextInt(20) - 10;
             if (x) {
                 node.setLayoutX(val);
             } else {
@@ -56,7 +53,7 @@ public class RandomShake {
 
 
         Timeline timelineY = new Timeline(new KeyFrame(Duration.seconds(0.05), t -> {
-            int val = new Random().nextInt(20)-10;
+            int val = new Random().nextInt(20) - 10;
             if (y) {
                 node.setLayoutY(val);
             } else {

@@ -10,6 +10,7 @@ class LimitData {
 
     /**
      * LimitData read from a data packet
+     *
      * @param lat double latitude
      * @param lon double longitude
      */

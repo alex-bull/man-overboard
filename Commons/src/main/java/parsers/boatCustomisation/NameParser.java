@@ -17,9 +17,10 @@ public class NameParser {
 
     /**
      * Process the given connection response data
+     *
      * @param body the data received
      */
-    public NameParser(byte[] body){
+    public NameParser(byte[] body) {
         sourceId = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 4));
         try {
             name = new String(Arrays.copyOfRange(body, 7, 37), "UTF-8").trim();

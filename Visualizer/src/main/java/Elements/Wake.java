@@ -20,15 +20,16 @@ public class Wake extends Polygon {
 
     /**
      * Initialize a wake
-     * @param boat Competitor, the boat
-     * @param boatLength double, the length of the boat
-     * @param startWakeOffset double, the offset of the wake
-     * @param wakeWidthFactor double, the width scale
+     *
+     * @param boat             Competitor, the boat
+     * @param boatLength       double, the length of the boat
+     * @param startWakeOffset  double, the offset of the wake
+     * @param wakeWidthFactor  double, the width scale
      * @param wakeLengthFactor double, the length scale
      */
     public Wake(Competitor boat, double boatLength, double startWakeOffset, double wakeWidthFactor, double wakeLengthFactor) {
 
-        double wakeLength = boat.getVelocity()*wakeLengthFactor;
+        double wakeLength = boat.getVelocity() * wakeLengthFactor;
         this.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + wakeLength * wakeWidthFactor, wakeLength + boatLength, -startWakeOffset - wakeLength * wakeWidthFactor, wakeLength + boatLength);
         LinearGradient linearGradient = new LinearGradient(0.0, 0, 0.0, 1, true, CycleMethod.NO_CYCLE, new Stop(0.0f, Color.rgb(0, 0, 255, 0.7)), new Stop(1.0f, TRANSPARENT));
         this.setFill(linearGradient);
@@ -37,10 +38,11 @@ public class Wake extends Polygon {
 
     /**
      * Update the wake model
-     * @param boat Competitor, the boat
-     * @param boatLength double, the length of the boat
-     * @param startWakeOffset double, the offset of the wake
-     * @param wakeWidthFactor double, the width scale
+     *
+     * @param boat             Competitor, the boat
+     * @param boatLength       double, the length of the boat
+     * @param startWakeOffset  double, the offset of the wake
+     * @param wakeWidthFactor  double, the width scale
      * @param wakeLengthFactor double, the length scale
      * @param relativePosition MutablePoint, the relative position to the controlled boat
      */

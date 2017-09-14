@@ -1,6 +1,5 @@
 package steps;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -17,8 +16,11 @@ public class BoatSailStateSteps {
 
     @Given("^the boat has their sails (\\d+)$")
     public void theBoatHasTheirSails(boolean out) throws Throwable {
-        if(out){ Assert.assertTrue(boat.getSailValue() > 0); }
-        else { Assert.assertTrue(boat.getSailValue() == 0); }
+        if (out) {
+            Assert.assertTrue(boat.getSailValue() > 0);
+        } else {
+            Assert.assertTrue(boat.getSailValue() == 0);
+        }
     }
 
     @Given("^the boat's velocity is (\\d+)$")

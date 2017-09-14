@@ -3,8 +3,8 @@ package models;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
-import parsers.BoatStatusEnum;
 import javafx.scene.shape.Line;
+import parsers.BoatStatusEnum;
 import utility.Calculator;
 
 import java.util.ArrayList;
@@ -49,21 +49,10 @@ public class Boat implements Competitor {
 
 
     //collision size
-    private double collisionRadius=20;
+    private double collisionRadius = 20;
 
     //external forces
-    private List<Force> externalForces=new ArrayList<>();
-
-
-
-    public MutablePoint getPosition17() {
-        return position17;
-    }
-
-    public void setPosition17(MutablePoint position17) {
-        this.position17 = position17;
-    }
-
+    private List<Force> externalForces = new ArrayList<>();
     private boolean sailsOut = true;
     private double sailValue = 1;
 
@@ -77,7 +66,7 @@ public class Boat implements Competitor {
      * @param abbreName     String the abbreviated name of the boat
      */
     public Boat(String teamName, int velocity, MutablePoint startPosition, Color color, String abbreName) {
-        this.boatSpeed=new Force(velocity,0,false);
+        this.boatSpeed = new Force(velocity, 0, false);
         this.teamName = teamName;
         this.position = startPosition;
 
@@ -87,8 +76,6 @@ public class Boat implements Competitor {
         timeToNextMark = 0;
         timeAtLastMark = 0;
     }
-
-
     /**
      * Creates a boat, for mock class only
      *
@@ -100,7 +87,7 @@ public class Boat implements Competitor {
      * @param status        BoatStatusEnum status of the boat
      */
     public Boat(String teamName, int velocity, MutablePoint startPosition, String abbreName, int sourceID, BoatStatusEnum status) {
-        this.boatSpeed=new Force(velocity,0,false);
+        this.boatSpeed = new Force(velocity, 0, false);
         this.teamName = teamName;
         this.position = startPosition;
         this.abbreName = abbreName;
@@ -111,9 +98,16 @@ public class Boat implements Competitor {
         this.status = status;
     }
 
-
     public Boat() {
-        this.boatSpeed=new Force(0,0,false);
+        this.boatSpeed = new Force(0, 0, false);
+    }
+
+    public MutablePoint getPosition17() {
+        return position17;
+    }
+
+    public void setPosition17(MutablePoint position17) {
+        this.position17 = position17;
     }
 
     public boolean boostActivated() {
@@ -142,7 +136,7 @@ public class Boat implements Competitor {
     }
 
     public void activateBoost() {
-        if(this.hasSpeedBoost) {
+        if (this.hasSpeedBoost) {
             this.activatedBoost = true;
             this.boostTimeout = System.currentTimeMillis() + 7000;
             this.hasSpeedBoost = false;
@@ -182,21 +176,21 @@ public class Boat implements Competitor {
         this.roundingLine2 = roundingLine2;
     }
 
-    public void setMaxHealth(int health){
-        this.maxHealth = health;
-    }
-
-    public void setHealthLevel(int health){
-        this.healthLevel = health;
-
-    }
-
     public double getMaxHealth() {
         return maxHealth;
     }
 
+    public void setMaxHealth(int health) {
+        this.maxHealth = health;
+    }
+
     public double getHealthLevel() {
         return healthLevel;
+    }
+
+    public void setHealthLevel(int health) {
+        this.healthLevel = health;
+
     }
 
     public boolean isSailsOut() {
@@ -205,13 +199,14 @@ public class Boat implements Competitor {
 
     /**
      * updates the boat health when they collide or round
+     *
      * @param delta int the amount the boat health changes by
      */
     public void updateHealth(int delta) {
         double resultHealth = healthLevel + delta;
 
-        if(resultHealth > maxHealth) {
-           this.healthLevel = maxHealth;
+        if (resultHealth > maxHealth) {
+            this.healthLevel = maxHealth;
         } else this.healthLevel = resultHealth;
     }
 
@@ -221,7 +216,7 @@ public class Boat implements Competitor {
     @Override
     public void switchSails() {
         sailsOut = !sailsOut;
-        if(sailsOut){
+        if (sailsOut) {
             sailValue = 1;
         } else {
             sailValue = 0;
@@ -242,25 +237,32 @@ public class Boat implements Competitor {
 
     /**
      * Returns the sail state of the boat
+     *
      * @return double - the value of the sail slider
      */
-    public double getSailValue() { return sailValue; }
+    public double getSailValue() {
+        return sailValue;
+    }
 
-    public void setSailValue(double sailValue){ this.sailValue = sailValue; }
+    public void setSailValue(double sailValue) {
+        this.sailValue = sailValue;
+    }
 
-    public boolean hasSailsOut(){ return sailsOut;}
+    public boolean hasSailsOut() {
+        return sailsOut;
+    }
 
     public double getCollisionRadius() {
         return collisionRadius;
     }
 
-    public void setBoatSpeed(Force boatSpeed) {
-        this.boatSpeed = boatSpeed;
-    }
-
     @Override
     public Force getBoatSpeed() {
         return boatSpeed;
+    }
+
+    public void setBoatSpeed(Force boatSpeed) {
+        this.boatSpeed = boatSpeed;
     }
 
     @Override
@@ -299,16 +301,28 @@ public class Boat implements Competitor {
         this.longitude = longitude;
     }
 
-    public void setTimeToNextMark(long timeToNextMark) {this.timeToNextMark =  timeToNextMark;}
+    public void setTimeToNextMark(long timeToNextMark) {
+        this.timeToNextMark = timeToNextMark;
+    }
 
-    public void setTimeAtLastMark(long timeAtLastMark) {this.timeAtLastMark = timeAtLastMark;}
+    public void setTimeAtLastMark(long timeAtLastMark) {
+        this.timeAtLastMark = timeAtLastMark;
+    }
 
-    public String getLastMarkPassed() {return lastMarkPassed;}
+    public String getLastMarkPassed() {
+        return lastMarkPassed;
+    }
 
-    public void setLastMarkPassed(String lastMarkPassed) {this.lastMarkPassed = lastMarkPassed;}
+    public void setLastMarkPassed(String lastMarkPassed) {
+        this.lastMarkPassed = lastMarkPassed;
+    }
 
     public int getSourceID() {
         return sourceID;
+    }
+
+    public void setSourceID(int sourceID) {
+        this.sourceID = sourceID;
     }
 
     /**
@@ -320,10 +334,6 @@ public class Boat implements Competitor {
         this.sourceID = Integer.parseInt(sourceID);
     }
 
-    public void setSourceID(int sourceID) {
-        this.sourceID = sourceID;
-    }
-
     public String getTeamName() {
         return this.teamName;
     }
@@ -333,7 +343,7 @@ public class Boat implements Competitor {
     }
 
     public double getVelocity() {
-        return boatSpeed.getMagnitude()*healthLevel/maxHealth;
+        return boatSpeed.getMagnitude() * healthLevel / maxHealth;
     }
 
     public void setVelocity(double velocity) {
@@ -348,7 +358,9 @@ public class Boat implements Competitor {
         this.position = newPos;
     }
 
-    public Integer getBoatType() { return this.boatType; }
+    public Integer getBoatType() {
+        return this.boatType;
+    }
 
     public void setBoatType(Integer boatType) {
         this.boatType = boatType;
@@ -358,6 +370,7 @@ public class Boat implements Competitor {
     public String getAbbreName() {
         return abbreName;
     }
+
     public void setAbbreName(String abbreName) {
         this.abbreName = abbreName;
     }
@@ -378,13 +391,11 @@ public class Boat implements Competitor {
 
     public void setCurrentHeading(double currentHeading) {
         if (currentHeading < 0) {
-            this.currentHeading.set(currentHeading+360);
-        }
-        else{
-            this.currentHeading.set(currentHeading%360);
+            this.currentHeading.set(currentHeading + 360);
+        } else {
+            this.currentHeading.set(currentHeading % 360);
         }
     }
-
 
 
     public void startRounding() {
@@ -408,14 +419,14 @@ public class Boat implements Competitor {
      */
     public void updatePosition(double elapsedTime) {
         //moves the boat by its speed
-        MutablePoint p= Calculator.movePoint((Force) Calculator.multiply(healthLevel/maxHealth,boatSpeed),getPosition(),elapsedTime);
+        MutablePoint p = Calculator.movePoint((Force) Calculator.multiply(healthLevel / maxHealth, boatSpeed), getPosition(), elapsedTime);
 
         //calculate all external forces on it
-        for(Force force:new ArrayList<>(externalForces)){
-            p=Calculator.movePoint(force,p,elapsedTime);
+        for (Force force : new ArrayList<>(externalForces)) {
+            p = Calculator.movePoint(force, p, elapsedTime);
             //reduce the external force
             force.reduce(0.95);
-            if(force.getMagnitude()<0.1){
+            if (force.getMagnitude() < 0.1) {
                 externalForces.remove(force);
             }
         }
@@ -423,12 +434,11 @@ public class Boat implements Competitor {
     }
 
 
-
-
-    public void addForce(Force externalForce){
+    public void addForce(Force externalForce) {
         externalForces.add(externalForce);
     }
-    public void removeForce(Force externalForce){
+
+    public void removeForce(Force externalForce) {
         externalForces.remove(externalForce);
     }
 
@@ -438,12 +448,13 @@ public class Boat implements Competitor {
 
     /**
      * Returns the downwind given wind angle
+     *
      * @param windAngle double wind angle
      * @return double downWind
      */
     public double getDownWind(double windAngle) {
         double downWind = windAngle + 180;
-        if(downWind > 360) {
+        if (downWind > 360) {
             downWind = downWind - 360;
         }
         return downWind;
@@ -451,33 +462,31 @@ public class Boat implements Competitor {
 
     /**
      * function to change boats heading
-     * @param upwind true=upwind
+     *
+     * @param upwind    true=upwind
      *                  false=downwind
      * @param windAngle the current wind angle
      */
-    public void changeHeading(boolean upwind, double windAngle){
+    public void changeHeading(boolean upwind, double windAngle) {
         int turnAngle = 3;
 
-        if(windAngle < 360 && windAngle > 180) {
+        if (windAngle < 360 && windAngle > 180) {
             windAngle = windAngle - 180;
             upwind = !upwind;
         }
 
         double downWind = getDownWind(windAngle);
-        double currentHeading=getCurrentHeading();
-        if(currentHeading>= windAngle && currentHeading <= downWind) {
-            if(upwind) {
+        double currentHeading = getCurrentHeading();
+        if (currentHeading >= windAngle && currentHeading <= downWind) {
+            if (upwind) {
                 setCurrentHeading(currentHeading - turnAngle);
-            }
-            else {
+            } else {
                 setCurrentHeading(currentHeading + turnAngle);
             }
-        }
-        else {
-            if(upwind) {
+        } else {
+            if (upwind) {
                 setCurrentHeading(currentHeading + turnAngle);
-            }
-            else {
+            } else {
                 setCurrentHeading(currentHeading - turnAngle);
             }
         }

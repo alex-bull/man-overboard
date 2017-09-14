@@ -7,7 +7,7 @@ public class Whirlpool {
 
     private int sourceID;
     private int currentLeg;
-    private double collisionRadius=400;
+    private double collisionRadius = 400;
     private MutablePoint position;
     private MutablePoint position17;
     private MutablePoint positionOriginal;
@@ -23,8 +23,8 @@ public class Whirlpool {
         this.sourceID = sourceID;
         this.currentLeg = currentLeg;
         this.position = position;
-        this.position17=position17;
-        this.positionOriginal=positionOriginal;
+        this.position17 = position17;
+        this.positionOriginal = positionOriginal;
     }
 
     public int getSourceID() {
@@ -51,11 +51,11 @@ public class Whirlpool {
         this.position = position;
     }
 
-    public double getLatitude(){
+    public double getLatitude() {
         return position.getXValue();
     }
 
-    public double getLongitude(){
+    public double getLongitude() {
         return position.getYValue();
     }
 

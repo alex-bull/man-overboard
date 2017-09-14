@@ -4,17 +4,10 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 
 /**
  * Created by jar156 on 14/04/17.
@@ -29,9 +22,10 @@ public class RegattaXMLParser {
 
     /**
      * Parse the Regatta Data
+     *
      * @param xmlStr XML String of regatta data
      * @throws JDOMException JDOMException
-     * @throws IOException IOException
+     * @throws IOException   IOException
      */
     public RegattaXMLParser(String xmlStr) throws JDOMException, IOException {
 

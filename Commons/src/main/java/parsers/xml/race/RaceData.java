@@ -21,15 +21,17 @@ public class RaceData {
     private Map<Integer, String> legIndexToRoundingDirection = new HashMap<>();
 
 
-    RaceData() {}
+    RaceData() {
+    }
 
     /**
      * Gets a list of start marks ID from the startMarks list
+     *
      * @return List list of start marks ids
      */
-    public List<Integer> getStartMarksID(){
-        List<Integer> returnList=new ArrayList<>();
-        for(MarkData mark:startMarks){
+    public List<Integer> getStartMarksID() {
+        List<Integer> returnList = new ArrayList<>();
+        for (MarkData mark : startMarks) {
             returnList.add(mark.getSourceID());
         }
         return returnList;
@@ -37,17 +39,16 @@ public class RaceData {
 
     /**
      * From the finish marks list, get the finish marks id
+     *
      * @return List the list of finish mark ids
      */
-    public List<Integer> getFinishMarksID(){
-        List<Integer> returnList=new ArrayList<>();
-        for(MarkData mark:finishMarks){
+    public List<Integer> getFinishMarksID() {
+        List<Integer> returnList = new ArrayList<>();
+        for (MarkData mark : finishMarks) {
             returnList.add(mark.getSourceID());
         }
         return returnList;
     }
-
-
 
 
     void setStartMarks(List<MarkData> startMarks) {
@@ -70,10 +71,6 @@ public class RaceData {
         return participants;
     }
 
-    void setParticipantIDs(Set<Integer> participantIDs) {
-        this.participantIDs = participantIDs;
-    }
-
     List<CornerData> getCompoundMarkSequence() {
         return compoundMarkSequence;
     }
@@ -90,6 +87,10 @@ public class RaceData {
         return participantIDs;
     }
 
+    void setParticipantIDs(Set<Integer> participantIDs) {
+        this.participantIDs = participantIDs;
+    }
+
     public Set<Integer> getMarkSourceIDs() {
         return markSourceIDs;
     }
@@ -99,7 +100,8 @@ public class RaceData {
     }
 
     public Map<Integer, List<Integer>> getLegIndexToMarkSourceIds() {
-        return legIndexToMarkSourceIds; }
+        return legIndexToMarkSourceIds;
+    }
 
     public void setLegIndexToMarkSourceIds(Map<Integer, List<Integer>> indexToSourceId) {
         this.legIndexToMarkSourceIds = indexToSourceId;
@@ -109,12 +111,11 @@ public class RaceData {
         this.compoundMarkIDs.add(markId);
     }
 
+    public Map<Integer, String> getLegIndexToRoundingDirection() {
+        return legIndexToRoundingDirection;
+    }
 
     public void setLegIndexToRoundingDirection(Map<Integer, String> legIndexToRoundingDirection) {
         this.legIndexToRoundingDirection = legIndexToRoundingDirection;
-    }
-
-    public Map<Integer, String> getLegIndexToRoundingDirection() {
-        return legIndexToRoundingDirection;
     }
 }

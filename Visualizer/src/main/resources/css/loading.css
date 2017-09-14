@@ -3,31 +3,30 @@
     src: url('../fonts/gentium-book-basic.bold-italic.ttf');
 }
 
-
-
-#loadingPane{
+#loadingPane {
     -fx-background-color: #7dcdcd;
 }
 
-#team{
+#team {
     -fx-font-size: 5em;
     -fx-font-family: 'Gentium Book Basic';
     -fx-fill: #e0efef;
 
 }
 
-#product{
+#product {
     -fx-font-size: 10em;
     -fx-fill: #e0efef;
     -fx-font-family: 'Gentium Book Basic';
 
-
 }
-#phrase{
-    -fx-font-size:3em;
+
+#phrase {
+    -fx-font-size: 3em;
     -fx-fill: #e0efef;
     /*-fx-font-family: 'Gentium Book Basic';*/
 }
-#indicator{
--fx-progress-color:#c0e8e8;
+
+#indicator {
+    -fx-progress-color: #c0e8e8;
 }

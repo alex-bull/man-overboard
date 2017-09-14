@@ -1,9 +1,6 @@
 package Elements;
 
 import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import models.Competitor;
@@ -22,7 +19,6 @@ public class HealthBar extends Group {
 
     /**
      * Initializes a health bar
-
      */
     public HealthBar() {
 
@@ -35,9 +31,10 @@ public class HealthBar extends Group {
 
     /**
      * Update health bar using a scale and default positioning
-     * @param boat Competitor, the boat
+     *
+     * @param boat        Competitor, the boat
      * @param lengthScale int, the scale factor for bar length
-     * @param widthScale int, the scale factor for bar width
+     * @param widthScale  int, the scale factor for bar width
      */
     public void update(Competitor boat, int lengthScale, int widthScale) {
 
@@ -67,10 +64,11 @@ public class HealthBar extends Group {
 
     /**
      * Updates the position and color of the health bar to match the current state of the boat
-     * @param boat Competitor, the boat for the health bar
+     *
+     * @param boat  Competitor, the boat for the health bar
      * @param boatX double, the screen coords of the boat on x axis
      * @param boatY double, the screen coords of the boat on y axis
-     * @param zoom boolean, true if the view is Zoomed
+     * @param zoom  boolean, true if the view is Zoomed
      * @return boolean, false if the boat died
      */
     public boolean update(Competitor boat, double boatX, double boatY, boolean zoom) {
@@ -83,7 +81,7 @@ public class HealthBar extends Group {
         double healthSize = ((healthLevel / boat.getMaxHealth()) * maxBarLength) / scale;
 
 
-        if(healthLevel > 0) {
+        if (healthLevel > 0) {
             Color healthColour = calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
             healthBarBackground.setStrokeWidth(strokeWidth + (2 * scale));
             healthBarBackground.setStartX(boatX);
@@ -103,7 +101,7 @@ public class HealthBar extends Group {
             return true;
         }
 
-        if(boat.getStatus() != DSQ) {
+        if (boat.getStatus() != DSQ) {
             healthBar.setVisible(false);
             this.getChildren().clear();
             boat.setStatus(DSQ);
@@ -114,31 +112,25 @@ public class HealthBar extends Group {
     }
 
 
-
-
-
     /**
      * Returns the color of the health bar
-     * @param health double the health level
+     *
+     * @param health    double the health level
      * @param maxHealth double the max health level
      * @return Color the bar color
      */
     public Color calculateHealthColour(double health, double maxHealth) {
 
-        double percentage = health/maxHealth;
-        if(percentage > 0.7) {
+        double percentage = health / maxHealth;
+        if (percentage > 0.7) {
             return Color.GREEN;
-        }
-        else if(percentage > 0.6) {
+        } else if (percentage > 0.6) {
             return Color.GREENYELLOW;
-        }
-        else if(percentage > 0.5) {
+        } else if (percentage > 0.5) {
             return Color.YELLOW;
-        }
-        else if(percentage > 0.4) {
+        } else if (percentage > 0.4) {
             return Color.ORANGE;
-        }
-        else {
+        } else {
             return Color.RED;
         }
     }

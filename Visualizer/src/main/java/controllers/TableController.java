@@ -1,8 +1,5 @@
 package controllers;
 
-import javafx.scene.layout.AnchorPane;
-import models.Competitor;
-import models.RaceEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,7 +7,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import models.Competitor;
+import models.RaceEvent;
 import utilities.DataSource;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +25,18 @@ import java.util.ResourceBundle;
 
 public class TableController implements Initializable {
 
-    @FXML private AnchorPane table;
-    @FXML private TableView<RaceEvent> raceTable;
-    @FXML private TableColumn<RaceEvent, Integer> positionCol;
-    @FXML private TableColumn<RaceEvent, String> featureCol;
-    @FXML private TableColumn<RaceEvent, String> nameCol;
-    @FXML private TableColumn<RaceEvent, Integer> speedCol;
+    @FXML
+    private AnchorPane table;
+    @FXML
+    private TableView<RaceEvent> raceTable;
+    @FXML
+    private TableColumn<RaceEvent, Integer> positionCol;
+    @FXML
+    private TableColumn<RaceEvent, String> featureCol;
+    @FXML
+    private TableColumn<RaceEvent, String> nameCol;
+    @FXML
+    private TableColumn<RaceEvent, Integer> speedCol;
 
     private TableObserver observer;
     private ObservableList<RaceEvent> events = FXCollections.observableArrayList();
@@ -63,6 +70,7 @@ public class TableController implements Initializable {
 
     /**
      * Sets the observer
+     *
      * @param observer TableObserver
      */
     public void addObserver(TableObserver observer) {
@@ -73,6 +81,7 @@ public class TableController implements Initializable {
     /**
      * Called when the race display updates
      * Gets table selection and resets the data in the table.
+     *
      * @param dataSource DataSource the latest race data
      */
     void refresh(DataSource dataSource) {
@@ -81,6 +90,7 @@ public class TableController implements Initializable {
 
     /**
      * Sets the data in the table
+     *
      * @param competitors List the competitors in the race
      */
     List<Competitor> setTable(List<Competitor> competitors) {
@@ -94,21 +104,21 @@ public class TableController implements Initializable {
             Double speed = comps.get(i).getVelocity();
             String featureName = comps.get(i).getLastMarkPassed();
             Integer sourceId = comps.get(i).getSourceID();
-            RaceEvent raceEvent = new RaceEvent(sourceId, teamName, featureName, String.format("%.2f",speed), i + 1);
+            RaceEvent raceEvent = new RaceEvent(sourceId, teamName, featureName, String.format("%.2f", speed), i + 1);
             events.add(raceEvent);
         }
 
         return comps;
     }
 
-    void printTable(){
-        for(RaceEvent raceEvent:events){
+    void printTable() {
+        for (RaceEvent raceEvent : events) {
             System.out.println(raceEvent.getTeamName());
         }
         System.out.println();
     }
 
-    public void makeInvisible(){
+    public void makeInvisible() {
         table.setVisible(false);
         visible = false;
     }

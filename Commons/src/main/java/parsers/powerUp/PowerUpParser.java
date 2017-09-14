@@ -1,12 +1,8 @@
 package parsers.powerUp;
 
-import models.CrewLocation;
-import models.MutablePoint;
 import parsers.Converter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.Converter.parseCoordinate;
@@ -16,7 +12,6 @@ import static parsers.Converter.parseCoordinate;
  * Parse power up
  */
 public class PowerUpParser {
-
 
 
     public PowerUp parsePowerUp(byte[] packet) {
@@ -30,8 +25,7 @@ public class PowerUpParser {
             Integer duration = hexByteArrayToInt(Arrays.copyOfRange(packet, 21, 25));
 
             return new PowerUp(id, latitude, longitude, radius, timeout, type, duration);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             return null;
         }
 

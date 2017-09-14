@@ -13,6 +13,7 @@ public class Sail extends Line {
 
     /**
      * initialize a sail with a color
+     *
      * @param color Color the line color
      */
     public Sail(Color color) {
@@ -21,12 +22,13 @@ public class Sail extends Line {
 
     /**
      * update the position of the sale
-     * @param width double the width of the line
-     * @param length double the length of the line
-     * @param boat Competitor the boat with the sail
+     *
+     * @param width     double the width of the line
+     * @param length    double the length of the line
+     * @param boat      Competitor the boat with the sail
      * @param windAngle double the windangle
-     * @param boatX double the screen x coord of the boat
-     * @param boatY double the screen y coord of the boat
+     * @param boatX     double the screen x coord of the boat
+     * @param boatY     double the screen y coord of the boat
      */
     public void update(double width, double length, Competitor boat, double windAngle, double boatX, double boatY) {
 

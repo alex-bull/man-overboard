@@ -15,6 +15,7 @@ public class MarkRoundingParser {
 
     /**
      * Parses the mark rounding message
+     *
      * @param body byte[] a byte array to be parsed
      * @return MarkRoundingData the parsed mark rounding data
      */
@@ -24,13 +25,11 @@ public class MarkRoundingParser {
             Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 13, 17));
             Integer markID = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 21));
             return new MarkRoundingData(sourceID, markID, roundingTime);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
 
     }
-
 
 
 }

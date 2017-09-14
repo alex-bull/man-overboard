@@ -4,25 +4,19 @@ import models.Force;
 import models.MutablePoint;
 import models.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static utility.Calculator.dot;
-import static utility.Calculator.multiply;
-import static utility.Calculator.subtract;
+import static utility.Calculator.*;
 
 /**
  * Created by msl47 on 7/08/17.
- *
  */
 public class CollisionUtility {
 
     /**
      * checks if the point is inside the polygon
-     * @param point point
+     *
+     * @param point   point
      * @param polygon counter clockwise
      * @return true if the point is inside the polygon
      */

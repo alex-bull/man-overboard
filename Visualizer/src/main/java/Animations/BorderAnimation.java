@@ -27,7 +27,8 @@ public class BorderAnimation {
 
     /**
      * Create the animation
-     * @param parent Pane, the pane to display the border on
+     *
+     * @param parent    Pane, the pane to display the border on
      * @param thickness double, the width of the border
      */
     public BorderAnimation(Pane parent, double thickness) {
@@ -46,20 +47,20 @@ public class BorderAnimation {
         double height = parent.getHeight();
         double width = parent.getWidth();
 
-        List<Shape> border=new ArrayList<>();
+        List<Shape> border = new ArrayList<>();
         //offset which the screen shakes by
-        double shakeOffset=10;
-        LinearGradient linearGradient=new LinearGradient(0,0,0,1,true, CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
+        double shakeOffset = 10;
+        LinearGradient linearGradient = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
 //        LinearGradient linearGradient2=new LinearGradient(0,1,0,0,true,CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
-        LinearGradient linearGradient3=new LinearGradient(0,0,1,0,true,CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
-        LinearGradient linearGradient4=new LinearGradient(1,0,0,0,true,CycleMethod.NO_CYCLE,new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
+        LinearGradient linearGradient3 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
+        LinearGradient linearGradient4 = new LinearGradient(1, 0, 0, 0, true, CycleMethod.NO_CYCLE, new Stop(0.0f, Color.RED), new Stop(1.0f, TRANSPARENT));
 
-        Rectangle rectTop =new Rectangle(-shakeOffset,-shakeOffset,width+shakeOffset*2,thickness+shakeOffset);
+        Rectangle rectTop = new Rectangle(-shakeOffset, -shakeOffset, width + shakeOffset * 2, thickness + shakeOffset);
         rectTop.setFill(linearGradient);
 
-        Rectangle rectLeft =new Rectangle(-shakeOffset,-shakeOffset,thickness+shakeOffset,height+shakeOffset*2);
+        Rectangle rectLeft = new Rectangle(-shakeOffset, -shakeOffset, thickness + shakeOffset, height + shakeOffset * 2);
         rectLeft.setFill(linearGradient3);
-        Rectangle rectRight =new Rectangle(width-thickness,-shakeOffset,thickness+shakeOffset,height+shakeOffset*2);
+        Rectangle rectRight = new Rectangle(width - thickness, -shakeOffset, thickness + shakeOffset, height + shakeOffset * 2);
         rectRight.setFill(linearGradient4);
 
         border.add(rectTop);
@@ -68,8 +69,8 @@ public class BorderAnimation {
         border.add(rectRight);
 
 
-        for(Shape rect: border ){
-            FadeTransition fadeTransition=new FadeTransition(Duration.millis(500),rect);
+        for (Shape rect : border) {
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(500), rect);
             fadeTransition.setOnFinished(event -> parent.getChildren().remove(rect));
             fadeTransition.setFromValue(1.0);
             fadeTransition.setToValue(0.0);

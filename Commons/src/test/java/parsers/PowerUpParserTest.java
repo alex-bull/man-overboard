@@ -14,6 +14,7 @@ import static org.junit.Assert.assertNull;
 public class PowerUpParserTest {
 
     private PowerUpParser powerUpParser = new PowerUpParser();
+
     @Test
     public void ignoresEmptyPowerUpPacket() {
         byte[] packet = {};

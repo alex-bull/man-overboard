@@ -1,28 +1,30 @@
 package controllers;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import utilities.Interpreter;
 
 import java.io.IOException;
 
 
 public class App extends Application {
+    private static Stage pStage;
+    private static Scene scene;
+
     public static void main(String[] args) {
         launch(args);
     }
 
-
-    private static Stage pStage;
-    private static Scene scene;
-
     public static Stage getPrimaryStage() {
         return pStage;
     }
-    public static Scene getScene() {return scene;}
+
+    public static Scene getScene() {
+        return scene;
+    }
 
     /**
      * Starts the app
@@ -73,8 +75,6 @@ public class App extends Application {
 //        lobbyController.autoStart();
 
     }
-
-
 
 
 }

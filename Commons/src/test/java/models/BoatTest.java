@@ -55,21 +55,21 @@ public class BoatTest {
 
 
     @Test
-    public void sailsOutByDefault() throws Exception{
+    public void sailsOutByDefault() throws Exception {
         assertTrue(boat.getSailValue() > 0);
     }
 
     @Test
-    public void sailMovesIn() throws Exception{
+    public void sailMovesIn() throws Exception {
 
         boat.sailsIn();
         assertTrue(boat.getSailValue() == 0);
     }
 
     @Test
-    public void sailMovesOut() throws Exception{
+    public void sailMovesOut() throws Exception {
         boat.sailsOut();
-        assertTrue(boat.getSailValue() ==1);
+        assertTrue(boat.getSailValue() == 1);
     }
 
 

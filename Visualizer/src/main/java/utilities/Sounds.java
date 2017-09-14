@@ -31,6 +31,7 @@ public class Sounds {
     /**
      * Play a sound effect
      * This should be used instead of play mp3 for any sound effects
+     *
      * @param effect String, the file of the effect
      */
     public void playSoundEffect(String effect) {
@@ -45,7 +46,7 @@ public class Sounds {
      * Set the volume value of all effects
      */
     public void setAllEffectVolume() {
-        for (MediaPlayer player: effects.values()) {
+        for (MediaPlayer player : effects.values()) {
             player.setVolume(EnvironmentConfig.maxFXVolume);
         }
     }
@@ -53,6 +54,7 @@ public class Sounds {
 
     /**
      * Play a sound file
+     *
      * @param track String the file to play
      */
     public void playMP3(String track) {
@@ -67,6 +69,7 @@ public class Sounds {
 
     /**
      * Loop a sound file continuously
+     *
      * @param track String, the sound file to play
      */
     public void loopMP3(String track) {
@@ -82,8 +85,9 @@ public class Sounds {
 
     /**
      * Loop a sound file with a fadeOut in
+     *
      * @param track String, the sound file to play
-     * @param time int, the fadeOut time
+     * @param time  int, the fadeOut time
      */
     public void loopMP3WithFadeIn(String track, int time) {
 
@@ -104,16 +108,16 @@ public class Sounds {
      * Set the volume value of all tracks
      */
     public void setAllMusicVolume() {
-        for (MediaPlayer player: music.values()) {
+        for (MediaPlayer player : music.values()) {
             player.setVolume(EnvironmentConfig.maxMusicVolume);
         }
     }
 
 
-
     /**
      * Set the volume of a track
-     * @param track String, the track to set
+     *
+     * @param track  String, the track to set
      * @param volume Double, the volume (0 - 1)
      */
     public void setVolume(String track, Double volume) {
@@ -124,11 +128,11 @@ public class Sounds {
     }
 
 
-
     /**
      * Fade out a playing track
+     *
      * @param track String, the name of the track to fadeOut
-     * @param time int, the fadeOut time
+     * @param time  int, the fadeOut time
      */
     public void fadeOut(String track, int time) {
         MediaPlayer player = music.get(track);
@@ -143,6 +147,7 @@ public class Sounds {
 
     /**
      * Stop a track playing
+     *
      * @param track String the track to stop
      */
     public void stop(String track) {

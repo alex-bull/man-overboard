@@ -35,9 +35,8 @@
     var marker2;
 
 
-
     /*call back function to initialize the map
-    */
+     */
     function initMap() {
         var styles = [
             {
@@ -283,8 +282,8 @@
     }
 
     /*
-    shifts the google maps to center at the bound
-    */
+     shifts the google maps to center at the bound
+     */
     function relocate(minLat, minLng, maxLat, maxLng) {
         if (map != null) {
             var bounds = new google.maps.LatLngBounds();
@@ -303,13 +302,13 @@
         map.setZoom(zoom);
     }
 
-    function setCenter(lat,lng){
+    function setCenter(lat, lng) {
         map.setCenter({lat: lat, lng: lng});
     }
 
     /*
-    draws a marker for testing
-    */
+     draws a marker for testing
+     */
     function drawMarker(lat, lng) {
         marker = new google.maps.Marker({
             map: map,
@@ -319,7 +318,7 @@
     }
 
     /*
-    shifts the google map by shift distance pixels vertically
+     shifts the google map by shift distance pixels vertically
      */
     function shift(shiftDistance) {
         var center = map.getCenter();
@@ -329,7 +328,7 @@
     }
 
     /*
-    converts latLng to a point on screen
+     converts latLng to a point on screen
      */
     function latLng2Point(latLng) {
         var topRight = map.getProjection().fromLatLngToPoint(map.getBounds().getNorthEast());
@@ -339,7 +338,7 @@
         return new google.maps.Point((worldPoint.x - bottomLeft.x) * scale, (worldPoint.y - topRight.y) * scale);
     }
     /*
-    convert point on screen to latLng
+     convert point on screen to latLng
      */
     function point2LatLng(point) {
         var topRight = map.getProjection().fromLatLngToPoint(map.getBounds().getNorthEast());
@@ -348,9 +347,6 @@
         var worldPoint = new google.maps.Point(point.x / scale + bottomLeft.x, point.y / scale + topRight.y);
         return map.getProjection().fromPointToLatLng(worldPoint);
     }
-
-
-
 
 
 </script>

@@ -7,9 +7,7 @@ import parsers.RaceStatusEnum;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static parsers.Converter.convertToRelativeTime;
-import static parsers.Converter.hexByteArrayToInt;
-import static parsers.Converter.hexByteArrayToLong;
+import static parsers.Converter.*;
 
 /**
  * Created by Pang on 3/05/17.
@@ -19,6 +17,7 @@ public class RaceStatusParser {
 
     /**
      * Parse the race status message
+     *
      * @param body byte[] a byte array of the message that needs parsing
      * @return RaceStatusData the data from the race status message
      */
@@ -48,8 +47,7 @@ public class RaceStatusParser {
             return new RaceStatusData(currentTime, raceStatusToEnum(raceStatus), expectedStartTime, doubleWindDirection,
                     windSpeed, numBoatsInRace, boatStatuses);
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
 
@@ -57,6 +55,7 @@ public class RaceStatusParser {
 
     /**
      * Converts race status to enum.
+     *
      * @param status Integer the race status
      * @return enum version of race status
      */
@@ -66,13 +65,13 @@ public class RaceStatusParser {
 
     /**
      * Converts boat status to enum.
+     *
      * @param status Integer the boat status
      * @return enum version of boat status
      */
     private BoatStatusEnum boatStatusToEnum(Integer status) {
         return BoatStatusEnum.values()[status];
     }
-
 
 
 }

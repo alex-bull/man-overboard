@@ -12,9 +12,7 @@ import utility.Calculator;
 import java.io.IOException;
 import java.util.*;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.abs;
-import static java.lang.Math.atan2;
+import static java.lang.Math.*;
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.powerUp.PowerUpType.BOOST;
 import static parsers.powerUp.PowerUpType.POTION;
@@ -51,8 +49,7 @@ public class BoatUpdater {
     private List<Blood> bloodList = new ArrayList<>();
     private List<Whirlpool> whirlpools = new ArrayList<>();
     private Map<Integer, PowerUp> powerUps = new HashMap<>();
-    private Random random=new Random();
-
+    private Random random = new Random();
 
 
     /**
@@ -104,8 +101,7 @@ public class BoatUpdater {
                         boat.getBoatSpeed().increase(0.01);
                         boat.getBoatSpeed().setMagnitude(speed * 4);
                         boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
-                    }
-                    else {
+                    } else {
                         boat.getBoatSpeed().increase(0.01);
                         boat.getBoatSpeed().setMagnitude(speed * 1);
                         boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
@@ -114,7 +110,7 @@ public class BoatUpdater {
                     boat.getBoatSpeed().reduce(0.99);
                 }
 
-                if(boat.getBoostTimeout() != 0 && System.currentTimeMillis() > boat.getBoostTimeout()) {
+                if (boat.getBoostTimeout() != 0 && System.currentTimeMillis() > boat.getBoostTimeout()) {
                     boat.getBoatSpeed().reduce(0.99);
                     boat.resetBoostTimeout();
                     boat.deactivateBoost();
@@ -156,7 +152,7 @@ public class BoatUpdater {
                 handler.whirlpoolEvent(whirlpools);
             }
 
-            if(!sharks.isEmpty()) {
+            if (!sharks.isEmpty()) {
                 updateShark();
                 handler.sharkEvent(sharks);
             }
@@ -170,18 +166,19 @@ public class BoatUpdater {
 
     /**
      * Add new power ups into the power ups hashmap.
+     *
      * @param powerUp PowerUp a power up
      */
     void updatePowerUps(PowerUp powerUp) {
         powerUps.put(powerUp.getId(), powerUp);
         List<Integer> toRemove = new ArrayList<>();
-        for(int id: powerUps.keySet()) {
+        for (int id : powerUps.keySet()) {
             PowerUp power = powerUps.get(id);
-            if(System.currentTimeMillis() > power.getTimeout()) {
+            if (System.currentTimeMillis() > power.getTimeout()) {
                 toRemove.add(id);
             }
         }
-        for(int removeId: toRemove) {
+        for (int removeId : toRemove) {
             powerUps.remove(removeId);
         }
     }
@@ -212,14 +209,13 @@ public class BoatUpdater {
      * @param boat Competitor boat
      */
     private void handlePowerUpCollisions(Competitor boat) {
-        for(int id: powerUps.keySet()) {
+        for (int id : powerUps.keySet()) {
             PowerUp powerUp = powerUps.get(id);
             if (boat.getPosition().isWithin(powerUp.getLocation(), 0.0005)) {
                 powerUps.remove(id);
-                if(powerUp.getType() == BOOST.getValue()) {
+                if (powerUp.getType() == BOOST.getValue()) {
                     boat.enableBoost();
-                }
-                else if(powerUp.getType() == POTION.getValue()) {
+                } else if (powerUp.getType() == POTION.getValue()) {
                     boat.enablePotion();
                 }
                 handler.powerUpTakenEvent(boat.getSourceID(), id, powerUp.getDuration());
@@ -231,14 +227,15 @@ public class BoatUpdater {
 
     /**
      * function to check if a crew member has been eaten by a shark
+     *
      * @return boolean if a crew member has been eaten
      */
-    private boolean crewEaten() throws IOException{
+    private boolean crewEaten() throws IOException {
         boolean updated = false;
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
-            for (Shark shark : new ArrayList<>(sharks)){
+            for (Shark shark : new ArrayList<>(sharks)) {
                 if (shark.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
-                    Blood blood = new Blood(bloodlocationSourceID++,crewLocation.getPosition());
+                    Blood blood = new Blood(bloodlocationSourceID++, crewLocation.getPosition());
                     bloodList.add(blood);
                     crewMembers.remove(crewLocation);
                     updated = true;
@@ -254,6 +251,7 @@ public class BoatUpdater {
 
     /**
      * Checks whether if any of the players have passed the first mark
+     *
      * @return boolean if a player has passed the first mark
      */
     private boolean passedFirstMark() {
@@ -269,6 +267,7 @@ public class BoatUpdater {
 
     /**
      * checks whether the leader has advanced to the next mark
+     *
      * @return boolean if the leader has advanced to the next mark
      */
     private boolean updateLeadLeg() {
@@ -289,7 +288,7 @@ public class BoatUpdater {
     private void createWhirlpool() {
         if ((whirlpools.size() < 2)) {
             MutablePoint centroid = utility.centroid(courseBoundary);
-            double angle = Math.random()*2*Math.PI;
+            double angle = Math.random() * 2 * Math.PI;
             double xOff = Math.cos(angle) * 0.001;
             double yOff = Math.sin(angle) * 0.001;
             MutablePoint whirlpoolPos = new MutablePoint(centroid.getXValue() + xOff, centroid.getYValue() + yOff);
@@ -305,9 +304,9 @@ public class BoatUpdater {
      * Updates whirlpool position whenever leader advances to next mark
      */
     private void updateWhirlpool() {
-        for (Whirlpool whirlpool:whirlpools) {
+        for (Whirlpool whirlpool : whirlpools) {
             MutablePoint centroid = utility.centroid(courseBoundary);
-            double angle = Math.random()*2*Math.PI;
+            double angle = Math.random() * 2 * Math.PI;
             double xOff = Math.cos(angle) * 0.01;
             double yOff = Math.sin(angle) * 0.01;
             MutablePoint whirlpoolPos = new MutablePoint(centroid.getXValue() + xOff, centroid.getYValue() + yOff);
@@ -323,7 +322,7 @@ public class BoatUpdater {
      * creates Shark at the start
      */
     private void createShark() {
-        if(sharks.size() < 2) {
+        if (sharks.size() < 2) {
             int velocity = 50;
             double sharkPosX = courseBoundary.get(0).getXValue() + 0.005;
             double sharkPosY = courseBoundary.get(0).getYValue() - 0.02;
@@ -343,7 +342,7 @@ public class BoatUpdater {
         double PosY = courseBoundary.get(sharkRoamIndex).getYValue() - 0.02;
         sharkRoamPos = new MutablePoint(PosX, PosY);
 
-        for (Shark shark : new ArrayList<>(sharks)){
+        for (Shark shark : new ArrayList<>(sharks)) {
             if (shark.getPosition().isWithin(sharkRoamPos, 0.0001)) {
                 sharkRoamIndex = random.nextInt(courseBoundary.size());
             }
@@ -364,11 +363,10 @@ public class BoatUpdater {
                 shark.getSharkSpeed().setDirection(shark.getHeading());
                 shark.updatePosition(0.1);
             }
-        }
-        else {
+        } else {
             updateSharkRoam();
             for (Shark shark : sharks) {
-                double angle = atan2(sharkRoamPos.getYValue() - shark.getLongitude(), sharkRoamPos.getXValue()  - shark.getLatitude()) * 180 / PI;
+                double angle = atan2(sharkRoamPos.getYValue() - shark.getLongitude(), sharkRoamPos.getXValue() - shark.getLatitude()) * 180 / PI;
                 angle = (angle % 360 + 360) % 360;
                 shark.setHeading(angle);
                 shark.getSharkSpeed().setDirection(shark.getHeading());
@@ -376,9 +374,6 @@ public class BoatUpdater {
             }
         }
     }
-
-
-
 
 
     /**
@@ -646,13 +641,14 @@ public class BoatUpdater {
 
     /**
      * Calculates if the boat collides with the whirlpool
+     *
      * @param boat Competitor the boat to check collisions for
      * @return boolean if boat collides
-     * @throws IOException IOException
+     * @throws IOException          IOException
      * @throws InterruptedException InterruptedException
      */
     private boolean handleWhirlpoolCollisions(Competitor boat) throws IOException, InterruptedException {
-        for (Whirlpool whirlpool: whirlpools) {
+        for (Whirlpool whirlpool : whirlpools) {
             double collisionRadius = boat.getCollisionRadius() + whirlpool.getCollisionRadius();
             double distance = raceCourse.distanceBetweenGPSPoints(whirlpool.getPosition(), boat.getPosition());
 //            System.out.println(distance);
@@ -713,7 +709,7 @@ public class BoatUpdater {
         int numLocation = (int) health / 5;
         for (int i = 0; i < numLocation; i++) {
             //50% chance of dropping
-            if (random.nextDouble()<0.32) {
+            if (random.nextDouble() < 0.32) {
                 //distance from the boat with mean magnitude and variance magnitude/2
                 double distance = magnitude * 10 + random.nextGaussian() * magnitude * 5;
                 //angle from the boat collision from 0 to 360 degrees

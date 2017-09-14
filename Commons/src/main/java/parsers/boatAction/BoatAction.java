@@ -20,14 +20,13 @@ public enum BoatAction {
 
     private final int value;
 
-    BoatAction(int value) {this.value = value;}
-
-    public int getValue() {
-        return value;
+    BoatAction(int value) {
+        this.value = value;
     }
 
     /**
      * Returns the corresponding boat action enum given an id
+     *
      * @param id the boat action number
      * @return BoatAction the boat action
      */
@@ -60,15 +59,19 @@ public enum BoatAction {
                 action = BOOST;
                 break;
             case 8:
-                action=POTION;
+                action = POTION;
                 break;
             case 9:
-                action=SWITCH_SAILS;
+                action = SWITCH_SAILS;
                 break;
             default:
-                action=UNKNOWN;
+                action = UNKNOWN;
                 break;
         }
         return action;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

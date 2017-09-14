@@ -1,15 +1,15 @@
 package mockDatafeed;
 
 import models.Competitor;
-import org.junit.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 
 import static mockDatafeed.Keys.TACK;
 import static mockDatafeed.Keys.UP;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static parsers.MessageType.BOAT_ACTION;
 import static utilities.Utility.fileToString;
 
@@ -22,17 +22,17 @@ public class BoatMockerTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        boatMocker=new BoatMocker();
-        mockerClass=boatMocker.getClass();
+        boatMocker = new BoatMocker();
+        mockerClass = boatMocker.getClass();
     }
 
 
     @Test
-    public void sendRaceXMLTest() throws Exception{
-        String raceTemplateString= fileToString("/raceTemplate.xml");
-        Method sendRaceXML=mockerClass.getDeclaredMethod("formatRaceXML",String.class);
+    public void sendRaceXMLTest() throws Exception {
+        String raceTemplateString = fileToString("/raceTemplate.xml");
+        Method sendRaceXML = mockerClass.getDeclaredMethod("formatRaceXML", String.class);
         sendRaceXML.setAccessible(true);
-        String resultString=(String) sendRaceXML.invoke(boatMocker,raceTemplateString);
+        String resultString = (String) sendRaceXML.invoke(boatMocker, raceTemplateString);
         System.out.println(resultString);
     }
 

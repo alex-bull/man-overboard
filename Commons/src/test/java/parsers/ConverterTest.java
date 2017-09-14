@@ -4,9 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static parsers.Converter.hexByteArrayToInt;
-import static parsers.Converter.hexByteArrayToLong;
-import static parsers.Converter.parseHeading;
+import static parsers.Converter.*;
 
 /**
  * Created by psu43 on 13/04/17.
@@ -15,22 +13,22 @@ import static parsers.Converter.parseHeading;
 public class ConverterTest {
     @Test
     public void hexByteArrayToIntTest() throws Exception {
-        byte[] testByteArray={0x68,0x00,0x00,0x00};
-        assertEquals(104,hexByteArrayToInt(testByteArray));
+        byte[] testByteArray = {0x68, 0x00, 0x00, 0x00};
+        assertEquals(104, hexByteArrayToInt(testByteArray));
 
 
-        byte[] testByteArray2={0x68,-83,-38,0x2E};
-        assertEquals(786083176,hexByteArrayToInt(testByteArray2));
+        byte[] testByteArray2 = {0x68, -83, -38, 0x2E};
+        assertEquals(786083176, hexByteArrayToInt(testByteArray2));
     }
 
     @Test
     public void hexByteArrayToLongTest() throws Exception {
-        byte[] testByteArray={0x68,83,127,-127,12,12};
-        assertEquals(13247851746152L,hexByteArrayToLong(testByteArray));
+        byte[] testByteArray = {0x68, 83, 127, -127, 12, 12};
+        assertEquals(13247851746152L, hexByteArrayToLong(testByteArray));
 
 
-        byte[] testByteArray2={0x68,-83,-38,0x2E, 0, 0};
-        assertEquals(786083176L,hexByteArrayToLong(testByteArray2));
+        byte[] testByteArray2 = {0x68, -83, -38, 0x2E, 0, 0};
+        assertEquals(786083176L, hexByteArrayToLong(testByteArray2));
     }
 
     @Test
@@ -58,7 +56,7 @@ public class ConverterTest {
     }
 
     @Test
-    public void testConvertRelativeTimeReturnsZeroWhenOneOfTheInputsIsZero(){
+    public void testConvertRelativeTimeReturnsZeroWhenOneOfTheInputsIsZero() {
         long testRealTime = 100020000;
         long testMessageTime = 100000000;
         Assert.assertEquals(0, Converter.convertToRelativeTime(0, testMessageTime));
@@ -66,21 +64,21 @@ public class ConverterTest {
     }
 
     @Test
-    public void testConvertRelativeTimeReturnsPositiveWhenMessageTimeAfterRealTime(){
+    public void testConvertRelativeTimeReturnsPositiveWhenMessageTimeAfterRealTime() {
         long testRealTime = 20 * 1000;
         long testMessageTime = 30 * 1000; // milliseconds
         Assert.assertTrue(Converter.convertToRelativeTime(testRealTime, testMessageTime) > 0);
     }
 
     @Test
-    public void testConvertRelativeTimeReturnsNegativeWhenMessageTimeBeforeRealTime(){
+    public void testConvertRelativeTimeReturnsNegativeWhenMessageTimeBeforeRealTime() {
         long testRealTime = 30 * 1000;
         long testMessageTime = 20 * 1000; // milliseconds
         Assert.assertTrue(Converter.convertToRelativeTime(testRealTime, testMessageTime) < 0);
     }
 
     @Test
-    public void testConvertRelativeTimeReturnsTheCorrectDifference(){
+    public void testConvertRelativeTimeReturnsTheCorrectDifference() {
         long testRealTime = 100 * 1000;
         long testMessageTime = 200 * 1000;
         long difference = 100;
@@ -90,21 +88,21 @@ public class ConverterTest {
 
     @Test
     public void testParseHeadingNorth() {
-        byte[] testByteArray={0x00,0x00};
+        byte[] testByteArray = {0x00, 0x00};
         Double heading = parseHeading(testByteArray);
         Assert.assertTrue(heading == 0);
     }
 
     @Test
     public void testParseHeadingSouth() {
-        byte[] testByteArray={0x7F,0x7F};
+        byte[] testByteArray = {0x7F, 0x7F};
         Double heading = parseHeading(testByteArray);
         Assert.assertEquals(heading, 180, 1);
     }
 
     @Test
     public void testParseHeading() {
-        byte[] testByteArray={0x68,0x00};
+        byte[] testByteArray = {0x68, 0x00};
         Double heading = parseHeading(testByteArray);
         Assert.assertTrue(heading == 0.5712890625);
     }

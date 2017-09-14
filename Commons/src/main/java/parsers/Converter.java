@@ -1,7 +1,5 @@
 package parsers;
 
-import java.nio.ByteBuffer;
-
 /**
  * Created by psu43 on 13/04/17.
  * Common parser functions
@@ -50,17 +48,19 @@ public class Converter {
     /**
      * Convert the real time to the difference in time in seconds.
      * If the message time is after (larger than) the real time, the returned time will be positive
-     * @param realTime real time (in milliseconds) from parser
+     *
+     * @param realTime    real time (in milliseconds) from parser
      * @param messageTime time message was received (in milliseconds)
      * @return converted time (in seconds)
      */
-    public static long convertToRelativeTime(long realTime, long messageTime){
+    public static long convertToRelativeTime(long realTime, long messageTime) {
         long relativeTime = 0;
         if (realTime != 0 && messageTime != 0) {
-            relativeTime = (messageTime - realTime)/1000;
+            relativeTime = (messageTime - realTime) / 1000;
         }
         return relativeTime;
     }
+
     /**
      * Convert a byte array of little endian hex values into a decimal latitude or longitude
      *
@@ -70,14 +70,16 @@ public class Converter {
     public static Double parseCoordinate(byte[] hexValues) {
         return (double) hexByteArrayToInt(hexValues) * 180.0 / 2147483648.0;
     }
+
     /**
      * Converts the received race status integer to a string with meaning.
+     *
      * @param status Integer the race status integer
      * @return String the description of the race status
      */
     static String raceStatusToString(RaceStatusEnum status) {
         String statusString;
-        switch(status) {
+        switch (status) {
             case NOT_ACTIVE:
                 statusString = "Not Active";
                 break;

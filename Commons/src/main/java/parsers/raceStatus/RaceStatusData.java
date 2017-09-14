@@ -21,13 +21,14 @@ public class RaceStatusData {
 
     /**
      * Race Status Data
-     * @param currentTime long current time
-     * @param raceStatus RaceStatusEnum race status enum
+     *
+     * @param currentTime       long current time
+     * @param raceStatus        RaceStatusEnum race status enum
      * @param expectedStartTime long expected start time
-     * @param windDirection double wind direction in degrees
-     * @param windSpeed Integer wind speed in mm/s
-     * @param numBoatsInRace int num boats in race
-     * @param boatStatuses Map boat statuses
+     * @param windDirection     double wind direction in degrees
+     * @param windSpeed         Integer wind speed in mm/s
+     * @param numBoatsInRace    int num boats in race
+     * @param boatStatuses      Map boat statuses
      */
     RaceStatusData(long currentTime, RaceStatusEnum raceStatus, long expectedStartTime, double windDirection,
                    Integer windSpeed, Integer numBoatsInRace, HashMap<Integer, BoatStatus> boatStatuses) {
@@ -44,15 +45,19 @@ public class RaceStatusData {
     public long getCurrentTime() {
         return currentTime;
     }
+
     public RaceStatusEnum getRaceStatus() {
         return raceStatus;
     }
+
     public long getExpectedStartTime() {
         return expectedStartTime;
     }
+
     public Integer getNumBoatsInRace() {
         return numBoatsInRace;
     }
+
     public HashMap<Integer, BoatStatus> getBoatStatuses() {
         return boatStatuses;
     }

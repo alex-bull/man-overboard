@@ -15,19 +15,20 @@ public class ShapeDraw {
 
     /**
      * Draw a polygon on a canvas
-     * @param gc GraphicsContext, where to draw the polygon
+     *
+     * @param gc       GraphicsContext, where to draw the polygon
      * @param vertices List the vertices of the polygon
-     * @param fill Color the color of the polygon fill
+     * @param fill     Color the color of the polygon fill
      */
     public static void polygon(GraphicsContext gc, List<MutablePoint> vertices, Color fill) {
         if (vertices != null) {
             gc.save();
 
-            double[] boundaryX=new double[vertices.size()];
-            double[] boundaryY=new double[vertices.size()];
-            for(int i=0;i<vertices.size();i++){
-                boundaryX[i]=vertices.get(i).getXValue();
-                boundaryY[i]=vertices.get(i).getYValue();
+            double[] boundaryX = new double[vertices.size()];
+            double[] boundaryY = new double[vertices.size()];
+            for (int i = 0; i < vertices.size(); i++) {
+                boundaryX[i] = vertices.get(i).getXValue();
+                boundaryY[i] = vertices.get(i).getYValue();
             }
 
             gc.setLineDashes(5);
@@ -38,7 +39,7 @@ public class ShapeDraw {
             gc.setGlobalAlpha(0.4);
             gc.setFill(fill);
             //shade inside the boundary
-            gc.fillPolygon(boundaryX,boundaryY, boundaryX.length);
+            gc.fillPolygon(boundaryX, boundaryY, boundaryX.length);
             gc.setGlobalAlpha(1.0);
             gc.restore();
         }
@@ -46,9 +47,10 @@ public class ShapeDraw {
 
     /**
      * Draws a line using the given coordinates
+     *
      * @param line Line, the object to update
-     * @param p1 MutablePoint, the start of the line
-     * @param p2 MutablePoint, the end of the line
+     * @param p1   MutablePoint, the start of the line
+     * @param p2   MutablePoint, the end of the line
      */
     public static void line(Line line, MutablePoint p1, MutablePoint p2) {
 

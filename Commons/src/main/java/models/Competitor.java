@@ -12,20 +12,34 @@ import java.util.List;
  */
 public interface Competitor {
     String getTeamName();
-    boolean isSailsOut();
-    double getVelocity();
-    double getCollisionRadius();
-    void setVelocity(double velocity);
-    MutablePoint getPosition17();
-    void setPosition17(MutablePoint position17);
-    MutablePoint getPosition();
-    void setBoatSpeed(Force boatSpeed);
-    Force getBoatSpeed();
-     void addForce(Force externalForce);
-     void removeForce(Force externalForce);
 
-     List<Force> getExternalForces();
+    void setTeamName(String teamName);
+
+    boolean isSailsOut();
+
+    double getVelocity();
+
+    void setVelocity(double velocity);
+
+    double getCollisionRadius();
+
+    MutablePoint getPosition17();
+
+    void setPosition17(MutablePoint position17);
+
+    MutablePoint getPosition();
+
     void setPosition(MutablePoint position);
+
+    Force getBoatSpeed();
+
+    void setBoatSpeed(Force boatSpeed);
+
+    void addForce(Force externalForce);
+
+    void removeForce(Force externalForce);
+
+    List<Force> getExternalForces();
 
     void updatePosition(double dt);
 
@@ -39,13 +53,15 @@ public interface Competitor {
 
     int getCurrentLegIndex();
 
-    void setLatitude(double latitude);
-
-    void setLongitude(double longitude);
+    void setCurrentLegIndex(int legIndex);
 
     double getLatitude();
 
+    void setLatitude(double latitude);
+
     double getLongitude();
+
+    void setLongitude(double longitude);
 
     void setTimeToNextMark(long timeToNextMark);
 
@@ -61,8 +77,6 @@ public interface Competitor {
 
     void setCurrentHeading(double currentHeading);
 
-    void setCurrentLegIndex(int legIndex);
-
     int getSourceID();
 
     void switchSails();
@@ -73,21 +87,21 @@ public interface Competitor {
 
     double getSailValue();
 
-    boolean hasSailsOut();
-
     void setSailValue(double sailValue);
+
+    boolean hasSailsOut();
 
     void changeHeading(boolean upwind, double angle);
 
     double getHealthLevel();
+
+    void setHealthLevel(int health);
 
     void updateHealth(int delta);
 
     double getMaxHealth();
 
     void setMaxHealth(int health);
-
-    void setHealthLevel(int health);
 
     double getDownWind(double windAngle);
 
@@ -105,11 +119,10 @@ public interface Competitor {
 
     void setRoundingLine2(Line roundingLine2);
 
-    void setTeamName(String teamName);
+    Integer getBoatType();
 
     void setBoatType(Integer boatType);
 
-    Integer getBoatType();
     boolean hasSpeedBoost();
 
     void enableBoost();

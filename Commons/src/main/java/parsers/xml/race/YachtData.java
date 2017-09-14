@@ -9,6 +9,7 @@ public class YachtData {
 
     /**
      * Yacht data from the race.XML packet (currently only reading sourceID)
+     *
      * @param sourceID int Source ID of the yacht
      */
     YachtData(int sourceID) {

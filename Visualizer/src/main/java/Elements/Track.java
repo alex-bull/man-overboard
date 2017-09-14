@@ -15,8 +15,9 @@ public class Track extends Group {
 
     /**
      * Adds a new fading point on the track
+     *
      * @param position Mutable point the location of the dot
-     * @param color Color the color of the dot
+     * @param color    Color the color of the dot
      */
     public void addDot(MutablePoint position, Color color) {
 

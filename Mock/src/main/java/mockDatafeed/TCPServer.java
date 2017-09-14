@@ -11,7 +11,9 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.TimerTask;
 
 import static parsers.Converter.hexByteArrayToInt;
 
@@ -28,7 +30,8 @@ public class TCPServer extends TimerTask {
 
     /**
      * Intialize a server instance on the given port
-     * @param port int the port to expose the service on
+     *
+     * @param port             int the port to expose the service on
      * @param connectionClient ConnectionClient, a handler for incoming data
      * @param sendQueue
      * @param receiveQueue
@@ -47,9 +50,6 @@ public class TCPServer extends TimerTask {
     }
 
 
-
-
-
     /**
      * Broadcast a message to all clients
      *
@@ -65,7 +65,7 @@ public class TCPServer extends TimerTask {
                 ByteBuffer buffer = ByteBuffer.wrap(data);
                 SocketChannel client = (SocketChannel) key.channel();
                 try {
-                    while(buffer.hasRemaining()) client.write(buffer);
+                    while (buffer.hasRemaining()) client.write(buffer);
                 } catch (IOException ie) {
                     System.out.println(client.getRemoteAddress() + " has disconnected, removing client");
                     key.cancel();
@@ -78,7 +78,8 @@ public class TCPServer extends TimerTask {
 
     /**
      * Send a message to a single client with an identifier
-     * @param data byte[] the message
+     *
+     * @param data     byte[] the message
      * @param clientId Integer the id of the client channel to send to
      */
     private void unicast(byte[] data, Integer clientId) throws IOException {
@@ -90,7 +91,7 @@ public class TCPServer extends TimerTask {
                 ByteBuffer buffer = ByteBuffer.wrap(data);
                 SocketChannel client = (SocketChannel) key.channel();
                 try {
-                    while(buffer.hasRemaining()) client.write(buffer);
+                    while (buffer.hasRemaining()) client.write(buffer);
                 } catch (IOException e) {
                     System.out.println(client.getRemoteAddress() + " is unreachable, removing client");
                     key.cancel();
@@ -101,16 +102,16 @@ public class TCPServer extends TimerTask {
     }
 
 
-
     /**
      * Reads data from client and puts the message in the queue.
+     *
      * @param client SocketChannel the client to read from
-     * @param id Integer the key id for the channel
+     * @param id     Integer the key id for the channel
      * @throws IOException reading message can fail
      */
     private void processClient(SocketChannel client, Integer id) throws IOException {
         // -125 is equivalent to 0x83 unsigned
-        byte[] expected = {0x47,-125};
+        byte[] expected = {0x47, -125};
         byte[] actual = new byte[2];
         ByteBuffer buffer = ByteBuffer.wrap(actual);
         client.read(buffer);
@@ -130,13 +131,14 @@ public class TCPServer extends TimerTask {
 
     /**
      * Returns the first 13 bytes from a packet
+     *
      * @return byte[] the header byte array
      * @throws IOException IOException
      */
     private byte[] getHeader(SocketChannel client) throws IOException {
 //        ByteBuffer header=ByteBuffer.allocate(13);
 //        client.read(header);
-        byte[] header=new byte[13];
+        byte[] header = new byte[13];
         ByteBuffer buffer = ByteBuffer.wrap(header);
 
         client.read(buffer);
@@ -146,6 +148,7 @@ public class TCPServer extends TimerTask {
 
     /**
      * returns the length field from a 13 byte header
+     *
      * @param header byte[] the header byte array
      * @return int the message length
      */
@@ -159,7 +162,7 @@ public class TCPServer extends TimerTask {
      */
     private void sendQueuedMessages() {
 
-        for (QueueMessage sm: sendQueue.drain()) {
+        for (QueueMessage sm : sendQueue.drain()) {
             try {
                 if (sm.getClientId() == null) this.broadcast(sm.getMessage());
                 else this.unicast(sm.getMessage(), sm.getClientId());
@@ -168,7 +171,6 @@ public class TCPServer extends TimerTask {
             }
         }
     }
-
 
 
     public void run() {
@@ -186,8 +188,7 @@ public class TCPServer extends TimerTask {
                 if (key.isAcceptable()) {
                     if (!connectionClient.isAccepting()) {
                         key.cancel();
-                    }
-                    else {
+                    } else {
 
                         SocketChannel client = serverSocket.accept();
                         client.configureBlocking(false);
@@ -210,12 +211,10 @@ public class TCPServer extends TimerTask {
                 selector.selectedKeys().remove(key);
             }
 
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 
 
 }

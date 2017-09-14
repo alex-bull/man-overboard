@@ -4,7 +4,7 @@ package models;
  * Created by mgo65 on 6/03/17.
  * Used as a row for the race table
  */
-public class RaceEvent{
+public class RaceEvent {
 
     private Integer boatSourceId;
     private String teamName;
@@ -15,11 +15,12 @@ public class RaceEvent{
 
     /**
      * Constructs a RaceEvent
+     *
      * @param boatSourceId Integer the source id of the boat
-     * @param teamName String team name of the boat
-     * @param speed Double speed of the boat
-     * @param feature String the course feature the boat has passed
-     * @param position int the position of the boat
+     * @param teamName     String team name of the boat
+     * @param speed        Double speed of the boat
+     * @param feature      String the course feature the boat has passed
+     * @param position     int the position of the boat
      */
     public RaceEvent(Integer boatSourceId, String teamName, String feature, String speed, int position) {
         this.boatSourceId = boatSourceId;

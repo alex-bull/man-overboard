@@ -47,27 +47,28 @@ public class PowerUp {
         return position;
     }
 
-    public MutablePoint getPosition17() {
-        return position17;
-    }
-
-    public MutablePoint getPositionOriginal() {
-        return positionOriginal;
-    }
-    public MutablePoint getLocation() {
-        return location;
-    }
-
     public void setPosition(MutablePoint position) {
         this.position = position;
+    }
+
+    public MutablePoint getPosition17() {
+        return position17;
     }
 
     public void setPosition17(MutablePoint position17) {
         this.position17 = position17;
     }
 
+    public MutablePoint getPositionOriginal() {
+        return positionOriginal;
+    }
+
     public void setPositionOriginal(MutablePoint positionOriginal) {
         this.positionOriginal = positionOriginal;
+    }
+
+    public MutablePoint getLocation() {
+        return location;
     }
 
     public Integer getId() {

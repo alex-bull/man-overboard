@@ -35,8 +35,9 @@ public class CourseXMLParser {
 
     /**
      * Constructor for loading a course with an XML input file
+     *
      * @param inputFile File a XML file with course features
-     * @throws IOException IOException
+     * @throws IOException   IOException
      * @throws JDOMException JDOMException
      */
     public CourseXMLParser(InputStream inputFile) throws IOException, JDOMException {
@@ -50,9 +51,10 @@ public class CourseXMLParser {
 
     /**
      * Creates a list of course features read from an xml file
+     *
      * @return List the list of course features
      * @throws JDOMException JDOMException
-     * @throws IOException IOException
+     * @throws IOException   IOException
      */
     public ArrayList<CourseFeature> parseCourse() throws JDOMException, IOException {
         double width = 1000;
@@ -90,7 +92,7 @@ public class CourseXMLParser {
 
                 MutablePoint GPS1 = new MutablePoint(lat1, lon1);
 
-                Gate gate = new Gate(name, GPS1, point1,point2, isFinish, true, index);
+                Gate gate = new Gate(name, GPS1, point1, point2, isFinish, true, index);
                 points.add(gate);
             } else if (type.equals("CompoundMark") && feature.getChildren().size() == 1) { //Its a mark
 
@@ -103,7 +105,6 @@ public class CourseXMLParser {
 
                 xMercatorCoords.add(point1.getXValue());
                 yMercatorCoords.add(point1.getYValue());
-
 
 
                 MutablePoint GPS = new MutablePoint(lat1, lon1);

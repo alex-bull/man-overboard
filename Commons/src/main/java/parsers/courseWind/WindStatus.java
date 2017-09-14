@@ -10,8 +10,9 @@ public class WindStatus {
 
     /**
      * Wind status
+     *
      * @param windDirection double wind direction
-     * @param windSpeed int wind speed in mm/s
+     * @param windSpeed     int wind speed in mm/s
      */
     WindStatus(double windDirection, int windSpeed) {
         this.windDirection = windDirection;
@@ -25,8 +26,6 @@ public class WindStatus {
     public double getWindDirection() {
         return windDirection;
     }
-
-
 
 
 }

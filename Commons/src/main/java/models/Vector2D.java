@@ -6,12 +6,12 @@ package models;
 public class Vector2D {
 
 
-
     private Double x;
     private Double y;
 
     /**
      * Create a vector from p1 to p2
+     *
      * @param x1 p1x
      * @param y1 p1y
      * @param x2 p2x

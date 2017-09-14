@@ -10,7 +10,9 @@ public enum PowerUpType {
 
     private final int value;
 
-    PowerUpType(int value) {this.value = value;}
+    PowerUpType(int value) {
+        this.value = value;
+    }
 
     public int getValue() {
         return value;

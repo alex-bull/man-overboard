@@ -12,6 +12,7 @@ public class CourseWindData {
 
     /**
      * Constructs course wind data parsed from data source
+     *
      * @param windStatuses Map a map of wind statuses
      */
     CourseWindData(Map<Integer, WindStatus> windStatuses) {

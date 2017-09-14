@@ -5,7 +5,6 @@ import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +25,7 @@ public class PolarTable {
      * constructor to load the table given path to the file
      *
      * @param filepath the path to the polar table
-     * @param speed double the speed
+     * @param speed    double the speed
      * @throws IOException IOException
      */
     public PolarTable(String filepath, double speed) throws IOException {
@@ -37,8 +36,9 @@ public class PolarTable {
 
     /**
      * Put file data into interpolator for speed
+     *
      * @param filePath String, the polar file
-     * @param speed double the windSpeed
+     * @param speed    double the windSpeed
      * @throws IOException IOException
      */
     private void buildSpeedFunc(String filePath, double speed) throws IOException {
@@ -70,6 +70,7 @@ public class PolarTable {
 
     /**
      * Put file data into interpolators for up and down twas
+     *
      * @param filePath String, the location of the polar file
      * @throws IOException IOException
      */
@@ -97,8 +98,9 @@ public class PolarTable {
 
     /**
      * Calculates the twa value that corresponds to the lowest boat speed above 0
+     *
      * @param windSpeed The current wind speed
-     * @param upwind whether it is up wind or not
+     * @param upwind    whether it is up wind or not
      * @return double, the twa
      */
     public double getMinimalTwa(double windSpeed, boolean upwind) {

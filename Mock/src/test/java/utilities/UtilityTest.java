@@ -2,7 +2,7 @@ package utilities;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static utilities.Utility.fileToString;
 
 /**
@@ -12,8 +12,8 @@ import static utilities.Utility.fileToString;
 public class UtilityTest {
     @Test
     public void fileToStringTest() throws Exception {
-        String string=fileToString("/test/fileToStringTest.txt");
-        assertEquals("This is the test file\n",string);
+        String string = fileToString("/test/fileToStringTest.txt");
+        assertEquals("This is the test file\n", string);
     }
 
 }

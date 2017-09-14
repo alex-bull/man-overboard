@@ -13,8 +13,9 @@ public class MarkRoundingData {
 
     /**
      * Mark rounding data
-     * @param sourceID Integer source id of the mark
-     * @param markID Integer mark id
+     *
+     * @param sourceID     Integer source id of the mark
+     * @param markID       Integer mark id
      * @param roundingTime long the time of the mark rounding
      */
     MarkRoundingData(Integer sourceID, Integer markID, long roundingTime) {
