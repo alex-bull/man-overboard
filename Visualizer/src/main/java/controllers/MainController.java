@@ -134,10 +134,11 @@ public class MainController {
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
                     playerController.refresh();
                     sailSlider.toFront();
-                    loadingPane.toBack();
+                    loadingPane.setVisible(false);
                 }
                 else {
                     loadingPane.toFront();
+                    loadingPane.setVisible(true);
                 }
             }
         };
