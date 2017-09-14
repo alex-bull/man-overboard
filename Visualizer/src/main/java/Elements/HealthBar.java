@@ -1,6 +1,7 @@
 package Elements;
 
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -18,8 +19,6 @@ public class HealthBar extends Group {
 
     private Line healthBarBackground;
     private Line healthBar;
-    private ImageView ripImage;
-
 
     /**
      * Initializes a health bar
@@ -31,12 +30,6 @@ public class HealthBar extends Group {
         this.getChildren().add(healthBarBackground);
         this.healthBar = new Line();
         this.getChildren().add(healthBar);
-        try {
-            this.ripImage = new ImageView(new Image("images/cross.png"));
-        } catch(Exception e) {
-            this.ripImage = new ImageView();
-        }
-        this.ripImage.setPreserveRatio(true);
     }
 
 
@@ -50,7 +43,7 @@ public class HealthBar extends Group {
 
         double strokeWidth = 5 * widthScale;
         double offset = 0;
-        double maxBarLength = 30 * lengthScale;
+        double maxBarLength = 1 * lengthScale;
         double healthLevel = boat.getHealthLevel() * lengthScale;
         double healthSize = ((healthLevel / boat.getMaxHealth()) * maxBarLength) / lengthScale;
         Color healthColour = calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
@@ -72,7 +65,6 @@ public class HealthBar extends Group {
 
     }
 
-
     /**
      * Updates the position and color of the health bar to match the current state of the boat
      * @param boat Competitor, the boat for the health bar
@@ -88,8 +80,7 @@ public class HealthBar extends Group {
         double offset = 20 * scale;
         double maxBarLength = 30 * scale;
         double healthLevel = boat.getHealthLevel() * scale;
-        double tombstoneSize = 30 * scale;
-        double healthSize = ((healthLevel / (double) boat.getMaxHealth()) * maxBarLength) / scale;
+        double healthSize = ((healthLevel / boat.getMaxHealth()) * maxBarLength) / scale;
 
 
         if(healthLevel > 0) {
@@ -113,15 +104,12 @@ public class HealthBar extends Group {
         }
 
         if(boat.getStatus() != DSQ) {
+            healthBar.setVisible(false);
             this.getChildren().clear();
             boat.setStatus(DSQ);
-            this.getChildren().add(ripImage);
-            ripImage.setX(boatX);
-            ripImage.setY(boatY);
-            ripImage.setFitHeight(tombstoneSize);
-            ripImage.setFitHeight(tombstoneSize);
             return false;
         }
+
         return true;
     }
 

@@ -44,7 +44,6 @@ public class TCPClient extends TimerTask {
         dis = new DataInputStream(receiveSock.getInputStream());
         dos = new DataOutputStream(receiveSock.getOutputStream());
         System.out.println("Start connection to server...");
-
     }
 
 

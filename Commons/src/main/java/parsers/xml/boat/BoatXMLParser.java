@@ -46,6 +46,7 @@ public class BoatXMLParser {
                 competitor.setTeamName(boat.getAttributeValue("BoatName"));
                 competitor.setAbbreName(boat.getAttributeValue("ShortName"));
                 competitor.setSourceID(sourceID);
+                competitor.setBoatType(Integer.parseInt(boat.getAttributeValue("Model")));
                 boats.put(sourceID, competitor);
             }
             //add to mark boats if type is mark

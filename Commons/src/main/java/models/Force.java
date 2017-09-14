@@ -123,6 +123,7 @@ public class Force implements Vector{
         factor+=(1-factor)*amount;
     }
 
+
     /**
      * rounds the force down to 0 if its small
      */

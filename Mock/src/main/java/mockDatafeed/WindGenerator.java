@@ -13,8 +13,6 @@ class WindGenerator {
     private short windSpeed;
     private short windDirection;
     private long lastUpdateTime=0;
-    private final int speedVariance=100;
-    private final int directionVariance=300;
 
     /**
      * Constructs a wind generator
@@ -26,7 +24,7 @@ class WindGenerator {
         this.windDirectionOriginal = (short) windDirection;
     }
 
-    public short getWindSpeed() {
+    short getWindSpeed() {
         if(System.currentTimeMillis()-lastUpdateTime>5000){
             lastUpdateTime=System.currentTimeMillis();
             getRandomWindSpeed();
@@ -35,7 +33,7 @@ class WindGenerator {
         return windSpeed;
     }
 
-    public short getWindDirection() {
+    short getWindDirection() {
         if(System.currentTimeMillis()-lastUpdateTime>5000){
             lastUpdateTime=System.currentTimeMillis();
             getRandomWindDirection();
@@ -60,7 +58,8 @@ class WindGenerator {
 //        else {
 //            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-2, 2+1) + windSpeed);
 //        }
-        windSpeed= (short) (windSpeedOriginal+ThreadLocalRandom.current().nextGaussian()*speedVariance);
+        int speedVariance = 100;
+        windSpeed= (short) (windSpeedOriginal+ThreadLocalRandom.current().nextGaussian()* speedVariance);
 
     }
 
@@ -69,6 +68,7 @@ class WindGenerator {
      */
     private void getRandomWindDirection() {
 
-        windDirection= (short) (windDirectionOriginal+ThreadLocalRandom.current().nextGaussian()*directionVariance);
+        int directionVariance = 300;
+        windDirection= (short) (windDirectionOriginal+ThreadLocalRandom.current().nextGaussian()* directionVariance);
     }
 }

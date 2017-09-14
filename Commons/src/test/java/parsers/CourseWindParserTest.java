@@ -26,7 +26,7 @@ public class CourseWindParserTest {
     }
 
     @Test
-    public void ignoresRacePacketWithMissingInfo() {
+    public void ignoresPacketWithMissingInfo() {
         byte[] packet = new byte[1];
 
         try {

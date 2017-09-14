@@ -5,6 +5,7 @@ import org.junit.*;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 
 import static mockDatafeed.Keys.TACK;
 import static mockDatafeed.Keys.UP;
@@ -82,11 +83,13 @@ public class BoatMockerTest {
 
         boatMocker.addConnection(); // generate competitors
 
+
         double expectedHeading = 0;
         for (Competitor competitor : boatMocker.getCompetitors()) {
             if (competitor.getSourceID() == sourceID) {
                 double windAngle = boatMocker.getWindDirection();
                 expectedHeading = windAngle - (competitor.getCurrentHeading() - windAngle);
+                expectedHeading = (expectedHeading % 360 + 360) % 360;
             }
         }
 

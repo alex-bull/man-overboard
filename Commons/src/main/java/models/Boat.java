@@ -40,6 +40,12 @@ public class Boat implements Competitor {
     private double healthLevel = 100;
     private double maxHealth = 100;
     private Force boatSpeed;
+    private Integer boatType = 0;
+    private boolean hasSpeedBoost = false;
+    private boolean activatedBoost = false;
+
+    private long boostTimeout = 0;
+    private boolean hasPotion = false;
 
 
     //collision size
@@ -58,7 +64,9 @@ public class Boat implements Competitor {
         this.position17 = position17;
     }
 
-    private boolean sailsOut = false;
+    private boolean sailsOut = true;
+    private double sailValue = 1;
+
     /**
      * Creates a boat
      *
@@ -108,6 +116,55 @@ public class Boat implements Competitor {
         this.boatSpeed=new Force(0,0,false);
     }
 
+    public boolean boostActivated() {
+        boolean activated = activatedBoost;
+        return activated;
+    }
+
+    public void enablePotion() {
+        this.hasPotion = true;
+    }
+
+    public boolean hasPotion() {
+        return hasPotion;
+    }
+
+    public void usePotion() {
+        this.hasPotion = false;
+    }
+
+    public long getBoostTimeout() {
+        return boostTimeout;
+    }
+
+    public void resetBoostTimeout() {
+        this.boostTimeout = 0;
+    }
+
+    public void activateBoost() {
+        if(this.hasSpeedBoost) {
+            this.activatedBoost = true;
+            this.boostTimeout = System.currentTimeMillis() + 7000;
+            this.hasSpeedBoost = false;
+        }
+    }
+
+    public void deactivateBoost() {
+        this.activatedBoost = false;
+    }
+
+    public boolean hasSpeedBoost() {
+        boolean speeding = hasSpeedBoost;
+        return speeding;
+    }
+
+    public void enableBoost() {
+        this.hasSpeedBoost = true;
+    }
+
+    public void disableBoost() {
+        this.hasSpeedBoost = false;
+    }
 
     public Line getRoundingLine1() {
         return roundingLine1;
@@ -142,6 +199,10 @@ public class Boat implements Competitor {
         return healthLevel;
     }
 
+    public boolean isSailsOut() {
+        return sailsOut;
+    }
+
     /**
      * updates the boat health when they collide or round
      * @param delta int the amount the boat health changes by
@@ -150,24 +211,44 @@ public class Boat implements Competitor {
         double resultHealth = healthLevel + delta;
 
         if(resultHealth > maxHealth) {
-            this.healthLevel = maxHealth;
+           this.healthLevel = maxHealth;
         } else this.healthLevel = resultHealth;
     }
 
     /**
      * Switches the sail state of the boat between sails in and sails out
      */
+    @Override
     public void switchSails() {
         sailsOut = !sailsOut;
+        if(sailsOut){
+            sailValue = 1;
+        } else {
+            sailValue = 0;
+        }
+    }
+
+    @Override
+    public void sailsIn() {
+        sailValue = 0;
+        sailsOut = false;
+    }
+
+    @Override
+    public void sailsOut() {
+        sailValue = 1;
+        sailsOut = true;
     }
 
     /**
      * Returns the sail state of the boat
-     * @return sailsOut sail state of the boat
+     * @return double - the value of the sail slider
      */
-    public boolean hasSailsOut() {
-        return sailsOut;
-    }
+    public double getSailValue() { return sailValue; }
+
+    public void setSailValue(double sailValue){ this.sailValue = sailValue; }
+
+    public boolean hasSailsOut(){ return sailsOut;}
 
     public double getCollisionRadius() {
         return collisionRadius;
@@ -217,30 +298,14 @@ public class Boat implements Competitor {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-    public long getTimeToNextMark() {
-        return timeToNextMark;
-    }
 
-    public void setTimeToNextMark(long timeToNextMark) {
-        this.timeToNextMark =  timeToNextMark;
-    }
+    public void setTimeToNextMark(long timeToNextMark) {this.timeToNextMark =  timeToNextMark;}
 
-    public long getTimeAtLastMark() {
-        return timeAtLastMark;
-    }
+    public void setTimeAtLastMark(long timeAtLastMark) {this.timeAtLastMark = timeAtLastMark;}
 
-    public void setTimeAtLastMark(long timeAtLastMark) {
-        this.timeAtLastMark = timeAtLastMark;
-    }
+    public String getLastMarkPassed() {return lastMarkPassed;}
 
-
-    public String getLastMarkPassed() {
-        return lastMarkPassed;
-    }
-
-    public void setLastMarkPassed(String lastMarkPassed) {
-        this.lastMarkPassed = lastMarkPassed;
-    }
+    public void setLastMarkPassed(String lastMarkPassed) {this.lastMarkPassed = lastMarkPassed;}
 
     public int getSourceID() {
         return sourceID;
@@ -258,6 +323,7 @@ public class Boat implements Competitor {
     public void setSourceID(int sourceID) {
         this.sourceID = sourceID;
     }
+
     public String getTeamName() {
         return this.teamName;
     }
@@ -280,6 +346,12 @@ public class Boat implements Competitor {
 
     public void setPosition(MutablePoint newPos) {
         this.position = newPos;
+    }
+
+    public Integer getBoatType() { return this.boatType; }
+
+    public void setBoatType(Integer boatType) {
+        this.boatType = boatType;
     }
 
     @Override
@@ -307,11 +379,9 @@ public class Boat implements Competitor {
     public void setCurrentHeading(double currentHeading) {
         if (currentHeading < 0) {
             this.currentHeading.set(currentHeading+360);
-//            boatSpeed.setDirection(currentHeading + 360);
         }
         else{
             this.currentHeading.set(currentHeading%360);
-//            boatSpeed.setDirection(currentHeading%360);
         }
     }
 
@@ -350,7 +420,6 @@ public class Boat implements Competitor {
             }
         }
         setPosition(p);
-//        System.out.println(p);
     }
 
 
@@ -372,7 +441,7 @@ public class Boat implements Competitor {
      * @param windAngle double wind angle
      * @return double downWind
      */
-    private double getDownWind(double windAngle) {
+    public double getDownWind(double windAngle) {
         double downWind = windAngle + 180;
         if(downWind > 360) {
             downWind = downWind - 360;
@@ -389,6 +458,11 @@ public class Boat implements Competitor {
     public void changeHeading(boolean upwind, double windAngle){
         int turnAngle = 3;
 
+        if(windAngle < 360 && windAngle > 180) {
+            windAngle = windAngle - 180;
+            upwind = !upwind;
+        }
+
         double downWind = getDownWind(windAngle);
         double currentHeading=getCurrentHeading();
         if(currentHeading>= windAngle && currentHeading <= downWind) {
@@ -400,7 +474,6 @@ public class Boat implements Competitor {
             }
         }
         else {
-
             if(upwind) {
                 setCurrentHeading(currentHeading + turnAngle);
             }
@@ -408,10 +481,7 @@ public class Boat implements Competitor {
                 setCurrentHeading(currentHeading - turnAngle);
             }
         }
-//        setCurrentHeading(currentHeading % 360);
-//        System.out.println(currentHeading);
-//        System.out.println(boatSpeed.getDirection());
-//        currentHeading.setValue(currentHeading.getValue() % 360);
+
     }
 
     @Override

@@ -1,9 +1,7 @@
 package utility;
 
 
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import models.Competitor;
-import models.CrewLocation;
+import models.*;
 import parsers.BoatStatusEnum;
 
 import java.io.IOException;
@@ -590,6 +588,194 @@ public class BinaryPackager {
         return packet;
     }
 
+
+    /**
+     * packages power up
+     * @param powerId Integer ID of power up
+     * @param latitude Double Latitude of power up location
+     * @param longitude Double Longitude of power up location
+     * @param radius short Radius of power up in meters
+     * @param powerType int Type of power up, 0 is speed and 1 is for projectile
+     * @param duration int Time power up is active for
+     * @param timeout long the timeout of the power up
+     * @return the packet for power up
+     */
+    public byte[] packagePowerUp(Integer powerId, Double latitude, Double longitude, short radius, int powerType, int duration, long timeout){
+        byte[] packet=new byte[44];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 112;
+        short bodyLength = 25;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        //BODY - note: chars are used as unsigned shorts
+        packetBuffer.putInt(powerId); //power id
+
+        //latitude
+        packetBuffer.putInt(latLngToInt(latitude));
+
+        //longitude
+        packetBuffer.putInt(latLngToInt(longitude));
+
+        packetBuffer.putShort(radius);
+
+        packetBuffer.put(this.get48bitTime(timeout));
+        packetBuffer.put((byte) powerType);
+
+        packetBuffer.putInt(duration);
+
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+
+    /**
+     * packages power up taken
+     * @param boatId Boat ID of power up
+     * @param powerId Integer ID of power up
+     * @param duration int Time power up is active for
+     * @return the packet for power up taken
+     */
+    public byte[] packagePowerUpTaken(int boatId, int powerId, int duration){
+        byte[] packet=new byte[31];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 113;
+        short bodyLength = 12;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.putInt(boatId); //boat id
+        packetBuffer.putInt(powerId); //power id
+        packetBuffer.putInt(duration); //duration
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+    /**
+     * Packages Shark event
+     * @param locations the location of the Obstacles
+     * @return the packet for event
+     */
+    public byte[] packageSharkEvent(List<Shark> locations){
+        int n=locations.size();
+        byte[] packet=new byte[20+n*22]; // total size of packet
+
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 120;
+        short bodyLength = (short) (n*22+1);
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.put((byte) n);
+        for(Shark shark:locations){
+            packetBuffer.putInt(shark.getSourceId());
+            packetBuffer.put((byte)shark.getNumSharks());
+            packetBuffer.putInt(latLngToInt(shark.getLatitude()));
+            packetBuffer.putInt(latLngToInt(shark.getLongitude()));
+            packetBuffer.put((byte) shark.getVelocity());
+            packetBuffer.putDouble(shark.getHeading());
+        }
+
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+
+
+    /**
+     * Packages Blood event
+     * @param locations the location of the blood pool
+     * @return the packet for event
+     */
+    public byte[] packageBloodEvent(List<Blood> locations){
+        int n=locations.size();
+        byte[] packet=new byte[20+n*12]; // total size of packet
+
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = -100;
+        short bodyLength = (short) (n*12+1);
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.put((byte) n);
+        for(Blood blood: locations) {
+            packetBuffer.putInt(blood.getSourceID());
+            packetBuffer.putInt(latLngToInt(blood.getLatitude()));
+            packetBuffer.putInt(latLngToInt(blood.getLongitude()));
+        }
+
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+    /**
+     * Packages whirlpool event
+     * @param whirlpools the data for whirlpool
+     * @return the packet for event
+     */
+    public byte[] packageWhirlpoolEvent(List<Whirlpool> whirlpools) {
+        int n=whirlpools.size();
+        byte[] packet=new byte[20+n*16]; // total size of packet
+
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 119;
+        short bodyLength = (short) (n*16+1);
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.put((byte) n);
+        for(Whirlpool whirlpool:whirlpools){
+            packetBuffer.putInt(whirlpool.getSourceID());
+            packetBuffer.putInt(whirlpool.getCurrentLeg());
+            packetBuffer.putInt(latLngToInt(whirlpool.getLatitude()));
+            packetBuffer.putInt(latLngToInt(whirlpool.getLongitude()));
+        }
+
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+    public byte[] packageBoatName(Integer sourceId, String boatName) {
+
+        byte[] packet=new byte[56]; //
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 106;
+        short bodyLength = 37;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.putInt(sourceId);
+        packetBuffer.put((byte)0);
+        packetBuffer.put((byte)0);
+        packetBuffer.put((byte)0);
+
+        byte[] name = new byte[30];
+        ByteBuffer namebuffer = ByteBuffer.wrap(name);
+        namebuffer.put(boatName.getBytes());
+        packetBuffer.put(name);
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+
+    public byte[] packageBoatModel(Integer sourceId, Integer code) {
+
+        byte[] packet=new byte[26]; //
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 104;
+        short bodyLength = 7;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.putInt(sourceId);
+        packetBuffer.putShort((short)2);
+        System.out.println("bpackager" + code);
+        packetBuffer.put(code.byteValue());
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
 }
 
 

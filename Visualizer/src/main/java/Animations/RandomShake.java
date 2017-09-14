@@ -1,6 +1,8 @@
 package Animations;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -23,6 +25,15 @@ public class RandomShake {
         this.node = node;
     }
 
+    /**
+     * Spins the node multiple times.
+     */
+    public void spin(){
+        RotateTransition rt = new RotateTransition(Duration.seconds(3), node);
+        rt.setByAngle(1080);
+        rt.setOnFinished(event-> node.setRotate(0));
+        rt.play();
+    }
 
     /**
      * Animates the node to shake for a short time

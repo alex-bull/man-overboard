@@ -96,8 +96,7 @@ public class MutablePoint implements Vector{
     }
 
     /**
-     * Checks in the current point is close enough to the other point, current EPSILON is 0.0002, longitude needs a higher
-     * EPSILON
+     * Checks in the current point is close enough to the other point, longitude needs a higher EPSILON
      * @param o the other mutable point
      * @return true if this point is close enough to o
      */

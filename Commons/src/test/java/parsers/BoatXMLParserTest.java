@@ -201,32 +201,32 @@ public class BoatXMLParserTest {
                 "\t\t\t<GPSposition Z=\"5.445\" Y=\"1.12\" X=\"0\"/>\n" +
                 "\t\t\t<FlagPosition Z=\"0\" Y=\"0.74\" X=\"0\"/>\n" +
                 "\t\t</Boat>\n" +
-                "\t\t<Boat Type=\"Yacht\" SourceID=\"101\" ShapeID=\"15\" StoweName=\"USA\" ShortName=\"ORACLE\" ShorterName=\"USA\" BoatName=\"ORACLE TEAM USA\" HullNum=\"AC4515\" Skipper=\"SPITHILL\" Helmsman=\"SPITHILL\" Country=\"USA\" PeliID=\"101\" RadioIP=\"172.20.2.101\">\n" +
+                "\t\t<Boat Type=\"Yacht\" SourceID=\"101\" ShapeID=\"15\" StoweName=\"USA\" ShortName=\"ORACLE\" ShorterName=\"USA\" BoatName=\"ORACLE TEAM USA\" HullNum=\"AC4515\" Skipper=\"SPITHILL\" Helmsman=\"SPITHILL\" Country=\"USA\" PeliID=\"101\" RadioIP=\"172.20.2.101\" Model=\"1\">\n" +
                 "\t\t\t<GPSposition Z=\"1.78\" Y=\"-0.331\" X=\"-0.006\"/>\n" +
                 "\t\t\t<MastTop Z=\"21.496\" Y=\"3.7\" X=\"0\"/>\n" +
                 "\t\t\t<FlagPosition Z=\"0\" Y=\"6.2\" X=\"0\"/>\n" +
                 "\t\t</Boat>\n" +
-                "\t\t<Boat Type=\"Yacht\" SourceID=\"102\" ShapeID=\"15\" StoweName=\"SWE\" ShortName=\"ARTEMIS\" ShorterName=\"SWE\" BoatName=\"ARTEMIS RACING\" HullNum=\"AC4517\" Skipper=\"OUTTERIDGE\" Helmsman=\"OUTTERIDGE\" Country=\"SWE\" PeliID=\"102\" RadioIP=\"172.20.2.102\">\n" +
+                "\t\t<Boat Type=\"Yacht\" SourceID=\"102\" ShapeID=\"15\" StoweName=\"SWE\" ShortName=\"ARTEMIS\" ShorterName=\"SWE\" BoatName=\"ARTEMIS RACING\" HullNum=\"AC4517\" Skipper=\"OUTTERIDGE\" Helmsman=\"OUTTERIDGE\" Country=\"SWE\" PeliID=\"102\" RadioIP=\"172.20.2.102\" Model=\"1\">\n" +
                 "\t\t\t<GPSposition Z=\"1.727\" Y=\"-0.359\" X=\"-0.0121\"/>\n" +
                 "\t\t\t<MastTop Z=\"21.496\" Y=\"3.7\" X=\"0\"/>\n" +
                 "\t\t\t<FlagPosition Z=\"0\" Y=\"6.2\" X=\"0\"/>\n" +
                 "\t\t</Boat>\n" +
-                "\t\t<Boat Type=\"Yacht\" SourceID=\"103\" ShapeID=\"15\" StoweName=\"NZL\" ShortName=\"ETNZ\" ShorterName=\"NZL\" BoatName=\"EMIRATES TEAM NZ\" HullNum=\"AC4503\" Skipper=\"ASHBY\" Helmsman=\"BURLING\" Country=\"NZL\" PeliID=\"103\" RadioIP=\"172.20.2.103\">\n" +
+                "\t\t<Boat Type=\"Yacht\" SourceID=\"103\" ShapeID=\"15\" StoweName=\"NZL\" ShortName=\"ETNZ\" ShorterName=\"NZL\" BoatName=\"EMIRATES TEAM NZ\" HullNum=\"AC4503\" Skipper=\"ASHBY\" Helmsman=\"BURLING\" Country=\"NZL\" PeliID=\"103\" RadioIP=\"172.20.2.103\" Model=\"1\">\n" +
                 "\t\t\t<GPSposition Z=\"1.881\" Y=\"-0.291\" X=\"-0.003\"/>\n" +
                 "\t\t\t<MastTop Z=\"21.496\" Y=\"3.7\" X=\"0\"/>\n" +
                 "\t\t\t<FlagPosition Z=\"0\" Y=\"6.2\" X=\"0\"/>\n" +
                 "\t\t</Boat>\n" +
-                "\t\t<Boat Type=\"Yacht\" SourceID=\"104\" ShapeID=\"15\" StoweName=\"JPN\" ShortName=\"JAPAN\" ShorterName=\"JPN\" BoatName=\"SOFTBANK TEAM JAPAN\" HullNum=\"AC4504\" Skipper=\"BARKER\" Helmsman=\"BARKER\" Country=\"JPN\" PeliID=\"104\" RadioIP=\"172.20.2.104\">\n" +
+                "\t\t<Boat Type=\"Yacht\" SourceID=\"104\" ShapeID=\"15\" StoweName=\"JPN\" ShortName=\"JAPAN\" ShorterName=\"JPN\" BoatName=\"SOFTBANK TEAM JAPAN\" HullNum=\"AC4504\" Skipper=\"BARKER\" Helmsman=\"BARKER\" Country=\"JPN\" PeliID=\"104\" RadioIP=\"172.20.2.104\" Model=\"1\">\n" +
                 "\t\t\t<GPSposition Z=\"1.805\" Y=\"-0.322\" X=\"-0.003\"/>\n" +
                 "\t\t\t<MastTop Z=\"21.496\" Y=\"3.7\" X=\"0\"/>\n" +
                 "\t\t\t<FlagPosition Z=\"0\" Y=\"6.2\" X=\"0\"/>\n" +
                 "\t\t</Boat>\n" +
-                "\t\t<Boat Type=\"Yacht\" SourceID=\"105\" ShapeID=\"15\" StoweName=\"FRA\" ShortName=\"FRANCE\" ShorterName=\"FRA\" BoatName=\"GROUPAMA TEAM FRANCE\" HullNum=\"AC4505\" Skipper=\"CAMMAS\" Helmsman=\"CAMMAS\" Country=\"FRA\" PeliID=\"105\" RadioIP=\"172.20.2.105\">\n" +
+                "\t\t<Boat Type=\"Yacht\" SourceID=\"105\" ShapeID=\"15\" StoweName=\"FRA\" ShortName=\"FRANCE\" ShorterName=\"FRA\" BoatName=\"GROUPAMA TEAM FRANCE\" HullNum=\"AC4505\" Skipper=\"CAMMAS\" Helmsman=\"CAMMAS\" Country=\"FRA\" PeliID=\"105\" RadioIP=\"172.20.2.105\" Model=\"1\">\n" +
                 "\t\t\t<GPSposition Z=\"1.863\" Y=\"-0.3\" X=\"-0.003\"/>\n" +
                 "\t\t\t<MastTop Z=\"21.496\" Y=\"3.7\" X=\"0\"/>\n" +
                 "\t\t\t<FlagPosition Z=\"0\" Y=\"6.2\" X=\"0\"/>\n" +
                 "\t\t</Boat>\n" +
-                "\t\t<Boat Type=\"Yacht\" SourceID=\"106\" ShapeID=\"15\" StoweName=\"GBR\" ShortName=\"GBR\" ShorterName=\"GBR\" BoatName=\"LAND ROVER BAR\" HullNum=\"AC4516\" Skipper=\"ANSLIE\" Helmsman=\"ANSLIE\" Country=\"GBR\" PeliID=\"106\" RadioIP=\"172.20.2.106\">\n" +
+                "\t\t<Boat Type=\"Yacht\" SourceID=\"106\" ShapeID=\"15\" StoweName=\"GBR\" ShortName=\"GBR\" ShorterName=\"GBR\" BoatName=\"LAND ROVER BAR\" HullNum=\"AC4516\" Skipper=\"ANSLIE\" Helmsman=\"ANSLIE\" Country=\"GBR\" PeliID=\"106\" RadioIP=\"172.20.2.106\" Model=\"1\">\n" +
                 "\t\t\t<GPSposition Z=\"1.734\" Y=\"-0.352\" X=\"0\"/>\n" +
                 "\t\t\t<MastTop Z=\"21.496\" Y=\"3.7\" X=\"0\"/>\n" +
                 "\t\t\t<FlagPosition Z=\"0\" Y=\"6.2\" X=\"0\"/>\n" +
