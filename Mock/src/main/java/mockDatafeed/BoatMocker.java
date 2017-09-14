@@ -5,6 +5,7 @@ import com.google.common.io.CharStreams;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
+import parsers.boatAction.BoatAction;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.powerUp.PowerUp;
@@ -117,26 +118,27 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 HeaderData headerData = headerParser.processMessage(header);
                 int sourceID = headerData.getSourceID();
                 Competitor boat = competitors.get(sourceID);
-                Keys action = Keys.getKeys(packet[0]);
+                BoatAction action = BoatAction.getBoatAction(packet[0]);
                 switch (action) {
-                    case SAILSIN:
-                        sendBoatAction(SAILSIN.getValue(), sourceID);
+                    case SAILS_IN:
+                        sendBoatAction(action.getValue(), sourceID);
                         competitors.get(sourceID).sailsIn();
                         break;
-                    case SAILSOUT:
-                        sendBoatAction(SAILSOUT.getValue(), sourceID);
+                    case SAILS_OUT:
+                        sendBoatAction(action.getValue(), sourceID);
                         competitors.get(sourceID).sailsOut();
                         break;
-                    case SWITCHSAILS:
-                        sendBoatAction(SWITCHSAILS.getValue(), sourceID);
+                    case SWITCH_SAILS:
+                        sendBoatAction(action.getValue(), sourceID);
                         competitors.get(sourceID).switchSails();
+//                        System.out.println("switch sail");
                         break;
-                    case UP:
+                    case UPWIND:
                         if(boat.getStatus() != DSQ) {
                             boat.changeHeading(true, shortToDegrees(windGenerator.getWindDirection()));
                         }
                         break;
-                    case DOWN:
+                    case DOWNWIND:
                         if(boat.getStatus() != DSQ) {
                             boat.changeHeading(false, shortToDegrees(windGenerator.getWindDirection()));
                         }
@@ -148,7 +150,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                             boatUpdater.finisherList.add(competitors.get(sourceID));
                         }
                         break;
-                    case TACK:
+                    case TACK_GYBE:
                         double windAngle = shortToDegrees(windGenerator.getWindDirection());
                         boat.setCurrentHeading(windAngle - (boat.getCurrentHeading() - windAngle));
                         break;

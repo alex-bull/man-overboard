@@ -1,6 +1,7 @@
 package controllers;
 
 import javafx.stage.Stage;
+import parsers.boatAction.BoatAction;
 import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
@@ -36,10 +37,10 @@ public class MainController {
      */
     @FXML public void updateSlider(){
         if(sailSlider.getValue()<0.5){
-            this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), dataSource.getSourceID()));
+            this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.SAILS_OUT.getValue(), dataSource.getSourceID()));
         }
         else{
-            this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), dataSource.getSourceID()));
+            this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.SAILS_IN.getValue(), dataSource.getSourceID()));
         }
     }
 
@@ -51,20 +52,20 @@ public class MainController {
 
             switch (event.getCode()) {
                 case W:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.UP.getValue(), dataSource.getSourceID()));
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.UPWIND.getValue(), dataSource.getSourceID()));
                     break;
                 case S:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.DOWN.getValue(), dataSource.getSourceID()));
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.DOWNWIND.getValue(), dataSource.getSourceID()));
                     break;
                 case SPACE:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.VMG.getValue(), dataSource.getSourceID()));
+//                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.VMG.getValue(), dataSource.getSourceID()));
                     break;
                 case SHIFT:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SWITCHSAILS.getValue(), dataSource.getSourceID()));
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.SWITCH_SAILS.getValue(), dataSource.getSourceID()));
                     sailSlider.setValue(this.dataSource.getCompetitor().getSailValue());
                     break;
                 case ENTER:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.TACK_GYBE.getValue(), dataSource.getSourceID()));
                     break;
                 case Q:
                     raceViewController.toggleZoom();
@@ -92,14 +93,14 @@ public class MainController {
                     break;
                 case DIGIT1:
                     if(dataSource.getCompetitor().hasSpeedBoost()) {
-                        this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.BOOST.getValue(), dataSource.getSourceID()));
+                        this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.BOOST.getValue(), dataSource.getSourceID()));
                         dataSource.getCompetitor().disableBoost();
                         playerController.hideBoost();
                     }
                     break;
                 case DIGIT2:
                     if(dataSource.getCompetitor().hasPotion()) {
-                        this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.POTION.getValue(), dataSource.getSourceID()));
+                        this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.POTION.getValue(), dataSource.getSourceID()));
                         dataSource.getCompetitor().usePotion();
                         playerController.hidePotion();
                     }

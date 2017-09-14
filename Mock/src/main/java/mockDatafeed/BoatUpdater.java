@@ -195,7 +195,7 @@ public class BoatUpdater {
     private boolean pickUpCrew(Competitor boat) {
         boolean updated = false;
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
-            if (boat.getPosition().isWithin(crewLocation.getPosition(), 0.001)) {
+            if (boat.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
                 crewMembers.remove(crewLocation);
                 boat.updateHealth(crewLocation.getNumCrew());
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
@@ -290,8 +290,8 @@ public class BoatUpdater {
         if ((whirlpools.size() < 2)) {
             MutablePoint centroid = utility.centroid(courseBoundary);
             double angle = Math.random()*2*Math.PI;
-            double xOff = Math.cos(angle) * 0.05;
-            double yOff = Math.sin(angle) * 0.05;
+            double xOff = Math.cos(angle) * 0.001;
+            double yOff = Math.sin(angle) * 0.001;
             MutablePoint whirlpoolPos = new MutablePoint(centroid.getXValue() + xOff, centroid.getYValue() + yOff);
             if (isPointInPolygon(whirlpoolPos, courseBoundary)) {
                 int currentLeg = leadLeg;

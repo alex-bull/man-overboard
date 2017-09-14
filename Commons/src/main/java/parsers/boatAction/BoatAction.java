@@ -6,13 +6,16 @@ package parsers.boatAction;
  */
 public enum BoatAction {
 
-    VMG(1),
+
     SAILS_IN(2),
     SAILS_OUT(3),
-    SWITCH_SAILS(7),
+    SWITCH_SAILS(9),
     TACK_GYBE(4),
     UPWIND(5),
     DOWNWIND(6),
+    BOOST(7),
+    POTION(8),
+    UNKNOWN(-1),
     RIP(0);
 
     private final int value;
@@ -36,9 +39,7 @@ public enum BoatAction {
             case 0:
                 action = RIP;
                 break;
-            case 1:
-                action = VMG;
-                break;
+
             case 2:
                 action = SAILS_IN;
                 break;
@@ -54,10 +55,18 @@ public enum BoatAction {
             case 6:
                 action = DOWNWIND;
                 break;
+
             case 7:
-                action = SWITCH_SAILS;
+                action = BOOST;
+                break;
+            case 8:
+                action=POTION;
+                break;
+            case 9:
+                action=SWITCH_SAILS;
                 break;
             default:
+                action=UNKNOWN;
                 break;
         }
         return action;

@@ -24,10 +24,11 @@ public class BoatActionParser {
     public BoatAction processMessage(byte[] body) {
         try {
             int actionNum = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 1));
-
+//            System.out.println(actionNum);
             return BoatAction.getBoatAction(actionNum);
         }
         catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

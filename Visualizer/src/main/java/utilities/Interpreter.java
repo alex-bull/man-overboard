@@ -368,6 +368,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 HeaderData headerData = headerParser.processMessage(header);
                 this.boatAction = boatActionParser.processMessage(packet);
+
                 if (boatAction != null && headerData != null) {
                     if(headerData.getSourceID() == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
@@ -380,6 +381,7 @@ public class Interpreter implements DataSource, PacketHandler {
                                 break;
                             case SWITCH_SAILS:
                                 boat.switchSails();
+//                                System.out.println(boat.hasSailsOut());
                                 break;
                             case TACK_GYBE:
                                 double boatHeading = boat.getCurrentHeading();
@@ -387,6 +389,9 @@ public class Interpreter implements DataSource, PacketHandler {
                                 break;
                             case RIP:
                                 boat.setStatus(DSQ);
+                                break;
+                            default:
+//                                System.out.println("RIP");
                                 break;
                         }
                     }
@@ -454,8 +459,7 @@ public class Interpreter implements DataSource, PacketHandler {
                         }
                     }
                 }
-
-
+                break;
             case SHARK:
                 addShark(parseShark(packet));
                 break;
@@ -534,9 +538,6 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
-    public Map<Integer,CrewLocation> getCrewLocations() {
-        return crewLocations;
-    }
     /**
      * adds blood locations with location converted
      * @param locations list of the blood locations

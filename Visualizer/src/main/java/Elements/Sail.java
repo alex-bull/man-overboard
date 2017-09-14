@@ -36,7 +36,6 @@ public class Sail extends Line {
         this.setEndX(boatX);
         this.setEndY(boatY + length);
         this.getTransforms().clear();
-
         if (boat.hasSailsOut()) {
             this.getTransforms().add(new Rotate(windAngle, boatX, boatY));
         } else {

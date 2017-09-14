@@ -3,6 +3,7 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
+import parsers.boatAction.BoatAction;
 import utilities.Sounds;
 import Elements.*;
 import Elements.Annotation;
@@ -233,7 +234,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat
      */
     private void killBoat(Competitor boat) {
-        this.dataSource.send(new BinaryPackager().packageBoatAction(Keys.RIP.getValue(), boat.getSourceID()));
+        this.dataSource.send(new BinaryPackager().packageBoatAction(BoatAction.RIP.getValue(), boat.getSourceID()));
         if(dataSource.getSourceID() == boat.getSourceID()){
             sailLine.setVisible(false);
             this.raceViewPane.getChildren().remove(guideArrow);
@@ -324,8 +325,7 @@ public class RaceViewController implements Initializable, TableObserver {
             else if (sourceID == dataSource.getSourceID() && collisions.get(sourceID) == 2) {
                 new RandomShake(raceParentPane).spin();
             }
-                Sounds.player.playSoundEffect("sounds/impact.mp3");
-            }
+            Sounds.player.playSoundEffect("sounds/impact.mp3");
             drawCollision(point.getXValue(), point.getYValue());
             dataSource.removeCollsions(sourceID);
         }
