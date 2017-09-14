@@ -28,7 +28,6 @@ public class BoatXMLParser {
      * @throws JDOMException JDOMException
      */
     public BoatXMLParser(String xmlStr) throws IOException, JDOMException {
-        System.out.println(xmlStr);
         boats = new HashMap<>();
         markBoats = new ArrayList<>();
         SAXBuilder builder = new SAXBuilder();
