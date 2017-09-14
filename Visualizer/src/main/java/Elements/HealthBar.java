@@ -65,7 +65,6 @@ public class HealthBar extends Group {
 
     }
 
-
     /**
      * Updates the position and color of the health bar to match the current state of the boat
      * @param boat Competitor, the boat for the health bar

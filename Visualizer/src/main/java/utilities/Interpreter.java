@@ -365,26 +365,32 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 HeaderData headerData = headerParser.processMessage(header);
                 this.boatAction = boatActionParser.processMessage(packet);
+
                 if (boatAction != null && headerData != null) {
-                    int headerDataSourceID = headerData.getSourceID();
-
-                    if (boatAction.equals(BoatAction.SAILS_IN) && headerDataSourceID == this.sourceID) {
+                    if(headerData.getSourceID() == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
-                        boat.switchSails();
+                        switch (boatAction) {
+                            case SAILS_IN:
+                                boat.sailsIn();
+                                break;
+                            case SAILS_OUT:
+                                boat.sailsOut();
+                                break;
+                            case SWITCH_SAILS:
+                                boat.switchSails();
+                                break;
+                            case TACK_GYBE:
+                                double boatHeading = boat.getCurrentHeading();
+                                boat.setCurrentHeading(calculateExpectedTack(this.windDirection, boatHeading));
+                                break;
+                            case RIP:
+                                boat.setStatus(DSQ);
+                                break;
+                        }
                     }
-
-                    if (boatAction.equals(BoatAction.TACK_GYBE) && headerDataSourceID == this.sourceID) {
-                        Competitor boat = this.storedCompetitors.get(this.sourceID);
-                        double boatHeading = boat.getCurrentHeading();
-                        boat.setCurrentHeading(calculateExpectedTack(this.windDirection, boatHeading));
-                    }
-                    if (boatAction.equals(BoatAction.RIP) && headerDataSourceID == this.sourceID) {
-                        Competitor boat = this.storedCompetitors.get(this.sourceID);
-                        boat.setStatus(DSQ);
-                    }
-
                 }
                 break;
+
             case YACHT_ACTION:
                 YachtEventParser parser = new YachtEventParser(packet);
                 switch (parser.getEventID()){
@@ -547,6 +553,11 @@ public class Interpreter implements DataSource, PacketHandler {
             updatingBoat.setCurrentHeading(boatData.getHeading());
             updatingBoat.setLatitude(boatData.getLatitude());
             updatingBoat.setLongitude(boatData.getLongitude());
+
+
+//            System.out.println("** lat: " + boatData.getLatitude() );
+//            System.out.println("** long: " + boatData.getLongitude() );
+//            System.out.println("** speed: " + boatData.getSpeed() + "\n" );
         }
 
         //order the list of competitors
@@ -652,6 +663,7 @@ public class Interpreter implements DataSource, PacketHandler {
         return zoomLevel;
     }
 
+
     /**
      * Parse binary data into XML
      * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
@@ -717,7 +729,7 @@ public class Interpreter implements DataSource, PacketHandler {
      * changes the scaling when zoomed in
      * @param deltaLevel
      */
-    public void changeScaling(int deltaLevel){
+    public void changeScaling(double deltaLevel){
         this.zoomLevel+=deltaLevel;
         updateCourseMarksScaling();
         updateCourseBoundary();

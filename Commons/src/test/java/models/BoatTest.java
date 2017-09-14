@@ -53,25 +53,40 @@ public class BoatTest {
         assertEquals(-64.861000, boat2.getPosition().getYValue(), 0.000001);
     }
 
+
     @Test
-    public void sailsOutByDefault() throws Exception {
-        assertFalse(boat.hasSailsOut());
+    public void sailsOutByDefault() throws Exception{
+        assertTrue(boat.getSailValue() > 0);
     }
 
     @Test
+    public void sailMovesIn() throws Exception{
+
+        boat.sailsIn();
+        assertTrue(boat.getSailValue() == 0);
+    }
+
+    @Test
+    public void sailMovesOut() throws Exception{
+        boat.sailsOut();
+        assertTrue(boat.getSailValue() ==1);
+    }
+
+
+    @Test
     public void toggleSails() throws Exception {
-        assertFalse(boat.hasSailsOut());
-        boat.switchSails();
         assertTrue(boat.hasSailsOut());
+        boat.switchSails();
+        assertFalse(boat.hasSailsOut());
     }
 
     @Test
     public void toggleSailsTwice() throws Exception {
-        assertFalse(boat.hasSailsOut());
-        boat.switchSails();
         assertTrue(boat.hasSailsOut());
         boat.switchSails();
         assertFalse(boat.hasSailsOut());
+        boat.switchSails();
+        assertTrue(boat.hasSailsOut());
     }
 
     @Test

@@ -4,9 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.util.converter.PercentageStringConverter;
-import models.Competitor;
-import models.CourseFeature;
-import models.MutablePoint;
+import models.*;
 import parsers.Converter;
 
 import java.awt.geom.Line2D;
@@ -24,6 +22,33 @@ import static java.lang.Math.sqrt;
  */
 public class RaceCalculator {
 
+    /**
+     * Calculates the boat's direction when screen was touched
+     * @param boatX x value of boat's position
+     * @param boatY y value of boat's position
+     * @param touchX x value of touch point's position
+     * @param touchY y value of touch point's position
+     * @return double theta
+     */
+    public static double calcBoatDirection(double boatX, double boatY, double touchX, double touchY) {
+        Vector2D boatDirection = new Vector2D(boatX, boatY, touchX, touchY);
+        double theta = atan2(boatDirection.getY(), boatDirection.getX());
+        theta = (theta * 180 / PI) + 90;
+        if (theta < 0) { theta = 360 + theta;}
+
+        return theta;
+    }
+
+    /**
+     * Calculates whether the boat is currently west of wind or not
+     * @param heading boat's heading
+     * @param downWind angle of down wind
+     * @param windAngle angle of wind
+     * @return boolean
+     */
+    public static boolean isWestOfWind(double heading, double downWind, double windAngle) {
+        return (heading > downWind) || (heading < windAngle);
+    }
 
 
     /**

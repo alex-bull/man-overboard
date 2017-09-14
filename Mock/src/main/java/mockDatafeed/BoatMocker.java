@@ -31,8 +31,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static mockDatafeed.Keys.RIP;
-import static mockDatafeed.Keys.SAILS;
+import static mockDatafeed.Keys.*;
 import static parsers.BoatStatusEnum.*;
 import static parsers.MessageType.UNKNOWN;
 import static utilities.CollisionUtility.isPointInPolygon;
@@ -122,9 +121,17 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 Competitor boat = competitors.get(sourceID);
                 Keys action = Keys.getKeys(packet[0]);
                 switch (action) {
-                    case SAILS:
-                        sendBoatAction(SAILS.getValue(), sourceID);
-                        boat.switchSails();
+                    case SAILSIN:
+                        sendBoatAction(SAILSIN.getValue(), sourceID);
+                        competitors.get(sourceID).sailsIn();
+                        break;
+                    case SAILSOUT:
+                        sendBoatAction(SAILSOUT.getValue(), sourceID);
+                        competitors.get(sourceID).sailsOut();
+                        break;
+                    case SWITCHSAILS:
+                        sendBoatAction(SWITCHSAILS.getValue(), sourceID);
+                        competitors.get(sourceID).switchSails();
                         break;
                     case UP:
                         if(boat.getStatus() != DSQ) {
@@ -367,8 +374,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             }
         }
     }
-
-
 
 
     /**

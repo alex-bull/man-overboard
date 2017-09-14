@@ -18,7 +18,7 @@ import java.util.Set;
  * Data source
  */
 public interface DataSource {
-    void changeScaling(int Multiplier);
+    void changeScaling(double Multiplier);
     int getZoomLevel();
     Map<Integer, CrewLocation> getCrewLocations();
     boolean receive(String host, int port, Scene scene);

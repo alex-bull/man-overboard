@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface Competitor {
     String getTeamName();
-
+    boolean isSailsOut();
     double getVelocity();
     double getCollisionRadius();
     void setVelocity(double velocity);
@@ -47,11 +47,7 @@ public interface Competitor {
 
     double getLongitude();
 
-    long getTimeToNextMark();
-
     void setTimeToNextMark(long timeToNextMark);
-
-    long getTimeAtLastMark();
 
     void setTimeAtLastMark(long timeAtLastMark);
 
@@ -71,7 +67,15 @@ public interface Competitor {
 
     void switchSails();
 
+    void sailsIn();
+
+    void sailsOut();
+
+    double getSailValue();
+
     boolean hasSailsOut();
+
+    void setSailValue(double sailValue);
 
     void changeHeading(boolean upwind, double angle);
 
@@ -85,7 +89,7 @@ public interface Competitor {
 
     void setHealthLevel(int health);
 
-
+    double getDownWind(double windAngle);
 
     void startRounding();
 

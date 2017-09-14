@@ -6,6 +6,9 @@ import Animations.RandomShake;
 import utilities.Sounds;
 import Elements.*;
 import Elements.Annotation;
+import javafx.animation.FadeTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
@@ -15,8 +18,13 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.RotateEvent;
+import javafx.scene.input.TouchEvent;
+import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -25,6 +33,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Rotate;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mockDatafeed.Keys;
@@ -32,6 +41,7 @@ import models.Competitor;
 import models.CourseFeature;
 import models.CrewLocation;
 import models.MutablePoint;
+import models.Vector2D;
 import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
 import parsers.powerUp.PowerUp;
@@ -60,6 +70,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     //VIEW ELEMENTS
+    @FXML private TableController tableController = new TableController();
     @FXML private AnchorPane raceView;
     @FXML private Pane raceViewPane;
     @FXML private Canvas raceViewCanvas;
@@ -69,7 +80,6 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML private HBox controlsBox;
     @FXML private GridPane finisherListPane;
     @FXML private ListView<String> finisherListView;
-
 
     private Map<Integer, ImageView> fallenCrews=new HashMap<>();
     private Map<Integer, PowerUpModel> powerUps=new HashMap<>();
@@ -97,6 +107,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private double boatPositionY; //current position in screen coords
     private MutablePoint currentPosition17; //boat position in screen coordinates with zoom level 17
     private ObservableList<String> observableFinisherList = observableArrayList();
+    private double touchZoomLevel = 0.0; // current touch zoom level
 
     //CONFIG
     private static final Color backgroundColor = Color.POWDERBLUE;
@@ -317,6 +328,18 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+    /**
+     * toggles the state of the zoom
+     */
+    public void toggleZoom() {
+        if(isZoom()) {
+            zoomOut();
+            if (!tableController.isVisible()) { tableController.makeVisible(); }
+        } else{
+            zoomIn();
+        }
+    }
+
 
 
 
@@ -353,9 +376,7 @@ public class RaceViewController implements Initializable, TableObserver {
         if (isZoom()) {
             MutablePoint location = getZoomedBoatLocation(boat);
             alive = healthBar.update(boat, location.getXValue(), location.getYValue(), true);
-        } else {
-            alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), false);
-        }
+        } else alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), false);
         if (!alive) this.killBoat(boat);
 
     }
@@ -633,8 +654,6 @@ public class RaceViewController implements Initializable, TableObserver {
     // VIEW SCALING
     //================================================================================================================
 
-
-
     /**
      * adds scaling to all shapes in the scene
      */
@@ -755,7 +774,6 @@ public class RaceViewController implements Initializable, TableObserver {
             }
             this.drawWake(boat, boatLength, startWakeOffset, wakeWidthFactor, wakeLengthFactor);
             this.drawBoat(boat);
-
             this.drawHealthBar(boat);
             this.drawAnnotations(boat);
         }
@@ -778,11 +796,64 @@ public class RaceViewController implements Initializable, TableObserver {
         setBoatLocation();
         updateRace();
         checkCollision();
-
     }
 
     boolean isLoaded() {
         return isLoaded;
     }
+
+    /**
+     * Turn the boat when a touch pressed stationary event is sent
+     * @param touchEvent pressed touch event
+     */
+    public void turnBoat(TouchEvent touchEvent) {
+        BinaryPackager binaryPackager = new BinaryPackager();
+        int UP = 5; int DOWN = 6;
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        double heading = boat.getCurrentHeading();
+        double windAngle = (dataSource.getWindDirection())%360;
+        double downWind = (boat.getDownWind(windAngle))%360;
+        double touchX = touchEvent.getTouchPoint().getX();
+        double touchY = touchEvent.getTouchPoint().getY();
+        double theta = RaceCalculator.calcBoatDirection(boatPositionX, boatPositionY, touchX, touchY);
+        double difference = theta - heading;
+
+        if (RaceCalculator.isWestOfWind(heading, downWind, windAngle)) {UP = 6; DOWN = 5;}
+
+        if (difference > 0 && difference < 180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
+        }
+        else if(difference > 0 && difference > 180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
+        }
+        else if (difference < 0 && difference > -180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
+        }
+        else if (difference < 0 && difference < -180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
+        }
+    }
+
+
+    /**
+     * Zoom the screen in and out upon touch zoom event
+     * @param zoomEvent zoom event
+     */
+    public void zoom(ZoomEvent zoomEvent) {
+        if (zoom) {
+            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
+                dataSource.changeScaling(1);
+                zoomIn();
+            }
+            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
+                dataSource.changeScaling(-1);
+                zoomIn();
+            }
+            touchZoomLevel = zoomEvent.getTotalZoomFactor();
+
+        }
+    }
+
+
 
 }

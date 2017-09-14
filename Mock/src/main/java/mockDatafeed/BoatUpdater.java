@@ -84,7 +84,8 @@ public class BoatUpdater {
             }
             double speed = polarTable.getSpeed(twa);
             if (boat.getStatus() != DSQ) {
-                if (boat.hasSailsOut()) {
+
+                if (!boat.hasSailsOut()) {
                     if (boat.boostActivated()) {
                         boat.getBoatSpeed().increase(0.01);
                         boat.getBoatSpeed().setMagnitude(speed * 4);
@@ -108,7 +109,6 @@ public class BoatUpdater {
             } else {
                 boat.getBoatSpeed().reduce(0.99);
             }
-
             crewMemberUpdated = crewMemberUpdated || pickUpCrew(boat);
             boat.updatePosition(0.1);
 
@@ -126,8 +126,8 @@ public class BoatUpdater {
         }
         if (crewMemberUpdated) {
             handler.fallenCrewEvent(crewMembers);
-
         }
+
     }
 
     /**
@@ -299,7 +299,7 @@ public class BoatUpdater {
 
         if (boat.getCurrentLegIndex() == 6) {
             if (!finisherList.contains(boat)) {
-                boat.switchSails();
+                boat.sailsOut();
                 finisherList.add(boat);
             }
         }
@@ -527,7 +527,6 @@ public class BoatUpdater {
             if (comp.getSourceID() == boat.getSourceID()) continue; //cant collide with self
 
             double collisionRadius = comp.getCollisionRadius() + boat.getCollisionRadius();
-
 
 
             double distance = raceCourse.distanceBetweenGPSPoints(comp.getPosition(), boat.getPosition());

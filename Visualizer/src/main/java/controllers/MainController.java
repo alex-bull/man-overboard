@@ -4,8 +4,9 @@ import javafx.stage.Stage;
 import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
+import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import mockDatafeed.Keys;
 import utilities.DataSource;
@@ -24,10 +25,23 @@ public class MainController {
     @FXML private WindController windController;
     @FXML private PlayerController playerController;
     @FXML private GridPane loadingPane;
+    @FXML private Slider sailSlider;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private boolean playing = false;
 
+
+    /**
+     * updates the slider and sends corresponding packet
+     */
+    @FXML public void updateSlider(){
+        if(sailSlider.getValue()<0.5){
+            this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILSOUT.getValue(), dataSource.getSourceID()));
+        }
+        else{
+            this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILSIN.getValue(), dataSource.getSourceID()));
+        }
+    }
 
     /**
      * Handle control key events
@@ -46,21 +60,14 @@ public class MainController {
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.VMG.getValue(), dataSource.getSourceID()));
                     break;
                 case SHIFT:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SAILS.getValue(), dataSource.getSourceID()));
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.SWITCHSAILS.getValue(), dataSource.getSourceID()));
+                    sailSlider.setValue(this.dataSource.getCompetitor().getSailValue());
                     break;
                 case ENTER:
                     this.dataSource.send(this.binaryPackager.packageBoatAction(Keys.TACK.getValue(), dataSource.getSourceID()));
                     break;
                 case Q:
-                    if(raceViewController.isZoom()) {
-                        raceViewController.zoomOut();
-                        if (!tableController.isVisible()) {
-                            tableController.makeVisible();
-                        }
-                    }
-                    else{
-                        raceViewController.zoomIn();
-                    }
+                    raceViewController.toggleZoom();
                     break;
                 case BACK_QUOTE:
                     if (raceViewController.isZoom() && tableController.isVisible()){
@@ -71,13 +78,17 @@ public class MainController {
                     }
                     break;
 
-                case UP:
-                    dataSource.changeScaling(1);
-                    raceViewController.zoomIn();
+                case A:
+                    if(dataSource.getZoomLevel() < 18 && raceViewController.isZoom()) {
+                        dataSource.changeScaling(1);
+                        raceViewController.zoomIn();
+                    }
                     break;
-                case DOWN:
-                    dataSource.changeScaling(-1);
-                    raceViewController.zoomIn();
+                case D:
+                    if(dataSource.getZoomLevel() > 12 && raceViewController.isZoom()) {
+                        dataSource.changeScaling(-1);
+                        raceViewController.zoomIn();
+                    }
                     break;
                 case DIGIT1:
                     if(dataSource.getCompetitor().hasSpeedBoost()) {
@@ -121,6 +132,7 @@ public class MainController {
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
                     playerController.refresh();
+                    sailSlider.toFront();
                     loadingPane.toBack();
                 }
                 else {

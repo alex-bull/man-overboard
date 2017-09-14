@@ -65,10 +65,10 @@ public class ForceTest {
         assertEquals(10,force2.getMagnitude(),0.001);
 
 
-        Force force3=new Force(8.39948,180,false);
-        System.out.println(force3.getXValue());
-        System.out.println(force3.getYValue());
-//        assertEquals(10,force3.getYValue(),0.001);
+
+        Force force4=new Force(0,0,true);
+        force4.setMagnitude(52.79643144860788);
+        System.out.println(force4.getMagnitude());
 
 
 
