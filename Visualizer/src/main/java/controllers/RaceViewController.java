@@ -728,31 +728,9 @@ public class RaceViewController implements Initializable, TableObserver {
             model.setScaleY(scale);
         }
         for (WhirlpoolModel model: whirlpools.values()) {
-            if (scale == 2) {
-                System.out.println(dataSource.getZoomLevel());
-                switch(dataSource.getZoomLevel()) {
-                    case 16:
-                        model.setScaleX(13);
-                        model.setScaleY(13);
-                        break;
-                    case 15:
-                        model.setScaleX(8);
-                        model.setScaleY(8);
-                        break;
-                }
-                if (dataSource.getZoomLevel() == 17) {
-                    model.setScaleX(dataSource.getZoomLevel() + 7);
-                    model.setScaleY(dataSource.getZoomLevel() + 7);
-                }
-                else if(dataSource.getZoomLevel() < 15) {
-                    model.setScaleX(dataSource.getZoomLevel() - 11);
-                    model.setScaleY(dataSource.getZoomLevel() - 11);
-                    }
-                }
-            else {
-                model.setScaleX(scale);
-                model.setScaleY(scale);
-            }
+            model.setPreserveRatio(true);
+            model.setFitWidth(scale*model.getImage().getWidth());
+            model.setFitHeight(scale*model.getImage().getHeight());
         }
         sharkModel.setScaleX(scale);
         sharkModel.setScaleY(scale);

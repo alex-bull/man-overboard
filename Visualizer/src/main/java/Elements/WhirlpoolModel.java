@@ -22,9 +22,8 @@ public class WhirlpoolModel extends ImageView {
     public void update(MutablePoint position) {
         this.setX(position.getXValue());
         this.setY(position.getYValue());
-        Circle clip = new Circle(this.getX()+20, this.getY()+20, 20);
-        this.setClip(clip);
     }
+
 
     public void spin() {
         this.setRotate(this.getRotate() + 5);

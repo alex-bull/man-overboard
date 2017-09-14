@@ -601,7 +601,7 @@ public class BoatUpdater {
             if (distance <= collisionRadius) {
                 handler.yachtEvent(boat.getSourceID(), 2);
                 collisionHandler(boat.getPosition(), whirlpool.getCollisionMagnitude(), 10);
-                boat.updatePosition(-20);
+                boat.updatePosition(-30);
                 return true;
             }
 
