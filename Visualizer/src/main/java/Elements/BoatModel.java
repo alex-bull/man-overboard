@@ -57,7 +57,7 @@ public class BoatModel extends Group {
             boatModel.setFill(new ImagePattern(boatImage));
         }
         else if (boatType == 4) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boatq.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boat.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
         else if (boatType == 5) {
@@ -72,7 +72,7 @@ public class BoatModel extends Group {
 
 
         //boatModel.setStroke(BLACK);
-        this.getChildren().add(boatModel);
+
 
         if (player) {
             Shape playerMarker = new Circle(0, 0, 15);
@@ -81,6 +81,7 @@ public class BoatModel extends Group {
             playerMarker.setFill(Color.rgb(0,0,0,0.2));
             this.getChildren().add(playerMarker);
         }
+        this.getChildren().add(boatModel);
     }
 
 

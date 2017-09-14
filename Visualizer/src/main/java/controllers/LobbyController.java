@@ -101,7 +101,7 @@ public class LobbyController implements Initializable {
 
 
 //        for (int i = 0; i<8; i++) {
-//            competitorList.add("Boat 10" +i);
+//            competitorList.add("Boaty 10" +i);
 //        }
 
         Scene scene = App.getScene();
@@ -220,18 +220,17 @@ public class LobbyController implements Initializable {
 
     @FXML
     public void confirmBoatDetails() {
-//        if (dataSource.getCompetitor() != null) {
-//            System.out.println("shit");
-//            return;
-//        }
+        if (dataSource.getCompetitor() == null) return;
         Competitor boat = dataSource.getCompetitor();
-        if (!nameText.getText().equals("")){
-            this.dataSource.send(binaryPackager.packageBoatName(boat.getSourceID(), nameText.getText()));
-        }
 
+        if (!nameText.getText().equals("")) this.dataSource.send(binaryPackager.packageBoatName(boat.getSourceID(), nameText.getText()));
+        else nameText.setText(boat.getTeamName()); //use server assigned name
 
         this.dataSource.send(binaryPackager.packageBoatModel(boat.getSourceID(), index %boatImages.size()));
-        confirmButton.setDisable(true);
+        confirmButton.setVisible(false);
+        nameText.setDisable(true);
+        leftButton.setVisible(false);
+        rightButton.setVisible(false);
     }
 
     @FXML
