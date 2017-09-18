@@ -350,6 +350,7 @@ public class LobbyController implements Initializable {
         if (timer != null) timer.stop();
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
+        this.confirmButton.setDisable(true);
         nameText.setDisable(true);
         this.nameText.setText(dataSource.getCompetitor().getTeamName());
 
