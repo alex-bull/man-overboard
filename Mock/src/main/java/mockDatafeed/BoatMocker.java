@@ -167,7 +167,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 break;
             case NAME_REQUEST:
                 NameParser nameParser = new NameParser(packet);
-                System.out.println("boatname mocker ");
                 competitors.get(nameParser.getSourceId()).setTeamName(nameParser.getName());
                 this.sendAllXML();
                 break;

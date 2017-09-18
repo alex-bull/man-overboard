@@ -27,7 +27,6 @@ public class ModelParser {
     }
 
     public Integer getModel() {
-        System.out.println("modelparser" + model);
         return model;
     }
 }
