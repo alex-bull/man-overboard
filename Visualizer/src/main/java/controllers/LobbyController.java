@@ -218,6 +218,9 @@ public class LobbyController implements Initializable {
         this.loadStartView();
     }
 
+    /**
+     * confirms the customised boat name and boat image and sends it to the server
+     */
     @FXML
     public void confirmBoatDetails() {
         if (dataSource.getCompetitor() == null) return;
@@ -233,6 +236,9 @@ public class LobbyController implements Initializable {
         rightButton.setVisible(false);
     }
 
+    /**
+     * displays previous boat customisation image
+     */
     @FXML
     public void showPreviousBoat(){
         index--;
@@ -242,6 +248,9 @@ public class LobbyController implements Initializable {
         boatImageView.setImage(boatImages.get(index %boatImages.size()));
     }
 
+    /**
+     * displays next boat customisation image
+     */
     @FXML
     public void showNextBoat(){
         index++;
@@ -350,7 +359,6 @@ public class LobbyController implements Initializable {
         if (timer != null) timer.stop();
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
-        this.confirmButton.setDisable(true);
         nameText.setDisable(true);
         this.nameText.setText(dataSource.getCompetitor().getTeamName());
 

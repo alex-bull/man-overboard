@@ -172,11 +172,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 break;
             case MODEL_REQUEST:
                 ModelParser modelParser = new ModelParser(packet);
-//                BoatModelEnum boatModelEnum = YACHT;
-//                for (BoatModelEnum modelEnum : BoatModelEnum.values()) {
-//                    if (modelParser.getModel() == modelEnum.getValue()) boatModelEnum = modelEnum;
-//                }
-                //competitors.get(modelParser.getSourceId()).setBoatType(boatModelEnum);
                 competitors.get(modelParser.getSourceId()).setBoatType(modelParser.getModel());
                 this.sendAllXML();
                 break;
