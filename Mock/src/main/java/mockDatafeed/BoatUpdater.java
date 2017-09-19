@@ -119,6 +119,7 @@ public class BoatUpdater {
                 boat.getBoatSpeed().reduce(0.99);
             }
             crewMemberUpdated = crewMemberUpdated || pickUpCrew(boat);
+            crewEaten();
             boat.updatePosition(0.1);
 
 
@@ -157,7 +158,6 @@ public class BoatUpdater {
         }
         if (crewMemberUpdated) {
             handler.fallenCrewEvent(crewMembers);
-
         }
 
     }
@@ -239,11 +239,8 @@ public class BoatUpdater {
                 }
             }
         }
-
-
-
-
     }
+
 
     /**
      * Checks whether if any of the players have passed the first mark
@@ -368,7 +365,6 @@ public class BoatUpdater {
                 shark.getSharkSpeed().setDirection(shark.getHeading());
                 shark.updatePosition(0.1);
             }
-            crewEaten();
         }
     }
 

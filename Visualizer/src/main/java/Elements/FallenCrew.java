@@ -15,13 +15,16 @@ import models.MutablePoint;
  *
  */
 public class FallenCrew extends ImageView {
-    private static final Integer imageWidth = 35;
-    private static final Integer imageHeight = 35;
+
+    private boolean dead = false;
+    Timeline animation;
 
 
-    public FallenCrew(String filePath) {
+    public FallenCrew(String filePath, Double scale) {
         Image drowning = new Image(filePath);
         this.setImage(drowning);
+        this.setPreserveRatio(true);
+        this.setFitWidth(scale * drowning.getWidth());
     }
 
     /**
@@ -34,25 +37,30 @@ public class FallenCrew extends ImageView {
      * @param height            double, the screen height
      */
     public void update(boolean isZoom, CrewLocation crewLocation, MutablePoint currentPosition17, double width, double height) {
+        MutablePoint p;
         if (isZoom) {
-            MutablePoint p = crewLocation.getPosition17().shift(-currentPosition17.getXValue() + width / 2, -currentPosition17.getYValue() + height / 2);
-            this.relocate(p.getXValue() - imageWidth / 2, p.getYValue() - imageHeight / 2);
+            p = crewLocation.getPosition17().shift(-currentPosition17.getXValue() + width / 2, -currentPosition17.getYValue() + height / 2);
         } else {
-            MutablePoint p = crewLocation.getPosition();
-            this.relocate(p.getXValue() - imageWidth / 2, p.getYValue() - imageHeight / 2);
+            p = crewLocation.getPosition();
         }
+        this.relocate(p.getXValue() - getFitWidth() / 2, p.getYValue() - getFitHeight() / 2);
     }
 
+    public boolean getDead() {
+        return this.dead;
+    }
 
     public void die(String filePath){
+        if (animation != null) return;
         Image blood = new Image(filePath);
-        Timeline animation;
         animation = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(opacityProperty(), 0)),
-                new KeyFrame(Duration.seconds(1.0), new KeyValue(opacityProperty(), 1)),
+                new KeyFrame(Duration.seconds(2.0), new KeyValue(opacityProperty(), 1)),
                 new KeyFrame(Duration.seconds(3.0), new KeyValue(opacityProperty(), 1)),
                 new KeyFrame(Duration.seconds(4.0), new KeyValue(opacityProperty(), 0))
         );
+        animation.setOnFinished(event -> this.dead = true);
+        this.setOpacity(0.0);
         this.setImage(blood);
         animation.play();
     }

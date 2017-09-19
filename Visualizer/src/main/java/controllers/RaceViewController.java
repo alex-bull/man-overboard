@@ -41,7 +41,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-import static Elements.PowerUpModel.getImageWidth;
 import static java.lang.Math.pow;
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.scene.paint.Color.ORANGERED;
@@ -600,26 +599,23 @@ public class RaceViewController implements Initializable, TableObserver {
             fallenCrews.remove(sourceId);
         }
 
-
         for (int sourceID : crewLocation.keySet()) {
             Random randomGenerator = new Random();
             if (!fallenCrews.containsKey(sourceID)) {
-                FallenCrew crew = new FallenCrew(crewImages[randomGenerator.nextInt(crewImages.length)]);
+                FallenCrew crew = new FallenCrew(crewImages[randomGenerator.nextInt(crewImages.length)], nodeSizeFunc(dataSource.getZoomLevel()));
                 fallenCrews.put(sourceID, crew);
                 raceViewPane.getChildren().add(crew);
             }
-            if (crewLocation.get(sourceID).died()) {
-                fallenCrews.get(sourceID).die(bloodImages[randomGenerator.nextInt(bloodImages.length)]);
-                crewLocation.remove(sourceID);
-            }
-
+            if (crewLocation.get(sourceID).died()) fallenCrews.get(sourceID).die(bloodImages[randomGenerator.nextInt(bloodImages.length)]); //show blood animation
             fallenCrews.get(sourceID).update(isZoom(),crewLocation.get(sourceID),currentPosition17,raceViewCanvas.getWidth(), raceViewCanvas.getHeight());
+            if (fallenCrews.get(sourceID).getDead()) crewLocation.remove(sourceID); //remove when animation finishes
         }
     }
 
 
-
-
+    /**
+     * Draw powerups
+     */
     private void drawPowerUps() {
         Map<Integer, PowerUp> receivedPowerUps = dataSource.getPowerUps();
 
@@ -627,7 +623,7 @@ public class RaceViewController implements Initializable, TableObserver {
         for (PowerUp receivedPowerUp : receivedPowerUps.values()) {
             int sourceId = receivedPowerUp.getId();
             if (!powerUps.containsKey(sourceId)) {
-                PowerUpModel powerUpModel = new PowerUpModel(receivedPowerUp);
+                PowerUpModel powerUpModel = new PowerUpModel(receivedPowerUp, nodeSizeFunc(dataSource.getZoomLevel()));
                 powerUps.put(sourceId, powerUpModel);
                 raceViewPane.getChildren().add(powerUpModel);
             }
@@ -652,17 +648,17 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawSharks() {
         Map<Integer, Shark> sharkLocation = dataSource.getSharkLocations();
         Shark shark = sharkLocation.get(0);
-        sharkModel.update(shark.getPosition().getXValue(), shark.getPosition().getYValue(), shark.getHeading());
+        sharkModel.update(isZoom(), shark, currentPosition17, raceViewPane.getWidth(), raceViewPane.getHeight(), shark.getHeading());
         sharkModel.toFront();
 
-        Image image = sharkModel.getImage();
-        if (isZoom()) {
-            MutablePoint p = sharkLocation.get(0).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-            sharkModel.relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-        } else {
-            MutablePoint p = sharkLocation.get(0).getPosition();
-            sharkModel.relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-        }
+//        Image image = sharkModel.getImage();
+//        if (isZoom()) {
+//            MutablePoint p = sharkLocation.get(0).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+//            sharkModel.relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
+//        } else {
+//            MutablePoint p = sharkLocation.get(0).getPosition();
+//            sharkModel.relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
+//        }
     }
 
     /**
@@ -681,7 +677,7 @@ public class RaceViewController implements Initializable, TableObserver {
         for (int id : whirlpoolsLocation.keySet()) {
             if (!whirlpools.containsKey(id)) {
                 Whirlpool whirlpool = whirlpoolsLocation.get(id);
-                WhirlpoolModel model = new WhirlpoolModel(new Image("/images/whirlpool.png"));
+                WhirlpoolModel model = new WhirlpoolModel(new Image("/images/whirlpool.png"), nodeSizeFunc(dataSource.getZoomLevel()));
                 model.update(whirlpool.getPosition());
                 model.animateSpawn();
                 whirlpools.put(id, model);
@@ -691,63 +687,11 @@ public class RaceViewController implements Initializable, TableObserver {
                     whirlpool.spin();
                 }
             }
-            Image image = whirlpools.get(id).getImage();
+            whirlpools.get(id).update(isZoom(), whirlpoolsLocation.get(id), currentPosition17, raceViewPane.getWidth(), raceViewPane.getHeight());
 
-            if (isZoom()) {
-                MutablePoint p = whirlpoolsLocation.get(id).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-                whirlpools.get(id).relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-            } else {
-                MutablePoint p = whirlpoolsLocation.get(id).getPosition();
-                whirlpools.get(id).relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-            }
 
         }
     }
-
-//    /**
-//     * draw blood when a shark eats a fallen crew member
-//     */
-//    private void drawBlood() {
-//        Map<Integer, Blood> bloodLocation = dataSource.getBloodLocations();
-//
-//        //remove entries
-//        Set<Integer> removedLocation = new HashSet<>(blood.keySet());
-//        removedLocation.removeAll(bloodLocation.keySet());
-//        for (int sourceId : removedLocation) {
-//            raceViewPane.getChildren().remove(blood.get(sourceId));
-//            blood.remove(sourceId);
-//        }
-//
-//        for (int sourceID : bloodLocation.keySet()) {
-//            if (!blood.containsKey(sourceID)) {
-//                Random randomGenerator = new Random();
-//                ImageView bloodImage = new ImageView();
-//                Image redBlob = bloodImages.get(randomGenerator.nextInt(bloodImages.size()));
-//                bloodImage.setImage(redBlob);
-//                blood.put(sourceID, bloodImage);
-//                raceViewPane.getChildren().add(bloodImage);
-//
-//            }
-//            double opacity = bloodLocation.get(sourceID).getOpacity();
-//            if (opacity >= 0) {
-//                bloodLocation.get(sourceID).updateOpacity();
-//                blood.get(sourceID).setOpacity(opacity);
-//            }
-//
-//            Image image = blood.get(sourceID).getImage();
-//
-//            if (isZoom()) {
-//                MutablePoint p = bloodLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-//                blood.get(sourceID).relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-//            } else {
-//                MutablePoint p = bloodLocation.get(sourceID).getPosition();
-//                blood.get(sourceID).relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-//            }
-//
-//        }
-//
-//
-//    }
 
 
     //================================================================================================================
@@ -767,15 +711,15 @@ public class RaceViewController implements Initializable, TableObserver {
             model.setScaleY(scale);
         }
 
-        for (ImageView imageView : powerUps.values()) {
-            imageView.setPreserveRatio(true);
-            imageView.setFitWidth(scale * getImageWidth());
+        for (PowerUpModel powerUpModel : powerUps.values()) {
+            powerUpModel.setPreserveRatio(true);
+            powerUpModel.setFitWidth(scale * powerUpModel.getImage().getWidth());
 
         }
 
-        for (ImageView imageView : fallenCrews.values()) {
-            imageView.setPreserveRatio(true);
-            imageView.setFitWidth(scale * getImageWidth());
+        for (FallenCrew fallenCrew : fallenCrews.values()) {
+            fallenCrew.setPreserveRatio(true);
+            fallenCrew.setFitWidth(scale * fallenCrew.getImage().getWidth());
 
         }
 

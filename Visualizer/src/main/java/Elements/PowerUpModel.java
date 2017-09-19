@@ -13,16 +13,13 @@ import static parsers.powerUp.PowerUpType.POTION;
  * Visual representation of a powerup
  */
 public class PowerUpModel extends ImageView {
-    private static final Integer imageWidth = 32;
-    private static final Integer imageHeight = 32;
-
 
     /**
      * Create a powerup model
      *
      * @param receivedPowerUp PowerUp the power up
      */
-    public PowerUpModel(PowerUp receivedPowerUp) {
+    public PowerUpModel(PowerUp receivedPowerUp, Double scale) {
         if (receivedPowerUp.getType() == BOOST.getValue() || receivedPowerUp.getType() == POTION.getValue()) {
             Image image;
             if (receivedPowerUp.getType() == BOOST.getValue()) {
@@ -31,14 +28,11 @@ public class PowerUpModel extends ImageView {
                 image = new Image("/images/potion.png");
             }
             this.setImage(image);
-            this.setFitHeight(imageHeight);
-            this.setFitWidth(imageWidth);
+            this.setPreserveRatio(true);
+            this.setFitWidth(scale * image.getWidth());
         }
     }
 
-    public static Integer getImageWidth() {
-        return imageWidth;
-    }
 
     /**
      * Update the position of the powerup model
@@ -50,12 +44,12 @@ public class PowerUpModel extends ImageView {
      * @param height            double, the screen height
      */
     public void update(boolean isZoom, PowerUp powerUp, MutablePoint currentPosition17, double width, double height) {
+        MutablePoint p;
         if (isZoom) {
-            MutablePoint p = powerUp.getPosition17().shift(-currentPosition17.getXValue() + width / 2, -currentPosition17.getYValue() + height / 2);
-            this.relocate(p.getXValue() - imageWidth / 2, p.getYValue() - imageHeight / 2);
+            p = powerUp.getPosition17().shift(-currentPosition17.getXValue() + width / 2, -currentPosition17.getYValue() + height / 2);
         } else {
-            MutablePoint p = powerUp.getPosition();
-            this.relocate(p.getXValue() - imageWidth / 2, p.getYValue() - imageHeight / 2);
+            p = powerUp.getPosition();
         }
+        this.relocate(p.getXValue() - getFitWidth() / 2, p.getYValue() - getFitHeight() / 2);
     }
 }
