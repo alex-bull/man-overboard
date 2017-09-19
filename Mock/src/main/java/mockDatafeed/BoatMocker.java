@@ -52,7 +52,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager = new BinaryPackager();
-    private MutablePoint prestart = new MutablePoint(32.295842, -64.857157);
+    private MutablePoint prestart;
     private WindGenerator windGenerator;
     private int currentSourceID = 99;
     private Random random = new Random();
@@ -74,9 +74,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
 
 
+
     BoatMocker() throws IOException, JDOMException {
         CourseGenerator courseGenerator = new CourseGenerator();
         this.coursePath = courseGenerator.generateCourse();
+        this.prestart = courseGenerator.getPrestart();
         System.out.println("Chosen path : " + this.coursePath);
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
@@ -215,8 +217,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private void addCompetitor(Integer clientId) {
 
         double a = 0.001 * competitors.size(); //shift competitors so they aren't colliding at the start
-//        prestart = new MutablePoint(32.41011 + a, -64.88937);
-        prestart = new MutablePoint(-64.68325 + a, -63.09448);
+        this.prestart.setX(this.prestart.getXValue() + a);
 
         Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
         newCompetitor.setCurrentHeading(0);
