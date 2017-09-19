@@ -8,8 +8,10 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ListView;
@@ -33,10 +35,12 @@ import parsers.RaceStatusEnum;
 import parsers.boatAction.BoatAction;
 import parsers.powerUp.PowerUp;
 import utilities.DataSource;
+import utilities.Interpreter;
 import utilities.RaceCalculator;
 import utilities.Sounds;
 import utility.BinaryPackager;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -967,11 +971,21 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-    public void goToStartScreen(ActionEvent event) {
-        System.out.println("go to the start screen");
+    /**
+     * Re-direct the user to the start screen
+     */
+    @FXML
+    public void goToStartScreen() {
+
     }
 
-    public void goToLobbyScreen(ActionEvent event) {
-        System.out.println("go to the lobby screen");
+    /**
+     * Re-direct the user to the lobby screen
+     */
+    @FXML
+    public void goToLobbyScreen() {
+        StartController startController = new StartController();
+        startController.joinGame();
+
     }
 }
