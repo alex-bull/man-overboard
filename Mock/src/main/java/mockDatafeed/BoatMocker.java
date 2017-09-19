@@ -213,7 +213,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         double a = 0.001 * competitors.size(); //shift competitors so they aren't colliding at the start
 //        prestart = new MutablePoint(32.41011 + a, -64.88937);
-        prestart = new MutablePoint(32.35763 + a, -64.81332);
+        prestart = new MutablePoint(-64.68325 + a, -63.09448);
 
         Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
         newCompetitor.setCurrentHeading(0);
@@ -344,7 +344,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * finds the current course of the race
      */
     private void generateCourse() throws JDOMException, IOException {
-        InputStream mockBoatStream = new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")));
+        InputStream mockBoatStream = new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/antarctica.xml")));
         CourseXMLParser cl = new CourseXMLParser(mockBoatStream);
         //screen size is not important
         RaceCourse course = new RaceCourse(cl.parseCourse(), false);
@@ -362,7 +362,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void generateMarkCompetitors() throws IOException, JDOMException {
 
-        String xml = CharStreams.toString(new InputStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")))));
+        String xml = CharStreams.toString(new InputStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/antarctica.xml")))));
         raceData = new RaceXMLParser().parseRaceData(xml);
         markBoats = new HashMap<>();
 
@@ -610,7 +610,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void sendRaceXML() throws IOException {
         int messageType = 6;
-        String raceTemplateString = fileToString("/raceTemplate.xml");
+        String raceTemplateString = fileToString("/antarctica.xml");
         String raceXML = formatRaceXML(raceTemplateString);
         this.sendQueue.put(null, binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
 
