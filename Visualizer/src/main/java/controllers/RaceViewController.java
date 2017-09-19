@@ -967,4 +967,11 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+    public void goToStartScreen(ActionEvent event) {
+        System.out.println("go to the start screen");
+    }
+
+    public void goToLobbyScreen(ActionEvent event) {
+        System.out.println("go to the lobby screen");
+    }
 }
