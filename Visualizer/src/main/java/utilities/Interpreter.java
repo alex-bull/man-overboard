@@ -460,11 +460,11 @@ public class Interpreter implements DataSource, PacketHandler {
                 addShark(parseShark(packet));
                 break;
             case BLOOD:
-                addBloodLocation(parseBlood(packet));
+                System.out.println("Blood event");
+                crewLocations.get((parseBlood(packet))).setDied();
                 break;
             case WHIRLPOOL:
                 addWhirlPool(parseWhirlpool(packet));
-
             default:
                 break;
         }

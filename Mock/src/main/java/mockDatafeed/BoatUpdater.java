@@ -38,7 +38,6 @@ public class BoatUpdater {
     private List<MutablePoint> courseBoundary;
     private WindGenerator windGenerator;
     private int crewLocationSourceID = 0;
-    private int bloodlocationSourceID = 0;
     private int sharkSourceID = 0;
     private int sharkRoamIndex = 0;
     private int leadLeg = 0;
@@ -119,8 +118,7 @@ public class BoatUpdater {
             } else {
                 boat.getBoatSpeed().reduce(0.99);
             }
-
-            crewMemberUpdated = crewMemberUpdated || pickUpCrew(boat) || crewEaten();
+            crewMemberUpdated = crewMemberUpdated || pickUpCrew(boat);
             boat.updatePosition(0.1);
 
 
@@ -159,7 +157,7 @@ public class BoatUpdater {
         }
         if (crewMemberUpdated) {
             handler.fallenCrewEvent(crewMembers);
-            handler.bloodEvent(bloodList);
+
         }
 
     }
@@ -230,22 +228,20 @@ public class BoatUpdater {
      *
      * @return boolean if a crew member has been eaten
      */
-    private boolean crewEaten() throws IOException {
-        boolean updated = false;
+    private void crewEaten() throws IOException {
+
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
             for (Shark shark : new ArrayList<>(sharks)) {
                 if (shark.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
-                    Blood blood = new Blood(bloodlocationSourceID++, crewLocation.getPosition());
-                    bloodList.add(blood);
                     crewMembers.remove(crewLocation);
-                    updated = true;
+                    handler.bloodEvent(crewLocation.getSourceId());
 
                 }
             }
         }
 
 
-        return updated;
+
 
     }
 
@@ -352,7 +348,7 @@ public class BoatUpdater {
     /**
      * update the position and heading of the Obstacles
      */
-    private void updateShark() {
+    private void updateShark() throws IOException {
         if (!crewMembers.isEmpty()) {
             for (Shark shark : sharks) {
                 double crew_x = crewMembers.get(0).getLatitude();
@@ -372,6 +368,7 @@ public class BoatUpdater {
                 shark.getSharkSpeed().setDirection(shark.getHeading());
                 shark.updatePosition(0.1);
             }
+            crewEaten();
         }
     }
 

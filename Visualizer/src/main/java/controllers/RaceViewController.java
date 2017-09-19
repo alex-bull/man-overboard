@@ -42,6 +42,7 @@ import java.net.URL;
 import java.util.*;
 
 import static Elements.PowerUpModel.getImageWidth;
+import static java.lang.Math.pow;
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.scene.paint.Color.ORANGERED;
 import static parsers.BoatStatusEnum.DSQ;
@@ -76,10 +77,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private GridPane finisherListPane;
     @FXML
     private ListView<String> finisherListView;
-    private Map<Integer, ImageView> fallenCrews = new HashMap<>();
-    private Map<Integer, Image> bloodImages = new HashMap<>();
+    private Map<Integer, FallenCrew> fallenCrews = new HashMap<>();
     private Map<Integer, ImageView> blood = new HashMap<>();
-    private Map<Integer, Image> crewImages = new HashMap<>();
     private Map<Integer, PowerUpModel> powerUps = new HashMap<>();
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
@@ -110,6 +109,9 @@ public class RaceViewController implements Initializable, TableObserver {
     private DataSource dataSource;
     private GraphicsContext gc;
 
+    //images
+    private final String[] crewImages = {"/Animations/boyCantSwim.gif", "/Animations/girlCantSwim.gif"};
+    private final String[] bloodImages = {"/images/blood2.png", "/images/blood1.png", "/images/blood.png"};
 
     //================================================================================================================
     // SETUP
@@ -126,11 +128,6 @@ public class RaceViewController implements Initializable, TableObserver {
         sailLine = new Sail(Color.WHITE);
 
         sharkModel = new SharkModel(new Image("/Animations/sharkMoving.gif"));
-        bloodImages.put(0, new Image("/images/blood.png"));
-        bloodImages.put(1, new Image("/images/blood1.png"));
-        bloodImages.put(2, new Image("/images/blood2.png"));
-        crewImages.put(0, new Image("/Animations/boyCantSwim.gif"));
-        crewImages.put(1, new Image("/Animations/girlCantSwim.gif"));
 
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
@@ -287,7 +284,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @return the node size to be scaled by
      */
     public double nodeSizeFunc(int zoomLevel) {
-        return 0.007 * zoomLevel * zoomLevel;
+        return pow(2,zoomLevel-16);
     }
 
 
@@ -297,7 +294,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void checkCollision() {
         HashMap<Integer, Integer> collisions = new HashMap<>(dataSource.getCollisions());
         for (int sourceID : collisions.keySet()) {
-            MutablePoint point = setRelativePosition(dataSource.getStoredCompetitors().get(sourceID));
+            MutablePoint point = getRelativePosition(dataSource.getStoredCompetitors().get(sourceID));
             if (sourceID == dataSource.getSourceID() && collisions.get(sourceID) == 1) {
                 //drawBorder(raceViewPane.getWidth(),raceViewPane.getHeight(),25);
                 new BorderAnimation(raceParentPane, 25).animate();
@@ -375,8 +372,8 @@ public class RaceViewController implements Initializable, TableObserver {
         boolean alive;
         if (isZoom()) {
             MutablePoint location = getZoomedBoatLocation(boat);
-            alive = healthBar.update(boat, location.getXValue(), location.getYValue(), true);
-        } else alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), false);
+            alive = healthBar.update(boat, location.getXValue(), location.getYValue(), true,nodeSizeFunc(dataSource.getZoomLevel()));
+        } else alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), false,nodeSizeFunc(dataSource.getZoomLevel()));
         if (!alive) this.killBoat(boat);
 
     }
@@ -490,7 +487,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawBoat(Competitor boat) {
         Integer sourceId = boat.getSourceID();
 
-        MutablePoint point = setRelativePosition(boat);
+        MutablePoint point = getRelativePosition(boat);
         Boolean player = sourceId == dataSource.getSourceID();
         BoatModel boatModel = boatModels.get(sourceId);
         if (boatModel == null) {
@@ -515,7 +512,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param wakeLengthFactor double, the length scale
      */
     private void drawWake(Competitor boat, double boatLength, double startWakeOffset, double wakeWidthFactor, double wakeLengthFactor) {
-        MutablePoint point = setRelativePosition(boat);
+        MutablePoint point = getRelativePosition(boat);
 
         Wake wake = wakeModels.get(boat.getSourceID());
         if (wake == null) {
@@ -569,7 +566,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.annotations.put(boat.getSourceID(), annotation);
             this.raceViewPane.getChildren().add(annotation);
         }
-        this.annotations.get(boat.getSourceID()).update(boat, setRelativePosition(boat), isZoom());
+        this.annotations.get(boat.getSourceID()).update(boat, getRelativePosition(boat), isZoom());
     }
 
 
@@ -603,28 +600,25 @@ public class RaceViewController implements Initializable, TableObserver {
             fallenCrews.remove(sourceId);
         }
 
+
         for (int sourceID : crewLocation.keySet()) {
             Random randomGenerator = new Random();
             if (!fallenCrews.containsKey(sourceID)) {
-                ImageView crew = new ImageView();
-                Image drowning = crewImages.get(randomGenerator.nextInt(crewImages.size()));
-                crew.setImage(drowning);
-//            Circle crew;
+                FallenCrew crew = new FallenCrew(crewImages[randomGenerator.nextInt(crewImages.length)]);
                 fallenCrews.put(sourceID, crew);
                 raceViewPane.getChildren().add(crew);
-//            System.out.println(crewLocation);
+            }
+            if (crewLocation.get(sourceID).died()) {
+                fallenCrews.get(sourceID).die(bloodImages[randomGenerator.nextInt(bloodImages.length)]);
+                crewLocation.remove(sourceID);
             }
 
-            Image image = fallenCrews.get(sourceID).getImage();
-            if (isZoom()) {
-                MutablePoint p = crewLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-                fallenCrews.get(sourceID).relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-            } else {
-                MutablePoint p = crewLocation.get(sourceID).getPosition();
-                fallenCrews.get(sourceID).relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-            }
+            fallenCrews.get(sourceID).update(isZoom(),crewLocation.get(sourceID),currentPosition17,raceViewCanvas.getWidth(), raceViewCanvas.getHeight());
         }
     }
+
+
+
 
     private void drawPowerUps() {
         Map<Integer, PowerUp> receivedPowerUps = dataSource.getPowerUps();
@@ -710,50 +704,50 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
-    /**
-     * draw blood when a shark eats a fallen crew member
-     */
-    private void drawBlood() {
-        Map<Integer, Blood> bloodLocation = dataSource.getBloodLocations();
-
-        //remove entries
-        Set<Integer> removedLocation = new HashSet<>(blood.keySet());
-        removedLocation.removeAll(bloodLocation.keySet());
-        for (int sourceId : removedLocation) {
-            raceViewPane.getChildren().remove(blood.get(sourceId));
-            blood.remove(sourceId);
-        }
-
-        for (int sourceID : bloodLocation.keySet()) {
-            if (!blood.containsKey(sourceID)) {
-                Random randomGenerator = new Random();
-                ImageView bloodImage = new ImageView();
-                Image redBlob = bloodImages.get(randomGenerator.nextInt(bloodImages.size()));
-                bloodImage.setImage(redBlob);
-                blood.put(sourceID, bloodImage);
-                raceViewPane.getChildren().add(bloodImage);
-
-            }
-            double opacity = bloodLocation.get(sourceID).getOpacity();
-            if (opacity >= 0) {
-                bloodLocation.get(sourceID).updateOpacity();
-                blood.get(sourceID).setOpacity(opacity);
-            }
-
-            Image image = blood.get(sourceID).getImage();
-
-            if (isZoom()) {
-                MutablePoint p = bloodLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-                blood.get(sourceID).relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-            } else {
-                MutablePoint p = bloodLocation.get(sourceID).getPosition();
-                blood.get(sourceID).relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-            }
-
-        }
-
-
-    }
+//    /**
+//     * draw blood when a shark eats a fallen crew member
+//     */
+//    private void drawBlood() {
+//        Map<Integer, Blood> bloodLocation = dataSource.getBloodLocations();
+//
+//        //remove entries
+//        Set<Integer> removedLocation = new HashSet<>(blood.keySet());
+//        removedLocation.removeAll(bloodLocation.keySet());
+//        for (int sourceId : removedLocation) {
+//            raceViewPane.getChildren().remove(blood.get(sourceId));
+//            blood.remove(sourceId);
+//        }
+//
+//        for (int sourceID : bloodLocation.keySet()) {
+//            if (!blood.containsKey(sourceID)) {
+//                Random randomGenerator = new Random();
+//                ImageView bloodImage = new ImageView();
+//                Image redBlob = bloodImages.get(randomGenerator.nextInt(bloodImages.size()));
+//                bloodImage.setImage(redBlob);
+//                blood.put(sourceID, bloodImage);
+//                raceViewPane.getChildren().add(bloodImage);
+//
+//            }
+//            double opacity = bloodLocation.get(sourceID).getOpacity();
+//            if (opacity >= 0) {
+//                bloodLocation.get(sourceID).updateOpacity();
+//                blood.get(sourceID).setOpacity(opacity);
+//            }
+//
+//            Image image = blood.get(sourceID).getImage();
+//
+//            if (isZoom()) {
+//                MutablePoint p = bloodLocation.get(sourceID).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+//                blood.get(sourceID).relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
+//            } else {
+//                MutablePoint p = bloodLocation.get(sourceID).getPosition();
+//                blood.get(sourceID).relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
+//            }
+//
+//        }
+//
+//
+//    }
 
 
     //================================================================================================================
@@ -774,6 +768,12 @@ public class RaceViewController implements Initializable, TableObserver {
         }
 
         for (ImageView imageView : powerUps.values()) {
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(scale * getImageWidth());
+
+        }
+
+        for (ImageView imageView : fallenCrews.values()) {
             imageView.setPreserveRatio(true);
             imageView.setFitWidth(scale * getImageWidth());
 
@@ -817,12 +817,12 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     /**
-     * sets the relative position of other boats compared to the visualizers boat
+     * sets the relative position of other nodes compared to the visualizers boat
      *
      * @param boat the boat to be calculated
      * @return point of the boat compared to visualizers boat
      */
-    private MutablePoint setRelativePosition(Competitor boat) {
+    private MutablePoint getRelativePosition(Competitor boat) {
         Integer sourceId = boat.getSourceID();
         double pointX;
         double pointY;
@@ -900,7 +900,6 @@ public class RaceViewController implements Initializable, TableObserver {
         drawFallenCrew();
         drawPowerUps();
         drawSharks();
-        drawBlood();
         drawWhirlpools();
         setBoatLocation();
         updateRace();

@@ -10,6 +10,7 @@ public class CrewLocation {
     private MutablePoint position;
     private MutablePoint position17;
     private MutablePoint positionOriginal;
+    private boolean died = false;
 
     public CrewLocation(int sourceId, int numCrew, MutablePoint position) {
         this.sourceId += sourceId;
@@ -64,5 +65,13 @@ public class CrewLocation {
                 "numCrew=" + numCrew +
                 ", position=" + position +
                 '}';
+    }
+
+    public boolean died() {
+        return died;
+    }
+
+    public void setDied() {
+        this.died = true;
     }
 }

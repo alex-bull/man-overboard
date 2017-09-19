@@ -2,6 +2,7 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
@@ -694,12 +695,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     /**
      * Packages and sends blood event
      *
-     * @param locations data for the event
+     * @param sourceId data for the event
      * @throws IOException if send fails
      */
-    public void bloodEvent(List<Blood> locations) throws IOException {
+    public void bloodEvent(int sourceId) throws IOException {
 
-        byte[] eventPacket = binaryPackager.packageBloodEvent(locations);
+        byte[] eventPacket = binaryPackager.packageBloodEvent(sourceId);
         this.sendQueue.put(null, eventPacket);
     }
 
