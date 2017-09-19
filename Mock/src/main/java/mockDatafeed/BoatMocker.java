@@ -70,11 +70,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private long previousPotionTime = System.currentTimeMillis();
     private long previousBoostTime = System.currentTimeMillis();
     private int powerUpId = 0;
+    private String coursePath = "";
 
 
 
     BoatMocker() throws IOException, JDOMException {
-
+        CourseGenerator courseGenerator = new CourseGenerator();
+        this.coursePath = courseGenerator.generateCourse();
+        System.out.println("Chosen path : " + this.coursePath);
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
 
@@ -344,7 +347,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * finds the current course of the race
      */
     private void generateCourse() throws JDOMException, IOException {
-        InputStream mockBoatStream = new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/antarctica.xml")));
+        InputStream mockBoatStream = new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream(this.coursePath)));
         CourseXMLParser cl = new CourseXMLParser(mockBoatStream);
         //screen size is not important
         RaceCourse course = new RaceCourse(cl.parseCourse(), false);
@@ -362,7 +365,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void generateMarkCompetitors() throws IOException, JDOMException {
 
-        String xml = CharStreams.toString(new InputStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/antarctica.xml")))));
+        String xml = CharStreams.toString(new InputStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream(this.coursePath)))));
         raceData = new RaceXMLParser().parseRaceData(xml);
         markBoats = new HashMap<>();
 
@@ -606,11 +609,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
 
     /**
-     * Send a race xml file to client, uses raceTemplate.xml to generate custom race xml messages
+     * Send a race xml file to client, uses a course xml to generate custom race xml messages
      */
     private void sendRaceXML() throws IOException {
         int messageType = 6;
-        String raceTemplateString = fileToString("/antarctica.xml");
+        String raceTemplateString = fileToString(this.coursePath);
         String raceXML = formatRaceXML(raceTemplateString);
         this.sendQueue.put(null, binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
 
