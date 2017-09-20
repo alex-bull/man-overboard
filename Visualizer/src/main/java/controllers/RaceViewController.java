@@ -6,7 +6,6 @@ import Animations.RandomShake;
 import Elements.*;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
@@ -316,9 +315,8 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Toggles a control layout of the game
      *
-     * @param actionEvent action
      */
-    public void toggleControls(ActionEvent actionEvent) {
+    public void toggleControls() {
         if (!raceViewPane.getChildren().contains(controlsBox)) {
             controlsBox.getChildren().add(controlsView);
             raceViewPane.getChildren().add(controlsBox);

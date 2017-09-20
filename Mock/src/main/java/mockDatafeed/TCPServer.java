@@ -5,7 +5,9 @@ import utility.QueueMessage;
 import utility.WorkQueue;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -43,10 +45,11 @@ public class TCPServer extends TimerTask {
         this.connectionClient = connectionClient;
         selector = Selector.open();
         serverSocket = ServerSocketChannel.open();
-        serverSocket.bind(new InetSocketAddress("localhost", port));
+
+        serverSocket.bind(new InetSocketAddress("0.0.0.0", port));
         serverSocket.configureBlocking(false);
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-        System.out.println("TCPServer listening on localhost " + port);
+        System.out.println("TCPServer listening on " +serverSocket.getLocalAddress());
     }
 
 
