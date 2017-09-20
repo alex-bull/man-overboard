@@ -390,7 +390,6 @@ public class Interpreter implements DataSource, PacketHandler {
                                 boat.setStatus(DSQ);
                                 break;
                             default:
-//                                System.out.println("RIP");
                                 break;
                         }
                     }

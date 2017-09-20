@@ -29,4 +29,5 @@ public interface BoatUpdateEventHandler {
 
     void powerUpTakenEvent(int boatId, int powerId, int duration);
 
+
 }

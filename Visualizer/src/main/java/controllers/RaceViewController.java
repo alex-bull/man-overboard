@@ -43,6 +43,8 @@ import utility.BinaryPackager;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static Elements.PowerUpModel.getImageWidth;
@@ -109,6 +111,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private MutablePoint currentPosition17; //boat position in screen coordinates with zoom level 17
     private ObservableList<String> observableFinisherList = observableArrayList();
     private double touchZoomLevel = 0.0; // current touch zoom level
+
     //OTHER
     private WebEngine mapEngine;
     private DataSource dataSource;
@@ -985,8 +988,6 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     @FXML
     public void goToLobbyScreen() {
-//        StartController startController = new StartController();
-//        startController.joinGame();
 
         Sounds.player.fadeOut("sounds/bensound-theduel.mp3", 3);
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
@@ -1000,11 +1001,9 @@ public class RaceViewController implements Initializable, TableObserver {
 
         assert root != null;
 
-        dataSource.setRaceStatus(RaceStatusEnum.STARTED);
+        observableFinisherList.clear();
 
         LobbyController lobbyController = loader.getController();
-//        Interpreter interpreter = new Interpreter();
-//        interpreter.setPrimaryStage(App.getPrimaryStage());
         lobbyController.setDataSource(dataSource);
         lobbyController.begin();
         App.getScene().setRoot(root);

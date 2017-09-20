@@ -495,6 +495,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         int raceStatus;
         if (boatUpdater.checkAllFinished()) {
             raceStatus = 4;
+            boatUpdater.finisherList.clear();
         } else {
             raceStatus = 3;
         }
