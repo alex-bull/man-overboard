@@ -34,6 +34,17 @@ public class PowerUpModel extends ImageView {
             this.setFitHeight(imageHeight);
             this.setFitWidth(imageWidth);
         }
+        else {
+            Image image;
+            if (receivedPowerUp.getType() == BOOST.getValue()) {
+                image = new Image("/images/greySpeed.png");
+            } else {
+                image = new Image("/images/greyPotion.png");
+            }
+            this.setImage(image);
+            this.setFitHeight(imageHeight);
+            this.setFitWidth(imageWidth);
+        }
     }
 
     public static Integer getImageWidth() {
