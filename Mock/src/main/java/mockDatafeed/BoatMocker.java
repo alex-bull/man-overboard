@@ -71,6 +71,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private long previousBoostTime = System.currentTimeMillis();
     private int powerUpId = 0;
 
+    // for testing
+    int count = 1;
+
 
     BoatMocker() throws IOException, JDOMException {
 
@@ -126,6 +129,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             }
         }
 
+        count +=1;
+        System.out.println("interpreting.. " + count + "  " + messageType.toString() );
+
         switch (messageType) {
             case BOAT_ACTION:
                 HeaderParser headerParser = new HeaderParser();
@@ -180,6 +186,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 this.addCompetitor(clientId);
                 break;
             case PLAYER_READY:
+                System.out.println("ready!!!");
                 this.updateReady(clientId);
                 break;
             case LEAVE_LOBBY:
@@ -724,7 +731,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         if (shouldStartGame()) raceInProgress = true;
 
-        if (!raceInProgress) return;
+        if (!raceInProgress) {
+            return;
+        }
 
         try {
             boatUpdater.updatePosition();

@@ -78,5 +78,7 @@ public interface DataSource {
 
     void update();
 
+    void setRaceStatus(RaceStatusEnum status);
+
     Map<Integer, PowerUp> getPowerUps();
 }

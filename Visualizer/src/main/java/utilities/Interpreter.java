@@ -105,6 +105,9 @@ public class Interpreter implements DataSource, PacketHandler {
     public void setPrimaryStage(Stage primaryStage){
         this.primaryStage=primaryStage;
     }
+    public void setRaceStatus(RaceStatusEnum status){
+        this.raceStatus = status;
+    }
     private Map<Integer, Shark> sharkLocations = new HashMap<>();
     private Map<Integer, Blood> bloodLocations = new HashMap<>();
     private Map<Integer, Whirlpool> whirlpools = new HashMap<>();

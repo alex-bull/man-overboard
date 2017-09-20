@@ -234,6 +234,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * Check to see if the race is finished and display finisher list if it is
      */
     private void checkRaceFinished() {
+
         if (dataSource.getRaceStatus().equals(RaceStatusEnum.FINISHED) && !finisherListDisplayed) {
             for (Competitor aCompetitor : dataSource.getCompetitorsPosition()) {
                 if (aCompetitor.getStatus() == DSQ) {
@@ -984,8 +985,31 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     @FXML
     public void goToLobbyScreen() {
-        StartController startController = new StartController();
-        startController.joinGame();
+//        StartController startController = new StartController();
+//        startController.joinGame();
+
+        Sounds.player.fadeOut("sounds/bensound-theduel.mp3", 3);
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        assert root != null;
+
+        dataSource.setRaceStatus(RaceStatusEnum.STARTED);
+
+        LobbyController lobbyController = loader.getController();
+//        Interpreter interpreter = new Interpreter();
+//        interpreter.setPrimaryStage(App.getPrimaryStage());
+        lobbyController.setDataSource(dataSource);
+        lobbyController.begin();
+        App.getScene().setRoot(root);
+
+
 
     }
 }
