@@ -4,15 +4,10 @@ import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
 import parsers.boatAction.BoatAction;
+import parsers.xml.race.ThemeEnum;
 import utilities.Sounds;
 import Elements.*;
 import Elements.Annotation;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.animation.FadeTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
@@ -22,11 +17,8 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.RotateEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.AnchorPane;
@@ -34,19 +26,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
-import javafx.scene.transform.Rotate;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.util.Duration;
-import mockDatafeed.Keys;
 import models.*;
 import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
 import parsers.powerUp.PowerUp;
-import utilities.*;
 import utilities.DataSource;
 import utilities.RaceCalculator;
 import utility.BinaryPackager;
@@ -56,12 +42,9 @@ import java.net.URL;
 import java.util.*;
 
 import static Elements.PowerUpModel.getImageWidth;
-import static java.lang.Math.sqrt;
 import static javafx.collections.FXCollections.observableArrayList;
-import static javafx.scene.paint.Color.ORANGERED;
 import static parsers.BoatStatusEnum.DSQ;
-import static parsers.powerUp.PowerUpType.BOOST;
-import static parsers.powerUp.PowerUpType.POTION;
+import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 
 
 /**
@@ -87,12 +70,12 @@ public class RaceViewController implements Initializable, TableObserver {
     private Map<Integer, ImageView> blood = new HashMap<>();
     private Map<Integer, Image> crewImages = new HashMap<>();
     private Map<Integer, PowerUpModel> powerUps=new HashMap<>();
-
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Integer, HealthBar> healthBars = new HashMap<>();
     private Map<Integer, Annotation> annotations = new HashMap<>();
     private Map<String, MarkModel> markModels = new HashMap<>();
+    private ThemeDecorations themeDecorations;
     private Track track = new Track();
     private Line startLine;
     private Line finishLine;
@@ -168,7 +151,7 @@ public class RaceViewController implements Initializable, TableObserver {
         mapView.toBack();
 
         try {
-            mapEngine.load(getClass().getClassLoader().getResource("maps.html").toURI().toString());
+            mapEngine.load(getClass().getClassLoader().getResource("mapsBermuda.html").toURI().toString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -198,6 +181,21 @@ public class RaceViewController implements Initializable, TableObserver {
         controlsBox.setPrefWidth(width);
         raceViewPane.getChildren().add(track);
         this.dataSource = dataSource;
+
+        try {
+            if(dataSource.getThemeId() == ANTARCTICA) {
+                mapEngine.load(getClass().getClassLoader().getResource("mapsAntarctica.html").toURI().toString());
+                this.themeDecorations = new ThemeDecorations();
+
+
+                raceViewPane.getChildren().add(themeDecorations);
+
+            }
+
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
 
         while (dataSource.getCompetitorsPosition() == null) {
             try {
