@@ -14,6 +14,7 @@ import java.util.*;
 
 import static java.lang.Math.*;
 import static parsers.BoatStatusEnum.DSQ;
+import static parsers.BoatStatusEnum.PRESTART;
 import static parsers.powerUp.PowerUpType.BOOST;
 import static parsers.powerUp.PowerUpType.POTION;
 import static utilities.CollisionUtility.calculateFinalVelocity;
@@ -163,6 +164,23 @@ public class BoatUpdater {
         }
 
     }
+
+
+//    /**
+//     * Sets the boat attributes as the defaults
+//     */
+//    public void setBoatDefaults(){
+////        for (Integer sourceId : competitors.keySet()) {
+////            Competitor boat = competitors.get(sourceId);
+////            boat.setHealthLevel(100);
+////            boat.setPosition(new MutablePoint(32.295842, -64.857157));
+////
+////        }
+//        crewMembers.clear();
+//        bloodList.clear();
+//        whirlpools.clear();
+//        powerUps.clear();
+//    }
 
     /**
      * Add new power ups into the power ups hashmap.
@@ -504,6 +522,7 @@ public class BoatUpdater {
         }
         return false;
     }
+
 
 
     /**

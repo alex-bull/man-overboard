@@ -51,6 +51,7 @@ import static Elements.PowerUpModel.getImageWidth;
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.scene.paint.Color.ORANGERED;
 import static parsers.BoatStatusEnum.DSQ;
+import static parsers.BoatStatusEnum.PRESTART;
 
 
 /**
@@ -245,6 +246,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 } else {
                     observableFinisherList.add((dataSource.getCompetitorsPosition().indexOf(aCompetitor) + 1) + ". " + aCompetitor.getTeamName());
                 }
+                aCompetitor.setHealthLevel(100);
             }
             finisherListView.setItems(observableFinisherList);
             finisherListView.refresh();
@@ -1002,6 +1004,7 @@ public class RaceViewController implements Initializable, TableObserver {
         assert root != null;
 
         observableFinisherList.clear();
+
 
         LobbyController lobbyController = loader.getController();
         lobbyController.setDataSource(dataSource);

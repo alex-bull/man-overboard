@@ -129,9 +129,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             }
         }
 
-        count +=1;
-        System.out.println("interpreting.. " + count + "  " + messageType.toString() );
-
         switch (messageType) {
             case BOAT_ACTION:
                 HeaderParser headerParser = new HeaderParser();
@@ -272,6 +269,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         if (this.competitors.get(clientId) == null) return; //not a registered player
         clientStates.put(clientId, true);
     }
+
+
 
     /**
      * returns true if the game if the game should start
@@ -496,6 +495,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         if (boatUpdater.checkAllFinished()) {
             raceStatus = 4;
             boatUpdater.finisherList.clear();
+//            boatUpdater.setBoatDefaults();
         } else {
             raceStatus = 3;
         }
@@ -503,6 +503,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         this.sendQueue.put(null, binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
     }
+
+
 
     /**
      * Sends power up to output port

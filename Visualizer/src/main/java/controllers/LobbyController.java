@@ -150,10 +150,8 @@ public class LobbyController implements Initializable {
     private void loop() {
 
         this.timer = new AnimationTimer() {
-            int count = 0;
             @Override
             public void handle(long now) {
-                System.out.println("counting.. "+count++);
                 dataSource.update();
                 updateList();
                 checkStatus();
@@ -310,7 +308,6 @@ public class LobbyController implements Initializable {
      * Change to the raceView upon started signal
      */
     public void checkStatus() {
-        System.out.println("checking status " + dataSource.getRaceStatus());
         if (dataSource.getRaceStatus() == RaceStatusEnum.STARTED) {
             System.out.println("game beginning...");
             this.loadRaceView();
@@ -322,7 +319,6 @@ public class LobbyController implements Initializable {
      * Updates the list with the competitors in the datasource
      */
     private void updateList() {
-        System.out.println("updating list");
         this.competitorList.clear();
         if (dataSource.getCompetitorsPosition().size() > 0) {
             this.progressIndicator.setVisible(false);
