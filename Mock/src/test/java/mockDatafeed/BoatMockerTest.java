@@ -3,9 +3,7 @@ package mockDatafeed;
 import models.Competitor;
 import org.junit.*;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 
 import static mockDatafeed.Keys.TACK;
 import static mockDatafeed.Keys.UP;
@@ -29,7 +27,7 @@ public class BoatMockerTest {
 
     @Test
     public void sendRaceXMLTest() throws Exception{
-        String raceTemplateString= fileToString("/raceTemplate.xml");
+        String raceTemplateString= fileToString("/bermuda.xml");
         Method sendRaceXML=mockerClass.getDeclaredMethod("formatRaceXML",String.class);
         sendRaceXML.setAccessible(true);
         String resultString=(String) sendRaceXML.invoke(boatMocker,raceTemplateString);

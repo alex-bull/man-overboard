@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import models.*;
 import parsers.RaceStatusEnum;
 import parsers.powerUp.PowerUp;
+import parsers.xml.race.ThemeEnum;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,4 +49,5 @@ public interface DataSource {
     HashMap<Integer, CourseFeature> getStoredFeatures17();
     void update();
     Map<Integer, PowerUp> getPowerUps();
+    ThemeEnum getThemeId();
 }

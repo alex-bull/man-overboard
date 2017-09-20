@@ -2,6 +2,7 @@ package parsers.xml.race;
 
 import com.google.common.math.DoubleMath;
 import com.rits.cloning.Cloner;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import models.MutablePoint;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -14,6 +15,8 @@ import java.io.InputStream;
 import java.util.*;
 
 import static com.google.common.collect.ImmutableList.copyOf;
+import static parsers.xml.race.ThemeEnum.ANTARCTICA;
+import static parsers.xml.race.ThemeEnum.BERMUDA;
 import static utility.Projection.mercatorProjection;
 
 /**
@@ -31,7 +34,7 @@ public class RaceXMLParser {
     private List<Double> xMercatorCoords;
     private List<Double> yMercatorCoords;
 
-
+    private Integer themeId;
     private double width;
     private double height;
     private double maxLat;
@@ -75,14 +78,18 @@ public class RaceXMLParser {
      */
     public RaceData parseRaceData(String xmlStr) throws IOException, JDOMException {
 
-
-
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
         InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
 
         Document root = builder.build(stream);
         Element race = root.getRootElement();
+        try {
+            this.themeId = Integer.parseInt(race.getChild("RaceID").getValue());
+        } catch (Exception e) {
+            //
+        }
+
         Set<Integer> participantIDs = new HashSet<>();
         for (Element yacht : race.getChild("Participants").getChildren()) {
             int sourceID = Integer.parseInt(yacht.getAttributeValue("SourceID"));
@@ -340,6 +347,15 @@ public class RaceXMLParser {
         return zoomLevel;
     }
 
+    public ThemeEnum getThemeId() {
+        if (this.themeId == ANTARCTICA.getValue()) {
+            return ANTARCTICA;
+        }
+        else if (this.themeId == BERMUDA.getValue()) {
+            return BERMUDA;
+        }
+        return BERMUDA;
+    }
 
     public double getShiftDistance() {
         return shiftDistance;

@@ -10,6 +10,7 @@ import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpParser;
 import parsers.powerUp.PowerUpTakenParser;
 import parsers.powerUp.PowerUpType;
+import parsers.xml.race.ThemeEnum;
 import utility.QueueMessage;
 import utility.WorkQueue;
 import models.ColourPool;
@@ -103,6 +104,8 @@ public class Interpreter implements DataSource, PacketHandler {
     private boolean seenRaceXML = false;
     private int sourceID = 0;
 
+    private ThemeEnum themeId;
+
     private TCPClient TCPClient;
 
     //zoom factor for scaling
@@ -184,6 +187,9 @@ public class Interpreter implements DataSource, PacketHandler {
         return storedCompetitors.get(sourceID);
     }
 
+    public ThemeEnum getThemeId() {
+        return themeId;
+    }
 
 
     private Map<Integer,CrewLocation> crewLocations=new HashMap<>();
@@ -392,7 +398,6 @@ public class Interpreter implements DataSource, PacketHandler {
                                 boat.setStatus(DSQ);
                                 break;
                             default:
-//                                System.out.println("RIP");
                                 break;
                         }
                     }
@@ -413,7 +418,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 break;
             case BOAT_STATE:
                 BoatStateParser boatStateParser = new BoatStateParser(packet);
-                System.out.println(boatStateParser.getSourceId());
                 Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());
                 if(stateBoat!= null) {
                     stateBoat.setHealthLevel(boatStateParser.getHealth());
@@ -725,6 +729,7 @@ public class Interpreter implements DataSource, PacketHandler {
                         raceXMLParser.setScreenSize(width, height);
 //                        this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.raceData = raceXMLParser.parseRaceData(xml.trim());
+                        this.themeId = raceXMLParser.getThemeId();
                         setScalingFactors();
                         setCourseBoundary(raceXMLParser.getCourseBoundary());
 //                        this.courseBoundary17=raceXMLParser.getCourseBoundary17();

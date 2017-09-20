@@ -71,6 +71,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private long previousBoostTime = System.currentTimeMillis();
     private int powerUpId = 0;
     private String coursePath = "";
+    private Integer themeId = 0;
 
 
 
@@ -79,6 +80,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         CourseGenerator courseGenerator = new CourseGenerator();
         this.coursePath = courseGenerator.generateCourse();
         this.prestart = courseGenerator.getPrestart();
+        this.themeId = courseGenerator.getThemeId();
         System.out.println("Chosen path : " + this.coursePath);
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         expectedStartTime = creationTime.plusMinutes(1);
@@ -606,8 +608,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             Competitor boat = competitors.get(sourceId);
             participants.append(String.format("<Yacht SourceID=\"%s\"/>", boat.getSourceID()));
         }
-        String raceID = creationTime.format(raceIDFormat) + "01";
-        return String.format(xmlTemplate, raceID, creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), participants);
+        return String.format(xmlTemplate, this.themeId, creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), participants);
     }
 
 

@@ -465,7 +465,7 @@ public class RaceViewController implements Initializable, TableObserver {
         double y = courseFeature.getPixelLocations().get(0).getYValue();
 
         if(!markModels.containsKey(courseFeature.getName())){
-            MarkModel markModel = new MarkModel(x, y);
+            MarkModel markModel = new MarkModel(dataSource.getThemeId(), x, y);
             markModels.put(courseFeature.getName(), markModel);
             raceViewPane.getChildren().add(markModel);
         }

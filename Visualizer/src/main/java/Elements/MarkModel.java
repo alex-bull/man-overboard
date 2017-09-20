@@ -6,10 +6,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
+import parsers.xml.race.ThemeEnum;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
+
+import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 
 
 /**
@@ -23,10 +26,16 @@ public class MarkModel extends Group {
      * Mark model for a mark or a gate
      * @param x double x coordinate
      * @param y double y coordinate
+     * @param theme ThemeEnum course theme
      */
-    public MarkModel(double x, double y) {
+    public MarkModel(ThemeEnum theme, double x, double y) {
         mark = new Circle(x,y,10);
-        mark.setFill(new ImagePattern(getBerg()));
+        if (theme.getValue() == ANTARCTICA.getValue()) {
+            mark.setFill(new ImagePattern(getBerg()));
+        }
+        else {
+            mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/bermuda/island.png").toString())));
+        }
         this.getChildren().add(mark);
     }
 

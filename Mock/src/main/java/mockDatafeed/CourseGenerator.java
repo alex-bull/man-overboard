@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import static parsers.xml.race.ThemeEnum.ANTARCTICA;
+import static parsers.xml.race.ThemeEnum.BERMUDA;
+
 /**
  * Created by psu43 on 20/09/17.
  * Course Generator
@@ -20,7 +23,7 @@ public class CourseGenerator {
      * Constructs a course generate with preset paths to course templates
      */
     CourseGenerator() {
-        coursePaths.put("/raceTemplate.xml", new MutablePoint(32.35763 , -64.81332));
+        coursePaths.put("/bermuda.xml", new MutablePoint(32.35763 , -64.81332));
         coursePaths.put("/antarctica.xml", new MutablePoint(-64.68325, -63.09448));
 
     }
@@ -41,5 +44,19 @@ public class CourseGenerator {
      */
     public MutablePoint getPrestart() {
         return coursePaths.get(this.chosenCourse);
+    }
+
+    /**
+     * Returns the value of the course theme
+     * @return Integer course theme id
+     */
+    public Integer getThemeId() {
+        if (chosenCourse.contains("antarctica")) {
+            return ANTARCTICA.getValue();
+        }
+        else if (chosenCourse.contains("bermuda")) {
+            return BERMUDA.getValue();
+        }
+        return BERMUDA.getValue();
     }
 }
