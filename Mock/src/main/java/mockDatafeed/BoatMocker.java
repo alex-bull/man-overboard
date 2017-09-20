@@ -65,8 +65,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private boolean raceInProgress = false;
     private Map<Integer, Boolean> clientStates = new HashMap<>();
 
-    private WorkQueue sendQueue = new WorkQueue(1000000);
-    private WorkQueue receiveQueue = new WorkQueue(1000000);
+    private WorkQueue sendQueue = new WorkQueue(1024);
+    private WorkQueue receiveQueue = new WorkQueue(1024);
     private long previousPotionTime = System.currentTimeMillis();
     private long previousBoostTime = System.currentTimeMillis();
     private int powerUpId = 0;
@@ -128,6 +128,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         switch (messageType) {
             case BOAT_ACTION:
+
                 HeaderParser headerParser = new HeaderParser();
                 HeaderData headerData = headerParser.processMessage(header);
                 int sourceID = headerData.getSourceID();
@@ -488,6 +489,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         int raceStatus;
         if (boatUpdater.checkAllFinished()) {
             raceStatus = 4;
+
         } else {
             raceStatus = 3;
         }

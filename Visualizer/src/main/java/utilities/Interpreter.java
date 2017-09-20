@@ -365,7 +365,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 HeaderData headerData = headerParser.processMessage(header);
                 this.boatAction = boatActionParser.processMessage(packet);
-
                 if (boatAction != null && headerData != null) {
                     if (headerData.getSourceID() == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);

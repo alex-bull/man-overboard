@@ -56,6 +56,7 @@ public class MainController {
      */
     @FXML
     public void keyPressed(KeyEvent event) {
+        System.out.println("key pressed "+System.currentTimeMillis());
 
         switch (event.getCode()) {
             case W:
