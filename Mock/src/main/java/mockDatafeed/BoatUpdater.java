@@ -93,7 +93,7 @@ public class BoatUpdater {
             if (twa > 180) {
                 twa = 180 - (twa - 180); // interpolator only goes up to 180
             }
-            double speed = polarTable.getSpeed(twa);
+            double speed = polarTable.getSpeed(twa) * 2.5;
             if (boat.getStatus() != DSQ) {
 
                 if (!boat.hasSailsOut()) {
