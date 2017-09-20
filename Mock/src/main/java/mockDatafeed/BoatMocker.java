@@ -71,6 +71,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private long previousBoostTime = System.currentTimeMillis();
     private int powerUpId = 0;
 
+    private long raceStartTime = 0;
+
 
     BoatMocker() throws IOException, JDOMException {
 
@@ -486,7 +488,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         short windDirection = windGenerator.getWindDirection();
         short windSpeed = windGenerator.getWindSpeed();
         int raceStatus;
-        if (boatUpdater.checkAllFinished()) {
+        if (raceStartTime == 0) {
+            raceStartTime = System.currentTimeMillis();
+        }
+        if (boatUpdater.checkAllFinished() || System.currentTimeMillis() - raceStartTime > 30000) {
             raceStatus = 4;
         } else {
             raceStatus = 3;
