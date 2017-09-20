@@ -531,7 +531,11 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor
      */
     private void drawTrack(Competitor boat) {
-        this.track.addDot(boat.getPosition(), boat.getColor());
+        try {
+            this.track.addDot(boat.getPosition(), boat.getColor());
+        } catch (Exception e) {
+            //
+        }
     }
 
 

@@ -176,13 +176,13 @@ public class LobbyController implements Initializable {
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         starterList.setItems(competitorList);
 
-        yacht = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
-        cog = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
-        frigate = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
-        galleon = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
-        boat = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
-        cat = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
-        pirate = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
+        yacht = new Image(getClass().getClassLoader().getResource("images/boats/yachtLandscape.png").toString());
+        cog = new Image(getClass().getClassLoader().getResource("images/boats/cogLandscape.png").toString());
+        frigate = new Image(getClass().getClassLoader().getResource("images/boats/frigateLandscape.png").toString());
+        galleon = new Image(getClass().getClassLoader().getResource("images/boats/galleonLandscape.png").toString());
+        boat = new Image(getClass().getClassLoader().getResource("images/boats/boatLandscape.png").toString());
+        cat = new Image(getClass().getClassLoader().getResource("images/boats/catLandscape.png").toString());
+        pirate = new Image(getClass().getClassLoader().getResource("images/boats/pirateLandscape.png").toString());
 
         boatImages.add(yacht);
         boatImages.add(cog);
@@ -229,6 +229,10 @@ public class LobbyController implements Initializable {
         this.loadStartView();
     }
 
+
+    /**
+     * confirms the customised boat name and boat image and sends it to the server
+     */
     @FXML
     public void confirmBoatDetails() {
         if (dataSource.getCompetitor() == null) return;
@@ -245,6 +249,9 @@ public class LobbyController implements Initializable {
         rightButton.setVisible(false);
     }
 
+    /**
+     * displays precious boat customisation image
+     */
     @FXML
     public void showPreviousBoat() {
         index--;
@@ -254,6 +261,10 @@ public class LobbyController implements Initializable {
         boatImageView.setImage(boatImages.get(index % boatImages.size()));
     }
 
+
+    /**
+     * displays next boat customisation image
+     */
     @FXML
     public void showNextBoat() {
         index++;
@@ -362,7 +373,8 @@ public class LobbyController implements Initializable {
         if (timer != null) timer.stop();
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
-        nameText.setDisable(true);
+        this.nameText.setDisable(true);
+        this.confirmButton.setDisable(true);
         this.nameText.setText(dataSource.getCompetitor().getTeamName());
 
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 10);

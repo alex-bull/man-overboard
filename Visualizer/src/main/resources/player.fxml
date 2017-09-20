@@ -34,7 +34,7 @@
                 <ImageView fx:id="playerImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true"
                            preserveRatio="true">
                     <image>
-                        <Image url="@images/boat.png"/>
+                        <Image url="@images/boats/boat.png"/>
                     </image>
                 </ImageView>
             </children>
