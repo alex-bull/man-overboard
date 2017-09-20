@@ -134,6 +134,11 @@ public class PlayerController {
 
     }
 
+    /**
+     * When boost button is clicked. The controller sends the packet for using boost
+     * @param actionEvent
+     */
+
     public void useBoost(ActionEvent actionEvent) {
         if (dataSource.getCompetitor().hasSpeedBoost()) {
             this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.BOOST.getValue(), dataSource.getSourceID()));
@@ -142,6 +147,10 @@ public class PlayerController {
         }
     }
 
+    /**
+     * When potion button is clicked. The controller sends the packet for using potion
+     * @param actionEvent
+     */
     public void usePotion(ActionEvent actionEvent) {
         if (dataSource.getCompetitor().hasPotion()) {
             this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.POTION.getValue(), dataSource.getSourceID()));

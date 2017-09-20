@@ -329,42 +329,6 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
     /**
-     * Use boost power up
-     * @param actionEvent
-     */
-    public void useBoost(ActionEvent actionEvent) {
-//        Map<Integer, PowerUp> receivedPowerUps = dataSource.getPowerUps();
-//        for (PowerUp receivedPowerUp : receivedPowerUps.values()) {
-//            int sourceId = receivedPowerUp.getId();
-//            if (!powerUps.containsKey(sourceId)) {
-//                PowerUpModel powerUpModel = new PowerUpModel(receivedPowerUp);
-//                powerUps.put(sourceId, powerUpModel);
-//                raceViewPane.getChildren().add(powerUpModel);
-//            }
-//
-//            powerUps.get(sourceId).update(isZoom(), receivedPowerUp, currentPosition17, raceViewCanvas.getWidth(), raceViewCanvas.getHeight());
-//
-//            Long timeout = receivedPowerUp.getTimeout();
-//
-//            if (System.currentTimeMillis() > timeout || receivedPowerUp.isTaken()) {
-//                raceViewPane.getChildren().remove(powerUps.get(sourceId));
-//                powerUps.remove(sourceId);
-//                dataSource.getPowerUps().remove(sourceId);
-//                break;
-//            }
-//
-//        }
-    }
-
-    /**
-     * Use potion power up
-     * @param actionEvent
-     */
-    public void usePotion(ActionEvent actionEvent) {
-
-    }
-
-    /**
      * toggles the state of the zoom
      */
     public void toggleZoom() {
