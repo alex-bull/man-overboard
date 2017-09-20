@@ -92,7 +92,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Integer, HealthBar> healthBars = new HashMap<>();
     private Map<Integer, Annotation> annotations = new HashMap<>();
-    private Map<String, Shape> markModels = new HashMap<>();
+    private Map<String, MarkModel> markModels = new HashMap<>();
     private Track track = new Track();
     private Line startLine;
     private Line finishLine;
@@ -465,14 +465,13 @@ public class RaceViewController implements Initializable, TableObserver {
         double y = courseFeature.getPixelLocations().get(0).getYValue();
 
         if(!markModels.containsKey(courseFeature.getName())){
-            Shape mark=new Circle(x,y,4.5,ORANGERED);
-            markModels.put(courseFeature.getName(),mark);
-            raceViewPane.getChildren().add(mark);
+            MarkModel markModel = new MarkModel(x, y);
+            markModels.put(courseFeature.getName(), markModel);
+            raceViewPane.getChildren().add(markModel);
         }
         else {
-            Circle mark = (Circle) markModels.get(courseFeature.getName());
-            mark.setCenterX(x);
-            mark.setCenterY(y);
+            MarkModel mark = markModels.get(courseFeature.getName());
+            mark.setCentres(x, y);
         }
     }
 
@@ -790,7 +789,7 @@ public class RaceViewController implements Initializable, TableObserver {
             model.setScaleX(scale);
             model.setScaleY(scale);
         }
-        for(Shape model: markModels.values()){
+        for(MarkModel model: markModels.values()){
             model.setScaleX(scale);
             model.setScaleY(scale);
         }

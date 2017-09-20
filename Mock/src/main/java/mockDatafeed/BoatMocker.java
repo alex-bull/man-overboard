@@ -217,9 +217,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private void addCompetitor(Integer clientId) {
 
         double a = 0.001 * competitors.size(); //shift competitors so they aren't colliding at the start
-        this.prestart.setX(this.prestart.getXValue() + a);
+        MutablePoint boatStart = new MutablePoint(this.prestart.getXValue() + a, this.prestart.getYValue());
+        System.out.println("boat will start at " + boatStart);
 
-        Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
+
+        Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, boatStart, "B" + clientId, clientId, PRESTART);
         newCompetitor.setCurrentHeading(0);
         competitors.put(clientId, newCompetitor);
 

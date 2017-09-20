@@ -413,8 +413,11 @@ public class Interpreter implements DataSource, PacketHandler {
                 break;
             case BOAT_STATE:
                 BoatStateParser boatStateParser = new BoatStateParser(packet);
+                System.out.println(boatStateParser.getSourceId());
                 Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());
-                stateBoat.setHealthLevel(boatStateParser.getHealth());
+                if(stateBoat!= null) {
+                    stateBoat.setHealthLevel(boatStateParser.getHealth());
+                }
                 break;
             case CONNECTION_RES:
                 ConnectionParser connectionParser = new ConnectionParser(packet);

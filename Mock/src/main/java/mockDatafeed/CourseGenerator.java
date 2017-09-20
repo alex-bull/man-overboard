@@ -16,6 +16,9 @@ public class CourseGenerator {
     private HashMap<String, MutablePoint> coursePaths = new HashMap<>();
     private String chosenCourse;
 
+    /**
+     * Constructs a course generate with preset paths to course templates
+     */
     CourseGenerator() {
         coursePaths.put("/raceTemplate.xml", new MutablePoint(32.35763 , -64.81332));
         coursePaths.put("/antarctica.xml", new MutablePoint(-64.68325, -63.09448));
