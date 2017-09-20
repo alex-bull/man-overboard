@@ -70,7 +70,7 @@ public class BoatModel extends Group {
 
 
         if (player) {
-            this.playerMarker = new Circle(0, 0, 15);
+            this.playerMarker = new Circle(0, 0, 18);
             playerMarker.setStrokeWidth(2.5);
             playerMarker.setStroke(Color.rgb(255, 255, 255, 0.5));
             playerMarker.setFill(Color.rgb(0, 0, 0, 0.2));

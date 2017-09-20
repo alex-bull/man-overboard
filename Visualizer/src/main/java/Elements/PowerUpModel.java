@@ -23,9 +23,9 @@ public class PowerUpModel extends ImageView {
         if (receivedPowerUp.getType() == BOOST.getValue() || receivedPowerUp.getType() == POTION.getValue()) {
             Image image;
             if (receivedPowerUp.getType() == BOOST.getValue()) {
-                image = new Image("/images/speed3.png");
+                image = new Image("/images/speed.png");
             } else {
-                image = new Image("/images/potion.png");
+                image = new Image("/images/potion2.png");
             }
             this.setImage(image);
             this.setPreserveRatio(true);
