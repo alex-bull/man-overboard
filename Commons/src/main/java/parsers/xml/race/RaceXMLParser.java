@@ -180,6 +180,17 @@ public class RaceXMLParser {
 
         }
 
+        for (Element item : race.getChild("Decorations").getChildren()) {
+            int id = Integer.parseInt(item.getAttributeValue("SeqId"));
+
+            double lat = Double.parseDouble(item.getAttributeValue("Lat"));
+            double lon = Double.parseDouble(item.getAttributeValue("Lon"));
+            MutablePoint mutablePoint = new MutablePoint(lat, lon);
+            raceData.addDecorations(id, mutablePoint);
+
+        }
+
+
         parseRace(raceData);
         return raceData;
     }

@@ -3,6 +3,8 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
+import javafx.scene.Node;
+import javafx.scene.shape.Shape;
 import parsers.boatAction.BoatAction;
 import parsers.xml.race.ThemeEnum;
 import utilities.Sounds;
@@ -185,7 +187,7 @@ public class RaceViewController implements Initializable, TableObserver {
         try {
             if(dataSource.getThemeId() == ANTARCTICA) {
                 mapEngine.load(getClass().getClassLoader().getResource("mapsAntarctica.html").toURI().toString());
-                this.themeDecorations = new ThemeDecorations();
+                this.themeDecorations = new ThemeDecorations(dataSource);
 
 
                 raceViewPane.getChildren().add(themeDecorations);
@@ -471,6 +473,13 @@ public class RaceViewController implements Initializable, TableObserver {
             MarkModel mark = markModels.get(courseFeature.getName());
             mark.setCentres(x, y);
         }
+    }
+
+    /**
+     * Draw course decorations
+     */
+    private void drawThemeDecorations() {
+        themeDecorations.update(isZoom(), currentPosition17, raceViewCanvas.getWidth(), raceViewCanvas.getHeight());
     }
 
 
@@ -803,6 +812,12 @@ public class RaceViewController implements Initializable, TableObserver {
             model.setFitWidth(scale*model.getImage().getWidth());
             model.setFitHeight(scale*model.getImage().getHeight());
         }
+        for(Node igloo: themeDecorations.getChildren()){
+            igloo.setScaleY(scale);
+            igloo.setScaleX(scale);
+
+
+        }
         sharkModel.setScaleX(scale);
         sharkModel.setScaleY(scale);
     }
@@ -929,6 +944,7 @@ public class RaceViewController implements Initializable, TableObserver {
         drawSharks();
         drawBlood();
         drawWhirlpools();
+        drawThemeDecorations();
         setBoatLocation();
         updateRace();
         checkCollision();

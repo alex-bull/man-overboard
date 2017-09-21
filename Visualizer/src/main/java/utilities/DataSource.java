@@ -50,4 +50,7 @@ public interface DataSource {
     void update();
     Map<Integer, PowerUp> getPowerUps();
     ThemeEnum getThemeId();
+    MutablePoint evaluatePosition17(MutablePoint position);
+    MutablePoint evaluateOriginalPosition(MutablePoint location);
+    MutablePoint evaluatePosition(MutablePoint location);
 }
