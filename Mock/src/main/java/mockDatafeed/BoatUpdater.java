@@ -50,6 +50,7 @@ public class BoatUpdater {
     private List<Whirlpool> whirlpools = new ArrayList<>();
     private Map<Integer, PowerUp> powerUps = new HashMap<>();
     private Random random = new Random();
+    private long lastWhirlpoolTime;
 
 
     /**
@@ -75,11 +76,16 @@ public class BoatUpdater {
         polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
         utility = new Utility();
         this.buildRoundingLines();
+
+
+        createShark();
+
     }
 
 
     /**
      * updates the position of all the boats given the boats speed and heading
+     * and other components on the lab
      *
      * @throws IOException          IOException
      * @throws InterruptedException InterruptedException
@@ -137,25 +143,22 @@ public class BoatUpdater {
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
 
-            if (courseBoundary != null && sharks.isEmpty()) {
-                createShark();
-            }
-
-            if (passedFirstMark()) {
+            if (passedFirstMark(boat)) {
+                lastWhirlpoolTime=System.currentTimeMillis();
                 createWhirlpool();
             }
+        }
 
-            if (!whirlpools.isEmpty()) {
-                if (updateLeadLeg()) {
-                    updateWhirlpool();
-                }
-                handler.whirlpoolEvent(whirlpools);
-            }
+        if (System.currentTimeMillis()-lastWhirlpoolTime>20000 && !whirlpools.isEmpty()) {
+            updateWhirlpool();
+            handler.whirlpoolEvent(whirlpools);
+        }
 
-            if (!sharks.isEmpty()) {
-                updateShark();
-                handler.sharkEvent(sharks);
-            }
+
+        if (!sharks.isEmpty()) {
+            updateSharkRoam();
+            updateShark();
+            handler.sharkEvent(sharks);
         }
         if (crewMemberUpdated) {
             handler.fallenCrewEvent(crewMembers);
@@ -254,33 +257,16 @@ public class BoatUpdater {
      *
      * @return boolean if a player has passed the first mark
      */
-    private boolean passedFirstMark() {
+    private boolean passedFirstMark(Competitor boat) {
         boolean passed = false;
-        for (Integer sourceId : competitors.keySet()) {
-            Competitor boat = competitors.get(sourceId);
+
             if (boat.getCurrentLegIndex() > 0) {
                 passed = true;
             }
-        }
+
         return passed;
     }
 
-    /**
-     * checks whether the leader has advanced to the next mark
-     *
-     * @return boolean if the leader has advanced to the next mark
-     */
-    private boolean updateLeadLeg() {
-        boolean updated = false;
-        for (Integer sourceId : competitors.keySet()) {
-            Competitor boat = competitors.get(sourceId);
-            if (leadLeg < boat.getCurrentLegIndex()) {
-                leadLeg = boat.getCurrentLegIndex();
-                updated = true;
-            }
-        }
-        return updated;
-    }
 
     /**
      * Randomly generates whirlpool after players have passed the first mark
