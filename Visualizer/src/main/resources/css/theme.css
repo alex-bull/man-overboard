@@ -1,11 +1,18 @@
 @font-face {
-    font-family: 'merriweather';
-    src: url('../fonts/merriweather.regular.ttf');
-}
+     font-family: 'Quicksand', sans-serif;
+     src: url('../fonts/Quicksand-Regular.ttf');
+ }
+ @font-face {
+     font-family: 'Quicksand', sans-serif, bold;
+     src: url('../fonts/Quicksand-Bold.ttf');
+ }
 
 .background {
     -fx-background-color: #2980B9;
+}
 
+.label {
+    -fx-font-family: 'Quicksand', sans-serif;
 }
 
 .button {
@@ -13,9 +20,10 @@
     -fx-border-color: white;
     -fx-text-fill: white;
     -fx-border-width: 3px;
+    -fx-border-radius: 5px;
     -fx-background-color: transparent;
     -fx-opacity: 0.8;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-family: 'Quicksand', sans-serif;
     -fx-font-size: 12pt;
     -fx-font-weight: 700;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
@@ -25,7 +33,8 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-text-fill: white;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif, bold;
+    -fx-font-family: 'Quicksand', sans-serif, bold;
+    -fx-font-variant: small-caps;
     -fx-font-size: 25pt;
     -fx-text-alignment: center;
     -fx-radius: 5px;
@@ -35,7 +44,7 @@
     -fx-border-color: white;
     -fx-text-fill: white;
     -fx-border-width: 4px;
-    -fx-border-radius: 5px;
+    -fx-border-radius: 6px;
     -fx-background-color: transparent;
 }
 
@@ -65,7 +74,7 @@
     -fx-background-color: #929B9B;
     -fx-text-fill: white;
 }
-
+/*
 .text-field {
     -fx-padding: 5 22 5 22;
     -fx-background-color: white;
@@ -75,7 +84,21 @@
     -fx-font-size: 11pt;
     -fx-text-fill: #444444;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
+}*/
+
+.text-field {
+    -fx-padding: 5 22 5 22;
+    -fx-font-size: 11pt;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-text-fill: white;
 }
+
+
+
 
 .list-view {
     -fx-padding: 3px;
@@ -89,7 +112,7 @@
 }
 
 .list-cell {
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-family: 'Quicksand', sans-serif;
     -fx-font-size: 12pt;
     -fx-text-fill: #444444;
     -fx-cell-size: 40px;
@@ -138,7 +161,7 @@
     -fx-border-width: 0;
     -fx-background-color: white;
     -fx-opacity: 0.8;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-family: 'Quicksand', sans-serif;
     -fx-font-size: 11pt;
 
 }
@@ -164,7 +187,7 @@
 }
 
 .radio-button .label {
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-family: 'Quicksand', sans-serif;
     -fx-font-size: 11pt;
 }
 
@@ -180,7 +203,7 @@
 .table-view .column-header {
     -fx-background-color: transparent;
 
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-family: 'Quicksand', sans-serif;
     -fx-font-size: 10pt;
 }
 
@@ -190,4 +213,28 @@
 
 .merriweather {
     -fx-font-family: 'merriweather';
+}
+
+.slider .track{
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-track-width: 15px;
+    -fx-opacity: .4;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+
+}
+
+
+.slider .thumb{
+    -fx-color: white;
+    -fx-border-color: white;
+    -fx-border-width: 5px;
+    -fx-border-radius: 5px;
+
+    }
+
+
+.pane {
+    -fx-radius: 10px;
 }
