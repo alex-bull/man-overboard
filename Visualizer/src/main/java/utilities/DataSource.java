@@ -54,5 +54,5 @@ public interface DataSource {
     MutablePoint evaluatePosition17(MutablePoint position);
     MutablePoint evaluateOriginalPosition(MutablePoint location);
     MutablePoint evaluatePosition(MutablePoint location);
-    HashMap<Integer, Decoration> getDecorations();
+    HashMap<String, Decoration> getDecorations();
 }

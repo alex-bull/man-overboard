@@ -86,7 +86,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
     private HashMap<Integer,CourseFeature> storedFeatures17=new HashMap<>();
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
-    private HashMap<Integer, Decoration> decorations = new HashMap<>();
+    private HashMap<String, Decoration> decorations = new HashMap<>();
 
     private List<MutablePoint> courseBoundary = new ArrayList<>();
     private List<MutablePoint> courseBoundaryOriginal = new ArrayList<>();
@@ -867,10 +867,8 @@ public class Interpreter implements DataSource, PacketHandler {
      * @return MutablePoint the factored position
      */
     public MutablePoint evaluatePosition(MutablePoint location) {
-        System.out.println("location " + location);
         MutablePoint position = cloner.deepClone(Projection.mercatorProjection(location));
         position.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-        System.out.println("pos " + position);
         return position;
     }
 
@@ -921,7 +919,7 @@ public class Interpreter implements DataSource, PacketHandler {
     }
 
 
-    public HashMap<Integer, Decoration> getDecorations() {
+    public HashMap<String, Decoration> getDecorations() {
         return decorations;
     }
 

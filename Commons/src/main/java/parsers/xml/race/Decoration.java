@@ -12,9 +12,9 @@ public class Decoration {
     private MutablePoint position;
     private MutablePoint position17;
     private MutablePoint positionOriginal;
-    private Integer id;
+    private String id;
 
-    public Decoration(Integer id, MutablePoint location) {
+    public Decoration(String id, MutablePoint location) {
         this.id = id;
         this.location = location;
     }
@@ -43,7 +43,7 @@ public class Decoration {
         return position17;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 

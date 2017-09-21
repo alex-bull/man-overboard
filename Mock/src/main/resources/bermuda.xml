@@ -104,6 +104,13 @@
         <!--<Limit SeqID="10" Lat="32.367811" Lon="-64.786272"/>-->
     </CourseLimit>
 
+    <Decorations>
+        <Item Id="Bermuda_1" Lati="32.38547" Long="-64.85624"/>
+        <Item Id="Bermuda_2" Lati="32.3759" Long="-64.72784"/>
+        <Item Id="Bermuda_3" Lati="32.32398" Long="-64.83736"/>
+    </Decorations>
+
+
     <!--<CourseLimit>-->
         <!--<Limit SeqID="1" Lat="32.47604" Lon="-64.84642"/>-->
         <!--<Limit SeqID="2" Lat="32.47598" Lon="-64.77141"/>-->

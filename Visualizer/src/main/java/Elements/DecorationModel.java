@@ -14,31 +14,101 @@ import utility.Projection;
 
 import javax.xml.crypto.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import static java.lang.Math.pow;
+import static parsers.powerUp.PowerUpType.BOOST;
 
 /**
  * Created by psu43 on 20/09/17.
  * Decorations for a theme
  */
-public class DecorationModel extends Group {
-    private double imageWidth = 150;
-    private double imageHeight = 93;
+public class DecorationModel extends ImageView {
+    private double imageWidth;
+    private double imageHeight;
     private Decoration decoration;
 
     /**
      * Constructs a Decoration item
-     * @param decorationModel Decoration a decoration model
+     * @param decoration Decoration a decoration model
      */
-    public DecorationModel(Decoration decorationModel) {
-        this.decoration = decorationModel;
-        Rectangle igloo = new Rectangle(imageWidth, imageHeight);
-        Image iglooImage = new Image(getClass().getClassLoader().getResource("images/antarctica/igloo.png").toString());
-        igloo.setFill(new ImagePattern(iglooImage));
-        igloo.setLayoutX(this.decoration.getPosition().getXValue());
-        igloo.setLayoutY(this.decoration.getPosition().getYValue());
-        this.getChildren().add(igloo);
+    public DecorationModel(Decoration decoration) {
+        this.decoration = decoration;
+        double scale = 0.5;
+        Image image = getRandomImage();
+        if(decoration.getId().contains("Igloo")) {
+            image = getRandomIglooImage();
+        }
+        else if(decoration.getId().contains("Penguin")) {
+            image = getRandomPenguinImage();
+            scale = 0.2;
+        }
+        else if(decoration.getId().contains("Bermuda")) {
+            image = getRandomBermudaImage();
+            scale = 0.4;
+        }
+        this.imageWidth = image.getWidth();
+        this.imageHeight = image.getHeight();
+        this.setImage(image);
+        this.setFitHeight(imageHeight * scale);
+        this.setFitWidth(imageWidth * scale);
 
     }
+
+    /**
+     * Generate a random image for a decoration
+     * @return Image the image
+     */
+    private Image getRandomImage() {
+        ArrayList<String> imagePaths = new ArrayList<>();
+        imagePaths.add("images/bermuda/island.png");
+        Random random = new Random();
+        String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
+        return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
+    }
+
+    /**
+     * Generate a random image for an igloo
+     * @return Image the image
+     */
+    private Image getRandomIglooImage() {
+        ArrayList<String> imagePaths = new ArrayList<>();
+        imagePaths.add("images/antarctica/igloo.png");
+        imagePaths.add("images/antarctica/igloo-flip.png");
+        Random random = new Random();
+        String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
+        return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
+    }
+
+    /**
+     * Generate a random image for a penguin
+     * @return Image the image
+     */
+    private Image getRandomPenguinImage() {
+        ArrayList<String> imagePaths = new ArrayList<>();
+        imagePaths.add("images/antarctica/penguins.png");
+        imagePaths.add("images/antarctica/penguins-flip.png");
+        imagePaths.add("images/antarctica/pengs.png");
+        Random random = new Random();
+        String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
+        return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
+    }
+
+    /**
+     * Generate a random image for bermuda course
+     * @return Image the image
+     */
+    private Image getRandomBermudaImage() {
+        ArrayList<String> imagePaths = new ArrayList<>();
+        imagePaths.add("images/bermuda/shipwreck.png");
+        imagePaths.add("images/bermuda/supersonic.png");
+        Random random = new Random();
+        String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
+        return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
+    }
+
 
     /**
      * Update the position of the decoration model

@@ -18,7 +18,7 @@ public class RaceData {
     private List<CornerData> compoundMarkSequence = new ArrayList<>();
     private Set<Integer> compoundMarkIDs = new HashSet<>();
     private Set<Integer> markSourceIDs = new HashSet<>();
-    private HashMap<Integer, Decoration> decorations = new HashMap<>();
+    private HashMap<String, Decoration> decorations = new HashMap<>();
     private List<LimitData> courseLimit = new ArrayList<>();
 
     private Map<Integer, List<Integer>> legIndexToMarkSourceIds = new HashMap<>();
@@ -90,11 +90,11 @@ public class RaceData {
         this.courseLimit.add(limitData);
     }
 
-    public HashMap<Integer, Decoration> getDecorations() {
+    public HashMap<String, Decoration> getDecorations() {
         return decorations;
     }
 
-    void addDecorations(Integer id, MutablePoint mutablePoint) {
+    void addDecorations(String id, MutablePoint mutablePoint) {
         Decoration decoration = new Decoration(id, mutablePoint);
         this.decorations.put(id, decoration);
     }

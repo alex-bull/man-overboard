@@ -71,7 +71,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Map<Integer, ImageView> blood = new HashMap<>();
     private Map<Integer, Image> crewImages = new HashMap<>();
     private Map<Integer, PowerUpModel> powerUps=new HashMap<>();
-    private Map<Integer, DecorationModel> decorations=new HashMap<>();
+    private Map<String, DecorationModel> decorations=new HashMap<>();
 
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
@@ -474,21 +474,21 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draw course decorations
      */
     private void drawThemeDecorations() {
-        Map<Integer,Decoration> receivedDecorations = dataSource.getDecorations();
+        Map<String ,Decoration> receivedDecorations = dataSource.getDecorations();
 
         for(Decoration receivedDecoration: receivedDecorations.values()) {
-            int sourceId = receivedDecoration.getId();
-            if (!decorations.containsKey(sourceId)) {
+            String id = receivedDecoration.getId();
+            if (!decorations.containsKey(id)) {
                 MutablePoint location = receivedDecoration.getLocation();
                 receivedDecoration.setPosition(dataSource.evaluatePosition(location));
                 receivedDecoration.setPositionOriginal(dataSource.evaluateOriginalPosition(location));
                 receivedDecoration.setPosition17(dataSource.evaluatePosition17(receivedDecoration.getPosition()));
 
                 DecorationModel decorationModel= new DecorationModel(receivedDecoration);
-                decorations.put(sourceId, decorationModel);
+                decorations.put(id, decorationModel);
                 raceViewPane.getChildren().add(decorationModel);
             }
-            decorations.get(sourceId).update(isZoom(), currentPosition17, raceViewCanvas.getWidth(), raceViewCanvas.getHeight());
+            decorations.get(id).update(isZoom(), currentPosition17, raceViewCanvas.getWidth(), raceViewCanvas.getHeight());
         }
 
     }

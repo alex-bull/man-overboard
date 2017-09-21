@@ -182,7 +182,7 @@ public class RaceXMLParser {
 
         try {
             for (Element item : race.getChild("Decorations").getChildren()) {
-                int id = Integer.parseInt(item.getAttributeValue("Id"));
+                String id = item.getAttributeValue("Id");
                 double lat = Double.parseDouble(item.getAttributeValue("Lati"));
                 double lon = Double.parseDouble(item.getAttributeValue("Long"));
                 MutablePoint mutablePoint = new MutablePoint(lat, lon);

@@ -105,7 +105,13 @@
     </CourseLimit>
 
     <Decorations>
-        <Item Id="1" Lati="-64.67297" Long=" -63.15559"/>
+        <Item Id="Igloo_1" Lati="-64.60767" Long="-63.12333"/>
+        <Item Id="Igloo_2" Lati="-64.68266" Long="-63.27369"/>
+        <Item Id="Igloo_3" Lati="-64.67767" Long="-62.50328"/>
+        <Item Id="Igloo_4" Lati="-64.729616" Long="-62.67907"/>
+        <Item Id="Penguin_1" Lati="-64.66237" Long="-62.46894"/>
+        <Item Id="Penguin_2" Lati="-64.74045" Long="-62.45246"/>
+        <Item Id="Penguin_3" Lati="-64.62446" Long="-63.25584"/>
     </Decorations>
 
     <!--<CourseLimit>-->
