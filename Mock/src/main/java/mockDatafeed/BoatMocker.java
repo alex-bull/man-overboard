@@ -743,7 +743,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     @Override
     public void run() {
-        System.out.println(System.currentTimeMillis());
         this.readAllMessages();
 
         if (shouldStartGame()) raceInProgress = true;
@@ -768,7 +767,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("end "+System.currentTimeMillis());
+
     }
 }
 
