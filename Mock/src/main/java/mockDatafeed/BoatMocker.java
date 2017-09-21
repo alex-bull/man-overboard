@@ -226,7 +226,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void addCompetitor(Integer clientId) {
 
-        double a = 0.001 * competitors.size(); //shift competitors so they aren't colliding at the start
+        double a = 0.002 * competitors.size(); //shift competitors so they aren't colliding at the start
 //        prestart = new MutablePoint(32.41011 + a, -64.88937);
         prestart = new MutablePoint(32.35763 + a, -64.81332);
 
@@ -358,7 +358,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         InputStream mockBoatStream = new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")));
         CourseXMLParser cl = new CourseXMLParser(mockBoatStream);
         //screen size is not important
-        RaceCourse course = new RaceCourse(cl.parseCourse(), false);
 
         courseBoundary = cl.parseCourseBoundary();
 //        collisionUtility.setCourseBoundary(courseBoundary);
@@ -743,6 +742,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     @Override
     public void run() {
+
         this.readAllMessages();
 
         if (shouldStartGame()) raceInProgress = true;

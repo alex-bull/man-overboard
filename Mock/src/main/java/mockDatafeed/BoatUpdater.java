@@ -102,7 +102,7 @@ public class BoatUpdater {
             }
             double speed = polarTable.getSpeed(twa);
             if (boat.getStatus() == DSQ || boat.hasSailsOut()) {
-                boat.getBoatSpeed().reduce(0.99);
+                boat.getBoatSpeed().reduce(0.98);
 
             } else {
                 if (!boat.hasSailsOut()) {
@@ -111,11 +111,11 @@ public class BoatUpdater {
                     }
                     boat.getBoatSpeed().setMagnitude(speed * 1);
                     boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
-                    boat.getBoatSpeed().increase(0.01);
+                    boat.getBoatSpeed().increase(0.02);
                 }
 
                 if (boat.getBoostTimeout() != 0 && System.currentTimeMillis() > boat.getBoostTimeout()) {
-                    boat.getBoatSpeed().reduce(0.99);
+                    boat.getBoatSpeed().reduce(0.98);
                     boat.resetBoostTimeout();
                     boat.deactivateBoost();
                     boat.disableBoost();
@@ -124,7 +124,7 @@ public class BoatUpdater {
 
             //calculate crew members for each boat
             crewMemberUpdated = crewMemberUpdated || pickUpCrew(boat);
-            boat.updatePosition(0.1);
+            boat.updatePosition(0.3);
 
 
             if (handleCourseCollisions(boat) || handleBoundaryCollisions(boat) || handleWhirlpoolCollisions(boat) || handleBoatCollisions(boat)) {
