@@ -4,7 +4,7 @@
 }
 
 .background {
-    -fx-background-color: #7dcdcd;
+    -fx-background-color: #2980B9;
 
 }
 
@@ -24,16 +24,18 @@
 .menu-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-text-fill: black;
+    -fx-text-fill: white;
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif, bold;
     -fx-font-size: 25pt;
-    -fx-text-alignment: right;
+    -fx-text-alignment: center;
+    -fx-radius: 5px;
 }
 
 .menu-button.button:hover {
-    -fx-border-color: black;
-    -fx-text-fill: black;
+    -fx-border-color: white;
+    -fx-text-fill: white;
     -fx-border-width: 4px;
+    -fx-border-radius: 5px;
     -fx-background-color: transparent;
 }
 
