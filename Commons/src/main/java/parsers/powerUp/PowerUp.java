@@ -13,7 +13,7 @@ public class PowerUp {
     private Double longitude;
     private Integer radius;
     private Long timeout;
-    private int type;
+    private PowerUpType type;
     private Integer duration;
     private MutablePoint location;
     private MutablePoint position;
@@ -21,7 +21,7 @@ public class PowerUp {
     private MutablePoint positionOriginal;
     private boolean isTaken = false;
 
-    public PowerUp(Integer id, Double latitude, Double longitude, Integer radius, Long timeout, int type, Integer duration) {
+    public PowerUp(Integer id, Double latitude, Double longitude, Integer radius, Long timeout, PowerUpType type, Integer duration) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -91,7 +91,7 @@ public class PowerUp {
         return timeout;
     }
 
-    public int getType() {
+    public PowerUpType getType() {
         return type;
     }
 

@@ -24,6 +24,7 @@ import parsers.markRounding.MarkRoundingParser;
 import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpParser;
 import parsers.powerUp.PowerUpTakenParser;
+import parsers.powerUp.PowerUpType;
 import parsers.raceStatus.RaceStatusData;
 import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.boat.BoatXMLParser;
@@ -421,7 +422,7 @@ public class Interpreter implements DataSource, PacketHandler {
             case POWER_UP:
                 PowerUpParser powerUpParser = new PowerUpParser();
                 PowerUp powerUp = powerUpParser.parsePowerUp(packet);
-                if (powerUp.getType() == BOOST.getValue() || powerUp.getType() == POTION.getValue()) {
+                if (powerUp.getType()==BOOST|| powerUp.getType()==POTION) {
                     MutablePoint location = powerUp.getLocation();
                     MutablePoint positionOriginal = cloner.deepClone(Projection.mercatorProjection(location));
 
@@ -445,12 +446,17 @@ public class Interpreter implements DataSource, PacketHandler {
                 if (powerUps.containsKey(id)) {
                     PowerUp power = powerUps.get(id);
                     power.taken();
-                    int type = power.getType();
+                    PowerUpType type= power.getType();
                     if (getCompetitor().getSourceID() == boatId) {
-                        if (type == 0) {
-                            getCompetitor().enableBoost();
-                        } else if (type == 3) {
-                            getCompetitor().enablePotion();
+                        switch(type){
+                            case BOOST:
+                                getCompetitor().enableBoost();
+                                break;
+                            case POTION:
+                                getCompetitor().enablePotion();
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }

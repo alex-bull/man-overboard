@@ -11,6 +11,7 @@ import parsers.boatCustomisation.NameParser;
 import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.powerUp.PowerUp;
+import parsers.powerUp.PowerUpType;
 import parsers.xml.CourseXMLParser;
 import parsers.xml.race.CompoundMarkData;
 import parsers.xml.race.MarkData;
@@ -70,6 +71,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private long previousPotionTime = System.currentTimeMillis();
     private long previousBoostTime = System.currentTimeMillis();
     private int powerUpId = 0;
+    int boostTime = 30000;
+    int healthTime = 60000;
 
 
     BoatMocker() throws IOException, JDOMException {
@@ -93,7 +96,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         //start the race, updates boat position at a rate of 60 hz
         Timer timer = new Timer();
-        timer.schedule(this, 0, 16);
+        timer.schedule(this, 0, 32);
     }
 
     /**
@@ -499,47 +502,67 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     }
 
     /**
-     * Sends power up to output port
+     * spawns powerUp given powerup type
+     * @param powerUpType the type of the powerup
      */
-    public void powerUpEvent() {
+    private void spawnPowerUp(PowerUpType powerUpType){
         long currentTime = System.currentTimeMillis();
-        int potionTime = 40000;
-        int boostTime = 30000;
+        long timeout = currentTime + 70000;
+        MutablePoint generatedLocation = getRandomLocation();
+        int radius = 10; // we dont use this but other teams do
 
-        // potion
-        if (currentTime > previousPotionTime + potionTime && raceInProgress) {
-            long timeout = currentTime + 70000;
-            MutablePoint generatedLocation = getRandomLocation();
-            int radius = 10; // we dont use this but other teams do
-            int powerType = 3;
-            int duration = 20000; // we dont use this but other teams do
+        int duration = 20000; // we dont use this but other teams do
 
-            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, powerType, duration, timeout);
-            this.sendQueue.put(null, eventPacket);
-            PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, powerType, duration);
-            boatUpdater.updatePowerUps(powerUp);
-            previousPotionTime = currentTime;
-            this.powerUpId++;
-        }
+        byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, powerUpType, duration, timeout);
+        this.sendQueue.put(null, eventPacket);
+        PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, powerUpType, duration);
+        boatUpdater.updatePowerUps(powerUp);
 
-        // speed boost
-        if (currentTime > previousBoostTime + boostTime && raceInProgress) {
-            long timeout = currentTime + 60000;
-            MutablePoint generatedLocation = getRandomLocation();
-            int radius = 10; // we dont use this but other teams do
-            int powerType = 0;
-            int duration = 20000; // we dont use this but other teams do
-
-            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, powerType, duration, timeout);
-            this.sendQueue.put(null, eventPacket);
-
-            PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, powerType, duration);
-            boatUpdater.updatePowerUps(powerUp);
-            previousBoostTime = currentTime;
-            this.powerUpId++;
-        }
-
+        this.powerUpId++;
     }
+
+//    /**
+//     * Sends power up to output port
+//     */
+//    public void powerUpEvent() {
+//
+//        int potionTime = 40000;
+//        int boostTime = 30000;
+//
+//        // potion
+//        if (currentTime > previousPotionTime + potionTime && raceInProgress) {
+//            long timeout = currentTime + 70000;
+//            MutablePoint generatedLocation = getRandomLocation();
+//            int radius = 10; // we dont use this but other teams do
+//
+//            int duration = 20000; // we dont use this but other teams do
+//
+//            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, PowerUpType.POTION, duration, timeout);
+//            this.sendQueue.put(null, eventPacket);
+//            PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, PowerUpType.POTION, duration);
+//            boatUpdater.updatePowerUps(powerUp);
+//            previousPotionTime = currentTime;
+//            this.powerUpId++;
+//        }
+//
+//        // speed boost
+//        if (currentTime > previousBoostTime + boostTime && raceInProgress) {
+//            long timeout = currentTime + 60000;
+//            MutablePoint generatedLocation = getRandomLocation();
+//            int radius = 10; // we dont use this but other teams do
+//            int duration = 20000; // we dont use this but other teams do
+//
+//            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, PowerUpType.BOOST, duration, timeout);
+//            this.sendQueue.put(null, eventPacket);
+//
+//            PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, PowerUpType.BOOST, duration);
+//            boatUpdater.updatePowerUps(powerUp);
+//            previousBoostTime = currentTime;
+//            this.powerUpId++;
+//        }
+//
+//
+//    }
 
     /**
      * Sends power up taken to output port
@@ -555,22 +578,21 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * @return MutablePoint a mutable point of the location
      */
     private MutablePoint getRandomLocation() {
-        Random random = new Random();
-        List<Integer> keys = new ArrayList<>(competitors.keySet());
-        Integer randomKey = keys.get(random.nextInt(keys.size()));
-        Competitor randomBoat = competitors.get(randomKey);
+        Competitor randomBoat;
+        MutablePoint generatedLocation;
+        double randomLat;
+        double randomLon;
+        int randomIndex;
+        do {
+            randomIndex=random.nextInt(competitors.size());
 
-        double randomLat = randomBoat.getPosition().getXValue() + getRandomRadius();
-        double randomLon = randomBoat.getPosition().getYValue() + getRandomRadius();
-
-        MutablePoint generatedLocation = new MutablePoint(randomLat, randomLon);
-
-        while (!isPointInPolygon(generatedLocation, courseBoundary)) {
+            randomBoat = new ArrayList<>(competitors.values()).get(randomIndex);
             randomLat = randomBoat.getPosition().getXValue() + getRandomRadius();
-            randomLon = randomBoat.getPosition().getYValue() + getRandomRadius();
-            generatedLocation = new MutablePoint(randomLat, randomLon);
+            randomLon= randomBoat.getPosition().getYValue() + getRandomRadius();
 
-        }
+            generatedLocation = new MutablePoint(randomLat, randomLon);
+        } while (!isPointInPolygon(generatedLocation, courseBoundary));
+
         return generatedLocation;
 
     }
@@ -684,12 +706,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     /**
      * Packages and sends shark event
      *
-     * @param locations data for the event
+     * @param shark data for the event
      * @throws IOException if send fails
      */
-    public void sharkEvent(List<Shark> locations) throws IOException {
+    public void sharkEvent(Shark shark) throws IOException {
 
-        byte[] eventPacket = binaryPackager.packageSharkEvent(locations);
+        byte[] eventPacket = binaryPackager.packageSharkEvent(shark);
         this.sendQueue.put(null, eventPacket);
     }
 
@@ -721,7 +743,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     @Override
     public void run() {
-
+        System.out.println(System.currentTimeMillis());
         this.readAllMessages();
 
         if (shouldStartGame()) raceInProgress = true;
@@ -730,12 +752,23 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         try {
             boatUpdater.updatePosition();
-            powerUpEvent();
+
+
+                if (System.currentTimeMillis() - previousBoostTime > boostTime) {
+                    spawnPowerUp(PowerUpType.BOOST);
+                    previousBoostTime = System.currentTimeMillis();
+                }
+                if (System.currentTimeMillis() - previousPotionTime > healthTime) {
+                    spawnPowerUp(PowerUpType.POTION);
+                    previousPotionTime = System.currentTimeMillis();
+                }
+
             sendBoatLocation();
             sendRaceStatus();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println("end "+System.currentTimeMillis());
     }
 }
 
