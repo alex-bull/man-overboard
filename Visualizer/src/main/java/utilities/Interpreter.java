@@ -550,6 +550,17 @@ public class Interpreter implements DataSource, PacketHandler {
     }
 
     /**
+     * updates decoration item location when scaling level changes
+     */
+    private void updateDecorationLocation(){
+        for(Decoration decoration: decorations.values()){
+            MutablePoint point=cloner.deepClone(decoration.getPositionOriginal());
+            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            decoration.setPosition17(point);
+        }
+    }
+
+    /**
      * adds blood locations with location converted
      * @param locations list of the blood locations
      */
@@ -733,14 +744,7 @@ public class Interpreter implements DataSource, PacketHandler {
                         this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.themeId = raceXMLParser.getThemeId();
                         this.decorations = this.raceData.getDecorations();
-                        // set decorations
-                        for(Decoration decoration: this.decorations.values()) {
-                            MutablePoint location = decoration.getLocation();
-                            decoration.setPosition(evaluatePosition(location));
-                            decoration.setPositionOriginal(evaluateOriginalPosition(location));
-                            decoration.setPosition17(evaluatePosition17(decoration.getPosition()));
 
-                        }
                         setScalingFactors();
                         setCourseBoundary(raceXMLParser.getCourseBoundary());
 //                        this.courseBoundary17=raceXMLParser.getCourseBoundary17();
@@ -863,8 +867,10 @@ public class Interpreter implements DataSource, PacketHandler {
      * @return MutablePoint the factored position
      */
     public MutablePoint evaluatePosition(MutablePoint location) {
+        System.out.println("location " + location);
         MutablePoint position = cloner.deepClone(Projection.mercatorProjection(location));
         position.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        System.out.println("pos " + position);
         return position;
     }
 
@@ -888,6 +894,7 @@ public class Interpreter implements DataSource, PacketHandler {
         updateCourseBoundary();
         updateCrewLocation();
         updatePowerUpLocation();
+        updateDecorationLocation();
         updateSharkLocation();
         updateBloodLocation();
         updateWhirlpools();
@@ -913,6 +920,10 @@ public class Interpreter implements DataSource, PacketHandler {
         return raceXMLParser.getShiftDistance();
     }
 
+
+    public HashMap<Integer, Decoration> getDecorations() {
+        return decorations;
+    }
 
 
 }

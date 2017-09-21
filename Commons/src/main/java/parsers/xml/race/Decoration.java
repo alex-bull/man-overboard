@@ -4,6 +4,7 @@ import models.MutablePoint;
 
 /**
  * Created by psu43 on 21/09/17.
+ * Decoration
  */
 public class Decoration {
 
@@ -11,15 +12,16 @@ public class Decoration {
     private MutablePoint position;
     private MutablePoint position17;
     private MutablePoint positionOriginal;
+    private Integer id;
 
-    public Decoration(MutablePoint location) {
+    public Decoration(Integer id, MutablePoint location) {
+        this.id = id;
         this.location = location;
     }
 
     public MutablePoint getLocation() {
         return location;
     }
-
 
     public void setPosition(MutablePoint position) {
         this.position = position;
@@ -33,9 +35,20 @@ public class Decoration {
         this.positionOriginal = positionOriginal;
     }
 
-
     public MutablePoint getPosition() {
         return position;
+    }
+
+    public MutablePoint getPosition17() {
+        return position17;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public MutablePoint getPositionOriginal() {
+        return positionOriginal;
     }
 
 

@@ -95,7 +95,7 @@ public class RaceData {
     }
 
     void addDecorations(Integer id, MutablePoint mutablePoint) {
-        Decoration decoration = new Decoration(mutablePoint);
+        Decoration decoration = new Decoration(id, mutablePoint);
         this.decorations.put(id, decoration);
     }
 

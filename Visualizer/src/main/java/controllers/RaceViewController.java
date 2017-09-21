@@ -4,9 +4,8 @@ import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
 import javafx.scene.Node;
-import javafx.scene.shape.Shape;
 import parsers.boatAction.BoatAction;
-import parsers.xml.race.ThemeEnum;
+import parsers.xml.race.Decoration;
 import utilities.Sounds;
 import Elements.*;
 import Elements.Annotation;
@@ -72,12 +71,13 @@ public class RaceViewController implements Initializable, TableObserver {
     private Map<Integer, ImageView> blood = new HashMap<>();
     private Map<Integer, Image> crewImages = new HashMap<>();
     private Map<Integer, PowerUpModel> powerUps=new HashMap<>();
+    private Map<Integer, DecorationModel> decorations=new HashMap<>();
+
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Integer, HealthBar> healthBars = new HashMap<>();
     private Map<Integer, Annotation> annotations = new HashMap<>();
     private Map<String, MarkModel> markModels = new HashMap<>();
-    private ThemeDecorations themeDecorations;
     private Track track = new Track();
     private Line startLine;
     private Line finishLine;
@@ -187,11 +187,6 @@ public class RaceViewController implements Initializable, TableObserver {
         try {
             if(dataSource.getThemeId() == ANTARCTICA) {
                 mapEngine.load(getClass().getClassLoader().getResource("mapsAntarctica.html").toURI().toString());
-                this.themeDecorations = new ThemeDecorations(dataSource);
-
-
-                raceViewPane.getChildren().add(themeDecorations);
-
             }
 
         } catch (URISyntaxException e) {
@@ -479,7 +474,23 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draw course decorations
      */
     private void drawThemeDecorations() {
-        themeDecorations.update(isZoom(), currentPosition17, raceViewCanvas.getWidth(), raceViewCanvas.getHeight());
+        Map<Integer,Decoration> receivedDecorations = dataSource.getDecorations();
+
+        for(Decoration receivedDecoration: receivedDecorations.values()) {
+            int sourceId = receivedDecoration.getId();
+            if (!decorations.containsKey(sourceId)) {
+                MutablePoint location = receivedDecoration.getLocation();
+                receivedDecoration.setPosition(dataSource.evaluatePosition(location));
+                receivedDecoration.setPositionOriginal(dataSource.evaluateOriginalPosition(location));
+                receivedDecoration.setPosition17(dataSource.evaluatePosition17(receivedDecoration.getPosition()));
+
+                DecorationModel decorationModel= new DecorationModel(receivedDecoration);
+                decorations.put(sourceId, decorationModel);
+                raceViewPane.getChildren().add(decorationModel);
+            }
+            decorations.get(sourceId).update(isZoom(), currentPosition17, raceViewCanvas.getWidth(), raceViewCanvas.getHeight());
+        }
+
     }
 
 
@@ -812,11 +823,9 @@ public class RaceViewController implements Initializable, TableObserver {
             model.setFitWidth(scale*model.getImage().getWidth());
             model.setFitHeight(scale*model.getImage().getHeight());
         }
-        for(Node igloo: themeDecorations.getChildren()){
-            igloo.setScaleY(scale);
-            igloo.setScaleX(scale);
-
-
+        for(DecorationModel item: decorations.values()){
+            item.setScaleY(scale);
+            item.setScaleX(scale);
         }
         sharkModel.setScaleX(scale);
         sharkModel.setScaleY(scale);

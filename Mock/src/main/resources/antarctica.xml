@@ -105,7 +105,7 @@
     </CourseLimit>
 
     <Decorations>
-        <Item SeqID="1" Lat="-64.68501" Lon="-63.3863"/>
+        <Item Id="1" Lati="-64.67297" Long=" -63.15559"/>
     </Decorations>
 
     <!--<CourseLimit>-->
