@@ -11,3 +11,9 @@
     -fx-text-fill: white;
     -fx-font-family: 'Quicksand', sans-serif, bold;
 }
+
+
+#controlbutton {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}

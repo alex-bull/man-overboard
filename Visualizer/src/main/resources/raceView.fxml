@@ -11,7 +11,7 @@
 <Pane xmlns:fx="http://javafx.com/fxml/1" fx:id="raceParentPane" onTouchStationary="#turnBoat" onZoom="#zoom"
       xmlns="http://javafx.com/javafx/8.0.111" fx:controller="controllers.RaceViewController">
     <children>
-        <AnchorPane fx:id="raceView" prefHeight="900.0" prefWidth="1000.0" stylesheets="@css/theme.css"
+        <AnchorPane fx:id="raceView" prefHeight="900.0" prefWidth="1000.0" stylesheets="@css/raceView.css"
                     AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                     AnchorPane.topAnchor="0.0">
 
@@ -33,9 +33,9 @@
                         onAction="#toggleControls" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0"
                         AnchorPane.topAnchor="411.0">
                     <graphic>
-                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@images/controlButton.png"/>
+                                <Image url="@images/helpIcon.png"/>
                             </image>
                         </ImageView>
                     </graphic>
@@ -85,10 +85,10 @@
                 <Button id="controlbutton" layoutX="25.0" layoutY="515.0" mnemonicParsing="false" onAction="#toggleZoom"
                         prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="515.0">
                     <graphic>
-                        <ImageView id="controlbutton" fitHeight="43.0" fitWidth="48.0" pickOnBounds="true"
+                        <ImageView id="controlbutton" fitHeight="55.0" fitWidth="60.0" pickOnBounds="true"
                                    preserveRatio="true">
                             <image>
-                                <Image url="@images/eagleIcon.png"/>
+                                <Image url="@images/zoomIcon.png"/>
                             </image>
                         </ImageView>
                     </graphic>

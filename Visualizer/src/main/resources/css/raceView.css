@@ -1,0 +1,36 @@
+ @font-face {
+     font-family: 'Quicksand', sans-serif, bold;
+     src: url('../fonts/Quicksand-Bold.ttf');
+ }
+
+
+.table-view {
+    -fx-background-color: transparent;
+    -fx-font-family: 'Quicksand', sans-serif, bold;
+
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-font-family: 'Quicksand', sans-serif, bold;
+    -fx-font-size: 10pt;
+}
+
+
+.table-view .table-column {
+    -fx-alignment: CENTER;
+}
+
+
+#finish-list {
+    -fx-background-color: white;
+}
+
+
+.button {
+    -fx-background-color: transparent;
+}
+
+#windPane {
+    -fx-font-family: 'Quicksand', sans-serif, bold;
+}
