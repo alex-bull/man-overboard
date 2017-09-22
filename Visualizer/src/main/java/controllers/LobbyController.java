@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  */
 public class LobbyController implements Initializable {
 
-    private final int STARTTIME = 9;
+    private final int STARTTIME = 1;
     BinaryPackager binaryPackager = new BinaryPackager();
     private DataSource dataSource;
     @FXML private ListView<String> starterList;
