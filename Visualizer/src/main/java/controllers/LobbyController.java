@@ -155,7 +155,7 @@ public class LobbyController implements Initializable {
         loadingLabel.setVisible(true);
         countdownLabel.setText("");
         gameStartLabel.setVisible(false);
-        primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        primaryScreenBounds = Screen.getPrimary().getBounds();
         starterList.setItems(competitorList);
 
         yacht = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
