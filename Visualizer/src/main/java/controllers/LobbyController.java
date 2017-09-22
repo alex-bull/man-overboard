@@ -316,9 +316,15 @@ public class LobbyController implements Initializable {
         if(courseThemeImage == null) {
             if(dataSource.getThemeId() == ANTARCTICA) {
                 this.courseThemeImage = new Image("/images/antarctica/antarc_course.png");
+                this.locationLabel.setText("Antarctica");
                 courseImageView.setImage(this.courseThemeImage);
             }
             else if(dataSource.getThemeId() == BERMUDA) {
+                this.courseThemeImage = new Image("/images/bermuda/bermuda_course.png");
+                this.locationLabel.setText("Bermuda");
+                courseImageView.setImage(this.courseThemeImage);
+            }
+            else if (dataSource.getThemeId() != null) {
                 this.courseThemeImage = new Image("/images/bermuda/bermuda_course.png");
                 courseImageView.setImage(this.courseThemeImage);
             }
