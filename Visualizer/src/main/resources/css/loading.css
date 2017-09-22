@@ -1,31 +1,17 @@
 @font-face {
-    font-family: 'Gentium Book Basic';
-    src: url('../fonts/gentium-book-basic.bold-italic.ttf');
-}
+     font-family: 'Quicksand', sans-serif, bold;
+     src: url('../fonts/Quicksand-Bold.ttf');
+ }
 
-#loadingPane {
-    -fx-background-color: #7dcdcd;
-}
+.background{
+    -fx-background-image: url("../images/blue.png");
 
-#team {
-    -fx-font-size: 5em;
-    -fx-font-family: 'Gentium Book Basic';
-    -fx-fill: #e0efef;
+ }
 
-}
-
-#product {
-    -fx-font-size: 10em;
-    -fx-fill: #e0efef;
-    -fx-font-family: 'Gentium Book Basic';
-
-}
-
-#phrase {
-    -fx-font-size: 3em;
-    -fx-fill: #e0efef;
-    /*-fx-font-family: 'Gentium Book Basic';*/
-}
+.text {
+    -fx-fill: white;
+    -fx-font-family: 'Quicksand', sans-serif, bold;
+ }
 
 #indicator {
     -fx-progress-color: #c0e8e8;
