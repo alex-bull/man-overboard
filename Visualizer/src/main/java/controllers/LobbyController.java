@@ -50,7 +50,6 @@ import static parsers.xml.race.ThemeEnum.BERMUDA;
 public class LobbyController implements Initializable {
 
     private final int STARTTIME = 9;
-    BinaryPackager binaryPackager = new BinaryPackager();
     private DataSource dataSource;
     @FXML
     private ListView<String> starterList;

@@ -116,14 +116,10 @@ public class Interpreter implements DataSource, PacketHandler {
     private int zoomLevel = 17;
 
     private WorkQueue receiveQueue = new WorkQueue(1000000);
-    private Map<Integer, CrewLocation> crewLocations = new HashMap<>();
 
     public void setPrimaryStage(Stage primaryStage){
         this.primaryStage=primaryStage;
     }
-    private Map<Integer, Shark> sharkLocations = new HashMap<>();
-    private Map<Integer, Blood> bloodLocations = new HashMap<>();
-    private Map<Integer, Whirlpool> whirlpools = new HashMap<>();
     private Map<Integer, PowerUp> powerUps = new HashMap<>();
 
     public Interpreter() {

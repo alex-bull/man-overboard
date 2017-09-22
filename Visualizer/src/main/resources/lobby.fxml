@@ -112,9 +112,6 @@
                                 <ImageView fx:id="courseImageView" fitWidth="420.0" pickOnBounds="true"
                                            preserveRatio="true" GridPane.halignment="CENTER"
                                            GridPane.valignment="BOTTOM">
-                                    <image>
-                                        <Image url="@images/courseImage.png"/>
-                                    </image>
                                 </ImageView>
                                 <Label fx:id="locationLabel" maxWidth="1.7976931348623157E308"
                                        style="-fx-background-color: grey; -fx-alignment: CENTER_RIGHT;" text="Bermuda"
