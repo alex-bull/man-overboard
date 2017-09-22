@@ -76,7 +76,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button id="controlbutton" mnemonicParsing="false" onAction="#quitGame" prefHeight="70.0" prefWidth="76.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+                <Button id="controlbutton" mnemonicParsing="false" onAction="#showQuitBox" prefHeight="70.0" prefWidth="76.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0">
                     <graphic>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                             <image>

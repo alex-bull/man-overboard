@@ -303,8 +303,8 @@ public class LobbyController implements Initializable {
         //clean up first
         if (timer != null) timer.stop();
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 2);
+        dataSource.kill();
         dataSource = null;
-
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
         Parent root = null;

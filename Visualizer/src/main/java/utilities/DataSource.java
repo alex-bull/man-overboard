@@ -79,4 +79,6 @@ public interface DataSource {
     void update();
 
     Map<Integer, PowerUp> getPowerUps();
+
+    void kill();
 }

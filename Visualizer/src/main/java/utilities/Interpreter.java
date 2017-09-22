@@ -96,6 +96,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private int sourceID = 0;
 
     private TCPClient TCPClient;
+    private Timer receiverTimer;
 
     //zoom factor for scaling
     private int zoomLevel = 17;
@@ -242,7 +243,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
         System.out.println("Starting client");
         //start receiving data
-        Timer receiverTimer = new Timer();
+        receiverTimer = new Timer();
         receiverTimer.schedule(TCPClient, 0, 1);
         System.out.println("Done");
 
@@ -861,6 +862,11 @@ public class Interpreter implements DataSource, PacketHandler {
 
     public double getShiftDistance() {
         return raceXMLParser.getShiftDistance();
+    }
+
+    public void kill() {
+        receiverTimer.cancel();
+        TCPClient.close();
     }
 
 }

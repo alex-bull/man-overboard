@@ -8,8 +8,10 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ListView;
@@ -38,6 +40,7 @@ import utilities.RaceCalculator;
 import utilities.Sounds;
 import utility.BinaryPackager;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -97,6 +100,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Boolean finisherListDisplayed = false;
     private boolean isLoaded = false;
     private boolean zoom = false;
+    public boolean exit = false;
     //CONTROL VARIABLES
     private int counter = 0;
     private Integer selectedBoatSourceId = 0;
@@ -321,7 +325,10 @@ public class RaceViewController implements Initializable, TableObserver {
         controlsBox.toFront();
     }
 
-
+    /**
+     * Sends the controls box to back
+     * @param mouseEvent
+     */
     public void closeControls(MouseEvent mouseEvent) {
         controlsBox.toBack();
     }
@@ -330,7 +337,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * Brings the quit box to front
      * @param actionEvent
      */
-    public void quitGame(ActionEvent actionEvent) {
+    public void showQuitBox(ActionEvent actionEvent) {
         quitBox.toFront();
     }
 
@@ -362,7 +369,9 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param actionEvent
      */
     public void leaveGame(ActionEvent actionEvent) {
-
+        BinaryPackager binaryPackager = new BinaryPackager();
+        dataSource.send(binaryPackager.packageLeaveLobby());
+        this.exit = true;
     }
 
 

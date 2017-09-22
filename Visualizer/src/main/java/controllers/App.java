@@ -44,6 +44,7 @@ public class App extends Application {
         primaryStage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
         primaryStage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
 
+
         scene = rootScene;
         pStage = primaryStage;
 

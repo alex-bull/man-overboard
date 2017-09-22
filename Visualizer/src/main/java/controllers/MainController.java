@@ -2,6 +2,8 @@ package controllers;
 
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
@@ -10,6 +12,8 @@ import parsers.boatAction.BoatAction;
 import utilities.DataSource;
 import utilities.Sounds;
 import utility.BinaryPackager;
+
+import java.io.IOException;
 
 import static javafx.scene.input.KeyCode.Q;
 
@@ -38,6 +42,7 @@ public class MainController {
     private BinaryPackager binaryPackager;
     private boolean playing = false;
     private boolean flag = false;
+    private AnimationTimer timer;
 
 
     /**
@@ -145,10 +150,14 @@ public class MainController {
         this.binaryPackager = new BinaryPackager();
 
 
-        AnimationTimer timer = new AnimationTimer() {
+        timer = new AnimationTimer() {
 
             @Override
             public void handle(long now) {
+                if (raceViewController.exit) {
+                    loadStartView();
+                    return;
+                }
                 dataSource.update();
                 if (raceViewController.isLoaded()) {
                     if (!playing) playGameMusic();
@@ -181,5 +190,25 @@ public class MainController {
         Sounds.player.loopMP3("sounds/bensound-epic.mp3");
         Sounds.player.setVolume("sounds/bensound-epic.mp3", 0.5);
         playing = true;
+    }
+
+    private void loadStartView() {
+        //clean up first
+        if (timer != null) timer.stop();
+        dataSource.kill();
+        dataSource = null;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assert root != null;
+        StartController startController = loader.getController();
+        startController.begin();
+        App.getScene().setRoot(root);
     }
 }
