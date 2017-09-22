@@ -39,6 +39,7 @@ import utilities.RaceCalculator;
 import utilities.Sounds;
 import utility.BinaryPackager;
 
+import javax.naming.BinaryRefAddr;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -246,7 +247,6 @@ public class RaceViewController implements Initializable, TableObserver {
                 } else {
                     observableFinisherList.add((dataSource.getCompetitorsPosition().indexOf(aCompetitor) + 1) + ". " + aCompetitor.getTeamName());
                 }
-                aCompetitor.setHealthLevel(100);
             }
             finisherListView.setItems(observableFinisherList);
             finisherListView.refresh();
@@ -1005,6 +1005,10 @@ public class RaceViewController implements Initializable, TableObserver {
 
         observableFinisherList.clear();
 
+        BinaryPackager binaryPackager = new BinaryPackager();
+        byte[] raceStatusPacket = binaryPackager.raceStatusHeader(4, ZonedDateTime.now(), (short) dataSource.getWindDirection(), (short) dataSource.getWindSpeed(), dataSource.getStoredCompetitors().size());
+        byte[] eachBoatPacket = binaryPackager.packageEachBoat((HashMap) dataSource.getStoredCompetitors());
+        this.dataSource.send(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
 
         LobbyController lobbyController = loader.getController();
         lobbyController.setDataSource(dataSource);

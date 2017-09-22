@@ -304,6 +304,9 @@ public class Interpreter implements DataSource, PacketHandler {
                         storedCompetitors.get(id).setStatus(raceStatusData.getBoatStatuses().get(id).getBoatStatus());
                         storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
                     }
+                    if(raceStatus == RaceStatusEnum.FINISHED){
+                        System.out.println("packet sent to interpreter");
+                    }
                 }
 
                 break;

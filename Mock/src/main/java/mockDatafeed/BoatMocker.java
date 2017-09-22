@@ -12,6 +12,7 @@ import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpType;
+import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.CourseXMLParser;
 import parsers.xml.race.CompoundMarkData;
 import parsers.xml.race.MarkData;
@@ -205,6 +206,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 competitors.get(modelParser.getSourceId()).setBoatType(modelParser.getModel());
                 this.sendAllXML();
                 break;
+
+
         }
     }
 
@@ -492,6 +495,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         if (boatUpdater.checkAllFinished()) {
             raceStatus = 4;
             boatUpdater.finisherList.clear();
+
         } else {
             raceStatus = 3;
         }
