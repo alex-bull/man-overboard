@@ -7,14 +7,14 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane styleClass="background" stylesheets="@css/theme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SettingsController">
+<?import java.net.URL?>
+<AnchorPane styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SettingsController">
+    <stylesheets>
+        <URL value="@css/settings.css"/>
+        <URL value="@css/theme.css"/>
+    </stylesheets>
     <children>
-      <ImageView fitHeight="1600.0" fitWidth="2000.0" layoutX="-31.0" layoutY="-25.0" opacity="0.66" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="0.0">
-         <image>
-            <Image url="@images/blue.png" />
-         </image>
-      </ImageView>
-        <GridPane prefHeight="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <GridPane opacity="0.78" prefHeight="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="70.0" prefWidth="605.0" />

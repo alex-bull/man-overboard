@@ -74,17 +74,6 @@
     -fx-background-color: #929B9B;
     -fx-text-fill: white;
 }
-/*
-.text-field {
-    -fx-padding: 5 22 5 22;
-    -fx-background-color: white;
-    -fx-background-radius: 0;
-    -fx-opacity: 0.8;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-font-size: 11pt;
-    -fx-text-fill: #444444;
-    -fx-background-insets: 0 0 0 0, 0, 1, 2;
-}*/
 
 .text-field {
     -fx-padding: 5 22 5 22;
@@ -97,15 +86,6 @@
     -fx-text-fill: white;
 }
 
-
-
-
-.list-view {
-    -fx-padding: 3px;
-    -fx-background-color: #7dcdcd;
-    -fx-opacity: 0.8;
-
-}
 
 #finish-list {
     -fx-background-color: white;
@@ -129,7 +109,15 @@
     -fx-padding: 2px;
 }
 
-/*logo colours : 0014A8, 3FA9F5, 99EEED*/
+
+
+
+
+
+
+/*****************************************************/
+/*                   RACE VIEW                       */
+/*****************************************************/
 
 .combo-box {
     -fx-min-width: 128;
@@ -215,26 +203,5 @@
     -fx-font-family: 'merriweather';
 }
 
-.slider .track{
-    -fx-background-color: transparent;
-    -fx-border-color: white;
-    -fx-track-width: 15px;
-    -fx-opacity: .4;
-    -fx-border-width: 2px;
-    -fx-border-radius: 10px;
-
-}
 
 
-.slider .thumb{
-    -fx-color: white;
-    -fx-border-color: white;
-    -fx-border-width: 5px;
-    -fx-border-radius: 5px;
-
-    }
-
-
-.pane {
-    -fx-radius: 10px;
-}

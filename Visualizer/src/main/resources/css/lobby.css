@@ -1,0 +1,13 @@
+
+.list-view {
+    -fx-background-color: transparent;
+    -fx-border-width: 4px;
+    -fx-border-radius: 10px;
+    -fx-border-color: white;
+}
+
+.list-cell:filled {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-family: 'Quicksand', sans-serif, bold;
+}

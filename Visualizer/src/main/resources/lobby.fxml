@@ -6,8 +6,15 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" styleClass="background" stylesheets="@css/theme.css"
+
+
+<?import java.net.URL?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" styleClass="background"
             xmlns="http://javafx.com/javafx/8" fx:controller="controllers.LobbyController">
+    <stylesheets>
+        <URL value="@css/lobby.css"/>
+        <URL value="@css/theme.css"/>
+    </stylesheets>
     <children>
         <GridPane layoutY="-6.0" prefHeight="966.0" prefWidth="1460.0" AnchorPane.bottomAnchor="6.0"
                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-6.0">

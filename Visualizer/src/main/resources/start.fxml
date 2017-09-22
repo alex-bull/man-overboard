@@ -34,6 +34,11 @@
                 <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
+                <ImageView fitHeight="531.0" fitWidth="539.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <image>
+                        <Image url="@images/logoLight.png" />
+                    </image>
+                </ImageView>
                 <Button fx:id="joinButton" alignment="CENTER" mnemonicParsing="false" onAction="#joinGame" prefWidth="500.0" styleClass="menu-button" text="Join Game" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                     <opaqueInsets>
                         <Insets />
@@ -42,11 +47,6 @@
                 <Button alignment="CENTER" mnemonicParsing="false" onAction="#settings" prefWidth="500.0" styleClass="menu-button" text="Settings" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
                 <Button alignment="CENTER" mnemonicParsing="false" onAction="#controls" prefWidth="500.0" styleClass="menu-button" text="Controls" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
                 <Button alignment="CENTER" mnemonicParsing="false" onAction="#quit" prefWidth="500.0" styleClass="menu-button" text="Quit" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
-                <ImageView fitHeight="531.0" fitWidth="539.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                    <image>
-                        <Image url="@images/logoLight.png" />
-                    </image>
-                </ImageView>
             </children>
         </GridPane>
     </children>
