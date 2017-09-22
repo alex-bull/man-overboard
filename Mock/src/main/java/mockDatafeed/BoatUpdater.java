@@ -144,6 +144,7 @@ public class BoatUpdater {
 
         if (System.currentTimeMillis() - lastWhirlpoolTime > 20000 && !whirlpools.isEmpty()) {
             updateWhirlpool();
+            lastWhirlpoolTime=System.currentTimeMillis();
             handler.whirlpoolEvent(whirlpools);
         }
 
@@ -275,7 +276,7 @@ public class BoatUpdater {
      * Randomly generates whirlpool after players have passed the first mark
      */
     private void createWhirlpool() {
-        if ((whirlpools.size() < 2)) {
+        while (whirlpools.size() < 2) {
             MutablePoint centroid = utility.centroid(courseBoundary);
             double angle = Math.random() * 2 * Math.PI;
             double xOff = Math.cos(angle) * 0.001;
@@ -337,9 +338,9 @@ public class BoatUpdater {
         double angle;
 
         if (!crewMembers.isEmpty()) {
-            int randomCrew = random.nextInt(crewMembers.size());
-            double crew_x = crewMembers.get(randomCrew).getLatitude();
-            double crew_y = crewMembers.get(randomCrew).getLongitude();
+//            int randomCrew = random.nextInt(crewMembers.size());
+            double crew_x = crewMembers.get(0).getLatitude();
+            double crew_y = crewMembers.get(0).getLongitude();
             angle = atan2(crew_y - shark.getLongitude(), crew_x - shark.getLatitude()) * 180 / PI;
         } else {
             if (shark.getPosition().isWithin(sharkRoamPos, 0.0001)) {
