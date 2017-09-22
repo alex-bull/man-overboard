@@ -111,8 +111,7 @@ public class Boat implements Competitor {
     }
 
     public boolean boostActivated() {
-        boolean activated = activatedBoost;
-        return activated;
+        return activatedBoost;
     }
 
     public void enablePotion() {
@@ -148,8 +147,7 @@ public class Boat implements Competitor {
     }
 
     public boolean hasSpeedBoost() {
-        boolean speeding = hasSpeedBoost;
-        return speeding;
+        return hasSpeedBoost;
     }
 
     public void enableBoost() {

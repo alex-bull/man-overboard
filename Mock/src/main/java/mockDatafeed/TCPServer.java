@@ -5,7 +5,9 @@ import utility.QueueMessage;
 import utility.WorkQueue;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -28,6 +30,7 @@ public class TCPServer extends TimerTask {
     private WorkQueue sendQueue;
     private WorkQueue receiveQueue;
 
+
     /**
      * Intialize a server instance on the given port
      *
@@ -43,10 +46,10 @@ public class TCPServer extends TimerTask {
         this.connectionClient = connectionClient;
         selector = Selector.open();
         serverSocket = ServerSocketChannel.open();
-        serverSocket.bind(new InetSocketAddress("localhost", port));
+        serverSocket.bind(new InetSocketAddress("0.0.0.0", port));
         serverSocket.configureBlocking(false);
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-        System.out.println("TCPServer listening on localhost " + port);
+        System.out.println("TCPServer listening on " +serverSocket.getLocalAddress());
     }
 
 
@@ -58,7 +61,6 @@ public class TCPServer extends TimerTask {
      */
     private void broadcast(byte[] data) throws IOException {
         selector.select(1);
-
         for (SelectionKey key : new HashSet<>(selector.selectedKeys())) {
             //write to channel if writable
             if (key.isWritable()) {
@@ -175,7 +177,6 @@ public class TCPServer extends TimerTask {
 
     public void run() {
 
-
         //send all messages
         this.sendQueuedMessages();
 
@@ -203,9 +204,8 @@ public class TCPServer extends TimerTask {
 
                 //handle incoming messages
                 else if (key.isReadable()) {
-
                     SocketChannel client = (SocketChannel) key.channel();
-                    selector.selectedKeys().remove(key); //remove key so that it can be written to for a response
+//                    selector.selectedKeys().remove(key); //remove key so that it can be written to for a response
                     this.processClient(client, (Integer) key.attachment());
                 }
                 selector.selectedKeys().remove(key);

@@ -23,9 +23,9 @@ public class PowerUpModel extends ImageView {
      * @param receivedPowerUp PowerUp the power up
      */
     public PowerUpModel(PowerUp receivedPowerUp) {
-        if (receivedPowerUp.getType() == BOOST.getValue() || receivedPowerUp.getType() == POTION.getValue()) {
+        if (receivedPowerUp.getType() == BOOST || receivedPowerUp.getType() == POTION) {
             Image image;
-            if (receivedPowerUp.getType() == BOOST.getValue()) {
+            if (receivedPowerUp.getType() == BOOST) {
                 image = new Image("/images/speed3.png");
             } else {
                 image = new Image("/images/potion.png");

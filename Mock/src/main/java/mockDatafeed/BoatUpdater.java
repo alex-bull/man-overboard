@@ -14,8 +14,6 @@ import java.util.*;
 
 import static java.lang.Math.*;
 import static parsers.BoatStatusEnum.DSQ;
-import static parsers.powerUp.PowerUpType.BOOST;
-import static parsers.powerUp.PowerUpType.POTION;
 import static utilities.CollisionUtility.calculateFinalVelocity;
 import static utilities.CollisionUtility.isPointInPolygon;
 import static utility.Calculator.*;
@@ -45,11 +43,13 @@ public class BoatUpdater {
     private int whirlpoolSourceID = 0;
     private MutablePoint sharkRoamPos;
     private List<CrewLocation> crewMembers = new ArrayList<>();
-    private List<Shark> sharks = new ArrayList<>();
+    private Shark shark;
     private List<Blood> bloodList = new ArrayList<>();
     private List<Whirlpool> whirlpools = new ArrayList<>();
     private Map<Integer, PowerUp> powerUps = new HashMap<>();
     private Random random = new Random();
+    private long lastWhirlpoolTime;
+    private boolean passedFirstMark = false;
 
 
     /**
@@ -75,11 +75,16 @@ public class BoatUpdater {
         polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
         utility = new Utility();
         this.buildRoundingLines();
+
+
+        createShark();
+
     }
 
 
     /**
      * updates the position of all the boats given the boats speed and heading
+     * and other components on the course
      *
      * @throws IOException          IOException
      * @throws InterruptedException InterruptedException
@@ -88,48 +93,41 @@ public class BoatUpdater {
         boolean crewMemberUpdated = false;
         for (Integer sourceId : competitors.keySet()) {
             Competitor boat = competitors.get(sourceId);
+
+            //calculate speed of the boat
             short windDirection = windGenerator.getWindDirection();
             double twa = abs(shortToDegrees(windDirection) - boat.getCurrentHeading());
             if (twa > 180) {
                 twa = 180 - (twa - 180); // interpolator only goes up to 180
             }
             double speed = polarTable.getSpeed(twa);
-            if (boat.getStatus() != DSQ) {
+            if (boat.getStatus() == DSQ || boat.hasSailsOut()) {
+                boat.getBoatSpeed().reduce(0.98);
 
+            } else {
                 if (!boat.hasSailsOut()) {
                     if (boat.boostActivated()) {
-                        boat.getBoatSpeed().increase(0.01);
-                        boat.getBoatSpeed().setMagnitude(speed * 4);
-                        boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
-                    } else {
-                        boat.getBoatSpeed().increase(0.01);
-                        boat.getBoatSpeed().setMagnitude(speed * 1);
-                        boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
+                        speed *= 4;
                     }
-                } else {
-                    boat.getBoatSpeed().reduce(0.99);
+                    boat.getBoatSpeed().setMagnitude(speed * 1);
+                    boat.getBoatSpeed().setDirection(boat.getCurrentHeading());
+                    boat.getBoatSpeed().increase(0.02);
                 }
 
                 if (boat.getBoostTimeout() != 0 && System.currentTimeMillis() > boat.getBoostTimeout()) {
-                    boat.getBoatSpeed().reduce(0.99);
+                    boat.getBoatSpeed().reduce(0.98);
                     boat.resetBoostTimeout();
                     boat.deactivateBoost();
                     boat.disableBoost();
                 }
-            } else {
-                boat.getBoatSpeed().reduce(0.99);
             }
 
-            crewMemberUpdated = crewMemberUpdated || pickUpCrew(boat) || crewEaten();
-            boat.updatePosition(0.1);
+            //calculate crew members for each boat
+            crewMemberUpdated = crewMemberUpdated || pickUpCrew(boat);
+            boat.updatePosition(0.3);
 
 
-            boolean courseCollision = this.handleCourseCollisions(boat);
-            handleBoatCollisions(boat);
-            boolean boundaryCollision = this.handleBoundaryCollisions(boat);
-            boolean whirlPoolCollision = this.handleWhirlpoolCollisions(boat);
-
-            if (courseCollision || boundaryCollision || whirlPoolCollision) {
+            if (handleCourseCollisions(boat) || handleBoundaryCollisions(boat) || handleWhirlpoolCollisions(boat) || handleBoatCollisions(boat)) {
                 boat.updateHealth(-15);
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
             }
@@ -137,29 +135,30 @@ public class BoatUpdater {
 //            boat.blownByWind(twa);
             this.handleRounding(boat);
 
-            if (courseBoundary != null && sharks.isEmpty()) {
-                createShark();
-            }
-
-            if (passedFirstMark()) {
+            if (passedFirstMark(boat) && !passedFirstMark) {
+                lastWhirlpoolTime = System.currentTimeMillis();
                 createWhirlpool();
-            }
-
-            if (!whirlpools.isEmpty()) {
-                if (updateLeadLeg()) {
-                    updateWhirlpool();
-                }
-                handler.whirlpoolEvent(whirlpools);
-            }
-
-            if (!sharks.isEmpty()) {
-                updateShark();
-                handler.sharkEvent(sharks);
+                passedFirstMark = true;
             }
         }
+
+        if (System.currentTimeMillis() - lastWhirlpoolTime > 20000 && !whirlpools.isEmpty()) {
+            updateWhirlpool();
+            handler.whirlpoolEvent(whirlpools);
+        }
+
+
+        if (shark != null) {
+            updateShark();
+            handler.sharkEvent(shark);
+        }
+
+        if(crewEaten()){
+            handler.bloodEvent(bloodList);
+        }
+
         if (crewMemberUpdated) {
             handler.fallenCrewEvent(crewMembers);
-            handler.bloodEvent(bloodList);
         }
 
     }
@@ -213,10 +212,17 @@ public class BoatUpdater {
             PowerUp powerUp = powerUps.get(id);
             if (boat.getPosition().isWithin(powerUp.getLocation(), 0.0005)) {
                 powerUps.remove(id);
-                if (powerUp.getType() == BOOST.getValue()) {
-                    boat.enableBoost();
-                } else if (powerUp.getType() == POTION.getValue()) {
-                    boat.enablePotion();
+
+                switch (powerUp.getType()) {
+                    case BOOST:
+                        boat.enableBoost();
+                        break;
+                    case POTION:
+                        boat.enablePotion();
+                        break;
+                    default:
+                        break;
+
                 }
                 handler.powerUpTakenEvent(boat.getSourceID(), id, powerUp.getDuration());
                 return;
@@ -233,14 +239,14 @@ public class BoatUpdater {
     private boolean crewEaten() throws IOException {
         boolean updated = false;
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
-            for (Shark shark : new ArrayList<>(sharks)) {
-                if (shark.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
-                    Blood blood = new Blood(bloodlocationSourceID++, crewLocation.getPosition());
-                    bloodList.add(blood);
-                    crewMembers.remove(crewLocation);
-                    updated = true;
 
-                }
+            if (shark.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
+                Blood blood = new Blood(bloodlocationSourceID++, crewLocation.getPosition());
+                bloodList.add(blood);
+                crewMembers.remove(crewLocation);
+                updated = true;
+
+
             }
         }
 
@@ -254,33 +260,16 @@ public class BoatUpdater {
      *
      * @return boolean if a player has passed the first mark
      */
-    private boolean passedFirstMark() {
-        boolean passed = false;
-        for (Integer sourceId : competitors.keySet()) {
-            Competitor boat = competitors.get(sourceId);
-            if (boat.getCurrentLegIndex() > 0) {
-                passed = true;
-            }
+    private boolean passedFirstMark(Competitor boat) {
+
+
+        if (boat.getCurrentLegIndex() > 0) {
+            return true;
         }
-        return passed;
+
+        return false;
     }
 
-    /**
-     * checks whether the leader has advanced to the next mark
-     *
-     * @return boolean if the leader has advanced to the next mark
-     */
-    private boolean updateLeadLeg() {
-        boolean updated = false;
-        for (Integer sourceId : competitors.keySet()) {
-            Competitor boat = competitors.get(sourceId);
-            if (leadLeg < boat.getCurrentLegIndex()) {
-                leadLeg = boat.getCurrentLegIndex();
-                updated = true;
-            }
-        }
-        return updated;
-    }
 
     /**
      * Randomly generates whirlpool after players have passed the first mark
@@ -322,57 +311,46 @@ public class BoatUpdater {
      * creates Shark at the start
      */
     private void createShark() {
-        if (sharks.size() < 2) {
-            int velocity = 50;
-            double sharkPosX = courseBoundary.get(0).getXValue() + 0.005;
-            double sharkPosY = courseBoundary.get(0).getYValue() - 0.02;
-            MutablePoint sharkPosition = new MutablePoint(sharkPosX, sharkPosY);
-            Shark shark = new Shark(sharkSourceID++, 1, sharkPosition, velocity, 0);
-            sharks.add(shark);
-        }
-        updateSharkRoam();
+
+        int velocity = 50;
+        double sharkPosX = courseBoundary.get(0).getXValue() + 0.005;
+        double sharkPosY = courseBoundary.get(0).getYValue() - 0.02;
+        MutablePoint sharkPosition = new MutablePoint(sharkPosX, sharkPosY);
+        shark = new Shark(sharkSourceID++, 1, sharkPosition, velocity, 0);
+
+        nextRoamPos();
+
     }
 
-    /**
-     * updates shark's next target for roaming
-     */
-    private void updateSharkRoam() {
-        Random random = new Random();
+    private void nextRoamPos(){
+        sharkRoamIndex = random.nextInt(courseBoundary.size());
         double PosX = courseBoundary.get(sharkRoamIndex).getXValue();
         double PosY = courseBoundary.get(sharkRoamIndex).getYValue() - 0.02;
         sharkRoamPos = new MutablePoint(PosX, PosY);
-
-        for (Shark shark : new ArrayList<>(sharks)) {
-            if (shark.getPosition().isWithin(sharkRoamPos, 0.0001)) {
-                sharkRoamIndex = random.nextInt(courseBoundary.size());
-            }
-        }
     }
 
     /**
      * update the position and heading of the Obstacles
      */
     private void updateShark() {
+
+        double angle;
+
         if (!crewMembers.isEmpty()) {
-            for (Shark shark : sharks) {
-                double crew_x = crewMembers.get(0).getLatitude();
-                double crew_y = crewMembers.get(0).getLongitude();
-                double angle = atan2(crew_y - shark.getLongitude(), crew_x - shark.getLatitude()) * 180 / PI;
-                angle = (angle % 360 + 360) % 360;
-                shark.setHeading(angle);
-                shark.getSharkSpeed().setDirection(shark.getHeading());
-                shark.updatePosition(0.1);
-            }
+            int randomCrew = random.nextInt(crewMembers.size());
+            double crew_x = crewMembers.get(randomCrew).getLatitude();
+            double crew_y = crewMembers.get(randomCrew).getLongitude();
+            angle = atan2(crew_y - shark.getLongitude(), crew_x - shark.getLatitude()) * 180 / PI;
         } else {
-            updateSharkRoam();
-            for (Shark shark : sharks) {
-                double angle = atan2(sharkRoamPos.getYValue() - shark.getLongitude(), sharkRoamPos.getXValue() - shark.getLatitude()) * 180 / PI;
-                angle = (angle % 360 + 360) % 360;
-                shark.setHeading(angle);
-                shark.getSharkSpeed().setDirection(shark.getHeading());
-                shark.updatePosition(0.1);
+            if (shark.getPosition().isWithin(sharkRoamPos, 0.0001)) {
+                nextRoamPos();
             }
+            angle = atan2(sharkRoamPos.getYValue() - shark.getLongitude(), sharkRoamPos.getXValue() - shark.getLatitude()) * 180 / PI;
         }
+        angle = (angle % 360 + 360) % 360;
+        shark.setHeading(angle);
+        shark.getSharkSpeed().setDirection(angle);
+        shark.updatePosition(0.1);
     }
 
 
