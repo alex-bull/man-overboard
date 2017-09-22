@@ -1,6 +1,5 @@
 package controllers;
 
-import javafx.geometry.Point3D;
 import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -35,11 +34,12 @@ import utility.BinaryPackager;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
+import static parsers.xml.race.ThemeEnum.ANTARCTICA;
+import static parsers.xml.race.ThemeEnum.BERMUDA;
 
 
 /**
@@ -85,7 +85,8 @@ public class LobbyController implements Initializable {
     private Rectangle2D primaryScreenBounds;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private AnimationTimer timer;
-    BinaryPackager binaryPackager = new BinaryPackager();
+    private BinaryPackager binaryPackager = new BinaryPackager();
+    private Image courseThemeImage;
 
 
     void setDataSource(DataSource dataSource) {
@@ -98,14 +99,7 @@ public class LobbyController implements Initializable {
      * Continuously tries to connect on background thread
      */
     void begin() {
-
-
-//        for (int i = 0; i<8; i++) {
-//            competitorList.add("Boaty 10" +i);
-//        }
-
         Scene scene = App.getScene();
-
 
         //start sound loop
         Sounds.player.loopMP3WithFadeIn("sounds/bensound-instinct.mp3", 4);
@@ -121,6 +115,7 @@ public class LobbyController implements Initializable {
                     } catch (Exception e) {}
                     connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
                 }
+
                 return true;
             }
         };
@@ -143,6 +138,7 @@ public class LobbyController implements Initializable {
                 dataSource.update();
                 updateList();
                 checkStatus();
+                updateCourseImage();
             }
         };
         timer.start();
@@ -182,9 +178,10 @@ public class LobbyController implements Initializable {
         boatImages.add(pirate);
         boatImageView.setImage(yacht);
         //image resizing cant be done in fxml >(
-        courseImageView.setPreserveRatio(false);
+        courseImageView.setPreserveRatio(true);
         courseImageView.fitWidthProperty().bind(gameGridPane.widthProperty());
         courseImageView.fitHeightProperty().bind(gameGridPane.heightProperty());
+
 
         boatImageView.setPreserveRatio(false);
         boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
@@ -309,6 +306,24 @@ public class LobbyController implements Initializable {
             this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
         }
         //if (dataSource.getCompetitor() != null) this.nameText.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
+    }
+
+    /**
+     * Updates the course theme image
+     */
+    private void updateCourseImage() {
+
+        if(courseThemeImage == null) {
+            if(dataSource.getThemeId() == ANTARCTICA) {
+                this.courseThemeImage = new Image("/images/antarctica/antarc_course.png");
+                courseImageView.setImage(this.courseThemeImage);
+            }
+            else if(dataSource.getThemeId() == BERMUDA) {
+                this.courseThemeImage = new Image("/images/bermuda/bermuda_course.png");
+                courseImageView.setImage(this.courseThemeImage);
+            }
+        }
+
     }
 
 
