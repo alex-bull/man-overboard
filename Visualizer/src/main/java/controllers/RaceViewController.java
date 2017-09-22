@@ -15,6 +15,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.AnchorPane;
@@ -69,9 +70,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML
     private Pane raceParentPane;
     @FXML
-    private ImageView controlsView;
-    @FXML
     private HBox controlsBox;
+    @FXML private HBox quitBox;
     @FXML
     private GridPane finisherListPane;
     @FXML
@@ -142,8 +142,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
         this.guideArrow = new GuideArrow(backgroundColor.brighter(), 90.0);
         raceViewPane.getChildren().add(guideArrow);
-        controlsView = new ImageView(new Image("images/controls.png"));
-
         gc = raceViewCanvas.getGraphicsContext2D();
 
         mapEngine = mapView.getEngine();
@@ -179,8 +177,8 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
         raceViewPane.setPrefWidth(width);
-        controlsBox.setPrefHeight(height);
-        controlsBox.setPrefWidth(width);
+        controlsBox.toBack();
+        quitBox.toBack();
         raceViewPane.getChildren().add(track);
         this.dataSource = dataSource;
 
@@ -319,14 +317,23 @@ public class RaceViewController implements Initializable, TableObserver {
      *
      */
     public void toggleControls() {
-        if (!raceViewPane.getChildren().contains(controlsBox)) {
-            controlsBox.getChildren().add(controlsView);
-            raceViewPane.getChildren().add(controlsBox);
-        } else {
-            controlsBox.getChildren().remove(controlsView);
-            raceViewPane.getChildren().remove(controlsBox);
-        }
+
+        controlsBox.toFront();
     }
+
+
+    public void closeControls(MouseEvent mouseEvent) {
+        controlsBox.toBack();
+    }
+
+    /**
+     * Brings the quit box to front
+     * @param actionEvent
+     */
+    public void quitGame(ActionEvent actionEvent) {
+        quitBox.toFront();
+    }
+
 
     /**
      * toggles the state of the zoom
@@ -340,6 +347,22 @@ public class RaceViewController implements Initializable, TableObserver {
         } else {
             zoomIn();
         }
+    }
+
+    /**
+     * hides the quit box
+     * @param actionEvent
+     */
+    public void hideQuitBox(ActionEvent actionEvent) {
+        quitBox.toBack();
+    }
+
+    /**
+     *
+     * @param actionEvent
+     */
+    public void leaveGame(ActionEvent actionEvent) {
+
     }
 
 
@@ -845,6 +868,26 @@ public class RaceViewController implements Initializable, TableObserver {
         return new MutablePoint(pointX, pointY);
     }
 
+    /**
+     * Zoom the screen in and out upon touch zoom event
+     *
+     * @param zoomEvent zoom event
+     */
+    public void zoom(ZoomEvent zoomEvent) {
+        if (zoom) {
+            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
+                dataSource.changeScaling(1);
+                zoomIn();
+            }
+            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
+                dataSource.changeScaling(-1);
+                zoomIn();
+            }
+            touchZoomLevel = zoomEvent.getTotalZoomFactor();
+
+        }
+    }
+
 
     //================================================================================================================
     // MAIN
@@ -946,31 +989,5 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-    /**
-     * Zoom the screen in and out upon touch zoom event
-     *
-     * @param zoomEvent zoom event
-     */
-    public void zoom(ZoomEvent zoomEvent) {
-        if (zoom) {
-            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
-                dataSource.changeScaling(1);
-                zoomIn();
-            }
-            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
-                dataSource.changeScaling(-1);
-                zoomIn();
-            }
-            touchZoomLevel = zoomEvent.getTotalZoomFactor();
 
-        }
-    }
-
-    /**
-     * Lets user quit out of the game and sends the packet to the server
-     * @param actionEvent
-     */
-    public void quitGame(ActionEvent actionEvent) {
-
-    }
 }
