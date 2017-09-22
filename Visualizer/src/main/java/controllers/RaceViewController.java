@@ -6,6 +6,7 @@ import Animations.RandomShake;
 import Elements.*;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
@@ -259,7 +260,6 @@ public class RaceViewController implements Initializable, TableObserver {
         mapEngine.executeScript(String.format("setZoom(%d);", dataSource.getZoomLevel()));
         updateRace();
         setScale(nodeSizeFunc(dataSource.getZoomLevel()));
-        System.out.println(nodeSizeFunc(dataSource.getZoomLevel()));
 //        dataSource.changeScaling(0);
         track.setVisible(!isZoom());
     }
@@ -966,5 +966,11 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+    /**
+     * Lets user quit out of the game and sends the packet to the server
+     * @param actionEvent
+     */
+    public void quitGame(ActionEvent actionEvent) {
 
+    }
 }
