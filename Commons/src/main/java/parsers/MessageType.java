@@ -5,6 +5,7 @@ package parsers;
  * Enum for message types
  */
 public enum MessageType {
+    // TODO put these in order
     UNKNOWN(-1),
     RACE_STATUS(12),
     XML(26),
@@ -14,6 +15,7 @@ public enum MessageType {
     COURSE_WIND(44),
     SOURCE_ID(56),
     YACHT_ACTION(29),
+    RESTART_RACE(78),
     BOAT_HEALTH(97),
     BOAT_STATE(103),
     CONNECTION_REQ(101),

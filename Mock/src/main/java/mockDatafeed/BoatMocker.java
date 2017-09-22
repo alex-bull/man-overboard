@@ -35,6 +35,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static mockDatafeed.Keys.RIP;
 import static parsers.BoatStatusEnum.*;
+import static parsers.Converter.hexByteArrayToInt;
+import static parsers.MessageType.RESTART_RACE;
 import static parsers.MessageType.UNKNOWN;
 import static utilities.CollisionUtility.isPointInPolygon;
 import static utilities.Utility.fileToString;
@@ -59,6 +61,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private Random random = new Random();
 
     private boolean flag = true;
+    private boolean hasCleared = false;
     private BoatUpdater boatUpdater;
     private long startTime = System.currentTimeMillis() / 1000;//time in seconds
 
@@ -128,12 +131,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 messageType = messageEnum;
             }
         }
+        HeaderParser headerParser = new HeaderParser();
+        HeaderData headerData = headerParser.processMessage(header);
+
+        System.out.println("interpret..." + messageType.getValue());
 
         switch (messageType) {
             case BOAT_ACTION:
-
-                HeaderParser headerParser = new HeaderParser();
-                HeaderData headerData = headerParser.processMessage(header);
                 int sourceID = headerData.getSourceID();
                 Competitor boat = competitors.get(sourceID);
                 BoatAction action = BoatAction.getBoatAction(packet[0]);
@@ -179,9 +183,20 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                         boatStateEvent(sourceID, boat.getHealthLevel());
                         break;
                 }
+
+                if (hasCleared) {
+                    hasCleared = false;
+                }
+
                 break;
             case CONNECTION_REQ:
                 this.addCompetitor(clientId);
+                break;
+            case RESTART_RACE:
+                System.out.println("clearing old info");
+
+                clearOldRace(hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 4)));
+
                 break;
             case PLAYER_READY:
                 this.updateReady(clientId);
@@ -205,6 +220,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 competitors.get(modelParser.getSourceId()).setBoatType(modelParser.getModel());
                 this.sendAllXML();
                 break;
+            default:
+                System.out.println("default");
+                System.out.println(messageType);
         }
     }
 
@@ -239,6 +257,32 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         sendQueue.put(clientId, res);
         this.clientStates.put(clientId, false);
         this.sendAllXML();
+    }
+
+    private void clearOldRace(int sourceID) {
+        Competitor boat = competitors.get(sourceID);
+        System.out.println(sourceID);
+        for (Competitor c : competitors.values()) {
+            System.out.println("Source id " + c.getSourceID());
+        }
+        System.out.println(boat);
+        System.out.println(prestart);
+        Competitor cleanBoat = new Boat(boat.getTeamName(), 0, prestart, boat.getAbbreName(), sourceID, PRESTART);
+
+        if (!hasCleared) {
+            try {
+                // clear race info
+                competitors.clear();
+                creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+                expectedStartTime = creationTime.plusMinutes(1);
+
+                hasCleared = true;
+
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+        competitors.put(sourceID, cleanBoat);
     }
 
     /**
@@ -742,7 +786,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     @Override
     public void run() {
-
         this.readAllMessages();
 
         if (shouldStartGame()) raceInProgress = true;

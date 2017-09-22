@@ -990,6 +990,9 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     @FXML
     public void goToLobbyScreen() {
+        System.out.println("sending source id " + dataSource.getCompetitor().getSourceID());
+        System.out.println(dataSource.getSourceID());
+        this.dataSource.send(new BinaryPackager().packageRestartRace(this.dataSource.getCompetitor().getSourceID()));
 
         Sounds.player.fadeOut("sounds/bensound-theduel.mp3", 3);
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
