@@ -19,15 +19,15 @@ public class PowerUpModel extends ImageView {
 
     /**
      * Create a powerup model
+     *
      * @param receivedPowerUp PowerUp the power up
      */
     public PowerUpModel(PowerUp receivedPowerUp) {
-        if (receivedPowerUp.getType() == BOOST.getValue() || receivedPowerUp.getType() == POTION.getValue()) {
+        if (receivedPowerUp.getType() == BOOST || receivedPowerUp.getType() == POTION) {
             Image image;
-            if(receivedPowerUp.getType() == BOOST.getValue()) {
+            if (receivedPowerUp.getType() == BOOST) {
                 image = new Image("/images/speed3.png");
-            }
-            else {
+            } else {
                 image = new Image("/images/potion.png");
             }
             this.setImage(image);
@@ -42,19 +42,20 @@ public class PowerUpModel extends ImageView {
 
     /**
      * Update the position of the powerup model
-     * @param isZoom boolean true if zoomed in
-     * @param powerUp PowerUp, the powerUp
+     *
+     * @param isZoom            boolean true if zoomed in
+     * @param powerUp           PowerUp, the powerUp
      * @param currentPosition17 MutablePoint, zoomed position
-     * @param width double, the screen width
-     * @param height double, the screen height
+     * @param width             double, the screen width
+     * @param height            double, the screen height
      */
     public void update(boolean isZoom, PowerUp powerUp, MutablePoint currentPosition17, double width, double height) {
         if (isZoom) {
             MutablePoint p = powerUp.getPosition17().shift(-currentPosition17.getXValue() + width / 2, -currentPosition17.getYValue() + height / 2);
-            this.relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
+            this.relocate(p.getXValue() - imageWidth / 2, p.getYValue() - imageHeight / 2);
         } else {
-            MutablePoint p=powerUp.getPosition();
-            this.relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
+            MutablePoint p = powerUp.getPosition();
+            this.relocate(p.getXValue() - imageWidth / 2, p.getYValue() - imageHeight / 2);
         }
     }
 }

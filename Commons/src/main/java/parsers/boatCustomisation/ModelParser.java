@@ -15,9 +15,10 @@ public class ModelParser {
 
     /**
      * Process the given connection response data
+     *
      * @param body the data received
      */
-    public ModelParser(byte[] body){
+    public ModelParser(byte[] body) {
         sourceId = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 4));
         model = hexByteArrayToInt(Arrays.copyOfRange(body, 6, 7));
     }

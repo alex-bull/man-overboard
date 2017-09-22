@@ -14,6 +14,7 @@ import models.MutablePoint;
 public class WhirlpoolModel extends ImageView {
 
     Timeline animation;
+
     public WhirlpoolModel(Image image) {
         this.setImage(image);
     }
@@ -29,7 +30,7 @@ public class WhirlpoolModel extends ImageView {
     }
 
     public Timeline animateSpawn() {
-        animation=new Timeline(
+        animation = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(fitHeightProperty(), 10)),
                 new KeyFrame(Duration.ZERO, new KeyValue(fitWidthProperty(), 10)),
 

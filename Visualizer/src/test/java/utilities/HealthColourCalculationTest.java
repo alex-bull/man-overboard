@@ -72,7 +72,6 @@ public class HealthColourCalculationTest {
     }
 
 
-
     @Test
     public void calculateHealthColourOrangeTest() {
         boat.updateHealth(-50);
@@ -86,7 +85,6 @@ public class HealthColourCalculationTest {
         Color resultColour = healthBar.calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
         assertEquals(Color.ORANGE, resultColour);
     }
-
 
 
     @Test

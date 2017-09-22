@@ -1,20 +1,12 @@
 package Elements;
 
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
 import models.Competitor;
-import models.CourseFeature;
 import models.MutablePoint;
-import utilities.DataSource;
 
-import java.util.List;
-import java.util.Map;
-
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.toRadians;
+import static java.lang.Math.*;
 import static utilities.RaceCalculator.calculateAngleBetweenMarks;
 
 
@@ -27,7 +19,8 @@ public class GuideArrow extends Polygon {
 
     /**
      * Initialize a guide arrow
-     * @param color Color, the color of the arrow
+     *
+     * @param color      Color, the color of the arrow
      * @param startAngle double, the angle which the arrow points initially
      */
     public GuideArrow(Color color, Double startAngle) {
@@ -43,19 +36,18 @@ public class GuideArrow extends Polygon {
                 15., arrowLength + offsetFromOrigin,
                 0., arrowLength + arrowHeadLength + offsetFromOrigin, // tip
                 -15., arrowLength + offsetFromOrigin,
-                -5.,arrowLength + offsetFromOrigin);
+                -5., arrowLength + offsetFromOrigin);
         this.setFill(color);
         this.getTransforms().add(new Rotate(startAngle, 0, 0));
     }
 
 
-
-
     /**
      * Update the arrow position when zoomed in
-     * @param boat Competitor, the boat to position the arrow for
-     * @param boatX double, the x coord of the boat in screen coords
-     * @param boatY double, the y coord of the boat in screen coords
+     *
+     * @param boat             Competitor, the boat to position the arrow for
+     * @param boatX            double, the x coord of the boat in screen coords
+     * @param boatY            double, the y coord of the boat in screen coords
      * @param nextMarkLocation MutablePoint, the location of the next mark
      */
     public void updateArrowZoomed(Competitor boat, Double boatX, Double boatY, MutablePoint nextMarkLocation) {
@@ -77,6 +69,7 @@ public class GuideArrow extends Polygon {
 
     /**
      * Update the arrow position when not zoomed in
+     *
      * @param prevMarkLocation MutablePoint, the location of the last mark passed
      * @param nextMarkLocation MutablePoint, the location of the next mark
      */
@@ -100,13 +93,12 @@ public class GuideArrow extends Polygon {
     }
 
 
-
     /**
      * Apply translation and rotation transforms to the guiding arrow
      *
      * @param angle double the angle by which to rotate the arrow, from north
-     * @param x double the x coordinate for the arrow's origin
-     * @param y double the y coordinate for the arrow's origin
+     * @param x     double the x coordinate for the arrow's origin
+     * @param y     double the y coordinate for the arrow's origin
      */
     private void applyTransformsToArrow(double angle, double x, double y) {
         this.getTransforms().clear();

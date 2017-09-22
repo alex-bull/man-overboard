@@ -11,7 +11,7 @@ public class RaceCalculatorTest {
     private RaceCalculator raceCalculator = new RaceCalculator();
 
     @Test
-    public void testCalculateStartSymbol(){
+    public void testCalculateStartSymbol() {
         String testNegative = raceCalculator.calculateStartSymbol(200, 250, 10.0, 30);
         Assert.assertEquals("-", testNegative);
         String testPositive = raceCalculator.calculateStartSymbol(200, 250, 10.0, 5);

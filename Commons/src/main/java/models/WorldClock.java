@@ -16,7 +16,8 @@ public class WorldClock extends AnimationTimer implements Clock {
 
     /**
      * Constructs a World Clock
-     * @param handler ClockHandler handler for the clock
+     *
+     * @param handler   ClockHandler handler for the clock
      * @param offsetUTC String offset UTC
      */
     public WorldClock(ClockHandler handler, String offsetUTC) {
@@ -26,6 +27,7 @@ public class WorldClock extends AnimationTimer implements Clock {
 
     /**
      * Starts the clock at the given time
+     *
      * @param startTime long the start time
      */
     public void start(long startTime) {
@@ -41,6 +43,7 @@ public class WorldClock extends AnimationTimer implements Clock {
 
     /**
      * Sets the clock to the world time
+     *
      * @param now long the current time
      */
     @Override
@@ -51,6 +54,7 @@ public class WorldClock extends AnimationTimer implements Clock {
 
     /**
      * Formats calendar time to hours
+     *
      * @param calendar Calendar
      * @return String the formatted hour
      */
@@ -64,6 +68,7 @@ public class WorldClock extends AnimationTimer implements Clock {
 
     /**
      * Formats calendar time to minutes
+     *
      * @param calendar Calendar
      * @return String the formatted minutes
      */
@@ -77,6 +82,7 @@ public class WorldClock extends AnimationTimer implements Clock {
 
     /**
      * Formats calendar time to seconds
+     *
      * @param calendar Calendar
      * @return String the formatted seconds
      */
@@ -90,6 +96,7 @@ public class WorldClock extends AnimationTimer implements Clock {
 
     /**
      * Formats calendar time to AM or PM
+     *
      * @param calendar Calendar
      * @return String AM or PM
      */
@@ -103,12 +110,13 @@ public class WorldClock extends AnimationTimer implements Clock {
 
     /**
      * Calculates the world time
+     *
      * @return String the world time
      */
     private String calculateWorldTime() {
         if (offsetUTC != null) {
 
-            String signUTC = offsetUTC.substring(0,1);
+            String signUTC = offsetUTC.substring(0, 1);
             String absUTC = offsetUTC.substring(1);
             int minUTC = 0;
             int maxUTC = 14;
@@ -133,6 +141,7 @@ public class WorldClock extends AnimationTimer implements Clock {
 
     /**
      * Formats the world time
+     *
      * @return String the formatted world time
      */
     private String formatWorldTime() {

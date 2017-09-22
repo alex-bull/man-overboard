@@ -12,11 +12,12 @@ class WindGenerator {
     private short windDirectionOriginal;
     private short windSpeed;
     private short windDirection;
-    private long lastUpdateTime=0;
+    private long lastUpdateTime = 0;
 
     /**
      * Constructs a wind generator
-     * @param windSpeed int wind speed initial value
+     *
+     * @param windSpeed     int wind speed initial value
      * @param windDirection int wind direction initial direction
      */
     WindGenerator(int windSpeed, int windDirection) {
@@ -25,8 +26,8 @@ class WindGenerator {
     }
 
     short getWindSpeed() {
-        if(System.currentTimeMillis()-lastUpdateTime>5000){
-            lastUpdateTime=System.currentTimeMillis();
+        if (System.currentTimeMillis() - lastUpdateTime > 5000) {
+            lastUpdateTime = System.currentTimeMillis();
             getRandomWindSpeed();
             getRandomWindDirection();
         }
@@ -34,8 +35,8 @@ class WindGenerator {
     }
 
     short getWindDirection() {
-        if(System.currentTimeMillis()-lastUpdateTime>5000){
-            lastUpdateTime=System.currentTimeMillis();
+        if (System.currentTimeMillis() - lastUpdateTime > 5000) {
+            lastUpdateTime = System.currentTimeMillis();
             getRandomWindDirection();
             getRandomWindSpeed();
         }
@@ -43,10 +44,8 @@ class WindGenerator {
     }
 
 
-
     /**
      * Generates a random value for wind speed.
-
      */
     private void getRandomWindSpeed() {
 //        if(windSpeed < 3000) {
@@ -59,7 +58,7 @@ class WindGenerator {
 //            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-2, 2+1) + windSpeed);
 //        }
         int speedVariance = 100;
-        windSpeed= (short) (windSpeedOriginal+ThreadLocalRandom.current().nextGaussian()* speedVariance);
+        windSpeed = (short) (windSpeedOriginal + ThreadLocalRandom.current().nextGaussian() * speedVariance);
 
     }
 
@@ -69,6 +68,6 @@ class WindGenerator {
     private void getRandomWindDirection() {
 
         int directionVariance = 300;
-        windDirection= (short) (windDirectionOriginal+ThreadLocalRandom.current().nextGaussian()* directionVariance);
+        windDirection = (short) (windDirectionOriginal + ThreadLocalRandom.current().nextGaussian() * directionVariance);
     }
 }

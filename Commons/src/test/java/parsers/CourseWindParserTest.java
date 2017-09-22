@@ -14,6 +14,7 @@ import static org.junit.Assert.assertNull;
 public class CourseWindParserTest {
 
     private CourseWindParser courseWindParser = new CourseWindParser();
+
     @Test
     public void ignoresEmptyWindPacket() {
         byte[] packet = {};

@@ -66,7 +66,6 @@ public class Gate implements CourseFeature {
     }
 
 
-
     /**
      * Gets a list of scaled pixel points representing the screen location of the gate
      *
@@ -92,6 +91,7 @@ public class Gate implements CourseFeature {
 
     /**
      * Get the centre point in the view frame
+     *
      * @return MutablePoint
      */
     public MutablePoint getPixelCentre() {
@@ -121,6 +121,7 @@ public class Gate implements CourseFeature {
 
     /**
      * Compares gate objects's name, isFinish and loation to see if they are equal.
+     *
      * @param o Object
      * @return boolean true if the objects are equal
      */
@@ -138,6 +139,7 @@ public class Gate implements CourseFeature {
 
     /**
      * Generates a hashcode with a built in algorithm from Intellij
+     *
      * @return int a hashcode
      */
     @Override
@@ -184,6 +186,6 @@ public class Gate implements CourseFeature {
 
     @Override
     public CourseFeature shift(double x, double y) {
-        return new Gate(name,GPSPoint1,pixelPoint1.shift(x,y),pixelPoint2.shift(x,y),isFinish,isLine,index);
+        return new Gate(name, GPSPoint1, pixelPoint1.shift(x, y), pixelPoint2.shift(x, y), isFinish, isLine, index);
     }
 }

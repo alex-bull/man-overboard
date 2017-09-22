@@ -3,6 +3,7 @@ package utility;
 
 import models.*;
 import parsers.BoatStatusEnum;
+import parsers.powerUp.PowerUpType;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -21,7 +22,8 @@ public class BinaryPackager {
 
     /**
      * Encapsulate a boat control action in a binary packet
-     * @param action Integer the code for the boat action
+     *
+     * @param action   Integer the code for the boat action
      * @param sourceId Integer the sourceId of the boat
      * @return byte[] the packet
      */
@@ -44,18 +46,18 @@ public class BinaryPackager {
 
     }
 
-    private int latLngToInt(double value){
-       return (int)(value* 2147483648.0 / 180.0); //latitude
+    private int latLngToInt(double value) {
+        return (int) (value * 2147483648.0 / 180.0); //latitude
     }
 
     /**
      * Takes boat position data and encapsulates it in a binary packet
      *
-     * @param sourceId  Double, the id of the boat
-     * @param latitude  Double, the current latitude of the boat
-     * @param longitude Double, the current longitude of the boat
-     * @param heading   Double, the current heading of the boat
-     * @param boatSpeed Double, the current speed of the boat
+     * @param sourceId   Double, the id of the boat
+     * @param latitude   Double, the current latitude of the boat
+     * @param longitude  Double, the current longitude of the boat
+     * @param heading    Double, the current heading of the boat
+     * @param boatSpeed  Double, the current speed of the boat
      * @param deviceType integer, indicate whether its a boat or mark
      * @return byte[], the binary packet
      */
@@ -80,7 +82,7 @@ public class BinaryPackager {
         packetBuffer.putInt(sequenceNumber); //sequence number
         packetBuffer.put((byte) deviceType); //device type:
 
-         //latitude
+        //latitude
         packetBuffer.putInt(latLngToInt(latitude));
 
         //longitude
@@ -163,6 +165,7 @@ public class BinaryPackager {
 
     /**
      * Writes a CRC to the end of a buffer - 4 bytes
+     *
      * @param buffer ByteBuffer, the buffer to write to
      */
     private void writeCRC(ByteBuffer buffer) {
@@ -178,10 +181,11 @@ public class BinaryPackager {
     /**
      * writes the header to a given buffer in AC35 streaming format
      * Header is 15 bytes
+     *
      * @param buffer        The buffer to write to
      * @param messageType   byte, the type of message
      * @param messageLength short, the length of the message body
-     * @param sourceId int, the sourceid of a competitor
+     * @param sourceId      int, the sourceid of a competitor
      */
     private void writeHeader(ByteBuffer buffer, int messageType, int messageLength, int sourceId) {
 
@@ -201,6 +205,7 @@ public class BinaryPackager {
     /**
      * writes the header to a given buffer in AC35 streaming format
      * Header is 15 bytes
+     *
      * @param buffer        The buffer to write to
      * @param messageType   byte, the type of message
      * @param messageLength short, the length of the message body
@@ -282,9 +287,9 @@ public class BinaryPackager {
      *                          9 – Race start time not set
      *                          10 – Prestart (more than 3:00 until start)
      * @param expectedStartTime the expected start time
-     * @param windDirection the wind direction
-     * @param windSpeed the wind speed
-     * @param numBoats the number of boats in the race
+     * @param windDirection     the wind direction
+     * @param windSpeed         the wind speed
+     * @param numBoats          the number of boats in the race
      * @return byte[], the race status message
      */
     public byte[] raceStatusHeader(int raceStatus, ZonedDateTime expectedStartTime, short windDirection, short windSpeed, int numBoats) {
@@ -357,16 +362,17 @@ public class BinaryPackager {
 
     /**
      * package a source id
+     *
      * @param sourceID sourceId
      * @return byte[] a byte array
      */
-    public byte[] packageSourceID(int sourceID){
-        byte[] packet=new byte[23];
+    public byte[] packageSourceID(int sourceID) {
+        byte[] packet = new byte[23];
 
-        ByteBuffer packetBuffer=ByteBuffer.wrap(packet);
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        writeHeader(packetBuffer,56,(short)4);
+        writeHeader(packetBuffer, 56, (short) 4);
         packetBuffer.putInt(sourceID);
 
         //CRC
@@ -377,13 +383,14 @@ public class BinaryPackager {
 
     /**
      * package yacht event
+     *
      * @param sourceID the sourceID of the Boat in the event
-     * @param eventID the event happened
-     *                1-boat collision
+     * @param eventID  the event happened
+     *                 1-boat collision
      * @return the packet generated
      */
-    public byte[] packageYachtEvent(int sourceID, int eventID){
-        byte[] packet=new byte[41];
+    public byte[] packageYachtEvent(int sourceID, int eventID) {
+        byte[] packet = new byte[41];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -392,11 +399,11 @@ public class BinaryPackager {
         this.writeHeader(packetBuffer, type, bodyLength);
 
         //MessageVersionNumber
-        packetBuffer.put((byte)1);
+        packetBuffer.put((byte) 1);
         //Time
         packetBuffer.put(getCurrentTimeStamp());
 //        AckNumber
-        packetBuffer.putShort((short)1);
+        packetBuffer.putShort((short) 1);
 //        RaceID
         packetBuffer.putInt(123456789);
 //      DestinationSourceID
@@ -414,9 +421,10 @@ public class BinaryPackager {
 
     /**
      * Packages a mark rounding message
-     * @param sourceID Integer, The source Id of the boat
+     *
+     * @param sourceID     Integer, The source Id of the boat
      * @param roundingSide Short, The side of the mark rounded: 0 is unknown, 1 is port, 2 is starboard
-     * @param markID Integer, the compoundMarkId of the mark rounded
+     * @param markID       Integer, the compoundMarkId of the mark rounded
      * @return byte[] the packet
      */
     public byte[] packageMarkRounding(Integer sourceID, byte roundingSide, Integer markID) {
@@ -430,11 +438,11 @@ public class BinaryPackager {
         this.writeHeader(buffer, type, bodyLength);
 
         //MessageVersionNumber
-        buffer.put((byte)1);
+        buffer.put((byte) 1);
         //Time
         buffer.put(getCurrentTimeStamp());
         //AckNumber
-        buffer.putShort((short)1);
+        buffer.putShort((short) 1);
         //RaceID
         buffer.putInt(123456789);
         //SourceID
@@ -455,17 +463,15 @@ public class BinaryPackager {
     }
 
 
-
-
-
     /**
      * package boat state event
+     *
      * @param sourceID Integer the sourceID of the Boat in the event
-     * @param health Integer the health as a percentage integer 0 to 100
+     * @param health   Integer the health as a percentage integer 0 to 100
      * @return the packet generated
      */
-    public byte[] packageBoatStateEvent(Integer sourceID, Double health){
-        byte[] packet=new byte[24]; // 19 + 5
+    public byte[] packageBoatStateEvent(Integer sourceID, Double health) {
+        byte[] packet = new byte[24]; // 19 + 5
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -483,11 +489,12 @@ public class BinaryPackager {
 
     /**
      * package connection request
+     *
      * @param clientType byte the connection type
      * @return the packet generated
      */
-    public byte[] packageConnectionRequest(byte clientType){
-        byte[] packet=new byte[20]; //
+    public byte[] packageConnectionRequest(byte clientType) {
+        byte[] packet = new byte[20]; //
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -503,12 +510,13 @@ public class BinaryPackager {
 
     /**
      * package connection response
-     * @param status byte the connection status
+     *
+     * @param status   byte the connection status
      * @param sourceID Integer the source id allocated to the client
      * @return the packet generated
      */
-    public byte[] packageConnectionResponse(byte status, Integer sourceID){
-        byte[] packet=new byte[24]; //
+    public byte[] packageConnectionResponse(byte status, Integer sourceID) {
+        byte[] packet = new byte[24]; //
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -525,10 +533,11 @@ public class BinaryPackager {
 
     /**
      * package player ready message
+     *
      * @return the packet generated
      */
     public byte[] packagePlayerReady() {
-        byte[] packet=new byte[19]; //
+        byte[] packet = new byte[19]; //
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -543,11 +552,12 @@ public class BinaryPackager {
 
     /**
      * package leave lobby message
+     *
      * @return the packet generated
      */
     public byte[] packageLeaveLobby() {
 
-        byte[] packet=new byte[19]; //
+        byte[] packet = new byte[19]; //
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -561,23 +571,24 @@ public class BinaryPackager {
 
     /**
      * packages fallen crew event
+     *
      * @param locations the location of the fallen crew members
      * @return the packet for event
      */
-    public byte[] packageFallenCrewEvent(List<CrewLocation> locations){
-        int n=locations.size();
-        byte[] packet=new byte[20+n*13]; // total size of packet
+    public byte[] packageFallenCrewEvent(List<CrewLocation> locations) {
+        int n = locations.size();
+        byte[] packet = new byte[20 + n * 13]; // total size of packet
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
         byte type = 107;
-        short bodyLength = (short) (n*13+1);
+        short bodyLength = (short) (n * 13 + 1);
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.put((byte) n);
-        for(CrewLocation crewLocation:locations){
+        for (CrewLocation crewLocation : locations) {
             packetBuffer.putInt(crewLocation.getSourceId());
-            packetBuffer.put((byte)crewLocation.getNumCrew());
+            packetBuffer.put((byte) crewLocation.getNumCrew());
             packetBuffer.putInt(latLngToInt(crewLocation.getLatitude()));
             packetBuffer.putInt(latLngToInt(crewLocation.getLongitude()));
         }
@@ -591,17 +602,18 @@ public class BinaryPackager {
 
     /**
      * packages power up
-     * @param powerId Integer ID of power up
-     * @param latitude Double Latitude of power up location
+     *
+     * @param powerId   Integer ID of power up
+     * @param latitude  Double Latitude of power up location
      * @param longitude Double Longitude of power up location
-     * @param radius short Radius of power up in meters
+     * @param radius    short Radius of power up in meters
      * @param powerType int Type of power up, 0 is speed and 1 is for projectile
-     * @param duration int Time power up is active for
-     * @param timeout long the timeout of the power up
+     * @param duration  int Time power up is active for
+     * @param timeout   long the timeout of the power up
      * @return the packet for power up
      */
-    public byte[] packagePowerUp(Integer powerId, Double latitude, Double longitude, short radius, int powerType, int duration, long timeout){
-        byte[] packet=new byte[44];
+    public byte[] packagePowerUp(Integer powerId, Double latitude, Double longitude, short radius, PowerUpType powerType, int duration, long timeout) {
+        byte[] packet = new byte[44];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -620,7 +632,7 @@ public class BinaryPackager {
         packetBuffer.putShort(radius);
 
         packetBuffer.put(this.get48bitTime(timeout));
-        packetBuffer.put((byte) powerType);
+        packetBuffer.put((byte) powerType.getValue());
 
         packetBuffer.putInt(duration);
 
@@ -631,13 +643,14 @@ public class BinaryPackager {
 
     /**
      * packages power up taken
-     * @param boatId Boat ID of power up
-     * @param powerId Integer ID of power up
+     *
+     * @param boatId   Boat ID of power up
+     * @param powerId  Integer ID of power up
      * @param duration int Time power up is active for
      * @return the packet for power up taken
      */
-    public byte[] packagePowerUpTaken(int boatId, int powerId, int duration){
-        byte[] packet=new byte[31];
+    public byte[] packagePowerUpTaken(int boatId, int powerId, int duration) {
+        byte[] packet = new byte[31];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -653,28 +666,30 @@ public class BinaryPackager {
 
     /**
      * Packages Shark event
-     * @param locations the location of the Obstacles
+     * only one shark currently
+     *
+     * @param shark the location of the Obstacles
      * @return the packet for event
      */
-    public byte[] packageSharkEvent(List<Shark> locations){
-        int n=locations.size();
-        byte[] packet=new byte[20+n*22]; // total size of packet
+    public byte[] packageSharkEvent(Shark shark) {
+        int n = 1;
+        byte[] packet = new byte[20 + n * 22]; // total size of packet
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
         byte type = 120;
-        short bodyLength = (short) (n*22+1);
+        short bodyLength = (short) (n * 22 + 1);
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.put((byte) n);
-        for(Shark shark:locations){
+
             packetBuffer.putInt(shark.getSourceId());
-            packetBuffer.put((byte)shark.getNumSharks());
+            packetBuffer.put((byte) shark.getNumSharks());
             packetBuffer.putInt(latLngToInt(shark.getLatitude()));
             packetBuffer.putInt(latLngToInt(shark.getLongitude()));
             packetBuffer.put((byte) shark.getVelocity());
             packetBuffer.putDouble(shark.getHeading());
-        }
+
 
         //CRC
         this.writeCRC(packetBuffer);
@@ -682,24 +697,24 @@ public class BinaryPackager {
     }
 
 
-
     /**
      * Packages Blood event
+     *
      * @param locations the location of the blood pool
      * @return the packet for event
      */
-    public byte[] packageBloodEvent(List<Blood> locations){
-        int n=locations.size();
-        byte[] packet=new byte[20+n*12]; // total size of packet
+    public byte[] packageBloodEvent(List<Blood> locations) {
+        int n = locations.size();
+        byte[] packet = new byte[20 + n * 12]; // total size of packet
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
         byte type = -100;
-        short bodyLength = (short) (n*12+1);
+        short bodyLength = (short) (n * 12 + 1);
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.put((byte) n);
-        for(Blood blood: locations) {
+        for (Blood blood : locations) {
             packetBuffer.putInt(blood.getSourceID());
             packetBuffer.putInt(latLngToInt(blood.getLatitude()));
             packetBuffer.putInt(latLngToInt(blood.getLongitude()));
@@ -712,21 +727,22 @@ public class BinaryPackager {
 
     /**
      * Packages whirlpool event
+     *
      * @param whirlpools the data for whirlpool
      * @return the packet for event
      */
     public byte[] packageWhirlpoolEvent(List<Whirlpool> whirlpools) {
-        int n=whirlpools.size();
-        byte[] packet=new byte[20+n*16]; // total size of packet
+        int n = whirlpools.size();
+        byte[] packet = new byte[20 + n * 16]; // total size of packet
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
         byte type = 119;
-        short bodyLength = (short) (n*16+1);
+        short bodyLength = (short) (n * 16 + 1);
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.put((byte) n);
-        for(Whirlpool whirlpool:whirlpools){
+        for (Whirlpool whirlpool : whirlpools) {
             packetBuffer.putInt(whirlpool.getSourceID());
             packetBuffer.putInt(whirlpool.getCurrentLeg());
             packetBuffer.putInt(latLngToInt(whirlpool.getLatitude()));
@@ -737,9 +753,10 @@ public class BinaryPackager {
         this.writeCRC(packetBuffer);
         return packet;
     }
+
     public byte[] packageBoatName(Integer sourceId, String boatName) {
 
-        byte[] packet=new byte[56]; //
+        byte[] packet = new byte[56]; //
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -747,9 +764,9 @@ public class BinaryPackager {
         short bodyLength = 37;
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.putInt(sourceId);
-        packetBuffer.put((byte)0);
-        packetBuffer.put((byte)0);
-        packetBuffer.put((byte)0);
+        packetBuffer.put((byte) 0);
+        packetBuffer.put((byte) 0);
+        packetBuffer.put((byte) 0);
 
         byte[] name = new byte[30];
         ByteBuffer namebuffer = ByteBuffer.wrap(name);
@@ -762,7 +779,7 @@ public class BinaryPackager {
 
     public byte[] packageBoatModel(Integer sourceId, Integer code) {
 
-        byte[] packet=new byte[26]; //
+        byte[] packet = new byte[26]; //
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -770,7 +787,7 @@ public class BinaryPackager {
         short bodyLength = 7;
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.putInt(sourceId);
-        packetBuffer.putShort((short)2);
+        packetBuffer.putShort((short) 2);
         System.out.println("bpackager" + code);
         packetBuffer.put(code.byteValue());
         this.writeCRC(packetBuffer);

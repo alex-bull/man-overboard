@@ -4,12 +4,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import utilities.EnvironmentConfig;
 import utilities.Sounds;
 
@@ -23,11 +21,14 @@ import java.util.ResourceBundle;
 public class SettingsController implements Initializable {
 
 
-    @FXML private TextField hostField;
-    @FXML private TextField portField;
-    @FXML private Slider musicSlider;
-    @FXML private Slider soundFXSlider;
-
+    @FXML
+    private TextField hostField;
+    @FXML
+    private TextField portField;
+    @FXML
+    private Slider musicSlider;
+    @FXML
+    private Slider soundFXSlider;
 
 
     @Override
@@ -37,7 +38,6 @@ public class SettingsController implements Initializable {
             Sounds.player.setAllMusicVolume();
         });
     }
-
 
 
     public void saveAndExit() {
@@ -75,7 +75,6 @@ public class SettingsController implements Initializable {
         musicSlider.setValue(EnvironmentConfig.maxMusicVolume);
         soundFXSlider.setValue(EnvironmentConfig.maxFXVolume);
     }
-
 
 
 }

@@ -45,6 +45,7 @@ public class RaceXMLParser {
     private double shiftDistance;
     private double xMin;
     private double yMin;
+
     /**
      * initializer to initialize variables
      */
@@ -58,7 +59,9 @@ public class RaceXMLParser {
     }
 
 
-    /** Set width and height of the screen
+    /**
+     * Set width and height of the screen
+     *
      * @param width  double the width of the screen
      * @param height height the height of the screen
      */
@@ -77,6 +80,7 @@ public class RaceXMLParser {
      * @throws JDOMException JDOMException
      */
     public RaceData parseRaceData(String xmlStr) throws IOException, JDOMException {
+
 
         RaceData raceData = new RaceData();
         SAXBuilder builder = new SAXBuilder();
@@ -252,7 +256,7 @@ public class RaceXMLParser {
                 maxLng = lon;
             }
 
-           MutablePoint projectedPoint = mercatorProjection(lat, lon);
+            MutablePoint projectedPoint = mercatorProjection(lat, lon);
 
             xMercatorCoords.add(projectedPoint.getXValue());
             yMercatorCoords.add(projectedPoint.getYValue());
@@ -261,10 +265,10 @@ public class RaceXMLParser {
         }
 
         //add course feature to zoom level calculation
-        for(CompoundMarkData compoundMarkData:raceData.getCourse()) {
+        for (CompoundMarkData compoundMarkData : raceData.getCourse()) {
             for (MarkData markData : compoundMarkData.getMarks()) {
-                double lat=markData.getTargetLat();
-                double lon=markData.getTargetLon();
+                double lat = markData.getTargetLat();
+                double lon = markData.getTargetLon();
 
                 //find course boundary
                 if (lat < minLat) {
@@ -288,9 +292,9 @@ public class RaceXMLParser {
             }
         }
 
-        if(scaleFactor==0.0) {
-            xMin=Collections.min(xMercatorCoords);
-            yMin=Collections.min(yMercatorCoords);
+        if (scaleFactor == 0.0) {
+            xMin = Collections.min(xMercatorCoords);
+            yMin = Collections.min(yMercatorCoords);
             double xDifference = (Collections.max(xMercatorCoords) - xMin);
             double yDifference = (Collections.max(yMercatorCoords) - yMin);
 

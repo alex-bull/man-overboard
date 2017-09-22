@@ -3,12 +3,10 @@ package parsers.boatLocation;
 import models.CourseFeature;
 import models.Mark;
 import models.MutablePoint;
-import java.util.Arrays;
-import java.util.List;
 
-import static parsers.Converter.hexByteArrayToInt;
-import static parsers.Converter.parseCoordinate;
-import static parsers.Converter.parseHeading;
+import java.util.Arrays;
+
+import static parsers.Converter.*;
 import static utility.Projection.mercatorProjection;
 
 /**
@@ -23,6 +21,7 @@ public class BoatDataParser {
 
     /**
      * Process the given data and parse source id, latitude, longitude, heading, speed
+     *
      * @param body byte[] a byte array of the boat data message
      * @return BoatData boat data object
      */
@@ -44,14 +43,11 @@ public class BoatDataParser {
                 this.courseFeature = new Mark(sourceID.toString(), mercatorPoint, GPS, 0);
             }
             return new BoatData(sourceID, deviceType, latitude, longitude, heading, convertedSpeed, mercatorPoint);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
 
     }
-
-
 
 
     public CourseFeature getCourseFeature() {

@@ -3,7 +3,7 @@ package utilities;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by khe60 on 19/07/17.
@@ -18,7 +18,7 @@ public class PolarTableTest {
     }
 
     @Test
-    public void testGetSpeed() throws Exception{
+    public void testGetSpeed() throws Exception {
         assertEquals(polarTable1.getSpeed(0.0), 0.0, 0.01);
         assertEquals(polarTable1.getSpeed(47.3), 10.3, 0.01);
         assertEquals(polarTable1.getSpeed(70.4), 12.45, 0.01);

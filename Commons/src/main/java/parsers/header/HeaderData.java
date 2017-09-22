@@ -12,9 +12,10 @@ public class HeaderData {
 
     /**
      * Header data
-     * @param timeStamp long the timestamp in milliseconds
-     * @param messageType message type
-     * @param sourceID source id of message
+     *
+     * @param timeStamp     long the timestamp in milliseconds
+     * @param messageType   message type
+     * @param sourceID      source id of message
      * @param messageLength length of message does not include this header or CRC
      */
     public HeaderData(int messageType, long timeStamp, int sourceID, int messageLength) {

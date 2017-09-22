@@ -1,8 +1,6 @@
 package utilities;
 
-import utility.QueueMessage;
 import utility.WorkQueue;
-import utility.PacketHandler;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -23,17 +21,17 @@ import static parsers.Converter.hexByteArrayToInt;
  */
 public class TCPClient extends TimerTask {
 
-//    private SocketChannel client;
+    //    private SocketChannel client;
     private DataInputStream dis;
     private DataOutputStream dos;
     private WorkQueue receiveQueue;
 
 
-
     /**
      * Initializes port to receive binary data from
-     * @param host String host of the server
-     * @param port int number of port of the server
+     *
+     * @param host         String host of the server
+     * @param port         int number of port of the server
      * @param receiveQueue WorkQueue a thread safe queue to put unwrapped packets in
      * @throws IOException IOException
      */
@@ -47,10 +45,9 @@ public class TCPClient extends TimerTask {
     }
 
 
-
-
     /**
      * Write data to the socket
+     *
      * @param data byte[] The data to send
      * @throws IOException IOException
      */
@@ -68,7 +65,7 @@ public class TCPClient extends TimerTask {
      */
     private boolean checkForSyncBytes() throws IOException {
         // -125 is equivalent to 0x83 unsigned
-        byte[] expected = {0x47,-125};
+        byte[] expected = {0x47, -125};
         byte[] actual = new byte[2];
 
         dis.readFully(actual);
@@ -77,17 +74,19 @@ public class TCPClient extends TimerTask {
 
     /**
      * Returns the first 13 bytes from a packet
+     *
      * @return byte[] the header byte array
      * @throws IOException IOException
      */
     private byte[] getHeader() throws IOException {
-        byte[] header=new byte[13];
+        byte[] header = new byte[13];
         dis.readFully(header);
         return header;
     }
 
     /**
      * returns the length field from a 13 byte header
+     *
      * @param header byte[] the header byte array
      * @return int the message length
      */
@@ -109,22 +108,19 @@ public class TCPClient extends TimerTask {
 
                 byte[] header = this.getHeader();
                 int length = this.getMessageLength(header);
-                byte[] message=new byte[length];
+                byte[] message = new byte[length];
                 dis.readFully(message);
                 this.receiveQueue.put(null, header, message);
 
             }
 
-        }catch (EOFException e){
+        } catch (EOFException e) {
             System.exit(0);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
-
-
 
 
 }

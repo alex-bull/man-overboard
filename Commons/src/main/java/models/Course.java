@@ -8,5 +8,6 @@ import java.util.List;
  */
 public interface Course {
     List<CourseFeature> getPoints();
+
     double distanceBetweenGPSPoints(MutablePoint start, MutablePoint end);
 }

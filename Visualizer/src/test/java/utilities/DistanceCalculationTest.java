@@ -1,12 +1,10 @@
 package utilities;
 
-import controllers.RaceViewController;
+import models.MutablePoint;
 import org.junit.Before;
 import org.junit.Test;
-import models.MutablePoint;
 
 import static java.lang.Math.*;
-import static java.lang.Math.sqrt;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -21,8 +19,8 @@ public class DistanceCalculationTest {
     @Before
     public void setUp() {
         raceCalculator = new RaceCalculator();
-        startPoint = new MutablePoint (10.0, 10.0);
-        endPoint = new MutablePoint (20.0, 20.0);
+        startPoint = new MutablePoint(10.0, 10.0);
+        endPoint = new MutablePoint(20.0, 20.0);
     }
 
     @Test
@@ -41,7 +39,7 @@ public class DistanceCalculationTest {
 
         double a = sin(deltaPhi / 2) * sin(deltaPhi / 2) + cos(phiStart) * cos(phiBoat) * sin(deltaLambda / 2) * sin(deltaLambda / 2);
         double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-        assertTrue(earthRadius * c == raceCalculator.calcDistBetweenGPSPoints(10.0, 10.0,20.0,20.0));
+        assertTrue(earthRadius * c == raceCalculator.calcDistBetweenGPSPoints(10.0, 10.0, 20.0, 20.0));
 
     }
 

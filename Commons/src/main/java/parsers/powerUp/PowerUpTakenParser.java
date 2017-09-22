@@ -16,6 +16,7 @@ public class PowerUpTakenParser {
 
     /**
      * Parses power up taken packet
+     *
      * @param packet byte[] the packet of the power up taken
      */
     public PowerUpTakenParser(byte[] packet) {

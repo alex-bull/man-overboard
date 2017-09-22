@@ -1,4 +1,5 @@
 Feature: Boat uses a power up
+
   Scenario: Boat picks up a power up
     Given Boat does not have a power up
     When The boat picks up the power up

@@ -12,6 +12,7 @@ public class ArrayContainer {
 
     /**
      * Constructor for an array container
+     *
      * @param x double[] array of x values
      * @param y double[] array of y values
      */
@@ -28,7 +29,6 @@ public class ArrayContainer {
     public double[] getY() {
         return y;
     }
-
 
 
 }

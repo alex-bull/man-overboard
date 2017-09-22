@@ -9,20 +9,18 @@ public enum Keys {
 
     private final int value;
 
-    Keys(int value) {this.value = value;}
-
-    public int getValue() {
-        return value;
+    Keys(int value) {
+        this.value = value;
     }
-
 
     /**
      * Convert integer key value to a enum for the keypress
+     *
      * @param value int value of the key
      * @return Keys enum for the key press
      */
     public static Keys getKeys(int value) {
-        switch(value) {
+        switch (value) {
             case 8:
                 return POTION;
             case 7:
@@ -46,6 +44,10 @@ public enum Keys {
             default:
                 return UNKNOWN;
         }
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

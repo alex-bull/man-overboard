@@ -29,6 +29,7 @@ import models.Competitor;
 import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
+import utilities.Sounds;
 import utility.BinaryPackager;
 
 import java.io.IOException;
@@ -48,28 +49,43 @@ import static parsers.xml.race.ThemeEnum.BERMUDA;
  */
 public class LobbyController implements Initializable {
 
-    private DataSource dataSource;
     private final int STARTTIME = 9;
-    @FXML private ListView<String> starterList;
-    @FXML private Button readyButton;
-    @FXML private Label countdownLabel;
-    @FXML private Button leaveButton;
-    @FXML private ProgressIndicator progressIndicator;
-    @FXML private Label gameStartLabel;
-    @FXML private ImageView boatImageView;
-    @FXML private ImageView courseImageView;
-    @FXML private Label locationLabel;
-    @FXML private Label gameTypeLabel;
-    @FXML private Label loadingLabel;
-    @FXML private GridPane gameGridPane;
-    @FXML private GridPane playerGridPane;
-
-
-
-    @FXML private TextField nameText;
-    @FXML private Button confirmButton;
-    @FXML private Button leftButton;
-    @FXML private Button rightButton;
+    BinaryPackager binaryPackager = new BinaryPackager();
+    private DataSource dataSource;
+    @FXML
+    private ListView<String> starterList;
+    @FXML
+    private Button readyButton;
+    @FXML
+    private Label countdownLabel;
+    @FXML
+    private Button leaveButton;
+    @FXML
+    private ProgressIndicator progressIndicator;
+    @FXML
+    private Label gameStartLabel;
+    @FXML
+    private ImageView boatImageView;
+    @FXML
+    private ImageView courseImageView;
+    @FXML
+    private Label locationLabel;
+    @FXML
+    private Label gameTypeLabel;
+    @FXML
+    private Label loadingLabel;
+    @FXML
+    private GridPane gameGridPane;
+    @FXML
+    private GridPane playerGridPane;
+    @FXML
+    private TextField nameText;
+    @FXML
+    private Button confirmButton;
+    @FXML
+    private Button leftButton;
+    @FXML
+    private Button rightButton;
     private Image yacht;
     private Image cog;
     private Image frigate;
@@ -107,12 +123,14 @@ public class LobbyController implements Initializable {
         //Connect to a game in the background
         Task connect = new Task() {
 
-            @Override public Boolean call() {
+            @Override
+            public Boolean call() {
                 boolean connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
                 while (!connected) {
                     try {
                         Thread.sleep(1000);
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                    }
                     connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
                 }
 
@@ -145,9 +163,9 @@ public class LobbyController implements Initializable {
     }
 
 
-
     /**
      * Initialiser for LobbyController
+     *
      * @param location  URL
      * @param resources ResourceBundle
      */
@@ -220,10 +238,11 @@ public class LobbyController implements Initializable {
         if (dataSource.getCompetitor() == null) return;
         Competitor boat = dataSource.getCompetitor();
 
-        if (!nameText.getText().equals("")) this.dataSource.send(binaryPackager.packageBoatName(boat.getSourceID(), nameText.getText()));
+        if (!nameText.getText().equals(""))
+            this.dataSource.send(binaryPackager.packageBoatName(boat.getSourceID(), nameText.getText()));
         else nameText.setText(boat.getTeamName()); //use server assigned name
 
-        this.dataSource.send(binaryPackager.packageBoatModel(boat.getSourceID(), index %boatImages.size()));
+        this.dataSource.send(binaryPackager.packageBoatModel(boat.getSourceID(), index % boatImages.size()));
         confirmButton.setVisible(false);
         nameText.setDisable(true);
         leftButton.setVisible(false);
@@ -231,33 +250,34 @@ public class LobbyController implements Initializable {
     }
 
     @FXML
-    public void showPreviousBoat(){
+    public void showPreviousBoat() {
         index--;
         if (index < 0) {
             index += boatImages.size();
         }
-        boatImageView.setImage(boatImages.get(index %boatImages.size()));
+        boatImageView.setImage(boatImages.get(index % boatImages.size()));
     }
 
     @FXML
-    public void showNextBoat(){
+    public void showNextBoat() {
         index++;
-        boatImageView.setImage(boatImages.get(index %boatImages.size()));
+        boatImageView.setImage(boatImages.get(index % boatImages.size()));
 
     }
 
 
     /**
      * Sets the game details on the lobby screen
+     *
      * @param courseImage String, the url of the course image
-     * @param location String, the name of the chosen course
-     * @param gameMode String, the game type
+     * @param location    String, the name of the chosen course
+     * @param gameMode    String, the game type
      */
     public void setGame(String courseImage, String location, String gameMode) {
 
         try {
             this.courseImageView.setImage(new Image(courseImage));
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Invalid image url, using default image");
             return;
         }
@@ -268,7 +288,8 @@ public class LobbyController implements Initializable {
 
     /**
      * Sets the player details on the lobby screen
-     * @param boatImage String, the url of the boat image
+     *
+     * @param boatImage   String, the url of the boat image
      * @param playerAlias String, the players in game name
      */
     public void setPlayer(String boatImage, String playerAlias) {
@@ -333,7 +354,6 @@ public class LobbyController implements Initializable {
     }
 
 
-
     /**
      * Loads the start view
      */
@@ -343,7 +363,6 @@ public class LobbyController implements Initializable {
         if (timer != null) timer.stop();
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 2);
         dataSource = null;
-
 
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
@@ -405,9 +424,6 @@ public class LobbyController implements Initializable {
             }
         });
     }
-
-
-
 
 
 }

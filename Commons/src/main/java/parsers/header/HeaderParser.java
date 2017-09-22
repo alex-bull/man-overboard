@@ -1,8 +1,5 @@
 package parsers.header;
 
-import parsers.Converter;
-import parsers.markRounding.MarkRoundingData;
-
 import java.util.Arrays;
 
 import static parsers.Converter.hexByteArrayToInt;
@@ -16,6 +13,7 @@ public class HeaderParser {
 
     /**
      * Parses the header for a message
+     *
      * @param body byte[] a byte array to be parsed
      * @return HeaderData the parsed header data
      */
@@ -28,8 +26,7 @@ public class HeaderParser {
             Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
             Integer messageLength = hexByteArrayToInt(Arrays.copyOfRange(body, 11, 13));
             return new HeaderData(messageType, timeStamp, sourceID, messageLength);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
 

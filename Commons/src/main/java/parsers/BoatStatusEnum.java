@@ -9,12 +9,13 @@ public enum BoatStatusEnum {
 
     /**
      * Converts the received race status enum to a int.
+     *
      * @param status Enum the boat status
      * @return Integer of the boat status
      */
     public static int boatStatusToInt(BoatStatusEnum status) {
         int statusInt = 0;
-        switch(status) {
+        switch (status) {
             case UNDEFINED:
                 statusInt = 0;
                 break;

@@ -1,17 +1,14 @@
 package controllers;
 
-import javafx.scene.layout.GridPane;
-import utilities.Sounds;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import utilities.Interpreter;
+import utilities.Sounds;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,9 +20,12 @@ import java.util.ResourceBundle;
  */
 public class StartController implements Initializable {
 
-    @FXML private Button joinButton;
-    @FXML private AnchorPane anchorPane;
-    @FXML private ImageView backgroundImage;
+    @FXML
+    private Button joinButton;
+    @FXML
+    private AnchorPane anchorPane;
+    @FXML
+    private ImageView backgroundImage;
 
 
     void begin() {
@@ -102,8 +102,6 @@ public class StartController implements Initializable {
     public void quit() {
         System.exit(0);
     }
-
-
 
 
 }

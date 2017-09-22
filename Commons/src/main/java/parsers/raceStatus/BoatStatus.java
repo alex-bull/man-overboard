@@ -14,9 +14,10 @@ public class BoatStatus {
 
     /**
      * Boat status
-     * @param sourceID int source id
-     * @param boatStatus enum boat status
-     * @param legNumber int leg number
+     *
+     * @param sourceID                int source id
+     * @param boatStatus              enum boat status
+     * @param legNumber               int leg number
      * @param estimatedTimeAtNextMark long estimated time at next mark
      */
     BoatStatus(int sourceID, BoatStatusEnum boatStatus, int legNumber, long estimatedTimeAtNextMark) {
@@ -31,7 +32,9 @@ public class BoatStatus {
         return sourceID;
     }
 
-    public BoatStatusEnum getBoatStatus() { return boatStatus; }
+    public BoatStatusEnum getBoatStatus() {
+        return boatStatus;
+    }
 
     public int getLegNumber() {
         return legNumber;

@@ -14,24 +14,24 @@ import java.util.List;
 public class Utility {
 
     public static String fileToString(String filePath) throws IOException {
-       return CharStreams.toString(new InputStreamReader(Utility.class.getResourceAsStream(filePath)));
+        return CharStreams.toString(new InputStreamReader(Utility.class.getResourceAsStream(filePath)));
     }
 
 
     /**
      * Get centroid of a polygon
+     *
      * @param points list of points of polygon
      * @return MutablePoint centroid of a polygon
      */
     public MutablePoint centroid(List<MutablePoint> points) {
         double centroidX = 0, centroidY = 0;
-        for (MutablePoint point: points) {
+        for (MutablePoint point : points) {
             centroidX += point.getXValue();
             centroidY += point.getYValue();
         }
-        return new MutablePoint(centroidX/ points.size(), centroidY / points.size());
+        return new MutablePoint(centroidX / points.size(), centroidY / points.size());
     }
-
 
 
 }

@@ -2,20 +2,13 @@ package Elements;
 
 import javafx.scene.Group;
 import javafx.scene.image.Image;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import models.MutablePoint;
-
-import java.util.Objects;
-
-import static javafx.scene.paint.Color.BLACK;
-import static javafx.scene.paint.Color.YELLOW;
 
 /**
  * Created by mattgoodson on 1/09/17.
@@ -30,8 +23,9 @@ public class BoatModel extends Group {
 
     /**
      * Initialize a boat model
+     *
      * @param boatType String, type of boat image to be displayed for player
-     * @param player boolean, true if the player marker should be shown
+     * @param player   boolean, true if the player marker should be shown
      */
     public BoatModel(Integer boatType, boolean player) {
 
@@ -51,32 +45,25 @@ public class BoatModel extends Group {
         if (boatType == 0) {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/yacht.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
-        }
-        else if (boatType == 1) {
+        } else if (boatType == 1) {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/cog.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
-        }
-        else if (boatType == 2) {
+        } else if (boatType == 2) {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigate.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
-        }
-        else if (boatType == 3) {
+        } else if (boatType == 3) {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleon.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
-        }
-        else if (boatType == 4) {
+        } else if (boatType == 4) {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/boat.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
-        }
-        else if (boatType == 5) {
+        } else if (boatType == 5) {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/cat.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
-        }
-        else if (boatType == 6) {
+        } else if (boatType == 6) {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/pirate.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
-
 
 
         //boatModel.setStroke(BLACK);
@@ -85,8 +72,8 @@ public class BoatModel extends Group {
         if (player) {
             this.playerMarker = new Circle(0, 0, 15);
             playerMarker.setStrokeWidth(2.5);
-            playerMarker.setStroke(Color.rgb(255,255,255,0.5));
-            playerMarker.setFill(Color.rgb(0,0,0,0.2));
+            playerMarker.setStroke(Color.rgb(255, 255, 255, 0.5));
+            playerMarker.setFill(Color.rgb(0, 0, 0, 0.2));
             this.getChildren().add(playerMarker);
         }
         this.ripImage = new ImageView(new Image("images/cross-small.png"));
@@ -101,8 +88,9 @@ public class BoatModel extends Group {
 
     /**
      * Update the position of the boat model
+     *
      * @param position MutablePoint the new location
-     * @param heading double the heading of the boat in degrees
+     * @param heading  double the heading of the boat in degrees
      */
     public void update(MutablePoint position, double heading) {
         this.setLayoutX(position.getXValue());
@@ -118,7 +106,7 @@ public class BoatModel extends Group {
      * The boat is dead so hide player marker and boat shape then show rip image
      */
     public void die() {
-        if(!isDead) {
+        if (!isDead) {
             isDead = true;
             boatModel.setVisible(false);
             this.getChildren().remove(playerMarker);

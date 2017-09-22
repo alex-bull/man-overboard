@@ -1,17 +1,17 @@
 package controllers;
 
-import javafx.stage.Stage;
-import parsers.boatAction.BoatAction;
-import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import mockDatafeed.Keys;
+import parsers.boatAction.BoatAction;
 import utilities.DataSource;
+import utilities.Sounds;
 import utility.BinaryPackager;
+
+import static javafx.scene.input.KeyCode.Q;
 
 
 /**
@@ -20,100 +20,122 @@ import utility.BinaryPackager;
  */
 public class MainController {
 
-    @FXML private TableController tableController;
-    @FXML private RaceViewController raceViewController;
-    @FXML private SplitPane splitPane;
-    @FXML private WindController windController;
-    @FXML private PlayerController playerController;
-    @FXML private GridPane loadingPane;
-    @FXML private Slider sailSlider;
+    @FXML
+    private TableController tableController;
+    @FXML
+    private RaceViewController raceViewController;
+    @FXML
+    private SplitPane splitPane;
+    @FXML
+    private WindController windController;
+    @FXML
+    private PlayerController playerController;
+    @FXML
+    private GridPane loadingPane;
+    @FXML
+    private Slider sailSlider;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private boolean playing = false;
+    private boolean flag = false;
 
 
     /**
      * updates the slider and sends corresponding packet
      */
-    @FXML public void updateSlider(){
-        if(sailSlider.getValue()<0.5){
+    @FXML
+    public void updateSlider() {
+        if (sailSlider.getValue() < 0.5) {
             this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.SAILS_OUT.getValue(), dataSource.getSourceID()));
-        }
-        else{
+        } else {
             this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.SAILS_IN.getValue(), dataSource.getSourceID()));
+        }
+    }
+
+    @FXML
+    public void zoomOut(KeyEvent event){
+        if (event.getCode()==Q){
+            raceViewController.zoomIn();
         }
     }
 
     /**
      * Handle control key events
+     *
      * @param event KeyEvent
      */
-    @FXML public void keyPressed(KeyEvent event) {
+    @FXML
+    public void keyPressed(KeyEvent event) {
+//        System.out.println("key pressed "+System.currentTimeMillis());
 
-            switch (event.getCode()) {
-                case W:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.UPWIND.getValue(), dataSource.getSourceID()));
-                    break;
-                case S:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.DOWNWIND.getValue(), dataSource.getSourceID()));
-                    break;
-                case SPACE:
+        switch (event.getCode()) {
+            case W:
+                this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.UPWIND.getValue(), dataSource.getSourceID()));
+                break;
+            case S:
+                this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.DOWNWIND.getValue(), dataSource.getSourceID()));
+                break;
+            case SPACE:
 //                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.VMG.getValue(), dataSource.getSourceID()));
-                    break;
-                case SHIFT:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.SWITCH_SAILS.getValue(), dataSource.getSourceID()));
-                    sailSlider.setValue(this.dataSource.getCompetitor().getSailValue());
-                    break;
-                case ENTER:
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.TACK_GYBE.getValue(), dataSource.getSourceID()));
-                    break;
-                case Q:
-                    raceViewController.toggleZoom();
-                    break;
-                case BACK_QUOTE:
-                    if (raceViewController.isZoom() && tableController.isVisible()){
-                        tableController.makeInvisible();
-                    }
-                    else if (raceViewController.isZoom()) {
-                        tableController.makeVisible();
-                    }
-                    break;
+                break;
+            case SHIFT:
+                this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.SWITCH_SAILS.getValue(), dataSource.getSourceID()));
+                sailSlider.setValue(this.dataSource.getCompetitor().getSailValue());
+                break;
+            case ENTER:
+                this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.TACK_GYBE.getValue(), dataSource.getSourceID()));
+                break;
+            case Q:
+                raceViewController.zoomOut();
 
-                case A:
-                    if(dataSource.getZoomLevel() < 18 && raceViewController.isZoom()) {
-                        dataSource.changeScaling(1);
-                        raceViewController.zoomIn();
-                    }
-                    break;
-                case D:
-                    if(dataSource.getZoomLevel() > 12 && raceViewController.isZoom()) {
-                        dataSource.changeScaling(-1);
-                        raceViewController.zoomIn();
-                    }
-                    break;
-                case DIGIT1:
-                    if(dataSource.getCompetitor().hasSpeedBoost()) {
-                        this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.BOOST.getValue(), dataSource.getSourceID()));
-                        dataSource.getCompetitor().disableBoost();
-                        playerController.hideBoost();
-                    }
-                    break;
-                case DIGIT2:
-                    if(dataSource.getCompetitor().hasPotion()) {
-                        this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.POTION.getValue(), dataSource.getSourceID()));
-                        dataSource.getCompetitor().usePotion();
-                        playerController.hidePotion();
-                    }
-                    break;
-            }
+                if (!tableController.isVisible()) {
+                    tableController.makeVisible();
+                }
+                break;
+            case BACK_QUOTE:
+                if (raceViewController.isZoom() && tableController.isVisible()) {
+                    tableController.makeInvisible();
+                } else if (raceViewController.isZoom()) {
+                    tableController.makeVisible();
+                }
+                break;
+
+            case A:
+                if (dataSource.getZoomLevel() < 18 && raceViewController.isZoom()) {
+                    dataSource.changeScaling(1);
+                    raceViewController.zoomIn();
+                }
+                break;
+            case D:
+                if (dataSource.getZoomLevel() > 12 && raceViewController.isZoom()) {
+                    dataSource.changeScaling(-1);
+                    raceViewController.zoomIn();
+                }
+                break;
+            case DIGIT1:
+                if (dataSource.getCompetitor().hasSpeedBoost()) {
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.BOOST.getValue(), dataSource.getSourceID()));
+                    dataSource.getCompetitor().disableBoost();
+                    playerController.hideBoost();
+                }
+                break;
+            case DIGIT2:
+                if (dataSource.getCompetitor().hasPotion()) {
+                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.POTION.getValue(), dataSource.getSourceID()));
+                    dataSource.getCompetitor().usePotion();
+                    playerController.hidePotion();
+                }
+                break;
+        }
     }
 
 
     /**
      * Begins the race loop which updates child controllers at ~60fps
+     *
      * @param dataSource DataSource the data to display
-     * @param width double the screen width
-     * @param height double the screen height
+     * @param width      double the screen width
+     * @param height     double the screen height
      */
     void beginRace(DataSource dataSource, double width, double height) {
         this.dataSource = dataSource;
@@ -121,6 +143,7 @@ public class MainController {
         tableController.addObserver(raceViewController);
         playerController.setup(dataSource, App.getPrimaryStage());
         this.binaryPackager = new BinaryPackager();
+
 
         AnimationTimer timer = new AnimationTimer() {
 
@@ -134,10 +157,15 @@ public class MainController {
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
                     playerController.refresh();
                     sailSlider.toFront();
-                    loadingPane.toBack();
-                }
-                else {
+                    loadingPane.setVisible(false);
+                    if (!flag) {
+                        raceViewController.toggleZoom();
+                        flag = true;
+                    }
+                } else {
                     loadingPane.toFront();
+                    loadingPane.setVisible(true);
+
                 }
             }
         };

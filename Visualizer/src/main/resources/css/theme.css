@@ -37,7 +37,6 @@
     -fx-background-color: transparent;
 }
 
-
 #controlbutton {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -65,8 +64,7 @@
     -fx-text-fill: white;
 }
 
-.text-field
-{
+.text-field {
     -fx-padding: 5 22 5 22;
     -fx-background-color: white;
     -fx-background-radius: 0;
@@ -77,9 +75,8 @@
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
 }
 
-.list-view
-{
-    -fx-padding: 3px ;
+.list-view {
+    -fx-padding: 3px;
     -fx-background-color: #7dcdcd;
     -fx-opacity: 0.8;
 
@@ -89,15 +86,14 @@
     -fx-background-color: white;
 }
 
-.list-cell
-{
+.list-cell {
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-font-size: 12pt;
     -fx-text-fill: #444444;
     -fx-cell-size: 40px;
     -fx-padding: 2px;
-    -fx-background-color: transparent, -fx-background ;
-    -fx-background-insets: 0px, 2px ;
+    -fx-background-color: transparent, -fx-background;
+    -fx-background-insets: 0px, 2px;
     -fx-label-padding: 0, 0, 0, 0;
     -fx-alignment: center;
 }
@@ -108,12 +104,9 @@
     -fx-padding: 2px;
 }
 
-
-
 /*logo colours : 0014A8, 3FA9F5, 99EEED*/
 
-.combo-box
-{
+.combo-box {
     -fx-min-width: 128;
     -fx-min-height: 30;
     -fx-background-color: white;
@@ -131,16 +124,14 @@
     -fx-text-fill: #0014A8;
 }
 
-.combo-box-popup .list-view .list-cell
-{
+.combo-box-popup .list-view .list-cell {
     -fx-background-color: #ececec;
     -fx-text-fill: black;
     -fx-opacity: 0.8;
 
 }
 
-.check-box .box
-{
+.check-box .box {
     -fx-border-color: white;
     -fx-border-width: 0;
     -fx-background-color: white;
@@ -155,42 +146,36 @@
     -fx-background-color: grey;
 }
 
-.check-box .mark
-{
+.check-box .mark {
     -fx-background-color: white;
 }
 
-.radio-button .radio
-{
+.radio-button .radio {
 
     -fx-background-color: white;
 }
 
-.radio-button .dot
-{
-    -fx-mark-color: grey ;
+.radio-button .dot {
+    -fx-mark-color: grey;
     -fx-padding: 6px;
 
 }
 
-.radio-button .label
-{
+.radio-button .label {
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-font-size: 11pt;
 }
 
-.progress-indicator
-{
+.progress-indicator {
     -fx-progress-color: white;
 
 }
 
-.table-view .column-header-background{
+.table-view .column-header-background {
     -fx-background-color: transparent;
 }
 
-.table-view .column-header
-{
+.table-view .column-header {
     -fx-background-color: transparent;
 
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
@@ -201,6 +186,6 @@
     -fx-alignment: CENTER;
 }
 
-.merriweather{
+.merriweather {
     -fx-font-family: 'merriweather';
 }

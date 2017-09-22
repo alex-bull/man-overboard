@@ -33,6 +33,10 @@ import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.markRounding.MarkRoundingData;
 import parsers.markRounding.MarkRoundingParser;
+import parsers.powerUp.PowerUp;
+import parsers.powerUp.PowerUpParser;
+import parsers.powerUp.PowerUpTakenParser;
+import parsers.powerUp.PowerUpType;
 import parsers.raceStatus.RaceStatusData;
 import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.boat.BoatXMLParser;
@@ -48,22 +52,20 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.*;
 
 import static java.lang.Math.pow;
-
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.Converter.hexByteArrayToInt;
 import static parsers.MessageType.UNKNOWN;
-import static parsers.Obstacles.WhirlpoolParser.parseWhirlpool;
-import static parsers.fallenCrew.FallenCrewParser.parseFallenCrew;
 import static parsers.Obstacles.BloodParser.parseBlood;
 import static parsers.Obstacles.SharkParser.parseShark;
+import static parsers.Obstacles.WhirlpoolParser.parseWhirlpool;
+import static parsers.fallenCrew.FallenCrewParser.parseFallenCrew;
 import static parsers.powerUp.PowerUpType.BOOST;
-
 import static parsers.powerUp.PowerUpType.POTION;
 import static utility.Calculator.calculateExpectedTack;
 
 /**
  * Created by mgo65 on 11/05/17.
- * Interprets packets
+ * Interprets packets.
  */
 public class Interpreter implements DataSource, PacketHandler {
 
@@ -72,7 +74,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private XmlSubtype xmlSubType;
     private List<Competitor> competitorsPosition;
     private double windDirection;
-    private Cloner cloner=new Cloner();
+    private Cloner cloner = new Cloner();
     private RaceData raceData;
     private Map<Integer, Integer> collisions;
     private BoatAction boatAction;
@@ -84,7 +86,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private RaceXMLParser raceXMLParser;
     private HashMap<Integer, CourseFeature> originalCourseFeature = new HashMap<>();
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
-    private HashMap<Integer,CourseFeature> storedFeatures17=new HashMap<>();
+    private HashMap<Integer, CourseFeature> storedFeatures17 = new HashMap<>();
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
     private HashMap<String, Decoration> decorations = new HashMap<>();
 
@@ -111,26 +113,43 @@ public class Interpreter implements DataSource, PacketHandler {
     private TCPClient TCPClient;
 
     //zoom factor for scaling
-    private int zoomLevel=17;
+    private int zoomLevel = 17;
 
     private WorkQueue receiveQueue = new WorkQueue(1000000);
-
-
-    public Interpreter() {
-        competitorsPosition = new ArrayList<>();
-        collisions=new HashMap<>();
-        this.raceXMLParser = new RaceXMLParser();
-
-    }
+    private Map<Integer, CrewLocation> crewLocations = new HashMap<>();
 
     public void setPrimaryStage(Stage primaryStage){
         this.primaryStage=primaryStage;
     }
+    private Map<Integer, Shark> sharkLocations = new HashMap<>();
+    private Map<Integer, Blood> bloodLocations = new HashMap<>();
+    private Map<Integer, Whirlpool> whirlpools = new HashMap<>();
+    private Map<Integer, PowerUp> powerUps = new HashMap<>();
 
-    public Map<Integer, CourseFeature> getCourseFeatureMap() {return this.storedFeatures;}
+    public Interpreter() {
+        competitorsPosition = new ArrayList<>();
+        collisions = new HashMap<>();
+        this.raceXMLParser = new RaceXMLParser();
+
+    }
+
+    public Map<Integer, CourseFeature> getCourseFeatureMap() {
+        return this.storedFeatures;
+    }
 
     public List<MutablePoint> getCourseBoundary() {
         return courseBoundary;
+    }
+
+    private void setCourseBoundary(List<MutablePoint> courseBoundary) {
+        courseBoundaryOriginal = cloner.deepClone(courseBoundary);
+
+        for (MutablePoint p : cloner.deepClone(courseBoundary)) {
+            this.courseBoundary.add(p.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY));
+        }
+
+        updateCourseBoundary();
+
     }
 
     public List<MutablePoint> getCourseBoundary17() {
@@ -169,19 +188,22 @@ public class Interpreter implements DataSource, PacketHandler {
         return new ArrayList<>(competitorsPosition); //return a shallow copy for thread safety
     }
 
-    public Map<Integer, Competitor> getStoredCompetitors() {return this.storedCompetitors;}
+    public Map<Integer, Competitor> getStoredCompetitors() {
+        return this.storedCompetitors;
+    }
 
     public double getWindDirection() {
         return windDirection;
     }
 
     public double getWindSpeed() {
-        return windSpeed/1000.0;
+        return windSpeed / 1000.0;
     }
 
     public Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures() {
         return this.raceData.getLegIndexToMarkSourceIds();
     }
+
     /**
      * @return the boat which the visualizer controls
      */
@@ -203,13 +225,9 @@ public class Interpreter implements DataSource, PacketHandler {
         return powerUps;
     }
 
-    private Map<Integer, PowerUp> powerUps = new HashMap<>();
-
-
-
-
     /**
      * Send control data via TCPClient
+     *
      * @param data byte[] the data to send
      */
     public void send(byte[] data) {
@@ -220,30 +238,26 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
-
-
     /**
      * Begins data receiver streaming from port.
+     *
      * @param host  String the host to stream from
      * @param port  Int the port to stream from
      * @param scene the scene of the stage, for size calculations
      * @return boolean, false if connetion failed, true otherwise
-     *
      */
-    public boolean receive(String host, int port, Scene scene) throws NullPointerException{
+    public boolean receive(String host, int port, Scene scene) throws NullPointerException {
 
 
         Rectangle2D primaryScreenBounds;
         try {
             TCPClient = new TCPClient(host, port, receiveQueue);
             primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        }
-        catch (UnresolvedAddressException e){
-           // System.out.println("Address is not found");
+        } catch (UnresolvedAddressException e) {
+            // System.out.println("Address is not found");
             return false;
-        }
-        catch (IOException e) {
-          //  System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
+        } catch (IOException e) {
+            //  System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
             return false;
         }
 
@@ -259,24 +273,23 @@ public class Interpreter implements DataSource, PacketHandler {
 
         //request game join
         System.out.println("Sending connection request...");
-        this.send(new BinaryPackager().packageConnectionRequest((byte)1));
+        this.send(new BinaryPackager().packageConnectionRequest((byte) 1));
         return true;
 
     }
-
 
     /**
      * handle server updates
      */
     public void update() {
-        for (QueueMessage m: this.receiveQueue.drain()) {
+        for (QueueMessage m : this.receiveQueue.drain()) {
             this.interpretPacket(m.getHeader(), m.getBody());
         }
     }
 
-
     /**
      * Reads packet values and updates model data
+     *
      * @param header byte[] packet header
      * @param packet byte[] packet body
      */
@@ -324,28 +337,28 @@ public class Interpreter implements DataSource, PacketHandler {
 
                     switch (markID) {
                         case 100:
-                            markName="Entry Limit Line";
+                            markName = "Entry Limit Line";
                             break;
                         case 101:
-                            markName="Entry Line";
+                            markName = "Entry Line";
                             break;
                         case 102:
-                            markName="Start Line";
+                            markName = "Start Line";
                             break;
                         case 103:
-                            markName="Finish Line";
+                            markName = "Finish Line";
                             break;
                         case 104:
-                            markName="Speed test start";
+                            markName = "Speed test start";
                             break;
                         case 105:
-                            markName="Speed test finish";
+                            markName = "Speed test finish";
                             break;
                         case 106:
-                            markName="ClearStart";
+                            markName = "ClearStart";
                             break;
                         default:
-                            markName=raceData.getCourse().get(markID - 1).getName();
+                            markName = raceData.getCourse().get(markID - 1).getName();
                             break;
 
                     }
@@ -378,9 +391,8 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 HeaderData headerData = headerParser.processMessage(header);
                 this.boatAction = boatActionParser.processMessage(packet);
-
                 if (boatAction != null && headerData != null) {
-                    if(headerData.getSourceID() == this.sourceID) {
+                    if (headerData.getSourceID() == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         switch (boatAction) {
                             case SAILS_IN:
@@ -408,7 +420,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
             case YACHT_ACTION:
                 YachtEventParser parser = new YachtEventParser(packet);
-                switch (parser.getEventID()){
+                switch (parser.getEventID()) {
                     case 1: // collision
                         collisions.put(parser.getSourceID(), parser.getEventID());
                         break;
@@ -436,15 +448,15 @@ public class Interpreter implements DataSource, PacketHandler {
             case POWER_UP:
                 PowerUpParser powerUpParser = new PowerUpParser();
                 PowerUp powerUp = powerUpParser.parsePowerUp(packet);
-                if(powerUp.getType() == BOOST.getValue() || powerUp.getType() == POTION.getValue()) {
+                if (powerUp.getType()==BOOST|| powerUp.getType()==POTION) {
                     MutablePoint location = powerUp.getLocation();
                     MutablePoint positionOriginal = cloner.deepClone(Projection.mercatorProjection(location));
 
                     MutablePoint position = cloner.deepClone(Projection.mercatorProjection(location));
                     position.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
-                    MutablePoint position17=cloner.deepClone(Projection.mercatorProjection(position));
-                    position17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+                    MutablePoint position17 = cloner.deepClone(Projection.mercatorProjection(position));
+                    position17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
                     powerUp.setPosition(position);
                     powerUp.setPosition17(position17);
@@ -457,16 +469,20 @@ public class Interpreter implements DataSource, PacketHandler {
                 PowerUpTakenParser powerUpTakenParser = new PowerUpTakenParser(packet);
                 int id = powerUpTakenParser.getPowerId();
                 int boatId = powerUpTakenParser.getBoatId();
-                if(powerUps.containsKey(id)) {
+                if (powerUps.containsKey(id)) {
                     PowerUp power = powerUps.get(id);
                     power.taken();
-                    int type = power.getType();
-                    if(getCompetitor().getSourceID() == boatId) {
-                        if(type == 0) {
-                            getCompetitor().enableBoost();
-                        }
-                        else if(type == 3) {
-                            getCompetitor().enablePotion();
+                    PowerUpType type= power.getType();
+                    if (getCompetitor().getSourceID() == boatId) {
+                        switch(type){
+                            case BOOST:
+                                getCompetitor().enableBoost();
+                                break;
+                            case POTION:
+                                getCompetitor().enablePotion();
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
@@ -487,15 +503,16 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * add whirlpools with location converted
+     *
      * @param locations location of whirlpools
      */
     private void addWhirlPool(List<Whirlpool> locations) {
-        for(Whirlpool whirlpool: locations){
+        for (Whirlpool whirlpool : locations) {
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(whirlpool.getPosition()));
             MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(whirlpool.getPosition()));
             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             MutablePoint location17 = cloner.deepClone(Projection.mercatorProjection(whirlpool.getPosition()));
-            location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            location17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             whirlpools.put(whirlpool.getSourceID(), new Whirlpool(whirlpool.getSourceID(), whirlpool.getCurrentLeg(), location, location17, locationOriginal));
         }
     }
@@ -504,36 +521,37 @@ public class Interpreter implements DataSource, PacketHandler {
      * updates whirlpools when scaling level changes
      */
     private void updateWhirlpools() {
-        for(Whirlpool whirlpool: whirlpools.values()){
-            MutablePoint point=cloner.deepClone(whirlpool.getPositionOriginal());
-            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        for (Whirlpool whirlpool : whirlpools.values()) {
+            MutablePoint point = cloner.deepClone(whirlpool.getPositionOriginal());
+            point.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             whirlpool.setPosition17(point);
         }
     }
 
     /**
      * adds crew locations with location converted
+     *
      * @param locations List locations
      */
-    public void addCrewLocation(List<CrewLocation> locations){
+    public void addCrewLocation(List<CrewLocation> locations) {
         crewLocations.clear();
-        for(CrewLocation crewLocation:locations){
+        for (CrewLocation crewLocation : locations) {
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
             MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
-            location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            crewLocations.put(crewLocation.getSourceId(),new CrewLocation(crewLocation.getSourceId(),crewLocation.getNumCrew(),location,location17, locationOriginal));
+            MutablePoint location17 = cloner.deepClone(Projection.mercatorProjection(crewLocation.getPosition()));
+            location17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            crewLocations.put(crewLocation.getSourceId(), new CrewLocation(crewLocation.getSourceId(), crewLocation.getNumCrew(), location, location17, locationOriginal));
         }
     }
 
     /**
      * updates crew location when scaling level changes
      */
-    private void updateCrewLocation(){
-        for(CrewLocation crewLocation: crewLocations.values()){
-            MutablePoint point=cloner.deepClone(crewLocation.getPositionOriginal());
-            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+    private void updateCrewLocation() {
+        for (CrewLocation crewLocation : crewLocations.values()) {
+            MutablePoint point = cloner.deepClone(crewLocation.getPositionOriginal());
+            point.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             crewLocation.setPosition17(point);
         }
     }
@@ -541,10 +559,10 @@ public class Interpreter implements DataSource, PacketHandler {
     /**
      * updates power up location when scaling level changes
      */
-    private void updatePowerUpLocation(){
-        for(PowerUp powerUp: powerUps.values()){
-            MutablePoint point=cloner.deepClone(powerUp.getPositionOriginal());
-            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+    private void updatePowerUpLocation() {
+        for (PowerUp powerUp : powerUps.values()) {
+            MutablePoint point = cloner.deepClone(powerUp.getPositionOriginal());
+            point.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             powerUp.setPosition17(point);
         }
     }
@@ -562,11 +580,12 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * adds blood locations with location converted
+     *
      * @param locations list of the blood locations
      */
-    public void addBloodLocation(List<Blood> locations){
-        for(Blood blood:locations){
-            if(!bloodLocations.containsKey(blood.getSourceID())) {
+    public void addBloodLocation(List<Blood> locations) {
+        for (Blood blood : locations) {
+            if (!bloodLocations.containsKey(blood.getSourceID())) {
                 MutablePoint location = cloner.deepClone(Projection.mercatorProjection(blood.getPosition()));
                 MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(blood.getPosition()));
                 location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
@@ -580,30 +599,31 @@ public class Interpreter implements DataSource, PacketHandler {
     /**
      * updates blood location when scaling level changes
      */
-    private void updateBloodLocation(){
-        for(Blood blood: bloodLocations.values()){
-            MutablePoint point=cloner.deepClone(blood.getPositionOriginal());
-            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+    private void updateBloodLocation() {
+        for (Blood blood : bloodLocations.values()) {
+            MutablePoint point = cloner.deepClone(blood.getPositionOriginal());
+            point.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             blood.setPosition17(point);
         }
     }
 
     /**
      * adds shark locations with location converted
+     *
      * @param locations list of shark locations
      */
-    public void addShark(List<Shark> locations){
+    public void addShark(List<Shark> locations) {
 
         sharkLocations.clear();
-        for(Shark shark:locations){
+        for (Shark shark : locations) {
             MutablePoint location = cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
             MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
             location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            MutablePoint location17=cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
-            location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            MutablePoint location17 = cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
+            location17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             double heading = cloner.deepClone(shark.getHeading());
             int velocity = cloner.deepClone(shark.getVelocity());
-            sharkLocations.put(shark.getSourceId(),new Shark(shark.getSourceId(),shark.getNumSharks(),location,location17, locationOriginal, heading, velocity));
+            sharkLocations.put(shark.getSourceId(), new Shark(shark.getSourceId(), shark.getNumSharks(), location, location17, locationOriginal, heading, velocity));
             shark.setSpeed(shark.getVelocity());
         }
     }
@@ -611,45 +631,48 @@ public class Interpreter implements DataSource, PacketHandler {
     /**
      * updates shark location when scaling level changes
      */
-    private void updateSharkLocation(){
-        for(Shark shark: sharkLocations.values()){
-            MutablePoint point=cloner.deepClone(shark.getPositionOriginal());
-            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+    private void updateSharkLocation() {
+        for (Shark shark : sharkLocations.values()) {
+            MutablePoint point = cloner.deepClone(shark.getPositionOriginal());
+            point.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             shark.setPosition17(point);
         }
     }
 
-    public Map<Integer,CrewLocation> getCrewLocations() { return crewLocations; }
+    public Map<Integer, CrewLocation> getCrewLocations() {
+        return crewLocations;
+    }
 
-    public Map<Integer,Shark> getSharkLocations() {
+    public Map<Integer, Shark> getSharkLocations() {
         return sharkLocations;
     }
 
-    public Map<Integer,Blood> getBloodLocations() {
+    public Map<Integer, Blood> getBloodLocations() {
         return bloodLocations;
     }
 
-    public Map<Integer, Whirlpool> getWhirlpools() {return whirlpools;}
-
+    public Map<Integer, Whirlpool> getWhirlpools() {
+        return whirlpools;
+    }
 
     /**
      * returns the sourceID of the clients boat
+     *
      * @return the sourceID of the clients boat
      */
     public int getSourceID() {
         return sourceID;
     }
 
-
     /**
      * removes sourceID from collisions list
+     *
      * @param sourceID the sourceID to be removed
      */
     @Override
     public void removeCollsions(int sourceID) {
         collisions.remove(sourceID);
     }
-
 
     /**
      * Updates the boat properties as data is being received.
@@ -658,10 +681,10 @@ public class Interpreter implements DataSource, PacketHandler {
         int boatID = boatData.getSourceID();
 
         MutablePoint location = cloner.deepClone(boatData.getMercatorPoint());
-        MutablePoint location17=cloner.deepClone(boatData.getMercatorPoint());
+        MutablePoint location17 = cloner.deepClone(boatData.getMercatorPoint());
 
         location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-        location17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        location17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
         //add to competitorsPosition and storedCompetitors if they are new
 
@@ -670,7 +693,7 @@ public class Interpreter implements DataSource, PacketHandler {
             this.storedCompetitors.put(boatID, competitor);
         } else {
             //update its properties
-            Competitor updatingBoat=storedCompetitors.get(boatID);
+            Competitor updatingBoat = storedCompetitors.get(boatID);
             // boat colour
             if (updatingBoat.getColor() == null) {
                 Color colour = this.colourPool.getColours().get(0);
@@ -690,38 +713,38 @@ public class Interpreter implements DataSource, PacketHandler {
         competitorsPosition.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
     }
 
-
     /**
      * Updates the course features/marks
+     *
      * @param courseFeature CourseFeature
      */
-    private void updateCourseMarks(CourseFeature courseFeature,BoatData boatData) {
-        CourseFeature courseFeature17=cloner.deepClone(courseFeature);
-        CourseFeature courseFeatureOriginal=cloner.deepClone(courseFeature);
+    private void updateCourseMarks(CourseFeature courseFeature, BoatData boatData) {
+        CourseFeature courseFeature17 = cloner.deepClone(courseFeature);
+        CourseFeature courseFeatureOriginal = cloner.deepClone(courseFeature);
         courseFeature.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-        courseFeature17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        courseFeature17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
-        if(!storedFeatures.containsKey(boatData.getSourceID())) {
+        if (!storedFeatures.containsKey(boatData.getSourceID())) {
             this.storedFeatures.put(boatData.getSourceID(), courseFeature);
             this.storedFeatures17.put(boatData.getSourceID(), courseFeature17);
-            this.originalCourseFeature.put(boatData.getSourceID(),courseFeatureOriginal);
+            this.originalCourseFeature.put(boatData.getSourceID(), courseFeatureOriginal);
         }
     }
 
     /**
      * updates the scaling of course marks when scaling level changes
      */
-    private void updateCourseMarksScaling(){
-        HashMap<Integer,CourseFeature> clone=cloner.deepClone(originalCourseFeature);
-        for(int sourceId:clone.keySet()){
-            MutablePoint newLocation=clone.get(sourceId).factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+    private void updateCourseMarksScaling() {
+        HashMap<Integer, CourseFeature> clone = cloner.deepClone(originalCourseFeature);
+        for (int sourceId : clone.keySet()) {
+            MutablePoint newLocation = clone.get(sourceId).factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             this.storedFeatures17.get(sourceId).setPixelLocation(newLocation);
         }
     }
 
-
     /**
      * Parse binary data into XML and create a new parser dependant on the XmlSubType
+     *
      * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
      * @throws IOException   IOException
      * @throws JDOMException JDOMException
@@ -766,24 +789,13 @@ public class Interpreter implements DataSource, PacketHandler {
 
     }
 
-    private void setCourseBoundary(List<MutablePoint> courseBoundary){
-        courseBoundaryOriginal=cloner.deepClone(courseBoundary);
-
-        for(MutablePoint p: cloner.deepClone(courseBoundary)){
-            this.courseBoundary.add(p.factor(scaleFactor,scaleFactor,minXMercatorCoord,minYMercatorCoord,paddingX,paddingY));
-        }
-
-        updateCourseBoundary();
-
-    }
-
     /**
      * updates course boundary when zoom level changes
      */
-    private void updateCourseBoundary(){
+    private void updateCourseBoundary() {
         courseBoundary17.removeAll(courseBoundary17);
-        for(MutablePoint p: cloner.deepClone(courseBoundaryOriginal)){
-            courseBoundary17.add(p.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY));
+        for (MutablePoint p : cloner.deepClone(courseBoundaryOriginal)) {
+            courseBoundary17.add(p.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY));
         }
     }
 
@@ -795,6 +807,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     /**
      * Parse binary data into XML
+     *
      * @param message byte[] an array of bytes which includes information about the xml as well as the xml itself
      * @return String XML string describing Regatta, Race, or Boat
      */
@@ -861,6 +874,10 @@ public class Interpreter implements DataSource, PacketHandler {
         return position17;
     }
 
+    public void setScalingFactor(double scaleFactor) {
+        this.scaleFactor = scaleFactor;
+    }
+
     /**
      * Evaluates position given a location
      * @param location MutablePoint the location to factor
@@ -886,8 +903,8 @@ public class Interpreter implements DataSource, PacketHandler {
      * changes the scaling when zoomed in
      * @param deltaLevel level of zoom
      */
-    public void changeScaling(double deltaLevel){
-        this.zoomLevel+=deltaLevel;
+    public void changeScaling(double deltaLevel) {
+        this.zoomLevel += deltaLevel;
         updateCourseMarksScaling();
         updateCourseBoundary();
         updateCrewLocation();
@@ -898,7 +915,7 @@ public class Interpreter implements DataSource, PacketHandler {
         updateWhirlpools();
     }
 
-    public Map<Integer, Integer> getCollisions(){
+    public Map<Integer, Integer> getCollisions() {
         return collisions;
     }
 

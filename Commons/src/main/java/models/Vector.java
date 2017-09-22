@@ -5,6 +5,8 @@ package models;
  */
 public interface Vector {
     double getXValue();
+
     double getYValue();
+
     double getMagnitude();
 }

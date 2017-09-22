@@ -1,15 +1,10 @@
 package steps;
 
 import Elements.HealthBar;
-
-import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import cucumber.runtime.Runtime;
-import javafx.application.Application;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import models.Boat;
 import models.Competitor;
 
@@ -21,7 +16,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class HealthBarSteps {
 
-    private Competitor boat=new Boat();
+    private Competitor boat = new Boat();
     private HealthBar healthBar = new HealthBar();
 
     @Given("^the max health is (\\d+)$")
@@ -40,10 +35,9 @@ public class HealthBarSteps {
     }
 
 
-
     @Then("^the boat's health should be (\\d+)$")
     public void the_boat_s_health_should_be(int resultHealth) throws Throwable {
-        assertEquals(resultHealth, boat.getHealthLevel(),0.01);
+        assertEquals(resultHealth, boat.getHealthLevel(), 0.01);
     }
 
     @Then("^the colour of the health bar should be GREEN$")
@@ -51,6 +45,7 @@ public class HealthBarSteps {
         Color result = healthBar.calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
         assertEquals(Color.GREEN, result);
     }
+
     @Then("^the colour of the health bar should be GREENYELLOW$")
     public void the_colour_of_the_health_bar_should_be_GREENYELLOW() throws Throwable {
         Color result = healthBar.calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());

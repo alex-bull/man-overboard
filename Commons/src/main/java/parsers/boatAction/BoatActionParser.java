@@ -1,15 +1,8 @@
 package parsers.boatAction;
 
-import models.Mark;
-import models.MutablePoint;
-import parsers.boatLocation.BoatData;
-
 import java.util.Arrays;
-import java.util.List;
 
 import static parsers.Converter.hexByteArrayToInt;
-import static parsers.Converter.parseHeading;
-import static utility.Projection.mercatorProjection;
 
 /**
  * Created by abu59 on 17/07/17.
@@ -18,6 +11,7 @@ public class BoatActionParser {
 
     /**
      * Process the given data and parse source id, latitude, longitude, heading, speed
+     *
      * @param body byte[] a byte array of the boat data message
      * @return BoatData boat data object
      */
@@ -26,8 +20,7 @@ public class BoatActionParser {
             int actionNum = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 1));
 //            System.out.println(actionNum);
             return BoatAction.getBoatAction(actionNum);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

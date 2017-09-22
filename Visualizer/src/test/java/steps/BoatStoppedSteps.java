@@ -1,16 +1,11 @@
 package steps;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import models.Boat;
 import models.Competitor;
 import org.junit.Assert;
-import org.junit.Before;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by jar156 on 24/07/17.
@@ -35,7 +30,7 @@ public class BoatStoppedSteps {
     @When("^The sail slider is set to (\\d+)$")
     public void theSailSliderIsSetTo(int arg1) throws Throwable {
 
-        for(int i = (int) boat.getSailValue(); i != 0; i--){
+        for (int i = (int) boat.getSailValue(); i != 0; i--) {
             boat.sailsIn();
         }
         Assert.assertTrue(boat.getSailValue() == arg1);

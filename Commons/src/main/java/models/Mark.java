@@ -35,7 +35,7 @@ public class Mark implements CourseFeature {
 
     @Override
     public void setPixelLocation(MutablePoint newLocation) {
-        pixelLocation=newLocation;
+        pixelLocation = newLocation;
     }
 
     public boolean isLine() {
@@ -71,6 +71,7 @@ public class Mark implements CourseFeature {
 
     /**
      * Get the centre point in the view frame
+     *
      * @return MutablePoint
      */
     public MutablePoint getPixelCentre() {
@@ -99,6 +100,7 @@ public class Mark implements CourseFeature {
 
     /**
      * Factors point to fit the screen
+     *
      * @param xFactor double the factor to scale by in the x axis
      * @param yFactor double the factor to scale by in the y axis
      * @param minX    double the min x value
@@ -111,6 +113,7 @@ public class Mark implements CourseFeature {
 
     /**
      * Compares mark objects's name, isFinish and location to see if they are equal.
+     *
      * @param o Object
      * @return boolean true if the objects are equal
      */
@@ -125,6 +128,7 @@ public class Mark implements CourseFeature {
 
     /**
      * Generates a hashcode with a built in algorithm from Intellij
+     *
      * @return int a hashcode
      */
     @Override
@@ -159,6 +163,6 @@ public class Mark implements CourseFeature {
 
     @Override
     public CourseFeature shift(double x, double y) {
-        return new Mark(name,pixelLocation.shift(x,y),GPSLocation,index);
+        return new Mark(name, pixelLocation.shift(x, y), GPSLocation, index);
     }
 }
