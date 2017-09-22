@@ -15,6 +15,7 @@
         <fx:include fx:id="table" source="table.fxml"/>
         <fx:include fx:id="wind" source="windDirection.fxml"/>
         <fx:include fx:id="player" source="player.fxml"/>
+        <fx:include fx:id="timer" source="timer.fxml"/>
         <GridPane fx:id="loadingPane" stylesheets="@css/loading.css" AnchorPane.bottomAnchor="0.0"
                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <columnConstraints>

@@ -32,6 +32,8 @@ public class MainController {
     private GridPane loadingPane;
     @FXML
     private Slider sailSlider;
+    @FXML
+    private TimerController timerController;
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private boolean playing = false;
@@ -125,6 +127,7 @@ public class MainController {
     void beginRace(DataSource dataSource, double width, double height) {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
+        timerController.begin(dataSource);
         tableController.addObserver(raceViewController);
         playerController.setup(dataSource, App.getPrimaryStage());
         this.binaryPackager = new BinaryPackager();

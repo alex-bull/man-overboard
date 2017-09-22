@@ -59,7 +59,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     private boolean flag = true;
     private BoatUpdater boatUpdater;
-    private long startTime = System.currentTimeMillis() / 1000;//time in seconds
+    private long startTime = 0;
 
     private TCPServer TCPserver;
     private boolean raceInProgress = false;
@@ -71,13 +71,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private long previousBoostTime = System.currentTimeMillis();
     private int powerUpId = 0;
 
-    private long raceStartTime = 0;
+    private long firstMessageTime = 0;
 
 
     BoatMocker() throws IOException, JDOMException {
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        expectedStartTime = creationTime.plusMinutes(1);
+        startTime = System.currentTimeMillis() / 1000 + 20;
+        expectedStartTime = creationTime.plusSeconds(11);
 
         //find out the coordinates of the course
         generateCourse();
@@ -488,10 +489,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         short windDirection = windGenerator.getWindDirection();
         short windSpeed = windGenerator.getWindSpeed();
         int raceStatus;
-        if (raceStartTime == 0) {
-            raceStartTime = System.currentTimeMillis();
+        if (firstMessageTime != 0) {
+            firstMessageTime = System.currentTimeMillis() / 1000;
         }
-        if (boatUpdater.checkAllFinished() || System.currentTimeMillis() - raceStartTime > 30000) {
+        System.out.println((System.currentTimeMillis() / 1000 - startTime));
+        if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() / 1000 - startTime > 30)) {
             raceStatus = 4;
         } else {
             raceStatus = 3;
