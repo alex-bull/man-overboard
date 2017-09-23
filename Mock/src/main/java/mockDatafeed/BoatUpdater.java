@@ -76,9 +76,7 @@ public class BoatUpdater {
         utility = new Utility();
         this.buildRoundingLines();
 
-
         createShark();
-
     }
 
 

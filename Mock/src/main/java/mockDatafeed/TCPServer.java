@@ -32,7 +32,7 @@ public class TCPServer extends TimerTask {
 
 
     /**
-     * Intialize a server instance on the given port
+     * Initialize a server instance on the given port
      *
      * @param port             int the port to expose the service on
      * @param connectionClient ConnectionClient, a handler for incoming data
@@ -210,6 +210,7 @@ public class TCPServer extends TimerTask {
                 }
                 selector.selectedKeys().remove(key);
             }
+
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -261,10 +261,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     private void clearOldRace(int sourceID) {
         Competitor boat = competitors.get(sourceID);
-
-        for (Competitor c : competitors.values()) {
-            System.out.println("Source id " + c.getSourceID());
-        }
         Competitor cleanBoat = new Boat(boat.getTeamName(), 0, prestart, boat.getAbbreName(), sourceID, PRESTART);
         cleanBoat.setBoatType(boat.getBoatType());
 

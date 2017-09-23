@@ -1014,7 +1014,7 @@ public class RaceViewController implements Initializable, TableObserver {
         dataSource.reset();
         lobbyController.setDataSource(dataSource);
         lobbyController.showCurrentBoat();
-        lobbyController.begin();
+        lobbyController.loop();
         App.getScene().setRoot(root);
 
 

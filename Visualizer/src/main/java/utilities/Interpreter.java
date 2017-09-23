@@ -122,7 +122,6 @@ public class Interpreter implements DataSource, PacketHandler {
     }
 
     public void reset() {
-        competitorsPosition = new ArrayList<>();
         collisions = new HashMap<>();
         crewLocations = new HashMap<>();
         bloodLocations = new HashMap<>();

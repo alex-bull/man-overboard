@@ -44,7 +44,6 @@ public class TCPClient extends TimerTask {
         System.out.println("Start connection to server...");
     }
 
-
     /**
      * Write data to the socket
      *
@@ -55,7 +54,6 @@ public class TCPClient extends TimerTask {
         dos.write(data);
         dos.flush();
     }
-
 
     /**
      * Check for the first and second sync byte
@@ -101,7 +99,6 @@ public class TCPClient extends TimerTask {
      */
     public void run() throws NullPointerException {
 
-
         try {
             boolean isStartOfPacket = checkForSyncBytes();
             if (isStartOfPacket) {
@@ -111,16 +108,11 @@ public class TCPClient extends TimerTask {
                 byte[] message = new byte[length];
                 dis.readFully(message);
                 this.receiveQueue.put(null, header, message);
-
             }
-
         } catch (EOFException e) {
             System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
-
 }

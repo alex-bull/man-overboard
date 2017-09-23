@@ -108,13 +108,7 @@ public class LobbyController implements Initializable {
      */
     void begin() {
 
-
-//        for (int i = 0; i<8; i++) {
-//            competitorList.add("Boaty 10" +i);
-//        }
-
         Scene scene = App.getScene();
-
 
         //start sound loop
         Sounds.player.loopMP3WithFadeIn("sounds/bensound-instinct.mp3", 4);
@@ -129,6 +123,7 @@ public class LobbyController implements Initializable {
                     try {
                         Thread.sleep(1000);
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                     connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
                 }
@@ -139,6 +134,7 @@ public class LobbyController implements Initializable {
         connect.setOnSucceeded(event -> this.loop());
         Thread connection = new Thread(connect);
         connection.start();
+
     }
 
 
@@ -147,7 +143,7 @@ public class LobbyController implements Initializable {
      * Continuously polls the datasource to update the view
      * Uses an animation timer as it is updating the GUI thread
      */
-    private void loop() {
+    public void loop() {
 
         this.timer = new AnimationTimer() {
             @Override
