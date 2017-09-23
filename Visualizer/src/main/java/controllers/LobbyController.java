@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  */
 public class LobbyController implements Initializable {
 
-    private final int STARTTIME = 9;
+    private final int STARTTIME = 1;
     BinaryPackager binaryPackager = new BinaryPackager();
     private DataSource dataSource;
     @FXML
@@ -193,6 +193,7 @@ public class LobbyController implements Initializable {
         boatImages.add(boat);
         boatImages.add(cat);
         boatImages.add(pirate);
+
         boatImageView.setImage(yacht);
         //image resizing cant be done in fxml >(
         courseImageView.setPreserveRatio(false);
@@ -202,7 +203,6 @@ public class LobbyController implements Initializable {
         boatImageView.setPreserveRatio(false);
         boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
         boatImageView.fitHeightProperty().bind(playerGridPane.heightProperty());
-
 
     }
 
@@ -263,6 +263,11 @@ public class LobbyController implements Initializable {
         index++;
         boatImageView.setImage(boatImages.get(index % boatImages.size()));
 
+    }
+
+    public void showCurrentBoat() {
+        int boatType = dataSource.getCompetitor().getBoatType();
+        boatImageView.setImage(boatImages.get(boatType));
     }
 
 
@@ -365,6 +370,9 @@ public class LobbyController implements Initializable {
         if (timer != null) timer.stop();
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
+        this.confirmButton.setDisable(true);
+        this.leftButton.setDisable(true);
+        this.rightButton.setDisable(true);
         nameText.setDisable(true);
         this.nameText.setText(dataSource.getCompetitor().getTeamName());
 

@@ -261,13 +261,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     private void clearOldRace(int sourceID) {
         Competitor boat = competitors.get(sourceID);
-        System.out.println(sourceID);
+
         for (Competitor c : competitors.values()) {
             System.out.println("Source id " + c.getSourceID());
         }
-        System.out.println(boat);
-        System.out.println(prestart);
         Competitor cleanBoat = new Boat(boat.getTeamName(), 0, prestart, boat.getAbbreName(), sourceID, PRESTART);
+        cleanBoat.setBoatType(boat.getBoatType());
 
         if (!hasCleared) {
             try {
@@ -275,6 +274,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 competitors.clear();
                 creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
                 expectedStartTime = creationTime.plusMinutes(1);
+                boatUpdater = new BoatUpdater(competitors, markBoats, raceData, this, courseBoundary, windGenerator);
 
                 hasCleared = true;
 
@@ -794,7 +794,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         try {
             boatUpdater.updatePosition();
-
 
                 if (System.currentTimeMillis() - previousBoostTime > boostTime) {
                     spawnPowerUp(PowerUpType.BOOST);

@@ -117,7 +117,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private DataSource dataSource;
     private GraphicsContext gc;
 
-
     //================================================================================================================
     // SETUP
     //================================================================================================================
@@ -1008,13 +1007,26 @@ public class RaceViewController implements Initializable, TableObserver {
 
         observableFinisherList.clear();
 
+        clearOldInfo();
+
 
         LobbyController lobbyController = loader.getController();
         lobbyController.setDataSource(dataSource);
+        lobbyController.showCurrentBoat();
         lobbyController.begin();
         App.getScene().setRoot(root);
 
 
 
+    }
+
+    private void clearOldInfo() {
+        fallenCrews = new HashMap<>();
+        bloodImages = new HashMap<>();
+        blood = new HashMap<>();
+        crewImages = new HashMap<>();
+        powerUps = new HashMap<>();
+        track = new Track();
+        whirlpools = new HashMap<>();
     }
 }
