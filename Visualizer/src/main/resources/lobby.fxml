@@ -85,22 +85,51 @@
                                 <Insets bottom="10.0" left="60.0" right="60.0" top="10.0" />
                             </GridPane.margin>
                         </GridPane>
-                        <GridPane fx:id="gameGridPane" prefHeight="360.0" prefWidth="420.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints />
+                  <GridPane styleClass="bordered" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
-                            <children>
-                                <ImageView fx:id="courseImageView" fitWidth="420.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
-                                    <image>
-                                        <Image url="@images/courseImage.png" />
-                                    </image>
-                                </ImageView>
-                            </children>
-                        </GridPane>
+                     </rowConstraints>
+                     <children>
+                              <GridPane fx:id="gameGridPane" prefHeight="360.0" prefWidth="420.0" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+                                  <columnConstraints>
+                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                  </columnConstraints>
+                                  <rowConstraints>
+                                      <RowConstraints />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                  </rowConstraints>
+                                  <children>
+                                      <ImageView fx:id="courseImageView" fitWidth="420.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                                          <image>
+                                              <Image url="@images/courseImage.png" />
+                                          </image>
+                                 <GridPane.margin>
+                                    <Insets left="5.0" right="5.0" top="5.0" />
+                                 </GridPane.margin>
+                                      </ImageView>
+                                      <Label fx:id="locationLabel" alignment="TOP_RIGHT" maxWidth="1.7976931348623157E308" style="-fx-background-color: rgba(0,0,0,0.75); -fx-alignment: CENTER_RIGHT;" text="Bermuda" textFill="WHITE" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                                          <font>
+                                              <Font size="30.0" />
+                                          </font>
+                                          <padding>
+                                              <Insets bottom="30.0" right="10.0" />
+                                          </padding>
+                                      </Label>
+                                      <Label fx:id="gameTypeLabel" alignment="BOTTOM_RIGHT" maxWidth="1.7976931348623157E308" prefWidth="382.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_RIGHT;" text="Match Race" textFill="WHITE" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                                          <font>
+                                              <Font size="20.0" />
+                                          </font>
+                                          <padding>
+                                              <Insets bottom="10.0" right="10.0" />
+                                          </padding>
+                                      </Label>
+                                  </children>
+                              </GridPane>
+                     </children>
+                  </GridPane>
                         <Button fx:id="leftButton" mnemonicParsing="false" onAction="#showPreviousBoat" styleClass="controlbutton" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                             <graphic>
                                 <ImageView fitHeight="37.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
@@ -155,22 +184,6 @@
                                 <Insets left="10.0" />
                             </padding>
                         </Label>
-                          <Label fx:id="gameTypeLabel" maxWidth="1.7976931348623157E308" prefWidth="382.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_RIGHT;" text="Match Race" textFill="WHITE" GridPane.columnIndex="1" GridPane.valignment="BOTTOM">
-                              <font>
-                                  <Font size="25.0" />
-                              </font>
-                              <padding>
-                                  <Insets bottom="20.0" right="180.0" />
-                              </padding>
-                          </Label>
-                          <Label fx:id="locationLabel" maxWidth="1.7976931348623157E308" style="-fx-background-color: transparent; -fx-alignment: CENTER_RIGHT;" text="Bermuda" textFill="WHITE" GridPane.valignment="BOTTOM">
-                              <font>
-                                  <Font size="30.0" />
-                              </font>
-                              <padding>
-                                  <Insets bottom="20.0" right="20.0" />
-                              </padding>
-                          </Label>
                     </children>
                 </GridPane>
                 <Label fx:id="loadingLabel" style="-fx-text-fill: white;" text="Finding a game..." textFill="#06d4f8" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">

@@ -19,3 +19,10 @@
     -fx-border-color: transparent;
     -fx-padding: 0;
 }
+
+
+.bordered {
+    -fx-border-color: white;
+    -fx-border-width: 3px;
+
+}
