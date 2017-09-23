@@ -121,6 +121,15 @@ public class Interpreter implements DataSource, PacketHandler {
 
     }
 
+    public void reset() {
+        competitorsPosition = new ArrayList<>();
+        collisions = new HashMap<>();
+        crewLocations = new HashMap<>();
+        bloodLocations = new HashMap<>();
+        whirlpools = new HashMap<>();
+        powerUps = new HashMap<>();
+    }
+
     public Map<Integer, CourseFeature> getCourseFeatureMap() {
         return this.storedFeatures;
     }

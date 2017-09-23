@@ -16,6 +16,8 @@ import java.util.Map;
 public interface DataSource {
     void changeScaling(double Multiplier);
 
+    void reset();
+
     int getZoomLevel();
 
     Map<Integer, CrewLocation> getCrewLocations();
