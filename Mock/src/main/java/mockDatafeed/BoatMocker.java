@@ -291,6 +291,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * @param clientId Integer, the client to remove
      */
     private void removePlayer(Integer clientId) {
+
+        if (raceInProgress) {
+            competitors.get(clientId).setStatus(DSQ);
+            return;
+        }
         clientStates.remove(clientId);
         this.competitors.remove(clientId);
         this.sendAllXML();

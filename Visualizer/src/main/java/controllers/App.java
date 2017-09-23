@@ -37,7 +37,6 @@ public class App extends Application {
     public void start(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
         Parent root = loader.load();
-
         Scene rootScene = new Scene(root);
         primaryStage.setScene(rootScene);
         primaryStage.setTitle("Man Overboard");
