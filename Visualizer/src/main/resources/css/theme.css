@@ -20,8 +20,9 @@
     -fx-border-color: white;
     -fx-text-fill: white;
     -fx-border-width: 3px;
-    -fx-border-radius: 5px;
+    -fx-border-radius: 10px;
     -fx-background-color: transparent;
+    -fx-background-radius: 10px;
     -fx-opacity: 0.8;
     -fx-font-family: 'Quicksand', sans-serif;
     -fx-font-size: 12pt;
@@ -29,24 +30,7 @@
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
 }
 
-.menu-button {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-text-fill: white;
-    -fx-font-family: 'Quicksand', sans-serif, bold;
-    -fx-font-variant: small-caps;
-    -fx-font-size: 25pt;
-    -fx-text-alignment: center;
-    -fx-radius: 5px;
-}
 
-.menu-button.button:hover {
-    -fx-border-color: white;
-    -fx-text-fill: white;
-    -fx-border-width: 4px;
-    -fx-border-radius: 6px;
-    -fx-background-color: transparent;
-}
 
 
 .button:hover {
@@ -56,12 +40,12 @@
 
 .button:pressed, .button:default:hover:pressed {
     -fx-background-color: white;
-    -fx-background-radius: 4;
+    -fx-background-radius: 10px;
 
 }
 
 .button:focused {
-    -fx-background-radius: 4;
+    -fx-background-radius: 10px;
     -fx-border-insets: 1 1 1 1, 0;
 }
 
@@ -80,6 +64,13 @@
     -fx-border-width: 2px;
     -fx-border-radius: 10px;
     -fx-text-fill: white;
+}
+
+.text-field:disabled {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-opacity: 1;
 }
 
 
