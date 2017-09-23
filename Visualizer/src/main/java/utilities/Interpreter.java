@@ -1,5 +1,6 @@
 package utilities;
 
+
 import com.rits.cloning.Cloner;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -190,6 +191,7 @@ public class Interpreter implements DataSource, PacketHandler {
         return this.raceData.getLegIndexToMarkSourceIds();
     }
 
+
     /**
      * @return the boat which the visualizer controls
      */
@@ -200,6 +202,7 @@ public class Interpreter implements DataSource, PacketHandler {
     public Map<Integer, PowerUp> getPowerUps() {
         return powerUps;
     }
+
 
     /**
      * Send control data via TCPClient
@@ -213,6 +216,7 @@ public class Interpreter implements DataSource, PacketHandler {
             System.out.println("Failed to send data");
         }
     }
+
 
     /**
      * Begins data receiver streaming from port.
@@ -254,6 +258,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
     }
 
+
     /**
      * handle server updates
      */
@@ -262,6 +267,7 @@ public class Interpreter implements DataSource, PacketHandler {
             this.interpretPacket(m.getHeader(), m.getBody());
         }
     }
+
 
     /**
      * Reads packet values and updates model data
@@ -476,6 +482,7 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
+
     /**
      * add whirlpools with location converted
      *
@@ -492,6 +499,7 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
+
     /**
      * updates whirlpools when scaling level changes
      */
@@ -502,6 +510,7 @@ public class Interpreter implements DataSource, PacketHandler {
             whirlpool.setPosition17(point);
         }
     }
+
 
     /**
      * adds crew locations with location converted
@@ -520,6 +529,7 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
+
     /**
      * updates crew location when scaling level changes
      */
@@ -531,6 +541,7 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
+
     /**
      * updates power up location when scaling level changes
      */
@@ -541,6 +552,7 @@ public class Interpreter implements DataSource, PacketHandler {
             powerUp.setPosition17(point);
         }
     }
+
 
     /**
      * adds blood locations with location converted
@@ -560,6 +572,7 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
+
     /**
      * updates blood location when scaling level changes
      */
@@ -570,6 +583,7 @@ public class Interpreter implements DataSource, PacketHandler {
             blood.setPosition17(point);
         }
     }
+
 
     /**
      * adds shark locations with location converted
@@ -591,6 +605,7 @@ public class Interpreter implements DataSource, PacketHandler {
             shark.setSpeed(shark.getVelocity());
         }
     }
+
 
     /**
      * updates shark location when scaling level changes
@@ -619,6 +634,7 @@ public class Interpreter implements DataSource, PacketHandler {
         return whirlpools;
     }
 
+
     /**
      * returns the sourceID of the clients boat
      *
@@ -627,6 +643,7 @@ public class Interpreter implements DataSource, PacketHandler {
     public int getSourceID() {
         return sourceID;
     }
+
 
     /**
      * removes sourceID from collisions list
@@ -637,6 +654,7 @@ public class Interpreter implements DataSource, PacketHandler {
     public void removeCollsions(int sourceID) {
         collisions.remove(sourceID);
     }
+
 
     /**
      * Updates the boat properties as data is being received.
@@ -677,6 +695,7 @@ public class Interpreter implements DataSource, PacketHandler {
         competitorsPosition.sort((o1, o2) -> (o1.getCurrentLegIndex() < o2.getCurrentLegIndex()) ? 1 : ((o1.getCurrentLegIndex() == o2.getCurrentLegIndex()) ? 0 : -1));
     }
 
+
     /**
      * Updates the course features/marks
      *
@@ -695,6 +714,7 @@ public class Interpreter implements DataSource, PacketHandler {
         }
     }
 
+
     /**
      * updates the scaling of course marks when scaling level changes
      */
@@ -705,6 +725,7 @@ public class Interpreter implements DataSource, PacketHandler {
             this.storedFeatures17.get(sourceId).setPixelLocation(newLocation);
         }
     }
+
 
     /**
      * Parse binary data into XML and create a new parser dependant on the XmlSubType

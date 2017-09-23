@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -404,6 +405,12 @@ public class RaceViewController implements Initializable, TableObserver {
             this.raceViewPane.getChildren().add(healthBar);
             return;
         }
+
+        if (boat.getStatus() == DSQ) {
+            healthBar.setVisible(false);
+            return;
+        }
+
         boolean alive;
         if (isZoom()) {
             MutablePoint location = getZoomedBoatLocation(boat);
@@ -531,7 +538,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.boatModels.put(sourceId, boatModel);
         }
         if (boat.getStatus() == DSQ) {
-            boatModels.get(boat.getSourceID()).die();
+            boatModel.die();
             boatModel.update(point, 0);
         } else boatModel.update(point, boat.getCurrentHeading());
     }
@@ -929,6 +936,16 @@ public class RaceViewController implements Initializable, TableObserver {
         updateCourse();
 
         for (Competitor boat : dataSource.getCompetitorsPosition()) {
+            Integer sourceId = boat.getSourceID();
+
+            if (boat.getHealthLevel() > 0 && boat.getStatus() == DSQ) { //remove model if they leave the race
+                Set<Node> elements = new HashSet<>();
+                elements.add(boatModels.get(sourceId));
+                elements.add(healthBars.get(sourceId));
+                elements.add(annotations.get(sourceId));
+                elements.add(wakeModels.get(sourceId));
+                raceViewPane.getChildren().removeAll(elements);
+            }
 
             if (counter % 70 == 0) {
                 drawTrack(boat);
