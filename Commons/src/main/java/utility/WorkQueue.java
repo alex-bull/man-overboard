@@ -60,4 +60,10 @@ public class WorkQueue {
         return process;
     }
 
+    @Override
+    public String toString() {
+        return "WorkQueue{" +
+                "size=" + queue.size() +
+                '}';
+    }
 }

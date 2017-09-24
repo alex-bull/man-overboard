@@ -11,6 +11,8 @@ import utilities.DataSource;
 import utilities.Sounds;
 import utility.BinaryPackager;
 
+import static javafx.scene.input.KeyCode.Q;
+
 
 /**
  * Created by psu43 on 22/03/17.
@@ -37,6 +39,7 @@ public class MainController {
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private boolean playing = false;
+    private boolean flag = false;
 
 
     /**
@@ -51,6 +54,13 @@ public class MainController {
         }
     }
 
+    @FXML
+    public void zoomOut(KeyEvent event){
+        if (event.getCode()==Q){
+            raceViewController.zoomIn();
+        }
+    }
+
     /**
      * Handle control key events
      *
@@ -58,6 +68,7 @@ public class MainController {
      */
     @FXML
     public void keyPressed(KeyEvent event) {
+//        System.out.println("key pressed "+System.currentTimeMillis());
 
         switch (event.getCode()) {
             case W:
@@ -77,7 +88,11 @@ public class MainController {
                 this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.TACK_GYBE.getValue(), dataSource.getSourceID()));
                 break;
             case Q:
-                raceViewController.toggleZoom();
+                raceViewController.zoomOut();
+
+                if (!tableController.isVisible()) {
+                    tableController.makeVisible();
+                }
                 break;
             case BACK_QUOTE:
                 if (raceViewController.isZoom() && tableController.isVisible()) {
@@ -94,7 +109,7 @@ public class MainController {
                 }
                 break;
             case D:
-                if (dataSource.getZoomLevel() > 12 && raceViewController.isZoom()) {
+                if (dataSource.getZoomLevel() > 13 && raceViewController.isZoom()) {
                     dataSource.changeScaling(-1);
                     raceViewController.zoomIn();
                 }
@@ -103,14 +118,14 @@ public class MainController {
                 if (dataSource.getCompetitor().hasSpeedBoost()) {
                     this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.BOOST.getValue(), dataSource.getSourceID()));
                     dataSource.getCompetitor().disableBoost();
-                    playerController.hideBoost();
+                    playerController.greyOutBoost();
                 }
                 break;
             case DIGIT2:
                 if (dataSource.getCompetitor().hasPotion()) {
                     this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.POTION.getValue(), dataSource.getSourceID()));
                     dataSource.getCompetitor().usePotion();
-                    playerController.hidePotion();
+                    playerController.greyOutPotion();
                 }
                 break;
         }
@@ -132,6 +147,7 @@ public class MainController {
         playerController.setup(dataSource, App.getPrimaryStage());
         this.binaryPackager = new BinaryPackager();
 
+
         AnimationTimer timer = new AnimationTimer() {
 
             @Override
@@ -145,9 +161,14 @@ public class MainController {
                     playerController.refresh();
                     sailSlider.toFront();
                     loadingPane.setVisible(false);
+                    if (!flag) {
+                        raceViewController.toggleZoom();
+                        flag = true;
+                    }
                 } else {
                     loadingPane.toFront();
                     loadingPane.setVisible(true);
+
                 }
             }
         };

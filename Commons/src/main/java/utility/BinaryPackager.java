@@ -3,6 +3,7 @@ package utility;
 
 import models.*;
 import parsers.BoatStatusEnum;
+import parsers.powerUp.PowerUpType;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -611,7 +612,7 @@ public class BinaryPackager {
      * @param timeout   long the timeout of the power up
      * @return the packet for power up
      */
-    public byte[] packagePowerUp(Integer powerId, Double latitude, Double longitude, short radius, int powerType, int duration, long timeout) {
+    public byte[] packagePowerUp(Integer powerId, Double latitude, Double longitude, short radius, PowerUpType powerType, int duration, long timeout) {
         byte[] packet = new byte[44];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -631,7 +632,7 @@ public class BinaryPackager {
         packetBuffer.putShort(radius);
 
         packetBuffer.put(this.get48bitTime(timeout));
-        packetBuffer.put((byte) powerType);
+        packetBuffer.put((byte) powerType.getValue());
 
         packetBuffer.putInt(duration);
 
@@ -665,12 +666,13 @@ public class BinaryPackager {
 
     /**
      * Packages Shark event
+     * only one shark currently
      *
-     * @param locations the location of the Obstacles
+     * @param shark the location of the Obstacles
      * @return the packet for event
      */
-    public byte[] packageSharkEvent(List<Shark> locations) {
-        int n = locations.size();
+    public byte[] packageSharkEvent(Shark shark) {
+        int n = 1;
         byte[] packet = new byte[20 + n * 22]; // total size of packet
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
@@ -680,14 +682,14 @@ public class BinaryPackager {
         short bodyLength = (short) (n * 22 + 1);
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.put((byte) n);
-        for (Shark shark : locations) {
+
             packetBuffer.putInt(shark.getSourceId());
             packetBuffer.put((byte) shark.getNumSharks());
             packetBuffer.putInt(latLngToInt(shark.getLatitude()));
             packetBuffer.putInt(latLngToInt(shark.getLongitude()));
             packetBuffer.put((byte) shark.getVelocity());
             packetBuffer.putDouble(shark.getHeading());
-        }
+
 
         //CRC
         this.writeCRC(packetBuffer);
@@ -698,25 +700,21 @@ public class BinaryPackager {
     /**
      * Packages Blood event
      *
-     * @param locations the location of the blood pool
+     * @param sourceId the location of the blood pool
      * @return the packet for event
      */
-    public byte[] packageBloodEvent(List<Blood> locations) {
-        int n = locations.size();
-        byte[] packet = new byte[20 + n * 12]; // total size of packet
+    public byte[] packageBloodEvent(int sourceId) {
+
+        byte[] packet = new byte[23]; // total size of packet
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        byte type = -100;
-        short bodyLength = (short) (n * 12 + 1);
+        byte type = 121;
+        short bodyLength = (short) (4);
         this.writeHeader(packetBuffer, type, bodyLength);
-        packetBuffer.put((byte) n);
-        for (Blood blood : locations) {
-            packetBuffer.putInt(blood.getSourceID());
-            packetBuffer.putInt(latLngToInt(blood.getLatitude()));
-            packetBuffer.putInt(latLngToInt(blood.getLongitude()));
-        }
+        packetBuffer.putInt(sourceId);
+
 
         //CRC
         this.writeCRC(packetBuffer);

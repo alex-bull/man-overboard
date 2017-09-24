@@ -24,6 +24,7 @@ import parsers.markRounding.MarkRoundingParser;
 import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpParser;
 import parsers.powerUp.PowerUpTakenParser;
+import parsers.powerUp.PowerUpType;
 import parsers.raceStatus.RaceStatusData;
 import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.boat.BoatXMLParser;
@@ -365,7 +366,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 HeaderData headerData = headerParser.processMessage(header);
                 this.boatAction = boatActionParser.processMessage(packet);
-
                 if (boatAction != null && headerData != null) {
                     if (headerData.getSourceID() == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
@@ -422,14 +422,14 @@ public class Interpreter implements DataSource, PacketHandler {
             case POWER_UP:
                 PowerUpParser powerUpParser = new PowerUpParser();
                 PowerUp powerUp = powerUpParser.parsePowerUp(packet);
-                if (powerUp.getType() == BOOST.getValue() || powerUp.getType() == POTION.getValue()) {
+                if (powerUp.getType()==BOOST|| powerUp.getType()==POTION) {
                     MutablePoint location = powerUp.getLocation();
                     MutablePoint positionOriginal = cloner.deepClone(Projection.mercatorProjection(location));
 
                     MutablePoint position = cloner.deepClone(Projection.mercatorProjection(location));
                     position.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
-                    MutablePoint position17 = cloner.deepClone(Projection.mercatorProjection(position));
+                    MutablePoint position17 = cloner.deepClone(Projection.mercatorProjection(location));
                     position17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
                     powerUp.setPosition(position);
@@ -446,12 +446,17 @@ public class Interpreter implements DataSource, PacketHandler {
                 if (powerUps.containsKey(id)) {
                     PowerUp power = powerUps.get(id);
                     power.taken();
-                    int type = power.getType();
+                    PowerUpType type= power.getType();
                     if (getCompetitor().getSourceID() == boatId) {
-                        if (type == 0) {
-                            getCompetitor().enableBoost();
-                        } else if (type == 3) {
-                            getCompetitor().enablePotion();
+                        switch(type){
+                            case BOOST:
+                                getCompetitor().enableBoost();
+                                break;
+                            case POTION:
+                                getCompetitor().enablePotion();
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
@@ -460,11 +465,11 @@ public class Interpreter implements DataSource, PacketHandler {
                 addShark(parseShark(packet));
                 break;
             case BLOOD:
-                addBloodLocation(parseBlood(packet));
+                System.out.println("Blood event");
+                crewLocations.get((parseBlood(packet))).setDied();
                 break;
             case WHIRLPOOL:
                 addWhirlPool(parseWhirlpool(packet));
-
             default:
                 break;
         }
