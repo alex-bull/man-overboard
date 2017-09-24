@@ -85,7 +85,7 @@
                                 <Insets bottom="10.0" left="60.0" right="60.0" top="10.0" />
                             </GridPane.margin>
                         </GridPane>
-                  <GridPane styleClass="bordered" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <GridPane styleClass="bordered" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                      </columnConstraints>
@@ -130,7 +130,7 @@
                               </GridPane>
                      </children>
                   </GridPane>
-                        <Button fx:id="leftButton" mnemonicParsing="false" onAction="#showPreviousBoat" styleClass="controlbutton" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+                        <Button fx:id="leftButton" mnemonicParsing="false" onAction="#showPreviousBoat" styleClass="controlbutton" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                             <graphic>
                                 <ImageView fitHeight="37.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -165,7 +165,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Label fx:id="gameStartLabel" text="Game starting in..." textFill="#e0efef" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                        <Label fx:id="gameStartLabel" text="Game starting in..." textFill="#e0efef" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                             <GridPane.margin>
                                 <Insets />
                             </GridPane.margin>
@@ -176,7 +176,7 @@
                                 <Insets left="20.0" />
                             </padding>
                         </Label>
-                        <Label fx:id="countdownLabel" text="5" textFill="#e0efef" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="countdownLabel" text="5" textFill="#e0efef" GridPane.columnIndex="1">
                             <font>
                                 <Font name="Gentium Book Basic Bold Italic" size="20.0" />
                             </font>
