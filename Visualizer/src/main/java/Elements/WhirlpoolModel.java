@@ -17,11 +17,13 @@ public class WhirlpoolModel extends ImageView {
 
     Timeline animation;
 
-    public WhirlpoolModel(Image image, Double scale) {
+    public WhirlpoolModel(Image image, boolean isZoom, Double scale) {
 
         this.setImage(image);
         this.setPreserveRatio(true);
-        this.setFitWidth(scale * image.getWidth());
+        if(isZoom) {
+            this.setFitWidth(scale * image.getWidth());
+        }
     }
 
     public void update(MutablePoint position) {

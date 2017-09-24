@@ -5,9 +5,6 @@ import javafx.scene.image.ImageView;
 import models.MutablePoint;
 import parsers.powerUp.PowerUp;
 
-import static parsers.powerUp.PowerUpType.BOOST;
-import static parsers.powerUp.PowerUpType.POTION;
-
 /**
  * Created by psu43 on 11/09/17.
  * Visual representation of a powerup
@@ -18,10 +15,12 @@ public class PowerUpModel extends ImageView {
      * Create a powerup model
      *
      * @param receivedPowerUp PowerUp the power up
+     * @param isZoom          if the visualizer is zoomed in or not
+     * @param scale           the scaling used
      */
-    public PowerUpModel(PowerUp receivedPowerUp, Double scale) {
+    public PowerUpModel(PowerUp receivedPowerUp, boolean isZoom, Double scale) {
         Image image;
-        switch(receivedPowerUp.getType()){
+        switch (receivedPowerUp.getType()) {
             case BOOST:
                 image = new Image("/images/speed.png");
                 break;
@@ -29,12 +28,14 @@ public class PowerUpModel extends ImageView {
                 image = new Image("/images/potion2.png");
                 break;
             default:
-                image=null;
+                image = null;
                 break;
         }
-            this.setImage(image);
-            this.setPreserveRatio(true);
+        this.setImage(image);
+        this.setPreserveRatio(true);
+        if (isZoom) {
             this.setFitWidth(scale * image.getWidth());
+        }
     }
 
 

@@ -622,7 +622,7 @@ public class RaceViewController implements Initializable, TableObserver {
         for (PowerUp receivedPowerUp : receivedPowerUps.values()) {
             int sourceId = receivedPowerUp.getId();
             if (!powerUps.containsKey(sourceId)) {
-                PowerUpModel powerUpModel = new PowerUpModel(receivedPowerUp, nodeSizeFunc(dataSource.getZoomLevel()));
+                PowerUpModel powerUpModel = new PowerUpModel(receivedPowerUp, isZoom(),nodeSizeFunc(dataSource.getZoomLevel()));
                 powerUps.put(sourceId, powerUpModel);
                 raceViewPane.getChildren().add(powerUpModel);
             }
@@ -677,7 +677,7 @@ public class RaceViewController implements Initializable, TableObserver {
         for (int id : whirlpoolsLocation.keySet()) {
             if (!whirlpools.containsKey(id)) {
                 Whirlpool whirlpool = whirlpoolsLocation.get(id);
-                WhirlpoolModel model = new WhirlpoolModel(new Image("/images/whirlpool.png"), nodeSizeFunc(dataSource.getZoomLevel()));
+                WhirlpoolModel model = new WhirlpoolModel(new Image("/images/whirlpool.png"), isZoom(), nodeSizeFunc(dataSource.getZoomLevel()));
                 model.update(whirlpool.getPosition());
                 model.animateSpawn();
                 whirlpools.put(id, model);
