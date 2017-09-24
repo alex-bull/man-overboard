@@ -30,10 +30,10 @@ public class WindController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.arrow = new Polygon();
         arrow.setLayoutX(80);
-        arrow.setLayoutY(90);
+        arrow.setLayoutY(110);
         drawArrow(0, -10);
-        arrow.setFill(WHITE);
-        arrow.setStroke(WHITE);
+        arrow.setFill(BLACK);
+        arrow.setStroke(BLACK);
         arrow.setStrokeWidth(1);
         this.windPane.getChildren().add(arrow);
     }
