@@ -36,6 +36,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import static mockDatafeed.Keys.RIP;
 import static parsers.BoatStatusEnum.*;
 import static parsers.Converter.hexByteArrayToInt;
+import static parsers.MessageType.RACE_STATUS;
 import static parsers.MessageType.RESTART_RACE;
 import static parsers.MessageType.UNKNOWN;
 import static utilities.CollisionUtility.isPointInPolygon;
@@ -248,7 +249,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 //        prestart = new MutablePoint(32.41011 + a, -64.88937);
         prestart = new MutablePoint(32.35763 + a, -64.81332);
 
-        Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
+        //random.nextInt(20) + 20
+        Boat newCompetitor = new Boat("Boat " + clientId, 50, prestart, "B" + clientId, clientId, PRESTART);
         newCompetitor.setCurrentHeading(0);
         competitors.put(clientId, newCompetitor);
 
@@ -260,6 +262,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     }
 
     private void clearOldRace(int sourceID) {
+        double a = 0.002 * competitors.size(); //shift competitors so they aren't colliding at the start
+        prestart = new MutablePoint(32.35763 + a, -64.81332);
         Competitor boat = competitors.get(sourceID);
         Competitor cleanBoat = new Boat(boat.getTeamName(), 0, prestart, boat.getAbbreName(), sourceID, PRESTART);
         cleanBoat.setBoatType(boat.getBoatType());
@@ -531,13 +535,16 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         int raceStatus;
         if (boatUpdater.checkAllFinished()) {
             raceStatus = 4;
-            boatUpdater.finisherList.clear();
+
         } else {
             raceStatus = 3;
         }
+        System.out.println("sENDING RACE STATUS");
+        System.out.println(raceStatus);
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed, competitors.size());
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         this.sendQueue.put(null, binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
+        if(raceStatus == 4) boatUpdater.finisherList.clear();
     }
 
     /**

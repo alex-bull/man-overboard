@@ -72,6 +72,7 @@ public class HealthBar extends Group {
      * @return boolean, false if the boat died
      */
     public boolean update(Competitor boat, double boatX, double boatY, boolean zoom) {
+        boolean alive = true;
         int scale = 1;
         if (zoom) scale *= 2;
         double strokeWidth = 5 * scale;
@@ -80,7 +81,7 @@ public class HealthBar extends Group {
         double healthLevel = boat.getHealthLevel() * scale;
         double healthSize = ((healthLevel / boat.getMaxHealth()) * maxBarLength) / scale;
 
-
+        System.out.println("health level " + healthLevel);
         if (healthLevel > 0) {
             Color healthColour = calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
             healthBarBackground.setStrokeWidth(strokeWidth + (2 * scale));
@@ -98,17 +99,13 @@ public class HealthBar extends Group {
 
             healthBar.setStroke(healthColour);
             healthBar.toFront();
-            return true;
-        }
-
-        if (boat.getStatus() != DSQ) {
+        } else if(boat.getStatus() != DSQ) {
             healthBar.setVisible(false);
             this.getChildren().clear();
             boat.setStatus(DSQ);
-            return false;
+            alive = false;
         }
-
-        return true;
+        return alive;
     }
 
 

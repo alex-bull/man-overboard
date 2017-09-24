@@ -101,6 +101,50 @@ public class LobbyController implements Initializable {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Initialiser for LobbyController
+     *
+     * @param location  URL
+     * @param resources ResourceBundle
+     */
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+        progressIndicator.setVisible(true);
+        loadingLabel.setVisible(true);
+        countdownLabel.setText("");
+        gameStartLabel.setVisible(false);
+        readyButton.setDisable(false);
+        primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        starterList.setItems(competitorList);
+
+        yacht = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
+        cog = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
+        frigate = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
+        galleon = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
+        boat = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
+        cat = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
+        pirate = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
+
+        boatImages.add(yacht);
+        boatImages.add(cog);
+        boatImages.add(frigate);
+        boatImages.add(galleon);
+        boatImages.add(boat);
+        boatImages.add(cat);
+        boatImages.add(pirate);
+
+        boatImageView.setImage(yacht);
+        //image resizing cant be done in fxml >(
+        courseImageView.setPreserveRatio(false);
+        courseImageView.fitWidthProperty().bind(gameGridPane.widthProperty());
+        courseImageView.fitHeightProperty().bind(gameGridPane.heightProperty());
+
+        boatImageView.setPreserveRatio(false);
+        boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
+        boatImageView.fitHeightProperty().bind(playerGridPane.heightProperty());
+
+    }
 
     /**
      * Begins connection to server
@@ -155,51 +199,6 @@ public class LobbyController implements Initializable {
         };
 
         timer.start();
-    }
-
-
-    /**
-     * Initialiser for LobbyController
-     *
-     * @param location  URL
-     * @param resources ResourceBundle
-     */
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-        progressIndicator.setVisible(true);
-        loadingLabel.setVisible(true);
-        countdownLabel.setText("");
-        gameStartLabel.setVisible(false);
-        primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        starterList.setItems(competitorList);
-
-        yacht = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
-        cog = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
-        frigate = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
-        galleon = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
-        boat = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
-        cat = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
-        pirate = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
-
-        boatImages.add(yacht);
-        boatImages.add(cog);
-        boatImages.add(frigate);
-        boatImages.add(galleon);
-        boatImages.add(boat);
-        boatImages.add(cat);
-        boatImages.add(pirate);
-
-        boatImageView.setImage(yacht);
-        //image resizing cant be done in fxml >(
-        courseImageView.setPreserveRatio(false);
-        courseImageView.fitWidthProperty().bind(gameGridPane.widthProperty());
-        courseImageView.fitHeightProperty().bind(gameGridPane.heightProperty());
-
-        boatImageView.setPreserveRatio(false);
-        boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
-        boatImageView.fitHeightProperty().bind(playerGridPane.heightProperty());
-
     }
 
 
@@ -309,6 +308,7 @@ public class LobbyController implements Initializable {
      * Change to the raceView upon started signal
      */
     public void checkStatus() {
+        System.out.println(dataSource.getRaceStatus());
         if (dataSource.getRaceStatus() == RaceStatusEnum.STARTED) {
             System.out.println("game beginning...");
             this.loadRaceView();

@@ -227,7 +227,7 @@ public class RaceViewController implements Initializable, TableObserver {
             sailLine.setVisible(false);
             this.raceViewPane.getChildren().remove(guideArrow);
         }
-
+        System.out.println("KILL");
         boatModels.get(boat.getSourceID()).die();
         wakeModels.get(boat.getSourceID()).setVisible(false);
     }
@@ -508,6 +508,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.boatModels.put(sourceId, boatModel);
         }
         if (boat.getStatus() == DSQ) {
+            System.out.println("THE BOAT IS DEAD RIP");
             boatModels.get(boat.getSourceID()).die();
             boatModel.update(point, 0);
         } else boatModel.update(point, boat.getCurrentHeading());
@@ -1016,8 +1017,6 @@ public class RaceViewController implements Initializable, TableObserver {
         lobbyController.showCurrentBoat();
         lobbyController.loop();
         App.getScene().setRoot(root);
-
-
 
     }
 

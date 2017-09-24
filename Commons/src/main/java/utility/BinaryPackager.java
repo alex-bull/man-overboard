@@ -3,6 +3,7 @@ package utility;
 
 import models.*;
 import parsers.BoatStatusEnum;
+import parsers.MessageType;
 import parsers.powerUp.PowerUpType;
 
 import java.io.IOException;
@@ -350,7 +351,7 @@ public class BinaryPackager {
         byte[] packet = new byte[19 + raceStatus.length + eachBoat.length];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        writeHeader(packetBuffer, 12, raceStatus.length + eachBoat.length);
+        writeHeader(packetBuffer, MessageType.RACE_STATUS.getValue(), raceStatus.length + eachBoat.length);
         packetBuffer.put(raceStatus);
         packetBuffer.put(eachBoat);
 

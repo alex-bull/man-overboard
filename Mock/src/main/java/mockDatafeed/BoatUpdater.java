@@ -475,7 +475,11 @@ public class BoatUpdater {
      * @return true if all boats have finished racing
      */
     boolean checkAllFinished() {
+        System.out.println("check finished");
+        System.out.println(finisherList.size() + "**");
+        System.out.println(competitors.size());
         if (finisherList.size() == competitors.size()) {
+            System.out.println("DEEEEEAAAADD");
             return true;
         }
         return false;
