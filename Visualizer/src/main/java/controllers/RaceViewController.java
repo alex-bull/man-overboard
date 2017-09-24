@@ -598,7 +598,7 @@ public class RaceViewController implements Initializable, TableObserver {
             fallenCrews.remove(sourceId);
         }
 
-        for (int sourceID : crewLocation.keySet()) {
+        for (int sourceID : new ArrayList<>(crewLocation.keySet())) {
             Random randomGenerator = new Random();
             if (!fallenCrews.containsKey(sourceID)) {
                 FallenCrew crew = new FallenCrew(crewImages[randomGenerator.nextInt(crewImages.length)], nodeSizeFunc(dataSource.getZoomLevel()));

@@ -189,14 +189,15 @@ public class BoatUpdater {
     private boolean pickUpCrew(Competitor boat) {
         boolean updated = false;
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
-            if (boat.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
+            if (raceCourse.distanceBetweenGPSPoints(boat.getPosition(),crewLocation.getPosition())<50) {
+
                 crewMembers.remove(crewLocation);
                 boat.updateHealth(crewLocation.getNumCrew());
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
                 updated = true;
+
             }
         }
-
         return updated;
     }
 
@@ -208,7 +209,7 @@ public class BoatUpdater {
     private void handlePowerUpCollisions(Competitor boat) {
         for (int id : powerUps.keySet()) {
             PowerUp powerUp = powerUps.get(id);
-            if (boat.getPosition().isWithin(powerUp.getLocation(), 0.0005)) {
+            if (raceCourse.distanceBetweenGPSPoints(boat.getPosition(),powerUp.getLocation())<50) {
                 powerUps.remove(id);
 
                 switch (powerUp.getType()) {
@@ -256,13 +257,8 @@ public class BoatUpdater {
      * @return boolean if a player has passed the first mark
      */
     private boolean passedFirstMark(Competitor boat) {
+        return boat.getCurrentLegIndex() > 0;
 
-
-        if (boat.getCurrentLegIndex() > 0) {
-            return true;
-        }
-
-        return false;
     }
 
 
@@ -472,10 +468,7 @@ public class BoatUpdater {
      * @return true if all boats have finished racing
      */
     boolean checkAllFinished() {
-        if (finisherList.size() == competitors.size()) {
-            return true;
-        }
-        return false;
+        return finisherList.size() == competitors.size();
     }
 
 
