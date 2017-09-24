@@ -47,6 +47,7 @@ import java.util.*;
 import static Elements.PowerUpModel.getImageWidth;
 import static javafx.collections.FXCollections.observableArrayList;
 import static parsers.BoatStatusEnum.DSQ;
+import static parsers.xml.race.ThemeEnum.AMAZON;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 
 
@@ -192,6 +193,9 @@ public class RaceViewController implements Initializable, TableObserver {
         try {
             if(dataSource.getThemeId() == ANTARCTICA) {
                 mapEngine.load(getClass().getClassLoader().getResource("mapsAntarctica.html").toURI().toString());
+            }
+            else if (dataSource.getThemeId() == AMAZON) {
+                mapEngine.load(getClass().getClassLoader().getResource("mapsAmazon.html").toURI().toString());
             }
 
         } catch (URISyntaxException e) {

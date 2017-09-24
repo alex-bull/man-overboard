@@ -6,7 +6,8 @@ package parsers.xml.race;
 public enum ThemeEnum {
 
     ANTARCTICA(0),
-    BERMUDA(1);
+    BERMUDA(1),
+    AMAZON(2);
 
     private final int value;
 

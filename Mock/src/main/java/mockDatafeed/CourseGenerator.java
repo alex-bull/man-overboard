@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import static parsers.xml.race.ThemeEnum.AMAZON;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 import static parsers.xml.race.ThemeEnum.BERMUDA;
 
@@ -25,6 +26,7 @@ public class CourseGenerator {
     CourseGenerator() {
         coursePaths.put("/bermuda.xml", new MutablePoint(32.35763 , -64.81332));
         coursePaths.put("/antarctica.xml", new MutablePoint(-64.68325, -63.09448));
+        coursePaths.put("/amazon.xml", new MutablePoint(0.49918, -50.52389));
 
     }
 
@@ -56,6 +58,9 @@ public class CourseGenerator {
         }
         else if (chosenCourse.contains("bermuda")) {
             return BERMUDA.getValue();
+        }
+        else if (chosenCourse.contains("amazon")) {
+            return AMAZON.getValue();
         }
         return BERMUDA.getValue();
     }
