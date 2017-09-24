@@ -34,3 +34,24 @@
 #windPane {
     -fx-font-family: 'Quicksand', sans-serif, bold;
 }
+
+.slider .track{
+    -fx-background-color: grey;
+    -fx-background-radius: 10px;
+    -fx-opacity: 0.5;
+    -fx-border-color: black;
+    -fx-track-width: 15px;
+    -fx-border-width: 4px;
+    -fx-border-radius: 10px;
+    -fx-pref-width: 30px;
+
+}
+
+
+.slider .thumb{
+    -fx-color: black;
+    -fx-border-color: black;
+    -fx-border-width: 5px;
+    -fx-border-radius: 5px;
+
+    }
