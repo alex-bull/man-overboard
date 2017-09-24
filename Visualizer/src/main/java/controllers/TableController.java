@@ -15,6 +15,7 @@ import utilities.DataSource;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 
@@ -100,12 +101,14 @@ public class TableController implements Initializable {
         events.clear();
 
         for (int i = 0; i < comps.size(); i++) {
-            String teamName = comps.get(i).getTeamName();
-            Double speed = comps.get(i).getVelocity();
-            String featureName = comps.get(i).getLastMarkPassed();
-            Integer sourceId = comps.get(i).getSourceID();
-            RaceEvent raceEvent = new RaceEvent(sourceId, teamName, featureName, String.format("%.2f", speed), i + 1);
-            events.add(raceEvent);
+            if (!Objects.equals(comps.get(i).getTeamName(), "Spectator")) {
+                String teamName = comps.get(i).getTeamName();
+                Double speed = comps.get(i).getVelocity();
+                String featureName = comps.get(i).getLastMarkPassed();
+                Integer sourceId = comps.get(i).getSourceID();
+                RaceEvent raceEvent = new RaceEvent(sourceId, teamName, featureName, String.format("%.2f", speed), i + 1);
+                events.add(raceEvent);
+            }
         }
 
         return comps;

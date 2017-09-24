@@ -363,22 +363,24 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawHealthBar(Competitor boat) {
 
-        int sourceId = boat.getSourceID();
-        HealthBar healthBar = healthBars.get(sourceId);
+        if (!Objects.equals(boat.getTeamName(), "Spectator")) {
+            int sourceId = boat.getSourceID();
+            HealthBar healthBar = healthBars.get(sourceId);
 
-        if (healthBar == null) {
-            healthBar = new HealthBar();
-            this.healthBars.put(sourceId, healthBar);
-            this.raceViewPane.getChildren().add(healthBar);
-            return;
+            if (healthBar == null) {
+                healthBar = new HealthBar();
+                this.healthBars.put(sourceId, healthBar);
+                this.raceViewPane.getChildren().add(healthBar);
+                return;
+            }
+            boolean alive;
+            if (isZoom()) {
+                MutablePoint location = getZoomedBoatLocation(boat);
+                alive = healthBar.update(boat, location.getXValue(), location.getYValue(), true);
+            } else
+                alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), false);
+            if (!alive) this.killBoat(boat);
         }
-        boolean alive;
-        if (isZoom()) {
-            MutablePoint location = getZoomedBoatLocation(boat);
-            alive = healthBar.update(boat, location.getXValue(), location.getYValue(), true);
-        } else alive = healthBar.update(boat, boat.getPosition().getXValue(), boat.getPosition().getYValue(), false);
-        if (!alive) this.killBoat(boat);
-
     }
 
 
@@ -488,20 +490,25 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param boat Competitor a competing boat
      */
     private void drawBoat(Competitor boat) {
-        Integer sourceId = boat.getSourceID();
 
-        MutablePoint point = setRelativePosition(boat);
-        Boolean player = sourceId == dataSource.getSourceID();
-        BoatModel boatModel = boatModels.get(sourceId);
-        if (boatModel == null) {
-            boatModel = new BoatModel(boat.getBoatType(), player);
-            this.raceViewPane.getChildren().add(boatModel);
-            this.boatModels.put(sourceId, boatModel);
+        System.out.println(boat.getTeamName());
+
+        if (!Objects.equals(boat.getTeamName(), "Spectator")) {
+            Integer sourceId = boat.getSourceID();
+
+            MutablePoint point = setRelativePosition(boat);
+            Boolean player = sourceId == dataSource.getSourceID();
+            BoatModel boatModel = boatModels.get(sourceId);
+            if (boatModel == null) {
+                boatModel = new BoatModel(boat.getBoatType(), player);
+                this.raceViewPane.getChildren().add(boatModel);
+                this.boatModels.put(sourceId, boatModel);
+            }
+            if (boat.getStatus() == DSQ) {
+                boatModels.get(boat.getSourceID()).die();
+                boatModel.update(point, 0);
+            } else boatModel.update(point, boat.getCurrentHeading());
         }
-        if (boat.getStatus() == DSQ) {
-            boatModels.get(boat.getSourceID()).die();
-            boatModel.update(point, 0);
-        } else boatModel.update(point, boat.getCurrentHeading());
     }
 
 
@@ -562,7 +569,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawAnnotations(Competitor boat) {
 
-        if (boat.getSourceID() == dataSource.getSourceID()) return; //don't draw annotations for the player
+        if (boat.getSourceID() == dataSource.getSourceID() || Objects.equals(boat.getTeamName(), "Spectator")) return; //don't draw annotations for the player
         Annotation annotation = annotations.get(boat.getSourceID());
         if (annotation == null) {
             annotation = new Annotation(boat);

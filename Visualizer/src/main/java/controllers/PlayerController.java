@@ -53,34 +53,36 @@ public class PlayerController {
         this.speed.setVisible(false);
         this.potion.setVisible(false);
         gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
+        if (dataSource.getCompetitor().getTeamName() != "Spectator") {
+            Competitor boat = dataSource.getCompetitor();
+            if (boat.getBoatType() == 0) {
+                Image boatImage = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
+                playerImageView.setImage(boatImage);
+            } else if (boat.getBoatType() == 1) {
+                Image boatImage = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
+                playerImageView.setImage(boatImage);
+            } else if (boat.getBoatType() == 2) {
+                Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
+                playerImageView.setImage(boatImage);
+            } else if (boat.getBoatType() == 3) {
+                Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
+                playerImageView.setImage(boatImage);
+            } else if (boat.getBoatType() == 4) {
+                Image boatImage = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
+                playerImageView.setImage(boatImage);
+            } else if (boat.getBoatType() == 5) {
+                Image boatImage = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
+                playerImageView.setImage(boatImage);
+            } else if (boat.getBoatType() == 6) {
+                Image boatImage = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
+                playerImageView.setImage(boatImage);
+            }
 
-        Competitor boat = dataSource.getCompetitor();
-        if (boat.getBoatType() == 0) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 1) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 2) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 3) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 4) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 5) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 6) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
-            playerImageView.setImage(boatImage);
+            playerImageView.setPreserveRatio(false);
+            playerImageView.fitWidthProperty().bind(imageGrid.widthProperty());
+            playerImageView.fitHeightProperty().bind(imageGrid.heightProperty());
+
         }
-
-        playerImageView.setPreserveRatio(false);
-        playerImageView.fitWidthProperty().bind(imageGrid.widthProperty());
-        playerImageView.fitHeightProperty().bind(imageGrid.heightProperty());
 
         this.stage = stage;
 

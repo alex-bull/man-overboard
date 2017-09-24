@@ -226,7 +226,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void addCompetitor(Integer clientId) {
         if(raceInProgress) {
-            System.out.println("Add a Spectator here? not really sure if this how u do it but ok" + clientId);
+            Boat newCompetitor = new Boat("Spectator", random.nextInt(20) + 20, prestart, "S" + clientId, clientId, PRESTART);
+            competitors.put(clientId, newCompetitor);
             byte[] res = binaryPackager.packageConnectionResponse((byte) 1, clientId);
             //send connection response and broadcast XML so update lobbies
             sendQueue.put(clientId, res);

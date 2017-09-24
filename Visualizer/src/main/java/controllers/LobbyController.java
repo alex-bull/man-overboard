@@ -78,6 +78,7 @@ public class LobbyController implements Initializable {
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private AnimationTimer timer;
     private boolean boatSelected = false;
+    private boolean readyButtonPressed = false;
 
     void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -194,6 +195,7 @@ public class LobbyController implements Initializable {
         if (dataSource.getSourceID() == 0) return; //player has not connected yet
 //        soundPlayer.playSound("sounds/im-ready.au");
         readyButton.setDisable(true);
+        readyButtonPressed = true;
         dataSource.send(new BinaryPackager().packagePlayerReady());
     }
 
@@ -271,7 +273,7 @@ public class LobbyController implements Initializable {
      * Change to the raceView upon started signal
      */
     public void checkStatus() {
-        if (dataSource.getStoredCompetitors().containsKey(dataSource.getSourceID()) && dataSource.getRaceStatus() == RaceStatusEnum.STARTED) {
+        if (dataSource.getRaceStatus() == RaceStatusEnum.STARTED && readyButtonPressed) {
             System.out.println("game beginning...");
             this.loadRaceView();
         }
@@ -337,6 +339,7 @@ public class LobbyController implements Initializable {
         rightButton.setVisible(false);
 
         if (!boatSelected) boatImageView.setImage(boatImages.get(0)); //if none selected then use default image
+
         this.nameText.setText(dataSource.getCompetitor().getTeamName());
 
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 10);
