@@ -50,6 +50,7 @@ public class PlayerController {
      * @param dataSource Datasource
      */
     void setup(DataSource dataSource, Stage stage) {
+
         this.dataSource = dataSource;
         this.healthPane.getChildren().add(screenHealthBar);
         this.healthPane.toBack();
@@ -57,6 +58,7 @@ public class PlayerController {
 //        this.speed.setVisible(false);
 //        this.potion.setVisible(false);
         gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
+
         Competitor boat = dataSource.getCompetitor();
         if (boat.getBoatType() == 0) {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());

@@ -24,7 +24,7 @@ public class PowerUpParser {
             int type = hexByteArrayToInt(Arrays.copyOfRange(packet, 20, 21));
             Integer duration = hexByteArrayToInt(Arrays.copyOfRange(packet, 21, 25));
 
-            return new PowerUp(id, latitude, longitude, radius, timeout, type, duration);
+            return new PowerUp(id, latitude, longitude, radius, timeout, PowerUpType.fromValue(type), duration);
         } catch (Exception e) {
             return null;
         }

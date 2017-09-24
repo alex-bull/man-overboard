@@ -44,43 +44,26 @@ import java.util.stream.Collectors;
  */
 public class LobbyController implements Initializable {
 
-    private final int STARTTIME = 9;
+    private final int STARTTIME = 1;
     BinaryPackager binaryPackager = new BinaryPackager();
     private DataSource dataSource;
-    @FXML
-    private ListView<String> starterList;
-    @FXML
-    private Button readyButton;
-    @FXML
-    private Label countdownLabel;
-    @FXML
-    private Button leaveButton;
-    @FXML
-    private ProgressIndicator progressIndicator;
-    @FXML
-    private Label gameStartLabel;
-    @FXML
-    private ImageView boatImageView;
-    @FXML
-    private ImageView courseImageView;
-    @FXML
-    private Label locationLabel;
-    @FXML
-    private Label gameTypeLabel;
-    @FXML
-    private Label loadingLabel;
-    @FXML
-    private GridPane gameGridPane;
-    @FXML
-    private GridPane playerGridPane;
-    @FXML
-    private TextField nameText;
-    @FXML
-    private Button confirmButton;
-    @FXML
-    private Button leftButton;
-    @FXML
-    private Button rightButton;
+    @FXML private ListView<String> starterList;
+    @FXML private Button readyButton;
+    @FXML private Label countdownLabel;
+    @FXML private Button leaveButton;
+    @FXML private ProgressIndicator progressIndicator;
+    @FXML private Label gameStartLabel;
+    @FXML private ImageView boatImageView;
+    @FXML private ImageView courseImageView;
+    @FXML private Label locationLabel;
+    @FXML private Label gameTypeLabel;
+    @FXML private Label loadingLabel;
+    @FXML private GridPane gameGridPane;
+    @FXML private GridPane playerGridPane;
+    @FXML private TextField nameText;
+    @FXML private Button confirmButton;
+    @FXML private Button leftButton;
+    @FXML private Button rightButton;
     private Image yacht;
     private Image cog;
     private Image frigate;
@@ -90,12 +73,11 @@ public class LobbyController implements Initializable {
     private Image pirate;
     private ArrayList<Image> boatImages = new ArrayList<>();
     private Integer index = 0;
-    private String boatType = "yacht";
-    private Stage primaryStage;
     private ObservableList<String> competitorList = FXCollections.observableArrayList();
     private Rectangle2D primaryScreenBounds;
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private AnimationTimer timer;
+    private boolean boatSelected = false;
 
     void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -173,7 +155,7 @@ public class LobbyController implements Initializable {
         loadingLabel.setVisible(true);
         countdownLabel.setText("");
         gameStartLabel.setVisible(false);
-        primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        primaryScreenBounds = Screen.getPrimary().getBounds();
         starterList.setItems(competitorList);
 
         yacht = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
@@ -243,6 +225,7 @@ public class LobbyController implements Initializable {
         nameText.setDisable(true);
         leftButton.setVisible(false);
         rightButton.setVisible(false);
+        boatSelected = true;
     }
 
     @FXML
@@ -282,21 +265,7 @@ public class LobbyController implements Initializable {
     }
 
 
-    /**
-     * Sets the player details on the lobby screen
-     *
-     * @param boatImage   String, the url of the boat image
-     * @param playerAlias String, the players in game name
-     */
-    public void setPlayer(String boatImage, String playerAlias) {
-        try {
-            this.boatImageView.setImage(new Image(boatImage));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid boat image url, using default image");
-            return;
-        }
-        this.nameText.setText(playerAlias);
-    }
+
 
 
     /**
@@ -359,10 +328,20 @@ public class LobbyController implements Initializable {
     private void loadRaceView() {
 
         //clean up
+
         if (timer != null) timer.stop();
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
+
+        //hide all boat selection controls
+        confirmButton.setVisible(false);
         nameText.setDisable(true);
+        leftButton.setVisible(false);
+        rightButton.setVisible(false);
+
+        if (!boatSelected) boatImageView.setImage(boatImages.get(0)); //if none selected then use default image
+
+
         this.nameText.setText(dataSource.getCompetitor().getTeamName());
 
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 10);
