@@ -6,7 +6,6 @@ import Animations.RandomShake;
 import Elements.*;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
@@ -158,6 +157,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 // new page has loaded, process:
                 isLoaded = true;
                 drawBackgroundImage();
+
             }
         });
     }
@@ -255,7 +255,8 @@ public class RaceViewController implements Initializable, TableObserver {
         mapEngine.executeScript(String.format("setZoom(%d);", dataSource.getZoomLevel()));
         updateRace();
         setScale(nodeSizeFunc(dataSource.getZoomLevel()));
-        dataSource.changeScaling(0);
+        System.out.println(nodeSizeFunc(dataSource.getZoomLevel()));
+//        dataSource.changeScaling(0);
         track.setVisible(!isZoom());
     }
 
@@ -268,7 +269,7 @@ public class RaceViewController implements Initializable, TableObserver {
         drawBackgroundImage();
         updateRace();
         setScale(1);
-        dataSource.changeScaling(0);
+//        dataSource.changeScaling(0);
         track.setVisible(!isZoom());
     }
 
@@ -312,9 +313,8 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Toggles a control layout of the game
      *
-     * @param actionEvent action
      */
-    public void toggleControls(ActionEvent actionEvent) {
+    public void toggleControls() {
         if (!raceViewPane.getChildren().contains(controlsBox)) {
             controlsBox.getChildren().add(controlsView);
             raceViewPane.getChildren().add(controlsBox);
@@ -841,11 +841,11 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     void refresh() {
         checkRaceFinished();
+        setBoatLocation();
         drawFallenCrew();
         drawPowerUps();
         drawSharks();
         drawWhirlpools();
-        setBoatLocation();
         updateRace();
         checkCollision();
     }

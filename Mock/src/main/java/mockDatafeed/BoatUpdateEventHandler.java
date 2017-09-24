@@ -21,7 +21,7 @@ public interface BoatUpdateEventHandler {
 
     void fallenCrewEvent(List<CrewLocation> locations) throws IOException;
 
-    void sharkEvent(List<Shark> locations) throws IOException;
+    void sharkEvent(Shark shark) throws IOException;
 
     void bloodEvent(int sourceId) throws IOException;
 

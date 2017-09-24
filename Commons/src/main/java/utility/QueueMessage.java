@@ -1,5 +1,7 @@
 package utility;
 
+import java.util.Arrays;
+
 /**
  * Created by mattgoodson on 30/08/17.
  * Used to queue mesages between server and boat mocker
@@ -40,4 +42,13 @@ public class QueueMessage {
         return message;
     }
 
+    @Override
+    public String toString() {
+        return "QueueMessage{" +
+                "clientId=" + clientId +
+                ", header=" + Arrays.toString(header) +
+                ", body=" + Arrays.toString(body) +
+                ", message=" + Arrays.toString(message) +
+                '}';
+    }
 }
