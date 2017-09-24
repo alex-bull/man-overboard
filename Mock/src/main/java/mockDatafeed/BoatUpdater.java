@@ -141,6 +141,8 @@ public class BoatUpdater {
             }
         }
 
+        crewEaten();
+
         if (System.currentTimeMillis() - lastWhirlpoolTime > 20000 && !whirlpools.isEmpty()) {
             updateWhirlpool();
             handler.whirlpoolEvent(whirlpools);
@@ -150,10 +152,6 @@ public class BoatUpdater {
         if (shark != null) {
             updateShark();
             handler.sharkEvent(shark);
-        }
-
-        if(crewEaten()){
-            handler.bloodEvent(bloodList);
         }
 
         if (crewMemberUpdated) {
@@ -235,22 +233,18 @@ public class BoatUpdater {
      *
      * @return boolean if a crew member has been eaten
      */
-    private boolean crewEaten() throws IOException {
-        boolean updated = false;
+    private void crewEaten() throws IOException {
+
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
 
             if (shark.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
-                Blood blood = new Blood(bloodlocationSourceID++, crewLocation.getPosition());
-                bloodList.add(blood);
                 crewMembers.remove(crewLocation);
-                updated = true;
-
+                handler.bloodEvent(crewLocation.getSourceId());
 
             }
         }
 
 
-        return updated;
 
     }
 

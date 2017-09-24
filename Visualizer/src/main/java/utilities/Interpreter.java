@@ -429,7 +429,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     MutablePoint position = cloner.deepClone(Projection.mercatorProjection(location));
                     position.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
-                    MutablePoint position17 = cloner.deepClone(Projection.mercatorProjection(position));
+                    MutablePoint position17 = cloner.deepClone(Projection.mercatorProjection(location));
                     position17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
                     powerUp.setPosition(position);

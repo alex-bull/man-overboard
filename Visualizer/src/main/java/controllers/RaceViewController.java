@@ -255,7 +255,6 @@ public class RaceViewController implements Initializable, TableObserver {
         mapEngine.executeScript(String.format("setZoom(%d);", dataSource.getZoomLevel()));
         updateRace();
         setScale(nodeSizeFunc(dataSource.getZoomLevel()));
-        System.out.println(nodeSizeFunc(dataSource.getZoomLevel()));
 //        dataSource.changeScaling(0);
         track.setVisible(!isZoom());
     }
@@ -629,6 +628,7 @@ public class RaceViewController implements Initializable, TableObserver {
             }
 
             powerUps.get(sourceId).update(isZoom(), receivedPowerUp, currentPosition17, raceViewCanvas.getWidth(), raceViewCanvas.getHeight());
+
 
             Long timeout = receivedPowerUp.getTimeout();
 

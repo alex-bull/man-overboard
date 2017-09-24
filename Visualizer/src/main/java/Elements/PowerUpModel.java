@@ -20,17 +20,21 @@ public class PowerUpModel extends ImageView {
      * @param receivedPowerUp PowerUp the power up
      */
     public PowerUpModel(PowerUp receivedPowerUp, Double scale) {
-        if (receivedPowerUp.getType() == BOOST.getValue() || receivedPowerUp.getType() == POTION.getValue()) {
-            Image image;
-            if (receivedPowerUp.getType() == BOOST.getValue()) {
+        Image image;
+        switch(receivedPowerUp.getType()){
+            case BOOST:
                 image = new Image("/images/speed.png");
-            } else {
+                break;
+            case POTION:
                 image = new Image("/images/potion2.png");
-            }
+                break;
+            default:
+                image=null;
+                break;
+        }
             this.setImage(image);
             this.setPreserveRatio(true);
             this.setFitWidth(scale * image.getWidth());
-        }
     }
 
 
@@ -51,5 +55,7 @@ public class PowerUpModel extends ImageView {
             p = powerUp.getPosition();
         }
         this.relocate(p.getXValue() - getFitWidth() / 2, p.getYValue() - getFitHeight() / 2);
+
+
     }
 }
