@@ -68,7 +68,12 @@ public class TCPClient extends TimerTask {
         byte[] expected = {0x47, -125};
         byte[] actual = new byte[2];
 
-        dis.readFully(actual);
+        try {
+            dis.readFully(actual);
+        }
+        catch(Exception e) {
+            return false;
+        }
         return Arrays.equals(actual, expected);
     }
 

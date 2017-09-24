@@ -351,7 +351,8 @@ public class Interpreter implements DataSource, PacketHandler {
                 BoatDataParser boatDataParser = new BoatDataParser();
                 BoatData boatData = boatDataParser.processMessage(packet);
 
-                if (boatData != null) {
+                if (boatData != null && this.raceData!= null) {
+
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties(boatData);
                     } else if (boatData.getDeviceType() == 3 && raceData.getMarkSourceIDs().contains(boatData.getSourceID())) {

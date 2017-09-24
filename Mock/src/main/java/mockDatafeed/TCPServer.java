@@ -187,9 +187,10 @@ public class TCPServer extends TimerTask {
 
                 //handle new clients connecting
                 if (key.isAcceptable()) {
-                    if (!connectionClient.isAccepting()) {
-                        key.cancel();
-                    } else {
+//                    if (!connectionClient.isAccepting()) {
+//                        key.cancel();
+//                    } else {
+
 
                         SocketChannel client = serverSocket.accept();
                         client.configureBlocking(false);
@@ -199,7 +200,7 @@ public class TCPServer extends TimerTask {
                         int sourceID = connectionClient.getNextSourceId();
                         client.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, sourceID);
                         System.out.println("Added new client: " + sourceID);
-                    }
+//                    }
                 }
 
                 //handle incoming messages

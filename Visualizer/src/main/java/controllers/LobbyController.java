@@ -89,8 +89,6 @@ public class LobbyController implements Initializable {
      * Continuously tries to connect on background thread
      */
     void begin() {
-
-
 //        for (int i = 0; i<8; i++) {
 //            competitorList.add("Boaty 10" +i);
 //        }
@@ -273,8 +271,7 @@ public class LobbyController implements Initializable {
      * Change to the raceView upon started signal
      */
     public void checkStatus() {
-
-        if (dataSource.getRaceStatus() == RaceStatusEnum.STARTED) {
+        if (dataSource.getStoredCompetitors().containsKey(dataSource.getSourceID()) && dataSource.getRaceStatus() == RaceStatusEnum.STARTED) {
             System.out.println("game beginning...");
             this.loadRaceView();
         }
@@ -340,8 +337,6 @@ public class LobbyController implements Initializable {
         rightButton.setVisible(false);
 
         if (!boatSelected) boatImageView.setImage(boatImages.get(0)); //if none selected then use default image
-
-
         this.nameText.setText(dataSource.getCompetitor().getTeamName());
 
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 10);

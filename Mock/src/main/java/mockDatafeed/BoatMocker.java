@@ -225,20 +225,30 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * @param clientId the channel id of the client, this is used as the source id of the new competitor
      */
     private void addCompetitor(Integer clientId) {
-
-        double a = 0.002 * competitors.size(); //shift competitors so they aren't colliding at the start
+        if(raceInProgress) {
+            System.out.println("Add a Spectator here? not really sure if this how u do it but ok" + clientId);
+            byte[] res = binaryPackager.packageConnectionResponse((byte) 1, clientId);
+            //send connection response and broadcast XML so update lobbies
+            sendQueue.put(clientId, res);
+            this.clientStates.put(clientId, false);
+            this.sendAllXML();
+        }
+        else {
+            double a = 0.002 * competitors.size(); //shift competitors so they aren't colliding at the start
 //        prestart = new MutablePoint(32.41011 + a, -64.88937);
-        prestart = new MutablePoint(32.35763 + a, -64.81332);
+            prestart = new MutablePoint(32.35763 + a, -64.81332);
 
-        Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
-        newCompetitor.setCurrentHeading(0);
-        competitors.put(clientId, newCompetitor);
+            Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
+            newCompetitor.setCurrentHeading(0);
+            competitors.put(clientId, newCompetitor);
 
-        byte[] res = binaryPackager.packageConnectionResponse((byte) 1, clientId);
-        //send connection response and broadcast XML so update lobbies
-        sendQueue.put(clientId, res);
-        this.clientStates.put(clientId, false);
-        this.sendAllXML();
+            byte[] res = binaryPackager.packageConnectionResponse((byte) 1, clientId);
+            //send connection response and broadcast XML so update lobbies
+            sendQueue.put(clientId, res);
+            this.clientStates.put(clientId, false);
+            this.sendAllXML();
+        }
+
     }
 
     /**
@@ -520,48 +530,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         this.powerUpId++;
     }
 
-//    /**
-//     * Sends power up to output port
-//     */
-//    public void powerUpEvent() {
-//
-//        int potionTime = 40000;
-//        int boostTime = 30000;
-//
-//        // potion
-//        if (currentTime > previousPotionTime + potionTime && raceInProgress) {
-//            long timeout = currentTime + 70000;
-//            MutablePoint generatedLocation = getRandomLocation();
-//            int radius = 10; // we dont use this but other teams do
-//
-//            int duration = 20000; // we dont use this but other teams do
-//
-//            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, PowerUpType.POTION, duration, timeout);
-//            this.sendQueue.put(null, eventPacket);
-//            PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, PowerUpType.POTION, duration);
-//            boatUpdater.updatePowerUps(powerUp);
-//            previousPotionTime = currentTime;
-//            this.powerUpId++;
-//        }
-//
-//        // speed boost
-//        if (currentTime > previousBoostTime + boostTime && raceInProgress) {
-//            long timeout = currentTime + 60000;
-//            MutablePoint generatedLocation = getRandomLocation();
-//            int radius = 10; // we dont use this but other teams do
-//            int duration = 20000; // we dont use this but other teams do
-//
-//            byte[] eventPacket = binaryPackager.packagePowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), (short) radius, PowerUpType.BOOST, duration, timeout);
-//            this.sendQueue.put(null, eventPacket);
-//
-//            PowerUp powerUp = new PowerUp(this.powerUpId, generatedLocation.getXValue(), generatedLocation.getYValue(), radius, timeout, PowerUpType.BOOST, duration);
-//            boatUpdater.updatePowerUps(powerUp);
-//            previousBoostTime = currentTime;
-//            this.powerUpId++;
-//        }
-//
-//
-//    }
 
     /**
      * Sends power up taken to output port
