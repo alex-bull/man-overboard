@@ -107,7 +107,7 @@ public class MainController {
                 }
                 break;
             case D:
-                if (dataSource.getZoomLevel() > 12 && raceViewController.isZoom()) {
+                if (dataSource.getZoomLevel() > 13 && raceViewController.isZoom()) {
                     dataSource.changeScaling(-1);
                     raceViewController.zoomIn();
                 }
@@ -116,14 +116,14 @@ public class MainController {
                 if (dataSource.getCompetitor().hasSpeedBoost()) {
                     this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.BOOST.getValue(), dataSource.getSourceID()));
                     dataSource.getCompetitor().disableBoost();
-                    playerController.hideBoost();
+                    playerController.greyOutBoost();
                 }
                 break;
             case DIGIT2:
                 if (dataSource.getCompetitor().hasPotion()) {
                     this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.POTION.getValue(), dataSource.getSourceID()));
                     dataSource.getCompetitor().usePotion();
-                    playerController.hidePotion();
+                    playerController.greyOutPotion();
                 }
                 break;
         }
