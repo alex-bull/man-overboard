@@ -81,8 +81,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     BoatMocker() throws IOException, JDOMException {
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        startTime = System.currentTimeMillis() / 1000 + 20;
+        startTime = System.currentTimeMillis() / 1000;
         expectedStartTime = creationTime.plusSeconds(11);
+        System.out.println("mock start time " + startTime);
+        System.out.println("expected " + expectedStartTime);
 
         //find out the coordinates of the course
         generateCourse();
