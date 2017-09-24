@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -40,6 +41,8 @@ public class App extends Application {
         Scene rootScene = new Scene(root);
         primaryStage.setScene(rootScene);
         primaryStage.setTitle("Man Overboard");
+        primaryStage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
+        primaryStage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
 
         scene = rootScene;
         pStage = primaryStage;
