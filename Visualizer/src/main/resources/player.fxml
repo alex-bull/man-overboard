@@ -19,8 +19,8 @@
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0" />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints minHeight="10.0" percentHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="-Infinity" minHeight="10.0" percentHeight="30.0" prefHeight="80.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="115.0" minHeight="10.0" percentHeight="40.0" prefHeight="112.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="71.0" minHeight="10.0" percentHeight="30.0" prefHeight="63.0" vgrow="SOMETIMES" />
         <RowConstraints minHeight="10.0" percentHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
@@ -39,11 +39,6 @@
                 </ImageView>
             </children>
         </GridPane>
-        <Label fx:id="gamerTagLabel" text="Player" textFill="#000000bc" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
-            <font>
-                <Font size="16.0" />
-            </font>
-        </Label>
         <GridPane GridPane.columnIndex="2" GridPane.rowIndex="1">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -67,14 +62,14 @@
             <children>
             <Group GridPane.valignment="BOTTOM">
                <children>
-                  <ImageView fx:id="playerImageView1" fitHeight="38.0" fitWidth="257.0" pickOnBounds="true" preserveRatio="true" GridPane.valignment="BOTTOM">
+                  <ImageView fx:id="playerImageView1" fitHeight="64.0" fitWidth="468.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true" GridPane.valignment="BOTTOM">
                      <image>
-                        <Image url="@images/boatSpeed.png" />
+                        <Image url="@images/boatInfo.png" />
                      </image>
                   </ImageView>
-                      <Label fx:id="boatSpeedLabel" layoutX="131.0" layoutY="3.0" prefHeight="21.0" prefWidth="127.0" text="20.1m/s" textFill="white" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="BOTTOM">
+                      <Label fx:id="boatSpeedLabel" layoutX="85.0" layoutY="52.0" prefHeight="21.0" prefWidth="127.0" text="20.1m/s" textFill="white" GridPane.halignment="LEFT" GridPane.valignment="BOTTOM">
                           <font>
-                              <Font name="System Bold" size="15.0" />
+                              <Font name="System Bold" size="14.0" />
                           </font>
                           <padding>
                               <Insets left="10.0" right="40.0" />
@@ -83,6 +78,11 @@
                         <Insets bottom="4.0" />
                      </GridPane.margin>
                       </Label>
+                    <Label fx:id="gamerTagLabel" layoutX="95.0" layoutY="30.0" text="Player" textFill="WHITE">
+                        <font>
+                            <Font name="System Bold" size="14.0" />
+                        </font>
+                    </Label>
                </children>
             </Group>
             </children>

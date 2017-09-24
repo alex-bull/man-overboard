@@ -55,3 +55,8 @@
     -fx-border-radius: 5px;
 
     }
+
+.label{
+    -fx-font-family: 'Quicksand', sans-serif, bold;
+
+}
