@@ -6,11 +6,13 @@ import Animations.RandomShake;
 import Elements.*;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,6 +34,7 @@ import parsers.RaceStatusEnum;
 import parsers.boatAction.BoatAction;
 import parsers.powerUp.PowerUp;
 import utilities.DataSource;
+import utilities.EnvironmentConfig;
 import utilities.RaceCalculator;
 import utilities.Sounds;
 import utility.BinaryPackager;
@@ -75,6 +78,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private GridPane finisherListPane;
     @FXML
     private ListView<String> finisherListView;
+    @FXML Button soundButton;
     private Map<Integer, ImageView> fallenCrews = new HashMap<>();
     private Map<Integer, Image> bloodImages = new HashMap<>();
     private Map<Integer, ImageView> blood = new HashMap<>();
@@ -96,6 +100,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Boolean finisherListDisplayed = false;
     private boolean isLoaded = false;
     private boolean zoom = false;
+    private boolean muted = false;
     //CONTROL VARIABLES
     private int counter = 0;
     private Integer selectedBoatSourceId = 0;
@@ -339,6 +344,25 @@ public class RaceViewController implements Initializable, TableObserver {
             }
         } else {
             zoomIn();
+        }
+    }
+
+
+    /**
+     * Toggles the sounds when the button is clicked
+     * @param actionEvent
+     */
+
+    public void toggleSound(ActionEvent actionEvent) {
+        muted = !muted;
+        if (muted) {
+            Sounds.player.muteSound();
+            this.soundButton.setGraphic(new ImageView(new Image("/images/Mute.png")));
+        }
+        else {
+            Sounds.player.setAllMusicVolume();
+            Sounds.player.setAllEffectVolume();
+            this.soundButton.setGraphic(new ImageView(new Image("/images/NotMute.png")));
         }
     }
 
