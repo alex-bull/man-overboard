@@ -1,5 +1,7 @@
 package controllers;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -132,7 +134,6 @@ public class LobbyController implements Initializable {
                     }
                     connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
                 }
-
                 return true;
             }
         };
@@ -186,6 +187,8 @@ public class LobbyController implements Initializable {
         cat = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
         pirate = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
 
+        addTextLimiter(nameText, 8);
+
         boatImages.add(yacht);
         boatImages.add(cog);
         boatImages.add(frigate);
@@ -198,7 +201,6 @@ public class LobbyController implements Initializable {
         courseImageView.setPreserveRatio(true);
         courseImageView.fitWidthProperty().bind(gameGridPane.widthProperty());
         courseImageView.fitHeightProperty().bind(gameGridPane.heightProperty());
-
 
         boatImageView.setPreserveRatio(false);
         boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
@@ -264,41 +266,16 @@ public class LobbyController implements Initializable {
 
     }
 
-
-    /**
-     * Sets the game details on the lobby screen
-     *
-     * @param courseImage String, the url of the course image
-     * @param location    String, the name of the chosen course
-     * @param gameMode    String, the game type
-     */
-    public void setGame(String courseImage, String location, String gameMode) {
-
-        try {
-            this.courseImageView.setImage(new Image(courseImage));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid image url, using default image");
-            return;
-        }
-        this.locationLabel.setText(location);
-        this.gameTypeLabel.setText(gameMode);
-    }
-
-
-    /**
-     * Sets the player details on the lobby screen
-     *
-     * @param boatImage   String, the url of the boat image
-     * @param playerAlias String, the players in game name
-     */
-    public void setPlayer(String boatImage, String playerAlias) {
-        try {
-            this.boatImageView.setImage(new Image(boatImage));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid boat image url, using default image");
-            return;
-        }
-        this.nameText.setText(playerAlias);
+    public void addTextLimiter(final TextField tf, final int maxLength) {
+        tf.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(final ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
+                if (tf.getText().length() > maxLength) {
+                    String s = tf.getText().substring(0, maxLength);
+                    tf.setText(s);
+                }
+            }
+        });
     }
 
 

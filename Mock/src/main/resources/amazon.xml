@@ -64,4 +64,9 @@
         <Limit SeqID="9" Lat="0.46279" Lon="-50.51891"/>
     </CourseLimit>
 
+    <Decorations>
+        <Item Id="Amazon_1" Lati="0.48579" Long="-50.59015"/>
+        <Item Id="Amazon_2" Lati="0.40837" Long="-50.41076"/>
+    </Decorations>
+
 </Race>

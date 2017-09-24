@@ -49,6 +49,10 @@ public class DecorationModel extends ImageView {
             image = getRandomBermudaImage();
             scale = 0.4;
         }
+        else if (decoration.getId().contains("Amazon")) {
+            image = getRandomTempleImage();
+            scale = 0.4;
+        }
         this.imageWidth = image.getWidth();
         this.imageHeight = image.getHeight();
         this.setImage(image);
@@ -104,6 +108,19 @@ public class DecorationModel extends ImageView {
         ArrayList<String> imagePaths = new ArrayList<>();
         imagePaths.add("images/bermuda/shipwreck.png");
         imagePaths.add("images/bermuda/supersonic.png");
+        Random random = new Random();
+        String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
+        return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
+    }
+
+    /**
+     * Generate a random image for a temple
+     * @return Image the image
+     */
+    private Image getRandomTempleImage() {
+        ArrayList<String> imagePaths = new ArrayList<>();
+        imagePaths.add("images/temple.png");
+        imagePaths.add("images/temple-flip.png");
         Random random = new Random();
         String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
         return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
