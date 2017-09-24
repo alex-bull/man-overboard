@@ -618,7 +618,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private void drawPowerUps() {
         Map<Integer, PowerUp> receivedPowerUps = dataSource.getPowerUps();
 
-
         for (PowerUp receivedPowerUp : receivedPowerUps.values()) {
             int sourceId = receivedPowerUp.getId();
             if (!powerUps.containsKey(sourceId)) {
@@ -895,19 +894,30 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param zoomEvent zoom event
      */
     public void zoom(ZoomEvent zoomEvent) {
+
         if (zoom) {
-            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
-                dataSource.changeScaling(1);
+            if (dataSource.getZoomLevel() < 18 && zoomEvent.getTotalZoomFactor() > 1) {
+                long zoomFactor = Math.round(zoomEvent.getTotalZoomFactor() / 2);
+                dataSource.changeScaling(zoomFactor);
                 zoomIn();
             }
-            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
-                dataSource.changeScaling(-1);
+            if (dataSource.getZoomLevel() > 13 && zoomEvent.getTotalZoomFactor() < 1) {
+                long zoomFactor = Math.round((1 - zoomEvent.getTotalZoomFactor()) / 0.4);
+                dataSource.changeScaling(-zoomFactor);
                 zoomIn();
             }
-            touchZoomLevel = zoomEvent.getTotalZoomFactor();
-
         }
+//        if (zoom) {
+//            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
+//                dataSource.changeScaling(1);
+//                zoomIn();
+//            }
+//            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
+//                dataSource.changeScaling(-1);
+//                zoomIn();
+//            }
+//            touchZoomLevel = zoomEvent.getTotalZoomFactor();
+//        }
     }
-
 
 }
