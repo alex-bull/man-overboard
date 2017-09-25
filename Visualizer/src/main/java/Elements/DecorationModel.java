@@ -75,7 +75,7 @@ public class DecorationModel extends ImageView {
 
     /**
      * Generate a random image for a penguin
-     * @return Image the image
+     * @return Image the imageqqqqqqqqqqqqq
      */
     private Image getRandomPenguinImage() {
         ArrayList<String> imagePaths = new ArrayList<>();
@@ -109,6 +109,8 @@ public class DecorationModel extends ImageView {
         imagePaths.add("images/amazon/temple.png");
         imagePaths.add("images/amazon/temple-flip.png");
         imagePaths.add("images/amazon/jaguar.png");
+        imagePaths.add("images/amazon/jaguar-flip.png");
+        imagePaths.add("images/amazon/snake.png");
         Random random = new Random();
         String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
         return new Image(getClass().getClassLoader().getResource(chosenPath).toString());

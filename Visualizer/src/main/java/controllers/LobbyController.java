@@ -41,6 +41,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
+import static parsers.xml.race.ThemeEnum.AMAZON;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 import static parsers.xml.race.ThemeEnum.BERMUDA;
 
@@ -321,9 +322,9 @@ public class LobbyController implements Initializable {
                 this.locationLabel.setText("Antarctica");
                 courseImageView.setImage(this.courseThemeImage);
             }
-            else if(dataSource.getThemeId() == BERMUDA) {
-                this.courseThemeImage = new Image("/images/bermuda/bermuda_course.png");
-                this.locationLabel.setText("Bermuda");
+            else if(dataSource.getThemeId() == AMAZON) {
+                this.courseThemeImage = new Image("/images/amazon/amazon_course.png");
+                this.locationLabel.setText("Amazon");
                 courseImageView.setImage(this.courseThemeImage);
             }
             else if (dataSource.getThemeId() != null) {

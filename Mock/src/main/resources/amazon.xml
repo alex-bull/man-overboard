@@ -67,6 +67,7 @@
     <Decorations>
         <Item Id="Amazon_1" Lati="0.48579" Long="-50.59015"/>
         <Item Id="Amazon_2" Lati="0.3967" Long="-50.37282"/>
+        <Item Id="Amazon_3" Lati="0.49626" Long="-50.35961"/>
     </Decorations>
 
 </Race>
