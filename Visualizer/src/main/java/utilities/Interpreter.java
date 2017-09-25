@@ -127,6 +127,7 @@ public class Interpreter implements DataSource, PacketHandler {
         bloodLocations = new HashMap<>();
         whirlpools = new HashMap<>();
         powerUps = new HashMap<>();
+        storedCompetitors = new HashMap<>();
         raceStatus = null;
     }
 
@@ -307,11 +308,17 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.windDirection = raceStatusData.getWindDirection() + 180;
                     this.windSpeed = raceStatusData.getWindSpeed();
                     for (int id : storedCompetitors.keySet()) {
-
-                        int newLegNumber = raceStatusData.getBoatStatuses().get(id).getLegNumber();
-                        storedCompetitors.get(id).setCurrentLegIndex(newLegNumber);
-                        storedCompetitors.get(id).setStatus(raceStatusData.getBoatStatuses().get(id).getBoatStatus());
-                        storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
+                        System.out.println("id = " + id);
+                        if (raceStatus.equals(RaceStatusEnum.STARTED)) {
+                            try {
+                                int newLegNumber = raceStatusData.getBoatStatuses().get(id).getLegNumber();
+                                storedCompetitors.get(id).setCurrentLegIndex(newLegNumber);
+                                storedCompetitors.get(id).setStatus(raceStatusData.getBoatStatuses().get(id).getBoatStatus());
+                                storedCompetitors.get(id).setTimeToNextMark(raceStatusData.getBoatStatuses().get(id).getEstimatedTimeAtNextMark());
+                            } catch (Exception e) {
+                                System.out.println("storedCompetitors do not match boat ids");
+                            }
+                        }
                     }
                 }
 

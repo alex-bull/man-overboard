@@ -5,6 +5,7 @@ import com.google.common.io.CharStreams;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
+import parsers.RaceStatusEnum;
 import parsers.boatAction.BoatAction;
 import parsers.boatCustomisation.ModelParser;
 import parsers.boatCustomisation.NameParser;
@@ -134,6 +135,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
         HeaderParser headerParser = new HeaderParser();
         HeaderData headerData = headerParser.processMessage(header);
+        int srcId = hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 4));
 
         System.out.println("interpret..." + messageType.getValue());
 
@@ -194,14 +196,15 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 this.addCompetitor(clientId);
                 break;
             case RESTART_RACE:
-                System.out.println("clearing old info");
-
-                clearOldRace(hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 4)));
-
+                clearOldRace(srcId);
                 break;
             case PLAYER_READY:
                 this.updateReady(clientId);
                 break;
+            case DISCONNECT:
+                //TCPserver.acceptNewConnections();
+                clearOldRace(srcId);
+                removePlayer(clientId);
             case LEAVE_LOBBY:
                 this.removePlayer(clientId);
                 break;
@@ -249,8 +252,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 //        prestart = new MutablePoint(32.41011 + a, -64.88937);
         prestart = new MutablePoint(32.35763 + a, -64.81332);
 
-        //random.nextInt(20) + 20
-        Boat newCompetitor = new Boat("Boat " + clientId, 50, prestart, "B" + clientId, clientId, PRESTART);
+        Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
         newCompetitor.setCurrentHeading(0);
         competitors.put(clientId, newCompetitor);
 
@@ -274,6 +276,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 competitors.clear();
                 creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
                 expectedStartTime = creationTime.plusMinutes(1);
+
                 boatUpdater = new BoatUpdater(competitors, markBoats, raceData, this, courseBoundary, windGenerator);
 
                 hasCleared = true;
@@ -335,6 +338,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * @param clientId Integer, the client to remove
      */
     private void removePlayer(Integer clientId) {
+        raceInProgress = false;
         clientStates.remove(clientId);
         this.competitors.remove(clientId);
         this.sendAllXML();
@@ -534,13 +538,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         short windSpeed = windGenerator.getWindSpeed();
         int raceStatus;
         if (boatUpdater.checkAllFinished()) {
-            raceStatus = 4;
+            raceStatus = RaceStatusEnum.FINISHED.getValue();
 
         } else {
-            raceStatus = 3;
+            raceStatus = RaceStatusEnum.STARTED.getValue();
         }
         System.out.println("sENDING RACE STATUS");
-        System.out.println(raceStatus);
+        System.out.println(competitors.size());
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed, competitors.size());
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         this.sendQueue.put(null, binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
@@ -798,14 +802,16 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         try {
             boatUpdater.updatePosition();
 
-                if (System.currentTimeMillis() - previousBoostTime > boostTime) {
-                    spawnPowerUp(PowerUpType.BOOST);
-                    previousBoostTime = System.currentTimeMillis();
-                }
-                if (System.currentTimeMillis() - previousPotionTime > healthTime) {
-                    spawnPowerUp(PowerUpType.POTION);
-                    previousPotionTime = System.currentTimeMillis();
-                }
+            System.out.println(raceInProgress);
+
+            if (System.currentTimeMillis() - previousBoostTime > boostTime) {
+                spawnPowerUp(PowerUpType.BOOST);
+                previousBoostTime = System.currentTimeMillis();
+            }
+            if (System.currentTimeMillis() - previousPotionTime > healthTime) {
+                spawnPowerUp(PowerUpType.POTION);
+                previousPotionTime = System.currentTimeMillis();
+            }
 
             sendBoatLocation();
             sendRaceStatus();
