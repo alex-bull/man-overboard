@@ -14,7 +14,7 @@ import utilities.DataSource;
  * Controller for race timers
  */
 public class TimerController implements ClockHandler {
-    @FXML Pane pane;
+    @FXML Pane timer;
     @FXML Text timerText;
     private Clock raceClock;
     private long startTime;

@@ -36,6 +36,7 @@ public class MainController {
     private Slider sailSlider;
     @FXML
     private TimerController timerController;
+
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private boolean playing = false;

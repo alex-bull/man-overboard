@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="player" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PlayerController">
+<GridPane fx:id="player" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PlayerController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0" />
@@ -100,23 +100,30 @@
          </GridPane.margin>
         </GridPane>
 
-        <ImageView fx:id="speed" fitHeight="51.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="TOP">
-            <image>
-                <Image url="@images/speed3.png" />
-            </image>
+        <Button fx:id="speed" onAction="#useBoost" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="TOP">
+            <graphic>
+                <ImageView id="boostButton" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@images/greySpeed.png" />
+                    </image>
+                </ImageView>
+            </graphic>
             <GridPane.margin>
-                <Insets top="5.0" />
+                <Insets top="2.0" />
             </GridPane.margin>
-        </ImageView>
-
-        <ImageView fx:id="potion" fitHeight="51.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="TOP">
-            <image>
-                <Image url="@images/potion.png" />
-            </image>
+        </Button>
+        <Button fx:id="potion" onAction="#usePotion" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="TOP">
+            <graphic>
+                <ImageView id="potionButton" fitHeight="32.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@images/greyPotion.png" />
+                    </image>
+                </ImageView>
+            </graphic>
             <GridPane.margin>
-                <Insets left="55.0" />
+                <Insets left="40.0" />
             </GridPane.margin>
-        </ImageView>
+        </Button>
 
     </children>
 </GridPane>
