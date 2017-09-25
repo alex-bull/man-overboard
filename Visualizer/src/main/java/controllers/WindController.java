@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static javafx.scene.paint.Color.BLACK;
+import static javafx.scene.paint.Color.WHITE;
 
 /**
  * Created by psu43 on 12/05/17.
@@ -29,7 +30,7 @@ public class WindController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.arrow = new Polygon();
         arrow.setLayoutX(80);
-        arrow.setLayoutY(80);
+        arrow.setLayoutY(110);
         drawArrow(0, -10);
         arrow.setFill(BLACK);
         arrow.setStroke(BLACK);

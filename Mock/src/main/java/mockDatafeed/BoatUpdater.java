@@ -36,7 +36,6 @@ public class BoatUpdater {
     private List<MutablePoint> courseBoundary;
     private WindGenerator windGenerator;
     private int crewLocationSourceID = 0;
-    private int bloodlocationSourceID = 0;
     private int sharkSourceID = 0;
     private int sharkRoamIndex = 0;
     private int leadLeg = 0;
@@ -72,7 +71,7 @@ public class BoatUpdater {
         this.courseBoundary = courseBoundary;
         this.windGenerator = windGenerator;
 
-        polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
+        polarTable = new PolarTable("/polars/VO70_polar.txt", 40.0);
         utility = new Utility();
         this.buildRoundingLines();
 
@@ -142,6 +141,8 @@ public class BoatUpdater {
             }
         }
 
+        crewEaten();
+
         if (System.currentTimeMillis() - lastWhirlpoolTime > 20000 && !whirlpools.isEmpty()) {
             updateWhirlpool();
             lastWhirlpoolTime=System.currentTimeMillis();
@@ -152,10 +153,6 @@ public class BoatUpdater {
         if (shark != null) {
             updateShark();
             handler.sharkEvent(shark);
-        }
-
-        if(crewEaten()){
-            handler.bloodEvent(bloodList);
         }
 
         if (crewMemberUpdated) {
@@ -192,14 +189,15 @@ public class BoatUpdater {
     private boolean pickUpCrew(Competitor boat) {
         boolean updated = false;
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
-            if (boat.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
+            if (raceCourse.distanceBetweenGPSPoints(boat.getPosition(),crewLocation.getPosition())<50) {
+
                 crewMembers.remove(crewLocation);
                 boat.updateHealth(crewLocation.getNumCrew());
                 handler.boatStateEvent(boat.getSourceID(), boat.getHealthLevel());
                 updated = true;
+
             }
         }
-
         return updated;
     }
 
@@ -211,7 +209,7 @@ public class BoatUpdater {
     private void handlePowerUpCollisions(Competitor boat) {
         for (int id : powerUps.keySet()) {
             PowerUp powerUp = powerUps.get(id);
-            if (boat.getPosition().isWithin(powerUp.getLocation(), 0.0005)) {
+            if (raceCourse.distanceBetweenGPSPoints(boat.getPosition(),powerUp.getLocation())<50) {
                 powerUps.remove(id);
 
                 switch (powerUp.getType()) {
@@ -237,24 +235,21 @@ public class BoatUpdater {
      *
      * @return boolean if a crew member has been eaten
      */
-    private boolean crewEaten() throws IOException {
-        boolean updated = false;
+    private void crewEaten() throws IOException {
+
         for (CrewLocation crewLocation : new ArrayList<>(crewMembers)) {
 
             if (shark.getPosition().isWithin(crewLocation.getPosition(), 0.0001)) {
-                Blood blood = new Blood(bloodlocationSourceID++, crewLocation.getPosition());
-                bloodList.add(blood);
                 crewMembers.remove(crewLocation);
-                updated = true;
-
+                handler.bloodEvent(crewLocation.getSourceId());
 
             }
         }
 
 
-        return updated;
 
     }
+
 
     /**
      * Checks whether if any of the players have passed the first mark
@@ -262,13 +257,8 @@ public class BoatUpdater {
      * @return boolean if a player has passed the first mark
      */
     private boolean passedFirstMark(Competitor boat) {
+        return boat.getCurrentLegIndex() > 0;
 
-
-        if (boat.getCurrentLegIndex() > 0) {
-            return true;
-        }
-
-        return false;
     }
 
 
@@ -478,10 +468,7 @@ public class BoatUpdater {
      * @return true if all boats have finished racing
      */
     boolean checkAllFinished() {
-        if (finisherList.size() == competitors.size()) {
-            return true;
-        }
-        return false;
+        return finisherList.size() == competitors.size();
     }
 
 

@@ -1,11 +1,18 @@
 @font-face {
-    font-family: 'merriweather';
-    src: url('../fonts/merriweather.regular.ttf');
-}
+     font-family: 'Quicksand', sans-serif;
+     src: url('../fonts/Quicksand-Regular.ttf');
+ }
+ @font-face {
+     font-family: 'Quicksand', sans-serif, bold;
+     src: url('../fonts/Quicksand-Bold.ttf');
+ }
 
 .background {
-    -fx-background-color: #7dcdcd;
+    -fx-background-color: #2980B9;
+}
 
+.label {
+    -fx-font-family: 'Quicksand', sans-serif;
 }
 
 .button {
@@ -13,34 +20,18 @@
     -fx-border-color: white;
     -fx-text-fill: white;
     -fx-border-width: 3px;
+    -fx-border-radius: 10px;
     -fx-background-color: transparent;
+    -fx-background-radius: 10px;
     -fx-opacity: 0.8;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-family: 'Quicksand', sans-serif;
     -fx-font-size: 12pt;
     -fx-font-weight: 700;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
 }
 
-.menu-button {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-text-fill: black;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif, bold;
-    -fx-font-size: 25pt;
-    -fx-text-alignment: right;
-}
 
-.menu-button.button:hover {
-    -fx-border-color: black;
-    -fx-text-fill: black;
-    -fx-border-width: 4px;
-    -fx-background-color: transparent;
-}
 
-#controlbutton {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
 
 .button:hover {
     -fx-background-color: #dddddd;
@@ -49,12 +40,12 @@
 
 .button:pressed, .button:default:hover:pressed {
     -fx-background-color: white;
-    -fx-background-radius: 4;
+    -fx-background-radius: 10px;
 
 }
 
 .button:focused {
-    -fx-background-radius: 4;
+    -fx-background-radius: 10px;
     -fx-border-insets: 1 1 1 1, 0;
 }
 
@@ -66,28 +57,30 @@
 
 .text-field {
     -fx-padding: 5 22 5 22;
-    -fx-background-color: white;
-    -fx-background-radius: 0;
-    -fx-opacity: 0.8;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-font-size: 11pt;
-    -fx-text-fill: #444444;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-text-fill: white;
 }
 
-.list-view {
-    -fx-padding: 3px;
-    -fx-background-color: #7dcdcd;
-    -fx-opacity: 0.8;
-
+.text-field:disabled {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-opacity: 1;
 }
 
-#finish-list {
-    -fx-background-color: white;
+
+.progress-indicator {
+    -fx-progress-color: white;
+
 }
 
 .list-cell {
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-family: 'Quicksand', sans-serif;
     -fx-font-size: 12pt;
     -fx-text-fill: #444444;
     -fx-cell-size: 40px;
@@ -104,96 +97,12 @@
     -fx-padding: 2px;
 }
 
-/*logo colours : 0014A8, 3FA9F5, 99EEED*/
 
-.combo-box {
-    -fx-min-width: 128;
-    -fx-min-height: 30;
-    -fx-background-color: white;
-    -fx-opacity: 0.8;
-}
-
-.combo-box-popup .list-view .list-cell:hover {
-    -fx-text-fill: #0014A8;
-    -fx-background-color: white;
-    -fx-opacity: 0.8;
-
-}
-
-.combo-box .cell:selected {
-    -fx-text-fill: #0014A8;
-}
-
-.combo-box-popup .list-view .list-cell {
-    -fx-background-color: #ececec;
-    -fx-text-fill: black;
-    -fx-opacity: 0.8;
-
-}
-
-.check-box .box {
-    -fx-border-color: white;
-    -fx-border-width: 0;
-    -fx-background-color: white;
-    -fx-opacity: 0.8;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-font-size: 11pt;
-
-}
-
-.check-box:selected .box {
-
-    -fx-background-color: grey;
-}
-
-.check-box .mark {
-    -fx-background-color: white;
-}
-
-.radio-button .radio {
-
-    -fx-background-color: white;
-}
-
-.radio-button .dot {
-    -fx-mark-color: grey;
-    -fx-padding: 6px;
-
-}
-
-.radio-button .label {
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-font-size: 11pt;
-}
-
-.progress-indicator {
-    -fx-progress-color: white;
-
-}
-
-.table-view .column-header-background {
-    -fx-background-color: transparent;
-}
-
-.table-view .column-header {
-    -fx-background-color: transparent;
-
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-font-size: 10pt;
-}
-
-.table-view .table-column {
-    -fx-alignment: CENTER;
-}
-
-.table-view .scroll-bar:horizontal .increment-arrow,
-.table-view .scroll-bar:horizontal .decrement-arrow,
-.table-view .scroll-bar:horizontal .increment-button,
-.table-view .scroll-bar:horizontal .decrement-button {
-    -fx-padding:0;
-}
 
 
 .merriweather {
     -fx-font-family: 'merriweather';
 }
+
+
+
