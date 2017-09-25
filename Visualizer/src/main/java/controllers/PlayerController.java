@@ -131,5 +131,12 @@ public class PlayerController {
 
     }
 
+    /**
+     * Hide the player pane
+     */
+    void hideAll() {
+        player.setVisible(false);
+    }
+
 
 }

@@ -259,7 +259,6 @@ public class RaceViewController implements Initializable, TableObserver {
         mapEngine.executeScript(String.format("setZoom(%d);", dataSource.getZoomLevel()));
         updateRace();
         setScale(nodeSizeFunc(dataSource.getZoomLevel()));
-        System.out.println(nodeSizeFunc(dataSource.getZoomLevel()));
 //        dataSource.changeScaling(0);
         track.setVisible(!isZoom());
     }
@@ -389,7 +388,8 @@ public class RaceViewController implements Initializable, TableObserver {
         Map<Integer, CourseFeature> courseFeatures;
         List<MutablePoint> courseBoundary;
         if (isZoom()) {
-            mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);", dataSource.getCompetitor().getLatitude(), dataSource.getCompetitor().getLongitude()));
+            if (dataSource.isSpectating()) mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);", 32.34458, -64.78431));
+            else mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);", dataSource.getCompetitor().getLatitude(), dataSource.getCompetitor().getLongitude()));
             courseFeatures = new HashMap<>();
             for (Integer id : dataSource.getStoredFeatures17().keySet()) {
                 courseFeatures.put(id, dataSource.getStoredFeatures17().get(id).shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2));
@@ -417,6 +417,7 @@ public class RaceViewController implements Initializable, TableObserver {
         for (CourseFeature courseFeature : courseFeatures.values()) {
             drawMark(courseFeature);
         }
+
         MutablePoint startLine1 = courseFeatures.get(dataSource.getStartMarks().get(0)).getPixelLocations().get(0);
         MutablePoint startLine2 = courseFeatures.get(dataSource.getStartMarks().get(1)).getPixelLocations().get(0);
         MutablePoint finishLine1 = courseFeatures.get(dataSource.getFinishMarks().get(0)).getPixelLocations().get(0);
@@ -793,6 +794,12 @@ public class RaceViewController implements Initializable, TableObserver {
      * sets the current boat position of the current boat controlled by visualizer
      */
     private void setBoatLocation() {
+
+        if (dataSource.isSpectating()) {
+            currentPosition17 = new MutablePoint(raceViewCanvas.getWidth() / 2, raceViewCanvas.getHeight() / 2);
+            return;
+        }
+
         Competitor boat = dataSource.getCompetitor();
         currentPosition17 = boat.getPosition17();
         if (isZoom()) {
@@ -886,9 +893,10 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawHealthBar(boat);
             this.drawAnnotations(boat);
         }
+        counter++;
+        if (dataSource.isSpectating()) return;
         this.drawSail(width, length, dataSource.getCompetitor());
         this.drawGuidingArrow();
-        counter++;
     }
 
 

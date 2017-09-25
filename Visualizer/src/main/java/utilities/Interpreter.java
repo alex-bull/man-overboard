@@ -94,6 +94,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private int numBoats = 0;
     private boolean seenRaceXML = false;
     private int sourceID = 0;
+    private boolean spectating = false;
 
     private TCPClient TCPClient;
 
@@ -415,6 +416,7 @@ public class Interpreter implements DataSource, PacketHandler {
             case CONNECTION_RES:
                 ConnectionParser connectionParser = new ConnectionParser(packet);
                 this.sourceID = connectionParser.getSourceId();
+                if (connectionParser.getStatus() == 0) this.spectating = true;
                 System.out.println("Connection accepted, my source ID: " + sourceID);
                 break;
             case FALLEN_CREW:
@@ -864,4 +866,7 @@ public class Interpreter implements DataSource, PacketHandler {
         return raceXMLParser.getShiftDistance();
     }
 
+    public boolean isSpectating() {
+        return spectating;
+    }
 }

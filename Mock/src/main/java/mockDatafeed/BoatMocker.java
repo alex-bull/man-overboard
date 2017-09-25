@@ -227,11 +227,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private void addCompetitor(Integer clientId) {
         if(raceInProgress) {
             System.out.println("Add a Spectator here? not really sure if this how u do it but ok" + clientId);
-            byte[] res = binaryPackager.packageConnectionResponse((byte) 1, clientId);
+            byte[] res = binaryPackager.packageConnectionResponse((byte) 0, clientId);
             //send connection response and broadcast XML so update lobbies
             sendQueue.put(clientId, res);
             this.clientStates.put(clientId, false);
             this.sendAllXML();
+            this.flag = true;
         }
         else {
             double a = 0.002 * competitors.size(); //shift competitors so they aren't colliding at the start

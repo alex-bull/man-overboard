@@ -275,6 +275,10 @@ public class LobbyController implements Initializable {
             System.out.println("game beginning...");
             this.loadRaceView();
         }
+        if (dataSource.isSpectating()) {
+            System.out.println("Spectating game...");
+            this.loadRaceView();
+        }
     }
 
 
@@ -337,7 +341,8 @@ public class LobbyController implements Initializable {
         rightButton.setVisible(false);
 
         if (!boatSelected) boatImageView.setImage(boatImages.get(0)); //if none selected then use default image
-        this.nameText.setText(dataSource.getCompetitor().getTeamName());
+
+        if (!dataSource.isSpectating()) this.nameText.setText(dataSource.getCompetitor().getTeamName());
 
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 10);
 

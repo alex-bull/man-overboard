@@ -11,6 +11,8 @@ import utilities.DataSource;
 import utilities.Sounds;
 import utility.BinaryPackager;
 
+import static javafx.scene.input.KeyCode.A;
+import static javafx.scene.input.KeyCode.D;
 import static javafx.scene.input.KeyCode.Q;
 
 
@@ -67,6 +69,21 @@ public class MainController {
     @FXML
     public void keyPressed(KeyEvent event) {
 //        System.out.println("key pressed "+System.currentTimeMillis());
+        if (dataSource.isSpectating()) {
+            if (event.getCode() == A) {
+                if (dataSource.getZoomLevel() < 18 && raceViewController.isZoom()) {
+                    dataSource.changeScaling(1);
+                    raceViewController.zoomIn();
+                }
+            }
+            else if (event.getCode() == D) {
+                if (dataSource.getZoomLevel() > 12 && raceViewController.isZoom()) {
+                    dataSource.changeScaling(-1);
+                    raceViewController.zoomIn();
+                }
+            }
+            return;
+        }
 
         switch (event.getCode()) {
             case W:
@@ -141,7 +158,8 @@ public class MainController {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
         tableController.addObserver(raceViewController);
-        playerController.setup(dataSource, App.getPrimaryStage());
+        if (!dataSource.isSpectating()) playerController.setup(dataSource, App.getPrimaryStage());
+        else playerController.hideAll();
         this.binaryPackager = new BinaryPackager();
 
 
@@ -155,7 +173,7 @@ public class MainController {
                     raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
-                    playerController.refresh();
+                    if (!dataSource.isSpectating()) playerController.refresh();
                     sailSlider.toFront();
                     loadingPane.setVisible(false);
                     if (!flag) {
