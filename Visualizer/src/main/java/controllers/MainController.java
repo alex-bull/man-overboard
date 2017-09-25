@@ -158,9 +158,11 @@ public class MainController {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
         tableController.addObserver(raceViewController);
+        this.binaryPackager = new BinaryPackager();
+
         if (!dataSource.isSpectating()) playerController.setup(dataSource, App.getPrimaryStage());
         else playerController.hideAll();
-        this.binaryPackager = new BinaryPackager();
+
 
 
         AnimationTimer timer = new AnimationTimer() {
@@ -176,7 +178,7 @@ public class MainController {
                     if (!dataSource.isSpectating()) playerController.refresh();
                     sailSlider.toFront();
                     loadingPane.setVisible(false);
-                    if (!flag) {
+                    if (!flag && !dataSource.isSpectating()) {
                         raceViewController.toggleZoom();
                         flag = true;
                     }

@@ -388,7 +388,11 @@ public class RaceViewController implements Initializable, TableObserver {
         Map<Integer, CourseFeature> courseFeatures;
         List<MutablePoint> courseBoundary;
         if (isZoom()) {
-            if (dataSource.isSpectating()) mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);", 32.34458, -64.78431));
+
+            if (dataSource.isSpectating()) {
+                MutablePoint position = new ArrayList<>(dataSource.getStoredFeatures17().values()).get(2).getGPSPoint();
+                mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);", position.getXValue(), position.getYValue()));
+            }
             else mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);", dataSource.getCompetitor().getLatitude(), dataSource.getCompetitor().getLongitude()));
             courseFeatures = new HashMap<>();
             for (Integer id : dataSource.getStoredFeatures17().keySet()) {
