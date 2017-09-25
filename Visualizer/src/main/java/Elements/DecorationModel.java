@@ -28,9 +28,9 @@ public class DecorationModel extends ImageView {
         if(decoration.getId().contains("Igloo")) {
             image = getRandomIglooImage();
         }
-        else if(decoration.getId().contains("Penguin")) {
-            image = getRandomPenguinImage();
-            scale = 0.2;
+        else if(decoration.getId().contains("Cold_Animal")) {
+            image = getRandomColdAnimalImage();
+            scale = 0.4;
         }
         else if(decoration.getId().contains("Bermuda")) {
             image = getRandomBermudaImage();
@@ -74,14 +74,14 @@ public class DecorationModel extends ImageView {
     }
 
     /**
-     * Generate a random image for a penguin
-     * @return Image the imageqqqqqqqqqqqqq
+     * Generate a random image for an antarctic animal
+     * @return Image the image
      */
-    private Image getRandomPenguinImage() {
+    private Image getRandomColdAnimalImage() {
         ArrayList<String> imagePaths = new ArrayList<>();
-        imagePaths.add("images/antarctica/penguins.png");
-        imagePaths.add("images/antarctica/penguins-flip.png");
-        imagePaths.add("images/antarctica/pengs.png");
+        imagePaths.add("images/antarctica/penguin.png");
+        imagePaths.add("images/antarctica/peng.png");
+        imagePaths.add("images/antarctica/walrus.png");
         Random random = new Random();
         String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
         return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
@@ -95,6 +95,8 @@ public class DecorationModel extends ImageView {
         ArrayList<String> imagePaths = new ArrayList<>();
         imagePaths.add("images/bermuda/shipwreck.png");
         imagePaths.add("images/bermuda/supersonic.png");
+        imagePaths.add("images/bermuda/gull.png");
+        imagePaths.add("images/bermuda/planewreck.png");
         Random random = new Random();
         String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
         return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
