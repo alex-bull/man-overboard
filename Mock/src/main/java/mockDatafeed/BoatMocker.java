@@ -2,7 +2,6 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
@@ -61,7 +60,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     private boolean flag = true;
     private BoatUpdater boatUpdater;
-    private long startTime = 0;
+    private long serverStartTime = 0;
+    private long gameStartTime = 0;
 
     private TCPServer TCPserver;
     private boolean raceInProgress = false;
@@ -81,10 +81,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     BoatMocker() throws IOException, JDOMException {
 
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        startTime = System.currentTimeMillis() / 1000;
+        serverStartTime = System.currentTimeMillis() / 1000;
         expectedStartTime = creationTime.plusSeconds(11);
-        System.out.println("mock start time " + startTime);
-        System.out.println("expected " + expectedStartTime);
 
         //find out the coordinates of the course
         generateCourse();
@@ -232,6 +230,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void addCompetitor(Integer clientId) {
 
+        if (competitors.size() == 0) serverStartTime = System.currentTimeMillis() / 1000;
+
         double a = 0.002 * competitors.size(); //shift competitors so they aren't colliding at the start
 //        prestart = new MutablePoint(32.41011 + a, -64.88937);
         prestart = new MutablePoint(32.35763 + a, -64.81332);
@@ -286,7 +286,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         if (competitors.size() < 1) return false; //no competitors
 
         //all players are ready or the timer has reached a minute
-        return !clientStates.values().contains(false) || ((System.currentTimeMillis() / 1000) - startTime > 60);
+        return !clientStates.values().contains(false) || ((System.currentTimeMillis() / 1000) - serverStartTime > 60);
     }
 
     /**
@@ -495,11 +495,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         short windDirection = windGenerator.getWindDirection();
         short windSpeed = windGenerator.getWindSpeed();
         int raceStatus;
+        int gameDuration = 300;
         if (firstMessageTime != 0) {
             firstMessageTime = System.currentTimeMillis() / 1000;
         }
-        System.out.println((System.currentTimeMillis() / 1000 - startTime));
-        if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() / 1000 - startTime > 30)) {
+        if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() / 1000 - gameStartTime > gameDuration)) {
             raceStatus = 4;
 
         } else {
@@ -755,7 +755,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         this.readAllMessages();
 
-        if (shouldStartGame()) raceInProgress = true;
+        if (shouldStartGame()) {
+            raceInProgress = true;
+            gameStartTime = System.currentTimeMillis() / 1000;
+        }
 
         if (!raceInProgress) return;
 

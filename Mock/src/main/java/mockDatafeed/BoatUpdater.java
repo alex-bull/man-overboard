@@ -71,7 +71,7 @@ public class BoatUpdater {
         this.courseBoundary = courseBoundary;
         this.windGenerator = windGenerator;
 
-        polarTable = new PolarTable("/polars/VO70_polar.txt", 12.0);
+        polarTable = new PolarTable("/polars/VO70_polar.txt", 40.0);
         utility = new Utility();
         this.buildRoundingLines();
 

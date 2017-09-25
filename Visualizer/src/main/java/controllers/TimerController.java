@@ -30,11 +30,9 @@ public class TimerController implements ClockHandler {
      */
     void begin(DataSource dataSource) {
 
-        long expectedStartTime = dataSource.getExpectedStartTime();
         long firstMessageTime = dataSource.getMessageTime();
         this.raceClock = new RaceClock(this, 1, 0);
-        long raceTime = firstMessageTime - expectedStartTime;
-        raceClock.start(raceTime);
+        raceClock.start(firstMessageTime);
 
     }
 
@@ -42,14 +40,18 @@ public class TimerController implements ClockHandler {
      * Implementation of ClockHandler interface method
      * @param newTime The currentTime of the clock
      */
-    public void clockTicked(String newTime, Clock clock) {
-        if (clock == raceClock && System.currentTimeMillis() - startTime <= 31000) {
-            timerText.setText(newTime);
-            if (newTime.charAt(newTime.length() - 1) % 2 == 0 && System.currentTimeMillis() - startTime > 25000) {
+    public void clockTicked(String newTime, Clock clock, long timeMillis) {
+        timerText.setText(newTime);
+        int flashInterval = 10000;
+        if(timeMillis <= flashInterval) {
+            if (timeMillis/500 % 2 == 0) {
                 timerText.setFill(Color.RED);
             } else {
                 timerText.setFill(Color.BLACK);
             }
+        }
+        if(timeMillis <= 0) {
+            this.raceClock.stop();
         }
     }
 
