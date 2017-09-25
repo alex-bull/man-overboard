@@ -694,7 +694,7 @@ public class RaceViewController implements Initializable, TableObserver {
         for (PowerUp receivedPowerUp : receivedPowerUps.values()) {
             int sourceId = receivedPowerUp.getId();
             if (!powerUps.containsKey(sourceId)) {
-                PowerUpModel powerUpModel = new PowerUpModel(receivedPowerUp, isZoom(),nodeSizeFunc(dataSource.getZoomLevel()));
+                PowerUpModel powerUpModel = new PowerUpModel(receivedPowerUp, isZoom(), nodeSizeFunc(dataSource.getZoomLevel()));
                 powerUps.put(sourceId, powerUpModel);
                 raceViewPane.getChildren().add(powerUpModel);
             }
@@ -774,7 +774,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * adds scaling to all shapes in the scene
      */
     private void setScale(double scale) {
-        for (Group model : boatModels.values()) {
+        for (BoatModel model : boatModels.values()) {
             model.setScaleX(scale);
             model.setScaleY(scale);
         }
@@ -785,20 +785,19 @@ public class RaceViewController implements Initializable, TableObserver {
 
         for (PowerUpModel powerUpModel : powerUps.values()) {
             powerUpModel.setPreserveRatio(true);
-            powerUpModel.setFitWidth(scale * powerUpModel.getImage().getWidth());
+            powerUpModel.setFitWidth(scale * PowerUpModel.baseSize);
 
         }
 
         for (FallenCrew fallenCrew : fallenCrews.values()) {
             fallenCrew.setPreserveRatio(true);
-            fallenCrew.setFitWidth(scale * fallenCrew.getImage().getWidth());
+            fallenCrew.setFitWidth(scale * FallenCrew.baseSize);
 
         }
 
         for (WhirlpoolModel model : whirlpools.values()) {
             model.setPreserveRatio(true);
-            model.setFitWidth(scale * model.getImage().getWidth());
-            model.setFitHeight(scale * model.getImage().getHeight());
+            model.setFitWidth(scale * WhirlpoolModel.baseSize);
         }
         for(DecorationModel item: decorations.values()){
             item.setScaleY(scale);
@@ -882,7 +881,7 @@ public class RaceViewController implements Initializable, TableObserver {
         double boatLength = 10;
         double startWakeOffset = 3;
         double wakeWidthFactor = 0.2;
-        double wakeLengthFactor = 1;
+        double wakeLengthFactor = 2;
 
         if (isZoom()) {
             double multiplier = nodeSizeFunc(dataSource.getZoomLevel());

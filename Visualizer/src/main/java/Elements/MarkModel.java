@@ -30,7 +30,7 @@ public class MarkModel extends Group {
      * @param theme ThemeEnum course theme
      */
     public MarkModel(ThemeEnum theme, double x, double y) {
-        mark = new Circle(x,y,10);
+        mark = new Circle(x,y,25);
         if (theme.getValue() == ANTARCTICA.getValue()) {
             mark.setFill(new ImagePattern(getBerg()));
         }
@@ -59,9 +59,9 @@ public class MarkModel extends Group {
      */
     private Image getBerg(){
         ArrayList<String> paths = new ArrayList<>();
-        paths.add("images/antarctica/berg.png");
-        paths.add("images/antarctica/berg2.png");
-        paths.add("images/antarctica/berg3.png");
+        paths.add("images/antarctica/tinyberg.png");
+        paths.add("images/antarctica/tinyberg2.png");
+        paths.add("images/antarctica/tinyberg3.png");
         Random random = new Random();
         int index = random.nextInt(paths.size());
         return new Image(getClass().getClassLoader().getResource(paths.get(index)).toString());

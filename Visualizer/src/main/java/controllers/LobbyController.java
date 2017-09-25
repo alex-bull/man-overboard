@@ -178,7 +178,7 @@ public class LobbyController implements Initializable {
         boatImages.add(pirate);
         boatImageView.setImage(yacht);
         //image resizing cant be done in fxml >(
-        courseImageView.setPreserveRatio(true);
+        courseImageView.setPreserveRatio(false);
         courseImageView.fitWidthProperty().bind(gameGridPane.widthProperty());
         courseImageView.fitHeightProperty().bind(gameGridPane.heightProperty());
 

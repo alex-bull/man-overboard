@@ -11,6 +11,8 @@ import parsers.powerUp.PowerUp;
  */
 public class PowerUpModel extends ImageView {
 
+    public static final int baseSize = 25;
+
     /**
      * Create a powerup model
      *
@@ -20,7 +22,6 @@ public class PowerUpModel extends ImageView {
      */
     public PowerUpModel(PowerUp receivedPowerUp, boolean isZoom, Double scale) {
         Image image;
-        double originalScale = 0.4;
         switch (receivedPowerUp.getType()) {
             case BOOST:
                 image = new Image("/images/powerups/tinyspeed.png");
@@ -32,14 +33,13 @@ public class PowerUpModel extends ImageView {
                 image = null;
                 break;
         }
-//        double imageWidth = image.getWidth();
-//        double imageHeight = image.getHeight();
-//        this.setFitHeight(imageHeight * originalScale);
-//        this.setFitWidth(imag eWidth * originalScale);
+
+        System.out.println(scale);
         this.setImage(image);
         this.setPreserveRatio(true);
+        this.setFitWidth(baseSize);
         if (isZoom) {
-            this.setFitWidth(scale * image.getWidth());
+            this.setFitWidth(scale * baseSize);
         }
     }
 

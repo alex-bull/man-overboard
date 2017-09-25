@@ -209,7 +209,8 @@ public class BoatUpdater {
     private void handlePowerUpCollisions(Competitor boat) {
         for (int id : powerUps.keySet()) {
             PowerUp powerUp = powerUps.get(id);
-            if (raceCourse.distanceBetweenGPSPoints(boat.getPosition(),powerUp.getLocation())<50) {
+            int collisionRadius = 25;
+            if (raceCourse.distanceBetweenGPSPoints(boat.getPosition(),powerUp.getLocation())<collisionRadius) {
                 powerUps.remove(id);
 
                 switch (powerUp.getType()) {
