@@ -37,10 +37,10 @@ public class BoatModel extends Group {
 //                6.0, 14.0,
 //                6.0, -14.0); //right
         boatModel.getPoints().addAll(
-                -11.0, -21.0, //top
-                -11.0, 21.0, //left
-                11.0, 21.0,
-                11.0, -21.0); //right
+                -8.0, -15.0, //top
+                -8.0, 15.0, //left
+                8.0, 15.0,
+                8.0, -15.0); //right
 
         if (boatType == 0) {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/yacht.png").toString());
@@ -70,7 +70,7 @@ public class BoatModel extends Group {
 
 
         if (player) {
-            this.playerMarker = new Circle(0, 0, 18);
+            this.playerMarker = new Circle(0, 0, 16);
             playerMarker.setStrokeWidth(2.5);
             playerMarker.setStroke(Color.rgb(255, 255, 255, 0.5));
             playerMarker.setFill(Color.rgb(0, 0, 0, 0.2));
