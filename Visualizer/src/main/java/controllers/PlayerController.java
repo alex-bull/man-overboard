@@ -121,7 +121,7 @@ public class PlayerController {
 
 
         if (boat.hasPotion()) {
-            this.potion.setGraphic(new ImageView(new Image("/images/tinypotion.png")));
+            this.potion.setGraphic(new ImageView(new Image("/images/tinyhealth.png")));
         } else {
             this.potion.setGraphic(new ImageView(new Image("/images/greyPotion.png")));
         }

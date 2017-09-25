@@ -35,7 +35,7 @@ public class PowerUpModel extends ImageView {
 //        double imageWidth = image.getWidth();
 //        double imageHeight = image.getHeight();
 //        this.setFitHeight(imageHeight * originalScale);
-//        this.setFitWidth(imageWidth * originalScale);
+//        this.setFitWidth(imag eWidth * originalScale);
         this.setImage(image);
         this.setPreserveRatio(true);
         if (isZoom) {
