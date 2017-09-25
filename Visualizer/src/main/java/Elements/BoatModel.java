@@ -43,25 +43,25 @@ public class BoatModel extends Group {
                 8.0, -15.0); //right
 
         if (boatType == 0) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/yacht.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/yacht.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 1) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cog.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/cog.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 2) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigate.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/frigate.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 3) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleon.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/galleon.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 4) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boat.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/boat.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 5) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cat.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/cat.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 6) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/pirate.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/pirate.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
 

@@ -25,13 +25,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import models.Competitor;
 import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
-import utilities.Sounds;
 import utility.BinaryPackager;
 
 import java.io.IOException;
@@ -43,7 +41,6 @@ import java.util.stream.Collectors;
 import static java.lang.Math.abs;
 import static parsers.xml.race.ThemeEnum.AMAZON;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
-import static parsers.xml.race.ThemeEnum.BERMUDA;
 
 
 /**
@@ -162,13 +159,13 @@ public class LobbyController implements Initializable {
         primaryScreenBounds = Screen.getPrimary().getBounds();
         starterList.setItems(competitorList);
 
-        yacht = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
-        cog = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
-        frigate = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
-        galleon = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
-        boat = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
-        cat = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
-        pirate = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
+        yacht = new Image(getClass().getClassLoader().getResource("images/boats/yachtLandscape.png").toString());
+        cog = new Image(getClass().getClassLoader().getResource("images/boats/cogLandscape.png").toString());
+        frigate = new Image(getClass().getClassLoader().getResource("images/boats/frigateLandscape.png").toString());
+        galleon = new Image(getClass().getClassLoader().getResource("images/boats/galleonLandscape.png").toString());
+        boat = new Image(getClass().getClassLoader().getResource("images/boats/boatLandscape.png").toString());
+        cat = new Image(getClass().getClassLoader().getResource("images/boats/catLandscape.png").toString());
+        pirate = new Image(getClass().getClassLoader().getResource("images/boats/pirateLandscape.png").toString());
 
         addTextLimiter(nameText, 8);
 

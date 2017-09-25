@@ -65,25 +65,25 @@ public class PlayerController {
 
         Competitor boat = dataSource.getCompetitor();
         if (boat.getBoatType() == 0) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/yachtLandscape.png").toString());
             playerImageView.setImage(boatImage);
         } else if (boat.getBoatType() == 1) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/cogLandscape.png").toString());
             playerImageView.setImage(boatImage);
         } else if (boat.getBoatType() == 2) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/frigateLandscape.png").toString());
             playerImageView.setImage(boatImage);
         } else if (boat.getBoatType() == 3) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/galleonLandscape.png").toString());
             playerImageView.setImage(boatImage);
         } else if (boat.getBoatType() == 4) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/boatLandscape.png").toString());
             playerImageView.setImage(boatImage);
         } else if (boat.getBoatType() == 5) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/catLandscape.png").toString());
             playerImageView.setImage(boatImage);
         } else if (boat.getBoatType() == 6) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/pirateLandscape.png").toString());
             playerImageView.setImage(boatImage);
         }
 
@@ -111,9 +111,9 @@ public class PlayerController {
         String speed = String.format("%.1f", boat.getVelocity());
         boatSpeedLabel.setText(speed + "m/s");
         if (boat.hasSpeedBoost()) {
-            this.speed.setGraphic(new ImageView(new Image("/images/tinyspeed.png")));
+            this.speed.setGraphic(new ImageView(new Image("/images/powerups/tinyspeed.png")));
         } else {
-            this.speed.setGraphic(new ImageView(new Image("/images/greySpeed.png")));
+            this.speed.setGraphic(new ImageView(new Image("/images/powerups/speed_grey.png")));
         }
 
         Double w = stage.getWidth() / 2.5;
@@ -121,9 +121,9 @@ public class PlayerController {
 
 
         if (boat.hasPotion()) {
-            this.potion.setGraphic(new ImageView(new Image("/images/tinyhealth.png")));
+            this.potion.setGraphic(new ImageView(new Image("/images/powerups/tinyhealth.png")));
         } else {
-            this.potion.setGraphic(new ImageView(new Image("/images/greyPotion.png")));
+            this.potion.setGraphic(new ImageView(new Image("/images/powerups/potion_grey.png")));
         }
 
     }
@@ -132,14 +132,14 @@ public class PlayerController {
      * Greys out the speed icon
      */
     void greyOutBoost() {
-        this.speed.setGraphic(new ImageView(new Image("/images/greySpeed.png")));
+        this.speed.setGraphic(new ImageView(new Image("/images/powerups/speed_grey.png")));
     }
 
     /**
      * Greys out the potion icon
      */
     void greyOutPotion() {
-        this.potion.setGraphic(new ImageView(new Image("/images/greyPotion.png")));
+        this.potion.setGraphic(new ImageView(new Image("/images/powerups/potion_grey.png")));
 
     }
 
