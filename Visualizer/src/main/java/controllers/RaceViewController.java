@@ -901,7 +901,7 @@ public class RaceViewController implements Initializable, TableObserver {
         updateCourse();
 
         for (Competitor boat : dataSource.getCompetitorsPosition()) {
-
+            System.out.println(boat.getStatus() + "***");
             if (counter % 70 == 0) {
                 drawTrack(boat);
             }

@@ -30,6 +30,7 @@ public class HealthUpSteps {
         boat.enablePotion();
         boat.setMaxHealth(maxHealth);
         boat.setHealthLevel(currentHealth);
+        System.out.println(boat.getHealthLevel());
         Assert.assertTrue(boat.hasPotion());
 
     }
@@ -37,11 +38,15 @@ public class HealthUpSteps {
     @When("^The boat uses the potion$")
     public void the_boat_uses_the_potion() throws Throwable {
         boat.usePotion();
+        System.out.println(boat.getHealthLevel());
         boat.updateHealth((int) boat.getMaxHealth() / 2);
+        System.out.println(boat.getHealthLevel());
     }
 
     @Then("^The boat health is increased by (\\d+) and the boat has no more potion$")
     public void the_boat_health_is_increased_by_and_the_boat_has_no_more_potion(int result) throws Throwable {
+        System.out.println(boat.getHealthLevel());
+        System.out.println(result + "ers");
         Assert.assertEquals(boat.getHealthLevel(), result, 0.01);
         Assert.assertTrue(!boat.hasPotion());
     }

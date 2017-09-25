@@ -205,7 +205,7 @@ public class Boat implements Competitor {
 
         if (resultHealth > maxHealth) {
             healthLevel = maxHealth;
-        } else if (healthLevel > 0) {
+        } else if (healthLevel >= 0) {
             healthLevel = resultHealth;
         }
     }
