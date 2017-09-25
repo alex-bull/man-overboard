@@ -426,12 +426,26 @@ public class RaceViewController implements Initializable, TableObserver {
         for (CourseFeature courseFeature : courseFeatures.values()) {
             drawMark(courseFeature);
         }
-        MutablePoint startLine1 = courseFeatures.get(dataSource.getStartMarks().get(0)).getPixelLocations().get(0);
-        MutablePoint startLine2 = courseFeatures.get(dataSource.getStartMarks().get(1)).getPixelLocations().get(0);
-        MutablePoint finishLine1 = courseFeatures.get(dataSource.getFinishMarks().get(0)).getPixelLocations().get(0);
-        MutablePoint finishLine2 = courseFeatures.get(dataSource.getFinishMarks().get(1)).getPixelLocations().get(0);
+
+        List<Integer> startMarks = dataSource.getStartMarks();
+        List<Integer> finishMarks = dataSource.getFinishMarks();
+
+        Integer start1 = startMarks.get(0);
+        Integer start2 = startMarks.get(1);
+        Integer finish1 = finishMarks.get(0);
+        Integer finish2 = finishMarks.get(1);
+
+        MutablePoint startLine1 = getLocation(courseFeatures.get(start1));
+        MutablePoint startLine2 = getLocation(courseFeatures.get(start2));
+        MutablePoint finishLine1 = getLocation(courseFeatures.get(finish1));
+        MutablePoint finishLine2 = getLocation(courseFeatures.get(finish2));
         drawLine(startLine, startLine1, startLine2);
         drawLine(finishLine, finishLine1, finishLine2);
+    }
+
+    private MutablePoint getLocation(CourseFeature courseFeature) {
+        List<MutablePoint> locations = courseFeature.getPixelLocations();
+        return locations.get(0);
     }
 
 
@@ -982,7 +996,23 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     @FXML
     public void goToStartScreen() {
+        dataSource.send(new BinaryPackager().packageDisconnect(dataSource.getCompetitor().getSourceID()));
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
+        assert root != null;
+
+        observableFinisherList.clear();
+        clearOldInfo();
+        LobbyController lobbyController = loader.getController();
+        lobbyController.setDataSource(dataSource);
+        lobbyController.leaveLobby();
     }
 
     /**

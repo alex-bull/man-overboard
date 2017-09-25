@@ -217,14 +217,11 @@ public class TCPServer extends TimerTask {
         }
     }
 
-    public void clearClients() {
-        try {
-            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
+//    public void acceptNewConnections() {
+//        try {
+//            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
