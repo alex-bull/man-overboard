@@ -214,7 +214,11 @@ public class LobbyController implements Initializable {
         readyButton.setDisable(true);
 
         dataSource.send(new BinaryPackager().packagePlayerReady());
-        confirmBoatDetails();
+
+        confirmButton.setVisible(false);
+        nameText.setDisable(true);
+        leftButton.setVisible(false);
+        rightButton.setVisible(false);
     }
 
 
