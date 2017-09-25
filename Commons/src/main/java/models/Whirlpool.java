@@ -7,7 +7,7 @@ public class Whirlpool {
 
     private int sourceID;
     private int currentLeg;
-    private double collisionRadius = 400;
+    private double collisionRadius = 60;
     private MutablePoint position;
     private MutablePoint position17;
     private MutablePoint positionOriginal;

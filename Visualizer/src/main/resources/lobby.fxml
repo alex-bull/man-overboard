@@ -1,207 +1,197 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" styleClass="background" stylesheets="@css/theme.css"
-            xmlns="http://javafx.com/javafx/8" fx:controller="controllers.LobbyController">
+<?import java.net.URL?>
+
+<AnchorPane styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LobbyController">
+    <stylesheets>
+        <URL value="@css/theme.css" />
+        <URL value="@css/lobby.css" />
+    </stylesheets>
     <children>
-        <GridPane layoutY="-6.0" prefHeight="966.0" prefWidth="1460.0" AnchorPane.bottomAnchor="6.0"
-                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-6.0">
+        <GridPane layoutY="-6.0" prefHeight="966.0" prefWidth="1460.0" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-6.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="10.0" percentWidth="10.0"
-                                   prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="20.0"
-                                   prefWidth="605.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="20.0"
-                                   prefWidth="605.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="5.0"
-                                   prefWidth="605.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="408.0" minWidth="0.0" percentWidth="40.0"
-                                   prefWidth="24.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="408.0" minWidth="10.0" percentWidth="10.0"
-                                   prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="10.0" percentWidth="13.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="15.0" prefWidth="605.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="15.0" prefWidth="605.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="5.0" prefWidth="605.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" percentWidth="5.0" prefWidth="605.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="408.0" minWidth="0.0" percentWidth="35.0" prefWidth="24.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="408.0" minWidth="10.0" percentWidth="13.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints maxHeight="50.0" minHeight="0.0" percentHeight="10.0" prefHeight="50.0"
-                                vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="50.0" minHeight="0.0" percentHeight="5.0" prefHeight="50.0"
-                                vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="300.0" minHeight="0.0" percentHeight="65.0" prefHeight="86.71890258789062"
-                                vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="291.2810974121094" minHeight="70.0" percentHeight="10.0"
-                                prefHeight="291.2810974121094" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="291.2810974121094" minHeight="0.0" percentHeight="10.0"
-                                prefHeight="291.2810974121094" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="50.0" minHeight="0.0" percentHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="50.0" minHeight="0.0" percentHeight="5.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="300.0" minHeight="0.0" percentHeight="65.0" prefHeight="86.71890258789062" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="291.2810974121094" minHeight="70.0" percentHeight="10.0" prefHeight="291.2810974121094" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="291.2810974121094" minHeight="70.0" percentHeight="10.0" prefHeight="291.2810974121094" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="291.2810974121094" minHeight="0.0" percentHeight="10.0" prefHeight="291.2810974121094" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Button fx:id="readyButton" mnemonicParsing="false" onAction="#playerReady" prefHeight="30.0"
-                        prefWidth="160.0" text="Ready" GridPane.columnIndex="2" GridPane.halignment="CENTER"
-                        GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                <Button fx:id="readyButton" mnemonicParsing="false" onAction="#playerReady" prefHeight="30.0" prefWidth="160.0" text="Ready" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </Button>
-                <ListView fx:id="starterList" prefHeight="598.0" prefWidth="400.0" GridPane.columnIndex="1"
-                          GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2"
-                          GridPane.valignment="CENTER">
+                <ListView fx:id="starterList" prefHeight="598.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets left="100.0" right="100.0" top="20.0"/>
+                        <Insets top="20.0" />
                     </GridPane.margin>
                 </ListView>
-                <Label text="Competitors" textFill="#e0efef" GridPane.columnIndex="1" GridPane.columnSpan="2"
-                       GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                <Label text="Competitors" textFill="#e0efef" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                     <font>
-                        <Font name="Gentium Book Basic Bold Italic" size="25.0"/>
+                        <Font name="Gentium Book Basic Bold Italic" size="25.0" />
                     </font>
                 </Label>
-                <ProgressIndicator fx:id="progressIndicator" maxHeight="70.0" stylesheets="@css/theme.css"
-                                   GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2"/>
-                <Button fx:id="leaveButton" mnemonicParsing="false" onAction="#leaveLobby" prefHeight="30.0"
-                        prefWidth="160.0" text="Leave" GridPane.columnIndex="1" GridPane.halignment="CENTER"
-                        GridPane.rowIndex="3"/>
-                <GridPane GridPane.columnIndex="4" GridPane.rowIndex="2">
+                <ProgressIndicator fx:id="progressIndicator" maxHeight="70.0" stylesheets="@css/theme.css" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                <Button fx:id="leaveButton" mnemonicParsing="false" onAction="#leaveLobby" prefHeight="30.0" prefWidth="160.0" text="Leave" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+                <GridPane GridPane.columnIndex="5" GridPane.rowIndex="2">
                     <columnConstraints>
-                        <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="0.0" percentWidth="10.0"
-                                           prefWidth="100.0"/>
-                        <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0" percentWidth="80.0"
-                                           prefWidth="100.0"/>
-                        <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="0.0" percentWidth="10.0"
-                                           prefWidth="100.0"/>
+                        <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="0.0" percentWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0" percentWidth="80.0" prefWidth="100.0" />
+                        <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="0.0" percentWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="10.0" percentHeight="5.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="10.0" percentHeight="5.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" percentHeight="5.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" percentHeight="5.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <GridPane fx:id="playerGridPane" prefHeight="90.0" prefWidth="400.0" GridPane.columnIndex="1"
-                                  GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                        <GridPane fx:id="playerGridPane" prefHeight="90.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
                             <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                             </columnConstraints>
                             <rowConstraints>
-                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
-                                <ImageView fx:id="boatImageView" fitHeight="136.0" fitWidth="382.0" pickOnBounds="true"
-                                           preserveRatio="true">
+                                <ImageView fx:id="boatImageView" fitHeight="136.0" fitWidth="382.0" pickOnBounds="true" preserveRatio="true">
                                     <effect>
-                                        <InnerShadow/>
+                                        <InnerShadow />
                                     </effect>
                                 </ImageView>
                             </children>
                             <GridPane.margin>
-                                <Insets left="50.0" right="50.0"/>
+                                <Insets bottom="10.0" left="60.0" right="60.0" top="10.0" />
                             </GridPane.margin>
                         </GridPane>
-                        <GridPane fx:id="gameGridPane" prefHeight="360.0" prefWidth="420.0" GridPane.columnIndex="1"
-                                  GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-                            </rowConstraints>
-                            <children>
-                                <ImageView fx:id="courseImageView" fitWidth="420.0" pickOnBounds="true"
-                                           preserveRatio="true" GridPane.halignment="CENTER"
-                                           GridPane.valignment="BOTTOM">
-                                </ImageView>
-                                <Label fx:id="locationLabel" maxWidth="1.7976931348623157E308"
-                                       style="-fx-background-color: grey; -fx-alignment: CENTER_RIGHT;" text="Bermuda"
-                                       textFill="#e0efef" GridPane.valignment="BOTTOM">
-                                    <font>
-                                        <Font size="30.0"/>
-                                    </font>
-                                    <padding>
-                                        <Insets bottom="20.0" right="20.0"/>
-                                    </padding>
-                                </Label>
-                                <Label fx:id="gameTypeLabel" maxWidth="1.7976931348623157E308" prefWidth="382.0"
-                                       style="-fx-background-color: grey; -fx-alignment: CENTER_RIGHT;"
-                                       text="Match Race" textFill="#e0efef" GridPane.valignment="BOTTOM">
-                                    <font>
-                                        <Font size="20.0"/>
-                                    </font>
-                                    <padding>
-                                        <Insets right="20.0"/>
-                                    </padding>
-                                </Label>
-                            </children>
-                        </GridPane>
-                        <Button id="controlbutton" fx:id="leftButton" mnemonicParsing="false"
-                                onAction="#showPreviousBoat" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                  <GridPane styleClass="bordered" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                              <GridPane fx:id="gameGridPane" prefHeight="360.0" prefWidth="420.0" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+                                  <columnConstraints>
+                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                  </columnConstraints>
+                                  <rowConstraints>
+                                      <RowConstraints />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                  </rowConstraints>
+                                  <children>
+                                      <ImageView fx:id="courseImageView" fitWidth="420.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                                          <image>
+                                              <Image url="@images/courseImage.png" />
+                                          </image>
+                                 <GridPane.margin>
+                                    <Insets left="5.0" right="5.0" top="5.0" />
+                                 </GridPane.margin>
+                                      </ImageView>
+                                      <Label fx:id="locationLabel" alignment="TOP_RIGHT" maxWidth="1.7976931348623157E308" style="-fx-background-color: rgba(0,0,0,0.75); -fx-alignment: CENTER_RIGHT;" text="Bermuda" textFill="WHITE" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                                          <font>
+                                              <Font size="30.0" />
+                                          </font>
+                                          <padding>
+                                              <Insets bottom="30.0" right="10.0" />
+                                          </padding>
+                                      </Label>
+                                      <Label fx:id="gameTypeLabel" alignment="BOTTOM_RIGHT" maxWidth="1.7976931348623157E308" prefWidth="382.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_RIGHT;" text="Match Race" textFill="WHITE" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                                          <font>
+                                              <Font size="20.0" />
+                                          </font>
+                                          <padding>
+                                              <Insets bottom="10.0" right="10.0" />
+                                          </padding>
+                                      </Label>
+                                  </children>
+                              </GridPane>
+                     </children>
+                  </GridPane>
+                        <Button fx:id="leftButton" mnemonicParsing="false" onAction="#showPreviousBoat" styleClass="controlbutton" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                             <graphic>
                                 <ImageView fitHeight="37.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@images/leftarrow.png"/>
+                                        <Image url="@images/leftarrow.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
+                     <padding>
+                        <Insets right="20.0" />
+                     </padding>
                         </Button>
-                        <Button id="controlbutton" fx:id="rightButton" mnemonicParsing="false" onAction="#showNextBoat"
-                                GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="RIGHT"
-                                GridPane.rowIndex="1">
+                        <Button fx:id="rightButton" mnemonicParsing="false" onAction="#showNextBoat" styleClass="controlbutton" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                             <graphic>
                                 <ImageView fitHeight="35.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@images/rightarrow.png"/>
+                                        <Image url="@images/rightarrow.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="confirmButton" mnemonicParsing="false" onAction="#confirmBoatDetails"
-                                text="Confirm" GridPane.columnIndex="1" GridPane.halignment="CENTER"
-                                GridPane.rowIndex="2"/>
-                        <TextField fx:id="nameText" promptText="Choose Boat Name " GridPane.columnIndex="1"
-                                   GridPane.halignment="CENTER"/>
+                        <Button fx:id="confirmButton" mnemonicParsing="false" onAction="#confirmBoatDetails" text="Confirm" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                        <TextField fx:id="nameText" promptText="Choose Boat Name " GridPane.columnIndex="1" GridPane.halignment="CENTER" />
                     </children>
                 </GridPane>
-                <GridPane GridPane.columnIndex="4" GridPane.rowIndex="3">
+                <GridPane GridPane.columnIndex="5" GridPane.rowIndex="4">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Label fx:id="gameStartLabel" text="Game starting in..." textFill="#e0efef"
-                               GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                        <Label fx:id="gameStartLabel" text="Game starting in..." textFill="#e0efef" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                             <GridPane.margin>
-                                <Insets/>
+                                <Insets />
                             </GridPane.margin>
                             <font>
-                                <Font name="Gentium Book Basic Bold Italic" size="20.0"/>
+                                <Font name="Gentium Book Basic Bold Italic" size="20.0" />
                             </font>
                             <padding>
-                                <Insets left="20.0"/>
+                                <Insets left="20.0" />
                             </padding>
                         </Label>
                         <Label fx:id="countdownLabel" text="5" textFill="#e0efef" GridPane.columnIndex="1">
                             <font>
-                                <Font name="Gentium Book Basic Bold Italic" size="20.0"/>
+                                <Font name="Gentium Book Basic Bold Italic" size="20.0" />
                             </font>
                             <padding>
-                                <Insets left="10.0"/>
+                                <Insets left="10.0" />
                             </padding>
                         </Label>
                     </children>
                 </GridPane>
-                <Label fx:id="loadingLabel" style="-fx-text-fill: white;" text="Finding a game..." textFill="#06d4f8"
-                       GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER"
-                       GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                <Label fx:id="loadingLabel" style="-fx-text-fill: white;" text="Finding a game..." textFill="#06d4f8" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                     <padding>
-                        <Insets top="120.0"/>
+                        <Insets top="120.0" />
                     </padding>
                     <font>
-                        <Font size="15.0"/>
+                        <Font size="15.0" />
                     </font>
                 </Label>
             </children>

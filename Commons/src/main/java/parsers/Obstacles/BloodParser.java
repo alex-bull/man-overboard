@@ -16,18 +16,8 @@ import static parsers.Converter.parseCoordinate;
  */
 public class BloodParser {
 
-    public static List<Blood> parseBlood(byte[] packet) {
-        List<Blood> deadCrewLocations = new ArrayList<>();
-        Integer n = hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 1));
-        int currentByte = 1;
-        for (int i = 0; i < n; i++) {
-            Integer sourceId = hexByteArrayToInt(Arrays.copyOfRange(packet, currentByte, currentByte + 4));
-            double latitude = parseCoordinate(Arrays.copyOfRange(packet, currentByte + 4, currentByte + 8));
-            double longitude = parseCoordinate(Arrays.copyOfRange(packet, currentByte + 8, currentByte + 12));
-            deadCrewLocations.add(new Blood(sourceId, new MutablePoint(latitude, longitude)));
-            currentByte += 12;
+    public static int parseBlood(byte[] packet) {
 
-        }
-        return deadCrewLocations;
+        return hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 4));
     }
 }

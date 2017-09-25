@@ -3,18 +3,22 @@ package models;
 import javafx.animation.AnimationTimer;
 import parsers.Converter;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import static java.lang.Math.abs;
 
 /**
  * Created by mgo65 on 30/03/17.
  * Clock for the race
  */
-public class RaceClock extends AnimationTimer implements Clock {
+public class RaceClock extends TimerTask implements Clock {
 
     private long startTime;
     private int scaleFactor;
     private int negativeTime;
     private ClockHandler clockHandler;
+    private Timer t;
 
 
     public RaceClock(ClockHandler handler, int scaleFactor, int negativeTime) {
@@ -25,17 +29,25 @@ public class RaceClock extends AnimationTimer implements Clock {
 
     }
 
-    @Override
+
     public void start(long startTimeMillis) {
         this.startTime = startTimeMillis;
-        super.start();
+         this.t = new Timer();
+        t.schedule(this, 0, 500);
     }
 
-    @Override
-    public void handle(long now) {
-        String newTime = this.formatDisplayTime(1000 * Converter.convertToRelativeTime(startTime, System.currentTimeMillis()));
-        this.clockHandler.clockTicked(newTime, this);
+
+    public void run() {
+        int gameDuration = 300000; // 5min
+        long time = gameDuration - (System.currentTimeMillis() - startTime);
+        String newTime = this.formatDisplayTime(time);
+        this.clockHandler.clockTicked(newTime, this, time);
     }
+
+    public void stop() {
+        this.t.cancel();
+    }
+
 
     /**
      * Creates a formatted display time string in mm:ss and takes into account the scale factor

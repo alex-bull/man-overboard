@@ -60,7 +60,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     private boolean flag = true;
     private BoatUpdater boatUpdater;
-    private long startTime = System.currentTimeMillis() / 1000;//time in seconds
+    private long serverStartTime = 0;
+    private long gameStartTime = 0;
 
     private TCPServer TCPserver;
     private boolean raceInProgress = false;
@@ -78,6 +79,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
 
 
+    private long firstMessageTime = 0;
+
 
     BoatMocker() throws IOException, JDOMException {
         CourseGenerator courseGenerator = new CourseGenerator();
@@ -86,7 +89,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         this.themeId = courseGenerator.getThemeId();
         System.out.println("Chosen path : " + this.coursePath);
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        expectedStartTime = creationTime.plusMinutes(1);
+        serverStartTime = System.currentTimeMillis() / 1000;
+        expectedStartTime = creationTime.plusSeconds(11);
 
         //find out the coordinates of the course
         generateCourse();
@@ -233,8 +237,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * @param clientId the channel id of the client, this is used as the source id of the new competitor
      */
     private void addCompetitor(Integer clientId) {
+        if (competitors.size() == 0) serverStartTime = System.currentTimeMillis() / 1000;
 
-        double a = 0.001 * competitors.size(); //shift competitors so they aren't colliding at the start
+        double a = 0.002 * competitors.size(); //shift competitors so they aren't colliding at the start
         MutablePoint boatStart = new MutablePoint(this.prestart.getXValue() + a, this.prestart.getYValue());
         System.out.println("boat will start at " + boatStart);
 
@@ -289,7 +294,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         if (competitors.size() < 1) return false; //no competitors
 
         //all players are ready or the timer has reached a minute
-        return !clientStates.values().contains(false) || ((System.currentTimeMillis() / 1000) - startTime > 60);
+        return !clientStates.values().contains(false) || ((System.currentTimeMillis() / 1000) - serverStartTime > 60);
     }
 
     /**
@@ -498,7 +503,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         short windDirection = windGenerator.getWindDirection();
         short windSpeed = windGenerator.getWindSpeed();
         int raceStatus;
-        if (boatUpdater.checkAllFinished()) {
+        int gameDuration = 300;
+        if (firstMessageTime != 0) {
+            firstMessageTime = System.currentTimeMillis() / 1000;
+        }
+        if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() / 1000 - gameStartTime > gameDuration)) {
             raceStatus = 4;
 
         } else {
@@ -716,7 +725,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
     /**
      * Packages and sends shark event
-     * @param locations data for the event
+     *
+     * @param shark data for the event
      * @throws IOException if send fails
      */
     public void sharkEvent(Shark shark) throws IOException {
@@ -728,12 +738,12 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     /**
      * Packages and sends blood event
      *
-     * @param locations data for the event
+     * @param sourceId data for the event
      * @throws IOException if send fails
      */
-    public void bloodEvent(List<Blood> locations) throws IOException {
+    public void bloodEvent(int sourceId) throws IOException {
 
-        byte[] eventPacket = binaryPackager.packageBloodEvent(locations);
+        byte[] eventPacket = binaryPackager.packageBloodEvent(sourceId);
         this.sendQueue.put(null, eventPacket);
     }
 
@@ -756,7 +766,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         this.readAllMessages();
 
-        if (shouldStartGame()) raceInProgress = true;
+        if (shouldStartGame()) {
+            raceInProgress = true;
+            gameStartTime = System.currentTimeMillis() / 1000;
+        }
 
         if (!raceInProgress) return;
 

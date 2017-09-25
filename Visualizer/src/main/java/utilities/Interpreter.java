@@ -451,7 +451,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     MutablePoint position = cloner.deepClone(Projection.mercatorProjection(location));
                     position.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
-                    MutablePoint position17 = cloner.deepClone(Projection.mercatorProjection(position));
+                    MutablePoint position17 = cloner.deepClone(Projection.mercatorProjection(location));
                     position17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
                     powerUp.setPosition(position);
@@ -487,11 +487,11 @@ public class Interpreter implements DataSource, PacketHandler {
                 addShark(parseShark(packet));
                 break;
             case BLOOD:
-                addBloodLocation(parseBlood(packet));
+                System.out.println("Blood event");
+                crewLocations.get((parseBlood(packet))).setDied();
                 break;
             case WHIRLPOOL:
                 addWhirlPool(parseWhirlpool(packet));
-
             default:
                 break;
         }

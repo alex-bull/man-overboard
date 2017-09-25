@@ -2,6 +2,7 @@ package Elements;
 
 import javafx.scene.Group;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import models.Competitor;
 import models.MutablePoint;
@@ -28,9 +29,9 @@ public class Annotation extends Group {
         name = new Label(boat.getAbbreName());
         speed = new Label(String.valueOf(boat.getVelocity()) + "m/s");
         name.setFont(Font.font("Monospaced"));
-        name.setTextFill(boat.getColor());
+        name.setTextFill(Color.BLACK);
         speed.setFont(Font.font("Monospaced"));
-        speed.setTextFill(boat.getColor());
+        speed.setTextFill(Color.BLACK);
         this.getChildren().add(speed);
         this.getChildren().add(name);
     }

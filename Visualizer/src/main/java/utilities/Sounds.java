@@ -113,6 +113,18 @@ public class Sounds {
         }
     }
 
+    /**
+     * Mutes the sound
+     */
+    public void muteSound() {
+        for (MediaPlayer player : music.values()) {
+            player.setVolume(0.0);
+        }
+        for (MediaPlayer player : effects.values()) {
+            player.setVolume(0.0);
+        }
+    }
+
 
     /**
      * Set the volume of a track

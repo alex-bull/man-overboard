@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="table" maxHeight="200.0" maxWidth="490.0" minHeight="-Infinity"
-            minWidth="-Infinity" prefHeight="200.0" prefWidth="489.0" AnchorPane.bottomAnchor="0.0"
-            AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" xmlns="http://javafx.com/javafx/8"
-            fx:controller="controllers.TableController">
+
+<AnchorPane fx:id="table" maxHeight="200.0" maxWidth="490.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="489.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TableController">
     <children>
 
-        <TableView fx:id="raceTable" blendMode="DARKEN" maxWidth="1.7976931348623157E308" prefHeight="190.0"
-                   prefWidth="482.0" style="-fx-background-color: transparent;" stylesheets="@css/theme.css"
-                   AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="0.0">
+        <TableView fx:id="raceTable" blendMode="DARKEN" maxWidth="1.7976931348623157E308" prefHeight="190.0" prefWidth="482.0" style="-fx-background-color: transparent;" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="0.0">
             <columns>
-                <TableColumn fx:id="positionCol" prefWidth="70.0" text="Position"/>
-                <TableColumn fx:id="nameCol" prefWidth="145.0" text="Name"/>
-                <TableColumn fx:id="speedCol" prefWidth="126.0" text="Speed(m/s)"/>
-                <TableColumn fx:id="featureCol" prefWidth="140.0" text="Last passed"/>
+                <TableColumn fx:id="positionCol" prefWidth="70.0" text="Position" />
+                <TableColumn fx:id="nameCol" prefWidth="145.0" text="Name" />
+                <TableColumn fx:id="speedCol" prefWidth="126.0" text="Speed(m/s)" />
+                <TableColumn fx:id="featureCol" prefWidth="140.0" text="Last passed" />
             </columns>
         </TableView>
     </children>

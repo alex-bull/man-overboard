@@ -2,22 +2,18 @@
 
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-
-<AnchorPane onKeyPressed="#keyPressed" onKeyReleased="#zoomOut" prefHeight="668.0" prefWidth="977.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<AnchorPane onKeyPressed="#keyPressed" stylesheets="css/raceView.css" onKeyReleased="#zoomOut" prefHeight="668.0" prefWidth="977.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
 
     <children>
-        <Slider fx:id="sailSlider" blockIncrement="1.0" layoutX="1350.0" layoutY="350.0" majorTickUnit="1.0" max="1.0" min="0.0" minorTickCount="0" onMouseDragged="#updateSlider" orientation="VERTICAL" prefHeight="250.0" prefWidth="60.0" showTickMarks="true" snapToTicks="true" value="0.0" />
+        <Slider fx:id="sailSlider" blockIncrement="1.0" AnchorPane.rightAnchor="50.0" layoutY="350.0" majorTickUnit="1.0" max="1.0" min="0.0" minorTickCount="0" onMouseDragged="#updateSlider" orientation="VERTICAL" prefHeight="180.0" prefWidth="60.0" showTickMarks="true" snapToTicks="true" value="0.0" />
         <fx:include fx:id="raceView" source="raceView.fxml" />
         <fx:include fx:id="table" source="table.fxml" />
         <fx:include fx:id="wind" source="windDirection.fxml" />
         <fx:include fx:id="player" source="player.fxml" />
-        <GridPane fx:id="loadingPane" stylesheets="@css/loading.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <fx:include fx:id="timer" source="timer.fxml"/>
+        <GridPane fx:id="loadingPane" styleClass="background" stylesheets="@css/loading.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -38,21 +34,18 @@
             </rowConstraints>
             <children>
                 <ProgressIndicator fx:id="indicator" mouseTransparent="true" prefHeight="117.0" prefWidth="140.0" GridPane.columnIndex="3" GridPane.rowIndex="3" GridPane.rowSpan="2" />
-                <Text fx:id="team" strokeType="OUTSIDE" strokeWidth="0.0" text="Zaffre Tides'" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                    <font>
-                        <Font name="Gentium Book Basic Bold Italic" size="200.0" />
-                    </font>
-                </Text>
-                <Text fx:id="product" strokeType="OUTSIDE" strokeWidth="0.0" text="Man Overboard" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-                    <font>
-                        <Font name="Gentium Book Basic Bold Italic" size="13.0" />
-                    </font>
-                </Text>
-                <Text fx:id="phrase" strokeType="OUTSIDE" strokeWidth="0.0" text="Getting Ready" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
-                    <font>
-                        <Font name="Liberation Serif Italic" size="13.0" />
-                    </font>
-                </Text>
+                <Text fill="#b3dbee" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="ZAFFRE TIDES" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+               <font>
+                  <Font size="60.0" />
+               </font></Text>
+                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="MAN OVERBOARD" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+               <font>
+                  <Font size="120.0" />
+               </font></Text>
+                <Text fill="#bfddf5" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Getting Ready" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+               <font>
+                  <Font size="70.0" />
+               </font></Text>
             </children>
         </GridPane>
     </children>
