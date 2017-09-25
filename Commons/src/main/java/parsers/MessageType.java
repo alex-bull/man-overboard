@@ -5,29 +5,31 @@ package parsers;
  * Enum for message types
  */
 public enum MessageType {
+    // TODO put these in order
     UNKNOWN(-1),
+    BLOOD(-100),
     RACE_STATUS(12),
     XML(26),
+    YACHT_ACTION(29),
     BOAT_LOCATION(37),
     MARK_ROUNDING(38),
-    BOAT_ACTION(100),
     COURSE_WIND(44),
     SOURCE_ID(56),
-    YACHT_ACTION(29),
+    RESTART_RACE(78),
     BOAT_HEALTH(97),
-    BOAT_STATE(103),
+    BOAT_ACTION(100),
     CONNECTION_REQ(101),
     CONNECTION_RES(102),
+    BOAT_STATE(103),
+    MODEL_REQUEST(104),
+    NAME_REQUEST(106),
+    FALLEN_CREW(107),
     PLAYER_READY(110),
     LEAVE_LOBBY(111),
-    WHIRLPOOL(119),
-    SHARK(120),
-    BLOOD(-100),
-    FALLEN_CREW(107),
-    NAME_REQUEST(106),
-    MODEL_REQUEST(104),
     POWER_UP(112),
-    POWER_UP_TAKEN(113);
+    POWER_UP_TAKEN(113),
+    WHIRLPOOL(119),
+    SHARK(120);
 
 
     private final int value;

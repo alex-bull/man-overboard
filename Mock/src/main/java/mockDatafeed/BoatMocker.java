@@ -12,7 +12,6 @@ import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpType;
-import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.CourseXMLParser;
 import parsers.xml.race.CompoundMarkData;
 import parsers.xml.race.MarkData;
@@ -36,6 +35,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static mockDatafeed.Keys.RIP;
 import static parsers.BoatStatusEnum.*;
+import static parsers.Converter.hexByteArrayToInt;
+import static parsers.MessageType.RACE_STATUS;
+import static parsers.MessageType.RESTART_RACE;
 import static parsers.MessageType.UNKNOWN;
 import static utilities.CollisionUtility.isPointInPolygon;
 import static utilities.Utility.fileToString;
@@ -60,6 +62,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private Random random = new Random();
 
     private boolean flag = true;
+    private boolean hasCleared = false;
     private BoatUpdater boatUpdater;
     private long startTime = System.currentTimeMillis() / 1000;//time in seconds
 
@@ -129,12 +132,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 messageType = messageEnum;
             }
         }
+        HeaderParser headerParser = new HeaderParser();
+        HeaderData headerData = headerParser.processMessage(header);
+
+        System.out.println("interpret..." + messageType.getValue());
 
         switch (messageType) {
             case BOAT_ACTION:
-
-                HeaderParser headerParser = new HeaderParser();
-                HeaderData headerData = headerParser.processMessage(header);
                 int sourceID = headerData.getSourceID();
                 Competitor boat = competitors.get(sourceID);
                 BoatAction action = BoatAction.getBoatAction(packet[0]);
@@ -180,9 +184,20 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                         boatStateEvent(sourceID, boat.getHealthLevel());
                         break;
                 }
+
+                if (hasCleared) {
+                    hasCleared = false;
+                }
+
                 break;
             case CONNECTION_REQ:
                 this.addCompetitor(clientId);
+                break;
+            case RESTART_RACE:
+                System.out.println("clearing old info");
+
+                clearOldRace(hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 4)));
+
                 break;
             case PLAYER_READY:
                 this.updateReady(clientId);
@@ -206,8 +221,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 competitors.get(modelParser.getSourceId()).setBoatType(modelParser.getModel());
                 this.sendAllXML();
                 break;
-
-
+            default:
+                System.out.println("default");
+                System.out.println(messageType);
         }
     }
 
@@ -233,7 +249,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 //        prestart = new MutablePoint(32.41011 + a, -64.88937);
         prestart = new MutablePoint(32.35763 + a, -64.81332);
 
-        Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
+        //random.nextInt(20) + 20
+        Boat newCompetitor = new Boat("Boat " + clientId, 50, prestart, "B" + clientId, clientId, PRESTART);
         newCompetitor.setCurrentHeading(0);
         competitors.put(clientId, newCompetitor);
 
@@ -242,6 +259,30 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         sendQueue.put(clientId, res);
         this.clientStates.put(clientId, false);
         this.sendAllXML();
+    }
+
+    private void clearOldRace(int sourceID) {
+        double a = 0.002 * competitors.size(); //shift competitors so they aren't colliding at the start
+        prestart = new MutablePoint(32.35763 + a, -64.81332);
+        Competitor boat = competitors.get(sourceID);
+        Competitor cleanBoat = new Boat(boat.getTeamName(), 0, prestart, boat.getAbbreName(), sourceID, PRESTART);
+        cleanBoat.setBoatType(boat.getBoatType());
+
+        if (!hasCleared) {
+            try {
+                // clear race info
+                competitors.clear();
+                creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+                expectedStartTime = creationTime.plusMinutes(1);
+                boatUpdater = new BoatUpdater(competitors, markBoats, raceData, this, courseBoundary, windGenerator);
+
+                hasCleared = true;
+
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+        competitors.put(sourceID, cleanBoat);
     }
 
     /**
@@ -494,14 +535,16 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         int raceStatus;
         if (boatUpdater.checkAllFinished()) {
             raceStatus = 4;
-            boatUpdater.finisherList.clear();
 
         } else {
             raceStatus = 3;
         }
+        System.out.println("sENDING RACE STATUS");
+        System.out.println(raceStatus);
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed, competitors.size());
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         this.sendQueue.put(null, binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
+        if(raceStatus == 4) boatUpdater.finisherList.clear();
     }
 
     /**
@@ -746,7 +789,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     @Override
     public void run() {
-
         this.readAllMessages();
 
         if (shouldStartGame()) raceInProgress = true;
@@ -755,7 +797,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         try {
             boatUpdater.updatePosition();
-
 
                 if (System.currentTimeMillis() - previousBoostTime > boostTime) {
                     spawnPowerUp(PowerUpType.BOOST);

@@ -121,6 +121,15 @@ public class Interpreter implements DataSource, PacketHandler {
 
     }
 
+    public void reset() {
+        collisions = new HashMap<>();
+        crewLocations = new HashMap<>();
+        bloodLocations = new HashMap<>();
+        whirlpools = new HashMap<>();
+        powerUps = new HashMap<>();
+        raceStatus = null;
+    }
+
     public Map<Integer, CourseFeature> getCourseFeatureMap() {
         return this.storedFeatures;
     }
@@ -414,7 +423,9 @@ public class Interpreter implements DataSource, PacketHandler {
             case BOAT_STATE:
                 BoatStateParser boatStateParser = new BoatStateParser(packet);
                 Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());
-                stateBoat.setHealthLevel(boatStateParser.getHealth());
+                if (stateBoat.getHealthLevel() > 0) {
+                    stateBoat.setHealthLevel(boatStateParser.getHealth());
+                }
                 break;
             case CONNECTION_RES:
                 ConnectionParser connectionParser = new ConnectionParser(packet);

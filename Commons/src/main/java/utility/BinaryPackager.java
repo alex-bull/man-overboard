@@ -3,6 +3,7 @@ package utility;
 
 import models.*;
 import parsers.BoatStatusEnum;
+import parsers.MessageType;
 import parsers.powerUp.PowerUpType;
 
 import java.io.IOException;
@@ -350,7 +351,7 @@ public class BinaryPackager {
         byte[] packet = new byte[19 + raceStatus.length + eachBoat.length];
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        writeHeader(packetBuffer, 12, raceStatus.length + eachBoat.length);
+        writeHeader(packetBuffer, MessageType.RACE_STATUS.getValue(), raceStatus.length + eachBoat.length);
         packetBuffer.put(raceStatus);
         packetBuffer.put(eachBoat);
 
@@ -525,6 +526,25 @@ public class BinaryPackager {
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.putInt(sourceID);
         packetBuffer.put(status);
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+    /**
+     * restart race message
+     *
+     * @return the packet generated
+     */
+    public byte[] packageRestartRace(Integer sourceID) {
+        byte[] packet = new byte[23]; //
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = 78;
+        short bodyLength = 4;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        packetBuffer.putInt(sourceID);
         //CRC
         this.writeCRC(packetBuffer);
         return packet;

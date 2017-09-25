@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  */
 public class LobbyController implements Initializable {
 
-    private final int STARTTIME = 9;
+    private final int STARTTIME = 1;
     BinaryPackager binaryPackager = new BinaryPackager();
     private DataSource dataSource;
     @FXML
@@ -101,67 +101,6 @@ public class LobbyController implements Initializable {
         this.dataSource = dataSource;
     }
 
-
-    /**
-     * Begins connection to server
-     * Continuously tries to connect on background thread
-     */
-    void begin() {
-
-
-//        for (int i = 0; i<8; i++) {
-//            competitorList.add("Boaty 10" +i);
-//        }
-
-        Scene scene = App.getScene();
-
-
-        //start sound loop
-        Sounds.player.loopMP3WithFadeIn("sounds/bensound-instinct.mp3", 4);
-
-        //Connect to a game in the background
-        Task connect = new Task() {
-
-            @Override
-            public Boolean call() {
-                boolean connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
-                while (!connected) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                    }
-                    connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
-                }
-                return true;
-            }
-        };
-
-        connect.setOnSucceeded(event -> this.loop());
-        Thread connection = new Thread(connect);
-        connection.start();
-    }
-
-
-    /**
-     * Start the main loop
-     * Continuously polls the datasource to update the view
-     * Uses an animation timer as it is updating the GUI thread
-     */
-    private void loop() {
-
-        this.timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                dataSource.update();
-                updateList();
-                checkStatus();
-            }
-        };
-
-        timer.start();
-    }
-
-
     /**
      * Initialiser for LobbyController
      *
@@ -175,6 +114,7 @@ public class LobbyController implements Initializable {
         loadingLabel.setVisible(true);
         countdownLabel.setText("");
         gameStartLabel.setVisible(false);
+        readyButton.setDisable(false);
         primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         starterList.setItems(competitorList);
 
@@ -193,6 +133,7 @@ public class LobbyController implements Initializable {
         boatImages.add(boat);
         boatImages.add(cat);
         boatImages.add(pirate);
+
         boatImageView.setImage(yacht);
         //image resizing cant be done in fxml >(
         courseImageView.setPreserveRatio(false);
@@ -203,7 +144,61 @@ public class LobbyController implements Initializable {
         boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
         boatImageView.fitHeightProperty().bind(playerGridPane.heightProperty());
 
+    }
 
+    /**
+     * Begins connection to server
+     * Continuously tries to connect on background thread
+     */
+    void begin() {
+
+        Scene scene = App.getScene();
+
+        //start sound loop
+        Sounds.player.loopMP3WithFadeIn("sounds/bensound-instinct.mp3", 4);
+
+        //Connect to a game in the background
+        Task connect = new Task() {
+
+            @Override
+            public Boolean call() {
+                boolean connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
+                while (!connected) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
+                }
+                return true;
+            }
+        };
+
+        connect.setOnSucceeded(event -> this.loop());
+        Thread connection = new Thread(connect);
+        connection.start();
+
+    }
+
+
+    /**
+     * Start the main loop
+     * Continuously polls the datasource to update the view
+     * Uses an animation timer as it is updating the GUI thread
+     */
+    public void loop() {
+
+        this.timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                dataSource.update();
+                updateList();
+                checkStatus();
+            }
+        };
+
+        timer.start();
     }
 
 
@@ -265,6 +260,11 @@ public class LobbyController implements Initializable {
 
     }
 
+    public void showCurrentBoat() {
+        int boatType = dataSource.getCompetitor().getBoatType();
+        boatImageView.setImage(boatImages.get(boatType));
+    }
+
 
     /**
      * Sets the game details on the lobby screen
@@ -308,6 +308,7 @@ public class LobbyController implements Initializable {
      * Change to the raceView upon started signal
      */
     public void checkStatus() {
+        System.out.println(dataSource.getRaceStatus());
         if (dataSource.getRaceStatus() == RaceStatusEnum.STARTED) {
             System.out.println("game beginning...");
             this.loadRaceView();
@@ -365,6 +366,9 @@ public class LobbyController implements Initializable {
         if (timer != null) timer.stop();
         this.leaveButton.setDisable(true); //cant leave once game is starting
         this.readyButton.setDisable(true);
+        this.confirmButton.setDisable(true);
+        this.leftButton.setDisable(true);
+        this.rightButton.setDisable(true);
         nameText.setDisable(true);
         this.nameText.setText(dataSource.getCompetitor().getTeamName());
 

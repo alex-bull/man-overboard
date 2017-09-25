@@ -39,7 +39,6 @@ import utilities.RaceCalculator;
 import utilities.Sounds;
 import utility.BinaryPackager;
 
-import javax.naming.BinaryRefAddr;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -117,7 +116,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private WebEngine mapEngine;
     private DataSource dataSource;
     private GraphicsContext gc;
-
 
     //================================================================================================================
     // SETUP
@@ -229,7 +227,7 @@ public class RaceViewController implements Initializable, TableObserver {
             sailLine.setVisible(false);
             this.raceViewPane.getChildren().remove(guideArrow);
         }
-
+        System.out.println("KILL");
         boatModels.get(boat.getSourceID()).die();
         wakeModels.get(boat.getSourceID()).setVisible(false);
     }
@@ -247,6 +245,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 } else {
                     observableFinisherList.add((dataSource.getCompetitorsPosition().indexOf(aCompetitor) + 1) + ". " + aCompetitor.getTeamName());
                 }
+                aCompetitor.setHealthLevel(100);
             }
             finisherListView.setItems(observableFinisherList);
             finisherListView.refresh();
@@ -509,6 +508,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.boatModels.put(sourceId, boatModel);
         }
         if (boat.getStatus() == DSQ) {
+            System.out.println("THE BOAT IS DEAD RIP");
             boatModels.get(boat.getSourceID()).die();
             boatModel.update(point, 0);
         } else boatModel.update(point, boat.getCurrentHeading());
@@ -990,6 +990,9 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     @FXML
     public void goToLobbyScreen() {
+        System.out.println("sending source id " + dataSource.getCompetitor().getSourceID());
+        System.out.println(dataSource.getSourceID());
+        this.dataSource.send(new BinaryPackager().packageRestartRace(this.dataSource.getCompetitor().getSourceID()));
 
         Sounds.player.fadeOut("sounds/bensound-theduel.mp3", 3);
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
@@ -1005,17 +1008,25 @@ public class RaceViewController implements Initializable, TableObserver {
 
         observableFinisherList.clear();
 
-        BinaryPackager binaryPackager = new BinaryPackager();
-        byte[] raceStatusPacket = binaryPackager.raceStatusHeader(4, ZonedDateTime.now(), (short) dataSource.getWindDirection(), (short) dataSource.getWindSpeed(), dataSource.getStoredCompetitors().size());
-        byte[] eachBoatPacket = binaryPackager.packageEachBoat((HashMap) dataSource.getStoredCompetitors());
-        this.dataSource.send(binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
+        clearOldInfo();
+
 
         LobbyController lobbyController = loader.getController();
+        dataSource.reset();
         lobbyController.setDataSource(dataSource);
-        lobbyController.begin();
+        lobbyController.showCurrentBoat();
+        lobbyController.loop();
         App.getScene().setRoot(root);
 
+    }
 
+    private void clearOldInfo() {
+        fallenCrews = new HashMap<>();
+        blood = new HashMap<>();
+        powerUps = new HashMap<>();
+        track = new Track();
+        whirlpools = new HashMap<>();
 
+        isLoaded = false;
     }
 }
