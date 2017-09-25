@@ -81,7 +81,6 @@ public class HealthBar extends Group {
         double healthLevel = boat.getHealthLevel() * scale;
         double healthSize = ((healthLevel / boat.getMaxHealth()) * maxBarLength) / scale;
 
-        System.out.println("health level " + healthLevel);
         if (healthLevel > 0) {
             Color healthColour = calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
             healthBarBackground.setStrokeWidth(strokeWidth + (2 * scale));

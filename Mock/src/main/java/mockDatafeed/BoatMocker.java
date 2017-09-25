@@ -548,7 +548,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed, competitors.size());
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         this.sendQueue.put(null, binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
-        if(raceStatus == 4) boatUpdater.finisherList.clear();
+        if(raceStatus == RaceStatusEnum.FINISHED.getValue()) boatUpdater.finisherList.clear();
     }
 
     /**

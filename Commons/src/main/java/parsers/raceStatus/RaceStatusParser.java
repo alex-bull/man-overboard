@@ -40,8 +40,6 @@ public class RaceStatusParser {
                 Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));
                 long timeAtNextMark = hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
                 long estTimeToNextMark = convertToRelativeTime(timeAtNextMark, currentTime) * -1; // returned time is negative because time at next mark is after current time
-                System.out.println("boat status source id");
-                System.out.println(sourceID);
                 boatStatuses.put(sourceID, new BoatStatus(sourceID, boatStatusToEnum(boatStatus), legNumber, estTimeToNextMark));
                 currentByte += 20;
             }

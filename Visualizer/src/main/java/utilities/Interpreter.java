@@ -308,7 +308,6 @@ public class Interpreter implements DataSource, PacketHandler {
                     this.windDirection = raceStatusData.getWindDirection() + 180;
                     this.windSpeed = raceStatusData.getWindSpeed();
                     for (int id : storedCompetitors.keySet()) {
-                        System.out.println("id = " + id);
                         if (raceStatus.equals(RaceStatusEnum.STARTED)) {
                             try {
                                 int newLegNumber = raceStatusData.getBoatStatuses().get(id).getLegNumber();

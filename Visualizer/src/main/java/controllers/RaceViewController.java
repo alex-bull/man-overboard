@@ -522,7 +522,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.boatModels.put(sourceId, boatModel);
         }
         if (boat.getStatus() == DSQ) {
-            System.out.println("THE BOAT IS DEAD RIP");
+//            System.out.println("THE BOAT IS DEAD RIP");
             boatModels.get(boat.getSourceID()).die();
             boatModel.update(point, 0);
         } else boatModel.update(point, boat.getCurrentHeading());
@@ -1021,7 +1021,7 @@ public class RaceViewController implements Initializable, TableObserver {
     public void goToLobbyScreen() {
         System.out.println("sending source id " + dataSource.getCompetitor().getSourceID());
         System.out.println(dataSource.getSourceID());
-        this.dataSource.send(new BinaryPackager().packageRestartRace(this.dataSource.getCompetitor().getSourceID()));
+
 
         Sounds.player.fadeOut("sounds/bensound-theduel.mp3", 3);
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
@@ -1039,11 +1039,12 @@ public class RaceViewController implements Initializable, TableObserver {
 
         clearOldInfo();
 
+        this.dataSource.send(new BinaryPackager().packageRestartRace(this.dataSource.getCompetitor().getSourceID()));
 
         LobbyController lobbyController = loader.getController();
         dataSource.reset();
         lobbyController.setDataSource(dataSource);
-        lobbyController.showCurrentBoat();
+//        lobbyController.showCurrentBoat();
         lobbyController.loop();
         App.getScene().setRoot(root);
 

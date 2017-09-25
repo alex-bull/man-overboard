@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  */
 public class LobbyController implements Initializable {
 
-    private final int STARTTIME = 1;
+    private final int STARTTIME = 5;
     BinaryPackager binaryPackager = new BinaryPackager();
     private DataSource dataSource;
     @FXML
@@ -208,6 +208,8 @@ public class LobbyController implements Initializable {
      */
     @FXML
     public void playerReady() {
+        confirmBoatDetails();
+
         System.out.println("player ready button pressed~");
         if (dataSource.getSourceID() == 0) return; //player has not connected yet
 //        soundPlayer.playSound("sounds/im-ready.au");
@@ -215,10 +217,6 @@ public class LobbyController implements Initializable {
 
         dataSource.send(new BinaryPackager().packagePlayerReady());
 
-        confirmButton.setVisible(false);
-        nameText.setDisable(true);
-        leftButton.setVisible(false);
-        rightButton.setVisible(false);
     }
 
 
@@ -266,6 +264,7 @@ public class LobbyController implements Initializable {
     }
 
     public void showCurrentBoat() {
+        System.out.println(dataSource.getCompetitor().getSourceID() + "new competitor source id");
         int boatType = dataSource.getCompetitor().getBoatType();
         boatImageView.setImage(boatImages.get(boatType));
     }
@@ -374,8 +373,8 @@ public class LobbyController implements Initializable {
         this.confirmButton.setDisable(true);
         this.leftButton.setDisable(true);
         this.rightButton.setDisable(true);
-        nameText.setDisable(true);
-        this.nameText.setText(dataSource.getCompetitor().getTeamName());
+        this.nameText.setDisable(true);
+//        this.nameText.setText(dataSource.getCompetitor().getTeamName());
 
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 10);
 
