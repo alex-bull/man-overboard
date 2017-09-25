@@ -20,17 +20,22 @@ public class PowerUpModel extends ImageView {
      */
     public PowerUpModel(PowerUp receivedPowerUp, boolean isZoom, Double scale) {
         Image image;
+        double originalScale = 0.4;
         switch (receivedPowerUp.getType()) {
             case BOOST:
-                image = new Image("/images/speed.png");
+                image = new Image("/images/tinyspeed.png");
                 break;
             case POTION:
-                image = new Image("/images/potion2.png");
+                image = new Image("/images/tinyhealth.png");
                 break;
             default:
                 image = null;
                 break;
         }
+//        double imageWidth = image.getWidth();
+//        double imageHeight = image.getHeight();
+//        this.setFitHeight(imageHeight * originalScale);
+//        this.setFitWidth(imageWidth * originalScale);
         this.setImage(image);
         this.setPreserveRatio(true);
         if (isZoom) {

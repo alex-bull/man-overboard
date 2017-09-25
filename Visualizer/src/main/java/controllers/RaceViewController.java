@@ -88,8 +88,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML
     private ListView<String> finisherListView;
     private Map<Integer, FallenCrew> fallenCrews = new HashMap<>();
-    private Map<Integer, ImageView> blood = new HashMap<>();
-    private Map<Integer, Image> crewImages = new HashMap<>();
+//    private Map<Integer, ImageView> blood = new HashMap<>();
+//    private Map<Integer, Image> crewImages = new HashMap<>();
     private Map<String, DecorationModel> decorations=new HashMap<>();
 
     private Map<Integer, PowerUpModel> powerUps = new HashMap<>();

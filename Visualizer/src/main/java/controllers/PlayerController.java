@@ -111,7 +111,7 @@ public class PlayerController {
         String speed = String.format("%.1f", boat.getVelocity());
         boatSpeedLabel.setText(speed + "m/s");
         if (boat.hasSpeedBoost()) {
-            this.speed.setGraphic(new ImageView(new Image("/images/speed3.png")));
+            this.speed.setGraphic(new ImageView(new Image("/images/tinyspeed.png")));
         } else {
             this.speed.setGraphic(new ImageView(new Image("/images/greySpeed.png")));
         }
@@ -121,7 +121,7 @@ public class PlayerController {
 
 
         if (boat.hasPotion()) {
-            this.potion.setGraphic(new ImageView(new Image("/images/potion.png")));
+            this.potion.setGraphic(new ImageView(new Image("/images/tinypotion.png")));
         } else {
             this.potion.setGraphic(new ImageView(new Image("/images/greyPotion.png")));
         }
