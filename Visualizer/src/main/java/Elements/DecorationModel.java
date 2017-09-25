@@ -1,25 +1,12 @@
 package Elements;
 
-import com.rits.cloning.Cloner;
-import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Rectangle;
 import models.MutablePoint;
-import parsers.powerUp.PowerUp;
 import parsers.xml.race.Decoration;
-import utilities.DataSource;
-import utility.Projection;
-
-import javax.xml.crypto.Data;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-
-import static java.lang.Math.pow;
-import static parsers.powerUp.PowerUpType.BOOST;
 
 /**
  * Created by psu43 on 20/09/17.
@@ -48,6 +35,10 @@ public class DecorationModel extends ImageView {
         else if(decoration.getId().contains("Bermuda")) {
             image = getRandomBermudaImage();
             scale = 0.4;
+        }
+        else if (decoration.getId().contains("Amazon")) {
+            image = getRandomAmazonImage();
+            scale = 0.5;
         }
         this.imageWidth = image.getWidth();
         this.imageHeight = image.getHeight();
@@ -104,6 +95,20 @@ public class DecorationModel extends ImageView {
         ArrayList<String> imagePaths = new ArrayList<>();
         imagePaths.add("images/bermuda/shipwreck.png");
         imagePaths.add("images/bermuda/supersonic.png");
+        Random random = new Random();
+        String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
+        return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
+    }
+
+    /**
+     * Generate a random image for an amazon themed decoration
+     * @return Image the image
+     */
+    private Image getRandomAmazonImage() {
+        ArrayList<String> imagePaths = new ArrayList<>();
+        imagePaths.add("images/amazon/temple.png");
+        imagePaths.add("images/amazon/temple-flip.png");
+        imagePaths.add("images/amazon/jaguar.png");
         Random random = new Random();
         String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
         return new Image(getClass().getClassLoader().getResource(chosenPath).toString());

@@ -1,5 +1,7 @@
 package controllers;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -114,7 +116,6 @@ public class LobbyController implements Initializable {
                     }
                     connected = dataSource.receive(EnvironmentConfig.host, EnvironmentConfig.port, scene);
                 }
-
                 return true;
             }
         };
@@ -168,6 +169,8 @@ public class LobbyController implements Initializable {
         cat = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
         pirate = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
 
+        addTextLimiter(nameText, 8);
+
         boatImages.add(yacht);
         boatImages.add(cog);
         boatImages.add(frigate);
@@ -180,7 +183,6 @@ public class LobbyController implements Initializable {
         courseImageView.setPreserveRatio(true);
         courseImageView.fitWidthProperty().bind(gameGridPane.widthProperty());
         courseImageView.fitHeightProperty().bind(gameGridPane.heightProperty());
-
 
         boatImageView.setPreserveRatio(false);
         boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
@@ -269,6 +271,17 @@ public class LobbyController implements Initializable {
 
 
 
+    public void addTextLimiter(final TextField tf, final int maxLength) {
+        tf.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(final ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
+                if (tf.getText().length() > maxLength) {
+                    String s = tf.getText().substring(0, maxLength);
+                    tf.setText(s);
+                }
+            }
+        });
+    }
 
 
     /**

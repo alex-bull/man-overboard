@@ -202,7 +202,6 @@ public class RaceViewController implements Initializable, TableObserver {
             else if (dataSource.getThemeId() == AMAZON) {
                 mapEngine.load(getClass().getClassLoader().getResource("mapsAmazon.html").toURI().toString());
             }
-
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

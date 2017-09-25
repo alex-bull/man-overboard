@@ -27,7 +27,6 @@ public class CourseGenerator {
         coursePaths.put("/bermuda.xml", new MutablePoint(32.35763 , -64.81332));
         coursePaths.put("/antarctica.xml", new MutablePoint(-64.68325, -63.09448));
         coursePaths.put("/amazon.xml", new MutablePoint(0.49918, -50.52389));
-
     }
 
     /**

@@ -41,37 +41,6 @@
             <Mark SeqID="2" Name="Finish Line 2" TargetLat="-64.64182" TargetLng="-62.95303" SourceID="129"/>
         </CompoundMark>
     </Course>
-    <!--<Course>-->
-    <!--<CompoundMark CompoundMarkID="1" Name="Start Line">-->
-    <!--<Mark SeqID="1" Name="Start Line 1" TargetLat="32.42244" TargetLng="-64.86768" SourceID="122"/>-->
-    <!--<Mark SeqID="2" Name="Start Line 2" TargetLat="32.39119" TargetLng="-64.86752" SourceID="123"/>-->
-    <!--</CompoundMark>-->
-
-    <!--<CompoundMark CompoundMarkID="2" Name="Mark">-->
-    <!--<Mark SeqID="1" Name="Mark 1" TargetLat="32.40754" TargetLng="-64.81033" SourceID="131"/>-->
-    <!--</CompoundMark>-->
-
-    <!--<CompoundMark CompoundMarkID="3" Name="Windward Gate">-->
-    <!--<Mark SeqID="1" Name="Lee Gate 1" TargetLat="32.45426" TargetLng="-64.83052" SourceID="124"/>-->
-    <!--<Mark SeqID="2" Name="Lee Gate 2" TargetLat="32.45412" TargetLng="-64.78993" SourceID="125"/>-->
-    <!--</CompoundMark>-->
-
-    <!--<CompoundMark CompoundMarkID="4" Name="Leeward Gate">-->
-    <!--<Mark SeqID="1" Name="Wind Gate 1" TargetLat="32.35804" TargetLng="-64.8322" SourceID="126"/>-->
-    <!--<Mark SeqID="2" Name="Wind Gate 2" TargetLat="32.35809" TargetLng="-64.79056" SourceID="127"/>-->
-    <!--</CompoundMark>-->
-
-    <!--<CompoundMark CompoundMarkID="5" Name="Windward Gate">-->
-    <!--<Mark SeqID="1" Name="Lee Gate 1" TargetLat="32.45426" TargetLng="-64.83052" SourceID="124"/>-->
-    <!--<Mark SeqID="2" Name="Lee Gate 2" TargetLat="32.45412" TargetLng="-64.78993" SourceID="125"/>-->
-    <!--</CompoundMark>-->
-
-    <!--<CompoundMark CompoundMarkID="6" Name="Finish Line" isfinish="true">-->
-    <!--<Mark SeqID="1" Name="Finish Line 1" TargetLat="32.42209" TargetLng="-64.75361" SourceID="128"/>-->
-    <!--<Mark SeqID="2" Name="Finish Line 2" TargetLat="32.38902" TargetLng="-64.75391" SourceID="129"/>-->
-    <!--</CompoundMark>-->
-    <!--</Course>-->
-
 
     <CompoundMarkSequence>
         <Corner SeqID="1" CompoundMarkID="1" Rounding="PS" ZoneSize="3"/>
@@ -83,25 +52,16 @@
     </CompoundMarkSequence>
 
     <CourseLimit>
-        <!--<Limit SeqID="3" Lat="32.3028767" Lon="-64.8209667"/>-->
-        <!--<Limit SeqID="5" Lat="32.2768286" Lon="-64.8519516"/>-->
-        <!--<Limit SeqID="6" Lat="32.2918489" Lon="-64.8545266"/>-->
-        <!--<Limit SeqID="7" Lat="32.2935902" Lon="-64.8600197"/>-->
-        <!--<Limit SeqID="8" Lat="32.299467" Lon="-64.8581314"/>-->
-        <!--<Limit SeqID="10" Lat="32.3122319" Lon="-64.8378754"/>-->
+
         <Limit SeqID="1" Lat="-64.70526" Lon="-63.13705"/>
         <Limit SeqID="2" Lat="-64.66592" Lon="-63.11233"/>
         <Limit SeqID="3" Lat="-64.67033" Lon="-63.02719"/>
         <Limit SeqID="4" Lat="-64.63887" Lon="-63.0059"/>
         <Limit SeqID="5" Lat="-64.63446" Lon="-62.91457"/>
         <Limit SeqID="6" Lat="-64.69" Lon="-62.85621"/>
-        <!--<Limit SeqID="7" Lat="32.291799" Lon="-64.867632"/>-->
         <Limit SeqID="7" Lat="-64.76768" Lon="-62.93106"/>
-        <!--<Limit SeqID="8" Lat="32.303291" Lon="-64.863019"/>-->
         <Limit SeqID="8" Lat="-64.76388" Lon="-63.03268"/>
-        <!--<Limit SeqID="9" Lat="32.2982336" Lon="-64.8480892"/>-->
         <Limit SeqID="9" Lat="-64.71787" Lon="-63.05877"/>
-        <!--<Limit SeqID="10" Lat="32.367811" Lon="-64.786272"/>-->
     </CourseLimit>
 
     <Decorations>
@@ -114,15 +74,6 @@
         <Item Id="Penguin_3" Lati="-64.62446" Long="-63.25584"/>
     </Decorations>
 
-    <!--<CourseLimit>-->
-    <!--<Limit SeqID="1" Lat="32.47604" Lon="-64.84642"/>-->
-    <!--<Limit SeqID="2" Lat="32.47598" Lon="-64.77141"/>-->
-    <!--<Limit SeqID="3" Lat="32.43676" Lon="-64.7208"/>-->
-    <!--<Limit SeqID="4" Lat="32.3759" Lon="-64.72097"/>-->
-    <!--<Limit SeqID="5" Lat="32.3321" Lon="-64.7747"/>-->
-    <!--<Limit SeqID="6" Lat="32.33399" Lon="-64.84869"/>-->
-    <!--<Limit SeqID="7" Lat="32.37648" Lon="-64.90259"/>-->
-    <!--<Limit SeqID="8" Lat="32.43923" Lon="-64.90224"/>-->
-    <!--</CourseLimit>-->
+
 
 </Race>

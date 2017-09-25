@@ -12,6 +12,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static parsers.xml.race.ThemeEnum.AMAZON;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 
 
@@ -32,6 +33,9 @@ public class MarkModel extends Group {
         mark = new Circle(x,y,10);
         if (theme.getValue() == ANTARCTICA.getValue()) {
             mark.setFill(new ImagePattern(getBerg()));
+        }
+        else if (theme.getValue() == AMAZON.getValue()) {
+            mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/amazon/mangrove.png").toString())));
         }
         else {
             mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/bermuda/island.png").toString())));
@@ -61,7 +65,6 @@ public class MarkModel extends Group {
         Random random = new Random();
         int index = random.nextInt(paths.size());
         return new Image(getClass().getClassLoader().getResource(paths.get(index)).toString());
-
     }
 
 }
