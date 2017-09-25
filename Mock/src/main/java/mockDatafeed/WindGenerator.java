@@ -22,6 +22,7 @@ class WindGenerator {
      */
     WindGenerator(int windSpeed, int windDirection) {
         this.windSpeedOriginal = (short) windSpeed;
+        
         this.windDirectionOriginal = (short) windDirection;
     }
 
@@ -59,6 +60,7 @@ class WindGenerator {
 //        }
         int speedVariance = 100;
         windSpeed = (short) (windSpeedOriginal + ThreadLocalRandom.current().nextGaussian() * speedVariance);
+
 
     }
 

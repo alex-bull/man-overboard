@@ -40,14 +40,13 @@ public class HealthBar extends Group {
 
         double strokeWidth = 5 * widthScale;
         double offset = 0;
-        double maxBarLength = 1 * lengthScale;
         double healthLevel = boat.getHealthLevel() * lengthScale;
-        double healthSize = ((healthLevel / boat.getMaxHealth()) * maxBarLength) / lengthScale;
+        double healthSize = ((healthLevel / boat.getMaxHealth()) * (double) lengthScale) / lengthScale;
         Color healthColour = calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
         healthBarBackground.setStrokeWidth(strokeWidth + (2 * widthScale));
         healthBarBackground.setStartX(0);
         healthBarBackground.setStartY(0 - offset);
-        healthBarBackground.setEndX(0 + maxBarLength);
+        healthBarBackground.setEndX(0 + (double) lengthScale);
         healthBarBackground.setEndY(0 - offset);
         healthBarBackground.setStroke(Color.WHITE);
 
@@ -71,11 +70,12 @@ public class HealthBar extends Group {
      * @param zoom  boolean, true if the view is Zoomed
      * @return boolean, false if the boat died
      */
-    public boolean update(Competitor boat, double boatX, double boatY, boolean zoom) {
-        int scale = 1;
-        if (zoom) scale *= 2;
+    public boolean update(Competitor boat, double boatX, double boatY, boolean zoom, double zoomedInScale) {
+        double scale=1;
+        if (zoom) scale = zoomedInScale;
+
         double strokeWidth = 5 * scale;
-        double offset = 20 * scale;
+        double offset = 25 * scale;
         double maxBarLength = 30 * scale;
         double healthLevel = boat.getHealthLevel() * scale;
         double healthSize = ((healthLevel / boat.getMaxHealth()) * maxBarLength) / scale;

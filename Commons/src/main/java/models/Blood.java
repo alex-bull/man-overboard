@@ -63,7 +63,7 @@ public class Blood {
         double max = 1;
 
         if (isIncreasing) {
-            opacity += 0.01;
+            opacity += 0.001;
         } else {
             opacity -= 0.001;
         }
@@ -73,5 +73,15 @@ public class Blood {
         }
     }
 
-
+    @Override
+    public String toString() {
+        return "Blood{" +
+                "sourceID=" + sourceID +
+                ", opacity=" + opacity +
+                ", position=" + position +
+                ", position17=" + position17 +
+                ", positionOriginal=" + positionOriginal +
+                ", isIncreasing=" + isIncreasing +
+                '}';
+    }
 }
