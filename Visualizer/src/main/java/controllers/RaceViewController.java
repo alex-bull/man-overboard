@@ -59,6 +59,10 @@ public class RaceViewController implements Initializable, TableObserver {
     private static final Color backgroundColor = Color.POWDERBLUE;
     //VIEW ELEMENTS
     @FXML
+    private Button muteButton;
+    @FXML
+    private Button soundButton;
+    @FXML
     private TableController tableController = new TableController();
     @FXML
     private AnchorPane raceView;
@@ -78,7 +82,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private GridPane finisherListPane;
     @FXML
     private ListView<String> finisherListView;
-    @FXML Button soundButton;
     private Map<Integer, ImageView> fallenCrews = new HashMap<>();
     private Map<Integer, Image> bloodImages = new HashMap<>();
     private Map<Integer, ImageView> blood = new HashMap<>();
@@ -354,15 +357,18 @@ public class RaceViewController implements Initializable, TableObserver {
      */
 
     public void toggleSound(ActionEvent actionEvent) {
+
         muted = !muted;
         if (muted) {
+            soundButton.setVisible(false);
+            muteButton.setVisible(true);
             Sounds.player.muteSound();
-            this.soundButton.setGraphic(new ImageView(new Image("/images/Mute.png")));
         }
         else {
+            soundButton.setVisible(true);
+            muteButton.setVisible(false);
             Sounds.player.setAllMusicVolume();
             Sounds.player.setAllEffectVolume();
-            this.soundButton.setGraphic(new ImageView(new Image("/images/NotMute.png")));
         }
     }
 

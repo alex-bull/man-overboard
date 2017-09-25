@@ -56,7 +56,11 @@
 
     }
 
-.label{
+.label {
     -fx-font-family: 'Quicksand', sans-serif, bold;
 
+}
+
+.text{
+    -fx-font-family: 'Quicksand', sans-serif, bold;
 }

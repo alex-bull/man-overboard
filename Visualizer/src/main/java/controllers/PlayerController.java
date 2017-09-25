@@ -1,7 +1,9 @@
 package controllers;
 
 import Elements.HealthBar;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -23,11 +25,15 @@ public class PlayerController {
     @FXML
     private ImageView playerImageView;
     @FXML
+    private ImageView playerImageView1;
+    @FXML
     private Label gamerTagLabel;
     @FXML
     private Label boatSpeedLabel;
     @FXML
     private GridPane imageGrid;
+    @FXML
+    private GridPane boatInfoGrid;
     @FXML
     private GridPane player;
     @FXML
@@ -79,6 +85,9 @@ public class PlayerController {
         playerImageView.setPreserveRatio(false);
         playerImageView.fitWidthProperty().bind(imageGrid.widthProperty());
         playerImageView.fitHeightProperty().bind(imageGrid.heightProperty());
+
+        playerImageView1.setPreserveRatio(false);
+        playerImageView1.fitWidthProperty().bind(boatInfoGrid.widthProperty());
 
         this.stage = stage;
 

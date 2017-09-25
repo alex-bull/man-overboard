@@ -51,10 +51,9 @@
                 <Pane fx:id="healthPane" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </children>
         </GridPane>
-        <GridPane GridPane.columnIndex="2" GridPane.valignment="BOTTOM">
+        <GridPane fx:id="boatInfoGrid" minWidth="50.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="70.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="NEVER" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -62,12 +61,12 @@
             <children>
             <Group GridPane.valignment="BOTTOM">
                <children>
-                  <ImageView fx:id="playerImageView1" fitHeight="64.0" fitWidth="468.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true" GridPane.valignment="BOTTOM">
+                  <ImageView fx:id="playerImageView1" fitHeight="77.0" fitWidth="373.0" layoutY="14.0" opacity="0.6" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@images/boatInfo.png" />
+                        <Image url="@images/infoBackground.png" />
                      </image>
                   </ImageView>
-                      <Label fx:id="boatSpeedLabel" layoutX="85.0" layoutY="52.0" prefHeight="21.0" prefWidth="127.0" text="20.1m/s" textFill="white" GridPane.halignment="LEFT" GridPane.valignment="BOTTOM">
+                      <Label fx:id="boatSpeedLabel" layoutX="85.0" layoutY="54.0" prefHeight="21.0" prefWidth="127.0" text="20.1m/s" textFill="white" GridPane.halignment="LEFT" GridPane.valignment="BOTTOM">
                           <font>
                               <Font name="System Bold" size="14.0" />
                           </font>
@@ -78,14 +77,27 @@
                         <Insets bottom="4.0" />
                      </GridPane.margin>
                       </Label>
-                    <Label fx:id="gamerTagLabel" layoutX="95.0" layoutY="30.0" text="Player" textFill="WHITE">
+                    <Label fx:id="gamerTagLabel" layoutX="95.0" layoutY="34.0" text="Player" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="14.0" />
                         </font>
                     </Label>
+                  <Text fill="WHITE" layoutX="31.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NAME:">
+                     <font>
+                        <Font name="Quicksand Bold" size="14.0" />
+                     </font>
+                  </Text>
+                  <Text fill="WHITE" layoutX="27.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SPEED:">
+                     <font>
+                        <Font name="Quicksand Bold" size="14.0" />
+                     </font>
+                  </Text>
                </children>
             </Group>
             </children>
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
         </GridPane>
 
         <ImageView fx:id="speed" fitHeight="51.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="TOP">

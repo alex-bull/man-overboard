@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
 <?import java.lang.*?>
@@ -12,19 +13,30 @@
 
 <Pane fx:id="windPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="215.0" prefWidth="180.0" stylesheets="css/raceView.css" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.WindController">
     <children>
-      <ImageView fitHeight="181.0" fitWidth="180.0" layoutY="-33.0" pickOnBounds="true" preserveRatio="true">
-        <image>
-            <Image url="@images/windBackground.png" />
-        </image>
-        </ImageView>
-        <Text fx:id="speed" fill="WHITE" layoutX="97.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1.0">
-         <font>
-            <Font name="System Bold" size="13.0" />
-         </font></Text>
-        <Text fill="WHITE" layoutX="131.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="m/s" >
-        <font>
-            <Font name="System Bold" size="13.0" />
-        </font></Text>
+      <Group>
+         <children>
+            <ImageView fitHeight="181.0" fitWidth="180.0" layoutY="16.0" opacity="0.6" pickOnBounds="true" preserveRatio="true">
+              <image>
+                  <Image url="@images/infoBackground.png" />
+              </image>
+              </ImageView>
+            <Text fill="WHITE" layoutX="25.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="WIND">
+               <font>
+                  <Font name="Quicksand Bold" size="14.0" />
+               </font>
+            </Text>
+              <Text fill="WHITE" layoutX="124.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="m/s">
+              <font>
+                  <Font size="13.0" />
+              </font>
+            </Text>
+              <Text fx:id="speed" fill="WHITE" layoutX="93.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1.0">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Text>
+         </children>
+      </Group>
     </children>
    <padding>
       <Insets top="10.0" />

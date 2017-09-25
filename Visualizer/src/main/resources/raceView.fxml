@@ -77,15 +77,25 @@
                         </ImageView>
                     </graphic>
                 </Button>
-            <Button fx:id="soundButton" mnemonicParsing="false" onAction="#toggleSound" prefHeight="70.0" prefWidth="76.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="605.0">
+            <Button fx:id="soundButton" visible="true" mnemonicParsing="false" onAction="#toggleSound" prefHeight="70.0" prefWidth="76.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="605.0">
                <graphic>
-                  <ImageView fitHeight="50.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@images/NotMute.png" />
+                        <Image url="@images/soundIcon.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
+                <Button fx:id="muteButton" visible="false" mnemonicParsing="false" onAction="#toggleSound" prefHeight="70.0" prefWidth="76.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="605.0">
+                    <graphic>
+                        <ImageView fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@images/muteIcon.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
 
             </children>
 
