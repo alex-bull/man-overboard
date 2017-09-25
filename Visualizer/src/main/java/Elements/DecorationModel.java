@@ -101,7 +101,7 @@ public class DecorationModel extends ImageView {
     }
 
     /**
-     * Generate a random image for a temple
+     * Generate a random image for an amazon themed decoration
      * @return Image the image
      */
     private Image getRandomAmazonImage() {
