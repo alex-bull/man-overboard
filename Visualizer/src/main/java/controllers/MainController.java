@@ -45,7 +45,6 @@ public class MainController {
     private boolean playing = false;
     private boolean flag = false;
 
-
     /**
      * updates the slider and sends corresponding packet
      */
