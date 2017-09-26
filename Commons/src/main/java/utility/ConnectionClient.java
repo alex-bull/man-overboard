@@ -7,7 +7,7 @@ package utility;
 public interface ConnectionClient {
     int getNextSourceId();
 
-    void interpretPacket(byte[] header, byte[] packet, Integer clientId);
+    boolean interpretPacket(byte[] header, byte[] packet, Integer clientId);
 
     boolean isAccepting();
 }

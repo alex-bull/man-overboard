@@ -14,9 +14,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<Pane fx:id="raceParentPane" onTouchStationary="#turnBoat" onZoom="#zoom" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
+<Pane fx:id="raceParentPane" onTouchStationary="#turnBoat" onZoom="#zoom" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
     <children>
-        <AnchorPane fx:id="raceView" prefHeight="900.0" prefWidth="1000.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <AnchorPane fx:id="raceView" prefHeight="900.0" prefWidth="1000.0" stylesheets="@css/raceView.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
             <children>
             <HBox fx:id="quitBox" alignment="CENTER" style="-fx-background-color: rgba(0,0,0,0.7);" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -66,12 +66,13 @@
                </children></HBox>
                 <Canvas fx:id="raceViewCanvas" height="500.0" width="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                 <Pane fx:id="raceViewPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1520.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                <WebView fx:id="mapView" prefHeight="2000.0" prefWidth="2084.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                <Button id="controlbutton" layoutX="25.0" layoutY="411.0" mnemonicParsing="false" onAction="#toggleControls" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="411.0">
+                <ImageView fx:id="controlsView" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true" />
+                <WebView fx:id="mapView" layoutX="-282.0" layoutY="-4.0" prefHeight="993.0" prefWidth="2084.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <Button id="controlbutton" layoutX="25.0" layoutY="411.0" mnemonicParsing="false" onAction="#toggleControls" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="415.0">
                     <graphic>
-                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@images/controlButton.png" />
+                                <Image url="@images/helpIcon.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -109,6 +110,7 @@
                                         <InnerShadow blurType="GAUSSIAN" />
                                     </effect>
                                 </ListView>
+                        <Button layoutX="66.0" layoutY="406.0" mnemonicParsing="false" onAction="#goToStartScreen" prefHeight="44.0" prefWidth="97.0" text="Leave" />
                             </children>
                         </Pane>
                     </children>
@@ -122,13 +124,32 @@
                 </GridPane>
                 <Button id="controlbutton" layoutX="25.0" layoutY="515.0" mnemonicParsing="false" onAction="#toggleZoom" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="515.0">
                     <graphic>
-                        <ImageView id="controlbutton" fitHeight="43.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView id="controlbutton" fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@images/eagleIcon.png" />
+                                <Image url="@images/zoomIcon.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
+            <Button fx:id="soundButton" mnemonicParsing="false" onAction="#toggleSound" prefHeight="70.0" prefWidth="76.0" style="-fx-background-color: transparent;" visible="true" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="605.0">
+               <graphic>
+                  <ImageView fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/soundIcon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+                <Button fx:id="muteButton" mnemonicParsing="false" onAction="#toggleSound" prefHeight="70.0" prefWidth="76.0" style="-fx-background-color: transparent;" visible="false" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="605.0">
+                    <graphic>
+                        <ImageView fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@images/muteIcon.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
 
             </children>
 

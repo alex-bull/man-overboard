@@ -5,5 +5,5 @@ package models;
  * Clock Handler interface
  */
 public interface ClockHandler {
-    void clockTicked(String newTime, Clock clock);
+    void clockTicked(String newTime, Clock clock, long timeMillis);
 }

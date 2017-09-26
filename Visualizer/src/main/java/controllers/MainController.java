@@ -1,6 +1,11 @@
 package controllers;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,8 +13,10 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.util.Duration;
 import parsers.boatAction.BoatAction;
 import utilities.DataSource;
+import utilities.Interpreter;
 import utilities.Sounds;
 import utility.BinaryPackager;
 
@@ -38,6 +45,9 @@ public class MainController {
     private GridPane loadingPane;
     @FXML
     private Slider sailSlider;
+    @FXML
+    private TimerController timerController;
+
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private boolean playing = false;
@@ -112,7 +122,7 @@ public class MainController {
                 }
                 break;
             case D:
-                if (dataSource.getZoomLevel() > 12 && raceViewController.isZoom()) {
+                if (dataSource.getZoomLevel() > 13 && raceViewController.isZoom()) {
                     dataSource.changeScaling(-1);
                     raceViewController.zoomIn();
                 }
@@ -121,14 +131,14 @@ public class MainController {
                 if (dataSource.getCompetitor().hasSpeedBoost()) {
                     this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.BOOST.getValue(), dataSource.getSourceID()));
                     dataSource.getCompetitor().disableBoost();
-                    playerController.hideBoost();
+                    playerController.greyOutBoost();
                 }
                 break;
             case DIGIT2:
                 if (dataSource.getCompetitor().hasPotion()) {
                     this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.POTION.getValue(), dataSource.getSourceID()));
                     dataSource.getCompetitor().usePotion();
-                    playerController.hidePotion();
+                    playerController.greyOutPotion();
                 }
                 break;
         }
@@ -145,6 +155,7 @@ public class MainController {
     void beginRace(DataSource dataSource, double width, double height) {
         this.dataSource = dataSource;
         raceViewController.begin(width, height, dataSource);
+        timerController.begin(dataSource);
         tableController.addObserver(raceViewController);
         playerController.setup(dataSource, App.getPrimaryStage());
         this.binaryPackager = new BinaryPackager();
@@ -154,6 +165,10 @@ public class MainController {
 
             @Override
             public void handle(long now) {
+                if (raceViewController.finishFlag) { //game finished
+                    timer.stop();
+                    returnToLobby();
+                }
                 if (raceViewController.exit) {
                     loadStartView();
                     return;
@@ -180,6 +195,40 @@ public class MainController {
         };
         timer.start();
 
+    }
+
+
+    private void returnToLobby() {
+
+        dataSource.disconnect();
+        this.dataSource = null;
+
+        //countdown
+        Timeline timeline = new Timeline();
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(10)));
+        timeline.play();
+
+        timeline.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Sounds.player.fadeOut("sounds/bensound-epic.mp3", 3);
+                FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
+                Parent root = null;
+                try {
+                    root = loader.load();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+
+                LobbyController lobbyController = loader.getController();
+                Interpreter interpreter = new Interpreter();
+                interpreter.setPrimaryStage(App.getPrimaryStage());
+                lobbyController.setDataSource(interpreter);
+                lobbyController.begin();
+                App.getScene().setRoot(root);
+            }
+        });
     }
 
 

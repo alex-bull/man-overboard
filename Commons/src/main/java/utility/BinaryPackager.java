@@ -3,6 +3,7 @@ package utility;
 
 import models.*;
 import parsers.BoatStatusEnum;
+import parsers.MessageType;
 import parsers.powerUp.PowerUpType;
 
 import java.io.IOException;
@@ -382,6 +383,24 @@ public class BinaryPackager {
     }
 
     /**
+     *  disconnect from race message, called after the race ends
+     *
+     * @return the packet generated
+     */
+    public byte[] packageDisconnect() {
+        byte[] packet = new byte[19];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = (byte) MessageType.DISCONNECT.getValue();
+        short bodyLength = 0;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        //CRC
+        this.writeCRC(packetBuffer);
+        return packet;
+    }
+
+    /**
      * package yacht event
      *
      * @param sourceID the sourceID of the Boat in the event
@@ -700,25 +719,21 @@ public class BinaryPackager {
     /**
      * Packages Blood event
      *
-     * @param locations the location of the blood pool
+     * @param sourceId the location of the blood pool
      * @return the packet for event
      */
-    public byte[] packageBloodEvent(List<Blood> locations) {
-        int n = locations.size();
-        byte[] packet = new byte[20 + n * 12]; // total size of packet
+    public byte[] packageBloodEvent(int sourceId) {
+
+        byte[] packet = new byte[23]; // total size of packet
 
         ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
         packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        byte type = -100;
-        short bodyLength = (short) (n * 12 + 1);
+        byte type = 121;
+        short bodyLength = (short) (4);
         this.writeHeader(packetBuffer, type, bodyLength);
-        packetBuffer.put((byte) n);
-        for (Blood blood : locations) {
-            packetBuffer.putInt(blood.getSourceID());
-            packetBuffer.putInt(latLngToInt(blood.getLatitude()));
-            packetBuffer.putInt(latLngToInt(blood.getLongitude()));
-        }
+        packetBuffer.putInt(sourceId);
+
 
         //CRC
         this.writeCRC(packetBuffer);

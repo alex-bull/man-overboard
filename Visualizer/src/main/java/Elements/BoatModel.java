@@ -36,31 +36,31 @@ public class BoatModel extends Group {
 //                6.0, 14.0,
 //                6.0, -14.0); //right
         boatModel.getPoints().addAll(
-                -11.0, -21.0, //top
-                -11.0, 21.0, //left
-                11.0, 21.0,
-                11.0, -21.0); //right
+                -12.0, -22.5, //top
+                -12.0, 22.5, //left
+                12.0, 22.5,
+                12.0, -22.5); //right
 
         if (boatType == 0) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/yacht.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/yacht.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 1) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cog.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/cog.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 2) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/frigate.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/frigate.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 3) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/galleon.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/galleon.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 4) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boat.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/boat.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 5) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/cat.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/cat.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         } else if (boatType == 6) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/pirate.png").toString());
+            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/pirate.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
 
@@ -69,13 +69,13 @@ public class BoatModel extends Group {
 
 
         if (player) {
-            this.playerMarker = new Circle(0, 0, 15);
+            this.playerMarker = new Circle(0, 0, 23);
             playerMarker.setStrokeWidth(2.5);
             playerMarker.setStroke(Color.rgb(255, 255, 255, 0.5));
             playerMarker.setFill(Color.rgb(0, 0, 0, 0.2));
             this.getChildren().add(playerMarker);
         }
-        this.ripImage = new ImageView(new Image("images/cross-small.png"));
+        this.ripImage = new ImageView(new Image(getClass().getClassLoader().getResource("images/cross-small.png").toString()));
         this.ripImage.setPreserveRatio(true);
         this.ripImage.setFitHeight(20);
         this.getChildren().add(ripImage);

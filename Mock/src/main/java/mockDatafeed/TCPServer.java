@@ -54,6 +54,19 @@ public class TCPServer extends TimerTask {
 
 
     /**
+     * Close the TCP Server
+     */
+    public void exit() {
+        System.out.println("exiting");
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
      * Broadcast a message to all clients
      *
      * @param data byte[] byte array of the data

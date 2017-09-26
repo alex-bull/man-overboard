@@ -1,0 +1,18 @@
+.slider .track{
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-track-width: 15px;
+    -fx-opacity: .4;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+
+}
+
+
+.slider .thumb{
+    -fx-color: white;
+    -fx-border-color: white;
+    -fx-border-width: 5px;
+    -fx-border-radius: 5px;
+
+    }

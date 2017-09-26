@@ -5,7 +5,7 @@ package models;
  * Clock interface
  */
 public interface Clock {
-    void start();
 
     void start(long startTime);
+    void stop();
 }
