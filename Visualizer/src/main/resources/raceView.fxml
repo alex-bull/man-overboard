@@ -79,15 +79,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button id="controlbutton" mnemonicParsing="false" onAction="#showQuitBox" prefHeight="70.0" prefWidth="76.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0">
-                    <graphic>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@images/quitButton.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
+
                 <GridPane fx:id="finisherListPane" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="479.0" prefWidth="358.0">
                     <children>
                         <Pane opacity="0.6" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" GridPane.rowSpan="2147483647">
@@ -147,6 +139,15 @@
                         <ImageView fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@images/muteIcon.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button id="controlbutton" mnemonicParsing="false" onAction="#showQuitBox" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="695.0">
+                    <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@images/quitButton.png" />
                             </image>
                         </ImageView>
                     </graphic>

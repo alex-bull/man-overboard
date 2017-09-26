@@ -81,7 +81,7 @@ public class LobbyController implements Initializable {
     private AnimationTimer timer;
     private boolean boatSelected = false;
     private Image courseThemeImage;
-
+    private  Boolean connected = false;
 
     void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -127,6 +127,7 @@ public class LobbyController implements Initializable {
      * Uses an animation timer as it is updating the GUI thread
      */
     private void loop() {
+        connected = true;
         this.timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -164,7 +165,7 @@ public class LobbyController implements Initializable {
         cat = new Image(getClass().getClassLoader().getResource("images/boats/catLandscape.png").toString());
         pirate = new Image(getClass().getClassLoader().getResource("images/boats/pirateLandscape.png").toString());
 
-        addTextLimiter(nameText, 8);
+        addTextLimiter(nameText, 15);
 
         boatImages.add(yacht);
         boatImages.add(cog);
@@ -319,7 +320,7 @@ public class LobbyController implements Initializable {
         //clean up first
         if (timer != null) timer.stop();
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 2);
-        dataSource.disconnect();
+        if (connected) dataSource.disconnect();
         dataSource = null;
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));

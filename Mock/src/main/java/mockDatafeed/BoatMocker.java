@@ -154,16 +154,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void restart() {
 
-        int count = 0;
-        while (count < 5) {
-            try {
-                Thread.sleep(1000);
-                count++;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
         this.serverTimer.cancel();
 
         TCPserver.exit();
@@ -283,18 +273,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             case PLAYER_READY:
                 this.updateReady(clientId);
                 break;
-            case DISCONNECT:
-
-//                //Check if all clients have disconnected and if they have then restart the server
-//                clientStates.put(clientId, ClientState.DISCONNECTED);
-//                System.out.println(clientStates);
-//
-//                for (ClientState state: clientStates.values()) {
-//                    if (state != ClientState.DISCONNECTED) return true;
-//                }
-//
-//                this.restart(); //all clients have disconnected
-//                return false;
 
             case LEAVE_LOBBY:
                 this.removePlayerFromLobby(clientId);
@@ -404,6 +382,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void removePlayerFromLobby(Integer clientId) {
         if (raceInProgress) {
+            if (competitors.get(clientId) == null) return;
             competitors.get(clientId).setStatus(DSQ);
             clientStates.put(clientId, ClientState.DISCONNECTED);
             if (!boatUpdater.finisherList.contains(competitors.get(clientId))) {
@@ -604,11 +583,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             firstMessageTime = System.currentTimeMillis() / 1000;
         }
         if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() / 1000 - gameStartTime > gameDuration)) {
-
             raceStatus = 4;
 
         } else {
-
             raceStatus = 3;
         }
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed, competitors.size());

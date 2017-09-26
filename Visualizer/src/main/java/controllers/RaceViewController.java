@@ -144,6 +144,9 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().add(sailLine);
         raceViewPane.getChildren().add(sharkModel);
 
+        controlsBox.setVisible(false);
+        quitBox.setVisible(false);
+
 
         finisherListPane.setVisible(false);
 
@@ -337,7 +340,7 @@ public class RaceViewController implements Initializable, TableObserver {
      *
      */
     public void toggleControls() {
-
+        controlsBox.setVisible(true);
         controlsBox.toFront();
     }
 
@@ -346,6 +349,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param mouseEvent
      */
     public void closeControls(MouseEvent mouseEvent) {
+        controlsBox.setVisible(false);
         controlsBox.toBack();
     }
 
@@ -371,6 +375,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     @FXML
     public void showQuitBox(ActionEvent actionEvent) {
+        quitBox.setVisible(true);
         quitBox.toFront();
     }
 
@@ -381,6 +386,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     @FXML
     public void hideQuitBox(ActionEvent actionEvent) {
+        quitBox.setVisible(false);
         quitBox.toBack();
     }
 

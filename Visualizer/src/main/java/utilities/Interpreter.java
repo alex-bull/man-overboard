@@ -140,7 +140,6 @@ public class Interpreter implements DataSource, PacketHandler {
      * Disconnect client from server
      */
     public void disconnect() {
-        this.send(new BinaryPackager().packageDisconnect()); //TODO:- not actually being used on the server side
         this.clientTimer.cancel();
         try {
             this.TCPClient.close();
@@ -676,6 +675,7 @@ public class Interpreter implements DataSource, PacketHandler {
                     if(!seenRaceXML) {
                         raceXMLParser.setScreenSize(width, height);
 //                        this.raceData = raceXMLParser.parseRaceData(xml.trim());
+                        System.out.println(xml.trim());
                         this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.themeId = raceXMLParser.getThemeId();
                         this.decorations = this.raceData.getDecorations();
