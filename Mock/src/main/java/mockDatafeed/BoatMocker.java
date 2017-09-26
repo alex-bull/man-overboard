@@ -154,6 +154,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void restart() {
 
+        // delay in case boat dies
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         this.serverTimer.cancel();
 
         TCPserver.exit();
@@ -582,6 +590,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         if (firstMessageTime != 0) {
             firstMessageTime = System.currentTimeMillis() / 1000;
         }
+        System.out.println("race status " + boatUpdater.checkAllFinished());
+        System.out.println(boatUpdater.finisherList.size());
+        System.out.println(competitors.size());
         if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() / 1000 - gameStartTime > gameDuration)) {
             raceStatus = 4;
 
