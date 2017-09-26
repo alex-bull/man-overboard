@@ -271,11 +271,11 @@ public class LobbyController implements Initializable {
      * Change to the raceView upon started signal
      */
     public void checkStatus() {
-        if (dataSource.getStoredCompetitors().containsKey(dataSource.getSourceID()) && dataSource.getRaceStatus() == RaceStatusEnum.STARTED) {
+        if (dataSource.getStoredCompetitors().containsKey(dataSource.getSourceID()) && dataSource.getRaceStatus() == RaceStatusEnum.STARTED && dataSource.getMessageTime() > 0) {
             System.out.println("game beginning...");
             this.loadRaceView();
         }
-        if (dataSource.isSpectating()) {
+        if (dataSource.isSpectating() && dataSource.getMessageTime() > 0) {
             System.out.println("Spectating game...");
             this.loadRaceView();
         }

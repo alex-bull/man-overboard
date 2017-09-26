@@ -51,6 +51,11 @@ public class PowerUpModel extends ImageView {
     public void update(boolean isZoom, PowerUp powerUp, MutablePoint currentPosition17, double width, double height) {
         MutablePoint p;
         if (isZoom) {
+            System.out.println(powerUp);
+            System.out.println(currentPosition17);
+            System.out.println(height);
+            System.out.println(width);
+            System.out.println(powerUp.getPosition17());
             p = powerUp.getPosition17().shift(-currentPosition17.getXValue() + width / 2, -currentPosition17.getYValue() + height / 2);
         } else {
             p = powerUp.getPosition();

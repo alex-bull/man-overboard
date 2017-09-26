@@ -75,8 +75,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     int boostTime = 30000;
     int healthTime = 60000;
 
-    private long firstMessageTime = 0;
-
 
     BoatMocker() throws IOException, JDOMException {
 
@@ -504,11 +502,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         short windDirection = windGenerator.getWindDirection();
         short windSpeed = windGenerator.getWindSpeed();
         int raceStatus;
-        int gameDuration = 300;
-        if (firstMessageTime != 0) {
-            firstMessageTime = System.currentTimeMillis() / 1000;
-        }
-        if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() / 1000 - gameStartTime > gameDuration)) {
+        int gameDuration = 300000;
+
+        if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() - gameStartTime > gameDuration)) {
             raceStatus = 4;
 
         } else {
@@ -596,7 +592,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             participants.append(String.format("<Yacht SourceID=\"%s\"/>", boat.getSourceID()));
         }
         String raceID = creationTime.format(raceIDFormat) + "01";
-        return String.format(xmlTemplate, raceID, creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), participants);
+        System.out.println(gameStartTime);
+        System.out.println("" + gameStartTime);
+        return String.format(xmlTemplate, raceID, creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), participants, "" + gameStartTime);
     }
 
     /**
@@ -724,7 +722,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         if (shouldStartGame()) {
             raceInProgress = true;
-            gameStartTime = System.currentTimeMillis() / 1000;
+            gameStartTime = System.currentTimeMillis();
+            this.sendAllXML();
         }
 
         if (!raceInProgress) return;

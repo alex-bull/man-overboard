@@ -290,7 +290,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 RaceStatusData raceStatusData = new RaceStatusParser().processMessage(packet);
                 if (raceStatusData != null) {
                     this.raceStatus = raceStatusData.getRaceStatus();
-                    this.messageTime = raceStatusData.getCurrentTime();
+                   // this.messageTime = raceStatusData.getCurrentTime();
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
                     this.windDirection = raceStatusData.getWindDirection() + 180;
@@ -736,6 +736,8 @@ public class Interpreter implements DataSource, PacketHandler {
 //                        this.courseBoundary17=raceXMLParser.getCourseBoundary17();
                         GPSbounds = raceXMLParser.getGPSBounds();
 //                        this.seenRaceXML = true;
+                        this.messageTime = raceData.getGameStartTime();
+                        System.out.println("Parsed " + messageTime);
                     }
 
                     break;

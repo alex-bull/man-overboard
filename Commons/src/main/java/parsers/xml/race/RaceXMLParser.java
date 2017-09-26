@@ -173,6 +173,13 @@ public class RaceXMLParser {
 
         }
 
+        try {
+            raceData.setGameStartTime(Long.parseLong(race.getChild("GameStartTime").getValue()));
+        } catch (NumberFormatException ne) {
+            //
+        }
+
+
         parseRace(raceData);
         return raceData;
     }
@@ -339,6 +346,9 @@ public class RaceXMLParser {
     public double getZoomLevel() {
         return zoomLevel;
     }
+
+
+
 
 
     public double getShiftDistance() {

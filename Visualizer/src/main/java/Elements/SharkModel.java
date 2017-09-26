@@ -26,6 +26,11 @@ public class SharkModel extends ImageView {
     public void update(boolean isZoom, Shark shark, MutablePoint currentPosition17, double width, double height, double heading) {
         MutablePoint p;
         if (isZoom) {
+            System.out.println(shark);
+            System.out.println(currentPosition17);
+            System.out.println(height);
+            System.out.println(width);
+            System.out.println(shark.getPosition17());
             p = shark.getPosition17().shift(-currentPosition17.getXValue() + width / 2, -currentPosition17.getYValue() + height / 2);
         } else {
             p = shark.getPosition();
