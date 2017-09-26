@@ -769,7 +769,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     /**
      * Restart the server for a new game
      */
-    public void restartServer() throws IOException {
+    private void restartServer() throws IOException {
         TCPserver.exit();
         for(Thread t: Thread.getAllStackTraces().keySet()){
             t.interrupt();
