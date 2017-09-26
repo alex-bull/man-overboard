@@ -15,14 +15,16 @@ import models.Whirlpool;
  */
 public class WhirlpoolModel extends ImageView {
 
-    Timeline animation;
+    private Timeline animation;
+    public static final int baseSize = 80;
+
 
     public WhirlpoolModel(Image image, boolean isZoom, Double scale) {
 
         this.setImage(image);
         this.setPreserveRatio(true);
         if(isZoom) {
-            this.setFitWidth(scale * image.getWidth());
+            this.setFitWidth(scale * baseSize);
         }
     }
 
@@ -58,14 +60,11 @@ public class WhirlpoolModel extends ImageView {
 
     public Timeline animateSpawn() {
         animation = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(fitHeightProperty(), 10)),
                 new KeyFrame(Duration.ZERO, new KeyValue(fitWidthProperty(), 10)),
 
-                new KeyFrame(Duration.seconds(0.5), new KeyValue(fitHeightProperty(), 20)),
-                new KeyFrame(Duration.seconds(0.5), new KeyValue(fitWidthProperty(), 20)),
+                new KeyFrame(Duration.seconds(0.5), new KeyValue(fitWidthProperty(), baseSize / 2)),
 
-                new KeyFrame(Duration.seconds(1), new KeyValue(fitHeightProperty(), 40)),
-                new KeyFrame(Duration.seconds(1), new KeyValue(fitWidthProperty(), 40))
+                new KeyFrame(Duration.seconds(1), new KeyValue(fitWidthProperty(), baseSize))
         );
         animation.play();
         return animation;

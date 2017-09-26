@@ -75,7 +75,7 @@ public class HealthBar extends Group {
         if (zoom) scale = zoomedInScale;
 
         double strokeWidth = 5 * scale;
-        double offset = 25 * scale;
+        double offset = 30 * scale;
         double maxBarLength = 30 * scale;
         double healthLevel = boat.getHealthLevel() * scale;
         double healthSize = ((healthLevel / boat.getMaxHealth()) * maxBarLength) / scale;

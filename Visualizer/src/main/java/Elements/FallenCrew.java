@@ -17,14 +17,15 @@ import models.MutablePoint;
 public class FallenCrew extends ImageView {
 
     private boolean dead = false;
-    Timeline animation;
+    private Timeline animation;
+    public static final int baseSize = 15;
 
 
     public FallenCrew(String filePath, Double scale) {
         Image drowning = new Image(filePath);
         this.setImage(drowning);
         this.setPreserveRatio(true);
-        this.setFitWidth(scale * drowning.getWidth());
+        this.setFitWidth(scale * baseSize);
     }
 
     /**

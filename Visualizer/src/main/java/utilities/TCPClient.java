@@ -21,6 +21,7 @@ import static parsers.Converter.hexByteArrayToInt;
  */
 public class TCPClient extends TimerTask {
 
+    private final Socket receiveSock;
     //    private SocketChannel client;
     private DataInputStream dis;
     private DataOutputStream dos;
@@ -38,10 +39,19 @@ public class TCPClient extends TimerTask {
     TCPClient(String host, int port, WorkQueue receiveQueue) throws UnresolvedAddressException, IOException {
 
         this.receiveQueue = receiveQueue;
-        Socket receiveSock = new Socket(host, port);
+        this.receiveSock = new Socket(host, port);
         dis = new DataInputStream(receiveSock.getInputStream());
         dos = new DataOutputStream(receiveSock.getOutputStream());
         System.out.println("Start connection to server...");
+    }
+
+
+    public void close() throws IOException {
+        this.cancel();
+        this.dis.close();
+        this.dos.close();
+        this.receiveSock.close();
+
     }
 
 
@@ -115,7 +125,7 @@ public class TCPClient extends TimerTask {
             }
 
         } catch (EOFException e) {
-            System.exit(0);
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
