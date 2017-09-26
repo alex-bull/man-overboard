@@ -1,8 +1,5 @@
 package controllers;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -30,7 +27,6 @@ import models.Competitor;
 import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
-import utilities.Interpreter;
 import utilities.Sounds;
 import utility.BinaryPackager;
 
@@ -40,7 +36,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import static java.lang.Math.abs;
 import static parsers.xml.race.ThemeEnum.AMAZON;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 

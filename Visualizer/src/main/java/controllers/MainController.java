@@ -148,6 +148,7 @@ public class MainController {
         playerController.setup(dataSource, App.getPrimaryStage());
         this.binaryPackager = new BinaryPackager();
 
+        //TODO: -Stop this timer
 
         AnimationTimer timer = new AnimationTimer() {
 

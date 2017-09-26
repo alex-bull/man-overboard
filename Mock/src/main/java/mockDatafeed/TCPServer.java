@@ -56,10 +56,13 @@ public class TCPServer extends TimerTask {
     /**
      * Close the TCP Server
      */
-    public void exit() throws IOException {
+    public void exit() {
         System.out.println("exiting");
-        serverSocket.close();
-        Thread.currentThread().interrupt();
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

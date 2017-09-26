@@ -1005,7 +1005,8 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     @FXML
     public void goToStartScreen(){
-        dataSource.send(new BinaryPackager().packageDisconnect());
+
+        dataSource.disconnect();
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
         Parent root = null;
         try {
