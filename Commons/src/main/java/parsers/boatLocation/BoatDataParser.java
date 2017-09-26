@@ -18,7 +18,6 @@ public class BoatDataParser {
 
     private CourseFeature courseFeature;
 
-
     /**
      * Process the given data and parse source id, latitude, longitude, heading, speed
      *
@@ -49,6 +48,15 @@ public class BoatDataParser {
 
     }
 
+    /**
+     * gets the latency of the packet
+     * @param body the body of the packet
+     * @return the current latency
+     */
+    public long getLatency(byte[] body){
+        return System.currentTimeMillis()-hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
+
+    }
 
     public CourseFeature getCourseFeature() {
         return courseFeature;

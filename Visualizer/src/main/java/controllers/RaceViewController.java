@@ -26,6 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import models.*;
@@ -82,6 +83,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private GridPane finisherListPane;
     @FXML
     private ListView<String> finisherListView;
+
     private Map<Integer, FallenCrew> fallenCrews = new HashMap<>();
     private Map<Integer, ImageView> blood = new HashMap<>();
     private Map<Integer, PowerUpModel> powerUps = new HashMap<>();
@@ -114,6 +116,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private WebEngine mapEngine;
     private DataSource dataSource;
     private GraphicsContext gc;
+    private int fpsCounter=0;
 
     //images
     private final String[] crewImages = {"/Animations/boyCantSwim.gif", "/Animations/girlCantSwim.gif"};
@@ -863,7 +866,6 @@ public class RaceViewController implements Initializable, TableObserver {
         this.drawGuidingArrow();
         counter++;
     }
-
 
     /**
      * Refreshes the contents of the display to match the datasource

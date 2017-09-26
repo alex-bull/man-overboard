@@ -15,6 +15,7 @@ import java.util.Map;
  */
 public interface DataSource {
     void changeScaling(double Multiplier);
+    long getLatency();
 
     int getZoomLevel();
 

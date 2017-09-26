@@ -94,7 +94,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private int numBoats = 0;
     private boolean seenRaceXML = false;
     private int sourceID = 0;
-
+    private long latency;
     private TCPClient TCPClient;
 
     //zoom factor for scaling
@@ -350,7 +350,7 @@ public class Interpreter implements DataSource, PacketHandler {
             case BOAT_LOCATION:
                 BoatDataParser boatDataParser = new BoatDataParser();
                 BoatData boatData = boatDataParser.processMessage(packet);
-
+                latency=boatDataParser.getLatency(packet);
                 if (boatData != null) {
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties(boatData);
@@ -842,7 +842,9 @@ public class Interpreter implements DataSource, PacketHandler {
         updateBloodLocation();
         updateWhirlpools();
     }
-
+    public long getLatency(){
+        return latency;
+    }
     public Map<Integer, Integer> getCollisions() {
         return collisions;
     }

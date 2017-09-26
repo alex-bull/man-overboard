@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<Pane fx:id="timer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="199.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimerController">
+<Pane fx:id="timer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="70.0" prefWidth="240.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TimerController">
     <children>
-      <ImageView fx:id="playerImageView1" fitHeight="36.0" fitWidth="170.0" layoutX="24.0" layoutY="16.0" opacity="0.6" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="playerImageView1" fitHeight="36.0" fitWidth="170.0" layoutX="35.0" layoutY="18.0" opacity="0.6" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@images/infoBackground.png" />
          </image>
       </ImageView>
-        <Text fx:id="timerText" fill="WHITE" layoutX="57.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="RIGHT" wrappingWidth="73.0">
+        <Text fx:id="timerText" fill="WHITE" layoutX="84.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" textAlignment="CENTER" wrappingWidth="73.0">
             <font>
                 <Font size="18.0" />
             </font>

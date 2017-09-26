@@ -56,6 +56,7 @@
 }
 
 .text-field {
+    -fx-font-family: 'Quicksand','sans-serif';
     -fx-padding: 5 22 5 22;
     -fx-font-size: 11pt;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;

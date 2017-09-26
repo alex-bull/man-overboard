@@ -37,6 +37,9 @@ public class MainController {
     @FXML
     private TimerController timerController;
 
+    @FXML
+    private PerformanceController performanceController;
+
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private boolean playing = false;
@@ -160,6 +163,7 @@ public class MainController {
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
                     playerController.refresh();
+                    performanceController.refresh(dataSource.getLatency());
                     sailSlider.toFront();
                     loadingPane.setVisible(false);
                     if (!flag) {
