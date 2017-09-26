@@ -23,22 +23,22 @@ public class DecorationModel extends ImageView {
      */
     public DecorationModel(Decoration decoration) {
         this.decoration = decoration;
-        double scale = 0.5;
+        double scale = 1;
         Image image = getRandomImage();
         if(decoration.getId().contains("Igloo")) {
             image = getRandomIglooImage();
         }
         else if(decoration.getId().contains("Cold_Animal")) {
             image = getRandomColdAnimalImage();
-            scale = 0.4;
+            scale = 1;
         }
         else if(decoration.getId().contains("Bermuda")) {
             image = getRandomBermudaImage();
-            scale = 0.4;
+            scale = 1;
         }
         else if (decoration.getId().contains("Amazon")) {
             image = getRandomAmazonImage();
-            scale = 0.5;
+            scale = 1;
         }
         this.imageWidth = image.getWidth();
         this.imageHeight = image.getHeight();
