@@ -57,6 +57,7 @@
                                         <InnerShadow blurType="GAUSSIAN" />
                                     </effect>
                                 </ListView>
+                        <Button layoutX="66.0" layoutY="406.0" mnemonicParsing="false" onAction="#goToStartScreen" prefHeight="44.0" prefWidth="97.0" text="Leave" />
                             </children>
                         </Pane>
                     </children>

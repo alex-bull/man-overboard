@@ -3,6 +3,7 @@ package utility;
 
 import models.*;
 import parsers.BoatStatusEnum;
+import parsers.MessageType;
 import parsers.powerUp.PowerUpType;
 
 import java.io.IOException;
@@ -378,6 +379,24 @@ public class BinaryPackager {
         //CRC
         this.writeCRC(packetBuffer);
 
+        return packet;
+    }
+
+    /**
+     *  disconnect from race message, called after the race ends
+     *
+     * @return the packet generated
+     */
+    public byte[] packageDisconnect() {
+        byte[] packet = new byte[19];
+        ByteBuffer packetBuffer = ByteBuffer.wrap(packet);
+        packetBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        byte type = (byte) MessageType.DISCONNECT.getValue();
+        short bodyLength = 0;
+        this.writeHeader(packetBuffer, type, bodyLength);
+        //CRC
+        this.writeCRC(packetBuffer);
         return packet;
     }
 

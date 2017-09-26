@@ -8,8 +8,10 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -39,6 +41,7 @@ import utilities.RaceCalculator;
 import utilities.Sounds;
 import utility.BinaryPackager;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -949,5 +952,40 @@ public class RaceViewController implements Initializable, TableObserver {
 //            touchZoomLevel = zoomEvent.getTotalZoomFactor();
 //        }
     }
+
+    /**
+     * Redirect the user to the start screen
+     */
+    @FXML
+    public void goToStartScreen(){
+        dataSource.send(new BinaryPackager().packageDisconnect());
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        assert root != null;
+        App.getScene().setRoot(root);
+
+//        clearOldInfo();
+    }
+
+//    /**
+//     * Clears the raceView feature lists
+//     */
+//    private void clearOldInfo() {
+//        fallenCrews = new HashMap<>();
+//        blood = new HashMap<>();
+//        powerUps = new HashMap<>();
+//        track = new Track();
+//        whirlpools = new HashMap<>();
+//
+//        isLoaded = false;
+//    }
+
 
 }

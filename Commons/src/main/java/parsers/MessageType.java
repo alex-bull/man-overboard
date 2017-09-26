@@ -27,7 +27,9 @@ public enum MessageType {
     NAME_REQUEST(106),
     MODEL_REQUEST(104),
     POWER_UP(112),
-    POWER_UP_TAKEN(113);
+    POWER_UP_TAKEN(113),
+    RESTART_RACE(78),
+    DISCONNECT(79);
 
 
     private final int value;

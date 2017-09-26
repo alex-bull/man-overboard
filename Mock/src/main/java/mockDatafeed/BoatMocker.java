@@ -109,11 +109,22 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * @param args String[]
      */
     public static void main(String[] args) {
+        System.out.println("main method");
         try {
             new BoatMocker();
-        } catch (SocketException ignored) {
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                System.out.println("hook called");
+                try {
+                    Thread.currentThread().join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                main(null);
+            }));
 
-        } catch (IOException | JDOMException e) {
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (IOException | JDOMException e ) {
             e.printStackTrace();
         }
     }
@@ -189,6 +200,13 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 break;
             case PLAYER_READY:
                 this.updateReady(clientId);
+                break;
+            case DISCONNECT:
+                try {
+                    restartServer();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             case LEAVE_LOBBY:
                 this.removePlayer(clientId);
@@ -745,6 +763,21 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     public void whirlpoolEvent(List<Whirlpool> whirlpools) throws IOException {
         byte[] eventPacket = binaryPackager.packageWhirlpoolEvent(whirlpools);
         this.sendQueue.put(null, eventPacket);
+    }
+
+
+    /**
+     * Restart the server for a new game
+     */
+    public void restartServer() throws IOException {
+        TCPserver.exit();
+        for(Thread t: Thread.getAllStackTraces().keySet()){
+            t.interrupt();
+        }
+        //need to exit the boatMocker, boatUpdater, tcpServer
+        System.out.println("Last instruction of Program....");
+        System.exit(0);
+
     }
 
     /**
