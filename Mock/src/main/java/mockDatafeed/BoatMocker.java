@@ -97,6 +97,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     }
 
 
+    /**
+     * Initialize and start a new game/race
+     * @throws JDOMException
+     * @throws IOException
+     */
     private void start() throws JDOMException, IOException {
         CourseGenerator courseGenerator = new CourseGenerator();
         this.coursePath = courseGenerator.generateCourse();
@@ -278,8 +283,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 this.updateReady(clientId);
                 break;
             case DISCONNECT:
-
-                //TODO:- The server needs to wait for a while after race ends then restart anyway
 
 //                //Check if all clients have disconnected and if they have then restart the server
 //                clientStates.put(clientId, ClientState.DISCONNECTED);

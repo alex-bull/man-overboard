@@ -166,7 +166,7 @@ public class MainController {
 
             @Override
             public void handle(long now) {
-                if (raceViewController.finishFlag) {
+                if (raceViewController.finishFlag) { //game finished
                     timer.stop();
                     returnToLobby();
                 }
@@ -198,6 +198,7 @@ public class MainController {
     private void returnToLobby() {
 
         dataSource.disconnect();
+        this.dataSource = null;
 
         //countdown
         Timeline timeline = new Timeline();
