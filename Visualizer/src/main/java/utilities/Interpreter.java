@@ -6,6 +6,18 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import parsers.powerUp.PowerUp;
+import parsers.powerUp.PowerUpParser;
+import parsers.powerUp.PowerUpTakenParser;
+import parsers.powerUp.PowerUpType;
+import parsers.xml.race.Decoration;
+import parsers.xml.race.ThemeEnum;
+import utility.QueueMessage;
+import utility.WorkQueue;
+import models.ColourPool;
+import models.Competitor;
+import models.CourseFeature;
+import models.MutablePoint;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
@@ -76,6 +88,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private HashMap<Integer, CourseFeature> storedFeatures = new HashMap<>();
     private HashMap<Integer, CourseFeature> storedFeatures17 = new HashMap<>();
     private HashMap<Integer, Competitor> storedCompetitors = new HashMap<>();
+    private HashMap<String, Decoration> decorations = new HashMap<>();
 
     private List<MutablePoint> courseBoundary = new ArrayList<>();
     private List<MutablePoint> courseBoundaryOriginal = new ArrayList<>();
@@ -95,20 +108,18 @@ public class Interpreter implements DataSource, PacketHandler {
     private boolean seenRaceXML = false;
     private int sourceID = 0;
 
+    private ThemeEnum themeId;
+
     private TCPClient TCPClient;
 
     //zoom factor for scaling
     private int zoomLevel = 17;
 
     private WorkQueue receiveQueue = new WorkQueue(1000000);
-    private Map<Integer, CrewLocation> crewLocations = new HashMap<>();
 
     public void setPrimaryStage(Stage primaryStage){
         this.primaryStage=primaryStage;
     }
-    private Map<Integer, Shark> sharkLocations = new HashMap<>();
-    private Map<Integer, Blood> bloodLocations = new HashMap<>();
-    private Map<Integer, Whirlpool> whirlpools = new HashMap<>();
     private Map<Integer, PowerUp> powerUps = new HashMap<>();
 
     public Interpreter() {
@@ -195,6 +206,16 @@ public class Interpreter implements DataSource, PacketHandler {
     public Competitor getCompetitor() {
         return storedCompetitors.get(sourceID);
     }
+
+    public ThemeEnum getThemeId() {
+        return themeId;
+    }
+
+
+    private Map<Integer,CrewLocation> crewLocations=new HashMap<>();
+    private Map<Integer, Shark> sharkLocations = new HashMap<>();
+    private Map<Integer, Blood> bloodLocations = new HashMap<>();
+    private Map<Integer, Whirlpool> whirlpools = new HashMap<>();
 
     public Map<Integer, PowerUp> getPowerUps() {
         return powerUps;
@@ -387,7 +408,6 @@ public class Interpreter implements DataSource, PacketHandler {
                                 boat.setStatus(DSQ);
                                 break;
                             default:
-//                                System.out.println("RIP");
                                 break;
                         }
                     }
@@ -409,7 +429,9 @@ public class Interpreter implements DataSource, PacketHandler {
             case BOAT_STATE:
                 BoatStateParser boatStateParser = new BoatStateParser(packet);
                 Competitor stateBoat = this.storedCompetitors.get(boatStateParser.getSourceId());
-                stateBoat.setHealthLevel(boatStateParser.getHealth());
+                if(stateBoat!= null) {
+                    stateBoat.setHealthLevel(boatStateParser.getHealth());
+                }
                 break;
             case CONNECTION_RES:
                 ConnectionParser connectionParser = new ConnectionParser(packet);
@@ -538,6 +560,17 @@ public class Interpreter implements DataSource, PacketHandler {
             MutablePoint point = cloner.deepClone(powerUp.getPositionOriginal());
             point.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             powerUp.setPosition17(point);
+        }
+    }
+
+    /**
+     * updates decoration item location when scaling level changes
+     */
+    private void updateDecorationLocation(){
+        for(Decoration decoration: decorations.values()){
+            MutablePoint point=cloner.deepClone(decoration.getPositionOriginal());
+            point.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            decoration.setPosition17(point);
         }
     }
 
@@ -724,10 +757,13 @@ public class Interpreter implements DataSource, PacketHandler {
                     }
                     break;
                 case RACE:
-                    if (!seenRaceXML) {
+                    if(!seenRaceXML) {
                         raceXMLParser.setScreenSize(width, height);
 //                        this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.raceData = raceXMLParser.parseRaceData(xml.trim());
+                        this.themeId = raceXMLParser.getThemeId();
+                        this.decorations = this.raceData.getDecorations();
+
                         setScalingFactors();
                         setCourseBoundary(raceXMLParser.getCourseBoundary());
 //                        this.courseBoundary17=raceXMLParser.getCourseBoundary17();
@@ -823,13 +859,44 @@ public class Interpreter implements DataSource, PacketHandler {
         this.minYMercatorCoord = raceXMLParser.getyMin();
     }
 
+    /**
+     * Evaluates position17 given a position
+     * @param position MutablePoint the position to factor
+     * @return MutablePoint the factored position
+     */
+    public MutablePoint evaluatePosition17(MutablePoint position) {
+        MutablePoint position17=cloner.deepClone(Projection.mercatorProjection(position));
+        position17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        return position17;
+    }
+
     public void setScalingFactor(double scaleFactor) {
         this.scaleFactor = scaleFactor;
     }
 
     /**
+     * Evaluates position given a location
+     * @param location MutablePoint the location to factor
+     * @return MutablePoint the factored position
+     */
+    public MutablePoint evaluatePosition(MutablePoint location) {
+        MutablePoint position = cloner.deepClone(Projection.mercatorProjection(location));
+        position.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+        return position;
+    }
+
+    /**
+     * Evaluates original position given a position
+     * @param location MutablePoint the location to factor
+     * @return MutablePoint the factored position
+     */
+    public MutablePoint evaluateOriginalPosition(MutablePoint location) {
+        return cloner.deepClone(Projection.mercatorProjection(location));
+    }
+
+
+    /**
      * changes the scaling when zoomed in
-     *
      * @param deltaLevel level of zoom
      */
     public void changeScaling(double deltaLevel) {
@@ -838,6 +905,7 @@ public class Interpreter implements DataSource, PacketHandler {
         updateCourseBoundary();
         updateCrewLocation();
         updatePowerUpLocation();
+        updateDecorationLocation();
         updateSharkLocation();
         updateBloodLocation();
         updateWhirlpools();
@@ -862,5 +930,11 @@ public class Interpreter implements DataSource, PacketHandler {
     public double getShiftDistance() {
         return raceXMLParser.getShiftDistance();
     }
+
+
+    public HashMap<String, Decoration> getDecorations() {
+        return decorations;
+    }
+
 
 }

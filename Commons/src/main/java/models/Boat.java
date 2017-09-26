@@ -49,7 +49,7 @@ public class Boat implements Competitor {
 
 
     //collision size
-    private double collisionRadius = 20;
+    private final double collisionRadius = 25;
 
     //external forces
     private List<Force> externalForces = new ArrayList<>();

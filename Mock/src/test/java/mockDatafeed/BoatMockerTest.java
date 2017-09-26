@@ -29,7 +29,7 @@ public class BoatMockerTest {
 
     @Test
     public void sendRaceXMLTest() throws Exception {
-        String raceTemplateString = fileToString("/raceTemplate.xml");
+        String raceTemplateString = fileToString("/bermuda.xml");
         Method sendRaceXML = mockerClass.getDeclaredMethod("formatRaceXML", String.class);
         sendRaceXML.setAccessible(true);
         String resultString = (String) sendRaceXML.invoke(boatMocker, raceTemplateString);

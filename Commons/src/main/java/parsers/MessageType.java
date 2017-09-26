@@ -21,7 +21,7 @@ public enum MessageType {
     PLAYER_READY(110),
     LEAVE_LOBBY(111),
     WHIRLPOOL(119),
-        SHARK(120),
+    SHARK(120),
     BLOOD(121),
     FALLEN_CREW(107),
     NAME_REQUEST(106),

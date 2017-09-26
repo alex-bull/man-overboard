@@ -53,7 +53,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private ZonedDateTime expectedStartTime;
     private ZonedDateTime creationTime;
     private BinaryPackager binaryPackager = new BinaryPackager();
-    private MutablePoint prestart = new MutablePoint(32.295842, -64.857157);
+    private MutablePoint prestart;
     private WindGenerator windGenerator;
     private int currentSourceID = 99;
     private Random random = new Random();
@@ -74,12 +74,20 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private int powerUpId = 0;
     int boostTime = 30000;
     int healthTime = 60000;
+    private String coursePath = "";
+    private Integer themeId = 0;
+
+
 
     private long firstMessageTime = 0;
 
 
     BoatMocker() throws IOException, JDOMException {
-
+        CourseGenerator courseGenerator = new CourseGenerator();
+        this.coursePath = courseGenerator.generateCourse();
+        this.prestart = courseGenerator.getPrestart();
+        this.themeId = courseGenerator.getThemeId();
+        System.out.println("Chosen path : " + this.coursePath);
         creationTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         serverStartTime = System.currentTimeMillis() / 1000;
         expectedStartTime = creationTime.plusSeconds(11);
@@ -247,14 +255,14 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * @param clientId the channel id of the client, this is used as the source id of the new competitor
      */
     private void addCompetitor(Integer clientId) {
-
         if (competitors.size() == 0) serverStartTime = System.currentTimeMillis() / 1000;
 
         double a = 0.002 * competitors.size(); //shift competitors so they aren't colliding at the start
-//        prestart = new MutablePoint(32.41011 + a, -64.88937);
-        prestart = new MutablePoint(32.35763 + a, -64.81332);
+        MutablePoint boatStart = new MutablePoint(this.prestart.getXValue() + a, this.prestart.getYValue());
+        System.out.println("boat will start at " + boatStart);
 
-        Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, prestart, "B" + clientId, clientId, PRESTART);
+
+        Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, boatStart, "B" + clientId, clientId, PRESTART);
         newCompetitor.setCurrentHeading(0);
         competitors.put(clientId, newCompetitor);
 
@@ -379,7 +387,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * finds the current course of the race
      */
     private void generateCourse() throws JDOMException, IOException {
-        InputStream mockBoatStream = new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")));
+        InputStream mockBoatStream = new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream(this.coursePath)));
         CourseXMLParser cl = new CourseXMLParser(mockBoatStream);
         //screen size is not important
 
@@ -392,7 +400,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      */
     private void generateMarkCompetitors() throws IOException, JDOMException {
 
-        String xml = CharStreams.toString(new InputStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream("/raceTemplate.xml")))));
+        String xml = CharStreams.toString(new InputStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray(getClass().getResourceAsStream(this.coursePath)))));
         raceData = new RaceXMLParser().parseRaceData(xml);
         markBoats = new HashMap<>();
 
@@ -646,20 +654,21 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             Competitor boat = competitors.get(sourceId);
             participants.append(String.format("<Yacht SourceID=\"%s\"/>", boat.getSourceID()));
         }
-        String raceID = creationTime.format(raceIDFormat) + "01";
-        return String.format(xmlTemplate, raceID, creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), participants);
+        return String.format(xmlTemplate, this.themeId, creationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), expectedStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), participants);
     }
 
+
     /**
-     * Send a race xml file to client, uses raceTemplate.xml to generate custom race xml messages
+     * Send a race xml file to client, uses a course xml to generate custom race xml messages
      */
     private void sendRaceXML() throws IOException {
         int messageType = 6;
-        String raceTemplateString = fileToString("/raceTemplate.xml");
+        String raceTemplateString = fileToString(this.coursePath);
         String raceXML = formatRaceXML(raceTemplateString);
         this.sendQueue.put(null, binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
 
     }
+
 
     /**
      * Send a xml file
@@ -695,6 +704,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         this.sendQueue.put(null, binaryPackager.packageXML(boatXML.length(), boatXML, messageType));
     }
 
+
     /**
      * Sends all xml files
      */
@@ -708,6 +718,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             e.printStackTrace();
         }
     }
+
 
     /**
      * Get all messages from receive queue and pass them to interpreter
