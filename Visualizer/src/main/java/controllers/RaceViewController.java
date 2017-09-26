@@ -3,7 +3,12 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
+import javafx.scene.Node;
+import parsers.boatAction.BoatAction;
+import parsers.xml.race.Decoration;
+import utilities.Sounds;
 import Elements.*;
+import Elements.Annotation;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
@@ -23,7 +28,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
@@ -46,8 +50,9 @@ import java.util.*;
 
 import static java.lang.Math.pow;
 import static javafx.collections.FXCollections.observableArrayList;
-import static javafx.scene.paint.Color.ORANGERED;
 import static parsers.BoatStatusEnum.DSQ;
+import static parsers.xml.race.ThemeEnum.AMAZON;
+import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 
 
 /**
@@ -85,13 +90,16 @@ public class RaceViewController implements Initializable, TableObserver {
     private ListView<String> finisherListView;
 
     private Map<Integer, FallenCrew> fallenCrews = new HashMap<>();
-    private Map<Integer, ImageView> blood = new HashMap<>();
+//    private Map<Integer, ImageView> blood = new HashMap<>();
+//    private Map<Integer, Image> crewImages = new HashMap<>();
+    private Map<String, DecorationModel> decorations=new HashMap<>();
+
     private Map<Integer, PowerUpModel> powerUps = new HashMap<>();
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
     private Map<Integer, HealthBar> healthBars = new HashMap<>();
     private Map<Integer, Annotation> annotations = new HashMap<>();
-    private Map<String, Shape> markModels = new HashMap<>();
+    private Map<String, MarkModel> markModels = new HashMap<>();
     private Track track = new Track();
     private Line startLine;
     private Line finishLine;
@@ -158,7 +166,7 @@ public class RaceViewController implements Initializable, TableObserver {
         mapView.toBack();
 
         try {
-            mapEngine.load(getClass().getClassLoader().getResource("maps.html").toURI().toString());
+            mapEngine.load(getClass().getClassLoader().getResource("mapsBermuda.html").toURI().toString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -189,6 +197,18 @@ public class RaceViewController implements Initializable, TableObserver {
         controlsBox.setPrefWidth(width);
         raceViewPane.getChildren().add(track);
         this.dataSource = dataSource;
+
+        try {
+            if(dataSource.getThemeId() == ANTARCTICA) {
+                mapEngine.load(getClass().getClassLoader().getResource("mapsAntarctica.html").toURI().toString());
+            }
+            else if (dataSource.getThemeId() == AMAZON) {
+                mapEngine.load(getClass().getClassLoader().getResource("mapsAmazon.html").toURI().toString());
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
 
         while (dataSource.getCompetitorsPosition() == null) {
             try {
@@ -475,15 +495,38 @@ public class RaceViewController implements Initializable, TableObserver {
         double x = courseFeature.getPixelLocations().get(0).getXValue();
         double y = courseFeature.getPixelLocations().get(0).getYValue();
 
-        if (!markModels.containsKey(courseFeature.getName())) {
-            Shape mark = new Circle(x, y, 4.5, ORANGERED);
-            markModels.put(courseFeature.getName(), mark);
-            raceViewPane.getChildren().add(mark);
-        } else {
-            Circle mark = (Circle) markModels.get(courseFeature.getName());
-            mark.setCenterX(x);
-            mark.setCenterY(y);
+        if(!markModels.containsKey(courseFeature.getName())){
+            MarkModel markModel = new MarkModel(dataSource.getThemeId(), x, y);
+            markModels.put(courseFeature.getName(), markModel);
+            raceViewPane.getChildren().add(markModel);
         }
+        else {
+            MarkModel mark = markModels.get(courseFeature.getName());
+            mark.setCentres(x, y);
+        }
+    }
+
+    /**
+     * Draw course decorations
+     */
+    private void drawThemeDecorations() {
+        Map<String ,Decoration> receivedDecorations = dataSource.getDecorations();
+
+        for(Decoration receivedDecoration: receivedDecorations.values()) {
+            String id = receivedDecoration.getId();
+            if (!decorations.containsKey(id)) {
+                MutablePoint location = receivedDecoration.getLocation();
+                receivedDecoration.setPosition(dataSource.evaluatePosition(location));
+                receivedDecoration.setPositionOriginal(dataSource.evaluateOriginalPosition(location));
+                receivedDecoration.setPosition17(dataSource.evaluatePosition17(receivedDecoration.getPosition()));
+
+                DecorationModel decorationModel= new DecorationModel(receivedDecoration);
+                decorations.put(id, decorationModel);
+                raceViewPane.getChildren().add(decorationModel);
+            }
+            decorations.get(id).update(isZoom(), currentPosition17, raceViewCanvas.getWidth(), raceViewCanvas.getHeight());
+        }
+
     }
 
 
@@ -654,7 +697,7 @@ public class RaceViewController implements Initializable, TableObserver {
         for (PowerUp receivedPowerUp : receivedPowerUps.values()) {
             int sourceId = receivedPowerUp.getId();
             if (!powerUps.containsKey(sourceId)) {
-                PowerUpModel powerUpModel = new PowerUpModel(receivedPowerUp, isZoom(),nodeSizeFunc(dataSource.getZoomLevel()));
+                PowerUpModel powerUpModel = new PowerUpModel(receivedPowerUp, isZoom(), nodeSizeFunc(dataSource.getZoomLevel()));
                 powerUps.put(sourceId, powerUpModel);
                 raceViewPane.getChildren().add(powerUpModel);
             }
@@ -734,31 +777,34 @@ public class RaceViewController implements Initializable, TableObserver {
      * adds scaling to all shapes in the scene
      */
     private void setScale(double scale) {
-        for (Group model : boatModels.values()) {
+        for (BoatModel model : boatModels.values()) {
             model.setScaleX(scale);
             model.setScaleY(scale);
         }
-        for (Shape model : markModels.values()) {
+        for(MarkModel model: markModels.values()){
             model.setScaleX(scale);
             model.setScaleY(scale);
         }
 
         for (PowerUpModel powerUpModel : powerUps.values()) {
             powerUpModel.setPreserveRatio(true);
-            powerUpModel.setFitWidth(scale * powerUpModel.getImage().getWidth());
+            powerUpModel.setFitWidth(scale * PowerUpModel.baseSize);
 
         }
 
         for (FallenCrew fallenCrew : fallenCrews.values()) {
             fallenCrew.setPreserveRatio(true);
-            fallenCrew.setFitWidth(scale * fallenCrew.getImage().getWidth());
+            fallenCrew.setFitWidth(scale * FallenCrew.baseSize);
 
         }
 
         for (WhirlpoolModel model : whirlpools.values()) {
             model.setPreserveRatio(true);
-            model.setFitWidth(scale * model.getImage().getWidth());
-            model.setFitHeight(scale * model.getImage().getHeight());
+            model.setFitWidth(scale * WhirlpoolModel.baseSize);
+        }
+        for(DecorationModel item: decorations.values()){
+            item.setScaleY(scale);
+            item.setScaleX(scale);
         }
         sharkModel.setScaleX(scale);
         sharkModel.setScaleY(scale);
@@ -838,7 +884,7 @@ public class RaceViewController implements Initializable, TableObserver {
         double boatLength = 10;
         double startWakeOffset = 3;
         double wakeWidthFactor = 0.2;
-        double wakeLengthFactor = 1;
+        double wakeLengthFactor = 2;
 
         if (isZoom()) {
             double multiplier = nodeSizeFunc(dataSource.getZoomLevel());
@@ -872,11 +918,12 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     void refresh() {
         checkRaceFinished();
-        setBoatLocation();
         drawFallenCrew();
         drawPowerUps();
         drawSharks();
         drawWhirlpools();
+        drawThemeDecorations();
+        setBoatLocation();
         updateRace();
         checkCollision();
     }

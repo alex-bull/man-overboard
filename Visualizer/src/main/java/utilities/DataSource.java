@@ -4,6 +4,8 @@ import javafx.scene.Scene;
 import models.*;
 import parsers.RaceStatusEnum;
 import parsers.powerUp.PowerUp;
+import parsers.xml.race.Decoration;
+import parsers.xml.race.ThemeEnum;
 
 import java.util.HashMap;
 import java.util.List;
@@ -80,4 +82,9 @@ public interface DataSource {
     void update();
 
     Map<Integer, PowerUp> getPowerUps();
+    ThemeEnum getThemeId();
+    MutablePoint evaluatePosition17(MutablePoint position);
+    MutablePoint evaluateOriginalPosition(MutablePoint location);
+    MutablePoint evaluatePosition(MutablePoint location);
+    HashMap<String, Decoration> getDecorations();
 }
