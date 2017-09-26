@@ -24,10 +24,10 @@ public class PowerUpModel extends ImageView {
         Image image;
         switch (receivedPowerUp.getType()) {
             case BOOST:
-                image = new Image("/images/powerups/speed.png");
+                image = new Image(getClass().getClassLoader().getResource("images/powerups/speed.png").toString());
                 break;
             case POTION:
-                image = new Image("/images/powerups/health.png");
+                image = new Image(getClass().getClassLoader().getResource("images/powerups/health.png").toString());
                 break;
             default:
                 image = null;

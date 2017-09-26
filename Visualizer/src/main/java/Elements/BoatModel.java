@@ -76,7 +76,7 @@ public class BoatModel extends Group {
             playerMarker.setFill(Color.rgb(0, 0, 0, 0.2));
             this.getChildren().add(playerMarker);
         }
-        this.ripImage = new ImageView(new Image("images/cross-small.png"));
+        this.ripImage = new ImageView(new Image(getClass().getClassLoader().getResource("images/cross-small.png").toString()));
         this.ripImage.setPreserveRatio(true);
         this.ripImage.setFitHeight(20);
         this.getChildren().add(ripImage);

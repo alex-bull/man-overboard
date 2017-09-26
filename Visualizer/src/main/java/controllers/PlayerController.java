@@ -111,9 +111,9 @@ public class PlayerController {
         String speed = String.format("%.1f", boat.getVelocity());
         boatSpeedLabel.setText(speed + "m/s");
         if (boat.hasSpeedBoost()) {
-            this.speed.setGraphic(new ImageView(new Image("/images/powerups/tinyspeed.png")));
+            this.speed.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/tinyspeed.png").toString())));
         } else {
-            this.speed.setGraphic(new ImageView(new Image("/images/powerups/speed_grey.png")));
+            this.speed.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/speed_grey.png").toString())));
         }
 
         Double w = stage.getWidth() / 2.5;
@@ -121,9 +121,9 @@ public class PlayerController {
 
 
         if (boat.hasPotion()) {
-            this.potion.setGraphic(new ImageView(new Image("/images/powerups/tinyhealth.png")));
+            this.potion.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/tinyhealth.png").toString())));
         } else {
-            this.potion.setGraphic(new ImageView(new Image("/images/powerups/potion_grey.png")));
+            this.potion.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/potion_grey.png").toString())));
         }
 
     }
@@ -132,14 +132,14 @@ public class PlayerController {
      * Greys out the speed icon
      */
     void greyOutBoost() {
-        this.speed.setGraphic(new ImageView(new Image("/images/powerups/speed_grey.png")));
+        this.speed.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/speed_grey.png").toString())));
     }
 
     /**
      * Greys out the potion icon
      */
     void greyOutPotion() {
-        this.potion.setGraphic(new ImageView(new Image("/images/powerups/potion_grey.png")));
+        this.potion.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/potion_grey.png").toString())));
 
     }
 

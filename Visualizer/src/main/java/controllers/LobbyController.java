@@ -315,17 +315,17 @@ public class LobbyController implements Initializable {
 
         if(courseThemeImage == null) {
             if(dataSource.getThemeId() == ANTARCTICA) {
-                this.courseThemeImage = new Image("/images/antarctica/antarc_course.png");
+                this.courseThemeImage = new Image(getClass().getClassLoader().getResource("images/antarctica/antarc_course.png").toString());
                 this.locationLabel.setText("Antarctica");
                 courseImageView.setImage(this.courseThemeImage);
             }
             else if(dataSource.getThemeId() == AMAZON) {
-                this.courseThemeImage = new Image("/images/amazon/amazon_course.png");
+                this.courseThemeImage = new Image(getClass().getClassLoader().getResource("images/amazon/amazon_course.png").toString());
                 this.locationLabel.setText("Amazon");
                 courseImageView.setImage(this.courseThemeImage);
             }
             else if (dataSource.getThemeId() != null) {
-                this.courseThemeImage = new Image("/images/bermuda/bermuda_course.png");
+                this.courseThemeImage = new Image(getClass().getClassLoader().getResource("images/bermuda/bermuda_course.png").toString());
                 courseImageView.setImage(this.courseThemeImage);
             }
         }
