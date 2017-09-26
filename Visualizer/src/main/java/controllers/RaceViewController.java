@@ -113,6 +113,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private boolean isLoaded = false;
     private boolean zoom = false;
     private boolean muted = false;
+    public boolean finishFlag = false;
     //CONTROL VARIABLES
     private int counter = 0;
     private Integer selectedBoatSourceId = 0;
@@ -129,6 +130,7 @@ public class RaceViewController implements Initializable, TableObserver {
     //images
     private final String[] crewImages = {"/Animations/boyCantSwim.gif", "/Animations/girlCantSwim.gif"};
     private final String[] bloodImages = {"/images/blood2.png", "/images/blood1.png", "/images/blood.png"};
+
 
     //================================================================================================================
     // SETUP
@@ -274,6 +276,7 @@ public class RaceViewController implements Initializable, TableObserver {
             double height = raceViewPane.getHeight();
             finisherListPane.setLayoutX(width / 2 - finisherListPane.getWidth() / 2);
             finisherListPane.setLayoutY(height / 2 - finisherListPane.getHeight() / 2);
+            this.finishFlag = true;
         }
     }
 
@@ -1006,18 +1009,18 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML
     public void goToStartScreen(){
 
-        dataSource.disconnect();
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
-        Parent root = null;
-        try {
-            root = loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        assert root != null;
-        App.getScene().setRoot(root);
+//        dataSource.disconnect();
+//        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
+//        Parent root = null;
+//        try {
+//            root = loader.load();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            System.exit(1);
+//        }
+//
+//        assert root != null;
+//        App.getScene().setRoot(root);
 
 //        clearOldInfo();
     }

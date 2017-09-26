@@ -2,6 +2,11 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.util.Duration;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
@@ -142,6 +147,17 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * Close the server and open a new one
      */
     private void restart() {
+
+        int count = 0;
+        while (count < 5) {
+            try {
+                Thread.sleep(1000);
+                count++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         this.serverTimer.cancel();
 
         TCPserver.exit();
@@ -263,16 +279,18 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 break;
             case DISCONNECT:
 
-                //Check if all clients have disconnected and if they have then restart the server
-                clientStates.put(clientId, ClientState.DISCONNECTED);
-                System.out.println(clientStates);
+                //TODO:- The server needs to wait for a while after race ends then restart anyway
 
-                for (ClientState state: clientStates.values()) {
-                    if (state != ClientState.DISCONNECTED) return true;
-                }
-
-                this.restart(); //all clients have disconnected
-                return false;
+//                //Check if all clients have disconnected and if they have then restart the server
+//                clientStates.put(clientId, ClientState.DISCONNECTED);
+//                System.out.println(clientStates);
+//
+//                for (ClientState state: clientStates.values()) {
+//                    if (state != ClientState.DISCONNECTED) return true;
+//                }
+//
+//                this.restart(); //all clients have disconnected
+//                return false;
 
             case LEAVE_LOBBY:
                 this.removePlayerFromLobby(clientId);
@@ -583,6 +601,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed, competitors.size());
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         this.sendQueue.put(null, binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
+        if (raceStatus == 4) this.restart();
     }
 
     /**
@@ -802,6 +821,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
 
         if (!raceInProgress) return;
+
+
 
         try {
             boatUpdater.updatePosition();
