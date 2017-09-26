@@ -387,6 +387,74 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+    /**
+     * Turn the boat when a touch pressed stationary event is sent
+     *
+     * @param touchEvent pressed touch event
+     */
+    public void turnBoat(TouchEvent touchEvent) {
+        BinaryPackager binaryPackager = new BinaryPackager();
+        int UP = 5;
+        int DOWN = 6;
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        double heading = boat.getCurrentHeading();
+        double windAngle = (dataSource.getWindDirection()) % 360;
+        double downWind = (boat.getDownWind(windAngle)) % 360;
+        double touchX = touchEvent.getTouchPoint().getX();
+        double touchY = touchEvent.getTouchPoint().getY();
+        double theta = RaceCalculator.calcBoatDirection(boatPositionX, boatPositionY, touchX, touchY);
+        double difference = theta - heading;
+
+        if (RaceCalculator.isWestOfWind(heading, downWind, windAngle)) {
+            UP = 6;
+            DOWN = 5;
+        }
+
+        if (difference > 0 && difference < 180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
+        } else if (difference > 0 && difference > 180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
+        } else if (difference < 0 && difference > -180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
+        } else if (difference < 0 && difference < -180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
+        }
+    }
+
+
+    /**
+     * Zoom the screen in and out upon touch zoom event
+     *
+     * @param zoomEvent zoom event
+     */
+    public void touchZoom(ZoomEvent zoomEvent) {
+
+        if (zoom) {
+            if (dataSource.getZoomLevel() < 18 && zoomEvent.getTotalZoomFactor() > 1) {
+                long zoomFactor = Math.round(zoomEvent.getTotalZoomFactor() / 1.5);
+                dataSource.changeScaling(zoomFactor);
+                zoomIn();
+            }
+            if (dataSource.getZoomLevel() > 13 && zoomEvent.getTotalZoomFactor() < 1) {
+                long zoomFactor = Math.round((1 - zoomEvent.getTotalZoomFactor()) / 0.4);
+                dataSource.changeScaling(-zoomFactor);
+                zoomIn();
+            }
+        }
+//        if (zoom) {
+//            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
+//                dataSource.changeScaling(1);
+//                zoomIn();
+//            }
+//            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
+//                dataSource.changeScaling(-1);
+//                zoomIn();
+//            }
+//            touchZoomLevel = zoomEvent.getTotalZoomFactor();
+//        }
+    }
+
+
 
     //================================================================================================================
     // DRAWING
@@ -930,71 +998,5 @@ public class RaceViewController implements Initializable, TableObserver {
         return isLoaded;
     }
 
-    /**
-     * Turn the boat when a touch pressed stationary event is sent
-     *
-     * @param touchEvent pressed touch event
-     */
-    public void turnBoat(TouchEvent touchEvent) {
-        BinaryPackager binaryPackager = new BinaryPackager();
-        int UP = 5;
-        int DOWN = 6;
-        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-        double heading = boat.getCurrentHeading();
-        double windAngle = (dataSource.getWindDirection()) % 360;
-        double downWind = (boat.getDownWind(windAngle)) % 360;
-        double touchX = touchEvent.getTouchPoint().getX();
-        double touchY = touchEvent.getTouchPoint().getY();
-        double theta = RaceCalculator.calcBoatDirection(boatPositionX, boatPositionY, touchX, touchY);
-        double difference = theta - heading;
-
-        if (RaceCalculator.isWestOfWind(heading, downWind, windAngle)) {
-            UP = 6;
-            DOWN = 5;
-        }
-
-        if (difference > 0 && difference < 180) {
-            this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
-        } else if (difference > 0 && difference > 180) {
-            this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
-        } else if (difference < 0 && difference > -180) {
-            this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
-        } else if (difference < 0 && difference < -180) {
-            this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
-        }
-    }
-
-
-    /**
-     * Zoom the screen in and out upon touch zoom event
-     *
-     * @param zoomEvent zoom event
-     */
-    public void zoom(ZoomEvent zoomEvent) {
-
-        if (zoom) {
-            if (dataSource.getZoomLevel() < 18 && zoomEvent.getTotalZoomFactor() > 1) {
-                long zoomFactor = Math.round(zoomEvent.getTotalZoomFactor() / 2);
-                dataSource.changeScaling(zoomFactor);
-                zoomIn();
-            }
-            if (dataSource.getZoomLevel() > 13 && zoomEvent.getTotalZoomFactor() < 1) {
-                long zoomFactor = Math.round((1 - zoomEvent.getTotalZoomFactor()) / 0.4);
-                dataSource.changeScaling(-zoomFactor);
-                zoomIn();
-            }
-        }
-//        if (zoom) {
-//            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
-//                dataSource.changeScaling(1);
-//                zoomIn();
-//            }
-//            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
-//                dataSource.changeScaling(-1);
-//                zoomIn();
-//            }
-//            touchZoomLevel = zoomEvent.getTotalZoomFactor();
-//        }
-    }
 
 }
