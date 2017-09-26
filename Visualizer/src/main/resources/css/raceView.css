@@ -21,6 +21,10 @@
     -fx-alignment: CENTER;
 }
 
+.table-view .table-cell {
+    -fx-font-weight: bold;
+}
+
 
 #finish-list {
     -fx-background-color: white;
