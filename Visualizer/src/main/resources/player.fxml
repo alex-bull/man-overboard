@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<GridPane fx:id="player" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PlayerController">
+<GridPane fx:id="player" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PlayerController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0" />
@@ -32,11 +35,7 @@
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <ImageView fx:id="playerImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@images/boat.png" />
-                    </image>
-                </ImageView>
+                <ImageView fx:id="playerImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
             </children>
         </GridPane>
         <GridPane GridPane.columnIndex="2" GridPane.rowIndex="1">
@@ -51,7 +50,7 @@
                 <Pane fx:id="healthPane" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
             </children>
         </GridPane>
-        <GridPane fx:id="boatInfoGrid"  minWidth="50.0" prefWidth="200.0" AnchorPane.rightAnchor="10.0" GridPane.columnIndex="2" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
+        <GridPane fx:id="boatInfoGrid" minWidth="50.0" prefWidth="200.0" AnchorPane.rightAnchor="10.0" GridPane.columnIndex="2" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
             <columnConstraints>
                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
             </columnConstraints>
@@ -82,12 +81,12 @@
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Text fill="WHITE" layoutX="31.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NAME:">
+                        <Text fx:id="nameText" fill="WHITE" layoutX="31.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NAME:">
                             <font>
                                 <Font name="Quicksand Bold" size="14.0" />
                             </font>
                         </Text>
-                        <Text fill="WHITE" layoutX="27.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SPEED:">
+                        <Text fx:id="speedText" fill="WHITE" layoutX="27.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SPEED:">
                             <font>
                                 <Font name="Quicksand Bold" size="14.0" />
                             </font>
@@ -124,6 +123,14 @@
                 <Insets left="40.0" />
             </GridPane.margin>
         </Button>
+      <ImageView fx:id="spectating" fitHeight="150.0" fitWidth="200.0" opacity="0.6" pickOnBounds="true" preserveRatio="true" visible="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="TOP">
+         <image>
+            <Image url="@/images/spectate.png" />
+         </image>
+         <GridPane.margin>
+            <Insets right="30.0" />
+         </GridPane.margin>
+      </ImageView>
 
     </children>
 </GridPane>

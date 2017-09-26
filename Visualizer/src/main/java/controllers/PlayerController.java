@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.Competitor;
 import parsers.boatAction.BoatAction;
@@ -21,6 +22,12 @@ import utility.BinaryPackager;
 public class PlayerController {
 
 
+    @FXML
+    private ImageView spectating;
+    @FXML
+    private Text speedText;
+    @FXML
+    private Text nameText;
     @FXML
     private Pane healthPane;
     @FXML
@@ -147,7 +154,27 @@ public class PlayerController {
      * Hide the player pane
      */
     void hideAll() {
-        player.setVisible(false);
+
+
+//
+//        @FXML
+//        private GridPane boatInfoGrid;
+//        @FXML
+//        private GridPane player;
+//
+
+//        player.setVisible(false);
+        spectating.setVisible(true);
+        playerImageView1.setVisible(false);
+        gamerTagLabel.setVisible(false);
+        boatSpeedLabel.setVisible(false);
+        speed.setVisible(false);
+        potion.setVisible(false);
+        playerImageView.setVisible(false);
+        healthPane.setVisible(false);
+        imageGrid.setVisible(false);
+        nameText.setVisible(false);
+        speedText.setVisible(false);
     }
 
 
