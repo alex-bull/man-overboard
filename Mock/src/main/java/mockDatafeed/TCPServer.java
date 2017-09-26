@@ -1,5 +1,6 @@
 package mockDatafeed;
 
+import utility.BinaryPackager;
 import utility.ConnectionClient;
 import utility.QueueMessage;
 import utility.WorkQueue;
@@ -83,6 +84,8 @@ public class TCPServer extends TimerTask {
                     while (buffer.hasRemaining()) client.write(buffer);
                 } catch (IOException ie) {
                     System.out.println(client.getRemoteAddress() + " has disconnected, removing client");
+                    //TODO:- make unclean disconnects restart the server if no players are left
+                    //this.sendQueue.put((Integer) key.attachment(), new BinaryPackager().packageLeaveLobby());
                     key.cancel();
                 }
             }

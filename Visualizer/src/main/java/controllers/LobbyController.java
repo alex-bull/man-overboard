@@ -319,7 +319,7 @@ public class LobbyController implements Initializable {
         //clean up first
         if (timer != null) timer.stop();
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 2);
-        dataSource.kill();
+        dataSource.disconnect();
         dataSource = null;
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));

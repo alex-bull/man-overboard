@@ -169,9 +169,9 @@ public class MainController {
                     timer.stop();
                     returnToLobby();
                 }
-                if (raceViewController.exit) {
-                    loadStartView();
-                    return;
+                if (raceViewController.exit) { //quit game
+                    timer.stop();
+                    returnToStart();
                 }
                 dataSource.update();
                 if (raceViewController.isLoaded()) {
@@ -211,7 +211,7 @@ public class MainController {
         timeline.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Sounds.player.fadeOut("sounds/bensound-epic.mp3", 3);
+                Sounds.player.stop("sounds/bensound-epic.mp3");
                 FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
                 Parent root = null;
                 try {
@@ -233,19 +233,15 @@ public class MainController {
 
 
     /**
-     * Play the game music loop
+     * Take the player back to the start screen
      */
-    private void playGameMusic() {
-        Sounds.player.loopMP3("sounds/bensound-epic.mp3");
-        Sounds.player.setVolume("sounds/bensound-epic.mp3", 0.5);
-        playing = true;
-    }
-
-    private void loadStartView() {
+    private void returnToStart() {
         //clean up first
-        if (timer != null) timer.stop();
-        dataSource.kill();
+        dataSource.send(new BinaryPackager().packageLeaveLobby());
+        dataSource.disconnect();
         dataSource = null;
+
+        Sounds.player.stop("sounds/bensound-epic.mp3");
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
         Parent root = null;
@@ -260,4 +256,16 @@ public class MainController {
         startController.begin();
         App.getScene().setRoot(root);
     }
+
+
+    /**
+     * Play the game music loop
+     */
+    private void playGameMusic() {
+        Sounds.player.loopMP3("sounds/bensound-epic.mp3");
+        Sounds.player.setVolume("sounds/bensound-epic.mp3", 0.5);
+        playing = true;
+    }
+
+
 }

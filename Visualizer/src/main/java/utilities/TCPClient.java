@@ -133,15 +133,6 @@ public class TCPClient extends TimerTask {
 
     }
 
-    public void close(){
 
-        try {
-            dis.close();
-            this.receiveSock.close();
-        } catch (IOException e) {
-            //
-        }
-
-    }
 
 }

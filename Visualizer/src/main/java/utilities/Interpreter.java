@@ -140,7 +140,7 @@ public class Interpreter implements DataSource, PacketHandler {
      * Disconnect client from server
      */
     public void disconnect() {
-        this.send(new BinaryPackager().packageDisconnect());
+        this.send(new BinaryPackager().packageDisconnect()); //TODO:- not actually being used on the server side
         this.clientTimer.cancel();
         try {
             this.TCPClient.close();

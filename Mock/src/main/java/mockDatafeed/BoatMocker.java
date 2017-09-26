@@ -2,6 +2,7 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
+import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -396,13 +397,21 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     }
 
     /**
-     * Removes the player from the lobby - DO NOT USE DURING RACE
+     * Removes the player from the lobby
      * the server will automatically remove selector key when socket disconnects
      * Send xml to update other clients
      *
      * @param clientId Integer, the client to remove
      */
     private void removePlayerFromLobby(Integer clientId) {
+        if (raceInProgress) {
+            competitors.get(clientId).setStatus(DSQ);
+            clientStates.put(clientId, ClientState.DISCONNECTED);
+            if (!boatUpdater.finisherList.contains(competitors.get(clientId))) {
+                boatUpdater.finisherList.add(competitors.get(clientId));
+            }
+            return;
+        }
         clientStates.put(clientId, ClientState.DISCONNECTED);
         this.competitors.remove(clientId);
         this.sendAllXML();
@@ -596,9 +605,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             firstMessageTime = System.currentTimeMillis() / 1000;
         }
         if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() / 1000 - gameStartTime > gameDuration)) {
+
             raceStatus = 4;
 
         } else {
+
             raceStatus = 3;
         }
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed, competitors.size());

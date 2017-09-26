@@ -361,14 +361,6 @@ public class RaceViewController implements Initializable, TableObserver {
         controlsBox.toBack();
     }
 
-    /**
-     * Brings the quit box to front
-     * @param actionEvent
-     */
-    public void showQuitBox(ActionEvent actionEvent) {
-        quitBox.toFront();
-    }
-
 
     /**
      * toggles the state of the zoom
@@ -384,21 +376,33 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+
+    /**
+     * Brings the quit box to front
+     * @param actionEvent
+     */
+    @FXML
+    public void showQuitBox(ActionEvent actionEvent) {
+        quitBox.toFront();
+    }
+
+
     /**
      * hides the quit box
      * @param actionEvent
      */
+    @FXML
     public void hideQuitBox(ActionEvent actionEvent) {
         quitBox.toBack();
     }
 
+
     /**
-     *
+     * Set the exit flag to tell main to leave the game when possible
      * @param actionEvent
      */
+    @FXML
     public void leaveGame(ActionEvent actionEvent) {
-        BinaryPackager binaryPackager = new BinaryPackager();
-        dataSource.send(binaryPackager.packageLeaveLobby());
         this.exit = true;
     }
 
@@ -407,7 +411,6 @@ public class RaceViewController implements Initializable, TableObserver {
      * Toggles the sounds when the button is clicked
      * @param actionEvent
      */
-
     public void toggleSound(ActionEvent actionEvent) {
 
         muted = !muted;
@@ -1038,37 +1041,7 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-    /**
-     * Zoom the screen in and out upon touch zoom event
-     *
-     * @param zoomEvent zoom event
-     */
-    public void zoom(ZoomEvent zoomEvent) {
 
-        if (zoom) {
-            if (dataSource.getZoomLevel() < 18 && zoomEvent.getTotalZoomFactor() > 1) {
-                long zoomFactor = Math.round(zoomEvent.getTotalZoomFactor() / 2);
-                dataSource.changeScaling(zoomFactor);
-                zoomIn();
-            }
-            if (dataSource.getZoomLevel() > 13 && zoomEvent.getTotalZoomFactor() < 1) {
-                long zoomFactor = Math.round((1 - zoomEvent.getTotalZoomFactor()) / 0.4);
-                dataSource.changeScaling(-zoomFactor);
-                zoomIn();
-            }
-        }
-//        if (zoom) {
-//            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
-//                dataSource.changeScaling(1);
-//                zoomIn();
-//            }
-//            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
-//                dataSource.changeScaling(-1);
-//                zoomIn();
-//            }
-//            touchZoomLevel = zoomEvent.getTotalZoomFactor();
-//        }
-    }
 
     /**
      * Redirect the user to the start screen
