@@ -249,34 +249,15 @@ public class LobbyController implements Initializable {
 
 
     /**
-     * Sets the game details on the lobby screen
-     *
-     * @param courseImage String, the url of the course image
-     * @param location    String, the name of the chosen course
-     * @param gameMode    String, the game type
+     * Limits character input count on text field
+     * @param tf TextField
+     * @param maxLength int, the max number of chars
      */
-    public void setGame(String courseImage, String location, String gameMode) {
-
-        try {
-            this.courseImageView.setImage(new Image(courseImage));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid image url, using default image");
-            return;
-        }
-        this.locationLabel.setText(location);
-        this.gameTypeLabel.setText(gameMode);
-    }
-
-
-
-    public void addTextLimiter(final TextField tf, final int maxLength) {
-        tf.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(final ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
-                if (tf.getText().length() > maxLength) {
-                    String s = tf.getText().substring(0, maxLength);
-                    tf.setText(s);
-                }
+    private void addTextLimiter(final TextField tf, final int maxLength) {
+        tf.textProperty().addListener((ov, oldValue, newValue) -> {
+            if (tf.getText().length() > maxLength) {
+                String s = tf.getText().substring(0, maxLength);
+                tf.setText(s);
             }
         });
     }
@@ -286,7 +267,7 @@ public class LobbyController implements Initializable {
      * Check the current race status
      * Change to the raceView upon started signal
      */
-    public void checkStatus() {
+    private void checkStatus() {
 
         if (dataSource.getRaceStatus() == RaceStatusEnum.STARTED) {
             System.out.println("game beginning...");

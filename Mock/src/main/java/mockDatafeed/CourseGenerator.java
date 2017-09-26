@@ -33,7 +33,7 @@ public class CourseGenerator {
      * Generates a random course template
      * @return String the path to the template
      */
-    public String generateCourse() {
+    String generateCourse() {
         List<String> keys = new ArrayList<>(coursePaths.keySet());
         this.chosenCourse = keys.get(randomGen.nextInt(keys.size()));
         return this.chosenCourse;
@@ -43,7 +43,7 @@ public class CourseGenerator {
      * Gets the prestart coordinates that matches with the chosen course
      * @return MutablePoint the prestart location
      */
-    public MutablePoint getPrestart() {
+    MutablePoint getPrestart() {
         return coursePaths.get(this.chosenCourse);
     }
 
@@ -51,7 +51,7 @@ public class CourseGenerator {
      * Returns the value of the course theme
      * @return Integer course theme id
      */
-    public Integer getThemeId() {
+    Integer getThemeId() {
         if (chosenCourse.contains("antarctica")) {
             return ANTARCTICA.getValue();
         }
