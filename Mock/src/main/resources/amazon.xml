@@ -70,4 +70,6 @@
         <Item Id="Amazon_3" Lati="0.49626" Long="-50.35961"/>
     </Decorations>
 
+    <GameStartTime>%s</GameStartTime>
+
 </Race>

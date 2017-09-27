@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
@@ -30,7 +31,6 @@ public class BoatModel extends Group {
     public BoatModel(Integer boatType, boolean player) {
 
         this.boatModel = new Polygon();
-        Polygon boatModel = new Polygon();
 //        boatModel.getPoints().addAll(
 //                -6.0, -14.0, //top
 //                -6.0, 14.0, //left
@@ -81,6 +81,7 @@ public class BoatModel extends Group {
         this.ripImage.setFitHeight(20);
         this.getChildren().add(ripImage);
         ripImage.setVisible(false);
+        ripImage.toFront();
 
         this.getChildren().add(boatModel);
     }
@@ -111,6 +112,8 @@ public class BoatModel extends Group {
             boatModel.setVisible(false);
             this.getChildren().remove(playerMarker);
             ripImage.setVisible(true);
+            this.ripImage.toFront();
+            this.getChildren().remove(boatModel);
         }
 
     }

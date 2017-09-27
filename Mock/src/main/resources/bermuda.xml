@@ -67,8 +67,8 @@
     <Decorations>
         <Item Id="Bermuda_1" Lati="32.38547" Long="-64.85624"/>
         <Item Id="Bermuda_2" Lati="32.3759" Long="-64.72784"/>
-        <Item Id="Bermuda_3" Lati="32.32398" Long="-64.83736"/>
+        <Item Id="Bermuda_3" Lati="32.33398" Long="-64.83736"/>
     </Decorations>
 
-
+    <GameStartTime>%s</GameStartTime>
 </Race>

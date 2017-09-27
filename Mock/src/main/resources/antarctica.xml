@@ -74,6 +74,6 @@
         <Item Id="Cold_Animal_3" Lati="-64.62446" Long="-63.25584"/>
     </Decorations>
 
-
+    <GameStartTime>%s</GameStartTime>
 
 </Race>

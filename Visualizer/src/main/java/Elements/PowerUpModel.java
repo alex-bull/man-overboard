@@ -34,7 +34,6 @@ public class PowerUpModel extends ImageView {
                 break;
         }
 
-        System.out.println(scale);
         this.setImage(image);
         this.setPreserveRatio(true);
         this.setFitWidth(baseSize);
@@ -56,6 +55,7 @@ public class PowerUpModel extends ImageView {
     public void update(boolean isZoom, PowerUp powerUp, MutablePoint currentPosition17, double width, double height) {
         MutablePoint p;
         if (isZoom) {
+
             p = powerUp.getPosition17().shift(-currentPosition17.getXValue() + width / 2, -currentPosition17.getYValue() + height / 2);
         } else {
             p = powerUp.getPosition();

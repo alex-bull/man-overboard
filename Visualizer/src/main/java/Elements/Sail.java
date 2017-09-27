@@ -39,12 +39,12 @@ public class Sail extends Line {
         this.setEndY(boatY + length);
         this.getTransforms().clear();
         if (boat.hasSailsOut()) {
-            this.getTransforms().add(new Rotate(windAngle, boatX, boatY));
+            this.setVisible(false);
         } else {
+            this.setVisible(true);
             this.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatX, boatY));
         }
         this.toFront();
-
     }
 
 }

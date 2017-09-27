@@ -317,8 +317,8 @@ public class BoatUpdater {
 
     private void nextRoamPos(){
         sharkRoamIndex = random.nextInt(courseBoundary.size());
-        double PosY = courseBoundary.get(sharkRoamIndex).getXValue() + 0.01;
-        double PosX = courseBoundary.get(sharkRoamIndex).getYValue() + 0.01;
+        double PosY = courseBoundary.get(sharkRoamIndex).getXValue();
+        double PosX = courseBoundary.get(sharkRoamIndex).getYValue();
         sharkRoamPos = new MutablePoint(PosX, PosY);
     }
 
@@ -619,7 +619,6 @@ public class BoatUpdater {
         for (Whirlpool whirlpool : whirlpools) {
             double collisionRadius = boat.getCollisionRadius() + whirlpool.getCollisionRadius();
             double distance = raceCourse.distanceBetweenGPSPoints(whirlpool.getPosition(), boat.getPosition());
-//            System.out.println(distance);
             if (distance <= collisionRadius) {
                 handler.yachtEvent(boat.getSourceID(), 2);
                 collisionHandler(boat.getPosition(), whirlpool.getCollisionMagnitude(), 10);

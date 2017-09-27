@@ -20,6 +20,8 @@ public interface DataSource {
 
     int getZoomLevel();
 
+    void disconnect();
+
     Map<Integer, CrewLocation> getCrewLocations();
 
     Map<Integer, Shark> getSharkLocations();
@@ -81,6 +83,8 @@ public interface DataSource {
     void update();
 
     Map<Integer, PowerUp> getPowerUps();
+
+    boolean isSpectating();
     ThemeEnum getThemeId();
     MutablePoint evaluatePosition17(MutablePoint position);
     MutablePoint evaluateOriginalPosition(MutablePoint location);

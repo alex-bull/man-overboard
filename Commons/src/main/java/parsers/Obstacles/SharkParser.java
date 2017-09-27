@@ -29,7 +29,6 @@ public class SharkParser {
         List<Shark> sharkLocations = new ArrayList<>();
         Integer n = hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 1));
         int currentByte = 1;
-//        System.out.println(packet.length);
         for (int i = 0; i < n; i++) {
             Integer sourceId = hexByteArrayToInt(Arrays.copyOfRange(packet, currentByte, currentByte + 4));
             Integer sharkNumber = hexByteArrayToInt(Arrays.copyOfRange(packet, currentByte + 4, currentByte + 5));

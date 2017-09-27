@@ -33,7 +33,6 @@ public class BoatMockerTest {
         Method sendRaceXML = mockerClass.getDeclaredMethod("formatRaceXML", String.class);
         sendRaceXML.setAccessible(true);
         String resultString = (String) sendRaceXML.invoke(boatMocker, raceTemplateString);
-        System.out.println(resultString);
     }
 
     @Test

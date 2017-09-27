@@ -25,6 +25,7 @@ public class RaceData {
     private Map<Integer, String> legIndexToRoundingDirection = new HashMap<>();
     private Map<Integer, String> markSourceIDToRoundingDirection = new HashMap<>();
 
+    private long gameStartTime;
 
     RaceData() {
     }
@@ -131,6 +132,13 @@ public class RaceData {
 
     public void setLegIndexToRoundingDirection(Map<Integer, String> legIndexToRoundingDirection) {
         this.legIndexToRoundingDirection = legIndexToRoundingDirection;
+    }
+    public long getGameStartTime() {
+        return gameStartTime;
+    }
+
+    public void setGameStartTime(long gameStartTime) {
+        this.gameStartTime = gameStartTime;
     }
 
     public Map<Integer, String> getMarkSourceIDToRoundingDirection() {
