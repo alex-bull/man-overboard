@@ -124,6 +124,9 @@ public class RaceViewController implements Initializable, TableObserver {
     private final String[] crewImages = {"/Animations/boyCantSwim.gif", "/Animations/girlCantSwim.gif"};
     private final String[] bloodImages = {"/images/blood2.png", "/images/blood1.png", "/images/blood.png"};
 
+    private Map<Integer, CourseFeature> currentFeaturePositions = new HashMap<>();
+
+
     //================================================================================================================
     // SETUP
     //================================================================================================================
@@ -391,6 +394,9 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+
+
+
     //================================================================================================================
     // DRAWING
     //================================================================================================================
@@ -451,6 +457,7 @@ public class RaceViewController implements Initializable, TableObserver {
             courseFeatures = dataSource.getStoredFeatures();
             courseBoundary = dataSource.getCourseBoundary();
         }
+        currentFeaturePositions = courseFeatures;
         drawCourse(courseFeatures);
         drawBoundary(courseBoundary);
     }
@@ -608,50 +615,60 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+
+
+    private boolean markInView(MutablePoint markLocation) {
+        Double width = raceViewPane.getWidth();
+        Double height = raceViewPane.getHeight();
+        if (markLocation.getXValue() > 0 && markLocation.getXValue() < width && markLocation.getYValue() > 0 && markLocation.getYValue() < height) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Update the position of the guide arrow
      */
     private void drawGuidingArrow() {
-        guideArrow.show();
+//        guideArrow.show();
         Map<Integer, List<Integer>> indexMap = dataSource.getIndexToSourceIdCourseFeatures();
         Map<Integer, CourseFeature> featureMap = dataSource.getCourseFeatureMap();
 
         Competitor boat = dataSource.getCompetitor();
         int currentIndex = boat.getCurrentLegIndex();
-        MutablePoint nextMarkLocation = RaceCalculator.getGateCentre(currentIndex + 1, indexMap, featureMap);
+        List<MutablePoint> nextMarkLocations = RaceCalculator.getMarkCentres(currentIndex + 1, indexMap, currentFeaturePositions);
 
-        if (nextMarkLocation == null) { //end of race
+
+        if (nextMarkLocations.size() == 0) { //end of race
             this.raceViewPane.getChildren().remove(guideArrow);
-            return;
-        }
-        if (isZoom()) {
-            guideArrow.updateArrowZoomed(boat, boatPositionX, boatPositionY, nextMarkLocation);
-        } else {
-            guideArrow.updateArrow(RaceCalculator.getGateCentre(currentIndex, indexMap, featureMap), nextMarkLocation);
-        }
-    }
-
-    /**
-     * Update the position of the curved guide arrows
-     */
-    private void drawCurvedGuidingArrows() {
-        curvedArrowClockwise.show();
-        curvedArrowAnticlockwise.show();
-        Map<Integer, List<Integer>> indexMap = dataSource.getIndexToSourceIdCourseFeatures();
-        Map<Integer, CourseFeature> featureMap = dataSource.getCourseFeatureMap();
-
-        Competitor boat = dataSource.getCompetitor();
-        int currentIndex = boat.getCurrentLegIndex();
-        MutablePoint nextMarkLocation = RaceCalculator.getGateCentre(currentIndex + 1, indexMap, featureMap);
-
-        if (nextMarkLocation == null) { //end of race
-            this.raceViewPane.getChildren().remove(curvedArrowClockwise);
             this.raceViewPane.getChildren().remove(curvedArrowAnticlockwise);
+            this.raceViewPane.getChildren().remove(curvedArrowClockwise);
             return;
         }
 
-        curvedArrowClockwise.updateArrow(nextMarkLocation.getXValue(), nextMarkLocation.getYValue()); // TODO get different mark location for left and right
-        curvedArrowAnticlockwise.updateArrow(boatPositionX, boatPositionY);
+
+        if (markInView(nextMarkLocations.get(0)) || (nextMarkLocations.size() > 1 && markInView(nextMarkLocations.get(1)))) {
+            System.out.println("Round");
+            guideArrow.hide();
+            curvedArrowAnticlockwise.show();
+            curvedArrowAnticlockwise.updateArrow(nextMarkLocations.get(0).getXValue(), nextMarkLocations.get(0).getYValue());
+            if (nextMarkLocations.size() > 1) {
+                curvedArrowClockwise.show();
+                curvedArrowClockwise.updateArrow(nextMarkLocations.get(1).getXValue(), nextMarkLocations.get(1).getYValue());
+            }
+        }
+        else {
+            System.out.println("Straight");
+            curvedArrowAnticlockwise.hide();
+            curvedArrowClockwise.hide();
+            guideArrow.show();
+            MutablePoint nextMarkLocation = RaceCalculator.getGateCentre(currentIndex + 1, indexMap, currentFeaturePositions);
+            if (isZoom()) {
+                guideArrow.updateArrowZoomed(boat, boatPositionX, boatPositionY, nextMarkLocation);
+            } else {
+                guideArrow.updateArrow(RaceCalculator.getGateCentre(currentIndex, indexMap, featureMap), nextMarkLocation);
+            }
+        }
     }
 
 
@@ -935,16 +952,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawHealthBar(boat);
             this.drawAnnotations(boat);
         }
-        isCloseToNextMark = true;
-        this.drawSail(width, length, dataSource.getCompetitor());
-        if (isCloseToNextMark) { // TODO calculate whether boat is close to mark
-            guideArrow.hide();
-            drawCurvedGuidingArrows();
-        } else {
-            curvedArrowClockwise.hide();
-            curvedArrowAnticlockwise.hide();
-            drawGuidingArrow();
-        }
+        drawGuidingArrow();
         counter++;
     }
 
