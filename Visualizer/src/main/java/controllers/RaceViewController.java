@@ -9,7 +9,6 @@ import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -43,7 +42,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-import static java.lang.Math.PI;
 import static java.lang.Math.pow;
 import static javafx.collections.FXCollections.observableArrayList;
 import static parsers.BoatStatusEnum.DSQ;
@@ -147,13 +145,12 @@ public class RaceViewController implements Initializable, TableObserver {
         sailLine = new Sail(Color.WHITE);
         curvedSailLine = new CurvedSail(Color.WHITE);
 
-        sharkModel = new SharkModel(new Image("/Animations/sharkMoving.gif"));
+
 
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(sailLine);
         raceViewPane.getChildren().add(curvedSailLine);
-        raceViewPane.getChildren().add(sharkModel);
 
         controlsBox.setVisible(false);
         quitBox.setVisible(false);
@@ -205,15 +202,23 @@ public class RaceViewController implements Initializable, TableObserver {
         this.dataSource = dataSource;
 
         try {
+
             if(dataSource.getThemeId() == ANTARCTICA) {
                 mapEngine.load(getClass().getClassLoader().getResource("mapsAntarctica.html").toURI().toString());
+                sharkModel = new SharkModel(new Image("/Animations/sharkMoving.gif"));
             }
             else if (dataSource.getThemeId() == AMAZON) {
                 mapEngine.load(getClass().getClassLoader().getResource("mapsAmazon.html").toURI().toString());
+                sharkModel = new SharkModel(new Image("/Animations/crocMoving.gif"));
             }
+            else {
+                sharkModel = new SharkModel(new Image("/Animations/sharkMoving.gif"));
+            }
+            raceViewPane.getChildren().add(sharkModel);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+
 
 
         while (dataSource.getCompetitorsPosition() == null) {
