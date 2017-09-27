@@ -2,12 +2,6 @@ package mockDatafeed;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
-import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.util.Duration;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
