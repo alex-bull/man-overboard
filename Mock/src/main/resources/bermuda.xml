@@ -13,32 +13,32 @@
     </Participants>
     <Course>
         <CompoundMark CompoundMarkID="1" Name="Start Line">
-            <Mark SeqID="1" Name="Start Line 1" TargetLat="-64.68413" TargetLng="-63.0574" SourceID="122" MarkDirection="CCW"/>
-            <Mark SeqID="2" Name="Start Line 2" TargetLat="-64.69587" TargetLng="-63.0622" SourceID="123" MarkDirection="CW"/>
+            <Mark SeqID="1" Name="Start Line 1" TargetLat="32.35812" TargetLng="-64.80413" SourceID="122" MarkDirection="CCW"/>
+            <Mark SeqID="2" Name="Start Line 2" TargetLat="32.34994" TargetLng="-64.80714" SourceID="123" MarkDirection="CW"/>
         </CompoundMark>
 
         <CompoundMark CompoundMarkID="2" Name="Mark">
-            <Mark SeqID="1" Name="Mark 1" TargetLat="-64.70262" TargetLng="-62.96745" SourceID="131" MarkDirection="CCW"/>
+            <Mark SeqID="1" Name="Mark 1" TargetLat="32.34458" TargetLng="-64.78431" SourceID="131" MarkDirection="CCW"/>
         </CompoundMark>
 
         <CompoundMark CompoundMarkID="3" Name="Windward Gate">
-            <Mark SeqID="1" Name="Lee Gate 1" TargetLat="-64.6671" TargetLng="-62.97088" SourceID="124" MarkDirection="CCW"/>
-            <Mark SeqID="2" Name="Lee Gate 2" TargetLat="-64.66739" TargetLng="-62.93792" SourceID="125" MarkDirection="CW"/>
+            <Mark SeqID="1" Name="Lee Gate 1" TargetLat="32.36444" TargetLng="-64.78191" SourceID="124" MarkDirection="CCW"/>
+            <Mark SeqID="2" Name="Lee Gate 2" TargetLat="32.3627" TargetLng="-64.76903" SourceID="125" MarkDirection="CW"/>
         </CompoundMark>
 
         <CompoundMark CompoundMarkID="4" Name="Leeward Gate">
-            <Mark SeqID="1" Name="Wind Gate 1" TargetLat="-64.73634" TargetLng="-62.98873" SourceID="126" MarkDirection="CW"/>
-            <Mark SeqID="2" Name="Wind Gate 2" TargetLat="-64.73722" TargetLng="-62.95509" SourceID="127" MarkDirection="CCW"/>
+            <Mark SeqID="1" Name="Wind Gate 1" TargetLat="32.32326" TargetLng="-64.79684" SourceID="126" MarkDirection="CW"/>
+            <Mark SeqID="2" Name="Wind Gate 2" TargetLat="32.3218" TargetLng="-64.78414" SourceID="127" MarkDirection="CCW"/>
         </CompoundMark>
 
         <CompoundMark CompoundMarkID="5" Name="Windward Gate">
-            <Mark SeqID="1" Name="Lee Gate 1" TargetLat="-64.6671" TargetLng="-62.97088" SourceID="124" MarkDirection="CCW"/>
-            <Mark SeqID="2" Name="Lee Gate 2" TargetLat="-64.66739" TargetLng="-62.93792" SourceID="125" MarkDirection="CW"/>
+            <Mark SeqID="1" Name="Lee Gate 1" TargetLat="32.36444" TargetLng="-64.78191" SourceID="124" MarkDirection="CCW"/>
+            <Mark SeqID="2" Name="Lee Gate 2" TargetLat="32.3627" TargetLng="-64.76903" SourceID="125" MarkDirection="CW"/>
         </CompoundMark>
 
         <CompoundMark CompoundMarkID="6" Name="Finish Line" isfinish="true">
-            <Mark SeqID="1" Name="Finish Line 1" TargetLat="-64.6424" TargetLng="-62.9853" SourceID="128" MarkDirection="CCW"/>
-            <Mark SeqID="2" Name="Finish Line 2" TargetLat="-64.64182" TargetLng="-62.95303" SourceID="129" MarkDirection="CW"/>
+            <Mark SeqID="1" Name="Finish Line 1" TargetLat="32.37894" TargetLng="-64.78225" SourceID="128" MarkDirection="CCW"/>
+            <Mark SeqID="2" Name="Finish Line 2" TargetLat="32.37822" TargetLng="-64.77144" SourceID="129" MarkDirection="CW"/>
         </CompoundMark>
     </Course>
 

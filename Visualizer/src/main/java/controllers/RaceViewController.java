@@ -638,7 +638,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
         Competitor boat = dataSource.getCompetitor();
         int currentIndex = boat.getCurrentLegIndex();
-        List<MutablePoint> nextMarkLocations = RaceCalculator.getMarkCentres(currentIndex + 1, indexMap, currentFeaturePositions);
+        List<MutablePoint> nextMarkLocations = RaceCalculator.getMarkCentres(currentIndex + 1, indexMap, this.currentFeaturePositions);
 
 
         if (nextMarkLocations == null || nextMarkLocations.size() == 0) { //end of race
@@ -650,31 +650,35 @@ public class RaceViewController implements Initializable, TableObserver {
 
         List<Integer> sourceIds = indexMap.get(currentIndex + 1);
 
+        double scale = nodeSizeFunc(dataSource.getZoomLevel());
+
+//        curvedArrowClockwise.setFitWidth(scale * curvedArrowClockwise.getFitWidth());
+////        curvedArrowClockwise.setScaleY(scale);
+//        curvedArrowAnticlockwise.setFitWidth(scale * curvedArrowAnticlockwise.getFitWidth());
+//        curvedArrowAnticlockwise.setScaleY(scale);
 
         if (markInView(nextMarkLocations.get(0)) || (nextMarkLocations.size() > 1 && markInView(nextMarkLocations.get(1)))) {
-            System.out.println("Round");
             guideArrow.hide();
             String direction = dataSource.getMarkSourceIdToRoundingDirection().get(sourceIds.get(0));
             if (direction.equals("CCW")) {
                 curvedArrowAnticlockwise.show();
-                curvedArrowAnticlockwise.updateArrow(nextMarkLocations.get(0).getXValue(), nextMarkLocations.get(0).getYValue());
+                curvedArrowAnticlockwise.updateArrow(nextMarkLocations.get(0).getXValue(), nextMarkLocations.get(0).getYValue(), scale);
             } else {
                 curvedArrowClockwise.show();
-                curvedArrowClockwise.updateArrow(nextMarkLocations.get(0).getXValue(), nextMarkLocations.get(0).getYValue());
+                curvedArrowClockwise.updateArrow(nextMarkLocations.get(0).getXValue(), nextMarkLocations.get(0).getYValue(), scale);
             }
             if (nextMarkLocations.size() > 1) {
                 String direction2 = dataSource.getMarkSourceIdToRoundingDirection().get(sourceIds.get(1));
                 if (direction2.equals("CCW")) {
                     curvedArrowAnticlockwise.show();
-                    curvedArrowAnticlockwise.updateArrow(nextMarkLocations.get(1).getXValue(), nextMarkLocations.get(1).getYValue());
+                    curvedArrowAnticlockwise.updateArrow(nextMarkLocations.get(1).getXValue(), nextMarkLocations.get(1).getYValue(), scale);
                 } else {
                     curvedArrowClockwise.show();
-                    curvedArrowClockwise.updateArrow(nextMarkLocations.get(1).getXValue(), nextMarkLocations.get(1).getYValue());
+                    curvedArrowClockwise.updateArrow(nextMarkLocations.get(1).getXValue(), nextMarkLocations.get(1).getYValue(), scale);
                 }
             }
         }
         else {
-            System.out.println("Straight");
             curvedArrowAnticlockwise.hide();
             curvedArrowClockwise.hide();
             guideArrow.show();
@@ -869,6 +873,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
         sharkModel.setScaleX(scale);
         sharkModel.setScaleY(scale);
+
     }
 
 
