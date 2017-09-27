@@ -3,24 +3,19 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
-import javafx.scene.Node;
-import parsers.boatAction.BoatAction;
-import parsers.xml.race.Decoration;
-import utilities.Sounds;
 import Elements.*;
-import Elements.Annotation;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.AnchorPane;
@@ -29,7 +24,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import models.*;
@@ -37,8 +31,8 @@ import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
 import parsers.boatAction.BoatAction;
 import parsers.powerUp.PowerUp;
+import parsers.xml.race.Decoration;
 import utilities.DataSource;
-import utilities.EnvironmentConfig;
 import utilities.RaceCalculator;
 import utilities.Sounds;
 import utility.BinaryPackager;
@@ -80,9 +74,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML
     private Pane raceParentPane;
     @FXML
-    private ImageView controlsView;
-    @FXML
     private HBox controlsBox;
+    @FXML private HBox quitBox;
     @FXML
     private GridPane finisherListPane;
     @FXML
@@ -110,6 +103,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private boolean isLoaded = false;
     private boolean zoom = false;
     private boolean muted = false;
+    public boolean finishFlag = false; //game finished
+    public boolean exit = false; //quit game
     //CONTROL VARIABLES
     private int counter = 0;
     private Integer selectedBoatSourceId = 0;
@@ -126,6 +121,7 @@ public class RaceViewController implements Initializable, TableObserver {
     //images
     private final String[] crewImages = {"/Animations/boyCantSwim.gif", "/Animations/girlCantSwim.gif"};
     private final String[] bloodImages = {"/images/blood2.png", "/images/blood1.png", "/images/blood.png"};
+
 
     //================================================================================================================
     // SETUP
@@ -148,13 +144,14 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().add(sailLine);
         raceViewPane.getChildren().add(sharkModel);
 
+        controlsBox.setVisible(false);
+        quitBox.setVisible(false);
+
 
         finisherListPane.setVisible(false);
 
         this.guideArrow = new GuideArrow(backgroundColor.brighter(), 90.0);
         raceViewPane.getChildren().add(guideArrow);
-        controlsView = new ImageView(new Image("images/controls.png"));
-
         gc = raceViewCanvas.getGraphicsContext2D();
 
         mapEngine = mapView.getEngine();
@@ -190,8 +187,8 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewCanvas.setWidth(width);
         raceViewPane.setPrefHeight(height);
         raceViewPane.setPrefWidth(width);
-        controlsBox.setPrefHeight(height);
-        controlsBox.setPrefWidth(width);
+        controlsBox.toBack();
+        quitBox.toBack();
         raceViewPane.getChildren().add(track);
         this.dataSource = dataSource;
 
@@ -254,6 +251,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * Check to see if the race is finished and display finisher list if it is
      */
     private void checkRaceFinished() {
+        System.out.println("data "+ dataSource.getRaceStatus());
         if (dataSource.getRaceStatus().equals(RaceStatusEnum.FINISHED) && !finisherListDisplayed) {
             for (Competitor aCompetitor : dataSource.getCompetitorsPosition()) {
                 if (aCompetitor.getStatus() == DSQ) {
@@ -271,6 +269,7 @@ public class RaceViewController implements Initializable, TableObserver {
             double height = raceViewPane.getHeight();
             finisherListPane.setLayoutX(width / 2 - finisherListPane.getWidth() / 2);
             finisherListPane.setLayoutY(height / 2 - finisherListPane.getHeight() / 2);
+            this.finishFlag = true;
         }
     }
 
@@ -342,14 +341,19 @@ public class RaceViewController implements Initializable, TableObserver {
      *
      */
     public void toggleControls() {
-        if (!raceViewPane.getChildren().contains(controlsBox)) {
-            controlsBox.getChildren().add(controlsView);
-            raceViewPane.getChildren().add(controlsBox);
-        } else {
-            controlsBox.getChildren().remove(controlsView);
-            raceViewPane.getChildren().remove(controlsBox);
-        }
+        controlsBox.setVisible(true);
+        controlsBox.toFront();
     }
+
+    /**
+     * Sends the controls box to back
+     * @param mouseEvent
+     */
+    public void closeControls(MouseEvent mouseEvent) {
+        controlsBox.setVisible(false);
+        controlsBox.toBack();
+    }
+
 
     /**
      * toggles the state of the zoom
@@ -367,10 +371,41 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     /**
+     * Brings the quit box to front
+     * @param actionEvent
+     */
+    @FXML
+    public void showQuitBox(ActionEvent actionEvent) {
+        quitBox.setVisible(true);
+        quitBox.toFront();
+    }
+
+
+    /**
+     * hides the quit box
+     * @param actionEvent
+     */
+    @FXML
+    public void hideQuitBox(ActionEvent actionEvent) {
+        quitBox.setVisible(false);
+        quitBox.toBack();
+    }
+
+
+    /**
+     * Set the exit flag to tell main to leave the game when possible
+     * @param actionEvent
+     */
+    @FXML
+    public void leaveGame(ActionEvent actionEvent) {
+        this.exit = true;
+    }
+
+
+    /**
      * Toggles the sounds when the button is clicked
      * @param actionEvent
      */
-
     public void toggleSound(ActionEvent actionEvent) {
 
         muted = !muted;
@@ -417,6 +452,12 @@ public class RaceViewController implements Initializable, TableObserver {
             this.raceViewPane.getChildren().add(healthBar);
             return;
         }
+
+        if (boat.getStatus() == DSQ) {
+            healthBar.setVisible(false);
+            return;
+        }
+
         boolean alive;
         if (isZoom()) {
             MutablePoint location = getZoomedBoatLocation(boat);
@@ -567,7 +608,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.boatModels.put(sourceId, boatModel);
         }
         if (boat.getStatus() == DSQ) {
-            boatModels.get(boat.getSourceID()).die();
+            boatModel.die();
             boatModel.update(point, 0);
         } else boatModel.update(point, boat.getCurrentHeading());
     }
@@ -864,6 +905,26 @@ public class RaceViewController implements Initializable, TableObserver {
         return new MutablePoint(pointX, pointY);
     }
 
+    /**
+     * Zoom the screen in and out upon touch zoom event
+     *
+     * @param zoomEvent zoom event
+     */
+    public void zoom(ZoomEvent zoomEvent) {
+        if (zoom) {
+            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
+                dataSource.changeScaling(1);
+                zoomIn();
+            }
+            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
+                dataSource.changeScaling(-1);
+                zoomIn();
+            }
+            touchZoomLevel = zoomEvent.getTotalZoomFactor();
+
+        }
+    }
+
 
     //================================================================================================================
     // MAIN
@@ -896,6 +957,16 @@ public class RaceViewController implements Initializable, TableObserver {
         updateCourse();
 
         for (Competitor boat : dataSource.getCompetitorsPosition()) {
+            Integer sourceId = boat.getSourceID();
+
+            if (boat.getHealthLevel() > 0 && boat.getStatus() == DSQ) { //remove model if they leave the race
+                Set<Node> elements = new HashSet<>();
+                elements.add(boatModels.get(sourceId));
+                elements.add(healthBars.get(sourceId));
+                elements.add(annotations.get(sourceId));
+                elements.add(wakeModels.get(sourceId));
+                raceViewPane.getChildren().removeAll(elements);
+            }
 
             if (counter % 70 == 0) {
                 drawTrack(boat);
@@ -965,36 +1036,44 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-    /**
-     * Zoom the screen in and out upon touch zoom event
-     *
-     * @param zoomEvent zoom event
-     */
-    public void zoom(ZoomEvent zoomEvent) {
 
-        if (zoom) {
-            if (dataSource.getZoomLevel() < 18 && zoomEvent.getTotalZoomFactor() > 1) {
-                long zoomFactor = Math.round(zoomEvent.getTotalZoomFactor() / 2);
-                dataSource.changeScaling(zoomFactor);
-                zoomIn();
-            }
-            if (dataSource.getZoomLevel() > 13 && zoomEvent.getTotalZoomFactor() < 1) {
-                long zoomFactor = Math.round((1 - zoomEvent.getTotalZoomFactor()) / 0.4);
-                dataSource.changeScaling(-zoomFactor);
-                zoomIn();
-            }
-        }
-//        if (zoom) {
-//            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
-//                dataSource.changeScaling(1);
-//                zoomIn();
-//            }
-//            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
-//                dataSource.changeScaling(-1);
-//                zoomIn();
-//            }
-//            touchZoomLevel = zoomEvent.getTotalZoomFactor();
+
+    /**
+     * Redirect the user to the start screen
+     */
+    @FXML
+    public void goToStartScreen(){
+
+
+
+//        dataSource.disconnect();
+//        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
+//        Parent root = null;
+//        try {
+//            root = loader.load();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            System.exit(1);
 //        }
+//
+//        assert root != null;
+//        App.getScene().setRoot(root);
+
+//        clearOldInfo();
     }
+
+//    /**
+//     * Clears the raceView feature lists
+//     */
+//    private void clearOldInfo() {
+//        fallenCrews = new HashMap<>();
+//        blood = new HashMap<>();
+//        powerUps = new HashMap<>();
+//        track = new Track();
+//        whirlpools = new HashMap<>();
+//
+//        isLoaded = false;
+//    }
+
 
 }

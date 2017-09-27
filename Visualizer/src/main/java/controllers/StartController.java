@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import utilities.Interpreter;
 import utilities.Sounds;
+import utility.BinaryPackager;
 
 import java.io.IOException;
 import java.net.URL;

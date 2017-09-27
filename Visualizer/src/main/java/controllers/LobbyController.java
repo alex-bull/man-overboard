@@ -1,8 +1,5 @@
 package controllers;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import utilities.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -30,6 +27,7 @@ import models.Competitor;
 import parsers.RaceStatusEnum;
 import utilities.DataSource;
 import utilities.EnvironmentConfig;
+import utilities.Sounds;
 import utility.BinaryPackager;
 
 import java.io.IOException;
@@ -38,7 +36,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import static java.lang.Math.abs;
 import static parsers.xml.race.ThemeEnum.AMAZON;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 
@@ -84,7 +81,7 @@ public class LobbyController implements Initializable {
     private AnimationTimer timer;
     private boolean boatSelected = false;
     private Image courseThemeImage;
-
+    private  Boolean connected = false;
 
     void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -130,6 +127,7 @@ public class LobbyController implements Initializable {
      * Uses an animation timer as it is updating the GUI thread
      */
     private void loop() {
+        connected = true;
         this.timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -167,7 +165,7 @@ public class LobbyController implements Initializable {
         cat = new Image(getClass().getClassLoader().getResource("images/boats/catLandscape.png").toString());
         pirate = new Image(getClass().getClassLoader().getResource("images/boats/pirateLandscape.png").toString());
 
-        addTextLimiter(nameText, 8);
+        addTextLimiter(nameText, 15);
 
         boatImages.add(yacht);
         boatImages.add(cog);
@@ -322,8 +320,8 @@ public class LobbyController implements Initializable {
         //clean up first
         if (timer != null) timer.stop();
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 2);
+        if (connected) dataSource.disconnect();
         dataSource = null;
-
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
         Parent root = null;

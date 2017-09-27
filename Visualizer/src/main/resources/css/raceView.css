@@ -35,6 +35,38 @@
     -fx-background-color: transparent;
 }
 
+.text-button {
+    -fx-padding: 5 22 5 22;
+    -fx-border-color: white;
+    -fx-text-fill: white;
+    -fx-border-width: 3px;
+    -fx-border-radius: 10px;
+    -fx-background-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-opacity: 0.8;
+    -fx-font-family: 'Quicksand', sans-serif;
+    -fx-font-size: 12pt;
+    -fx-font-weight: 700;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+}
+
+
+ .text-button:hover {
+     -fx-background-color: #dddddd;
+
+ }
+
+ .text-button:pressed, .text-button:default:hover:pressed {
+     -fx-background-color: white;
+     -fx-background-radius: 10px;
+
+ }
+
+ .text-button:focused {
+     -fx-background-radius: 10px;
+     -fx-border-insets: 1 1 1 1, 0;
+ }
+
 #windPane {
     -fx-font-family: 'Quicksand', sans-serif, bold;
 }

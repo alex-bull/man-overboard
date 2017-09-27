@@ -30,7 +30,6 @@ public class BoatModel extends Group {
     public BoatModel(Integer boatType, boolean player) {
 
         this.boatModel = new Polygon();
-        Polygon boatModel = new Polygon();
 //        boatModel.getPoints().addAll(
 //                -6.0, -14.0, //top
 //                -6.0, 14.0, //left
@@ -106,11 +105,14 @@ public class BoatModel extends Group {
      * The boat is dead so hide player marker and boat shape then show rip image
      */
     public void die() {
+
         if (!isDead) {
+            System.out.println("Die");
             isDead = true;
             boatModel.setVisible(false);
             this.getChildren().remove(playerMarker);
             ripImage.setVisible(true);
+            this.getChildren().remove(boatModel);
         }
 
     }

@@ -20,6 +20,8 @@ public interface DataSource {
 
     int getZoomLevel();
 
+    void disconnect();
+
     Map<Integer, CrewLocation> getCrewLocations();
 
     Map<Integer, Shark> getSharkLocations();
