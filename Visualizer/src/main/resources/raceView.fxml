@@ -1,41 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.effect.GaussianBlur?>
-<?import javafx.scene.effect.InnerShadow?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.web.WebView?>
+<?import java.lang.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
 
-<Pane fx:id="raceParentPane" onTouchStationary="#turnBoat" onZoom="#zoom" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
+<Pane fx:id="raceParentPane" onTouchStationary="#turnBoat" onZoomFinished="#touchZoom" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
     <children>
         <AnchorPane fx:id="raceView" prefHeight="900.0" prefWidth="1000.0" stylesheets="@css/raceView.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
             <children>
                 <HBox fx:id="controlsBox" alignment="CENTER" prefHeight="1080.0" prefWidth="2000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                 <Canvas fx:id="raceViewCanvas" height="1000.0" width="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                <Pane fx:id="raceViewPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1520.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="0.0" />
+                <Pane fx:id="raceViewPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1520.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                 <ImageView fx:id="controlsView" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true" />
-                <WebView fx:id="mapView" layoutX="-282.0" layoutY="-4.0" prefHeight="993.0" prefWidth="2084.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="-282.0" AnchorPane.rightAnchor="-2.0" AnchorPane.topAnchor="-4.0" />
-                <Button id="controlbutton" layoutX="25.0" layoutY="411.0" mnemonicParsing="false" onAction="#toggleControls" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="415.0">
-                    <graphic>
-                        <ImageView fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@images/helpIcon.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
+                <WebView fx:id="mapView" layoutX="-282.0" layoutY="-4.0" prefHeight="993.0" prefWidth="2084.0" stylesheets="@css/theme.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                 <GridPane fx:id="finisherListPane" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="479.0" prefWidth="358.0">
                     <children>
                         <Pane opacity="0.6" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" GridPane.rowSpan="2147483647">
@@ -71,33 +54,37 @@
                         <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="103.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                 </GridPane>
-                <Button id="controlbutton" layoutX="25.0" layoutY="515.0" mnemonicParsing="false" onAction="#toggleZoom" onMousePressed="#toggleZoom" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="515.0">
-                    <graphic>
-                        <ImageView id="controlbutton" fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@images/zoomIcon.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-            <Button fx:id="soundButton" mnemonicParsing="false" onAction="#toggleSound" prefHeight="70.0" prefWidth="76.0" style="-fx-background-color: transparent;" visible="true" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="605.0">
-               <graphic>
-                  <ImageView fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/soundIcon.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-                <Button fx:id="muteButton" mnemonicParsing="false" onAction="#toggleSound" prefHeight="70.0" prefWidth="76.0" style="-fx-background-color: transparent;" visible="false" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="605.0">
-                    <graphic>
+            <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                      <Button id="controlbutton" mnemonicParsing="false" onAction="#toggleControls" prefHeight="70.0" prefWidth="76.0">
+                          <graphic>
+                              <ImageView fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@images/helpIcon.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </Button>
+                      <Button id="controlbutton" mnemonicParsing="false" onAction="#toggleZoom" onMousePressed="#toggleZoom" prefHeight="70.0" prefWidth="76.0">
+                          <graphic>
+                              <ImageView id="controlbutton" fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@images/zoomIcon.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </Button>
+                  <Button fx:id="soundButton" mnemonicParsing="false" onAction="#toggleSound" prefHeight="70.0" prefWidth="76.0" style="-fx-background-color: transparent;" visible="true">
+                     <graphic>
                         <ImageView fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@images/muteIcon.png" />
-                            </image>
+                           <image>
+                              <Image url="@images/soundIcon.png" />
+                           </image>
                         </ImageView>
-                    </graphic>
-                </Button>
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
 
 
             </children>
