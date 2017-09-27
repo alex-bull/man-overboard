@@ -305,9 +305,8 @@ public class RaceViewController implements Initializable, TableObserver {
         mapEngine.executeScript(String.format("setZoom(%d);", dataSource.getZoomLevel()));
         updateRace();
         setScale(nodeSizeFunc(dataSource.getZoomLevel()));
-//        dataSource.changeScaling(0);
         track.setVisible(!isZoom());
-        zoomIcon.setImage(zoomInImage);
+        zoomIcon.setImage(zoomOutImage);
     }
 
 
@@ -320,14 +319,28 @@ public class RaceViewController implements Initializable, TableObserver {
         drawBackgroundImage();
         updateRace();
         setScale(1);
-//        dataSource.changeScaling(0);
         track.setVisible(!isZoom());
-        this.zoomIcon.setImage(this.zoomOutImage);
+        this.zoomIcon.setImage(this.zoomInImage);
     }
 
     public boolean isZoom() {
         return zoom;
     }
+
+    /**
+     * toggles the state of the zoom
+     */
+    public void toggleZoom() {
+        if (isZoom()) {
+            zoomOut();
+            if (!tableController.isVisible()) {
+                tableController.makeVisible();
+            }
+        } else {
+            zoomIn();
+        }
+    }
+
 
     /**
      * returns the node size scaling corresponding to zoom level
@@ -381,19 +394,6 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-    /**
-     * toggles the state of the zoom
-     */
-    public void toggleZoom() {
-        if (isZoom()) {
-            zoomOut();
-            if (!tableController.isVisible()) {
-                tableController.makeVisible();
-            }
-        } else {
-            zoomIn();
-        }
-    }
 
 
     /**
