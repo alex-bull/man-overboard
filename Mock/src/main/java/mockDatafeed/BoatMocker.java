@@ -591,10 +591,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         int gameDuration = 300000;
 
-        System.out.println("Race status");
-        System.out.println(competitors);
-        System.out.println(boatUpdater.finisherList);
-        System.out.println(boatUpdater.checkAllFinished());
         if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() - gameStartTime > gameDuration)) {
             raceStatus = 4;
 

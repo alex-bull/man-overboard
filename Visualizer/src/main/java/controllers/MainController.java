@@ -76,6 +76,7 @@ public class MainController {
      */
     @FXML
     public void keyPressed(KeyEvent event) {
+        if (raceViewController.finishFlag || raceViewController.exit) return;
         if (dataSource.isSpectating()) {
             if (event.getCode() == A) {
                 if (dataSource.getZoomLevel() < 18 && raceViewController.isZoom()) {
