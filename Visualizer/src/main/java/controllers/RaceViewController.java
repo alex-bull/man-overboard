@@ -1043,12 +1043,12 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawHealthBar(boat);
             this.drawAnnotations(boat);
         }
-        counter++;
+
         if (dataSource.isSpectating()) return;
         this.drawSail(width, length, dataSource.getCompetitor());
         this.drawGuidingArrow();
         counter++;
-    }
+
 
         updateCourse();
     }

@@ -40,8 +40,9 @@ public class MarkModel extends Group {
                 break;
             case BERMUDA:
                 mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/bermuda/island.png").toString())));
+                break;
             default:
-                System.out.println("invalid theme id");
+                System.out.println("invalid theme id: "+theme);
                 break;
         }
         this.getChildren().add(mark);
