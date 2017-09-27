@@ -121,6 +121,7 @@ public class MainController {
                 if (!tableController.isVisible()) {
                     tableController.makeVisible();
                 }
+
                 break;
             case BACK_QUOTE:
                 if (raceViewController.isZoom() && tableController.isVisible()) {

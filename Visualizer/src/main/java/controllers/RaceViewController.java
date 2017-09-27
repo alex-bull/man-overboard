@@ -67,6 +67,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML
     private Button leaveButton;
     @FXML
+    private Button zoomButton;
+    @FXML
     private TableController tableController = new TableController();
     @FXML
     private AnchorPane raceView;
@@ -291,6 +293,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * Zooms in on your boat
      */
     public void zoomIn() {
+        if(dataSource.isSpectating()) {return;}
         zoom = true;
         mapEngine.executeScript(String.format("setZoom(%d);", dataSource.getZoomLevel()));
         updateRace();
@@ -305,6 +308,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * Zooms out from your boat
      */
     public void zoomOut() {
+        if(dataSource.isSpectating()) {return;}
         zoom = false;
         drawBackgroundImage();
         updateRace();
@@ -1062,7 +1066,10 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawAnnotations(boat);
         }
         counter++;
-        if (dataSource.isSpectating()) return;
+        if (dataSource.isSpectating()){
+            zoomButton.setVisible(false);
+            return;
+        }
         this.drawSail(width, length, dataSource.getCompetitor());
         this.drawGuidingArrow();
     }
