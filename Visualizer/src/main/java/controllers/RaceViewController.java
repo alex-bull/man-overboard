@@ -82,7 +82,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private Pane raceParentPane;
     @FXML
     private HBox controlsBox;
-    @FXML private HBox quitBox;
+    @FXML
+    private HBox quitBox;
     @FXML
     private GridPane finisherListPane;
     @FXML
@@ -91,10 +92,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private ImageView zoomIcon;
 
     private Map<Integer, FallenCrew> fallenCrews = new HashMap<>();
-//    private Map<Integer, ImageView> blood = new HashMap<>();
-//    private Map<Integer, Image> crewImages = new HashMap<>();
     private Map<String, DecorationModel> decorations=new HashMap<>();
-
     private Map<Integer, PowerUpModel> powerUps = new HashMap<>();
     private Map<Integer, BoatModel> boatModels = new HashMap<>();
     private Map<Integer, Wake> wakeModels = new HashMap<>();
@@ -128,7 +126,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private WebEngine mapEngine;
     private DataSource dataSource;
     private GraphicsContext gc;
-
     //images
     private final String[] crewImages = {"/Animations/boyCantSwim.gif", "/Animations/girlCantSwim.gif"};
     private final String[] bloodImages = {"/images/blood2.png", "/images/blood1.png", "/images/blood.png"};
@@ -361,7 +358,6 @@ public class RaceViewController implements Initializable, TableObserver {
         for (int sourceID : collisions.keySet()) {
             MutablePoint point = getRelativePosition(dataSource.getStoredCompetitors().get(sourceID));
             if (sourceID == dataSource.getSourceID() && collisions.get(sourceID) == 1) {
-                //drawBorder(raceViewPane.getWidth(),raceViewPane.getHeight(),25);
                 new BorderAnimation(raceParentPane, 25).animate();
                 new RandomShake(raceParentPane).animate();
                 drawCollision(point.getXValue(), point.getYValue());
@@ -871,15 +867,6 @@ public class RaceViewController implements Initializable, TableObserver {
         Shark shark = sharkLocation.get(0);
         sharkModel.update(isZoom(), shark, currentPosition17, raceViewPane.getWidth(), raceViewPane.getHeight(), shark.getHeading());
         sharkModel.toFront();
-
-//        Image image = sharkModel.getImage();
-//        if (isZoom()) {
-//            MutablePoint p = sharkLocation.get(0).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-//            sharkModel.relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-//        } else {
-//            MutablePoint p = sharkLocation.get(0).getPosition();
-//            sharkModel.relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-//        }
     }
 
     /**
@@ -1046,7 +1033,6 @@ public class RaceViewController implements Initializable, TableObserver {
             length *= multiplier;
             boatLength *= multiplier;
             startWakeOffset *= multiplier;
-//            wakeWidthFactor*= 1;
             wakeLengthFactor *= multiplier;
         }
 
