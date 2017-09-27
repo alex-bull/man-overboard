@@ -108,7 +108,7 @@
                                  </GridPane.margin>
                                       </ImageView>
 
-                                      <Label fx:id="locationLabel" alignment="TOP_RIGHT" maxWidth="1.7976931348623157E308" style="-fx-background-color: rgba(0,0,0,0.75); -fx-alignment: CENTER_RIGHT;" text="Bermuda" textFill="WHITE" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                                      <Label fx:id="locationLabel" alignment="TOP_RIGHT" maxWidth="1.7976931348623157E308" style="-fx-background-color: rgba(0,0,0,0.75); -fx-alignment: CENTER_RIGHT;" text="-" textFill="WHITE" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
                                           <font>
                                               <Font size="30.0" />
                                           </font>
