@@ -18,6 +18,7 @@ import static com.google.common.collect.ImmutableList.copyOf;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 import static parsers.xml.race.ThemeEnum.BERMUDA;
 import static parsers.xml.race.ThemeEnum.AMAZON;
+import static parsers.xml.race.ThemeEnum.NILE;
 import static utility.Projection.mercatorProjection;
 
 /**
@@ -381,6 +382,9 @@ public class RaceXMLParser {
         }
         else if (this.themeId == AMAZON.getValue()) {
             return AMAZON;
+        }
+        else if (this.themeId == NILE.getValue()) {
+            return NILE;
         }
         return BERMUDA;
     }

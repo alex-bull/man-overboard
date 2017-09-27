@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 
 import static parsers.xml.race.ThemeEnum.AMAZON;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
+import static parsers.xml.race.ThemeEnum.NILE;
 
 
 /**
@@ -303,6 +304,11 @@ public class LobbyController implements Initializable {
             else if(dataSource.getThemeId() == AMAZON) {
                 this.courseThemeImage = new Image(getClass().getClassLoader().getResource("images/amazon/amazonTheme.png").toString());
                 this.locationLabel.setText("Amazon");
+                courseImageView.setImage(this.courseThemeImage);
+            }
+            else if(dataSource.getThemeId() == NILE) {
+                this.courseThemeImage = new Image(getClass().getClassLoader().getResource("images/nile/nileTheme.png").toString());
+                this.locationLabel.setText("Nile");
                 courseImageView.setImage(this.courseThemeImage);
             }
             else if (dataSource.getThemeId() != null) {

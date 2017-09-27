@@ -44,6 +44,10 @@ public class DecorationModel extends ImageView {
             image = getRandomAmazonImage();
             scale = 1;
         }
+        else if (decoration.getId().contains("Nile")) {
+            image = getRandomNileImage();
+            scale = 1;
+        }
         this.imageWidth = image.getWidth();
         this.imageHeight = image.getHeight();
         this.setImage(image);
@@ -131,6 +135,20 @@ public class DecorationModel extends ImageView {
         Random random = new Random();
         String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
         if (chosenPath.contains("snake")) isSnake = true;
+        return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
+    }
+
+    /**
+     * Generate a random image for an igloo
+     * @return Image the image
+     */
+    private Image getRandomNileImage() {
+        ArrayList<String> imagePaths = new ArrayList<>();
+        imagePaths.add("images/nile/mummy.png");
+        imagePaths.add("images/nile/pyramid.png");
+        imagePaths.add("images/nile/sphinx.png");
+        Random random = new Random();
+        String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
         return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
     }
 

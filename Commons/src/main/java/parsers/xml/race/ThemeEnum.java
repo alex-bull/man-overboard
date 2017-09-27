@@ -7,7 +7,8 @@ public enum ThemeEnum {
 
     ANTARCTICA(0),
     BERMUDA(1),
-    AMAZON(2);
+    AMAZON(2),
+    NILE(3);
 
     private final int value;
 

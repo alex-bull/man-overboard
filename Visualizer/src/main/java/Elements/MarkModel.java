@@ -2,18 +2,16 @@ package Elements;
 
 import javafx.scene.Group;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
 import parsers.xml.race.ThemeEnum;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
 import static parsers.xml.race.ThemeEnum.AMAZON;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
+import static parsers.xml.race.ThemeEnum.NILE;
 
 
 /**
@@ -36,6 +34,9 @@ public class MarkModel extends Group {
         }
         else if (theme.getValue() == AMAZON.getValue()) {
             mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/amazon/mangrove.png").toString())));
+        }
+        else if (theme.getValue() == NILE.getValue()) {
+            mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/nile/hippo.png").toString())));
         }
         else {
             mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/bermuda/island.png").toString())));

@@ -317,8 +317,8 @@ public class BoatUpdater {
 
     private void nextRoamPos(){
         sharkRoamIndex = random.nextInt(courseBoundary.size());
-        double PosY = courseBoundary.get(sharkRoamIndex).getXValue() + 0.01;
-        double PosX = courseBoundary.get(sharkRoamIndex).getYValue() + 0.01;
+        double PosY = courseBoundary.get(sharkRoamIndex).getXValue();
+        double PosX = courseBoundary.get(sharkRoamIndex).getYValue();
         sharkRoamPos = new MutablePoint(PosX, PosY);
     }
 

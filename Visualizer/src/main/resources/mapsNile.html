@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Race Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+        crossorigin="anonymous"></script>
+
+<script>
+
+
+    var map;
+    var marker;
+    var marker2;
+
+
+    /*call back function to initialize the map
+     */
+    function initMap() {
+        var styles = [
+            {
+                "featureType": "administrative.country",
+                "elementType": "geometry.stroke",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.country",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.province",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    {
+                        "lightness": "-3"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.province",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.locality",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.neighborhood",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.land_parcel",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "landscape",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "landscape.man_made",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    {
+                        "saturation": "43"
+                    },
+                    {
+                        "lightness": "100"
+                    },
+                    {
+                        "color": "#d8bd6a"
+                    }
+                ]
+            },
+            {
+                "featureType": "landscape.natural",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    },
+                    {
+                        "color": "#d8bd6a"
+                    }
+                ]
+            },
+            {
+                "featureType": "landscape.natural.landcover",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    {
+                        "saturation": "70"
+                    },
+                    {
+                        "lightness": "100"
+                    },
+                    {
+                        "gamma": "8.32"
+                    }
+                ]
+            },
+            {
+                "featureType": "landscape.natural.terrain",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    {
+                        "lightness": "47"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    },
+                    {
+                        "hue": "#1900ff"
+                    },
+                    {
+                        "color": "#c0e8e8"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "lightness": 100
+                    },
+                    {
+                        "visibility": "simplified"
+                    },
+                    {
+                        "color": "#c2b280"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.highway",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.highway",
+                "elementType": "labels.text",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.highway",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.highway",
+                "elementType": "labels.text.stroke",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "transit.line",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "transit.line",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "transit.station",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "water",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "color": "#52AEFE"
+                    }
+                ]
+            }
+        ];
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 57.6679590, lng: 11.8503233},
+            zoom: 15,
+            disableDefaultUI: true,
+            styles: styles
+
+        });
+
+    }
+
+    /*
+     shifts the google maps to center at the bound
+     */
+    function relocate(minLat, minLng, maxLat, maxLng) {
+        if (map != null) {
+            var bounds = new google.maps.LatLngBounds();
+            bounds.extend({lat: minLat, lng: minLng});
+            bounds.extend({lat: maxLat, lng: maxLng});
+
+            map.setCenter(bounds.getCenter());
+        }
+
+    }
+
+    /*
+     sets the zoom level of map
+     */
+    function setZoom(zoom) {
+        map.setZoom(zoom);
+    }
+
+    function setCenter(lat, lng) {
+        map.setCenter({lat: lat, lng: lng});
+    }
+
+    /*
+     draws a marker for testing
+     */
+    function drawMarker(lat, lng) {
+        marker = new google.maps.Marker({
+            map: map,
+            position: {lat: lat, lng: lng},
+            visible: true
+        });
+    }
+
+    /*
+     shifts the google map by shift distance pixels vertically
+     */
+    function shift(shiftDistance) {
+        var center = map.getCenter();
+        var pixelCenter = latLng2Point(center);
+        pixelCenter.y += shiftDistance;
+        map.setCenter(point2LatLng(pixelCenter));
+    }
+
+    /*
+     converts latLng to a point on screen
+     */
+    function latLng2Point(latLng) {
+        var topRight = map.getProjection().fromLatLngToPoint(map.getBounds().getNorthEast());
+        var bottomLeft = map.getProjection().fromLatLngToPoint(map.getBounds().getSouthWest());
+        var scale = Math.pow(2, map.getZoom());
+        var worldPoint = map.getProjection().fromLatLngToPoint(latLng);
+        return new google.maps.Point((worldPoint.x - bottomLeft.x) * scale, (worldPoint.y - topRight.y) * scale);
+    }
+    /*
+     convert point on screen to latLng
+     */
+    function point2LatLng(point) {
+        var topRight = map.getProjection().fromLatLngToPoint(map.getBounds().getNorthEast());
+        var bottomLeft = map.getProjection().fromLatLngToPoint(map.getBounds().getSouthWest());
+        var scale = Math.pow(2, map.getZoom());
+        var worldPoint = new google.maps.Point(point.x / scale + bottomLeft.x, point.y / scale + topRight.y);
+        return map.getProjection().fromPointToLatLng(worldPoint);
+    }
+
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzOciYkpka9RhAVpxko1Z0vm-bdJEjWHw&libraries=places&callback=initMap"
+        defer></script>
+<!--<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5TgdDXm27koP5Biy24Q3-Nay9fJCeJOo&libraries=places"></script>-->
+
+</body>
+</html>

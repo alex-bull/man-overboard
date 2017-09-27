@@ -47,6 +47,7 @@ import static javafx.collections.FXCollections.observableArrayList;
 import static parsers.BoatStatusEnum.DSQ;
 import static parsers.xml.race.ThemeEnum.AMAZON;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
+import static parsers.xml.race.ThemeEnum.NILE;
 
 
 /**
@@ -209,6 +210,10 @@ public class RaceViewController implements Initializable, TableObserver {
             }
             else if (dataSource.getThemeId() == AMAZON) {
                 mapEngine.load(getClass().getClassLoader().getResource("mapsAmazon.html").toURI().toString());
+                sharkModel = new SharkModel(new Image("/Animations/crocMoving.gif"));
+            }
+            else if (dataSource.getThemeId() == NILE) {
+                mapEngine.load(getClass().getClassLoader().getResource("mapsNile.html").toURI().toString());
                 sharkModel = new SharkModel(new Image("/Animations/crocMoving.gif"));
             }
             else {
