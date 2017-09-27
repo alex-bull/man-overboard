@@ -491,13 +491,14 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawSail(double width, double length, Competitor boat) {
         if(boat.getStatus() == DSQ) {
-            System.out.println("DEAD");
             this.sailLine.setVisible(false);
             this.curvedSailLine.setVisible(false);
-
         }
-        this.sailLine.update(width, length, boat, dataSource.getWindDirection(), boatPositionX, boatPositionY);
-        this.curvedSailLine.update(width, length, boat, dataSource.getWindDirection(), boatPositionX, boatPositionY);
+        else {
+            this.sailLine.update(width, length, boat, dataSource.getWindDirection(), boatPositionX, boatPositionY);
+            this.curvedSailLine.update(width, length, boat, dataSource.getWindDirection(), boatPositionX, boatPositionY);
+        }
+
     }
 
 
