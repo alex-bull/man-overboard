@@ -1,16 +1,29 @@
 package controllers;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.util.Duration;
 import parsers.boatAction.BoatAction;
 import utilities.DataSource;
+import utilities.Interpreter;
 import utilities.Sounds;
 import utility.BinaryPackager;
 
+import java.io.IOException;
+
+import static javafx.scene.input.KeyCode.A;
+import static javafx.scene.input.KeyCode.D;
 import static javafx.scene.input.KeyCode.Q;
 
 
@@ -44,6 +57,7 @@ public class MainController {
     private BinaryPackager binaryPackager;
     private boolean playing = false;
     private boolean flag = false;
+    private AnimationTimer timer;
 
     /**
      * updates the slider and sends corresponding packet
@@ -71,7 +85,21 @@ public class MainController {
      */
     @FXML
     public void keyPressed(KeyEvent event) {
-//        System.out.println("key pressed "+System.currentTimeMillis());
+        if (dataSource.isSpectating()) {
+            if (event.getCode() == A) {
+                if (dataSource.getZoomLevel() < 18 && raceViewController.isZoom()) {
+                    dataSource.changeScaling(1);
+                    raceViewController.zoomIn();
+                }
+            }
+            else if (event.getCode() == D) {
+                if (dataSource.getZoomLevel() > 12 && raceViewController.isZoom()) {
+                    dataSource.changeScaling(-1);
+                    raceViewController.zoomIn();
+                }
+            }
+            return;
+        }
 
         switch (event.getCode()) {
             case W:
@@ -92,7 +120,6 @@ public class MainController {
                 break;
             case Q:
                 raceViewController.zoomOut();
-
                 if (!tableController.isVisible()) {
                     tableController.makeVisible();
                 }
@@ -139,25 +166,36 @@ public class MainController {
         raceViewController.begin(width, height, dataSource);
         timerController.begin(dataSource);
         tableController.addObserver(raceViewController);
-        playerController.setup(dataSource, App.getPrimaryStage());
         this.binaryPackager = new BinaryPackager();
 
+        if (!dataSource.isSpectating()) playerController.setup(dataSource, App.getPrimaryStage());
+        else playerController.hideAll();
 
-        AnimationTimer timer = new AnimationTimer() {
+
+
+        timer = new AnimationTimer() {
 
             @Override
             public void handle(long now) {
+                if (raceViewController.finishFlag) { //game finished
+                    timer.stop();
+                    returnToLobby();
+                }
+                if (raceViewController.exit) { //quit game
+                    timer.stop();
+                    returnToStart();
+                }
                 dataSource.update();
                 if (raceViewController.isLoaded()) {
                     if (!playing) playGameMusic();
                     raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
-                    playerController.refresh();
+                    if (!dataSource.isSpectating()) playerController.refresh();
                     performanceController.refresh(dataSource.getLatency());
                     sailSlider.toFront();
                     loadingPane.setVisible(false);
-                    if (!flag) {
+                    if (!flag && !dataSource.isSpectating()) {
                         raceViewController.toggleZoom();
                         flag = true;
                     }
@@ -170,6 +208,66 @@ public class MainController {
         };
         timer.start();
 
+    }
+
+
+    private void returnToLobby() {
+
+        dataSource.disconnect();
+        this.dataSource = null;
+
+        //countdown
+        Timeline timeline = new Timeline();
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(10)));
+        timeline.play();
+
+        timeline.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Sounds.player.stop("sounds/bensound-epic.mp3");
+                FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("lobby.fxml"));
+                Parent root = null;
+                try {
+                    root = loader.load();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+
+                LobbyController lobbyController = loader.getController();
+                Interpreter interpreter = new Interpreter();
+                interpreter.setPrimaryStage(App.getPrimaryStage());
+                lobbyController.setDataSource(interpreter);
+                lobbyController.begin();
+                App.getScene().setRoot(root);
+            }
+        });
+    }
+
+
+    /**
+     * Take the player back to the start screen
+     */
+    private void returnToStart() {
+        //clean up first
+        dataSource.send(new BinaryPackager().packageLeaveLobby());
+        dataSource.disconnect();
+        dataSource = null;
+
+        Sounds.player.stop("sounds/bensound-epic.mp3");
+
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assert root != null;
+        StartController startController = loader.getController();
+        startController.begin();
+        App.getScene().setRoot(root);
     }
 
 

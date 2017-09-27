@@ -102,6 +102,7 @@ public class BoatModel extends Group {
             boatModel.setVisible(false);
             this.getChildren().remove(playerMarker);
             ripImage.setVisible(true);
+            this.getChildren().remove(boatModel);
         }
 
     }

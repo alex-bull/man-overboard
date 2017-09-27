@@ -35,11 +35,7 @@
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <ImageView fx:id="playerImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@images/boats/boat.png" />
-                    </image>
-                </ImageView>
+                <ImageView fx:id="playerImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
             </children>
         </GridPane>
         <GridPane GridPane.columnIndex="2" GridPane.rowIndex="1">
@@ -85,12 +81,12 @@
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Text fill="WHITE" layoutX="31.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NAME:">
+                        <Text fx:id="nameText" fill="WHITE" layoutX="31.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NAME:">
                             <font>
                                 <Font name="Quicksand Bold" size="14.0" />
                             </font>
                         </Text>
-                        <Text fill="WHITE" layoutX="27.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SPEED:">
+                        <Text fx:id="speedText" fill="WHITE" layoutX="27.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SPEED:">
                             <font>
                                 <Font name="Quicksand Bold" size="14.0" />
                             </font>
@@ -106,12 +102,15 @@
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="149.0" minWidth="10.0" prefWidth="59.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="336.0" minWidth="10.0" prefWidth="301.0" />
+            <ColumnConstraints />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints />
+            <RowConstraints />
          </rowConstraints>
          <children>
-      
+
               <Button fx:id="speed" onAction="#useBoost" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
                   <graphic>
                       <ImageView id="boostButton" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
@@ -120,9 +119,9 @@
                           </image>
                       </ImageView>
                   </graphic>
-               <GridPane.margin>
-                  <Insets right="10.0" />
-               </GridPane.margin>
+                  <GridPane.margin>
+                      <Insets top="2.0" />
+                  </GridPane.margin>
               </Button>
               <Button fx:id="potion" onAction="#usePotion" prefHeight="42.0" prefWidth="51.0" GridPane.columnIndex="1" GridPane.valignment="TOP">
                   <graphic>
@@ -132,7 +131,18 @@
                           </image>
                       </ImageView>
                   </graphic>
+                  <GridPane.margin>
+                      <Insets left="40.0" />
+                  </GridPane.margin>
               </Button>
+             <ImageView fx:id="spectating" fitHeight="150.0" fitWidth="200.0" opacity="0.6" pickOnBounds="true" preserveRatio="true" visible="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+                 <image>
+                     <Image url="@/images/spectate.png" />
+                 </image>
+                 <GridPane.margin>
+                     <Insets right="30.0" />
+                 </GridPane.margin>
+             </ImageView>
          </children>
       </GridPane>
 

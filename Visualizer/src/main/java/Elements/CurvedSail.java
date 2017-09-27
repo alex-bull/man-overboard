@@ -1,26 +1,28 @@
 package Elements;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Rotate;
+import javafx.util.Duration;
 import models.Competitor;
 
 /**
- * Created by mgo65 on 31/08/17.
- * A visual representation of a sail on a boat
+ * Created by msl47.
  */
-public class Sail extends Line {
+public class CurvedSail extends CubicCurve {
 
-    private Rotate rotate;
+    double sailMovement = 10;
+    boolean reverse = false;
     /**
      * initialize a sail with a color
      *
      * @param color Color the line color
      */
-    public Sail(Color color) {
+    public CurvedSail(Color color) {
         this.setStroke(color);
-        rotate=new Rotate(0,0,0);
-        getTransforms().add(rotate);
     }
 
     /**
@@ -35,20 +37,35 @@ public class Sail extends Line {
      */
     public void update(double width, double length, Competitor boat, double windAngle, double boatX, double boatY) {
 
+        if(reverse) {
+            sailMovement += 0.5;
+        }
+        else {
+            sailMovement -= 0.5;
+        }
+
+        if (sailMovement > 10 || sailMovement < -10) {
+            reverse = !reverse;
+        }
+
         this.setStrokeWidth(width);
         this.setStartX(boatX);
         this.setStartY(boatY);
+        this.setControlX1(boatX + sailMovement);
+        this.setControlY1(boatY + (length/4));
+        this.setControlX2(boatX - sailMovement);
+        this.setControlY2(boatY + (3*length/4));
         this.setEndX(boatX);
         this.setEndY(boatY + length);
 
+        this.getTransforms().clear();
+
         if (boat.hasSailsOut()) {
-            this.setVisible(false);
-        } else {
             this.setVisible(true);
-            rotate.setAngle(boat.getCurrentHeading());
+            this.getTransforms().add(new Rotate(windAngle, boatX, boatY));
+        } else {
+            this.setVisible(false);
         }
-        rotate.setPivotX(boatX);
-        rotate.setPivotY(boatY);
         this.toFront();
     }
 

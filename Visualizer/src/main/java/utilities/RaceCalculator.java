@@ -50,7 +50,13 @@ public class RaceCalculator {
      * @return boolean
      */
     public static boolean isWestOfWind(double heading, double downWind, double windAngle) {
-        return (heading > downWind) || (heading < windAngle);
+
+        if (windAngle > 180) {
+            return (heading < windAngle) && (heading > downWind);
+        }
+        else {
+            return (heading > downWind) || (heading < windAngle);
+        }
     }
 
 

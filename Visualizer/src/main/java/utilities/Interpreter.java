@@ -33,10 +33,6 @@ import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.markRounding.MarkRoundingData;
 import parsers.markRounding.MarkRoundingParser;
-import parsers.powerUp.PowerUp;
-import parsers.powerUp.PowerUpParser;
-import parsers.powerUp.PowerUpTakenParser;
-import parsers.powerUp.PowerUpType;
 import parsers.raceStatus.RaceStatusData;
 import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.boat.BoatXMLParser;
@@ -107,11 +103,13 @@ public class Interpreter implements DataSource, PacketHandler {
     private int numBoats = 0;
     private boolean seenRaceXML = false;
     private int sourceID = 0;
+    private boolean spectating = false;
 
     private ThemeEnum themeId;
 
     private long latency;
     private TCPClient TCPClient;
+    private Timer clientTimer;
 
     //parsers
     YachtEventParser yachtEventParser = new YachtEventParser();
@@ -124,99 +122,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
     private WorkQueue receiveQueue = new WorkQueue(1000000);
 
-    public void setPrimaryStage(Stage primaryStage){
-        this.primaryStage=primaryStage;
-    }
-    private Map<Integer, PowerUp> powerUps = new HashMap<>();
-
-    public Interpreter() {
-        competitorsPosition = new ArrayList<>();
-        collisions = new HashMap<>();
-        this.raceXMLParser = new RaceXMLParser();
-
-    }
-
-    public Map<Integer, CourseFeature> getCourseFeatureMap() {
-        return this.storedFeatures;
-    }
-
-    public List<MutablePoint> getCourseBoundary() {
-        return courseBoundary;
-    }
-
-    private void setCourseBoundary(List<MutablePoint> courseBoundary) {
-        courseBoundaryOriginal = cloner.deepClone(courseBoundary);
-
-        for (MutablePoint p : cloner.deepClone(courseBoundary)) {
-            this.courseBoundary.add(p.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY));
-        }
-
-        updateCourseBoundary();
-
-    }
-
-    public List<MutablePoint> getCourseBoundary17() {
-        return courseBoundary17;
-    }
-
-    public HashMap<Integer, CourseFeature> getStoredFeatures17() {
-        return storedFeatures17;
-    }
-
-    public String getCourseTimezone() {
-        return timezone;
-    }
-
-    public List<Integer> getStartMarks() {
-        return raceData.getStartMarksID();
-    }
-
-    public List<Integer> getFinishMarks() {
-        return raceData.getFinishMarksID();
-    }
-
-    public RaceStatusEnum getRaceStatus() {
-        return raceStatus;
-    }
-
-    public long getMessageTime() {
-        return messageTime;
-    }
-
-    public long getExpectedStartTime() {
-        return expectedStartTime;
-    }
-
-    public List<Competitor> getCompetitorsPosition() {
-        return new ArrayList<>(competitorsPosition); //return a shallow copy for thread safety
-    }
-
-    public Map<Integer, Competitor> getStoredCompetitors() {
-        return this.storedCompetitors;
-    }
-
-    public double getWindDirection() {
-        return windDirection;
-    }
-
-    public double getWindSpeed() {
-        return windSpeed / 1000.0;
-    }
-
-    public Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures() {
-        return this.raceData.getLegIndexToMarkSourceIds();
-    }
-
-    /**
-     * @return the boat which the visualizer controls
-     */
-    public Competitor getCompetitor() {
-        return storedCompetitors.get(sourceID);
-    }
-
-    public ThemeEnum getThemeId() {
-        return themeId;
-    }
 
 
     private Map<Integer,CrewLocation> crewLocations=new HashMap<>();
@@ -224,9 +129,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private Map<Integer, Blood> bloodLocations = new HashMap<>();
     private Map<Integer, Whirlpool> whirlpools = new HashMap<>();
 
-    public Map<Integer, PowerUp> getPowerUps() {
-        return powerUps;
-    }
+
 
     /**
      * Send control data via TCPClient
@@ -239,6 +142,19 @@ public class Interpreter implements DataSource, PacketHandler {
         } catch (Exception e) {
             System.out.println("Failed to send data");
         }
+    }
+
+    /**
+     * Disconnect client from server
+     */
+    public void disconnect() {
+        this.clientTimer.cancel();
+        try {
+            this.TCPClient.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -270,8 +186,8 @@ public class Interpreter implements DataSource, PacketHandler {
 
         System.out.println("Starting client");
         //start receiving data
-        Timer receiverTimer = new Timer();
-        receiverTimer.schedule(TCPClient, 0, 1);
+        this.clientTimer = new Timer();
+        clientTimer.schedule(TCPClient, 0, 1);
         System.out.println("Done");
 
         //request game join
@@ -317,7 +233,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 RaceStatusData raceStatusData = RaceStatusParser.processMessage(packet);
                 if (raceStatusData != null) {
                     this.raceStatus = raceStatusData.getRaceStatus();
-                    this.messageTime = raceStatusData.getCurrentTime();
+                   // this.messageTime = raceStatusData.getCurrentTime();
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
                     this.windDirection = raceStatusData.getWindDirection() + 180;
@@ -377,7 +293,7 @@ public class Interpreter implements DataSource, PacketHandler {
             case BOAT_LOCATION:
                 BoatData boatData = BoatDataParser.processMessage(packet);
                 latency=BoatDataParser.getLatency(packet);
-                if (boatData != null) {
+                if (boatData != null && this.raceData!= null) {
                     if (boatData.getDeviceType() == 1 && this.raceData.getParticipantIDs().contains(boatData.getSourceID())) {
                         updateBoatProperties(boatData);
                     } else if (boatData.getDeviceType() == 3 && raceData.getMarkSourceIDs().contains(boatData.getSourceID())) {
@@ -439,6 +355,7 @@ public class Interpreter implements DataSource, PacketHandler {
             case CONNECTION_RES:
                 connectionParser.update(packet);
                 this.sourceID = connectionParser.getSourceId();
+                if (connectionParser.getStatus() == 0) this.spectating = true;
                 System.out.println("Connection accepted, my source ID: " + sourceID);
                 break;
             case FALLEN_CREW:
@@ -490,7 +407,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 addShark(parseShark(packet));
                 break;
             case BLOOD:
-                System.out.println("Blood event");
                 crewLocations.get((parseBlood(packet))).setDied();
                 break;
             case WHIRLPOOL:
@@ -681,7 +597,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
         MutablePoint location = cloner.deepClone(boatData.getMercatorPoint());
         MutablePoint location17 = cloner.deepClone(boatData.getMercatorPoint());
-
         location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
         location17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
@@ -699,6 +614,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 updatingBoat.setColor(colour);
                 colourPool.getColours().remove(colour);
             }
+
 
             updatingBoat.setPosition(location);
             updatingBoat.setPosition17(location17);
@@ -762,16 +678,15 @@ public class Interpreter implements DataSource, PacketHandler {
                 case RACE:
                     if(!seenRaceXML) {
                         raceXMLParser.setScreenSize(width, height);
-//                        this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.themeId = raceXMLParser.getThemeId();
                         this.decorations = this.raceData.getDecorations();
 
                         setScalingFactors();
                         setCourseBoundary(raceXMLParser.getCourseBoundary());
-//                        this.courseBoundary17=raceXMLParser.getCourseBoundary17();
                         GPSbounds = raceXMLParser.getGPSBounds();
 //                        this.seenRaceXML = true;
+                        this.messageTime = raceData.getGameStartTime();
                     }
 
                     break;
@@ -936,9 +851,110 @@ public class Interpreter implements DataSource, PacketHandler {
         return raceXMLParser.getShiftDistance();
     }
 
+    public boolean isSpectating() {
+        return spectating;
+    }
 
     public HashMap<String, Decoration> getDecorations() {
         return decorations;
+    }
+
+    public void setPrimaryStage(Stage primaryStage){
+        this.primaryStage=primaryStage;
+    }
+    private Map<Integer, PowerUp> powerUps = new HashMap<>();
+
+    public Interpreter() {
+        competitorsPosition = new ArrayList<>();
+        collisions = new HashMap<>();
+        this.raceXMLParser = new RaceXMLParser();
+
+    }
+
+    public Map<Integer, CourseFeature> getCourseFeatureMap() {
+        return this.storedFeatures;
+    }
+
+    public List<MutablePoint> getCourseBoundary() {
+        return courseBoundary;
+    }
+
+    private void setCourseBoundary(List<MutablePoint> courseBoundary) {
+        courseBoundaryOriginal = cloner.deepClone(courseBoundary);
+
+        for (MutablePoint p : cloner.deepClone(courseBoundary)) {
+            this.courseBoundary.add(p.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY));
+        }
+
+        updateCourseBoundary();
+
+    }
+
+    public List<MutablePoint> getCourseBoundary17() {
+        return courseBoundary17;
+    }
+
+    public HashMap<Integer, CourseFeature> getStoredFeatures17() {
+        return storedFeatures17;
+    }
+
+    public String getCourseTimezone() {
+        return timezone;
+    }
+
+    public List<Integer> getStartMarks() {
+        return raceData.getStartMarksID();
+    }
+
+    public List<Integer> getFinishMarks() {
+        return raceData.getFinishMarksID();
+    }
+
+    public RaceStatusEnum getRaceStatus() {
+        return raceStatus;
+    }
+
+    public long getMessageTime() {
+        return messageTime;
+    }
+
+    public long getExpectedStartTime() {
+        return expectedStartTime;
+    }
+
+    public List<Competitor> getCompetitorsPosition() {
+        return new ArrayList<>(competitorsPosition); //return a shallow copy for thread safety
+    }
+
+    public Map<Integer, Competitor> getStoredCompetitors() {
+        return this.storedCompetitors;
+    }
+
+    public double getWindDirection() {
+        return windDirection;
+    }
+
+    public double getWindSpeed() {
+        return windSpeed / 1000.0;
+    }
+
+    public Map<Integer, List<Integer>> getIndexToSourceIdCourseFeatures() {
+        return this.raceData.getLegIndexToMarkSourceIds();
+    }
+
+    /**
+     * @return the boat which the visualizer controls
+     */
+    public Competitor getCompetitor() {
+        return storedCompetitors.get(sourceID);
+    }
+
+    public ThemeEnum getThemeId() {
+        return themeId;
+    }
+
+    public Map<Integer, PowerUp> getPowerUps() {
+        return powerUps;
     }
 
 

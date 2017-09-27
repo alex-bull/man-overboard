@@ -27,8 +27,6 @@ import static utility.Projection.mercatorProjection;
 public class RaceXMLParser {
 
     private List<MutablePoint> courseBoundary;
-//    private List<MutablePoint> courseBoundary17;
-
     private double scaleFactor;
     private double paddingX;
     private double paddingY;
@@ -184,6 +182,13 @@ public class RaceXMLParser {
             raceData.addCourseLimit(limitData);
 
         }
+
+        try {
+            raceData.setGameStartTime(Long.parseLong(race.getChild("GameStartTime").getValue()));
+        } catch (NumberFormatException ne) {
+            //
+        }
+
 
         try {
             for (Element item : race.getChild("Decorations").getChildren()) {
@@ -379,6 +384,9 @@ public class RaceXMLParser {
         }
         return BERMUDA;
     }
+
+
+
 
     public double getShiftDistance() {
         return shiftDistance;
