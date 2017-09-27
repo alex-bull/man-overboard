@@ -674,15 +674,12 @@ public class Interpreter implements DataSource, PacketHandler {
                 case RACE:
                     if(!seenRaceXML) {
                         raceXMLParser.setScreenSize(width, height);
-//                        this.raceData = raceXMLParser.parseRaceData(xml.trim());
-                        System.out.println(xml.trim());
                         this.raceData = raceXMLParser.parseRaceData(xml.trim());
                         this.themeId = raceXMLParser.getThemeId();
                         this.decorations = this.raceData.getDecorations();
 
                         setScalingFactors();
                         setCourseBoundary(raceXMLParser.getCourseBoundary());
-//                        this.courseBoundary17=raceXMLParser.getCourseBoundary17();
                         GPSbounds = raceXMLParser.getGPSBounds();
 //                        this.seenRaceXML = true;
                     }

@@ -325,7 +325,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         double a = 0.002 * competitors.size(); //shift competitors so they aren't colliding at the start
         MutablePoint boatStart = new MutablePoint(this.prestart.getXValue() + a, this.prestart.getYValue());
-        System.out.println("boat will start at " + boatStart);
 
 
         Boat newCompetitor = new Boat("Boat " + clientId, random.nextInt(20) + 20, boatStart, "B" + clientId, clientId, PRESTART);
@@ -590,9 +589,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         if (firstMessageTime != 0) {
             firstMessageTime = System.currentTimeMillis() / 1000;
         }
-        System.out.println("race status " + boatUpdater.checkAllFinished());
-        System.out.println(boatUpdater.finisherList.size());
-        System.out.println(competitors.size());
+
         if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() / 1000 - gameStartTime > gameDuration)) {
             raceStatus = 4;
 
