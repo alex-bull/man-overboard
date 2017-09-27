@@ -16,7 +16,6 @@ import static utilities.RaceCalculator.calculateAngleBetweenMarks;
  */
 public class GuideArrow extends Polygon {
 
-
     /**
      * Initialize a guide arrow
      *
@@ -107,5 +106,11 @@ public class GuideArrow extends Polygon {
         this.getTransforms().add(new Rotate(angle, 0, 0));
     }
 
+    public void hide() {
+        this.setVisible(false);
+    }
 
+    public void show() {
+        this.setVisible(true);
+    }
 }

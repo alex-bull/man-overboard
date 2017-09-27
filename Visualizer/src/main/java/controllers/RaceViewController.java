@@ -3,7 +3,6 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
-import javafx.scene.Node;
 import parsers.boatAction.BoatAction;
 import parsers.xml.race.Decoration;
 import utilities.Sounds;
@@ -14,7 +13,6 @@ import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -29,18 +27,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import models.*;
 import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
-import parsers.boatAction.BoatAction;
 import parsers.powerUp.PowerUp;
 import utilities.DataSource;
-import utilities.EnvironmentConfig;
 import utilities.RaceCalculator;
-import utilities.Sounds;
 import utility.BinaryPackager;
 
 import java.net.URISyntaxException;
@@ -102,6 +96,8 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line startLine;
     private Line finishLine;
     private GuideArrow guideArrow;
+    private CurvedGuideArrow curvedArrowClockwise;
+    private CurvedGuideArrow curvedArrowAnticlockwise;
     private Sail sailLine;
     private SharkModel sharkModel;
     private Map<Integer, WhirlpoolModel> whirlpools = new HashMap<>();
@@ -110,6 +106,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private boolean isLoaded = false;
     private boolean zoom = false;
     private boolean muted = false;
+    private boolean isCloseToNextMark = false;
     //CONTROL VARIABLES
     private int counter = 0;
     private Integer selectedBoatSourceId = 0;
@@ -152,7 +149,11 @@ public class RaceViewController implements Initializable, TableObserver {
         finisherListPane.setVisible(false);
 
         this.guideArrow = new GuideArrow(backgroundColor.brighter(), 90.0);
+        curvedArrowClockwise = new CurvedGuideArrow(true, backgroundColor.brighter());
+        curvedArrowAnticlockwise = new CurvedGuideArrow(false, backgroundColor.brighter());
         raceViewPane.getChildren().add(guideArrow);
+        raceViewPane.getChildren().add(curvedArrowClockwise);
+        raceViewPane.getChildren().add(curvedArrowAnticlockwise);
         controlsView = new ImageView(new Image("images/controls.png"));
 
         gc = raceViewCanvas.getGraphicsContext2D();
@@ -243,6 +244,8 @@ public class RaceViewController implements Initializable, TableObserver {
         if (dataSource.getSourceID() == boat.getSourceID()) {
             sailLine.setVisible(false);
             this.raceViewPane.getChildren().remove(guideArrow);
+            this.raceViewPane.getChildren().remove(curvedArrowClockwise);
+            this.raceViewPane.getChildren().remove(curvedArrowAnticlockwise);
         }
 
         boatModels.get(boat.getSourceID()).die();
@@ -609,6 +612,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * Update the position of the guide arrow
      */
     private void drawGuidingArrow() {
+        guideArrow.show();
         Map<Integer, List<Integer>> indexMap = dataSource.getIndexToSourceIdCourseFeatures();
         Map<Integer, CourseFeature> featureMap = dataSource.getCourseFeatureMap();
 
@@ -620,8 +624,33 @@ public class RaceViewController implements Initializable, TableObserver {
             this.raceViewPane.getChildren().remove(guideArrow);
             return;
         }
-        if (isZoom()) guideArrow.updateArrowZoomed(boat, boatPositionX, boatPositionY, nextMarkLocation);
-        else guideArrow.updateArrow(RaceCalculator.getGateCentre(currentIndex, indexMap, featureMap), nextMarkLocation);
+        if (isZoom()) {
+            guideArrow.updateArrowZoomed(boat, boatPositionX, boatPositionY, nextMarkLocation);
+        } else {
+            guideArrow.updateArrow(RaceCalculator.getGateCentre(currentIndex, indexMap, featureMap), nextMarkLocation);
+        }
+    }
+
+    /**
+     * Update the position of the curved guide arrows
+     */
+    private void drawCurvedGuidingArrows() {
+        curvedArrowClockwise.show();
+        curvedArrowAnticlockwise.show();
+        Map<Integer, List<Integer>> indexMap = dataSource.getIndexToSourceIdCourseFeatures();
+        Map<Integer, CourseFeature> featureMap = dataSource.getCourseFeatureMap();
+
+        Competitor boat = dataSource.getCompetitor();
+        int currentIndex = boat.getCurrentLegIndex();
+        MutablePoint nextMarkLocation = RaceCalculator.getGateCentre(currentIndex + 1, indexMap, featureMap);
+
+        if (nextMarkLocation == null) { //end of race
+            this.raceViewPane.getChildren().remove(curvedArrowClockwise);
+            this.raceViewPane.getChildren().remove(curvedArrowAnticlockwise);
+            return;
+        }
+        curvedArrowClockwise.updateArrow(nextMarkLocation); // TODO get different mark location for left and right
+        curvedArrowAnticlockwise.updateArrow(nextMarkLocation);
     }
 
 
@@ -906,7 +935,14 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawAnnotations(boat);
         }
         this.drawSail(width, length, dataSource.getCompetitor());
-        this.drawGuidingArrow();
+        if (isCloseToNextMark) { // TODO calculate whether boat is close to mark
+            guideArrow.hide();
+            drawCurvedGuidingArrows();
+        } else {
+            curvedArrowClockwise.hide();
+            curvedArrowAnticlockwise.hide();
+            drawGuidingArrow();
+        }
         counter++;
     }
 
