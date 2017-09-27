@@ -68,7 +68,7 @@
                         <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="103.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                 </GridPane>
-                <Button id="controlbutton" layoutX="25.0" layoutY="515.0" mnemonicParsing="false" onMousePressed="#toggleZoom" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="515.0">
+                <Button id="controlbutton" layoutX="25.0" layoutY="515.0" mnemonicParsing="false" onAction="#toggleZoom" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="515.0">
                     <graphic>
                         <ImageView id="controlbutton" fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>

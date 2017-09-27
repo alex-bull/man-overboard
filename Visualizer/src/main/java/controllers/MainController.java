@@ -88,9 +88,8 @@ public class MainController {
             case ENTER:
                 this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.TACK_GYBE.getValue(), dataSource.getSourceID()));
                 break;
-            case P:
+            case Q:
                 raceViewController.zoomOut();
-
                 if (!tableController.isVisible()) {
                     tableController.makeVisible();
                 }
