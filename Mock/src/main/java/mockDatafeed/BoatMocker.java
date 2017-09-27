@@ -397,6 +397,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             if (!boatUpdater.finisherList.contains(competitors.get(clientId))) {
                 boatUpdater.finisherList.add(competitors.get(clientId));
             }
+            sendBoatAction(RIP.getValue(), clientId);
             return;
         }
         clientStates.put(clientId, ClientState.DISCONNECTED);
@@ -590,6 +591,10 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 
         int gameDuration = 300000;
 
+        System.out.println("Race status");
+        System.out.println(competitors);
+        System.out.println(boatUpdater.finisherList);
+        System.out.println(boatUpdater.checkAllFinished());
         if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() - gameStartTime > gameDuration)) {
             raceStatus = 4;
 
@@ -599,7 +604,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         byte[] raceStatusPacket = binaryPackager.raceStatusHeader(raceStatus, expectedStartTime, windDirection, windSpeed, competitors.size());
         byte[] eachBoatPacket = binaryPackager.packageEachBoat(competitors);
         this.sendQueue.put(null, binaryPackager.packageRaceStatus(raceStatusPacket, eachBoatPacket));
-        if (raceStatus == 4) this.restart();
+        if (raceStatus == 4) {
+            this.restart();
+        }
     }
 
     /**

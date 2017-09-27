@@ -246,19 +246,26 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     /**
-     * Remove dead boat and attachments from the view
+     * Handle a boat dying
      *
      * @param boat
      */
     private void killBoat(Competitor boat) {
+        showRIP(boat);
         this.dataSource.send(new BinaryPackager().packageBoatAction(BoatAction.RIP.getValue(), boat.getSourceID()));
+    }
+
+    /**
+     * Set view of dead boat
+     * @param boat
+     */
+    private void showRIP(Competitor boat) {
+        boatModels.get(boat.getSourceID()).die();
+        wakeModels.get(boat.getSourceID()).setVisible(false);
         if (dataSource.getSourceID() == boat.getSourceID()) {
             sailLine.setVisible(false);
             this.raceViewPane.getChildren().remove(guideArrow);
         }
-
-        boatModels.get(boat.getSourceID()).die();
-        wakeModels.get(boat.getSourceID()).setVisible(false);
     }
 
 
@@ -1046,16 +1053,6 @@ public class RaceViewController implements Initializable, TableObserver {
         updateCourse();
 
         for (Competitor boat : dataSource.getCompetitorsPosition()) {
-            Integer sourceId = boat.getSourceID();
-
-            if (boat.getHealthLevel() > 0 && boat.getStatus() == DSQ) { //remove model if they leave the race
-                Set<Node> elements = new HashSet<>();
-                elements.add(boatModels.get(sourceId));
-                elements.add(healthBars.get(sourceId));
-                elements.add(annotations.get(sourceId));
-                elements.add(wakeModels.get(sourceId));
-                raceViewPane.getChildren().removeAll(elements);
-            }
 
             if (counter % 70 == 0) {
                 drawTrack(boat);
