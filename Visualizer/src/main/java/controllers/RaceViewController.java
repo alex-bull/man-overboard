@@ -652,11 +652,11 @@ public class RaceViewController implements Initializable, TableObserver {
 
         double scale = nodeSizeFunc(dataSource.getZoomLevel());
 
-//        curvedArrowClockwise.setFitWidth(scale * curvedArrowClockwise.getFitWidth());
-////        curvedArrowClockwise.setScaleY(scale);
-//        curvedArrowAnticlockwise.setFitWidth(scale * curvedArrowAnticlockwise.getFitWidth());
-//        curvedArrowAnticlockwise.setScaleY(scale);
-
+        if (!isZoom()) {
+            curvedArrowClockwise.hide();
+            curvedArrowAnticlockwise.hide();
+            return;
+        }
         if (markInView(nextMarkLocations.get(0)) || (nextMarkLocations.size() > 1 && markInView(nextMarkLocations.get(1)))) {
             guideArrow.hide();
             String direction = dataSource.getMarkSourceIdToRoundingDirection().get(sourceIds.get(0));
