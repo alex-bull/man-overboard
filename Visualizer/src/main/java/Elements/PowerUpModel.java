@@ -34,7 +34,6 @@ public class PowerUpModel extends ImageView {
                 break;
         }
 
-        System.out.println(scale);
         this.setImage(image);
         this.setPreserveRatio(true);
         this.setFitWidth(baseSize);
