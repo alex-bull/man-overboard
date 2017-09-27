@@ -106,7 +106,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private boolean isLoaded = false;
     private boolean zoom = false;
     private boolean muted = false;
-    private boolean isCloseToNextMark = false;
+    private boolean isCloseToNextMark;
     //CONTROL VARIABLES
     private int counter = 0;
     private Integer selectedBoatSourceId = 0;
@@ -149,8 +149,8 @@ public class RaceViewController implements Initializable, TableObserver {
         finisherListPane.setVisible(false);
 
         this.guideArrow = new GuideArrow(backgroundColor.brighter(), 90.0);
-        curvedArrowClockwise = new CurvedGuideArrow(true, backgroundColor.brighter());
-        curvedArrowAnticlockwise = new CurvedGuideArrow(false, backgroundColor.brighter());
+        curvedArrowClockwise = new CurvedGuideArrow(true, Color.RED);
+        curvedArrowAnticlockwise = new CurvedGuideArrow(false, Color.GREEN);
         raceViewPane.getChildren().add(guideArrow);
         raceViewPane.getChildren().add(curvedArrowClockwise);
         raceViewPane.getChildren().add(curvedArrowAnticlockwise);
@@ -649,8 +649,9 @@ public class RaceViewController implements Initializable, TableObserver {
             this.raceViewPane.getChildren().remove(curvedArrowAnticlockwise);
             return;
         }
-        curvedArrowClockwise.updateArrow(nextMarkLocation); // TODO get different mark location for left and right
-        curvedArrowAnticlockwise.updateArrow(nextMarkLocation);
+
+        curvedArrowClockwise.updateArrow(nextMarkLocation.getXValue(), nextMarkLocation.getYValue()); // TODO get different mark location for left and right
+        curvedArrowAnticlockwise.updateArrow(boatPositionX, boatPositionY);
     }
 
 
@@ -934,6 +935,7 @@ public class RaceViewController implements Initializable, TableObserver {
             this.drawHealthBar(boat);
             this.drawAnnotations(boat);
         }
+        isCloseToNextMark = true;
         this.drawSail(width, length, dataSource.getCompetitor());
         if (isCloseToNextMark) { // TODO calculate whether boat is close to mark
             guideArrow.hide();

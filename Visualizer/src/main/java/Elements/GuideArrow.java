@@ -51,12 +51,9 @@ public class GuideArrow extends Polygon {
      */
     public void updateArrowZoomed(Competitor boat, Double boatX, Double boatY, MutablePoint nextMarkLocation) {
 
-
         // arrow points from boat to next mark
-        Double xDist;
-        Double yDist;
-        xDist = boat.getPosition().getXValue() - nextMarkLocation.getXValue();
-        yDist = boat.getPosition().getYValue() - nextMarkLocation.getYValue();
+        Double xDist = boat.getPosition().getXValue() - nextMarkLocation.getXValue();
+        Double yDist = boat.getPosition().getYValue() - nextMarkLocation.getYValue();
         double angle = calculateAngleBetweenMarks(xDist, yDist);
         double xOffset = 150 * cos(toRadians(angle - 90));
         double yOffset = 150 * sin(toRadians(angle - 90));
@@ -73,7 +70,6 @@ public class GuideArrow extends Polygon {
      * @param nextMarkLocation MutablePoint, the location of the next mark
      */
     public void updateArrow(MutablePoint prevMarkLocation, MutablePoint nextMarkLocation) {
-
 
         double angle;
         if (prevMarkLocation == null) { //before first mark
