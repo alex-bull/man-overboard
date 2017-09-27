@@ -3,7 +3,8 @@ package controllers;
 import Elements.HealthBar;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -46,7 +47,10 @@ public class PlayerController {
     private DataSource dataSource;
     private Stage stage;
     private BinaryPackager binaryPackager;
-
+    private ImageView tinySpeed=new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/tinyspeed.png").toString()));
+    private ImageView greySpeed=new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/speed_grey.png").toString()));
+    private ImageView tinyHealth=new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/tinyhealth.png").toString()));
+    private ImageView greyHealth=new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/potion_grey.png").toString()));
 
     /**
      * Setup
@@ -59,33 +63,41 @@ public class PlayerController {
         this.healthPane.getChildren().add(screenHealthBar);
         this.healthPane.toBack();
         this.binaryPackager = new BinaryPackager();
-//        this.speed.setVisible(false);
-//        this.potion.setVisible(false);
         gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
 
         Competitor boat = dataSource.getCompetitor();
-        if (boat.getBoatType() == 0) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/yachtLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 1) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/cogLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 2) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/frigateLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 3) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/galleonLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 4) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/boatLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 5) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/catLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        } else if (boat.getBoatType() == 6) {
-            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/pirateLandscape.png").toString());
-            playerImageView.setImage(boatImage);
-        }
+        String[] imagePaths = {"images/boats/yachtLandscape.png",
+                "images/boats/cogLandscape.png",
+                "images/boats/frigateLandscape.png",
+                "images/boats/galleonLandscape.png",
+                "images/boats/boatLandscape.png",
+                "images/boats/catLandscape.png",
+                "images/boats/pirateLandscape.png"};
+        Image boatImage = new Image(getClass().getClassLoader().getResource(imagePaths[boat.getBoatType()]).toString());
+        playerImageView.setImage(boatImage);
+//
+//        if (boat.getBoatType() == 0) {
+//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/yachtLandscape.png").toString());
+//            playerImageView.setImage(boatImage);
+//        } else if (boat.getBoatType() == 1) {
+//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/cogLandscape.png").toString());
+//            playerImageView.setImage(boatImage);
+//        } else if (boat.getBoatType() == 2) {
+//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/frigateLandscape.png").toString());
+//            playerImageView.setImage(boatImage);
+//        } else if (boat.getBoatType() == 3) {
+//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/galleonLandscape.png").toString());
+//            playerImageView.setImage(boatImage);
+//        } else if (boat.getBoatType() == 4) {
+//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/boatLandscape.png").toString());
+//            playerImageView.setImage(boatImage);
+//        } else if (boat.getBoatType() == 5) {
+//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/catLandscape.png").toString());
+//            playerImageView.setImage(boatImage);
+//        } else if (boat.getBoatType() == 6) {
+//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/pirateLandscape.png").toString());
+//            playerImageView.setImage(boatImage);
+//        }
 
         playerImageView.setPreserveRatio(false);
         playerImageView.fitWidthProperty().bind(imageGrid.widthProperty());
@@ -107,64 +119,50 @@ public class PlayerController {
 
         Competitor boat = dataSource.getCompetitor();
         Integer barLength = (int) Math.round(healthPane.getWidth());
-        screenHealthBar.update(boat, barLength, 5);
-        String speed = String.format("%.1f", boat.getVelocity());
-        boatSpeedLabel.setText(speed + "m/s");
+        screenHealthBar.update(boat.getHealthLevel(),boat.getMaxHealth(), barLength, 5);
+        boatSpeedLabel.setText(String.format("%.1f m/s", boat.getVelocity()));
         if (boat.hasSpeedBoost()) {
-            this.speed.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/tinyspeed.png").toString())));
+            this.speed.setGraphic(tinySpeed);
         } else {
-            this.speed.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/speed_grey.png").toString())));
+            this.speed.setGraphic(greySpeed);
         }
-
-        Double w = stage.getWidth() / 2.5;
-        player.setPrefSize(w, w / 2.5);
-
-
         if (boat.hasPotion()) {
-            this.potion.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/tinyhealth.png").toString())));
+            this.potion.setGraphic(tinyHealth);
         } else {
-            this.potion.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/potion_grey.png").toString())));
+            this.potion.setGraphic(greyHealth);
         }
 
-    }
+//        Double w = stage.getWidth() / 2.5;
+//        player.setPrefSize(w, w / 2.5);
 
-    /**
-     * Greys out the speed icon
-     */
-    void greyOutBoost() {
-        this.speed.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/speed_grey.png").toString())));
-    }
 
-    /**
-     * Greys out the potion icon
-     */
-    void greyOutPotion() {
-        this.potion.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/potion_grey.png").toString())));
+
 
     }
 
     /**
      * When boost button is clicked. The controller sends the packet for using boost
-     * @param actionEvent
+     *
      */
-
-    public void useBoost(ActionEvent actionEvent) {
+    @FXML
+    public void useBoost() {
         if (dataSource.getCompetitor().hasSpeedBoost()) {
             this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.BOOST.getValue(), dataSource.getSourceID()));
             dataSource.getCompetitor().disableBoost();
-            greyOutBoost();
+//            this.speed.setGraphic(greySpeed);
         }
     }
 
     /**
      * When potion button is clicked. The controller sends the packet for using potion
-     * @param actionEvent
+     *
      */
-    public void usePotion(ActionEvent actionEvent) {
+    @FXML
+    public void usePotion() {
         if (dataSource.getCompetitor().hasPotion()) {
             this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.POTION.getValue(), dataSource.getSourceID()));
             dataSource.getCompetitor().usePotion();
-            greyOutPotion();
+//            this.potion.setGraphic(greyHealth);
         }
     }
 }

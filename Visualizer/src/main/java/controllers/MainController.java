@@ -118,18 +118,10 @@ public class MainController {
                 }
                 break;
             case DIGIT1:
-                if (dataSource.getCompetitor().hasSpeedBoost()) {
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.BOOST.getValue(), dataSource.getSourceID()));
-                    dataSource.getCompetitor().disableBoost();
-                    playerController.greyOutBoost();
-                }
+                playerController.useBoost();
                 break;
             case DIGIT2:
-                if (dataSource.getCompetitor().hasPotion()) {
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.POTION.getValue(), dataSource.getSourceID()));
-                    dataSource.getCompetitor().usePotion();
-                    playerController.greyOutPotion();
-                }
+                playerController.usePotion();
                 break;
         }
     }

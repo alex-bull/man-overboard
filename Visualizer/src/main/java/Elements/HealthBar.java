@@ -32,29 +32,30 @@ public class HealthBar extends Group {
     /**
      * Update health bar using a scale and default positioning
      *
-     * @param boat        Competitor, the boat
+     * @param healthLevel the current health level of boat
+     * @param maxHealth the maximum health level of boat
      * @param lengthScale int, the scale factor for bar length
      * @param widthScale  int, the scale factor for bar width
      */
-    public void update(Competitor boat, int lengthScale, int widthScale) {
+    public void update(double healthLevel,double maxHealth, int lengthScale, int widthScale) {
 
         double strokeWidth = 5 * widthScale;
-        double offset = 0;
-        double healthLevel = boat.getHealthLevel() * lengthScale;
-        double healthSize = ((healthLevel / boat.getMaxHealth()) * (double) lengthScale) / lengthScale;
-        Color healthColour = calculateHealthColour(boat.getHealthLevel(), boat.getMaxHealth());
-        healthBarBackground.setStrokeWidth(strokeWidth + (2 * widthScale));
-        healthBarBackground.setStartX(0);
-        healthBarBackground.setStartY(0 - offset);
-        healthBarBackground.setEndX(0 + (double) lengthScale);
-        healthBarBackground.setEndY(0 - offset);
+//        double offset = 0;
+
+        double healthSize = (healthLevel /maxHealth) * lengthScale;
+        Color healthColour = calculateHealthColour(healthLevel,maxHealth);
+        healthBarBackground.setStrokeWidth(strokeWidth+2*widthScale);
+//        healthBarBackground.setStartX(0);
+//        healthBarBackground.setStartY(0 - offset);
+        healthBarBackground.setEndX((double) lengthScale);
+//        healthBarBackground.setEndY(0 - offset);
         healthBarBackground.setStroke(Color.WHITE);
 
         healthBar.setStrokeWidth(strokeWidth);
-        healthBar.setStartX(0);
-        healthBar.setStartY(0 - offset);
-        healthBar.setEndX(0 + healthSize);
-        healthBar.setEndY(0 - offset);
+//        healthBar.setStartX(0);
+//        healthBar.setStartY(0 - offset);
+        healthBar.setEndX(healthSize);
+//        healthBar.setEndY(0 - offset);
 
         healthBar.setStroke(healthColour);
         healthBar.toFront();
