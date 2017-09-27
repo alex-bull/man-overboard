@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<Pane fx:id="raceParentPane" onTouchStationary="#turnBoat" onZoom="#zoom" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
+<Pane fx:id="raceParentPane" onTouchStationary="#turnBoat" onZoom="#touchZoom" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RaceViewController">
     <children>
         <AnchorPane fx:id="raceView" prefHeight="900.0" prefWidth="1000.0" stylesheets="@css/raceView.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
@@ -104,7 +104,7 @@
                                         <InnerShadow blurType="GAUSSIAN" />
                                     </effect>
                                 </ListView>
-                        <Button layoutX="66.0" layoutY="406.0" mnemonicParsing="false" onAction="#goToStartScreen" prefHeight="44.0" prefWidth="97.0" text="Leave" />
+                        <Button layoutX="66.0" layoutY="406.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="97.0" text="Leave" />
                             </children>
                         </Pane>
                     </children>

@@ -964,25 +964,7 @@ public class RaceViewController implements Initializable, TableObserver {
         return new MutablePoint(pointX, pointY);
     }
 
-    /**
-     * Zoom the screen in and out upon touch zoom event
-     *
-     * @param zoomEvent zoom event
-     */
-    public void zoom(ZoomEvent zoomEvent) {
-        if (zoom) {
-            if (dataSource.getZoomLevel() < 18 && touchZoomLevel < zoomEvent.getTotalZoomFactor()) {
-                dataSource.changeScaling(1);
-                zoomIn();
-            }
-            if (dataSource.getZoomLevel() > 12 && touchZoomLevel > zoomEvent.getTotalZoomFactor()) {
-                dataSource.changeScaling(-1);
-                zoomIn();
-            }
-            touchZoomLevel = zoomEvent.getTotalZoomFactor();
 
-        }
-    }
 
 
     //================================================================================================================
