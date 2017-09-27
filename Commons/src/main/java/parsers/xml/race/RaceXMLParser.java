@@ -27,8 +27,6 @@ import static utility.Projection.mercatorProjection;
 public class RaceXMLParser {
 
     private List<MutablePoint> courseBoundary;
-//    private List<MutablePoint> courseBoundary17;
-
     private double scaleFactor;
     private double paddingX;
     private double paddingY;
