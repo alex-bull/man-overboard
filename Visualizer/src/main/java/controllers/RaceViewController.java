@@ -4,6 +4,7 @@ import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
 import Elements.*;
+import com.rits.cloning.Cloner;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
@@ -116,7 +117,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private WebEngine mapEngine;
     private DataSource dataSource;
     private GraphicsContext gc;
-    private int fpsCounter = 0;
+    private Cloner cloner=new Cloner();
 
     //images
     private final String[] crewImages = {"/Animations/boyCantSwim.gif", "/Animations/girlCantSwim.gif"};
@@ -421,30 +422,41 @@ public class RaceViewController implements Initializable, TableObserver {
 
     }
 
+    private Map<Integer, CourseFeature> courseFeatures = new HashMap<>();
+    private List<MutablePoint> courseBoundary = new ArrayList<>();
 
     /**
      * Check if course need to be redrawn and draws the course features and the course boundary
      */
     private void updateCourse() {
-        Map<Integer, CourseFeature> courseFeatures;
-        List<MutablePoint> courseBoundary;
+
         if (isZoom()) {
             mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);", dataSource.getCompetitor().getLatitude(), dataSource.getCompetitor().getLongitude()));
-            courseFeatures = new HashMap<>();
+
             for (Integer id : dataSource.getStoredFeatures17().keySet()) {
-                courseFeatures.put(id, dataSource.getStoredFeatures17().get(id).shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2));
-            }
-            courseBoundary = new ArrayList<>();
-            for (MutablePoint p : dataSource.getCourseBoundary17()) {
-                courseBoundary.add(p.shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2));
+                if (!courseFeatures.containsKey(id)) {
+                    courseFeatures.put(id, cloner.deepClone(dataSource.getStoredFeatures17().get(id)));
+                }
+                courseFeatures.get(id).setPixelLocation(dataSource.getStoredFeatures17().get(id).getPixelCentre().getXValue()-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2,
+                        dataSource.getStoredFeatures17().get(id).getPixelCentre().getYValue()-currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+
             }
 
+
+            for(int i=0;i<dataSource.getCourseBoundary17().size();i++){
+                if (courseBoundary.size()<dataSource.getCourseBoundary17().size()) {
+                    courseBoundary.add(new MutablePoint(0.0,0.0));
+                }
+                courseBoundary.get(i).setX(dataSource.getCourseBoundary17().get(i).getXValue()-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2);
+                courseBoundary.get(i).setY(dataSource.getCourseBoundary17().get(i).getYValue()-currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
+            }
+            drawCourse(courseFeatures);
+            drawBoundary(courseBoundary);
+
         } else {
-            courseFeatures = dataSource.getStoredFeatures();
-            courseBoundary = dataSource.getCourseBoundary();
+            drawCourse(dataSource.getStoredFeatures());
+            drawBoundary(dataSource.getCourseBoundary());
         }
-        drawCourse(courseFeatures);
-        drawBoundary(courseBoundary);
     }
 
 

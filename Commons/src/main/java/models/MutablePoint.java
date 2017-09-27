@@ -127,4 +127,9 @@ public class MutablePoint implements Vector {
     public MutablePoint shift(double x, double y) {
         return new MutablePoint(getXValue() + x, getYValue() + y);
     }
+
+    public void shiftInPlace(double x, double y){
+        setX(getXValue()+x);
+        setY(getYValue()+y);
+    }
 }
