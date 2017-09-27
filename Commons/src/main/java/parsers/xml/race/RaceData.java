@@ -1,5 +1,7 @@
 package parsers.xml.race;
 
+import models.MutablePoint;
+
 import java.util.*;
 
 /**
@@ -16,7 +18,9 @@ public class RaceData {
     private List<CornerData> compoundMarkSequence = new ArrayList<>();
     private Set<Integer> compoundMarkIDs = new HashSet<>();
     private Set<Integer> markSourceIDs = new HashSet<>();
+    private HashMap<String, Decoration> decorations = new HashMap<>();
     private List<LimitData> courseLimit = new ArrayList<>();
+
     private Map<Integer, List<Integer>> legIndexToMarkSourceIds = new HashMap<>();
     private Map<Integer, String> legIndexToRoundingDirection = new HashMap<>();
     private long gameStartTime;
@@ -81,6 +85,15 @@ public class RaceData {
 
     void addCourseLimit(LimitData limitData) {
         this.courseLimit.add(limitData);
+    }
+
+    public HashMap<String, Decoration> getDecorations() {
+        return decorations;
+    }
+
+    void addDecorations(String id, MutablePoint mutablePoint) {
+        Decoration decoration = new Decoration(id, mutablePoint);
+        this.decorations.put(id, decoration);
     }
 
     public Set<Integer> getParticipantIDs() {

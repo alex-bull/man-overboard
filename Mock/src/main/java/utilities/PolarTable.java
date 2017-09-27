@@ -49,7 +49,6 @@ public class PolarTable {
         //ignore first row
         for (int i = 1; i < rows.length; i++) {
             String[] values = rows[i].split("\\s+");
-
             double windSpeed = Double.parseDouble(values[0]);
             double[] x = new double[(values.length - 1) / 2];
             double[] y = new double[(values.length - 1) / 2];

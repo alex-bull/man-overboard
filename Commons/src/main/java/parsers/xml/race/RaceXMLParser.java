@@ -1,6 +1,8 @@
 package parsers.xml.race;
 
 import com.google.common.math.DoubleMath;
+import com.rits.cloning.Cloner;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import models.MutablePoint;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -12,6 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static com.google.common.collect.ImmutableList.copyOf;
+import static parsers.xml.race.ThemeEnum.ANTARCTICA;
+import static parsers.xml.race.ThemeEnum.BERMUDA;
+import static parsers.xml.race.ThemeEnum.AMAZON;
 import static utility.Projection.mercatorProjection;
 
 /**
@@ -29,7 +35,7 @@ public class RaceXMLParser {
     private List<Double> xMercatorCoords;
     private List<Double> yMercatorCoords;
 
-
+    private Integer themeId;
     private double width;
     private double height;
     private double maxLat;
@@ -83,6 +89,12 @@ public class RaceXMLParser {
 
         Document root = builder.build(stream);
         Element race = root.getRootElement();
+        try {
+            this.themeId = Integer.parseInt(race.getChild("RaceID").getValue());
+        } catch (Exception e) {
+            //
+        }
+
         Set<Integer> participantIDs = new HashSet<>();
         for (Element yacht : race.getChild("Participants").getChildren()) {
             int sourceID = Integer.parseInt(yacht.getAttributeValue("SourceID"));
@@ -179,6 +191,21 @@ public class RaceXMLParser {
             //
         }
 
+
+        try {
+            for (Element item : race.getChild("Decorations").getChildren()) {
+                String id = item.getAttributeValue("Id");
+                double lat = Double.parseDouble(item.getAttributeValue("Lati"));
+                double lon = Double.parseDouble(item.getAttributeValue("Long"));
+                MutablePoint mutablePoint = new MutablePoint(lat, lon);
+                raceData.addDecorations(id, mutablePoint);
+
+            }
+
+        }
+        catch (Exception e){
+            //
+        }
 
         parseRace(raceData);
         return raceData;
@@ -347,6 +374,18 @@ public class RaceXMLParser {
         return zoomLevel;
     }
 
+    public ThemeEnum getThemeId() {
+        if (this.themeId == ANTARCTICA.getValue()) {
+            return ANTARCTICA;
+        }
+        else if (this.themeId == BERMUDA.getValue()) {
+            return BERMUDA;
+        }
+        else if (this.themeId == AMAZON.getValue()) {
+            return AMAZON;
+        }
+        return BERMUDA;
+    }
 
 
 

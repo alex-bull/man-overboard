@@ -67,7 +67,6 @@ public class ForceTest {
 
         Force force4 = new Force(0, 0, true);
         force4.setMagnitude(52.79643144860788);
-        System.out.println(force4.getMagnitude());
 
 
     }

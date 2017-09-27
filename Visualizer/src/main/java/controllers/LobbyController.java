@@ -22,7 +22,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import models.Competitor;
 import parsers.RaceStatusEnum;
@@ -36,6 +35,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+import static parsers.xml.race.ThemeEnum.AMAZON;
+import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 
 
 /**
@@ -78,6 +80,8 @@ public class LobbyController implements Initializable {
     private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
     private AnimationTimer timer;
     private boolean boatSelected = false;
+    private Image courseThemeImage;
+    private  Boolean connected = false;
 
     void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -89,12 +93,8 @@ public class LobbyController implements Initializable {
      * Continuously tries to connect on background thread
      */
     void begin() {
-//        for (int i = 0; i<8; i++) {
-//            competitorList.add("Boaty 10" +i);
-//        }
 
         Scene scene = App.getScene();
-
 
         //start sound loop
         Sounds.player.loopMP3WithFadeIn("sounds/bensound-instinct.mp3", 4);
@@ -128,12 +128,14 @@ public class LobbyController implements Initializable {
      * Uses an animation timer as it is updating the GUI thread
      */
     private void loop() {
+        connected = true;
         this.timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 dataSource.update();
                 updateList();
                 checkStatus();
+                updateCourseImage();
             }
         };
         timer.start();
@@ -156,13 +158,15 @@ public class LobbyController implements Initializable {
         primaryScreenBounds = Screen.getPrimary().getBounds();
         starterList.setItems(competitorList);
 
-        yacht = new Image(getClass().getClassLoader().getResource("images/yachtLandscape.png").toString());
-        cog = new Image(getClass().getClassLoader().getResource("images/cogLandscape.png").toString());
-        frigate = new Image(getClass().getClassLoader().getResource("images/frigateLandscape.png").toString());
-        galleon = new Image(getClass().getClassLoader().getResource("images/galleonLandscape.png").toString());
-        boat = new Image(getClass().getClassLoader().getResource("images/boatLandscape.png").toString());
-        cat = new Image(getClass().getClassLoader().getResource("images/catLandscape.png").toString());
-        pirate = new Image(getClass().getClassLoader().getResource("images/pirateLandscape.png").toString());
+        yacht = new Image(getClass().getClassLoader().getResource("images/boats/yachtLandscape.png").toString());
+        cog = new Image(getClass().getClassLoader().getResource("images/boats/cogLandscape.png").toString());
+        frigate = new Image(getClass().getClassLoader().getResource("images/boats/frigateLandscape.png").toString());
+        galleon = new Image(getClass().getClassLoader().getResource("images/boats/galleonLandscape.png").toString());
+        boat = new Image(getClass().getClassLoader().getResource("images/boats/boatLandscape.png").toString());
+        cat = new Image(getClass().getClassLoader().getResource("images/boats/catLandscape.png").toString());
+        pirate = new Image(getClass().getClassLoader().getResource("images/boats/pirateLandscape.png").toString());
+
+        addTextLimiter(nameText, 15);
 
         boatImages.add(yacht);
         boatImages.add(cog);
@@ -244,26 +248,18 @@ public class LobbyController implements Initializable {
 
 
     /**
-     * Sets the game details on the lobby screen
-     *
-     * @param courseImage String, the url of the course image
-     * @param location    String, the name of the chosen course
-     * @param gameMode    String, the game type
+     * Limits character input count on text field
+     * @param tf TextField
+     * @param maxLength int, the max number of chars
      */
-    public void setGame(String courseImage, String location, String gameMode) {
-
-        try {
-            this.courseImageView.setImage(new Image(courseImage));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid image url, using default image");
-            return;
-        }
-        this.locationLabel.setText(location);
-        this.gameTypeLabel.setText(gameMode);
+    private void addTextLimiter(final TextField tf, final int maxLength) {
+        tf.textProperty().addListener((ov, oldValue, newValue) -> {
+            if (tf.getText().length() > maxLength) {
+                String s = tf.getText().substring(0, maxLength);
+                tf.setText(s);
+            }
+        });
     }
-
-
-
 
 
     /**
@@ -295,6 +291,30 @@ public class LobbyController implements Initializable {
         //if (dataSource.getCompetitor() != null) this.nameText.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
     }
 
+    /**
+     * Updates the course theme image
+     */
+    private void updateCourseImage() {
+
+        if(courseThemeImage == null) {
+            if(dataSource.getThemeId() == ANTARCTICA) {
+                this.courseThemeImage = new Image(getClass().getClassLoader().getResource("images/antarctica/antarcticaTheme.png").toString());
+                this.locationLabel.setText("Antarctica");
+                courseImageView.setImage(this.courseThemeImage);
+            }
+            else if(dataSource.getThemeId() == AMAZON) {
+                this.courseThemeImage = new Image(getClass().getClassLoader().getResource("images/amazon/amazonTheme.png").toString());
+                this.locationLabel.setText("Amazon");
+                courseImageView.setImage(this.courseThemeImage);
+            }
+            else if (dataSource.getThemeId() != null) {
+                this.courseThemeImage = new Image(getClass().getClassLoader().getResource("images/bermuda/bermudaTheme.png").toString());
+                courseImageView.setImage(this.courseThemeImage);
+            }
+        }
+
+    }
+
 
     /**
      * Loads the start view
@@ -304,8 +324,8 @@ public class LobbyController implements Initializable {
         //clean up first
         if (timer != null) timer.stop();
         Sounds.player.fadeOut("sounds/bensound-instinct.mp3", 2);
+        if (connected) dataSource.disconnect();
         dataSource = null;
-
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
         Parent root = null;

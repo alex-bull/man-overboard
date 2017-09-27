@@ -209,7 +209,8 @@ public class BoatUpdater {
     private void handlePowerUpCollisions(Competitor boat) {
         for (int id : powerUps.keySet()) {
             PowerUp powerUp = powerUps.get(id);
-            if (raceCourse.distanceBetweenGPSPoints(boat.getPosition(),powerUp.getLocation())<50) {
+            int collisionRadius = 25;
+            if (raceCourse.distanceBetweenGPSPoints(boat.getPosition(),powerUp.getLocation())<collisionRadius) {
                 powerUps.remove(id);
 
                 switch (powerUp.getType()) {
@@ -304,8 +305,9 @@ public class BoatUpdater {
     private void createShark() {
 
         int velocity = 50;
-        double sharkPosX = courseBoundary.get(0).getXValue() + 0.005;
-        double sharkPosY = courseBoundary.get(0).getYValue() - 0.02;
+        int startIndex = random.nextInt(courseBoundary.size());
+        double sharkPosX = courseBoundary.get(startIndex).getXValue();
+        double sharkPosY = courseBoundary.get(startIndex).getYValue();
         MutablePoint sharkPosition = new MutablePoint(sharkPosX, sharkPosY);
         shark = new Shark(sharkSourceID++, 1, sharkPosition, velocity, 0);
 
@@ -315,8 +317,8 @@ public class BoatUpdater {
 
     private void nextRoamPos(){
         sharkRoamIndex = random.nextInt(courseBoundary.size());
-        double PosX = courseBoundary.get(sharkRoamIndex).getXValue();
-        double PosY = courseBoundary.get(sharkRoamIndex).getYValue() - 0.02;
+        double PosY = courseBoundary.get(sharkRoamIndex).getXValue() + 0.01;
+        double PosX = courseBoundary.get(sharkRoamIndex).getYValue() + 0.01;
         sharkRoamPos = new MutablePoint(PosX, PosY);
     }
 
@@ -333,10 +335,10 @@ public class BoatUpdater {
             double crew_y = crewMembers.get(0).getLongitude();
             angle = atan2(crew_y - shark.getLongitude(), crew_x - shark.getLatitude()) * 180 / PI;
         } else {
-            if (shark.getPosition().isWithin(sharkRoamPos, 0.0001)) {
+            if (new MutablePoint(shark.getLongitude(), shark.getLatitude()).isWithin(sharkRoamPos, 0.0001)) {
                 nextRoamPos();
             }
-            angle = atan2(sharkRoamPos.getYValue() - shark.getLongitude(), sharkRoamPos.getXValue() - shark.getLatitude()) * 180 / PI;
+            angle = atan2(sharkRoamPos.getXValue() - shark.getLongitude(), sharkRoamPos.getYValue() - shark.getLatitude()) * 180 / PI;
         }
         angle = (angle % 360 + 360) % 360;
         shark.setHeading(angle);
