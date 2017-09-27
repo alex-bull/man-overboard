@@ -585,7 +585,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawLine(Line line, MutablePoint p1, MutablePoint p2) {
 
-        int lineTweak;
+        int lineTweak;      //how far line has to be moved to accommodate zooming
 
         if (!isZoom()) lineTweak = 15;
         else if (dataSource.getZoomLevel() == 18) lineTweak = 60;
