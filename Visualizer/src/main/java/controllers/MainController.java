@@ -102,7 +102,6 @@ public class MainController {
                 break;
             case Q:
                 raceViewController.zoomOut();
-
                 if (!tableController.isVisible()) {
                     tableController.makeVisible();
                 }

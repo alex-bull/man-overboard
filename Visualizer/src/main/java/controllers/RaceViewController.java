@@ -96,6 +96,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Line finishLine;
     private GuideArrow guideArrow;
     private Sail sailLine;
+    private CurvedSail curvedSailLine;
     private SharkModel sharkModel;
     private Map<Integer, WhirlpoolModel> whirlpools = new HashMap<>();
     //FLAGS
@@ -136,12 +137,14 @@ public class RaceViewController implements Initializable, TableObserver {
 
         //draws the sail on the boat
         sailLine = new Sail(Color.WHITE);
+        curvedSailLine = new CurvedSail(Color.WHITE);
 
         sharkModel = new SharkModel(new Image("/Animations/sharkMoving.gif"));
 
         raceViewPane.getChildren().add(startLine);
         raceViewPane.getChildren().add(finishLine);
         raceViewPane.getChildren().add(sailLine);
+        raceViewPane.getChildren().add(curvedSailLine);
         raceViewPane.getChildren().add(sharkModel);
 
         controlsBox.setVisible(false);
@@ -421,6 +424,62 @@ public class RaceViewController implements Initializable, TableObserver {
         }
     }
 
+    /**
+     * Turn the boat when a touch pressed stationary event is sent
+     *
+     * @param touchEvent pressed touch event
+     */
+    public void turnBoat(TouchEvent touchEvent) {
+        BinaryPackager binaryPackager = new BinaryPackager();
+        int UP = 5;
+        int DOWN = 6;
+        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
+        double heading = boat.getCurrentHeading();
+        double windAngle = (dataSource.getWindDirection()) % 360;
+        double downWind = (boat.getDownWind(windAngle)) % 360;
+        double touchX = touchEvent.getTouchPoint().getX();
+        double touchY = touchEvent.getTouchPoint().getY();
+        double theta = RaceCalculator.calcBoatDirection(boatPositionX, boatPositionY, touchX, touchY);
+        double difference = theta - heading;
+
+        if (RaceCalculator.isWestOfWind(heading, downWind, windAngle)) {
+            UP = 6;
+            DOWN = 5;
+        }
+
+        if (difference > 0 && difference < 180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
+        } else if (difference > 0 && difference > 180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
+        } else if (difference < 0 && difference > -180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
+        } else if (difference < 0 && difference < -180) {
+            this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
+        }
+    }
+
+
+    /**
+     * Zoom the screen in and out upon touch zoom event
+     *
+     * @param zoomEvent zoom event
+     */
+    public void touchZoom(ZoomEvent zoomEvent) {
+
+        if (zoom) {
+            if (dataSource.getZoomLevel() < 18 && zoomEvent.getTotalZoomFactor() > 1) {
+                long zoomFactor = Math.round(zoomEvent.getTotalZoomFactor() / 2);
+                dataSource.changeScaling(zoomFactor);
+                zoomIn();
+            }
+            if (dataSource.getZoomLevel() > 13 && zoomEvent.getTotalZoomFactor() < 1) {
+                long zoomFactor = Math.round((1 - zoomEvent.getTotalZoomFactor()) / 0.4);
+                dataSource.changeScaling(-zoomFactor);
+                zoomIn();
+            }
+        }
+    }
+
 
     //================================================================================================================
     // DRAWING
@@ -432,6 +491,7 @@ public class RaceViewController implements Initializable, TableObserver {
      */
     private void drawSail(double width, double length, Competitor boat) {
         this.sailLine.update(width, length, boat, dataSource.getWindDirection(), boatPositionX, boatPositionY);
+        this.curvedSailLine.update(width, length, boat, dataSource.getWindDirection(), boatPositionX, boatPositionY);
     }
 
 
@@ -1000,79 +1060,6 @@ public class RaceViewController implements Initializable, TableObserver {
         return isLoaded;
     }
 
-    /**
-     * Turn the boat when a touch pressed stationary event is sent
-     *
-     * @param touchEvent pressed touch event
-     */
-    public void turnBoat(TouchEvent touchEvent) {
-        BinaryPackager binaryPackager = new BinaryPackager();
-        int UP = 5;
-        int DOWN = 6;
-        Competitor boat = dataSource.getStoredCompetitors().get(dataSource.getSourceID());
-        double heading = boat.getCurrentHeading();
-        double windAngle = (dataSource.getWindDirection()) % 360;
-        double downWind = (boat.getDownWind(windAngle)) % 360;
-        double touchX = touchEvent.getTouchPoint().getX();
-        double touchY = touchEvent.getTouchPoint().getY();
-        double theta = RaceCalculator.calcBoatDirection(boatPositionX, boatPositionY, touchX, touchY);
-        double difference = theta - heading;
-
-        if (RaceCalculator.isWestOfWind(heading, downWind, windAngle)) {
-            UP = 6;
-            DOWN = 5;
-        }
-
-        if (difference > 0 && difference < 180) {
-            this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
-        } else if (difference > 0 && difference > 180) {
-            this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
-        } else if (difference < 0 && difference > -180) {
-            this.dataSource.send(binaryPackager.packageBoatAction(UP, boat.getSourceID()));
-        } else if (difference < 0 && difference < -180) {
-            this.dataSource.send(binaryPackager.packageBoatAction(DOWN, boat.getSourceID()));
-        }
-    }
-
-
-
-
-    /**
-     * Redirect the user to the start screen
-     */
-    @FXML
-    public void goToStartScreen(){
-
-
-
-//        dataSource.disconnect();
-//        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("start.fxml"));
-//        Parent root = null;
-//        try {
-//            root = loader.load();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            System.exit(1);
-//        }
-//
-//        assert root != null;
-//        App.getScene().setRoot(root);
-
-//        clearOldInfo();
-    }
-
-//    /**
-//     * Clears the raceView feature lists
-//     */
-//    private void clearOldInfo() {
-//        fallenCrews = new HashMap<>();
-//        blood = new HashMap<>();
-//        powerUps = new HashMap<>();
-//        track = new Track();
-//        whirlpools = new HashMap<>();
-//
-//        isLoaded = false;
-//    }
 
 
 }
