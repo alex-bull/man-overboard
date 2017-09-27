@@ -21,7 +21,7 @@ public class RaceStatusParser {
      * @param body byte[] a byte array of the message that needs parsing
      * @return RaceStatusData the data from the race status message
      */
-    public RaceStatusData processMessage(byte[] body) {
+    public static RaceStatusData processMessage(byte[] body) {
         try {
             long currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
             Integer raceId = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
@@ -59,7 +59,7 @@ public class RaceStatusParser {
      * @param status Integer the race status
      * @return enum version of race status
      */
-    private RaceStatusEnum raceStatusToEnum(Integer status) {
+    private static RaceStatusEnum raceStatusToEnum(Integer status) {
         return RaceStatusEnum.values()[status];
     }
 
@@ -69,7 +69,7 @@ public class RaceStatusParser {
      * @param status Integer the boat status
      * @return enum version of boat status
      */
-    private BoatStatusEnum boatStatusToEnum(Integer status) {
+    private static BoatStatusEnum boatStatusToEnum(Integer status) {
         return BoatStatusEnum.values()[status];
     }
 

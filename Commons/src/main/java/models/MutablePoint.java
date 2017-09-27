@@ -109,6 +109,7 @@ public class MutablePoint implements Vector {
      * @return true if this point is close enough to o
      */
     public boolean isWithin(MutablePoint o, double EPSILON) {
+        if(o==null)return false;
 //        double EPSILON = 0.0002;
         return Math.abs(getXValue() - o.getXValue()) < EPSILON && Math.abs(getYValue() - o.getYValue()) < EPSILON * 2;
     }

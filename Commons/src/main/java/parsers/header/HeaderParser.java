@@ -17,7 +17,7 @@ public class HeaderParser {
      * @param body byte[] a byte array to be parsed
      * @return HeaderData the parsed header data
      */
-    public HeaderData processMessage(byte[] body) {
+    public static HeaderData processMessage(byte[] body) {
         try {
 //            Integer sync1 = hexByteArrayToInt(Arrays.copyOfRange(body, 1, 2));
 //            Integer sync2 = hexByteArrayToInt(Arrays.copyOfRange(body, 2, 3));

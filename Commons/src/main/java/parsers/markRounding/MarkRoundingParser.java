@@ -19,7 +19,7 @@ public class MarkRoundingParser {
      * @param body byte[] a byte array to be parsed
      * @return MarkRoundingData the parsed mark rounding data
      */
-    public MarkRoundingData processMessage(byte[] body) {
+    public static MarkRoundingData processMessage(byte[] body) {
         try {
             long roundingTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
             Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 13, 17));

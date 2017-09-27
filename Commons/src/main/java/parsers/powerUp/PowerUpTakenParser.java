@@ -19,7 +19,7 @@ public class PowerUpTakenParser {
      *
      * @param packet byte[] the packet of the power up taken
      */
-    public PowerUpTakenParser(byte[] packet) {
+    public void update(byte[] packet) {
         this.boatId = hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 4));
         this.powerId = hexByteArrayToInt(Arrays.copyOfRange(packet, 4, 8));
         this.duration = hexByteArrayToInt(Arrays.copyOfRange(packet, 8, 12));

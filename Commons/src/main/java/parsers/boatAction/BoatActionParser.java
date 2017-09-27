@@ -15,7 +15,7 @@ public class BoatActionParser {
      * @param body byte[] a byte array of the boat data message
      * @return BoatData boat data object
      */
-    public BoatAction processMessage(byte[] body) {
+    public static BoatAction processMessage(byte[] body) {
         try {
             int actionNum = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 1));
 //            System.out.println(actionNum);
@@ -32,7 +32,7 @@ public class BoatActionParser {
      * @param hexValues byte[] a byte array of (2) hexadecimal bytes in little endian format
      * @return Double the value of the heading
      */
-    private Double parseHeading(byte[] hexValues) {
+    private static Double parseHeading(byte[] hexValues) {
         return (double) hexByteArrayToInt(hexValues) * 360.0 / 65536.0;
     }
 
@@ -42,7 +42,7 @@ public class BoatActionParser {
      * @param hexValues byte[] a byte array of (4) hexadecimal bytes in little endian format
      * @return Double the value of the coordinate value
      */
-    private Double parseCoordinate(byte[] hexValues) {
+    private static Double parseCoordinate(byte[] hexValues) {
         return (double) hexByteArrayToInt(hexValues) * 180.0 / 2147483648.0;
     }
 

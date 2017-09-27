@@ -15,8 +15,7 @@ import static utility.Projection.mercatorProjection;
  */
 public class BoatDataParser {
 
-
-    private CourseFeature courseFeature;
+    private static CourseFeature courseFeature;
 
     /**
      * Process the given data and parse source id, latitude, longitude, heading, speed
@@ -24,7 +23,7 @@ public class BoatDataParser {
      * @param body byte[] a byte array of the boat data message
      * @return BoatData boat data object
      */
-    public BoatData processMessage(byte[] body) {
+    public static BoatData processMessage(byte[] body) {
         try {
             Integer sourceID = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
             int deviceType = hexByteArrayToInt(Arrays.copyOfRange(body, 15, 16));
@@ -39,7 +38,7 @@ public class BoatDataParser {
             MutablePoint mercatorPoint = mercatorProjection(latitude, longitude);
             if (deviceType == 3) {
                 MutablePoint GPS = new MutablePoint(latitude, longitude);
-                this.courseFeature = new Mark(sourceID.toString(), mercatorPoint, GPS, 0);
+                courseFeature=new Mark(sourceID.toString(), mercatorPoint, GPS, 0);
             }
             return new BoatData(sourceID, deviceType, latitude, longitude, heading, convertedSpeed, mercatorPoint);
         } catch (Exception e) {
@@ -48,18 +47,19 @@ public class BoatDataParser {
 
     }
 
+    public static CourseFeature getCourseFeature() {
+        return courseFeature;
+    }
+
     /**
      * gets the latency of the packet
      * @param body the body of the packet
      * @return the current latency
      */
-    public long getLatency(byte[] body){
+    public static long getLatency(byte[] body){
         return System.currentTimeMillis()-hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
 
     }
 
-    public CourseFeature getCourseFeature() {
-        return courseFeature;
-    }
 
 }
