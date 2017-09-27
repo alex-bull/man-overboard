@@ -114,9 +114,9 @@
                 </GridPane>
                 <Button id="controlbutton" layoutX="25.0" layoutY="515.0" mnemonicParsing="false" onAction="#toggleZoom" prefHeight="70.0" prefWidth="76.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="515.0">
                     <graphic>
-                        <ImageView id="controlbutton" fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView id="controlbutton" fx:id="zoomIcon" fitHeight="55.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@images/zoomIcon.png" />
+                                <Image url="@images/zoomInIcon.png" />
                             </image>
                         </ImageView>
                     </graphic>

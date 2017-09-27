@@ -15,6 +15,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.ZoomEvent;
@@ -36,6 +37,7 @@ import utilities.DataSource;
 import utilities.RaceCalculator;
 import utilities.Sounds;
 import utility.BinaryPackager;
+import java.util.ResourceBundle;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -81,6 +83,9 @@ public class RaceViewController implements Initializable, TableObserver {
     private GridPane finisherListPane;
     @FXML
     private ListView<String> finisherListView;
+    @FXML
+    private ImageView zoomIcon;
+
     private Map<Integer, FallenCrew> fallenCrews = new HashMap<>();
 //    private Map<Integer, ImageView> blood = new HashMap<>();
 //    private Map<Integer, Image> crewImages = new HashMap<>();
@@ -123,7 +128,8 @@ public class RaceViewController implements Initializable, TableObserver {
     //images
     private final String[] crewImages = {"/Animations/boyCantSwim.gif", "/Animations/girlCantSwim.gif"};
     private final String[] bloodImages = {"/images/blood2.png", "/images/blood1.png", "/images/blood.png"};
-
+    private Image zoomInImage;
+    private Image zoomOutImage;
 
     //================================================================================================================
     // SETUP
@@ -151,6 +157,8 @@ public class RaceViewController implements Initializable, TableObserver {
         controlsBox.setVisible(false);
         quitBox.setVisible(false);
 
+        this.zoomInImage = new Image(getClass().getClassLoader().getResource("images/zoomInIcon.png").toString());
+        this.zoomOutImage = new Image(getClass().getClassLoader().getResource("images/zoomOutIcon.png").toString());
 
         finisherListPane.setVisible(false);
 
@@ -174,7 +182,6 @@ public class RaceViewController implements Initializable, TableObserver {
                 // new page has loaded, process:
                 isLoaded = true;
                 drawBackgroundImage();
-
             }
         });
     }
@@ -287,6 +294,7 @@ public class RaceViewController implements Initializable, TableObserver {
         setScale(nodeSizeFunc(dataSource.getZoomLevel()));
 //        dataSource.changeScaling(0);
         track.setVisible(!isZoom());
+        zoomIcon.setImage(zoomInImage);
     }
 
 
@@ -300,6 +308,7 @@ public class RaceViewController implements Initializable, TableObserver {
         setScale(1);
 //        dataSource.changeScaling(0);
         track.setVisible(!isZoom());
+        this.zoomIcon.setImage(this.zoomOutImage);
     }
 
     public boolean isZoom() {

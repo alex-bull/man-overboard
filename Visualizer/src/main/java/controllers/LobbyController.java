@@ -184,8 +184,6 @@ public class LobbyController implements Initializable {
         boatImageView.setPreserveRatio(false);
         boatImageView.fitWidthProperty().bind(playerGridPane.widthProperty());
         boatImageView.fitHeightProperty().bind(playerGridPane.heightProperty());
-
-
     }
 
 
