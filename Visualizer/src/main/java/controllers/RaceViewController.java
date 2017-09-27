@@ -41,6 +41,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.pow;
 import static javafx.collections.FXCollections.observableArrayList;
 import static parsers.BoatStatusEnum.DSQ;
@@ -489,6 +490,12 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draws the line representing the sail of the boat
      */
     private void drawSail(double width, double length, Competitor boat) {
+        if(boat.getStatus() == DSQ) {
+            System.out.println("DEAD");
+            this.sailLine.setVisible(false);
+            this.curvedSailLine.setVisible(false);
+
+        }
         this.sailLine.update(width, length, boat, dataSource.getWindDirection(), boatPositionX, boatPositionY);
         this.curvedSailLine.update(width, length, boat, dataSource.getWindDirection(), boatPositionX, boatPositionY);
     }
