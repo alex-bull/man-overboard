@@ -73,7 +73,13 @@ public class PlayerController {
                 "images/boats/boatLandscape.png",
                 "images/boats/catLandscape.png",
                 "images/boats/pirateLandscape.png"};
-        Image boatImage = new Image(getClass().getClassLoader().getResource(imagePaths[boat.getBoatType()]).toString());
+        Image boatImage;
+        try {
+            boatImage= new Image(getClass().getClassLoader().getResource(imagePaths[boat.getBoatType()]).toString());
+        }
+        catch (IndexOutOfBoundsException e){
+            boatImage=new Image(getClass().getClassLoader().getResource("images/cross-small").toString());
+        }
         playerImageView.setImage(boatImage);
 //
 //        if (boat.getBoatType() == 0) {

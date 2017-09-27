@@ -16,7 +16,7 @@ import static utilities.RaceCalculator.calculateAngleBetweenMarks;
  */
 public class GuideArrow extends Polygon {
 
-
+    private Rotate rotate;
     /**
      * Initialize a guide arrow
      *
@@ -38,7 +38,8 @@ public class GuideArrow extends Polygon {
                 -15., arrowLength + offsetFromOrigin,
                 -5., arrowLength + offsetFromOrigin);
         this.setFill(color);
-        this.getTransforms().add(new Rotate(startAngle, 0, 0));
+        rotate=new Rotate(startAngle, 0, 0);
+        this.getTransforms().add(rotate);
     }
 
 
@@ -74,8 +75,6 @@ public class GuideArrow extends Polygon {
      * @param nextMarkLocation MutablePoint, the location of the next mark
      */
     public void updateArrow(MutablePoint prevMarkLocation, MutablePoint nextMarkLocation) {
-
-
         double angle;
         if (prevMarkLocation == null) { //before first mark
             angle = 90;
@@ -101,10 +100,10 @@ public class GuideArrow extends Polygon {
      * @param y     double the y coordinate for the arrow's origin
      */
     private void applyTransformsToArrow(double angle, double x, double y) {
-        this.getTransforms().clear();
         this.setLayoutX(x);
         this.setLayoutY(y);
-        this.getTransforms().add(new Rotate(angle, 0, 0));
+        rotate.setAngle(angle);
+
     }
 
 

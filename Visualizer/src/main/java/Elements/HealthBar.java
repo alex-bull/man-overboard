@@ -102,14 +102,15 @@ public class HealthBar extends Group {
             return true;
         }
 
-        if (boat.getStatus() != DSQ) {
-            healthBar.setVisible(false);
-            this.getChildren().clear();
-            boat.setStatus(DSQ);
-            return false;
-        }
+        else {
+            if (boat.getStatus() != DSQ) {
+                healthBar.setVisible(false);
+                this.getChildren().clear();
+                boat.setStatus(DSQ);
 
-        return true;
+            }
+        return false;
+        }
     }
 
 

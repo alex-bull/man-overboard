@@ -31,14 +31,18 @@ public class MarkModel extends Group {
      */
     public MarkModel(ThemeEnum theme, double x, double y) {
         mark = new Circle(x,y,25);
-        if (theme.getValue() == ANTARCTICA.getValue()) {
-            mark.setFill(new ImagePattern(getBerg()));
-        }
-        else if (theme.getValue() == AMAZON.getValue()) {
-            mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/amazon/mangrove.png").toString())));
-        }
-        else {
-            mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/bermuda/island.png").toString())));
+        switch (theme){
+            case ANTARCTICA:
+                mark.setFill(new ImagePattern(getBerg()));
+                break;
+            case AMAZON:
+                mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/amazon/mangrove.png").toString())));
+                break;
+            case BERMUDA:
+                mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/bermuda/island.png").toString())));
+            default:
+                System.out.println("invalid theme id");
+                break;
         }
         this.getChildren().add(mark);
     }
