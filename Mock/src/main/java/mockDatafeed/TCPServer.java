@@ -126,11 +126,9 @@ public class TCPServer extends TimerTask {
      * @param clientId Integer, the client the message corresponds to
      */
     private void processMessage(byte[] message, Integer clientId) {
-        System.out.println("Process message");
         byte[] header = Arrays.copyOfRange(message, 2, 15);
         int length = this.getMessageLength(header);
         byte[] body = Arrays.copyOfRange(message, 15, 15 + length + 1);
-        System.out.println("Header");
         this.receiveQueue.put(clientId, header, message);
     }
 

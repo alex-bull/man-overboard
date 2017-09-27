@@ -70,5 +70,5 @@
         <Item Id="Bermuda_3" Lati="32.32398" Long="-64.83736"/>
     </Decorations>
 
-
+    <GameStartTime>%s</GameStartTime>
 </Race>

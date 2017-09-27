@@ -83,7 +83,6 @@ public class MainController {
      */
     @FXML
     public void keyPressed(KeyEvent event) {
-//        System.out.println("key pressed "+System.currentTimeMillis());
         if (dataSource.isSpectating()) {
             if (event.getCode() == A) {
                 if (dataSource.getZoomLevel() < 18 && raceViewController.isZoom()) {
@@ -173,7 +172,6 @@ public class MainController {
         raceViewController.begin(width, height, dataSource);
         timerController.begin(dataSource);
         tableController.addObserver(raceViewController);
-        playerController.setup(dataSource, App.getPrimaryStage());
         this.binaryPackager = new BinaryPackager();
 
         if (!dataSource.isSpectating()) playerController.setup(dataSource, App.getPrimaryStage());

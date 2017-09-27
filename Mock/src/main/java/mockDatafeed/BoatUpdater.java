@@ -619,7 +619,6 @@ public class BoatUpdater {
         for (Whirlpool whirlpool : whirlpools) {
             double collisionRadius = boat.getCollisionRadius() + whirlpool.getCollisionRadius();
             double distance = raceCourse.distanceBetweenGPSPoints(whirlpool.getPosition(), boat.getPosition());
-//            System.out.println(distance);
             if (distance <= collisionRadius) {
                 handler.yachtEvent(boat.getSourceID(), 2);
                 collisionHandler(boat.getPosition(), whirlpool.getCollisionMagnitude(), 10);

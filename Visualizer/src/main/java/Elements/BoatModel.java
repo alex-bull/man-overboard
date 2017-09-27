@@ -107,7 +107,6 @@ public class BoatModel extends Group {
     public void die() {
 
         if (!isDead) {
-            System.out.println("Die");
             isDead = true;
             boatModel.setVisible(false);
             this.getChildren().remove(playerMarker);

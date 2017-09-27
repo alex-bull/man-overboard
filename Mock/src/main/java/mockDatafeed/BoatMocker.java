@@ -134,7 +134,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * @param args String[]
      */
     public static void main(String[] args) {
-        System.out.println("main method");
         try {
             new BoatMocker();
 
@@ -286,7 +285,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             case NAME_REQUEST:
                 NameParser nameParser = new NameParser(packet);
                 competitors.get(nameParser.getSourceId()).setTeamName(nameParser.getName());
-                this.sendAllXML();
+                this.sendAllXML(null);
                 break;
             case MODEL_REQUEST:
                 ModelParser modelParser = new ModelParser(packet);
@@ -296,7 +295,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
 //                }
                 //competitors.get(modelParser.getSourceId()).setBoatType(boatModelEnum);
                 competitors.get(modelParser.getSourceId()).setBoatType(modelParser.getModel());
-                this.sendAllXML();
+                this.sendAllXML(null);
                 break;
         }
         return true;
@@ -325,8 +324,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             byte[] res = binaryPackager.packageConnectionResponse((byte) 0, clientId);
             //send connection response and broadcast XML so update lobbies
             sendQueue.put(clientId, res);
-            this.clientStates.put(clientId, false);
-            this.sendAllXML();
+            this.clientStates.put(clientId, ClientState.NOT_READY);
+            this.sendAllXML(clientId);
             this.flag = true;
         } else {
             double a = 0.002 * competitors.size(); //shift competitors so they aren't colliding at the start
@@ -341,7 +340,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             //send connection response and broadcast XML so update lobbies
             sendQueue.put(clientId, res);
             this.clientStates.put(clientId, ClientState.NOT_READY);
-            this.sendAllXML();
+            this.sendAllXML(null);
         }
     }
 
@@ -408,7 +407,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
         clientStates.put(clientId, ClientState.DISCONNECTED);
         this.competitors.remove(clientId);
-        this.sendAllXML();
+        this.sendAllXML(null);
     }
 
     /**
@@ -692,11 +691,11 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     /**
      * Send a race xml file to client, uses a course xml to generate custom race xml messages
      */
-    private void sendRaceXML() throws IOException {
+    private void sendRaceXML(Integer clientId) throws IOException {
         int messageType = 6;
         String raceTemplateString = fileToString(this.coursePath);
         String raceXML = formatRaceXML(raceTemplateString);
-        this.sendQueue.put(null, binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
+        this.sendQueue.put(clientId, binaryPackager.packageXML(raceXML.length(), raceXML, messageType));
 
     }
 
@@ -704,9 +703,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     /**
      * Send a xml file
      */
-    private void sendXML(String xmlPath, int messageType) throws IOException {
+    private void sendXML(String xmlPath, int messageType, Integer clientId) throws IOException {
         String xmlString = CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
-        this.sendQueue.put(null, binaryPackager.packageXML(xmlString.length(), xmlString, messageType));
+        this.sendQueue.put(clientId, binaryPackager.packageXML(xmlString.length(), xmlString, messageType));
     }
 
     /**
@@ -716,7 +715,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
      * @param messageType message type
      * @throws IOException IO exception
      */
-    private void sendBoatXML(String xmlPath, int messageType) throws IOException {
+    private void sendBoatXML(String xmlPath, int messageType, Integer clientId) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         String boatTemplate = "<Boat Type=\"Yacht\" SourceID=\"%s\" ShapeID=\"15\" StoweName=\"USA\" ShortName=\"%s\" ShorterName=\"USA\"\n" +
                 "              BoatName=\"%s\" HullNum=\"AC4515\" Skipper=\"SPITHILL\" Helmsman=\"SPITHILL\" Country=\"USA\"\n" +
@@ -732,19 +731,19 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         }
         String xmlString = CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(xmlPath)));
         String boatXML = String.format(xmlString, stringBuilder.toString());
-        this.sendQueue.put(null, binaryPackager.packageXML(boatXML.length(), boatXML, messageType));
+        this.sendQueue.put(clientId, binaryPackager.packageXML(boatXML.length(), boatXML, messageType));
     }
 
 
     /**
      * Sends all xml files
      */
-    private void sendAllXML() {
+    private void sendAllXML(Integer clientId) {
 
         try {
-            sendBoatXML("/mock_boats.xml", 7);
-            sendXML("/mock_regatta.xml", 5);
-            sendRaceXML();
+            sendBoatXML("/mock_boats.xml", 7, clientId);
+            sendXML("/mock_regatta.xml", 5, clientId);
+            sendRaceXML(clientId);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -822,7 +821,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         if (shouldStartGame()) {
             raceInProgress = true;
             gameStartTime = System.currentTimeMillis();
-            this.sendAllXML();
+            this.sendAllXML(null);
         }
 
         if (!raceInProgress) return;

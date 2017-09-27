@@ -405,7 +405,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 addShark(parseShark(packet));
                 break;
             case BLOOD:
-                System.out.println("Blood event");
                 crewLocations.get((parseBlood(packet))).setDied();
                 break;
             case WHIRLPOOL:
@@ -596,7 +595,6 @@ public class Interpreter implements DataSource, PacketHandler {
 
         MutablePoint location = cloner.deepClone(boatData.getMercatorPoint());
         MutablePoint location17 = cloner.deepClone(boatData.getMercatorPoint());
-
         location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
         location17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
@@ -614,6 +612,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 updatingBoat.setColor(colour);
                 colourPool.getColours().remove(colour);
             }
+
 
             updatingBoat.setPosition(location);
             updatingBoat.setPosition17(location17);
@@ -686,7 +685,6 @@ public class Interpreter implements DataSource, PacketHandler {
                         GPSbounds = raceXMLParser.getGPSBounds();
 //                        this.seenRaceXML = true;
                         this.messageTime = raceData.getGameStartTime();
-                        System.out.println("Parsed " + messageTime);
                     }
 
                     break;
