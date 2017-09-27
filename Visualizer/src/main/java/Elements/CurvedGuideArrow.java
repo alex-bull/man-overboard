@@ -1,5 +1,7 @@
 package Elements;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
@@ -14,10 +16,11 @@ import static utilities.RaceCalculator.calculateAngleBetweenMarks;
  * Created by mattgoodson on 30/08/17.
  * An arrow that circles the next mark to round
  */
-public class CurvedGuideArrow extends Polygon {
+public class CurvedGuideArrow extends ImageView {
 
     private double angle;
     private boolean rotatesClockwise;
+    Image image;
     /**
      * Initialize a curved guide arrow
      *
@@ -26,41 +29,52 @@ public class CurvedGuideArrow extends Polygon {
      */
     public CurvedGuideArrow(boolean isClockwise, Color color) {
 
-        double arrowLength = -50; // default arrow points vertically in the -y direction (upwards)
-        double arrowHeadLength = -20;
-        double offsetFromOrigin = -1 * (arrowLength + arrowHeadLength) + 10; // 80
-        double moveRight = 70;
-        double moveLeft = 0;
+//        double arrowLength = -50; // default arrow points vertically in the -y direction (upwards)
+//        double arrowHeadLength = -20;
+//        double offsetFromOrigin = -1 * (arrowLength + arrowHeadLength) + 10; // 80
+//        double moveRight = 70;
+//        double moveLeft = 0;
+//
+//        if (isClockwise) {
+//            // flip
+//            moveLeft = -moveLeft;
+//            moveRight = -moveRight;
+//            this.getPoints().addAll(
+//                    10. + moveRight, offsetFromOrigin, //tail left
+//                    moveLeft, offsetFromOrigin,
+//                    moveLeft, offsetFromOrigin + 10,
+//                    moveRight, offsetFromOrigin + 10, //tail right
+//                    0. + moveRight, arrowLength + offsetFromOrigin, // base head left
+//                    -10. + moveRight, arrowLength + offsetFromOrigin, // point head left
+//                    5. + moveRight, arrowLength + arrowHeadLength + offsetFromOrigin, // tip
+//                    20. + moveRight, arrowLength + offsetFromOrigin, // point head right
+//                    10. + moveRight, arrowLength + offsetFromOrigin); // base head right
+//
+//            rotatesClockwise = true;
+//        } else {
+//            this.getPoints().addAll(
+//                    0. + moveRight, offsetFromOrigin, //tail left
+//                    moveLeft, offsetFromOrigin,
+//                    moveLeft, offsetFromOrigin + 10,
+//                    10 + moveRight, offsetFromOrigin + 10, //tail right
+//                    10. + moveRight, arrowLength + offsetFromOrigin, // base head right
+//                    20. + moveRight, arrowLength + offsetFromOrigin, // point head right
+//                    5. + moveRight, arrowLength + arrowHeadLength + offsetFromOrigin, // tip
+//                    -10. + moveRight, arrowLength + offsetFromOrigin, // point head left
+//                    0. + moveRight, arrowLength + offsetFromOrigin); // base head left
+//        }
+//        this.setFill(color);
+    }
 
-        if (isClockwise) {
-            // flip
-            moveLeft = -moveLeft;
-            moveRight = -moveRight;
-            this.getPoints().addAll(
-                    10. + moveRight, offsetFromOrigin, //tail left
-                    moveLeft, offsetFromOrigin,
-                    moveLeft, offsetFromOrigin + 10,
-                    moveRight, offsetFromOrigin + 10, //tail right
-                    0. + moveRight, arrowLength + offsetFromOrigin, // base head left
-                    -10. + moveRight, arrowLength + offsetFromOrigin, // point head left
-                    5. + moveRight, arrowLength + arrowHeadLength + offsetFromOrigin, // tip
-                    20. + moveRight, arrowLength + offsetFromOrigin, // point head right
-                    10. + moveRight, arrowLength + offsetFromOrigin); // base head right
-
-            rotatesClockwise = true;
+    public CurvedGuideArrow(Boolean clockwise) {
+        if (clockwise) {
+            image = new Image("images/clockwiseArrow.png");
         } else {
-            this.getPoints().addAll(
-                    0. + moveRight, offsetFromOrigin, //tail left
-                    moveLeft, offsetFromOrigin,
-                    moveLeft, offsetFromOrigin + 10,
-                    10 + moveRight, offsetFromOrigin + 10, //tail right
-                    10. + moveRight, arrowLength + offsetFromOrigin, // base head right
-                    20. + moveRight, arrowLength + offsetFromOrigin, // point head right
-                    5. + moveRight, arrowLength + arrowHeadLength + offsetFromOrigin, // tip
-                    -10. + moveRight, arrowLength + offsetFromOrigin, // point head left
-                    0. + moveRight, arrowLength + offsetFromOrigin); // base head left
+            image = new Image("images/antiClockwiseArrow.png");
         }
-        this.setFill(color);
+        this.setImage(image);
+        rotatesClockwise = clockwise;
+
     }
 
 
@@ -77,7 +91,12 @@ public class CurvedGuideArrow extends Polygon {
         } else {
             angle -= 2;
         }
-        applyTransformsToArrow(angle, markX, markY);
+        if (rotatesClockwise) {
+            applyTransformsToArrow(angle, markX - image.getWidth(), markY - image.getHeight(), image.getWidth(), image.getHeight());
+        }
+        else {
+            applyTransformsToArrow(angle, markX, markY - image.getHeight(), 0, image.getHeight());
+        }
     }
 
     /**
@@ -87,11 +106,11 @@ public class CurvedGuideArrow extends Polygon {
      * @param x     double the x coordinate for the arrow's origin
      * @param y     double the y coordinate for the arrow's origin
      */
-    private void applyTransformsToArrow(double angle, double x, double y) {
+    private void applyTransformsToArrow(double angle, double x, double y, double width, double height) {
         this.getTransforms().clear();
         this.setLayoutX(x);
         this.setLayoutY(y);
-        this.getTransforms().add(new Rotate(angle, 0, 0));
+        this.getTransforms().add(new Rotate(angle, width, height));
     }
 
     public void hide() {

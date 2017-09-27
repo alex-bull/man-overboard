@@ -10,8 +10,7 @@ import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpParser;
 import parsers.powerUp.PowerUpTakenParser;
 import parsers.powerUp.PowerUpType;
-import parsers.xml.race.Decoration;
-import parsers.xml.race.ThemeEnum;
+import parsers.xml.race.*;
 import utility.QueueMessage;
 import utility.WorkQueue;
 import models.ColourPool;
@@ -40,8 +39,6 @@ import parsers.powerUp.PowerUpType;
 import parsers.raceStatus.RaceStatusData;
 import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.boat.BoatXMLParser;
-import parsers.xml.race.RaceData;
-import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
 import utility.*;
@@ -107,6 +104,7 @@ public class Interpreter implements DataSource, PacketHandler {
     private int numBoats = 0;
     private boolean seenRaceXML = false;
     private int sourceID = 0;
+
 
     private ThemeEnum themeId;
 
@@ -764,6 +762,8 @@ public class Interpreter implements DataSource, PacketHandler {
                         this.themeId = raceXMLParser.getThemeId();
                         this.decorations = this.raceData.getDecorations();
 
+
+
                         setScalingFactors();
                         setCourseBoundary(raceXMLParser.getCourseBoundary());
 //                        this.courseBoundary17=raceXMLParser.getCourseBoundary17();
@@ -931,10 +931,18 @@ public class Interpreter implements DataSource, PacketHandler {
         return raceXMLParser.getShiftDistance();
     }
 
-
     public HashMap<String, Decoration> getDecorations() {
         return decorations;
     }
+
+    public Map<Integer, String> getMarkSourceIdToRoundingDirection() {
+        return this.raceData.getMarkSourceIDToRoundingDirection();
+    }
+
+//    public Map<Integer, MarkData> getMarks() {
+//        return marks;
+//    }
+
 
 
 }

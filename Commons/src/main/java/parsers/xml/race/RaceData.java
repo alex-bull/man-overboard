@@ -23,6 +23,7 @@ public class RaceData {
 
     private Map<Integer, List<Integer>> legIndexToMarkSourceIds = new HashMap<>();
     private Map<Integer, String> legIndexToRoundingDirection = new HashMap<>();
+    private Map<Integer, String> markSourceIDToRoundingDirection = new HashMap<>();
 
 
     RaceData() {
@@ -130,5 +131,13 @@ public class RaceData {
 
     public void setLegIndexToRoundingDirection(Map<Integer, String> legIndexToRoundingDirection) {
         this.legIndexToRoundingDirection = legIndexToRoundingDirection;
+    }
+
+    public Map<Integer, String> getMarkSourceIDToRoundingDirection() {
+        return markSourceIDToRoundingDirection;
+    }
+
+    public void setMarkSourceIDToRoundingDirection(Map<Integer, String> markSourceIDToRoundingDirection) {
+        this.markSourceIDToRoundingDirection = markSourceIDToRoundingDirection;
     }
 }

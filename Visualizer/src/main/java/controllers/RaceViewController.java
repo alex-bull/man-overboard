@@ -152,8 +152,10 @@ public class RaceViewController implements Initializable, TableObserver {
         finisherListPane.setVisible(false);
 
         this.guideArrow = new GuideArrow(backgroundColor.brighter(), 90.0);
-        curvedArrowClockwise = new CurvedGuideArrow(true, Color.RED);
-        curvedArrowAnticlockwise = new CurvedGuideArrow(false, Color.GREEN);
+//        curvedArrowClockwise = new CurvedGuideArrow(true, backgroundColor.brighter());
+//        curvedArrowAnticlockwise = new CurvedGuideArrow(false, backgroundColor.brighter());
+        curvedArrowClockwise = new CurvedGuideArrow(true);
+        curvedArrowAnticlockwise = new CurvedGuideArrow(false);
         raceViewPane.getChildren().add(guideArrow);
         raceViewPane.getChildren().add(curvedArrowClockwise);
         raceViewPane.getChildren().add(curvedArrowAnticlockwise);
@@ -639,22 +641,36 @@ public class RaceViewController implements Initializable, TableObserver {
         List<MutablePoint> nextMarkLocations = RaceCalculator.getMarkCentres(currentIndex + 1, indexMap, currentFeaturePositions);
 
 
-        if (nextMarkLocations.size() == 0) { //end of race
+        if (nextMarkLocations == null || nextMarkLocations.size() == 0) { //end of race
             this.raceViewPane.getChildren().remove(guideArrow);
             this.raceViewPane.getChildren().remove(curvedArrowAnticlockwise);
             this.raceViewPane.getChildren().remove(curvedArrowClockwise);
             return;
         }
 
+        List<Integer> sourceIds = indexMap.get(currentIndex + 1);
+
 
         if (markInView(nextMarkLocations.get(0)) || (nextMarkLocations.size() > 1 && markInView(nextMarkLocations.get(1)))) {
             System.out.println("Round");
             guideArrow.hide();
-            curvedArrowAnticlockwise.show();
-            curvedArrowAnticlockwise.updateArrow(nextMarkLocations.get(0).getXValue(), nextMarkLocations.get(0).getYValue());
-            if (nextMarkLocations.size() > 1) {
+            String direction = dataSource.getMarkSourceIdToRoundingDirection().get(sourceIds.get(0));
+            if (direction.equals("CCW")) {
+                curvedArrowAnticlockwise.show();
+                curvedArrowAnticlockwise.updateArrow(nextMarkLocations.get(0).getXValue(), nextMarkLocations.get(0).getYValue());
+            } else {
                 curvedArrowClockwise.show();
-                curvedArrowClockwise.updateArrow(nextMarkLocations.get(1).getXValue(), nextMarkLocations.get(1).getYValue());
+                curvedArrowClockwise.updateArrow(nextMarkLocations.get(0).getXValue(), nextMarkLocations.get(0).getYValue());
+            }
+            if (nextMarkLocations.size() > 1) {
+                String direction2 = dataSource.getMarkSourceIdToRoundingDirection().get(sourceIds.get(1));
+                if (direction2.equals("CCW")) {
+                    curvedArrowAnticlockwise.show();
+                    curvedArrowAnticlockwise.updateArrow(nextMarkLocations.get(1).getXValue(), nextMarkLocations.get(1).getYValue());
+                } else {
+                    curvedArrowClockwise.show();
+                    curvedArrowClockwise.updateArrow(nextMarkLocations.get(1).getXValue(), nextMarkLocations.get(1).getYValue());
+                }
             }
         }
         else {
@@ -850,6 +866,7 @@ public class RaceViewController implements Initializable, TableObserver {
             item.setScaleY(scale);
             item.setScaleX(scale);
         }
+
         sharkModel.setScaleX(scale);
         sharkModel.setScaleY(scale);
     }

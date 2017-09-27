@@ -86,4 +86,6 @@ public interface DataSource {
     MutablePoint evaluateOriginalPosition(MutablePoint location);
     MutablePoint evaluatePosition(MutablePoint location);
     HashMap<String, Decoration> getDecorations();
+//    HashMap<Integer, Mark> getMarks();
+    Map<Integer, String> getMarkSourceIdToRoundingDirection();
 }

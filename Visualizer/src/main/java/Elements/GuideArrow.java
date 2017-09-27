@@ -16,6 +16,7 @@ import static utilities.RaceCalculator.calculateAngleBetweenMarks;
  */
 public class GuideArrow extends Polygon {
 
+
     /**
      * Initialize a guide arrow
      *
