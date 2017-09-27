@@ -584,7 +584,20 @@ public class RaceViewController implements Initializable, TableObserver {
      * @param p2   the other point
      */
     private void drawLine(Line line, MutablePoint p1, MutablePoint p2) {
-        ShapeDraw.line(line, p1, p2);
+
+        int lineTweak;
+
+        if (!isZoom()) lineTweak = 15;
+        else if (dataSource.getZoomLevel() == 18) lineTweak = 60;
+        else if (dataSource.getZoomLevel() == 17) lineTweak = 35;
+        else if (dataSource.getZoomLevel() == 16) lineTweak = 15;
+        else if (dataSource.getZoomLevel() == 15) lineTweak = 7;
+        else if (dataSource.getZoomLevel() == 14) lineTweak = 0;
+        else lineTweak = 0;
+
+        MutablePoint point1 = new MutablePoint(p1.getXValue(), p1.getYValue() + lineTweak);
+        MutablePoint point2 = new MutablePoint(p2.getXValue(), p2.getYValue() + lineTweak);
+        ShapeDraw.line(line, point1, point2);
     }
 
 
