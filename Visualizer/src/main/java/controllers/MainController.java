@@ -2,7 +2,6 @@ package controllers;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -56,7 +55,7 @@ public class MainController {
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private boolean playing = false;
-    private boolean flag = false;
+    private boolean zoomFlag = false;
     private AnimationTimer timer;
 
     /**
@@ -71,12 +70,6 @@ public class MainController {
         }
     }
 
-    @FXML
-    public void zoomOut(KeyEvent event){
-        if (event.getCode()==Q){
-            raceViewController.zoomIn();
-        }
-    }
 
     /**
      * Handle control key events
@@ -85,6 +78,7 @@ public class MainController {
      */
     @FXML
     public void keyPressed(KeyEvent event) {
+        if (raceViewController.finishFlag || raceViewController.exit) return;
         if (dataSource.isSpectating()) {
             if (event.getCode() == A) {
                 if (dataSource.getZoomLevel() < 18 && raceViewController.isZoom()) {
@@ -119,10 +113,8 @@ public class MainController {
                 this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.TACK_GYBE.getValue(), dataSource.getSourceID()));
                 break;
             case Q:
-                raceViewController.zoomOut();
-                if (!tableController.isVisible()) {
-                    tableController.makeVisible();
-                }
+                raceViewController.toggleZoom();
+
                 break;
             case BACK_QUOTE:
                 if (raceViewController.isZoom() && tableController.isVisible()) {
@@ -195,10 +187,7 @@ public class MainController {
                     performanceController.refresh(dataSource.getLatency());
                     sailSlider.toFront();
                     loadingPane.setVisible(false);
-                    if (!flag && !dataSource.isSpectating()) {
-                        raceViewController.toggleZoom();
-                        flag = true;
-                    }
+
                 } else {
                     loadingPane.toFront();
                     loadingPane.setVisible(true);

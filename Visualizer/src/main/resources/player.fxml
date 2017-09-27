@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
@@ -98,11 +105,11 @@
             <Insets />
          </GridPane.margin>
         </GridPane>
-      <GridPane GridPane.columnIndex="2" GridPane.rowIndex="2">
+      <GridPane prefHeight="74.0" prefWidth="383.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="149.0" minWidth="10.0" prefWidth="59.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="336.0" minWidth="10.0" prefWidth="301.0" />
-            <ColumnConstraints />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="149.0" minWidth="0.0" prefWidth="65.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="336.0" minWidth="10.0" prefWidth="70.0" />
+            <ColumnConstraints maxWidth="278.0" minWidth="149.0" prefWidth="225.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -111,7 +118,7 @@
          </rowConstraints>
          <children>
 
-              <Button fx:id="speed" onAction="#useBoost" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+              <Button fx:id="speed" onAction="#useBoost" GridPane.halignment="CENTER" GridPane.valignment="TOP">
                   <graphic>
                       <ImageView id="boostButton" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                           <image>
@@ -120,10 +127,10 @@
                       </ImageView>
                   </graphic>
                   <GridPane.margin>
-                      <Insets top="2.0" />
+                      <Insets />
                   </GridPane.margin>
               </Button>
-              <Button fx:id="potion" onAction="#usePotion" prefHeight="42.0" prefWidth="51.0" GridPane.columnIndex="1" GridPane.valignment="TOP">
+              <Button fx:id="potion" onAction="#usePotion" prefHeight="42.0" prefWidth="51.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="TOP">
                   <graphic>
                       <ImageView id="potionButton" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                           <image>
@@ -132,7 +139,7 @@
                       </ImageView>
                   </graphic>
                   <GridPane.margin>
-                      <Insets left="40.0" />
+                      <Insets />
                   </GridPane.margin>
               </Button>
              <ImageView fx:id="spectating" fitHeight="150.0" fitWidth="200.0" opacity="0.6" pickOnBounds="true" preserveRatio="true" visible="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.valignment="TOP">

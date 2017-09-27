@@ -803,7 +803,6 @@ public class BinaryPackager {
         this.writeHeader(packetBuffer, type, bodyLength);
         packetBuffer.putInt(sourceId);
         packetBuffer.putShort((short) 2);
-        System.out.println("bpackager" + code);
         packetBuffer.put(code.byteValue());
         this.writeCRC(packetBuffer);
         return packet;

@@ -1,12 +1,8 @@
 package Elements;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Rotate;
-import javafx.util.Duration;
 import models.Competitor;
 
 /**

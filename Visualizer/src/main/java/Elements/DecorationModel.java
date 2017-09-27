@@ -1,9 +1,12 @@
 package Elements;
 
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import models.MutablePoint;
 import parsers.xml.race.Decoration;
+import utilities.Sounds;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -16,6 +19,7 @@ public class DecorationModel extends ImageView {
     private double imageWidth;
     private double imageHeight;
     private Decoration decoration;
+    private boolean isSnake = false;
 
     /**
      * Constructs a Decoration item
@@ -40,12 +44,27 @@ public class DecorationModel extends ImageView {
             image = getRandomAmazonImage();
             scale = 1;
         }
+        else if (decoration.getId().contains("Nile")) {
+            image = getRandomNileImage();
+            scale = 1;
+        }
         this.imageWidth = image.getWidth();
         this.imageHeight = image.getHeight();
         this.setImage(image);
         this.setFitHeight(imageHeight * scale);
         this.setFitWidth(imageWidth * scale);
 
+        //adds snake sound
+        if (isSnake) {
+            this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent event) {
+                    playImageSound();
+                }
+            });
+            isSnake = false;
+        }
     }
 
     /**
@@ -115,6 +134,21 @@ public class DecorationModel extends ImageView {
         imagePaths.add("images/amazon/snake.png");
         Random random = new Random();
         String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
+        if (chosenPath.contains("snake")) isSnake = true;
+        return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
+    }
+
+    /**
+     * Generate a random image for an igloo
+     * @return Image the image
+     */
+    private Image getRandomNileImage() {
+        ArrayList<String> imagePaths = new ArrayList<>();
+        imagePaths.add("images/nile/mummy.png");
+        imagePaths.add("images/nile/pyramid.png");
+        imagePaths.add("images/nile/sphinx.png");
+        Random random = new Random();
+        String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
         return new Image(getClass().getClassLoader().getResource(chosenPath).toString());
     }
 
@@ -134,6 +168,14 @@ public class DecorationModel extends ImageView {
             MutablePoint p=this.decoration.getPosition();
             this.relocate(p.getXValue()-imageWidth/2,p.getYValue()-imageHeight/2);
         }
+    }
+
+    /**
+     * Play the game snake sound
+     */
+    private void playImageSound() {
+        Sounds.player.playMP3("sounds/snake.wav");
+        Sounds.player.setVolume("sounds/snake.wav", 2.0);
     }
 
 }

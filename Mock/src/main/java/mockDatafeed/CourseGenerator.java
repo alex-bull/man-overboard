@@ -10,6 +10,7 @@ import java.util.Random;
 import static parsers.xml.race.ThemeEnum.AMAZON;
 import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 import static parsers.xml.race.ThemeEnum.BERMUDA;
+import static parsers.xml.race.ThemeEnum.NILE;
 
 /**
  * Created by psu43 on 20/09/17.
@@ -27,6 +28,8 @@ public class CourseGenerator {
         coursePaths.put("/bermuda.xml", new MutablePoint(32.35763 , -64.81332));
         coursePaths.put("/antarctica.xml", new MutablePoint(-64.68325, -63.09448));
         coursePaths.put("/amazon.xml", new MutablePoint(0.49918, -50.52389));
+        coursePaths.put("/nile.xml", new MutablePoint(29.4529 , 34.87592));
+
     }
 
     /**
@@ -60,6 +63,9 @@ public class CourseGenerator {
         }
         else if (chosenCourse.contains("amazon")) {
             return AMAZON.getValue();
+        }
+        else if (chosenCourse.contains("nile")) {
+            return NILE.getValue();
         }
         return BERMUDA.getValue();
     }

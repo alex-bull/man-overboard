@@ -108,13 +108,6 @@
                                   </rowConstraints>
                                   <children>
                                       <ImageView fx:id="courseImageView" fitWidth="420.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
-                                          <image>
-                                              <Image url="@images/courseImage.png" />
-                                          </image>
-                                          <!--<ImageView fx:id="courseImageView" fitWidth="420.0" pickOnBounds="true"-->
-                                                     <!--preserveRatio="true" GridPane.halignment="CENTER"-->
-                                                     <!--GridPane.valignment="BOTTOM">-->
-                                          <!--</ImageView>-->
                                  <GridPane.margin>
                                     <Insets left="5.0" right="5.0" top="5.0" />
                                  </GridPane.margin>

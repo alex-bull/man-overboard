@@ -188,7 +188,7 @@ public class Interpreter implements DataSource, PacketHandler {
         //start receiving data
         this.clientTimer = new Timer();
         clientTimer.schedule(TCPClient, 0, 1);
-        System.out.println("Done");
+
 
         //request game join
         System.out.println("Sending connection request...");
@@ -233,6 +233,7 @@ public class Interpreter implements DataSource, PacketHandler {
                 RaceStatusData raceStatusData = RaceStatusParser.processMessage(packet);
                 if (raceStatusData != null) {
                     this.raceStatus = raceStatusData.getRaceStatus();
+
                    // this.messageTime = raceStatusData.getCurrentTime();
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
