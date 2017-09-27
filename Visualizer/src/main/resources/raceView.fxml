@@ -61,7 +61,7 @@
                      <children>
                         <ImageView fitWidth="900.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER">
                            <image>
-                              <Image url="@images/controlsW.png" />
+                              <Image url="@images/controls.png" />
                            </image>
                         </ImageView>
                      </children>
