@@ -65,6 +65,8 @@ public class RaceViewController implements Initializable, TableObserver {
     @FXML
     private Button soundButton;
     @FXML
+    private Button leaveButton;
+    @FXML
     private TableController tableController = new TableController();
     @FXML
     private AnchorPane raceView;
@@ -274,6 +276,7 @@ public class RaceViewController implements Initializable, TableObserver {
             finisherListView.refresh();
             finisherListPane.setVisible(true);
             finisherListDisplayed = true;
+            leaveButton.setVisible(false);
 
             double width = raceViewPane.getWidth();
             double height = raceViewPane.getHeight();
