@@ -1,8 +1,11 @@
 package Elements;
 
+import com.google.common.collect.Iterables;
+import javafx.collections.ObservableList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import models.MutablePoint;
 
 import java.util.List;
@@ -14,34 +17,17 @@ import java.util.List;
 public class ShapeDraw {
 
     /**
-     * Draw a polygon on a canvas
+     * redraw a movePolygon on a canvas
      *
-     * @param gc       GraphicsContext, where to draw the polygon
-     * @param vertices List the vertices of the polygon
-     * @param fill     Color the color of the polygon fill
+     * @param polygon the movePolygon too be redrawn
+     * @param vertices List the vertices of the movePolygon
      */
-    public static void polygon(GraphicsContext gc, List<MutablePoint> vertices, Color fill) {
+    public static void movePolygon(Polygon polygon, Double[] vertices) {
         if (vertices != null) {
-            gc.save();
 
-            double[] boundaryX = new double[vertices.size()];
-            double[] boundaryY = new double[vertices.size()];
-            for (int i = 0; i < vertices.size(); i++) {
-                boundaryX[i] = vertices.get(i).getXValue();
-                boundaryY[i] = vertices.get(i).getYValue();
-            }
+            polygon.getPoints().setAll(vertices);
 
-            gc.setLineDashes(5);
-            gc.setLineWidth(0.8);
-            gc.clearRect(0, 0, 4000, 4000);
 
-            gc.strokePolygon(boundaryX, boundaryY, boundaryX.length);
-            gc.setGlobalAlpha(0.4);
-            gc.setFill(fill);
-            //shade inside the boundary
-            gc.fillPolygon(boundaryX, boundaryY, boundaryX.length);
-            gc.setGlobalAlpha(1.0);
-            gc.restore();
         }
     }
 

@@ -18,7 +18,7 @@ public class BoatStateParser {
      *
      * @param body the data received
      */
-    public BoatStateParser(byte[] body) {
+    public void update(byte[] body) {
         sourceId = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 4));
         health = hexByteArrayToInt(Arrays.copyOfRange(body, 4, 5));
     }

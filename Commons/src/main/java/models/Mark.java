@@ -165,4 +165,15 @@ public class Mark implements CourseFeature {
     public CourseFeature shift(double x, double y) {
         return new Mark(name, pixelLocation.shift(x, y), GPSLocation, index);
     }
+
+    @Override
+    public void shiftInPlace(double x, double y) {
+        pixelLocation.shiftInPlace(x,y);
+    }
+
+    @Override
+    public void setPixelLocation(double x, double y) {
+        pixelLocation.setX(x);
+        pixelLocation.setY(y);
+    }
 }

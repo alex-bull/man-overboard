@@ -1,6 +1,7 @@
 package parsers.yachtEvent;
 
 import parsers.Converter;
+import parsers.xml.race.YachtData;
 
 import java.util.Arrays;
 
@@ -25,7 +26,7 @@ public class YachtEventParser {
      *
      * @param data the data received
      */
-    public YachtEventParser(byte[] data) {
+    public void update(byte[] data) {
         currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(data, 1, 7));
         ackNumber = hexByteArrayToInt(Arrays.copyOfRange(data, 7, 9));
         raceID = hexByteArrayToInt(Arrays.copyOfRange(data, 9, 13));

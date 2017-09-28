@@ -55,12 +55,14 @@ public class MainController {
     @FXML
     private Label stopText;
 
+    @FXML
+    private PerformanceController performanceController;
+
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private boolean playing = false;
     private boolean zoomFlag = false;
     private AnimationTimer timer;
-
 
     /**
      * updates the slider and sends corresponding packet
@@ -141,18 +143,10 @@ public class MainController {
                 }
                 break;
             case DIGIT1:
-                if (dataSource.getCompetitor().hasSpeedBoost()) {
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.BOOST.getValue(), dataSource.getSourceID()));
-                    dataSource.getCompetitor().disableBoost();
-                    playerController.greyOutBoost();
-                }
+                playerController.useBoost();
                 break;
             case DIGIT2:
-                if (dataSource.getCompetitor().hasPotion()) {
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.POTION.getValue(), dataSource.getSourceID()));
-                    dataSource.getCompetitor().usePotion();
-                    playerController.greyOutPotion();
-                }
+                playerController.usePotion();
                 break;
         }
     }
@@ -202,6 +196,8 @@ public class MainController {
                         stopText.toFront();
 
                     }
+                    performanceController.refresh(dataSource.getLatency());
+
                     loadingPane.setVisible(false);
 
                 } else {

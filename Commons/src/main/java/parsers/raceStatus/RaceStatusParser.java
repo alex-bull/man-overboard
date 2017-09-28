@@ -15,23 +15,65 @@ import static parsers.Converter.*;
  */
 public class RaceStatusParser {
 
+    private long currentTime;
+    private Integer raceId;
+    private Integer raceStatus;
+    private long expectedStartTime ;
+    private Integer numBoatsInRace ;
+    private HashMap<Integer, BoatStatus> boatStatuses ;
+    private Integer windSpeed ;
+    private Double doubleWindDirection;
+
+    public long getCurrentTime() {
+        return currentTime;
+    }
+
+    public Integer getRaceId() {
+        return raceId;
+    }
+
+    public RaceStatusEnum getRaceStatus() {
+        return raceStatusToEnum(raceStatus);
+    }
+
+    public long getExpectedStartTime() {
+        return expectedStartTime;
+    }
+
+    public Integer getNumBoatsInRace() {
+        return numBoatsInRace;
+    }
+
+    public HashMap<Integer, BoatStatus> getBoatStatuses() {
+        return boatStatuses;
+    }
+
+
+    public Integer getWindSpeed() {
+        return windSpeed;
+    }
+
+    public Double getWindDirection() {
+        return doubleWindDirection;
+    }
+
     /**
      * Parse the race status message
      *
      * @param body byte[] a byte array of the message that needs parsing
      * @return RaceStatusData the data from the race status message
      */
-    public RaceStatusData processMessage(byte[] body) {
+    public void update(byte[] body) {
         try {
-            long currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
-            Integer raceId = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
-            Integer raceStatus = hexByteArrayToInt(Arrays.copyOfRange(body, 11, 12));
-            long expectedStartTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 12, 18));
-            Integer numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22, 23));
-            HashMap<Integer, BoatStatus> boatStatuses = new HashMap<>();
-            Integer windDirection = hexByteArrayToInt(Arrays.copyOfRange(body, 18, 20));
-            Integer windSpeed = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 22));
-            Double doubleWindDirection = windDirection * 360.0 / 65536.0;
+            currentTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 1, 7));
+            raceId = hexByteArrayToInt(Arrays.copyOfRange(body, 7, 11));
+            raceStatus = hexByteArrayToInt(Arrays.copyOfRange(body, 11, 12));
+            expectedStartTime = Converter.hexByteArrayToLong(Arrays.copyOfRange(body, 12, 18));
+            numBoatsInRace = hexByteArrayToInt(Arrays.copyOfRange(body, 22, 23));
+            boatStatuses = new HashMap<>();
+            int windDirection = hexByteArrayToInt(Arrays.copyOfRange(body, 18, 20));
+            windSpeed = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 22));
+            doubleWindDirection = windDirection * 360.0 / 65536.0;
             int currentByte = 24;
 
             for (int i = 0; i < numBoatsInRace; i++) {
@@ -40,15 +82,20 @@ public class RaceStatusParser {
                 Integer legNumber = hexByteArrayToInt(Arrays.copyOfRange(body, currentByte + 5, currentByte + 6));
                 long timeAtNextMark = hexByteArrayToLong(Arrays.copyOfRange(body, currentByte + 8, currentByte + 14));
                 long estTimeToNextMark = convertToRelativeTime(timeAtNextMark, currentTime) * -1; // returned time is negative because time at next mark is after current time
+                if(!boatStatuses.containsKey(sourceID)){
                 boatStatuses.put(sourceID, new BoatStatus(sourceID, boatStatusToEnum(boatStatus), legNumber, estTimeToNextMark));
+                }
+                else{
+                    boatStatuses.get(sourceID).setBoatStatus(boatStatusToEnum(boatStatus));
+                    boatStatuses.get(sourceID).setLegNumber(legNumber);
+                    boatStatuses.get(sourceID).setEstimatedTimeAtNextMark(estTimeToNextMark);
+                }
                 currentByte += 20;
             }
 
-            return new RaceStatusData(currentTime, raceStatusToEnum(raceStatus), expectedStartTime, doubleWindDirection,
-                    windSpeed, numBoatsInRace, boatStatuses);
 
         } catch (Exception e) {
-            return null;
+            e.printStackTrace();
         }
 
     }

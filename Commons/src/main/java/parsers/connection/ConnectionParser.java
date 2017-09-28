@@ -18,7 +18,7 @@ public class ConnectionParser {
      *
      * @param body the data received
      */
-    public ConnectionParser(byte[] body) {
+    public void update(byte[] body) {
         sourceId = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 4));
         status = hexByteArrayToInt(Arrays.copyOfRange(body, 4, 5));
     }
