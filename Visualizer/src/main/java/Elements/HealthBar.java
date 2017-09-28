@@ -69,6 +69,7 @@ public class HealthBar extends Group {
      * @param boatX double, the screen coords of the boat on x axis
      * @param boatY double, the screen coords of the boat on y axis
      * @param zoom  boolean, true if the view is Zoomed
+     * @param zoomedInScale double, zoom factor
      * @return boolean, false if the boat died
      */
     public boolean update(Competitor boat, double boatX, double boatY, boolean zoom, double zoomedInScale) {

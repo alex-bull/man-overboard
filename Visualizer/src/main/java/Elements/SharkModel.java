@@ -21,6 +21,7 @@ public class SharkModel extends ImageView {
      * @param currentPosition17 MutablePoint, zoomed position
      * @param width             double, the screen width
      * @param height            double, the screen height
+     * @param heading           double, the shark heading
      */
     public void update(boolean isZoom, Shark shark, MutablePoint currentPosition17, double width, double height, double heading) {
         MutablePoint p;
