@@ -560,7 +560,6 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     private void updateSharkLocation() {
         for (Shark shark : sharkLocations.values()) {
-            System.out.println(shark.getPositionOriginal());
             MutablePoint point = cloner.deepClone(shark.getPositionOriginal());
             point.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             shark.setPosition17(point);
