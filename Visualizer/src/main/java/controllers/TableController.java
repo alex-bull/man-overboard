@@ -92,6 +92,7 @@ public class TableController implements Initializable {
      * Sets the data in the table
      *
      * @param competitors List the competitors in the race
+     * @return comps List sorted list of competitors
      */
     List<Competitor> setTable(List<Competitor> competitors) {
         List<Competitor> comps = new ArrayList<>(competitors);
@@ -118,11 +119,17 @@ public class TableController implements Initializable {
         System.out.println();
     }
 
+    /**
+     * hides table
+     */
     public void makeInvisible() {
         table.setVisible(false);
         visible = false;
     }
 
+    /**
+     * shows table
+     */
     public void makeVisible() {
         table.setVisible(true);
         visible = true;

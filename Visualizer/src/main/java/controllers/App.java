@@ -62,21 +62,9 @@ public class App extends Application {
         //set on close requests
         primaryStage.setOnCloseRequest(event -> {
             System.exit(0);
-//            Platform.runLater(() -> {
-//                try {
-//                    primaryStage.close();
-//
-//                    new App().start(new Stage());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            });
-
         });
 
         primaryStage.show();
-//        lobbyController.autoStart();
-
     }
 
 

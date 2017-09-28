@@ -39,7 +39,9 @@ public class SettingsController implements Initializable {
         });
     }
 
-
+    /**
+     * saves settings and exits back to start screen
+     */
     public void saveAndExit() {
 
         try {

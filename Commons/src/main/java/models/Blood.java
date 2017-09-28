@@ -55,24 +55,6 @@ public class Blood {
         return position.getYValue();
     }
 
-    public double getOpacity() {
-        return opacity;
-    }
-
-    public void updateOpacity() {
-        double max = 1;
-
-        if (isIncreasing) {
-            opacity += 0.001;
-        } else {
-            opacity -= 0.001;
-        }
-
-        if (opacity >= max) {
-            isIncreasing = false;
-        }
-    }
-
     @Override
     public String toString() {
         return "Blood{" +

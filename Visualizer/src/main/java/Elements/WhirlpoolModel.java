@@ -57,7 +57,9 @@ public class WhirlpoolModel extends ImageView {
         this.relocate(p.getXValue() - getFitWidth() / 2, p.getYValue() - getFitHeight() / 2);
     }
 
-
+    /**
+     * rotates whirlpool
+     */
     public void spin() {
         this.setRotate(this.getRotate() - 5);
     }

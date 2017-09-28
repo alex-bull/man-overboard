@@ -129,7 +129,6 @@ public class RaceViewController implements Initializable, TableObserver {
     private double boatPositionY; //current position in screen coords
     private MutablePoint currentPosition17; //boat position in screen coordinates with zoom level 17
     private ObservableList<String> observableFinisherList = observableArrayList();
-    private double touchZoomLevel = 0.0; // current touch zoom level
     //OTHER
     private WebEngine mapEngine;
     private DataSource dataSource;
@@ -176,8 +175,6 @@ public class RaceViewController implements Initializable, TableObserver {
         finisherListPane.setVisible(false);
 
         this.guideArrow = new GuideArrow(backgroundColor.brighter(), 90.0);
-//        curvedArrowClockwise = new CurvedGuideArrow(true, backgroundColor.brighter());
-//        curvedArrowAnticlockwise = new CurvedGuideArrow(false, backgroundColor.brighter());
         curvedArrowClockwise = new CurvedGuideArrow(true);
         curvedArrowAnticlockwise = new CurvedGuideArrow(false);
         raceViewPane.getChildren().add(guideArrow);
@@ -832,9 +829,13 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
-
-
-    private boolean markInView(MutablePoint markLocation) {
+    /**
+     * Checks if a mark in within the screen bounds in view
+     *
+     * @param markLocation mark coordinates
+     * @return Boolean, is the mark in view
+     */
+    private boolean ismarkInView(MutablePoint markLocation) {
         Double width = raceViewPane.getWidth();
         Double height = raceViewPane.getHeight();
         if (markLocation.getXValue() > 0 && markLocation.getXValue() < width && markLocation.getYValue() > 0 && markLocation.getYValue() < height) {
@@ -873,7 +874,7 @@ public class RaceViewController implements Initializable, TableObserver {
             guideArrow.hide();
             return;
         }
-        if (markInView(nextMarkLocations.get(0)) || (nextMarkLocations.size() > 1 && markInView(nextMarkLocations.get(1)))) {
+        if (ismarkInView(nextMarkLocations.get(0)) || (nextMarkLocations.size() > 1 && ismarkInView(nextMarkLocations.get(1)))) {
             guideArrow.hide();
             String direction = dataSource.getMarkSourceIdToRoundingDirection().get(sourceIds.get(0));
             if (direction.equals("CCW")) {
@@ -910,6 +911,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Draw annotations and move with boat positions
+     *
+     * @param boat competitor's boat
      */
     private void drawAnnotations(Competitor boat) {
 
@@ -1044,6 +1047,8 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * adds scaling to all shapes in the scene
+     *
+     * @param scale size scale factor
      */
     private void setScale(double scale) {
         for (BoatModel model : boatModels.values()) {

@@ -31,6 +31,7 @@ public class BoatModel extends Group {
     public BoatModel(Integer boatType, boolean player) {
         boatModel = new Polygon();
 
+        this.boatModel = new Polygon();
         boatModel.getPoints().addAll(
                 -12.0, -22.5, //top
                 -12.0, 22.5, //left

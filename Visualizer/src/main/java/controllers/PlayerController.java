@@ -87,29 +87,6 @@ public class PlayerController {
             boatImage=new Image(getClass().getClassLoader().getResource("images/cross-small").toString());
         }
         playerImageView.setImage(boatImage);
-//
-//        if (boat.getBoatType() == 0) {
-//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/yachtLandscape.png").toString());
-//            playerImageView.setImage(boatImage);
-//        } else if (boat.getBoatType() == 1) {
-//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/cogLandscape.png").toString());
-//            playerImageView.setImage(boatImage);
-//        } else if (boat.getBoatType() == 2) {
-//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/frigateLandscape.png").toString());
-//            playerImageView.setImage(boatImage);
-//        } else if (boat.getBoatType() == 3) {
-//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/galleonLandscape.png").toString());
-//            playerImageView.setImage(boatImage);
-//        } else if (boat.getBoatType() == 4) {
-//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/boatLandscape.png").toString());
-//            playerImageView.setImage(boatImage);
-//        } else if (boat.getBoatType() == 5) {
-//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/catLandscape.png").toString());
-//            playerImageView.setImage(boatImage);
-//        } else if (boat.getBoatType() == 6) {
-//            Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/pirateLandscape.png").toString());
-//            playerImageView.setImage(boatImage);
-//        }
 
         playerImageView.setPreserveRatio(false);
         playerImageView.fitWidthProperty().bind(imageGrid.widthProperty());
@@ -119,8 +96,6 @@ public class PlayerController {
         playerImageView1.fitWidthProperty().bind(boatInfoGrid.widthProperty());
 
         this.stage = stage;
-
-
     }
 
 
@@ -157,15 +132,6 @@ public class PlayerController {
      */
     void hideAll() {
 
-
-//
-//        @FXML
-//        private GridPane boatInfoGrid;
-//        @FXML
-//        private GridPane player;
-//
-
-//        player.setVisible(false);
         spectating.setVisible(true);
         playerImageView1.setVisible(false);
         gamerTagLabel.setVisible(false);

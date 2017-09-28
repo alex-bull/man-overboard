@@ -59,61 +59,6 @@ public class RaceCalculator {
         }
     }
 
-
-    /**
-     * Calculates whether boat is heading to the start line
-     * and if it does calculates the virtual line points and returns them so they can be used for drawing
-     * returns empty list if boat is not heading to the start line
-     *
-     * @param boatModel         boat model
-     * @param startMark1        start mark 1
-     * @param startMark2        start mark 2
-     * @param startLine1        start line 1
-     * @param expectedStartTime expected start time
-     * @param selectedBoat      selected boat
-     * @param messageTime       time of message
-     * @return List virtualLinePoints
-     */
-    public static List<MutablePoint> calcVirtualLinePoints(Competitor selectedBoat, Polygon boatModel, MutablePoint startMark1, MutablePoint startMark2, CourseFeature startLine1, long expectedStartTime, long messageTime) {
-        List<MutablePoint> virtualLinePoints = new ArrayList<>();
-
-//
-//        Polygon boatModel = boatModels.get(boat.getSourceID());
-        Point2D boatFront = boatModel.localToParent(0, 0);
-        Point2D boatBack = boatModel.localToParent(0, -2000);
-
-//        MutablePoint startMark1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0)).getPixelLocations().get(0);
-//        MutablePoint startMark2 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(1)).getPixelLocations().get(0);
-
-        Line2D startLine = new Line2D.Double(startMark1.getXValue(), startMark1.getYValue(), startMark2.getXValue(), startMark2.getYValue());
-        Line2D headingLine = new Line2D.Double(boatFront.getX(), boatFront.getY(), boatBack.getX(), boatBack.getY());
-        boolean intersects = headingLine.intersectsLine(startLine);
-
-        if (intersects) {
-            MutablePoint intersection = calcStartLineIntersection(boatFront, boatBack, startMark1, startMark2);
-            double xDifference = boatFront.getX() - intersection.getXValue();
-            double yDifference = boatFront.getY() - intersection.getYValue();
-
-
-//            CourseFeature startLine1 = dataSource.getStoredFeatures().get(dataSource.getStartMarks().get(0));
-            double distanceToStartLine = calcDistToStart(selectedBoat, startLine1);
-
-//            long expectedStartTime = dataSource.getExpectedStartTime();
-//            long messageTime = dataSource.getMessageTime();
-            long timeUntilStart = Converter.convertToRelativeTime(expectedStartTime, messageTime) * -1; // seconds, negative because race hasn't started
-
-            double distanceToVirtualLine = calcDistToVirtual(selectedBoat, timeUntilStart);
-
-            if (distanceToStartLine != 0) {
-                double ratio = distanceToVirtualLine / distanceToStartLine;
-
-                virtualLinePoints.add(calcVirtualLinePoint(ratio, xDifference, yDifference, startMark1));
-                virtualLinePoints.add(calcVirtualLinePoint(ratio, xDifference, yDifference, startMark2));
-            }
-        }
-        return virtualLinePoints;
-    }
-
     /**
      * Calculates the point of intersection of the boat's heading line and the start line.
      *
@@ -140,7 +85,6 @@ public class RaceCalculator {
         double startLineGradient;
         double xDiffStart = startMark1.getXValue() - startMark2.getXValue();
         if (xDiffStart == 0) {
-//            startLineGradient = Double.MAX_VALUE;
             startLineGradient = 10000000;
         } else {
             startLineGradient = (startMark1.getYValue() - startMark2.getYValue()) / xDiffStart;
@@ -206,34 +150,6 @@ public class RaceCalculator {
         } else {
             return "";
         }
-    }
-
-    /**
-     * Calculates distance between the player's boat and the virtual line
-     *
-     * @param selectedBoat   selected boat
-     * @param timeUntilStart time until start
-     * @return double distance (m)
-     */
-    public static double calcDistToVirtual(Competitor selectedBoat, long timeUntilStart) {
-        return selectedBoat.getVelocity() * timeUntilStart; // metres
-    }
-
-    /**
-     * Calculates distance between the player's boat and the start line
-     *
-     * @param selectedBoat selected boat
-     * @param startLine1   start line
-     * @return double distance (m)
-     */
-    public static double calcDistToStart(Competitor selectedBoat, CourseFeature startLine1) {
-        double boatLat = selectedBoat.getLatitude();
-        double boatLon = selectedBoat.getLongitude();
-
-        double startLat = startLine1.getGPSPoint().getXValue();
-        double startLon = startLine1.getGPSPoint().getYValue();
-
-        return calcDistBetweenGPSPoints(boatLat, boatLon, startLat, startLon);
     }
 
     /**

@@ -284,11 +284,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
                 break;
             case MODEL_REQUEST:
                 ModelParser modelParser = new ModelParser(packet);
-//                BoatModelEnum boatModelEnum = YACHT;
-//                for (BoatModelEnum modelEnum : BoatModelEnum.values()) {
-//                    if (modelParser.getModel() == modelEnum.getValue()) boatModelEnum = modelEnum;
-//                }
-                //competitors.get(modelParser.getSourceId()).setBoatType(boatModelEnum);
                 competitors.get(modelParser.getSourceId()).setBoatType(modelParser.getModel());
                 this.sendAllXML(null);
                 break;
@@ -552,7 +547,6 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         byte[] eventPacket = binaryPackager.packageYachtEvent(sourceID, eventID);
         this.sendQueue.put(null, eventPacket);
         //wait for it to be send
-//        Thread.sleep(20);
     }
 
     /**
@@ -817,21 +811,15 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     public void run() {
 
         this.readAllMessages();
-
         if (shouldStartGame()) {
             raceInProgress = true;
             gameStartTime = System.currentTimeMillis();
             this.sendAllXML(null);
         }
-
         if (!raceInProgress) return;
-
-
 
         try {
             boatUpdater.updatePosition();
-
-
             if (System.currentTimeMillis() - previousBoostTime > boostTime) {
                 spawnPowerUp(PowerUpType.BOOST);
                 previousBoostTime = System.currentTimeMillis();

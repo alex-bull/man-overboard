@@ -210,6 +210,9 @@ public class LobbyController implements Initializable {
         this.loadStartView();
     }
 
+    /**
+     * Confirms boat customisation
+     */
     @FXML
     public void confirmBoatDetails() {
         if (dataSource.getCompetitor() == null) return;
@@ -227,6 +230,9 @@ public class LobbyController implements Initializable {
         boatSelected = true;
     }
 
+    /**
+     * display previous boat image
+     */
     @FXML
     public void showPreviousBoat() {
         index--;
@@ -236,6 +242,9 @@ public class LobbyController implements Initializable {
         boatImageView.setImage(boatImages.get(index % boatImages.size()));
     }
 
+    /**
+     * display next boat image
+     */
     @FXML
     public void showNextBoat() {
         index++;
@@ -285,7 +294,6 @@ public class LobbyController implements Initializable {
             this.loadingLabel.setVisible(false);
             this.competitorList.addAll(dataSource.getCompetitorsPosition().stream().map(Competitor::getTeamName).collect(Collectors.toList()));
         }
-        //if (dataSource.getCompetitor() != null) this.nameText.setText(dataSource.getCompetitor().getTeamName()); //set label to my boat name
     }
 
     /**

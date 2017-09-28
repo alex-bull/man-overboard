@@ -37,7 +37,6 @@ public class BoatUpdater {
     private WindGenerator windGenerator;
     private int crewLocationSourceID = 0;
     private int sharkSourceID = 0;
-    private int sharkRoamIndex = 0;
     private int leadLeg = 0;
     private int whirlpoolSourceID = 0;
     private MutablePoint sharkRoamPos;
@@ -316,6 +315,7 @@ public class BoatUpdater {
     }
 
     private void nextRoamPos(){
+        int sharkRoamIndex;
         sharkRoamIndex = random.nextInt(courseBoundary.size());
         double PosY = courseBoundary.get(sharkRoamIndex).getXValue();
         double PosX = courseBoundary.get(sharkRoamIndex).getYValue();
@@ -330,7 +330,6 @@ public class BoatUpdater {
         double angle;
 
         if (!crewMembers.isEmpty()) {
-//            int randomCrew = random.nextInt(crewMembers.size());
             double crew_x = crewMembers.get(0).getLatitude();
             double crew_y = crewMembers.get(0).getLongitude();
             angle = atan2(crew_y - shark.getLongitude(), crew_x - shark.getLatitude()) * 180 / PI;
@@ -704,15 +703,12 @@ public class BoatUpdater {
             if (comp.getSourceID() == boat.getSourceID()) continue; //cant collide with self
 
             double collisionRadius = comp.getCollisionRadius() + boat.getCollisionRadius();
-
-
             double distance = raceCourse.distanceBetweenGPSPoints(comp.getPosition(), boat.getPosition());
 
             if (distance <= collisionRadius) {
 //                send a collision packet
                 handler.yachtEvent(comp.getSourceID(), 1);
                 handler.yachtEvent(boat.getSourceID(), 1);
-
                 comp.updateHealth(-15);
                 handler.boatStateEvent(comp.getSourceID(), comp.getHealthLevel());
                 calculateCollisions(comp, boat);

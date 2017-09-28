@@ -51,6 +51,10 @@ public class FallenCrew extends ImageView {
         return this.dead;
     }
 
+    /**
+     * shows blood patch when crew member dies
+     * @param filePath
+     */
     public void die(String filePath){
         if (animation != null) return;
         Image blood = new Image(filePath);
