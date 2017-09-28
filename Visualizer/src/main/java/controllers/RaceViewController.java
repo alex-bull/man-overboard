@@ -838,7 +838,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
         Competitor boat = dataSource.getCompetitor();
         int currentIndex = boat.getCurrentLegIndex();
-        System.out.println("asdf"+currentFeaturePositions);
         List<MutablePoint> nextMarkLocations = RaceCalculator.getMarkCentres(currentIndex + 1, indexMap, this.currentFeaturePositions);
 
 
