@@ -2,14 +2,8 @@ package Elements;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
-import models.Competitor;
-import models.MutablePoint;
 
-import static java.lang.Math.*;
-import static utilities.RaceCalculator.calculateAngleBetweenMarks;
 
 
 /**
@@ -87,9 +81,5 @@ public class CurvedGuideArrow extends ImageView {
 
     public void show() {
         this.setVisible(true);
-    }
-
-    private Integer calculateTranslation(Integer zoomFactor) {
-        return 0;
     }
 }

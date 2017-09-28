@@ -32,10 +32,6 @@ import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.markRounding.MarkRoundingData;
 import parsers.markRounding.MarkRoundingParser;
-import parsers.powerUp.PowerUp;
-import parsers.powerUp.PowerUpParser;
-import parsers.powerUp.PowerUpTakenParser;
-import parsers.powerUp.PowerUpType;
 import parsers.raceStatus.RaceStatusData;
 import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.boat.BoatXMLParser;
@@ -167,10 +163,8 @@ public class Interpreter implements DataSource, PacketHandler {
             TCPClient = new TCPClient(host, port, receiveQueue);
             primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         } catch (UnresolvedAddressException e) {
-            // System.out.println("Address is not found");
             return false;
         } catch (IOException e) {
-            //  System.out.println("Could not connect to: " + host + ":" + EnvironmentConfig.port);
             return false;
         }
 
@@ -228,8 +222,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 RaceStatusData raceStatusData = new RaceStatusParser().processMessage(packet);
                 if (raceStatusData != null) {
                     this.raceStatus = raceStatusData.getRaceStatus();
-
-                   // this.messageTime = raceStatusData.getCurrentTime();
                     this.expectedStartTime = raceStatusData.getExpectedStartTime();
                     this.numBoats = raceStatusData.getNumBoatsInRace();
                     this.windDirection = raceStatusData.getWindDirection() + 180;
@@ -686,7 +678,6 @@ public class Interpreter implements DataSource, PacketHandler {
                         setScalingFactors();
                         setCourseBoundary(raceXMLParser.getCourseBoundary());
                         GPSbounds = raceXMLParser.getGPSBounds();
-//                        this.seenRaceXML = true;
                         this.messageTime = raceData.getGameStartTime();
                     }
 
@@ -787,10 +778,6 @@ public class Interpreter implements DataSource, PacketHandler {
         MutablePoint position17=cloner.deepClone(Projection.mercatorProjection(position));
         position17.factor(pow(2,zoomLevel), pow(2,zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
         return position17;
-    }
-
-    public void setScalingFactor(double scaleFactor) {
-        this.scaleFactor = scaleFactor;
     }
 
     /**
@@ -959,11 +946,5 @@ public class Interpreter implements DataSource, PacketHandler {
     public Map<Integer, String> getMarkSourceIdToRoundingDirection() {
         return this.raceData.getMarkSourceIDToRoundingDirection();
     }
-
-//    public Map<Integer, MarkData> getMarks() {
-//        return marks;
-//    }
-
-
 
 }

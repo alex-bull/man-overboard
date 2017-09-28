@@ -5,7 +5,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import models.MutablePoint;
 import models.Shark;
-import parsers.powerUp.PowerUp;
 
 public class SharkModel extends ImageView {
 

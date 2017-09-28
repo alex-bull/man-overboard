@@ -23,8 +23,6 @@ import java.io.IOException;
 
 import static javafx.scene.input.KeyCode.A;
 import static javafx.scene.input.KeyCode.D;
-import static javafx.scene.input.KeyCode.Q;
-
 
 /**
  * Created by psu43 on 22/03/17.
@@ -52,7 +50,6 @@ public class MainController {
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private boolean playing = false;
-    private boolean zoomFlag = false;
     private AnimationTimer timer;
 
 
@@ -101,7 +98,6 @@ public class MainController {
                 this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.DOWNWIND.getValue(), dataSource.getSourceID()));
                 break;
             case SPACE:
-//                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.VMG.getValue(), dataSource.getSourceID()));
                 break;
             case SHIFT:
                 this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.SWITCH_SAILS.getValue(), dataSource.getSourceID()));
@@ -204,7 +200,9 @@ public class MainController {
 
     }
 
-
+    /**
+     * takes user back to lobby screen
+     */
     private void returnToLobby() {
 
         dataSource.disconnect();

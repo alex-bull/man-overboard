@@ -11,7 +11,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static javafx.scene.paint.Color.BLACK;
-import static javafx.scene.paint.Color.WHITE;
 
 /**
  * Created by psu43 on 12/05/17.

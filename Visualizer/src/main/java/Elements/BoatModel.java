@@ -5,7 +5,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
@@ -31,11 +30,6 @@ public class BoatModel extends Group {
     public BoatModel(Integer boatType, boolean player) {
 
         this.boatModel = new Polygon();
-//        boatModel.getPoints().addAll(
-//                -6.0, -14.0, //top
-//                -6.0, 14.0, //left
-//                6.0, 14.0,
-//                6.0, -14.0); //right
         boatModel.getPoints().addAll(
                 -12.0, -22.5, //top
                 -12.0, 22.5, //left
@@ -64,10 +58,6 @@ public class BoatModel extends Group {
             Image boatImage = new Image(getClass().getClassLoader().getResource("images/boats/pirate.png").toString());
             boatModel.setFill(new ImagePattern(boatImage));
         }
-
-
-        //boatModel.setStroke(BLACK);
-
 
         if (player) {
             this.playerMarker = new Circle(0, 0, 23);

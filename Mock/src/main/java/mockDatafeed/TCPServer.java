@@ -6,9 +6,7 @@ import utility.QueueMessage;
 import utility.WorkQueue;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -153,7 +151,6 @@ public class TCPServer extends TimerTask {
             byte[] message = new byte[length];
             ByteBuffer messageBuffer = ByteBuffer.wrap(message);
             client.read(messageBuffer);
-            //this.connectionClient.interpretPacket(header, message, id);
             this.receiveQueue.put(id, header, message);
         }
 
@@ -167,8 +164,6 @@ public class TCPServer extends TimerTask {
      * @throws IOException IOException
      */
     private byte[] getHeader(SocketChannel client) throws IOException {
-//        ByteBuffer header=ByteBuffer.allocate(13);
-//        client.read(header);
         byte[] header = new byte[13];
         ByteBuffer buffer = ByteBuffer.wrap(header);
 
@@ -216,11 +211,6 @@ public class TCPServer extends TimerTask {
 
                 //handle new clients connecting
                 if (key.isAcceptable()) {
-//                    if (!connectionClient.isAccepting()) {
-//                        key.cancel();
-//                    } else {
-
-
                         SocketChannel client = serverSocket.accept();
                         client.configureBlocking(false);
 
@@ -229,13 +219,11 @@ public class TCPServer extends TimerTask {
                         int sourceID = connectionClient.getNextSourceId();
                         client.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, sourceID);
                         System.out.println("Added new client: " + sourceID);
-//                    }
                 }
 
                 //handle incoming messages
                 else if (key.isReadable()) {
                     SocketChannel client = (SocketChannel) key.channel();
-//                    selector.selectedKeys().remove(key); //remove key so that it can be written to for a response
                     this.processClient(client, (Integer) key.attachment());
                 }
                 selector.selectedKeys().remove(key);

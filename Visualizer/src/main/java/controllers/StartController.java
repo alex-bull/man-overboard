@@ -9,7 +9,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import utilities.Interpreter;
 import utilities.Sounds;
-import utility.BinaryPackager;
 
 import java.io.IOException;
 import java.net.URL;
@@ -43,7 +42,9 @@ public class StartController implements Initializable {
 
     }
 
-
+    /**
+     * joins client to the lobby
+     */
     @FXML
     public void joinGame() {
         Sounds.player.fadeOut("sounds/bensound-theduel.mp3", 3);
@@ -66,7 +67,9 @@ public class StartController implements Initializable {
 
     }
 
-
+    /**
+     * brings up settings pane
+     */
     @FXML
     public void settings() {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("settings.fxml"));
@@ -83,7 +86,9 @@ public class StartController implements Initializable {
         App.getScene().setRoot(root);
     }
 
-
+    /**
+     * brings up controls pane
+     */
     @FXML
     public void controls() {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("controls.fxml"));
@@ -98,7 +103,9 @@ public class StartController implements Initializable {
         App.getScene().setRoot(root);
     }
 
-
+    /**
+     * exit the app
+     */
     @FXML
     public void quit() {
         System.exit(0);

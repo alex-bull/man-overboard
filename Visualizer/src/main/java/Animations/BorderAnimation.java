@@ -64,7 +64,6 @@ public class BorderAnimation {
         rectRight.setFill(linearGradient4);
 
         border.add(rectTop);
-//        border.add(rectBot);
         border.add(rectLeft);
         border.add(rectRight);
 

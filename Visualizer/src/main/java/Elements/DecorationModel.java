@@ -175,7 +175,7 @@ public class DecorationModel extends ImageView {
      */
     private void playImageSound() {
         Sounds.player.playMP3("sounds/snake.wav");
-        Sounds.player.setVolume("sounds/snake.wav", 2.0);
+        Sounds.player.setVolume("sounds/snake.wav", 1.0);
     }
 
 }

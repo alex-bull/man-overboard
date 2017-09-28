@@ -49,15 +49,6 @@ class WindGenerator {
      * Generates a random value for wind speed.
      */
     private void getRandomWindSpeed() {
-//        if(windSpeed < 3000) {
-//            windSpeed = (short) (ThreadLocalRandom.current().nextInt(0, 2+1) + windSpeed);
-//        }
-//        else if(windSpeed > 8000) {
-//            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-2, 0) + windSpeed);
-//        }
-//        else {
-//            windSpeed = (short) (ThreadLocalRandom.current().nextInt(-2, 2+1) + windSpeed);
-//        }
         int speedVariance = 100;
         windSpeed = (short) (windSpeedOriginal + ThreadLocalRandom.current().nextGaussian() * speedVariance);
 

@@ -66,8 +66,6 @@ public class PlayerController {
         this.healthPane.getChildren().add(screenHealthBar);
         this.healthPane.toBack();
         this.binaryPackager = new BinaryPackager();
-//        this.speed.setVisible(false);
-//        this.potion.setVisible(false);
         gamerTagLabel.setText(dataSource.getCompetitor().getTeamName());
 
         Competitor boat = dataSource.getCompetitor();
@@ -102,8 +100,6 @@ public class PlayerController {
         playerImageView1.fitWidthProperty().bind(boatInfoGrid.widthProperty());
 
         this.stage = stage;
-
-
     }
 
 
@@ -125,7 +121,6 @@ public class PlayerController {
 
         Double w = stage.getWidth() / 2.5;
         player.setPrefSize(w, w / 2.5);
-
 
         if (boat.hasPotion()) {
             this.potion.setGraphic(new ImageView(new Image(getClass().getClassLoader().getResource("images/powerups/tinyhealth.png").toString())));
@@ -155,15 +150,6 @@ public class PlayerController {
      */
     void hideAll() {
 
-
-//
-//        @FXML
-//        private GridPane boatInfoGrid;
-//        @FXML
-//        private GridPane player;
-//
-
-//        player.setVisible(false);
         spectating.setVisible(true);
         playerImageView1.setVisible(false);
         gamerTagLabel.setVisible(false);
