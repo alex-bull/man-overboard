@@ -69,7 +69,7 @@
                      <children>
                         <ImageView fitWidth="900.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER">
                            <image>
-                              <Image url="@images/controls.png" />
+                              <Image url="@images/controlsLayout.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -84,9 +84,9 @@
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" percentHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" percentHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" percentHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" percentHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" percentHeight="8.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" percentHeight="8.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" percentHeight="8.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" percentHeight="8.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" percentHeight="38.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
