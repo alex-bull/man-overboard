@@ -721,7 +721,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private void createBoundary(Double[] vertices){
         boundaryPolygon=new Polygon();
         boundaryPolygon.getPoints().addAll(vertices);
-        boundaryPolygon.getStrokeDashArray().addAll(50d,40d);
+        boundaryPolygon.getStrokeDashArray().addAll(10d,8d);
         boundaryPolygon.setStroke(Color.BLACK);
         boundaryPolygon.setStrokeWidth(0.8);
         boundaryPolygon.setFill(backgroundColor);
@@ -838,7 +838,6 @@ public class RaceViewController implements Initializable, TableObserver {
 
         Competitor boat = dataSource.getCompetitor();
         int currentIndex = boat.getCurrentLegIndex();
-        System.out.println("asdf"+currentFeaturePositions);
         List<MutablePoint> nextMarkLocations = RaceCalculator.getMarkCentres(currentIndex + 1, indexMap, this.currentFeaturePositions);
 
 
@@ -857,6 +856,7 @@ public class RaceViewController implements Initializable, TableObserver {
         if (!isZoom()) {
             curvedArrowClockwise.hide();
             curvedArrowAnticlockwise.hide();
+            guideArrow.hide();
             return;
         }
         if (markInView(nextMarkLocations.get(0)) || (nextMarkLocations.size() > 1 && markInView(nextMarkLocations.get(1)))) {
