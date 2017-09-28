@@ -24,7 +24,7 @@ public class GuideArrow extends Polygon {
      * @param startAngle double, the angle which the arrow points initially
      */
     public GuideArrow(Color color, Double startAngle) {
-
+        this.setVisible(false);
         double arrowLength = -60; // default arrow points vertically in the -y direction (upwards)
         double arrowHeadLength = -20;
         double offsetFromOrigin = -1 * (arrowLength + arrowHeadLength) + 30;
