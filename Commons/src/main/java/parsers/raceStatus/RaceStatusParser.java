@@ -61,7 +61,6 @@ public class RaceStatusParser {
      * Parse the race status message
      *
      * @param body byte[] a byte array of the message that needs parsing
-     * @return RaceStatusData the data from the race status message
      */
     public void update(byte[] body) {
         try {

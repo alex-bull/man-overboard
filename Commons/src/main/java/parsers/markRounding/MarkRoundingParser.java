@@ -41,7 +41,6 @@ public class MarkRoundingParser {
      * Parses the mark rounding message
      *
      * @param body byte[] a byte array to be parsed
-     * @return MarkRoundingData the parsed mark rounding data
      */
     public void update(byte[] body) {
         try {

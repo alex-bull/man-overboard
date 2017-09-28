@@ -34,7 +34,6 @@ public class BoatActionParser {
      * Process the given data and parse source id, latitude, longitude, heading, speed
      *
      * @param body byte[] a byte array of the boat data message
-     * @return BoatData boat data object
      */
     public void update(byte[] body) {
         try {

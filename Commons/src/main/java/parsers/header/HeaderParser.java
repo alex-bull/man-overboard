@@ -36,7 +36,6 @@ public class HeaderParser {
      * Parses the header for a message
      *
      * @param body byte[] a byte array to be parsed
-     * @return HeaderData the parsed header data
      */
     public void update(byte[] body) {
         try {

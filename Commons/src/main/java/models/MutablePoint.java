@@ -60,6 +60,7 @@ public class MutablePoint implements Vector {
      * @param minY     double the min y value
      * @param paddingX double the x padding
      * @param paddingY double the y padding
+     * @return MutablePoint
      */
     public MutablePoint factor(double xFactor, double yFactor, double minX, double minY, double paddingX, double paddingY) {
         setX(((getXValue() - minX) * xFactor + paddingX));
@@ -106,6 +107,7 @@ public class MutablePoint implements Vector {
      * Checks in the current point is close enough to the other point, longitude needs a higher EPSILON
      *
      * @param o the other mutable point
+     * @param EPSILON the min distance
      * @return true if this point is close enough to o
      */
     public boolean isWithin(MutablePoint o, double EPSILON) {

@@ -146,6 +146,7 @@ public class Calculator {
      * @param force       the force which the boat is affected by
      * @param point       the point at the start
      * @param elapsedTime the time period of this movement
+     * @return MutablePoint
      */
     public static MutablePoint movePoint(Force force, MutablePoint point, double elapsedTime) {
         double distance = force.getMagnitude() * elapsedTime / 1000; // in km
