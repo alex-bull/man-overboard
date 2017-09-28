@@ -1008,18 +1008,15 @@ public class RaceViewController implements Initializable, TableObserver {
         }
 
         for (int id : whirlpoolsLocation.keySet()) {
+            Whirlpool whirlpool = whirlpoolsLocation.get(id);
             if (!whirlpools.containsKey(id)) {
-                Whirlpool whirlpool = whirlpoolsLocation.get(id);
                 WhirlpoolModel model = new WhirlpoolModel(new Image("/images/whirlpool.png"), isZoom(), nodeSizeFunc(dataSource.getZoomLevel()));
                 model.update(whirlpool.getPosition());
                 model.animateSpawn();
                 whirlpools.put(id, model);
                 raceViewPane.getChildren().add(model);
-            } else {
-                for (WhirlpoolModel whirlpool : whirlpools.values()) {
-                    whirlpool.spin();
-                }
             }
+            whirlpools.get(id).spin();
             whirlpools.get(id).update(isZoom(), whirlpoolsLocation.get(id), currentPosition17, raceViewPane.getWidth(), raceViewPane.getHeight());
 
 
