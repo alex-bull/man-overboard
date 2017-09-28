@@ -98,6 +98,27 @@
     -fx-padding: 2px;
 }
 
+.table-view {
+    -fx-background-color: transparent;
+    -fx-font-family: 'Quicksand', sans-serif, bold;
+
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-font-family: 'Quicksand', sans-serif, bold;
+    -fx-font-size: 10pt;
+}
+
+
+.table-view .table-column {
+    -fx-alignment: CENTER;
+}
+
+.table-view .table-cell {
+    -fx-font-weight: bold;
+}
+
 .table-view .scroll-bar:horizontal .increment-arrow,
 .table-view .scroll-bar:horizontal .decrement-arrow,
 .table-view .scroll-bar:horizontal .increment-button,

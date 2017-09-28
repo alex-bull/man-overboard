@@ -8,10 +8,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import parsers.boatAction.BoatAction;
 import utilities.DataSource;
@@ -48,6 +50,10 @@ public class MainController {
     private Slider sailSlider;
     @FXML
     private TimerController timerController;
+    @FXML
+    private Label goText;
+    @FXML
+    private Label stopText;
 
     @FXML
     private PerformanceController performanceController;
@@ -183,9 +189,15 @@ public class MainController {
                     raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
-                    if (!dataSource.isSpectating()) playerController.refresh();
+                    if (!dataSource.isSpectating()) {
+                        playerController.refresh();
+                        sailSlider.toFront();
+                        goText.toFront();
+                        stopText.toFront();
+
+                    }
                     performanceController.refresh(dataSource.getLatency());
-                    sailSlider.toFront();
+
                     loadingPane.setVisible(false);
 
                 } else {

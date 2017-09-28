@@ -10,8 +10,7 @@ import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpParser;
 import parsers.powerUp.PowerUpTakenParser;
 import parsers.powerUp.PowerUpType;
-import parsers.xml.race.Decoration;
-import parsers.xml.race.ThemeEnum;
+import parsers.xml.race.*;
 import utility.QueueMessage;
 import utility.WorkQueue;
 import models.ColourPool;
@@ -33,10 +32,13 @@ import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.markRounding.MarkRoundingData;
 import parsers.markRounding.MarkRoundingParser;
+import parsers.powerUp.PowerUp;
+import parsers.powerUp.PowerUpParser;
+import parsers.powerUp.PowerUpTakenParser;
+import parsers.powerUp.PowerUpType;
+import parsers.raceStatus.RaceStatusData;
 import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.boat.BoatXMLParser;
-import parsers.xml.race.RaceData;
-import parsers.xml.race.RaceXMLParser;
 import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
 import utility.*;
@@ -605,6 +607,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
         MutablePoint location = cloner.deepClone(boatData.getMercatorPoint());
         MutablePoint location17 = cloner.deepClone(boatData.getMercatorPoint());
+
         location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
         location17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
@@ -622,7 +625,6 @@ public class Interpreter implements DataSource, PacketHandler {
                 updatingBoat.setColor(colour);
                 colourPool.getColours().remove(colour);
             }
-
 
             updatingBoat.setPosition(location);
             updatingBoat.setPosition17(location17);
@@ -964,6 +966,15 @@ public class Interpreter implements DataSource, PacketHandler {
     public Map<Integer, PowerUp> getPowerUps() {
         return powerUps;
     }
+
+    public Map<Integer, String> getMarkSourceIdToRoundingDirection() {
+        return this.raceData.getMarkSourceIDToRoundingDirection();
+    }
+
+//    public Map<Integer, MarkData> getMarks() {
+//        return marks;
+//    }
+
 
 
 }

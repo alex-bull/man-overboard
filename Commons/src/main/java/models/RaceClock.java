@@ -2,6 +2,7 @@ package models;
 
 import javafx.animation.AnimationTimer;
 import parsers.Converter;
+import parsers.xml.race.ThemeEnum;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,10 +20,13 @@ public class RaceClock extends TimerTask implements Clock {
     private int negativeTime;
     private ClockHandler clockHandler;
     private Timer t;
+    private int gameDuration = 300000; // 5min
 
 
-    public RaceClock(ClockHandler handler, int scaleFactor, int negativeTime) {
-
+    public RaceClock(ClockHandler handler, int scaleFactor, int negativeTime, ThemeEnum theme) {
+        if(theme == ThemeEnum.ANTARCTICA) {
+            gameDuration = 600000;
+        }
         this.clockHandler = handler;
         this.scaleFactor = scaleFactor;
         this.negativeTime = negativeTime;
@@ -38,7 +42,6 @@ public class RaceClock extends TimerTask implements Clock {
 
 
     public void run() {
-        int gameDuration = 300000; // 5min
         long time = gameDuration - (System.currentTimeMillis() - startTime);
         String newTime = this.formatDisplayTime(time);
         this.clockHandler.clockTicked(newTime, this, time);

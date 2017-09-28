@@ -46,6 +46,7 @@ public class RaceXMLParser {
     private double xMin;
     private double yMin;
 
+
     /**
      * initializer to initialize variables
      */
@@ -106,15 +107,15 @@ public class RaceXMLParser {
         List<CompoundMarkData> course = new ArrayList<>();
         List<MarkData> startMarks = new ArrayList<>();
         List<MarkData> finishMarks = new ArrayList<>();
+        List<MarkData> marks = new ArrayList<>();
         boolean startLineSet = false;
 
         Map<Integer, List<Integer>> compoundMarkIdToSourceId = new HashMap<>();
-
+        Map<Integer, String> markSourceIdToRoundingDirection = new HashMap<>();
         for (Element compoundMark : race.getChild("Course").getChildren()) {
             int size = race.getChild("Course").getChildren().size();
             int compoundMarkID = Integer.parseInt(compoundMark.getAttribute("CompoundMarkID").getValue());
             String compoundMarkName = compoundMark.getAttribute("Name").getValue();
-            List<MarkData> marks = new ArrayList<>();
             List<Integer> sourceIds = new ArrayList<>();
 
             for (Element mark : compoundMark.getChildren()) {
@@ -124,9 +125,12 @@ public class RaceXMLParser {
                 double targetLat = Double.parseDouble(mark.getAttributeValue("TargetLat"));
                 double targetLng = Double.parseDouble(mark.getAttributeValue("TargetLng"));
                 int sourceID = Integer.parseInt(mark.getAttributeValue("SourceID"));
+                String markDirection = mark.getAttributeValue("MarkDirection");
                 raceData.addMarkSourceID(sourceID);
                 sourceIds.add(sourceID);
-                MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID);
+                MarkData markData = new MarkData(seqID, markName, targetLat, targetLng, sourceID, markDirection);
+                markSourceIdToRoundingDirection.put(sourceID, markDirection);
+
                 marks.add(markData);
             }
             compoundMarkIdToSourceId.put(compoundMarkID, sourceIds);
@@ -153,6 +157,7 @@ public class RaceXMLParser {
             raceData.setStartMarks(startMarks);
             raceData.setFinishMarks(finishMarks);
         }
+        raceData.setMarkSourceIDToRoundingDirection(markSourceIdToRoundingDirection);
         raceData.setCourse(course);
 
         Map<Integer, List<Integer>> legIndexToSourceId = new HashMap<>();
@@ -395,4 +400,6 @@ public class RaceXMLParser {
     public double getShiftDistance() {
         return shiftDistance;
     }
+
+
 }

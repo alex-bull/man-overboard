@@ -2,6 +2,7 @@ package parsers.xml.race;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by psu43 on 26/04/17.
@@ -14,8 +15,7 @@ public class CompoundMarkData {
 
     /**
      * Compound mark data
-     *
-     * @param ID    int ID
+     *  @param ID    int ID
      * @param name  String name
      * @param marks List marks
      */

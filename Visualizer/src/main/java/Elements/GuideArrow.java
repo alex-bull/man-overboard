@@ -16,7 +16,7 @@ import static utilities.RaceCalculator.calculateAngleBetweenMarks;
  */
 public class GuideArrow extends Polygon {
 
-    private Rotate rotate;
+
     /**
      * Initialize a guide arrow
      *
@@ -24,7 +24,7 @@ public class GuideArrow extends Polygon {
      * @param startAngle double, the angle which the arrow points initially
      */
     public GuideArrow(Color color, Double startAngle) {
-
+        this.setVisible(false);
         double arrowLength = -60; // default arrow points vertically in the -y direction (upwards)
         double arrowHeadLength = -20;
         double offsetFromOrigin = -1 * (arrowLength + arrowHeadLength) + 30;
@@ -38,8 +38,7 @@ public class GuideArrow extends Polygon {
                 -15., arrowLength + offsetFromOrigin,
                 -5., arrowLength + offsetFromOrigin);
         this.setFill(color);
-        rotate=new Rotate(startAngle, 0, 0);
-        this.getTransforms().add(rotate);
+        this.getTransforms().add(new Rotate(startAngle, 0, 0));
     }
 
 
@@ -53,12 +52,9 @@ public class GuideArrow extends Polygon {
      */
     public void updateArrowZoomed(Competitor boat, Double boatX, Double boatY, MutablePoint nextMarkLocation) {
 
-
         // arrow points from boat to next mark
-        Double xDist;
-        Double yDist;
-        xDist = boat.getPosition().getXValue() - nextMarkLocation.getXValue();
-        yDist = boat.getPosition().getYValue() - nextMarkLocation.getYValue();
+        Double xDist = boat.getPosition().getXValue() - nextMarkLocation.getXValue();
+        Double yDist = boat.getPosition().getYValue() - nextMarkLocation.getYValue();
         double angle = calculateAngleBetweenMarks(xDist, yDist);
         double xOffset = 150 * cos(toRadians(angle - 90));
         double yOffset = 150 * sin(toRadians(angle - 90));
@@ -75,6 +71,7 @@ public class GuideArrow extends Polygon {
      * @param nextMarkLocation MutablePoint, the location of the next mark
      */
     public void updateArrow(MutablePoint prevMarkLocation, MutablePoint nextMarkLocation) {
+
         double angle;
         if (prevMarkLocation == null) { //before first mark
             angle = 90;
@@ -100,11 +97,17 @@ public class GuideArrow extends Polygon {
      * @param y     double the y coordinate for the arrow's origin
      */
     private void applyTransformsToArrow(double angle, double x, double y) {
+        this.getTransforms().clear();
         this.setLayoutX(x);
         this.setLayoutY(y);
-        rotate.setAngle(angle);
-
+        this.getTransforms().add(new Rotate(angle, 0, 0));
     }
 
+    public void hide() {
+        this.setVisible(false);
+    }
 
+    public void show() {
+        this.setVisible(true);
+    }
 }

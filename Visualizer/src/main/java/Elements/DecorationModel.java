@@ -144,9 +144,9 @@ public class DecorationModel extends ImageView {
      */
     private Image getRandomNileImage() {
         ArrayList<String> imagePaths = new ArrayList<>();
-        imagePaths.add("images/nile/mummy.png");
+        imagePaths.add("images/nile/egypt.png");
+        imagePaths.add("images/nile/phar.png");
         imagePaths.add("images/nile/pyramid.png");
-        imagePaths.add("images/nile/sphinx.png");
         Random random = new Random();
         String chosenPath = imagePaths.get(random.nextInt(imagePaths.size()));
         return new Image(getClass().getClassLoader().getResource(chosenPath).toString());

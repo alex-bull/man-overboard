@@ -10,22 +10,24 @@ public class MarkData {
     private Double targetLat;
     private Double targetLon;
     private int sourceID;
+    private String markDirection;
 
     /**
      * MarkData from the data stream
-     *
-     * @param seqID     int sequence id of mark
+     *  @param seqID     int sequence id of mark
      * @param name      String name of mark
      * @param targetLat Double target latitude
      * @param targetLon Double target longitude
      * @param sourceID  int source ID
+     * @param markDirection String direction of mark rounding
      */
-    MarkData(int seqID, String name, Double targetLat, Double targetLon, int sourceID) {
+    MarkData(int seqID, String name, Double targetLat, Double targetLon, int sourceID, String markDirection) {
         this.seqID = seqID;
         this.name = name;
         this.targetLat = targetLat;
         this.targetLon = targetLon;
         this.sourceID = sourceID;
+        this.markDirection = markDirection;
     }
 
     @Override
@@ -69,6 +71,10 @@ public class MarkData {
 
     public void setTargetLon(Double targetLon) {
         this.targetLon = targetLon;
+    }
+
+    public String getMarkDirection() {
+        return markDirection;
     }
 
 }
