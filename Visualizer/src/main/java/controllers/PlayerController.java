@@ -119,8 +119,8 @@ public class PlayerController {
             this.potion.setGraphic(greyHealth);
         }
 
-//        Double w = stage.getWidth() / 2.5;
-//        player.setPrefSize(w, w / 2.5);
+        Double w = stage.getWidth() / 2.2;
+        player.setPrefSize(w, w / 2.5);
 
 
 
