@@ -27,6 +27,17 @@ public class BoatStatus {
         this.estimatedTimeAtNextMark = estimatedTimeAtNextMark;
     }
 
+    public void setBoatStatus(BoatStatusEnum boatStatus) {
+        this.boatStatus = boatStatus;
+    }
+
+    public void setLegNumber(int legNumber) {
+        this.legNumber = legNumber;
+    }
+
+    public void setEstimatedTimeAtNextMark(long estimatedTimeAtNextMark) {
+        this.estimatedTimeAtNextMark = estimatedTimeAtNextMark;
+    }
 
     public int getSourceID() {
         return sourceID;

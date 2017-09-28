@@ -37,7 +37,8 @@ public class MarkRoundingParserTest {
 
         try {
             Assert.assertNotNull(markRoundingParser);
-            Assert.assertNull(markRoundingParser.processMessage(packet));
+            markRoundingParser.update(packet);
+            Assert.assertNull(markRoundingParser);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -49,7 +50,8 @@ public class MarkRoundingParserTest {
         packet[20] = 3;
 
         try {
-            assertTrue(markRoundingParser.processMessage(packet).getMarkID() == 3);
+            markRoundingParser.update(packet);
+            assertTrue(markRoundingParser.getMarkID() == 3);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -66,7 +68,8 @@ public class MarkRoundingParserTest {
         int expectedSourceId = hexByteArrayToInt(Arrays.copyOfRange(packet, 13, 17));
 
         try {
-            assertTrue(markRoundingParser.processMessage(packet).getSourceID() == expectedSourceId);
+            markRoundingParser.update(packet);
+            assertTrue(markRoundingParser.getSourceID() == expectedSourceId);
         } catch (Exception e) {
             Assert.fail();
         }

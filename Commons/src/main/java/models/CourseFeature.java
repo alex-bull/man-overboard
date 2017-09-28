@@ -29,7 +29,10 @@ public interface CourseFeature {
 
     CourseFeature shift(double x, double y);
 
+    void shiftInPlace(double x, double y);
+
     void setPixelLocation(MutablePoint newLocation);
+    void setPixelLocation(double x, double y);
 
     MutablePoint getPixelCentre();
 }

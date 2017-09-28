@@ -56,6 +56,7 @@
 }
 
 .text-field {
+    -fx-font-family: 'Quicksand','sans-serif';
     -fx-padding: 5 22 5 22;
     -fx-font-size: 11pt;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
@@ -95,6 +96,27 @@
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-padding: 2px;
+}
+
+.table-view {
+    -fx-background-color: transparent;
+    -fx-font-family: 'Quicksand', sans-serif, bold;
+
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-font-family: 'Quicksand', sans-serif, bold;
+    -fx-font-size: 10pt;
+}
+
+
+.table-view .table-column {
+    -fx-alignment: CENTER;
+}
+
+.table-view .table-cell {
+    -fx-font-weight: bold;
 }
 
 .table-view .scroll-bar:horizontal .increment-arrow,

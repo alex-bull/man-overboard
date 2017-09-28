@@ -21,7 +21,8 @@ public class BoatDataParserTest {
 
         try {
             BoatDataParser boatDataParser = new BoatDataParser();
-            Assert.assertNull(boatDataParser.processMessage(packet));
+            boatDataParser.update(packet);
+            Assert.assertNull(boatDataParser);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -33,7 +34,8 @@ public class BoatDataParserTest {
 
         try {
             BoatDataParser boatDataParser = new BoatDataParser();
-            Assert.assertNull(boatDataParser.processMessage(packet));
+            boatDataParser.update(packet);
+            Assert.assertNull(boatDataParser);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -49,7 +51,8 @@ public class BoatDataParserTest {
 
         try {
             BoatDataParser boatDataParser = new BoatDataParser();
-            assertTrue(boatDataParser.processMessage(packet).getSpeed() == (double) expectedSpeedInMms / 1000);
+            boatDataParser.update(packet);
+            assertTrue(boatDataParser.getSpeed() == (double) expectedSpeedInMms / 1000);
         } catch (Exception e) {
             Assert.fail();
         }

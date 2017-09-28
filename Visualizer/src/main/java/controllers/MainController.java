@@ -8,10 +8,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import parsers.boatAction.BoatAction;
 import utilities.DataSource;
@@ -48,13 +50,19 @@ public class MainController {
     private Slider sailSlider;
     @FXML
     private TimerController timerController;
+    @FXML
+    private Label goText;
+    @FXML
+    private Label stopText;
+
+    @FXML
+    private PerformanceController performanceController;
 
     private DataSource dataSource;
     private BinaryPackager binaryPackager;
     private boolean playing = false;
     private boolean zoomFlag = false;
     private AnimationTimer timer;
-
 
     /**
      * updates the slider and sends corresponding packet
@@ -135,18 +143,10 @@ public class MainController {
                 }
                 break;
             case DIGIT1:
-                if (dataSource.getCompetitor().hasSpeedBoost()) {
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.BOOST.getValue(), dataSource.getSourceID()));
-                    dataSource.getCompetitor().disableBoost();
-                    playerController.greyOutBoost();
-                }
+                playerController.useBoost();
                 break;
             case DIGIT2:
-                if (dataSource.getCompetitor().hasPotion()) {
-                    this.dataSource.send(this.binaryPackager.packageBoatAction(BoatAction.POTION.getValue(), dataSource.getSourceID()));
-                    dataSource.getCompetitor().usePotion();
-                    playerController.greyOutPotion();
-                }
+                playerController.usePotion();
                 break;
         }
     }
@@ -189,8 +189,15 @@ public class MainController {
                     raceViewController.refresh();
                     tableController.refresh(dataSource);
                     windController.refresh(dataSource.getWindDirection(), dataSource.getWindSpeed());
-                    if (!dataSource.isSpectating()) playerController.refresh();
-                    sailSlider.toFront();
+                    if (!dataSource.isSpectating()) {
+                        playerController.refresh();
+                        sailSlider.toFront();
+                        goText.toFront();
+                        stopText.toFront();
+
+                    }
+                    performanceController.refresh(dataSource.getLatency());
+
                     loadingPane.setVisible(false);
 
                 } else {

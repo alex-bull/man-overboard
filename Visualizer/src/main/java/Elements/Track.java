@@ -12,6 +12,7 @@ import models.MutablePoint;
  * A Visual representation of a boats path
  */
 public class Track extends Group {
+    private MutablePoint lastAdded;
 
     /**
      * Adds a new fading point on the track
@@ -21,6 +22,10 @@ public class Track extends Group {
      */
     public void addDot(MutablePoint position, Color color) {
 
+        //dont draw if its on top
+        if(position.isWithin(lastAdded,1)){
+            return;
+        }
         Circle circle = new Circle(position.getXValue(), position.getYValue(), 1.5, color);
         //add fadeOut transition
         FadeTransition ft = new FadeTransition(Duration.millis(20000), circle);
@@ -28,6 +33,7 @@ public class Track extends Group {
         ft.setToValue(0.15);
         ft.setOnFinished(event -> this.getChildren().remove(circle));
         ft.play();
+        lastAdded=position;
         this.getChildren().add(circle);
     }
 }

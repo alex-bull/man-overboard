@@ -35,11 +35,17 @@ public class Sounds {
      * @param effect String, the file of the effect
      */
     public void playSoundEffect(String effect) {
-        Media sound = new Media(Sounds.class.getClassLoader().getResource(effect).toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-        effects.put(effect, mediaPlayer);
-        mediaPlayer.play();
-        mediaPlayer.setVolume(EnvironmentConfig.maxFXVolume);
+        if (effects.get(effect) != null) {
+            effects.get(effect).play();
+        }
+        else {
+            Media sound = new Media(Sounds.class.getClassLoader().getResource(effect).toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.setVolume(EnvironmentConfig.maxFXVolume);
+            effects.put(effect, mediaPlayer);
+            mediaPlayer.play();
+        }
+
     }
 
     /**

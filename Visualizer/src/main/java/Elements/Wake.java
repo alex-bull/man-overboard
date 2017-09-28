@@ -18,6 +18,8 @@ import static javafx.scene.paint.Color.TRANSPARENT;
  */
 public class Wake extends Polygon {
 
+    private Translate translate;
+    private Rotate rotate;
     /**
      * Initialize a wake
      *
@@ -33,6 +35,12 @@ public class Wake extends Polygon {
         this.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + wakeLength * wakeWidthFactor, wakeLength + boatLength, -startWakeOffset - wakeLength * wakeWidthFactor, wakeLength + boatLength);
         LinearGradient linearGradient = new LinearGradient(0.0, 0, 0.0, 1, true, CycleMethod.NO_CYCLE, new Stop(0.0f, Color.rgb(0, 0, 255, 0.7)), new Stop(1.0f, TRANSPARENT));
         this.setFill(linearGradient);
+
+        translate=new Translate(0,0);
+        rotate=new Rotate(0,0,0);
+        getTransforms().add(translate);
+        getTransforms().add(rotate);
+
     }
 
 
@@ -49,11 +57,16 @@ public class Wake extends Polygon {
     public void update(Competitor boat, double boatLength, double startWakeOffset, double wakeWidthFactor, double wakeLengthFactor, MutablePoint relativePosition) {
 
         double newLength = boat.getVelocity() * 2 * wakeLengthFactor;
-        this.getTransforms().clear();
+//        this.getTransforms().clear();
         this.getPoints().clear();
         this.getPoints().addAll(-startWakeOffset, boatLength, startWakeOffset, boatLength, startWakeOffset + newLength * wakeWidthFactor, newLength + boatLength, -startWakeOffset - newLength * wakeWidthFactor, newLength + boatLength);
-        this.getTransforms().add(new Translate(relativePosition.getXValue(), relativePosition.getYValue()));
-        this.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
+//        this.getTransforms().add(new Translate(relativePosition.getXValue(), relativePosition.getYValue()));
+//
+//        this.getTransforms().add(new Rotate(boat.getCurrentHeading(), 0, 0));
+        translate.setX(relativePosition.getXValue());
+        translate.setY(relativePosition.getYValue());
+        rotate.setAngle(boat.getCurrentHeading());
+
         this.toFront();
     }
 

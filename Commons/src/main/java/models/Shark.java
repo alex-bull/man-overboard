@@ -16,6 +16,12 @@ public class Shark {
     private MutablePoint position17;
     private MutablePoint positionOriginal;
 
+    public Shark(int sourceId, MutablePoint positionOriginal) {
+        this.sourceId=sourceId;
+        this.positionOriginal=positionOriginal;
+        this.sharkSpeed = new Force(velocity, 0, false);
+    }
+
     public Shark(int sourceId, int numSharks, MutablePoint position, int velocity, double heading) {
         this.sourceId += sourceId;
         this.numSharks = numSharks;
