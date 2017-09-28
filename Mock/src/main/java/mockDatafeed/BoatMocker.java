@@ -13,10 +13,7 @@ import parsers.header.HeaderParser;
 import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpType;
 import parsers.xml.CourseXMLParser;
-import parsers.xml.race.CompoundMarkData;
-import parsers.xml.race.MarkData;
-import parsers.xml.race.RaceData;
-import parsers.xml.race.RaceXMLParser;
+import parsers.xml.race.*;
 import utilities.ClientState;
 import utility.BinaryPackager;
 import utility.ConnectionClient;
@@ -37,6 +34,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import static mockDatafeed.Keys.RIP;
 import static parsers.BoatStatusEnum.*;
 import static parsers.MessageType.UNKNOWN;
+import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 import static utilities.CollisionUtility.isPointInPolygon;
 import static utilities.Utility.fileToString;
 import static utility.Calculator.*;
@@ -590,7 +588,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         int raceStatus;
 
         int gameDuration = 300000;
-
+        if(themeId == 0) {
+            gameDuration = 600000; // antarctica is 10mins
+        }
         if (boatUpdater.checkAllFinished() || (System.currentTimeMillis() - gameStartTime > gameDuration)) {
             raceStatus = 4;
 

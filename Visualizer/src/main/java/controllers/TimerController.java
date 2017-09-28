@@ -31,7 +31,7 @@ public class TimerController implements ClockHandler {
     void begin(DataSource dataSource) {
 
         long firstMessageTime = dataSource.getMessageTime();
-        this.raceClock = new RaceClock(this, 1, 0);
+        this.raceClock = new RaceClock(this, 1, 0, dataSource.getThemeId());
         raceClock.start(firstMessageTime);
 
     }
