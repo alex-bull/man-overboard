@@ -95,7 +95,7 @@ public class RaceStatusParser {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
     }

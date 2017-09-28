@@ -8,12 +8,14 @@ import parsers.MessageType;
 import parsers.boatAction.BoatAction;
 import parsers.boatCustomisation.ModelParser;
 import parsers.boatCustomisation.NameParser;
-import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
 import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpType;
 import parsers.xml.CourseXMLParser;
-import parsers.xml.race.*;
+import parsers.xml.race.CompoundMarkData;
+import parsers.xml.race.MarkData;
+import parsers.xml.race.RaceData;
+import parsers.xml.race.RaceXMLParser;
 import utilities.ClientState;
 import utility.BinaryPackager;
 import utility.ConnectionClient;
@@ -34,7 +36,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import static mockDatafeed.Keys.RIP;
 import static parsers.BoatStatusEnum.*;
 import static parsers.MessageType.UNKNOWN;
-import static parsers.xml.race.ThemeEnum.ANTARCTICA;
 import static utilities.CollisionUtility.isPointInPolygon;
 import static utilities.Utility.fileToString;
 import static utility.Calculator.*;
@@ -132,9 +133,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             new BoatMocker();
 
         } catch (SocketException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         } catch (IOException | JDOMException e ) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
     }
 
@@ -149,7 +150,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
 
@@ -192,9 +193,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         try {
             start();
         } catch (JDOMException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
     }
 
@@ -499,7 +500,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         try {
             sendYachtEvent(sourceId, eventId);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -744,7 +745,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             sendXML("/mock_regatta.xml", 5, clientId);
             sendRaceXML(clientId);
         } catch (IOException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
     }
 
@@ -843,7 +844,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             sendBoatLocation();
             sendRaceStatus();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
     }

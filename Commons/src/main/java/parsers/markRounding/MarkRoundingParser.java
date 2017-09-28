@@ -50,7 +50,7 @@ public class MarkRoundingParser {
             markID = hexByteArrayToInt(Arrays.copyOfRange(body, 20, 21));
 
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
     }

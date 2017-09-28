@@ -36,7 +36,7 @@ public class ControlsController implements Initializable {
         try {
             root = loader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+          //  e.printStackTrace();
         }
 
         assert root != null;

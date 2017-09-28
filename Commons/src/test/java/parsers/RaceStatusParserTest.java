@@ -20,7 +20,7 @@ public class RaceStatusParserTest {
             RaceStatusParser raceStatusParser = new RaceStatusParser();
             assertNotNull(raceStatusParser);
             raceStatusParser.update(packet);
-            assertNull(raceStatusParser);
+            assertNull(raceStatusParser.getRaceId());
         } catch (Exception e) {
             Assert.fail();
         }

@@ -1,7 +1,10 @@
 package utility;
 
 
-import models.*;
+import models.Competitor;
+import models.CrewLocation;
+import models.Shark;
+import models.Whirlpool;
 import parsers.BoatStatusEnum;
 import parsers.MessageType;
 import parsers.powerUp.PowerUpType;

@@ -9,7 +9,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import utilities.Interpreter;
 import utilities.Sounds;
-import utility.BinaryPackager;
 
 import java.io.IOException;
 import java.net.URL;
@@ -52,7 +51,7 @@ public class StartController implements Initializable {
         try {
             root = loader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
             System.exit(1);
         }
 
@@ -74,7 +73,7 @@ public class StartController implements Initializable {
         try {
             root = loader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+          //  e.printStackTrace();
         }
 
         assert root != null;
@@ -91,7 +90,7 @@ public class StartController implements Initializable {
         try {
             root = loader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
         assert root != null;

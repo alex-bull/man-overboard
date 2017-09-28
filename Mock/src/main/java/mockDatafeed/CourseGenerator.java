@@ -7,10 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import static parsers.xml.race.ThemeEnum.AMAZON;
-import static parsers.xml.race.ThemeEnum.ANTARCTICA;
-import static parsers.xml.race.ThemeEnum.BERMUDA;
-import static parsers.xml.race.ThemeEnum.NILE;
+import static parsers.xml.race.ThemeEnum.*;
 
 /**
  * Created by psu43 on 20/09/17.

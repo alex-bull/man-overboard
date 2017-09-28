@@ -6,9 +6,7 @@ import utility.QueueMessage;
 import utility.WorkQueue;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -62,7 +60,7 @@ public class TCPServer extends TimerTask {
         try {
             serverSocket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+         //   e.printStackTrace();
         }
     }
 
@@ -242,7 +240,7 @@ public class TCPServer extends TimerTask {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
     }
 

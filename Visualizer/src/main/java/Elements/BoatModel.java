@@ -5,7 +5,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
@@ -52,7 +51,7 @@ public class BoatModel extends Group {
         }
         catch (IndexOutOfBoundsException e){
             boatImage=new Image(getClass().getClassLoader().getResource("images/cross-small.png").toString());
-            System.out.println("invalid boat image index");
+            //System.out.println("invalid boat image index");
 
         }
         boatModel.setFill(new ImagePattern(boatImage));

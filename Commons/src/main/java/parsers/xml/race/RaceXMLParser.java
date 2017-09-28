@@ -1,8 +1,6 @@
 package parsers.xml.race;
 
 import com.google.common.math.DoubleMath;
-import com.rits.cloning.Cloner;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import models.MutablePoint;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -14,11 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import static com.google.common.collect.ImmutableList.copyOf;
-import static parsers.xml.race.ThemeEnum.ANTARCTICA;
-import static parsers.xml.race.ThemeEnum.BERMUDA;
-import static parsers.xml.race.ThemeEnum.AMAZON;
-import static parsers.xml.race.ThemeEnum.NILE;
+import static parsers.xml.race.ThemeEnum.*;
 import static utility.Projection.mercatorProjection;
 
 /**

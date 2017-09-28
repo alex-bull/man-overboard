@@ -3,9 +3,6 @@ package controllers;
 import Animations.BorderAnimation;
 import Animations.CollisionRipple;
 import Animations.RandomShake;
-import parsers.boatAction.BoatAction;
-import parsers.xml.race.Decoration;
-import utilities.Sounds;
 import Elements.*;
 import com.rits.cloning.Cloner;
 import javafx.collections.ObservableList;
@@ -34,24 +31,23 @@ import javafx.scene.web.WebView;
 import models.*;
 import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
+import parsers.boatAction.BoatAction;
 import parsers.powerUp.PowerUp;
+import parsers.xml.race.Decoration;
 import utilities.DataSource;
 import utilities.RaceCalculator;
+import utilities.Sounds;
 import utility.BinaryPackager;
-
-import java.text.DecimalFormat;
-import java.util.ResourceBundle;
 
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.*;
 
 import static java.lang.Math.pow;
 import static javafx.collections.FXCollections.observableArrayList;
 import static parsers.BoatStatusEnum.DSQ;
-import static parsers.xml.race.ThemeEnum.AMAZON;
-import static parsers.xml.race.ThemeEnum.ANTARCTICA;
-import static parsers.xml.race.ThemeEnum.NILE;
+import static parsers.xml.race.ThemeEnum.*;
 
 
 /**
@@ -198,7 +194,7 @@ public class RaceViewController implements Initializable, TableObserver {
         try {
             mapEngine.load(getClass().getClassLoader().getResource("mapsBermuda.html").toURI().toString());
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
         mapEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
@@ -244,7 +240,7 @@ public class RaceViewController implements Initializable, TableObserver {
             }
             raceViewPane.getChildren().add(sharkModel);
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
 
@@ -252,7 +248,7 @@ public class RaceViewController implements Initializable, TableObserver {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+              //  e.printStackTrace();
             }
         }
     }
@@ -774,7 +770,7 @@ public class RaceViewController implements Initializable, TableObserver {
             mapEngine.executeScript(String.format("relocate(%.9f,%.9f,%.9f,%.9f);", bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3)));
             mapEngine.executeScript(String.format("shift(%.2f);", dataSource.getShiftDistance()));
         } catch (JSException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

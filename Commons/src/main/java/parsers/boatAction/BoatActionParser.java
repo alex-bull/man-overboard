@@ -41,7 +41,7 @@ public class BoatActionParser {
             int num = hexByteArrayToInt(Arrays.copyOfRange(body, 0, 1));
             actionNum= getBoatAction(num);
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
     }
 

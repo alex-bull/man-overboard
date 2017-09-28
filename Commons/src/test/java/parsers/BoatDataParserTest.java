@@ -22,7 +22,7 @@ public class BoatDataParserTest {
         try {
             BoatDataParser boatDataParser = new BoatDataParser();
             boatDataParser.update(packet);
-            Assert.assertNull(boatDataParser);
+            Assert.assertNull(boatDataParser.getSourceID());
         } catch (Exception e) {
             Assert.fail();
         }
@@ -35,7 +35,7 @@ public class BoatDataParserTest {
         try {
             BoatDataParser boatDataParser = new BoatDataParser();
             boatDataParser.update(packet);
-            Assert.assertNull(boatDataParser);
+            Assert.assertNull(boatDataParser.getCourseFeature());
         } catch (Exception e) {
             Assert.fail();
         }

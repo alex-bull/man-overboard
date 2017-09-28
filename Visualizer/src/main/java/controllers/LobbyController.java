@@ -36,9 +36,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import static parsers.xml.race.ThemeEnum.AMAZON;
-import static parsers.xml.race.ThemeEnum.ANTARCTICA;
-import static parsers.xml.race.ThemeEnum.NILE;
+import static parsers.xml.race.ThemeEnum.*;
 
 
 /**
@@ -47,7 +45,7 @@ import static parsers.xml.race.ThemeEnum.NILE;
  */
 public class LobbyController implements Initializable {
 
-    private final int STARTTIME = 1;
+    private final int STARTTIME = 5;
     BinaryPackager binaryPackager = new BinaryPackager();
     private DataSource dataSource;
     @FXML private ListView<String> starterList;
@@ -337,7 +335,7 @@ public class LobbyController implements Initializable {
         try {
             root = loader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
         assert root != null;
@@ -390,7 +388,7 @@ public class LobbyController implements Initializable {
                 try {
                     root = loader.load();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                  //  e.printStackTrace();
                 }
 
                 assert root != null;

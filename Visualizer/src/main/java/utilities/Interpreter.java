@@ -6,39 +6,27 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import parsers.powerUp.PowerUp;
-import parsers.powerUp.PowerUpParser;
-import parsers.powerUp.PowerUpTakenParser;
-import parsers.powerUp.PowerUpType;
-import parsers.xml.race.*;
-import utility.QueueMessage;
-import utility.WorkQueue;
-import models.ColourPool;
-import models.Competitor;
-import models.CourseFeature;
-import models.MutablePoint;
 import models.*;
 import org.jdom2.JDOMException;
 import parsers.MessageType;
 import parsers.RaceStatusEnum;
 import parsers.XmlSubtype;
-import parsers.boatAction.BoatAction;
 import parsers.boatAction.BoatActionParser;
-import parsers.boatLocation.BoatData;
 import parsers.boatLocation.BoatDataParser;
 import parsers.boatState.BoatStateParser;
 import parsers.connection.ConnectionParser;
-import parsers.header.HeaderData;
 import parsers.header.HeaderParser;
-import parsers.markRounding.MarkRoundingData;
 import parsers.markRounding.MarkRoundingParser;
 import parsers.powerUp.PowerUp;
 import parsers.powerUp.PowerUpParser;
 import parsers.powerUp.PowerUpTakenParser;
 import parsers.powerUp.PowerUpType;
-import parsers.raceStatus.RaceStatusData;
 import parsers.raceStatus.RaceStatusParser;
 import parsers.xml.boat.BoatXMLParser;
+import parsers.xml.race.Decoration;
+import parsers.xml.race.RaceData;
+import parsers.xml.race.RaceXMLParser;
+import parsers.xml.race.ThemeEnum;
 import parsers.xml.regatta.RegattaXMLParser;
 import parsers.yachtEvent.YachtEventParser;
 import utility.*;
@@ -159,7 +147,7 @@ public class Interpreter implements DataSource, PacketHandler {
         try {
             this.TCPClient.close();
         } catch (IOException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
     }
@@ -233,12 +221,12 @@ public class Interpreter implements DataSource, PacketHandler {
                 try {
                     readXMLMessage(packet);
                 } catch (JDOMException | IOException e) {
-                    e.printStackTrace();
+                 //   e.printStackTrace();
                 }
                 break;
             case RACE_STATUS:
                 raceStatusParser.update(packet);
-                if (raceStatusParser != null) {
+                if (raceStatusParser.getNumBoatsInRace() != null) {
                     this.raceStatus = raceStatusParser.getRaceStatus();
 
                    // this.messageTime = raceStatusParser.getCurrentTime();
@@ -314,7 +302,7 @@ public class Interpreter implements DataSource, PacketHandler {
 
                 headerParser.update(header);
                 boatActionParser.update(packet);
-                if (boatActionParser != null && headerParser != null) {
+                if (boatActionParser.getActionNum() != null && headerParser.getSourceID() != null) {
                     if (headerParser.getSourceID() == this.sourceID) {
                         Competitor boat = this.storedCompetitors.get(this.sourceID);
                         switch (boatActionParser.getActionNum()) {
@@ -769,7 +757,7 @@ public class Interpreter implements DataSource, PacketHandler {
             try {
                 xmlString = new String(xmlBytes, charset);
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+               // e.printStackTrace();
             }
             return xmlString;
         } catch (Exception e) {

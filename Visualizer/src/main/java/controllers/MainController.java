@@ -13,7 +13,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 import parsers.boatAction.BoatAction;
 import utilities.DataSource;
@@ -25,7 +24,6 @@ import java.io.IOException;
 
 import static javafx.scene.input.KeyCode.A;
 import static javafx.scene.input.KeyCode.D;
-import static javafx.scene.input.KeyCode.Q;
 
 
 /**
@@ -231,7 +229,7 @@ public class MainController {
                 try {
                     root = loader.load();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                 //   e.printStackTrace();
                     System.exit(1);
                 }
 
@@ -262,7 +260,7 @@ public class MainController {
         try {
             root = loader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
         assert root != null;

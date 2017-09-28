@@ -48,7 +48,7 @@ public class HeaderParser {
             messageLength = hexByteArrayToInt(Arrays.copyOfRange(body, 11, 13));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
     }

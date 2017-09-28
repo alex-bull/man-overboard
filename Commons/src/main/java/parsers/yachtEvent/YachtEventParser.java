@@ -1,7 +1,6 @@
 package parsers.yachtEvent;
 
 import parsers.Converter;
-import parsers.xml.race.YachtData;
 
 import java.util.Arrays;
 

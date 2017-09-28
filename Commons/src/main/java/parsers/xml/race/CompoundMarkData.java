@@ -2,7 +2,6 @@ package parsers.xml.race;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by psu43 on 26/04/17.

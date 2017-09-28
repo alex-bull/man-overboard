@@ -1,7 +1,5 @@
 package models;
 
-import javafx.animation.AnimationTimer;
-import parsers.Converter;
 import parsers.xml.race.ThemeEnum;
 
 import java.util.Timer;

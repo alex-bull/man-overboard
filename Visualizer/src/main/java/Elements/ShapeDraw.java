@@ -1,14 +1,8 @@
 package Elements;
 
-import com.google.common.collect.Iterables;
-import javafx.collections.ObservableList;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import models.MutablePoint;
-
-import java.util.List;
 
 /**
  * Created by mattgoodson on 1/09/17.

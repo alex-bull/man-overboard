@@ -9,10 +9,6 @@ import parsers.xml.race.ThemeEnum;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static parsers.xml.race.ThemeEnum.AMAZON;
-import static parsers.xml.race.ThemeEnum.ANTARCTICA;
-import static parsers.xml.race.ThemeEnum.NILE;
-
 
 /**
  * Created by psu43 on 20/09/17.
@@ -43,7 +39,7 @@ public class MarkModel extends Group {
                 mark.setFill(new ImagePattern(new Image(getClass().getClassLoader().getResource("images/nile/hippo.png").toString())));
                 break;
             default:
-                System.out.println("invalid theme id: "+theme);
+               // System.out.println("invalid theme id: "+theme);
                 break;
         }
         this.getChildren().add(mark);

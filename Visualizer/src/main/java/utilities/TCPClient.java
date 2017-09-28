@@ -7,7 +7,6 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.Arrays;
 import java.util.TimerTask;
@@ -132,10 +131,10 @@ public class TCPClient extends TimerTask {
             }
 
         } catch (EOFException e) {
-            e.printStackTrace();
+          //  e.printStackTrace();
         } catch (IOException e) {
 
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
     }
