@@ -220,6 +220,7 @@ public class RaceViewController implements Initializable, TableObserver {
                 sharkModel = new SharkModel(new Image("/Animations/sharkMoving.gif"));
             } else if (dataSource.getThemeId() == AMAZON) {
                 mapEngine.load(getClass().getClassLoader().getResource("mapsAmazon.html").toURI().toString());
+                sharkModel = new SharkModel(new Image("/Animations/crocMoving.gif"));
             }
             else if (dataSource.getThemeId() == NILE) {
                 mapEngine.load(getClass().getClassLoader().getResource("mapsNile.html").toURI().toString());

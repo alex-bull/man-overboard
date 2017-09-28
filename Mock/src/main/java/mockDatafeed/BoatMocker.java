@@ -81,6 +81,8 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
     private String coursePath = "";
     private Integer themeId = 0;
 
+    private HeaderParser headerParser=new HeaderParser();
+
 
 
 
@@ -218,9 +220,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         switch (messageType) {
             case BOAT_ACTION:
 
-                HeaderParser headerParser = new HeaderParser();
-                HeaderData headerData = headerParser.processMessage(header);
-                int sourceID = headerData.getSourceID();
+
+                headerParser.update(header);
+                int sourceID = headerParser.getSourceID();
                 Competitor boat = competitors.get(sourceID);
                 BoatAction action = BoatAction.getBoatAction(packet[0]);
                 switch (action) {
