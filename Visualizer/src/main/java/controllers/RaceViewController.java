@@ -25,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import models.*;
@@ -58,7 +59,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
     //CONFIG
-    private static final Color backgroundColor = Color.POWDERBLUE;
+    private static final Color backgroundColor = Color.web("B0E0E6",0.4); //powder blue
     //VIEW ELEMENTS
     @FXML
     private Button muteButton;
@@ -111,6 +112,9 @@ public class RaceViewController implements Initializable, TableObserver {
     private CurvedSail curvedSailLine;
     private SharkModel sharkModel;
     private Map<Integer, WhirlpoolModel> whirlpools = new HashMap<>();
+    private Polygon boundaryPolygon;
+    private Polygon innerPolygon;
+
     //FLAGS
     private Boolean finisherListDisplayed = false;
     private boolean isLoaded = false;
@@ -583,7 +587,6 @@ public class RaceViewController implements Initializable, TableObserver {
                 mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);", position.getXValue(), position.getYValue()));
             }
             else mapEngine.executeScript(String.format("setCenter(%.9f,%.9f);", dataSource.getCompetitor().getLatitude(), dataSource.getCompetitor().getLongitude()));
-            courseFeatures = new HashMap<>();
             for (Integer id : dataSource.getStoredFeatures17().keySet()) {
                 if (!courseFeatures.containsKey(id)) {
                     courseFeatures.put(id, cloner.deepClone(dataSource.getStoredFeatures17().get(id)));
@@ -698,11 +701,31 @@ public class RaceViewController implements Initializable, TableObserver {
     }
 
 
+    private void createBoundary(Double[] vertices){
+        boundaryPolygon=new Polygon();
+        boundaryPolygon.getPoints().addAll(vertices);
+        boundaryPolygon.getStrokeDashArray().addAll(50d,40d);
+        boundaryPolygon.setStroke(Color.BLACK);
+        boundaryPolygon.setStrokeWidth(0.8);
+        boundaryPolygon.setFill(backgroundColor);
+        raceViewPane.getChildren().add(boundaryPolygon);
+    }
+
     /**
      * Draw boundary
      */
     private void drawBoundary(List<MutablePoint> courseBoundary) {
-        ShapeDraw.polygon(gc, courseBoundary, backgroundColor);
+        Double[]  boundary = new Double[courseBoundary.size() * 2];
+
+        for(int i=0;i<courseBoundary.size();i++){
+            boundary[i*2]=courseBoundary.get(i).getXValue();
+            boundary[i*2+1]=courseBoundary.get(i).getYValue();
+        }
+        if(boundaryPolygon==null){
+
+            createBoundary(boundary);
+        }
+        ShapeDraw.movePolygon(boundaryPolygon,boundary);
     }
 
 

@@ -530,17 +530,19 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     public void addShark(List<Shark> locations) {
 
-        sharkLocations.clear();
         for (Shark shark : locations) {
-            MutablePoint location = cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
-            MutablePoint locationOriginal = cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
-            location.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            MutablePoint location17 = cloner.deepClone(Projection.mercatorProjection(shark.getPosition()));
-            location17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
-            double heading = cloner.deepClone(shark.getHeading());
-            int velocity = cloner.deepClone(shark.getVelocity());
-            sharkLocations.put(shark.getSourceId(), new Shark(shark.getSourceId(), shark.getNumSharks(), location, location17, locationOriginal, heading, velocity));
-            shark.setSpeed(shark.getVelocity());
+            if(!sharkLocations.containsKey(shark.getSourceId())){
+                sharkLocations.put(shark.getSourceId(), new Shark(shark.getSourceId(),shark.getPositionOriginal()));
+            }
+            MutablePoint projectedPoint=Projection.mercatorProjection(shark.getPosition());
+            projectedPoint.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+
+            MutablePoint projectedPoint17=Projection.mercatorProjection(shark.getPosition());
+            projectedPoint17.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
+            sharkLocations.get(shark.getSourceId()).setPosition(projectedPoint);
+            sharkLocations.get(shark.getSourceId()).setPosition17(projectedPoint17);
+            sharkLocations.get(shark.getSourceId()).setHeading(shark.getHeading());
+            sharkLocations.get(shark.getSourceId()).setSpeed(shark.getVelocity());
         }
     }
 
