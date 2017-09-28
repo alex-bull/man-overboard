@@ -145,7 +145,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private Image zoomInImage;
     private Image zoomOutImage;
 
-    private Map<Integer, CourseFeature> currentFeaturePositions = new HashMap<>();
+    private Map<Integer, CourseFeature> currentFeaturePositions;
 
 
     //================================================================================================================
@@ -618,13 +618,16 @@ public class RaceViewController implements Initializable, TableObserver {
                 courseBoundary.get(i).setX(dataSource.getCourseBoundary17().get(i).getXValue()-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2);
                 courseBoundary.get(i).setY(dataSource.getCourseBoundary17().get(i).getYValue()-currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
             }
+            currentFeaturePositions=courseFeatures;
             drawCourse(courseFeatures);
             drawBoundary(courseBoundary);
 
         } else {
+            currentFeaturePositions=dataSource.getStoredFeatures();
             drawCourse(dataSource.getStoredFeatures());
             drawBoundary(dataSource.getCourseBoundary());
         }
+
     }
 
 
@@ -835,7 +838,9 @@ public class RaceViewController implements Initializable, TableObserver {
 
         Competitor boat = dataSource.getCompetitor();
         int currentIndex = boat.getCurrentLegIndex();
+        System.out.println("asdf"+currentFeaturePositions);
         List<MutablePoint> nextMarkLocations = RaceCalculator.getMarkCentres(currentIndex + 1, indexMap, this.currentFeaturePositions);
+
 
 
         if (nextMarkLocations == null || nextMarkLocations.size() == 0) { //end of race
@@ -1136,6 +1141,7 @@ public class RaceViewController implements Initializable, TableObserver {
      * Draws the race. This includes the boat, wakes, track and annotations.
      */
     private void updateRace() {
+        updateCourse();
         //needs to redraw if zoomed in
         double width = 2;
         double length = 15;
@@ -1173,7 +1179,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
 
 
-        updateCourse();
+
     }
 
     /**
