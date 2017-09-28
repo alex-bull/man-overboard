@@ -1126,6 +1126,9 @@ public class RaceViewController implements Initializable, TableObserver {
         }
         counter++;
         if (dataSource.isSpectating()){
+            guideArrow.setVisible(false);
+            curvedArrowAnticlockwise.setVisible(false);
+            curvedArrowClockwise.setVisible(false);
             zoomButton.setVisible(false);
             return;
         }
