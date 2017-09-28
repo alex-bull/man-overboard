@@ -4,26 +4,7 @@
  }
 
 
-.table-view {
-    -fx-background-color: transparent;
-    -fx-font-family: 'Quicksand', sans-serif, bold;
 
-}
-
-.table-view .column-header {
-    -fx-background-color: transparent;
-    -fx-font-family: 'Quicksand', sans-serif, bold;
-    -fx-font-size: 10pt;
-}
-
-
-.table-view .table-column {
-    -fx-alignment: CENTER;
-}
-
-.table-view .table-cell {
-    -fx-font-weight: bold;
-}
 
 
 #finish-list {
