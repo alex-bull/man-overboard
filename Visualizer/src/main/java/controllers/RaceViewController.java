@@ -175,7 +175,6 @@ public class RaceViewController implements Initializable, TableObserver {
         raceViewPane.getChildren().add(guideArrow);
         raceViewPane.getChildren().add(curvedArrowClockwise);
         raceViewPane.getChildren().add(curvedArrowAnticlockwise);
-        controlsView = new ImageView(new Image("images/controls.png"));
 
         gc = raceViewCanvas.getGraphicsContext2D();
 
