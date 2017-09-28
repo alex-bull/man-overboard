@@ -732,15 +732,6 @@ public class RaceViewController implements Initializable, TableObserver {
         Shark shark = sharkLocation.get(0);
         sharkModel.update(isZoom(), shark, currentPosition17, raceViewPane.getWidth(), raceViewPane.getHeight(), shark.getHeading());
         sharkModel.toFront();
-
-//        Image image = sharkModel.getImage();
-//        if (isZoom()) {
-//            MutablePoint p = sharkLocation.get(0).getPosition17().shift(-currentPosition17.getXValue() + raceViewCanvas.getWidth() / 2, -currentPosition17.getYValue() + raceViewCanvas.getHeight() / 2);
-//            sharkModel.relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-//        } else {
-//            MutablePoint p = sharkLocation.get(0).getPosition();
-//            sharkModel.relocate(p.getXValue() - image.getWidth() / 2, p.getYValue() - image.getHeight() / 2);
-//        }
     }
 
     /**
@@ -751,27 +742,17 @@ public class RaceViewController implements Initializable, TableObserver {
         Set<Integer> removedLocation = new HashSet<>(whirlpools.keySet());
         removedLocation.removeAll(whirlpoolsLocation.keySet());
 
-        for (int sourceId : removedLocation) {
-            raceViewPane.getChildren().remove(whirlpools.get(sourceId));
-            whirlpools.remove(sourceId);
-        }
-
         for (int id : whirlpoolsLocation.keySet()) {
+            Whirlpool whirlpool = whirlpoolsLocation.get(id);
             if (!whirlpools.containsKey(id)) {
-                Whirlpool whirlpool = whirlpoolsLocation.get(id);
                 WhirlpoolModel model = new WhirlpoolModel(new Image("/images/whirlpool.png"), isZoom(), nodeSizeFunc(dataSource.getZoomLevel()));
                 model.update(whirlpool.getPosition());
                 model.animateSpawn();
                 whirlpools.put(id, model);
                 raceViewPane.getChildren().add(model);
-            } else {
-                for (WhirlpoolModel whirlpool : whirlpools.values()) {
-                    whirlpool.spin();
-                }
             }
+            whirlpools.get(id).spin();
             whirlpools.get(id).update(isZoom(), whirlpoolsLocation.get(id), currentPosition17, raceViewPane.getWidth(), raceViewPane.getHeight());
-
-
         }
     }
 
