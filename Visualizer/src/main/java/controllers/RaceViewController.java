@@ -35,10 +35,11 @@ import models.*;
 import netscape.javascript.JSException;
 import parsers.RaceStatusEnum;
 import parsers.powerUp.PowerUp;
-import parsers.xml.race.Decoration;
 import utilities.DataSource;
 import utilities.RaceCalculator;
 import utility.BinaryPackager;
+
+import java.text.DecimalFormat;
 import java.util.ResourceBundle;
 
 import java.net.URISyntaxException;
@@ -306,9 +307,10 @@ public class RaceViewController implements Initializable, TableObserver {
         if (dataSource.getRaceStatus().equals(RaceStatusEnum.FINISHED) && !finisherListDisplayed) {
             for (Competitor aCompetitor : dataSource.getCompetitorsPosition()) {
                 if (aCompetitor.getStatus() == DSQ) {
-                    observableFinisherList.add("RIP " + aCompetitor.getTeamName());
+                    observableFinisherList.add("RIP " + aCompetitor.getTeamName() + "      " + getPlayerRecord());
                 } else {
-                    observableFinisherList.add((dataSource.getCompetitorsPosition().indexOf(aCompetitor) + 1) + ". " + aCompetitor.getTeamName());
+                    observableFinisherList.add((dataSource.getCompetitorsPosition().indexOf(aCompetitor) + 1) + ". " +
+                            aCompetitor.getTeamName() + "      " + getPlayerRecord());
                 }
             }
             finisherListView.setItems(observableFinisherList);
@@ -322,6 +324,22 @@ public class RaceViewController implements Initializable, TableObserver {
             finisherListPane.setLayoutX(width / 2 - finisherListPane.getWidth() / 2);
             finisherListPane.setLayoutY(height / 2 - finisherListPane.getHeight() / 2);
             this.finishFlag = true;
+        }
+    }
+
+    /**
+     * Calculates the time taken for players to finish the race / die in the race
+     * @return player's record
+     */
+    public String getPlayerRecord() {
+        double time = (System.currentTimeMillis()- dataSource.getMessageTime());
+        time = time/1000.0;
+        double seconds = time % 60;
+        DecimalFormat df = new DecimalFormat("#");
+        if (time > 60) {
+            return (int) Math.floor(time/ 60) + " : " + df.format(seconds) + " seconds";
+        } else {
+            return df.format(seconds) + " seconds";
         }
     }
 
