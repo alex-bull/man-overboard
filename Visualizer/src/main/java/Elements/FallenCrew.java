@@ -53,7 +53,7 @@ public class FallenCrew extends ImageView {
 
     /**
      * shows blood patch when crew member dies
-     * @param filePath
+     * @param filePath file path of the image
      */
     public void die(String filePath){
         if (animation != null) return;
