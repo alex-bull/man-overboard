@@ -14,7 +14,7 @@ import static parsers.Converter.parseCoordinate;
 public class PowerUpParser {
 
 
-    public PowerUp parsePowerUp(byte[] packet) {
+    public static PowerUp parsePowerUp(byte[] packet) {
         try {
             Integer id = hexByteArrayToInt(Arrays.copyOfRange(packet, 0, 4));
             Double latitude = parseCoordinate(Arrays.copyOfRange(packet, 4, 8));

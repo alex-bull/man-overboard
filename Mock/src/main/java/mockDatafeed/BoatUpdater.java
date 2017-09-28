@@ -269,8 +269,8 @@ public class BoatUpdater {
         while (whirlpools.size() < 2) {
             MutablePoint centroid = utility.centroid(courseBoundary);
             double angle = Math.random() * 2 * Math.PI;
-            double xOff = Math.cos(angle) * 0.001;
-            double yOff = Math.sin(angle) * 0.001;
+            double xOff = Math.cos(angle) * 0.01;
+            double yOff = Math.sin(angle) * 0.01;
             MutablePoint whirlpoolPos = new MutablePoint(centroid.getXValue() + xOff, centroid.getYValue() + yOff);
             if (isPointInPolygon(whirlpoolPos, courseBoundary)) {
                 int currentLeg = leadLeg;
@@ -281,7 +281,7 @@ public class BoatUpdater {
     }
 
     /**
-     * Updates whirlpool position whenever leader advances to next mark
+     * Updates whirlpool position every 20 seconds
      */
     private void updateWhirlpool() {
         for (Whirlpool whirlpool : whirlpools) {

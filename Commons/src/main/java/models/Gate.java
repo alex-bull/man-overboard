@@ -119,6 +119,11 @@ public class Gate implements CourseFeature {
 
     }
 
+    @Override
+    public void setPixelLocation(double x, double y) {
+
+    }
+
     /**
      * Compares gate objects's name, isFinish and loation to see if they are equal.
      *
@@ -187,5 +192,11 @@ public class Gate implements CourseFeature {
     @Override
     public CourseFeature shift(double x, double y) {
         return new Gate(name, GPSPoint1, pixelPoint1.shift(x, y), pixelPoint2.shift(x, y), isFinish, isLine, index);
+    }
+
+    @Override
+    public void shiftInPlace(double x, double y) {
+        pixelPoint1.shiftInPlace(x, y);
+        pixelPoint2.shiftInPlace(x, y);
     }
 }

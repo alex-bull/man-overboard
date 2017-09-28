@@ -11,6 +11,7 @@ import models.Competitor;
  */
 public class Sail extends Line {
 
+    private Rotate rotate;
     /**
      * initialize a sail with a color
      *
@@ -18,6 +19,8 @@ public class Sail extends Line {
      */
     public Sail(Color color) {
         this.setStroke(color);
+        rotate=new Rotate(0,0,0);
+        getTransforms().add(rotate);
     }
 
     /**
@@ -37,13 +40,15 @@ public class Sail extends Line {
         this.setStartY(boatY);
         this.setEndX(boatX);
         this.setEndY(boatY + length);
-        this.getTransforms().clear();
+
         if (boat.hasSailsOut()) {
             this.setVisible(false);
         } else {
             this.setVisible(true);
-            this.getTransforms().add(new Rotate(boat.getCurrentHeading(), boatX, boatY));
+            rotate.setAngle(boat.getCurrentHeading());
         }
+        rotate.setPivotX(boatX);
+        rotate.setPivotY(boatY);
         this.toFront();
     }
 

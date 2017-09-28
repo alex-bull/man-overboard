@@ -321,6 +321,7 @@ public class LobbyController implements Initializable {
             }
             else if (dataSource.getThemeId() != null) {
                 this.courseThemeImage = new Image(getClass().getClassLoader().getResource("images/bermuda/bermudaTheme.png").toString());
+                this.locationLabel.setText("Bermuda");
                 courseImageView.setImage(this.courseThemeImage);
             }
         }

@@ -227,14 +227,14 @@ public class RaceCalculator {
 
 
     public static List<MutablePoint> getMarkCentres(Integer markIndex, Map<Integer, List<Integer>> indexMap, Map<Integer, CourseFeature> featureMap) {
-        Map<Integer, List<Integer>> features = indexMap;
-        if (markIndex > features.size()) return null; //passed the finish line
+        if (markIndex > indexMap.size()) return null; //passed the finish line
 
         List<MutablePoint> centres = new ArrayList<>();
 
-        List<Integer> ids = features.get(markIndex);
+        List<Integer> ids = indexMap.get(markIndex);
         if (ids == null) return null;
         CourseFeature featureOne = featureMap.get(ids.get(0));
+
         Double markX = featureOne.getPixelCentre().getXValue();
         Double markY = featureOne.getPixelCentre().getYValue();
         centres.add(new MutablePoint(markX, markY));

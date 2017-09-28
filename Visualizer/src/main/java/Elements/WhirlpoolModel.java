@@ -49,6 +49,11 @@ public class WhirlpoolModel extends ImageView {
             p = whirlPool.getPosition17().shift(-currentPosition17.getXValue() + width / 2, -currentPosition17.getYValue() + height / 2);
         } else {
             p = whirlPool.getPosition();
+            if (p.getXValue() != this.getX()) {
+                this.setX(p.getXValue());
+                this.setY(p.getYValue());
+                this.animateSpawn();
+            }
         }
         this.relocate(p.getXValue() - getFitWidth() / 2, p.getYValue() - getFitHeight() / 2);
     }
@@ -57,7 +62,7 @@ public class WhirlpoolModel extends ImageView {
      * rotates whirlpool
      */
     public void spin() {
-        this.setRotate(this.getRotate() + 5);
+        this.setRotate(this.getRotate() - 5);
     }
 
     public Timeline animateSpawn() {

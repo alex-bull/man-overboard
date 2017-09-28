@@ -55,7 +55,7 @@ public class CurvedGuideArrow extends ImageView {
             applyTransformsToArrow(angle, markX - image.getWidth() * scale, markY - image.getHeight() * scale, image.getWidth() * scale, image.getHeight() * scale);
         }
         else {
-            applyTransformsToArrow(angle, markX, markY - image.getHeight() * scale, 0, image.getHeight() * scale);
+            applyTransformsToArrow(angle, markX - image.getWidth() * scale, markY, image.getWidth() * scale, 0);
         }
     }
 
