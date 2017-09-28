@@ -116,7 +116,7 @@ public class RaceViewController implements Initializable, TableObserver {
     private SharkModel sharkModel;
     private Map<Integer, WhirlpoolModel> whirlpools = new HashMap<>();
     private Polygon boundaryPolygon;
-    private Polygon innerPolygon;
+
 
     //FLAGS
     private Boolean finisherListDisplayed = false;

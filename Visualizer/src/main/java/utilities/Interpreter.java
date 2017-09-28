@@ -538,9 +538,11 @@ public class Interpreter implements DataSource, PacketHandler {
     public void addShark(List<Shark> locations) {
 
         for (Shark shark : locations) {
+
             if(!sharkLocations.containsKey(shark.getSourceId())){
-                sharkLocations.put(shark.getSourceId(), new Shark(shark.getSourceId(),shark.getPositionOriginal()));
+                sharkLocations.put(shark.getSourceId(), new Shark(shark.getSourceId(),shark.getPosition()));
             }
+
             MutablePoint projectedPoint=Projection.mercatorProjection(shark.getPosition());
             projectedPoint.factor(scaleFactor, scaleFactor, minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
 
@@ -558,6 +560,7 @@ public class Interpreter implements DataSource, PacketHandler {
      */
     private void updateSharkLocation() {
         for (Shark shark : sharkLocations.values()) {
+            System.out.println(shark.getPositionOriginal());
             MutablePoint point = cloner.deepClone(shark.getPositionOriginal());
             point.factor(pow(2, zoomLevel), pow(2, zoomLevel), minXMercatorCoord, minYMercatorCoord, paddingX, paddingY);
             shark.setPosition17(point);
