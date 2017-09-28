@@ -425,7 +425,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Sends the controls box to back
-     * @param mouseEvent
+     * @param mouseEvent mouse clicked event
      */
     public void closeControls(MouseEvent mouseEvent) {
         controlsBox.setVisible(false);
@@ -437,7 +437,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Brings the quit box to front
-     * @param actionEvent
+     * @param actionEvent button pressed event
      */
     @FXML
     public void showQuitBox(ActionEvent actionEvent) {
@@ -448,7 +448,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * hides the quit box
-     * @param actionEvent
+     * @param actionEvent button pressed event
      */
     @FXML
     public void hideQuitBox(ActionEvent actionEvent) {
@@ -459,7 +459,7 @@ public class RaceViewController implements Initializable, TableObserver {
 
     /**
      * Set the exit flag to tell main to leave the game when possible
-     * @param actionEvent
+     * @param actionEvent event
      */
     @FXML
     public void leaveGame(ActionEvent actionEvent) {
@@ -470,7 +470,7 @@ public class RaceViewController implements Initializable, TableObserver {
     /**
      * Toggles the sounds when the button is clicked
      *
-     * @param actionEvent
+     * @param actionEvent button pressed event
      */
     public void toggleSound(ActionEvent actionEvent) {
 
