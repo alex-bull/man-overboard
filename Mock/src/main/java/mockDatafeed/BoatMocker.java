@@ -133,9 +133,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             new BoatMocker();
 
         } catch (SocketException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         } catch (IOException | JDOMException e ) {
-           // e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -150,7 +150,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
 
 
@@ -193,9 +193,9 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
         try {
             start();
         } catch (JDOMException e) {
-           // e.printStackTrace();
+//            e.printStackTrace();
         } catch (IOException e) {
-           // e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -832,7 +832,7 @@ public class BoatMocker extends TimerTask implements ConnectionClient, BoatUpdat
             sendBoatLocation();
             sendRaceStatus();
         } catch (IOException | InterruptedException e) {
-           // e.printStackTrace();
+//            e.printStackTrace();
         }
 
     }

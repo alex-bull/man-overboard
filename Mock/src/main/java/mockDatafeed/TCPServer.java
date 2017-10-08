@@ -7,6 +7,7 @@ import utility.WorkQueue;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -45,6 +46,7 @@ public class TCPServer extends TimerTask {
         this.connectionClient = connectionClient;
         selector = Selector.open();
         serverSocket = ServerSocketChannel.open();
+        serverSocket.socket().setReuseAddress(true);
         serverSocket.bind(new InetSocketAddress("0.0.0.0", port));
         serverSocket.configureBlocking(false);
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
@@ -58,9 +60,11 @@ public class TCPServer extends TimerTask {
     public void exit() {
         System.out.println("exiting");
         try {
+//            serverSocket.close();
+            selector.close();
             serverSocket.close();
         } catch (IOException e) {
-         //   e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -201,6 +205,7 @@ public class TCPServer extends TimerTask {
 
     public void run() {
 
+//        System.out.println("RUn");
         //send all messages
         this.sendQueuedMessages();
 
@@ -230,7 +235,7 @@ public class TCPServer extends TimerTask {
             }
 
         } catch (IOException e) {
-           // e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
